@@ -1038,6 +1038,16 @@ class FactionAbilities {
 
 
   // ---------------------------------------------------------------------------
+  // Y0. Transport Capacity Exemptions
+  // ---------------------------------------------------------------------------
+
+  isCapacityExempt(player, unitType) {
+    const handler = this._getPlayerHandler(player)
+    return handler?.isCapacityExempt?.(player, this, unitType) ?? false
+  }
+
+
+  // ---------------------------------------------------------------------------
   // Y1. Bombardment Triggers
   // ---------------------------------------------------------------------------
 
