@@ -176,6 +176,69 @@ AgricolaActionManager.prototype.offerUseOtherSpace = function(player, card, othe
 // Occupation action
 // ---------------------------------------------------------------------------
 
+/**
+ * Central function for completing an occupation play (post-selection).
+ * Handles before-hooks, cost payment, card play, logging, onPlay hook,
+ * action-space registration, and onPlayOccupation hooks.
+ *
+ * @param {object} player
+ * @param {string} cardId
+ * @param {object} [options]
+ * @param {object} [options.cost]             — cost to pay (e.g., { food: 2 })
+ * @param {string} [options.logTemplate]      — custom log template
+ * @param {object} [options.logArgs]          — extra log args merged with { player, card }
+ * @param {boolean} [options.skipBeforeHooks] — suppress onBeforePlayOccupation (when caller already fired it)
+ */
+AgricolaActionManager.prototype._completeOccupationPlay = function(player, cardId, options = {}) {
+  const card = this.game.cards.byId(cardId)
+  if (!card) {
+    return false
+  }
+
+  // Fire onBeforePlayOccupation hooks (e.g. Patron: get 2 food, WhaleOil: get stored food)
+  if (!options.skipBeforeHooks) {
+    this.game.callPlayerCardHook(player, 'onBeforePlayOccupation')
+  }
+
+  // Pay cost if provided
+  if (options.cost) {
+    player.payCost(options.cost)
+  }
+
+  // Play the card (moves from hand to playedOccupations)
+  player.playCard(cardId)
+  this._recordCardPlayed(player, card)
+
+  // Log
+  if (options.logTemplate) {
+    this.log.add({
+      template: options.logTemplate,
+      args: { player, card, ...(options.logArgs || {}) },
+    })
+  }
+  else {
+    this.log.add({
+      template: '{player} plays {card}',
+      args: { player, card },
+    })
+  }
+
+  // Pay card cost (e.g. prereq costs defined on the card itself)
+  player.payCardCost(cardId)
+
+  // Execute onPlay effect if present
+  if (card.hasHook('onPlay')) {
+    card.callHook('onPlay', this.game, player)
+  }
+
+  this.game.registerCardActionSpace(player, card)
+
+  // Call onPlayOccupation hooks on all active cards
+  this.game.callPlayerCardHook(player, 'onPlayOccupation', card)
+
+  return true
+}
+
 AgricolaActionManager.prototype.playOccupation = function(player, options = {}) {
   if (player.cannotPlayOccupations) {
     this.log.add({
@@ -379,28 +442,7 @@ AgricolaActionManager.prototype.playOccupation = function(player, options = {}) 
     }
   }
 
-  // Play the card (moves from hand to playedOccupations)
-  const card = this.game.cards.byId(cardId)
-  player.playCard(cardId)
-  this._recordCardPlayed(player, card)
-
-  this.log.add({
-    template: '{player} plays {card}',
-    args: { player, card: card },
-  })
-  player.payCardCost(cardId)
-
-  // Execute onPlay effect if present
-  if (card.hasHook('onPlay')) {
-    card.callHook('onPlay', this.game, player)
-  }
-
-  this.game.registerCardActionSpace(player, card)
-
-  // Call onPlayOccupation hooks on all active cards
-  this.game.callPlayerCardHook(player, 'onPlayOccupation', card)
-
-  return true
+  return this._completeOccupationPlay(player, cardId, { skipBeforeHooks: true })
 }
 
 // ---------------------------------------------------------------------------

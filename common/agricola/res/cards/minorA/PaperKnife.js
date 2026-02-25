@@ -41,22 +41,9 @@ module.exports = {
 
     // Randomly select one of the three
     const chosenId = util.array.select(selectedIds, game.random)
-    const card = game.cards.byId(chosenId)
 
-    // Play for free (no occupation food cost)
-    player.playCard(chosenId)
-    game.actions._recordCardPlayed(player, card)
-
-    game.log.add({
-      template: '{player} plays {card} for free (Paper Knife)',
-      args: { player, card },
+    game.actions._completeOccupationPlay(player, chosenId, {
+      logTemplate: '{player} plays {card} for free (Paper Knife)',
     })
-
-    if (card.hasHook('onPlay')) {
-      card.callHook('onPlay', game, player)
-    }
-
-    game.registerCardActionSpace(player, card)
-    game.callPlayerCardHook(player, 'onPlayOccupation', card)
   },
 }

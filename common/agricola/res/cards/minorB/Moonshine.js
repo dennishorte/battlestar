@@ -32,21 +32,10 @@ module.exports = {
     })
 
     if (selection[0].startsWith('Play')) {
-      player.payCost({ food: 2 })
-      player.playCard(chosenId)
-      game.actions._recordCardPlayed(player, chosenCard)
-
-      game.log.add({
-        template: '{player} plays {card} for 2 food (Moonshine)',
-        args: { player, card: chosenCard },
+      game.actions._completeOccupationPlay(player, chosenId, {
+        cost: { food: 2 },
+        logTemplate: '{player} plays {card} for 2 food (Moonshine)',
       })
-
-      if (chosenCard.hasHook('onPlay')) {
-        chosenCard.callHook('onPlay', game, player)
-      }
-
-      game.registerCardActionSpace(player, chosenCard)
-      game.callPlayerCardHook(player, 'onPlayOccupation', chosenCard)
     }
     else {
       const leftPlayer = game.players.leftOf(player)
