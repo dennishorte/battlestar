@@ -275,7 +275,51 @@ describe('Yssaril Tribes', () => {
   })
 
   describe('Promissory Note — Spy Net', () => {
-    test.todo('at start of turn, look at Yssaril hand and take 1 card')
+    test('at start of turn, look at Yssaril hand and take 1 action card, then return', () => {
+      // Dennis = Hacan (holder), Micah = Yssaril (owner)
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'yssaril-tribes'] })
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [{ id: 'spy-net', owner: 'micah' }],
+          actionCards: [],
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          actionCards: ['sabotage', 'direct-hit'],
+          units: {
+            'yssaril-home': {
+              space: ['carrier'],
+              'retillion': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // At Dennis's turn start, Spy Net triggers
+      // Dennis chooses to play Spy Net
+      t.choose(game, 'Play Spy Net')
+      // Dennis chooses Sabotage from Yssaril's hand
+      t.choose(game, 'Sabotage')
+
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+
+      // Dennis took 1 action card from Yssaril
+      expect(dennis.actionCards.some(c => c.id === 'sabotage')).toBe(true)
+      expect(micah.actionCards.length).toBe(1)
+      expect(micah.actionCards[0].id).toBe('direct-hit')
+
+      // PN returned to Yssaril
+      const micahPNs = micah.getPromissoryNotes()
+      expect(micahPNs.some(n => n.id === 'spy-net')).toBe(true)
+    })
   })
 
   describe('Faction Technologies', () => {

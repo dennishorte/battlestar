@@ -4038,8 +4038,13 @@ Twilight.prototype._resolveSecondaries = function(activePlayer, cardId) {
     }
 
     // Hacan Masters of Trade: free Trade secondary (no strategy token cost)
-    const isFree = cardId === 'trade'
+    let isFree = cardId === 'trade'
       && this.factionAbilities.canSkipTradeSecondaryCost(player)
+
+    // Acquiescence (Winnu PN): free secondary when Winnu uses strategic action
+    if (!isFree && this.factionAbilities.hasAcquiescence(player, activePlayer)) {
+      isFree = true
+    }
 
     // Skip if player has no strategy tokens to spend (unless free)
     if (!isFree && player.commandTokens.strategy <= 0) {
@@ -4057,6 +4062,9 @@ Twilight.prototype._resolveSecondaries = function(activePlayer, cardId) {
         this.factionAbilities.onStrategyTokenSpent(player, activePlayer.name)
       }
       this._resolveSecondary(player, cardId)
+
+      // Acquiescence: return PN to Winnu after free secondary
+      this.factionAbilities.returnAcquiescence(player, activePlayer)
     }
   }
 }
