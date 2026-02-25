@@ -104,8 +104,10 @@ export default {
       }
       if (this.tileData.type === 'home') {
         const faction = res.getFaction(this.tileData.faction)
-        // Short faction abbreviation
-        return faction?.name?.substring(0, 3) || '?'
+        if (!faction?.name) {
+          return '?'
+        }
+        return faction.name.replace(/^The /, '')
       }
       if (this.tileData.type === 'hyperlane') {
         return ''
@@ -161,6 +163,7 @@ export default {
       return {
         interactive: this.interactive,
         highlighted: this.highlighted,
+        home: this.tileData.type === 'home',
       }
     },
 
@@ -323,6 +326,17 @@ export default {
   font-weight: 700;
   font-size: 1.1em;
   opacity: .7;
+  max-width: 90%;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home .tile-id {
+  font-size: .65em;
+  white-space: normal;
+  line-height: 1.1;
 }
 
 .planet-indicators {
