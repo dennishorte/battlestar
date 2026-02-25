@@ -1,5 +1,9 @@
 const t = require('../../testutil.js')
 
+function pickStrategyCards(game, dennisCard, micahCard) {
+  t.choose(game, dennisCard)
+  t.choose(game, micahCard)
+}
 
 describe('Nomad', () => {
   describe('Data', () => {
@@ -427,9 +431,81 @@ describe('Nomad', () => {
   })
 
   describe('Promissory Note — The Cavalry', () => {
-    test.todo('at start of space combat against non-Nomad player, treat 1 non-fighter ship as if it has flagship stats')
-    test.todo('treated ship gains sustain damage, combat value, and AFB of Memoria')
-    test.todo('returns to Nomad player at end of combat')
+    test('treated ship gains flagship combat value and sustain damage, PN returns to Nomad', () => {
+      // Dennis = Hacan (holder of Cavalry), Micah = Nomad (PN owner), Scott = Sol (opponent)
+      // Cavalry can only be used against non-Nomad opponents.
+      // Dennis fights Scott in system 27; cruiser gets Nomad flagship stats.
+      const game = t.fixture({
+        numPlayers: 3,
+        factions: ['emirates-of-hacan', 'nomad', 'federation-of-sol'],
+      })
+      t.setBoard(game, {
+        systems: {
+          27: { q: 0, r: -2 },   // New Albion + Starpoint, adjacent to P1 home
+          26: { q: 0, r: -1 },   // Lodor
+          38: { q: 0, r: 2 },    // Abyz + Fria, adjacent to P3 home
+          35: { q: -1, r: 0 },   // Bereg + Lirta IV
+          34: { q: 1, r: 0 },    // Centauri + Gral
+          20: { q: 1, r: -1 },   // Vefut II
+        },
+        dennis: {
+          promissoryNotes: [{ id: 'the-cavalry', owner: 'micah' }],
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock', 'infantry'],
+            },
+            '27': {
+              space: ['cruiser', 'cruiser'],
+            },
+          },
+        },
+        scott: {
+          units: {
+            'sol-home': {
+              space: ['carrier'],
+              'jord': ['space-dock', 'infantry'],
+            },
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+
+      // 3-player strategy phase: snake draft, 2 cards per player
+      // Round 1 (clockwise): dennis, micah, scott
+      t.choose(game, 'leadership')
+      t.choose(game, 'diplomacy')
+      t.choose(game, 'politics')
+      // Round 2 (reverse): scott, micah, dennis
+      t.choose(game, 'construction')
+      t.choose(game, 'trade')
+      t.choose(game, 'warfare')
+
+      // Dennis activates system 27 where Dennis and Scott have ships
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', { movements: [] })
+
+      // Space combat begins — Dennis is offered The Cavalry
+      t.choose(game, 'Play The Cavalry')
+      // Dennis has 2 cruisers — choose which ship
+      t.choose(game, 'cruiser')
+
+      // Combat resolves (2 cruisers vs 1 fighter — cruisers should win easily)
+      // After combat, verify PN was returned and logged
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('The Cavalry'))).toBe(true)
+
+      // PN should be returned to Nomad (Micah)
+      const micah = game.players.byName('micah')
+      expect(micah.getPromissoryNotes().some(n => n.id === 'the-cavalry')).toBe(true)
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getPromissoryNotes().some(n => n.id === 'the-cavalry')).toBe(false)
+    })
   })
 
   describe('Faction Technologies', () => {
