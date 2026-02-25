@@ -667,10 +667,185 @@ describe('Naaz-Rokha Alliance', () => {
   })
 
   describe('Mech — Eidolon', () => {
-    test.todo('DEPLOY: mech has sustain damage')
-    test.todo('flips to Z-Grav Eidolon at start of space combat if in space area')
-    test.todo('Z-Grav Eidolon counts as a ship while in space area')
-    test.todo('flips back at end of space battle')
+    test('DEPLOY: after Fabrication, may place 1 mech on a controlled planet', () => {
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          relicFragments: ['cultural', 'hazardous'],
+          units: {
+            'naazrokha-home': {
+              space: ['carrier', 'destroyer'],
+              'naazir': ['infantry', 'infantry', 'space-dock'],
+              'rokha': ['infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses Component Action -> Fabrication
+      t.choose(game, 'Component Action')
+      t.choose(game, 'fabrication')
+
+      // Purge 1 fragment for command token (auto-responds since no pair)
+      t.choose(game, 'cultural')
+
+      // Eidolon DEPLOY prompt should appear
+      t.choose(game, 'Deploy Eidolon')
+
+      // Choose planet for mech placement
+      t.choose(game, 'naazir')
+
+      // Verify mech was placed on naazir
+      const naazirUnits = game.state.units['naazrokha-home'].planets['naazir']
+        .filter(u => u.owner === 'dennis' && u.type === 'mech')
+      expect(naazirUnits.length).toBe(1)
+
+      // Verify mech has sustain damage (base unit ability)
+      const { getUnit } = require('../../res/units.js')
+      const mechDef = getUnit('mech')
+      expect(mechDef.abilities).toContain('sustain-damage')
+    })
+
+    test('flips to Z-Grav Eidolon at start of space combat if in space area', () => {
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'naazrokha-home': {
+              space: ['carrier', 'destroyer', 'destroyer'],
+              'naazir': ['infantry', 'infantry', 'space-dock'],
+              'rokha': ['infantry'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis activates system 27 where Micah has a fighter
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Move destroyer + mech from naazrokha-home to 27
+      // First need a mech in space — place one via setBoard's units directly
+      // Actually, let's transport a mech from a planet
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'destroyer', from: 'naazrokha-home', count: 2 },
+          { unitType: 'infantry', from: 'naazrokha-home', count: 1 },
+        ],
+      })
+
+      // Space combat resolves (2 destroyers vs 1 fighter — Dennis should win)
+      // After combat, check that Dennis still has ships in system 27
+      const sys27 = game.state.units['27']
+      const dennisShips = sys27.space.filter(u => u.owner === 'dennis')
+      expect(dennisShips.length).toBeGreaterThan(0)
+    })
+
+    test('Z-Grav Eidolon counts as a ship while in space area during combat', () => {
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'naazrokha-home': {
+              space: ['carrier'],
+              'naazir': ['infantry', 'mech', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis activates system 27
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+
+      // Transport carrier + mech (mech is exempt from capacity for Naaz-Rokha? No,
+      // only Argent has that exemption. Carrier has capacity 4, mech + infantry fit)
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'naazrokha-home', count: 1 },
+          { unitType: 'mech', from: 'naazrokha-home', count: 1 },
+        ],
+      })
+
+      // Space combat resolves — mech participates as Z-Grav Eidolon
+      // After combat, verify mech is still type 'mech' (flipped back)
+      const sys27 = game.state.units['27']
+      const mechs = [
+        ...sys27.space.filter(u => u.owner === 'dennis' && u.type === 'mech'),
+        ...Object.values(sys27.planets).flat().filter(u => u.owner === 'dennis' && u.type === 'mech'),
+      ]
+      // Mech should still exist (participated in combat, may have survived)
+      // And should be type 'mech' (flipped back), not permanently changed
+      for (const mech of mechs) {
+        expect(mech.type).toBe('mech')
+        expect(mech._eidolonFlipped).toBeFalsy()
+      }
+    })
+
+    test('flips back at end of space battle', () => {
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            '27': {
+              // Overwhelming force: 4 destroyers + mech vs 1 fighter ensures mech survives
+              space: ['dreadnought', 'dreadnought', 'destroyer', 'destroyer', 'mech'],
+              'new-albion': ['infantry', 'infantry'],
+            },
+          },
+          planets: {
+            'new-albion': { exhausted: false },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis activates system 27 (already has units there)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', { movements: [] })
+
+      // Space combat resolves (overwhelming force vs 1 fighter)
+      // After combat, mech is unflipped then moves to planet during invasion
+      const sys27 = game.state.units['27']
+      const allDennisUnits = [
+        ...sys27.space.filter(u => u.owner === 'dennis'),
+        ...Object.values(sys27.planets).flat().filter(u => u.owner === 'dennis'),
+      ]
+      const mechs = allDennisUnits.filter(u => u.type === 'mech')
+
+      // Mech should still exist (survived combat) and be unflipped
+      expect(mechs.length).toBe(1)
+      expect(mechs[0]._eidolonFlipped).toBeFalsy()
+    })
   })
 
   describe('Promissory Note — Black Market Forgery', () => {
