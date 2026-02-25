@@ -504,13 +504,237 @@ describe('Empyrean', () => {
   })
 
   describe('Promissory Note — Dark Pact', () => {
-    test.todo('when holder gives commodities equal to max commodity value to Empyrean, both gain 1 trade good')
-    test.todo('returns to Empyrean if holder activates a system with Empyrean units')
+    test('when holder gives commodities equal to max commodity value to Empyrean, both gain 1 trade good', () => {
+      // Dennis = Empyrean, Micah = Hacan (max 6 commodities)
+      // System 27 is adjacent to empyrean-home so they're neighbors
+      const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 0,
+          leaders: { agent: 'exhausted' },
+          units: {
+            'empyrean-home': {
+              space: ['carrier'],
+              'the-dark': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          tradeGoods: 0,
+          promissoryNotes: [{ id: 'dark-pact', owner: 'dennis' }],
+          units: {
+            '27': {
+              space: ['cruiser'],
+            },
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      // Micah = Leadership (1) goes first, Dennis = Trade (5)
+      pickStrategyCards(game, 'trade', 'leadership')
+
+      // Micah: Component Action → Dark Pact
+      t.choose(game, 'Component Action')
+      t.choose(game, 'dark-pact')
+      // Transaction window auto-exits (no resources)
+
+      // Dennis: Strategic Action (Trade) — gains 3 TG, replenishes all commodities
+      t.choose(game, 'Strategic Action')
+      // Micah: Trade secondary (Hacan gets it free)
+      t.choose(game, 'Pass')
+
+      // Dennis's transaction window: request 6 commodities from Micah
+      t.choose(game, 'micah')
+      t.action(game, 'trade-offer', {
+        offering: {},
+        requesting: { commodities: 6 },
+      })
+      t.choose(game, 'Accept')
+
+      // Dark Pact: Micah gave 6 commodities (= Hacan max 6) to Empyrean → both gain 1 TG
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+      // Dennis: 3 (Trade) + 6 (from commodities) + 1 (Dark Pact) = 10
+      expect(dennis.tradeGoods).toBe(10)
+      // Micah: 0 + 1 (Dark Pact) = 1
+      expect(micah.tradeGoods).toBe(1)
+    })
+
+    test('returns to Empyrean if holder activates a system with Empyrean units', () => {
+      const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted' },
+          units: {
+            'empyrean-home': {
+              space: ['carrier'],
+              'the-dark': ['space-dock'],
+            },
+            '27': {
+              space: ['cruiser'], // Empyrean unit in system 27
+            },
+          },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'dark-pact', owner: 'dennis' }],
+          units: {
+            'hacan-home': {
+              space: ['carrier', 'cruiser'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: Strategic Action (Leadership) → Micah declines secondary
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')
+
+      // Micah: Component Action → Dark Pact
+      t.choose(game, 'Component Action')
+      t.choose(game, 'dark-pact')
+
+      // Dennis: pass
+      t.choose(game, 'Pass')
+
+      // Micah: Tactical Action → activate system 27 (has Empyrean cruiser)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'hacan-home', count: 1 }],
+      })
+
+      // PN returned to Empyrean (Dennis)
+      const micah = game.players.byName('micah')
+      const dennis = game.players.byName('dennis')
+      expect(micah.hasPromissoryNote('dark-pact')).toBe(false)
+      expect(dennis.hasPromissoryNote('dark-pact')).toBe(true)
+    })
   })
 
   describe('Promissory Note — Blood Pact', () => {
-    test.todo('when holder and Empyrean vote for the same outcome, cast 4 additional votes')
-    test.todo('returns to Empyrean if holder activates a system with Empyrean units')
+    test('when holder and Empyrean vote for the same outcome, cast 4 additional votes', () => {
+      // Dennis = Empyrean, Micah = Hacan. Both vote for same outcome → 4 extra votes
+      const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        custodiansRemoved: true,
+        agendaDeck: ['minister-of-commerce'],
+        dennis: {
+          leaders: { agent: 'exhausted' },
+          units: {
+            'empyrean-home': {
+              space: ['carrier'],
+              'the-dark': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'blood-pact', owner: 'dennis' }],
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      // Micah = Leadership (1) goes first, Dennis = Trade (5)
+      pickStrategyCards(game, 'trade', 'leadership')
+
+      // Micah: Component Action → Blood Pact
+      t.choose(game, 'Component Action')
+      t.choose(game, 'blood-pact')
+
+      // Dennis: Strategic Action (Trade)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // Micah declines Trade secondary
+
+      // Micah: Strategic Action (Leadership)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // Dennis declines Leadership secondary
+      // Hacan Guild Ships: transaction window (Dennis has TG from Trade)
+      t.choose(game, 'Skip Transaction')
+
+      // Both pass to end action phase
+      t.choose(game, 'Pass')  // Dennis
+      t.choose(game, 'Pass')  // Micah
+
+      // Status phase: token redistribution
+      t.choose(game, 'Done')  // dennis
+      t.choose(game, 'Done')  // micah
+
+      // Agenda phase — minister-of-commerce: elect a player
+      // Voting order: Micah first (non-speaker), Dennis second
+      // Both vote for same outcome: 'dennis'
+      t.choose(game, 'dennis')   // Micah votes for dennis
+      t.choose(game, 'kamdorn (1)')  // Micah exhausts kamdorn (influence 1)
+      t.choose(game, 'dennis')   // Dennis votes for dennis
+      t.choose(game, 'the-dark (4)')  // Dennis exhausts the-dark (influence 4)
+
+      // Blood Pact adds 4 extra votes for 'dennis' outcome
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Blood Pact') && e.includes('4 additional votes'))).toBe(true)
+    })
+
+    test('returns to Empyrean if holder activates a system with Empyrean units', () => {
+      const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted' },
+          units: {
+            'empyrean-home': {
+              space: ['carrier'],
+              'the-dark': ['space-dock'],
+            },
+            '27': {
+              space: ['cruiser'], // Empyrean unit in system 27
+            },
+          },
+        },
+        micah: {
+          promissoryNotes: [{ id: 'blood-pact', owner: 'dennis' }],
+          units: {
+            'hacan-home': {
+              space: ['carrier', 'cruiser'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: Strategic Action → Micah declines
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')
+
+      // Micah: Component Action → Blood Pact
+      t.choose(game, 'Component Action')
+      t.choose(game, 'blood-pact')
+
+      // Dennis: pass
+      t.choose(game, 'Pass')
+
+      // Micah: Tactical Action → activate system 27 (has Empyrean cruiser)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'hacan-home', count: 1 }],
+      })
+
+      // PN returned to Empyrean (Dennis)
+      const micah = game.players.byName('micah')
+      const dennis = game.players.byName('dennis')
+      expect(micah.hasPromissoryNote('blood-pact')).toBe(false)
+      expect(dennis.hasPromissoryNote('blood-pact')).toBe(true)
+    })
   })
 
   describe('Faction Technologies', () => {
