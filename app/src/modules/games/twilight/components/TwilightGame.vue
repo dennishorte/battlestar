@@ -20,6 +20,10 @@
           <TradeOffer v-if="activeActionType === 'trade-offer'" />
           <RedistributeTokens v-if="activeActionType === 'redistribute-tokens'" />
 
+          <div class="toolbar">
+            <button class="btn btn-sm btn-outline-secondary" @click="openShipOverview">Units</button>
+          </div>
+
           <WaitingPanel />
         </div>
 
@@ -42,6 +46,7 @@
 
     <SystemDetailModal />
     <CardDetailModal />
+    <ShipOverviewModal />
     <DebugModal />
   </div>
 </template>
@@ -68,6 +73,7 @@ import TradeOffer from './actions/TradeOffer.vue'
 
 // Modals
 import CardDetailModal from './modals/CardDetailModal.vue'
+import ShipOverviewModal from './modals/ShipOverviewModal.vue'
 import SystemDetailModal from './modals/SystemDetailModal.vue'
 
 
@@ -86,6 +92,7 @@ export default {
     PlayerPanel,
     ProduceUnits,
     RedistributeTokens,
+    ShipOverviewModal,
     SystemDetailModal,
     TradeOffer,
     WaitingPanel,
@@ -222,6 +229,10 @@ export default {
       this.ui.interactiveSystems = systemIds
     },
 
+    openShipOverview() {
+      this.$modal('twilight-ship-overview').show()
+    },
+
     openSystemDetail(systemId) {
       this.ui.modals.systemDetail.systemId = systemId
       this.$modal('twilight-system-detail').show()
@@ -344,6 +355,11 @@ export default {
   flex: 0 0 auto;
   overflow: hidden;
   padding: 0;
+}
+
+.toolbar {
+  padding: .25em .5em;
+  border-bottom: 1px solid #dee2e6;
 }
 
 /* Override common component styles */
