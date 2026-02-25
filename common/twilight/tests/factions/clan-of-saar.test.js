@@ -115,9 +115,140 @@ describe('Clan of Saar', () => {
   })
 
   describe('Floating Factory I', () => {
-    test.todo('space dock is placed in space area instead of on a planet')
-    test.todo('space dock can move as if it were a ship')
-    test.todo('space dock is destroyed if blockaded')
+    test('space dock is placed in space area instead of on a planet', () => {
+      const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'saar-home': {
+              space: ['carrier'],
+              'lisis-ii': ['infantry', 'infantry'],
+              'ragh': ['infantry'],
+            },
+          },
+          planets: {
+            'lisis-ii': { exhausted: false },
+            'ragh': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      // Dennis picks construction, Micah picks leadership
+      pickStrategyCards(game, 'construction', 'leadership')
+
+      // Micah's turn first (initiative 1 — leadership)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass') // Dennis declines secondary
+      // Dennis's turn — use Construction
+      t.choose(game, 'Strategic Action')
+
+      // Place space dock — choose a planet, but Saar places in space
+      t.choose(game, 'space-dock:lisis-ii')
+      t.choose(game, 'pds:ragh')
+
+      // Space dock should be in space area, not on the planet
+      const spaceUnits = game.state.units['saar-home'].space
+      const spaceDocks = spaceUnits.filter(u => u.owner === 'dennis' && u.type === 'space-dock')
+      expect(spaceDocks.length).toBe(1)
+
+      // No space dock on the planet
+      const planetUnits = game.state.units['saar-home'].planets['lisis-ii']
+      const planetDocks = planetUnits.filter(u => u.owner === 'dennis' && u.type === 'space-dock')
+      expect(planetDocks.length).toBe(0)
+    })
+
+    test('space dock can move as if it were a ship', () => {
+      const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'saar-home': {
+              space: ['carrier', 'space-dock'],
+              'lisis-ii': ['infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis activates adjacent system and moves the floating factory
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.choose(game, 'Pass') // Captain Mendosa agent prompt
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'space-dock', from: 'saar-home', count: 1 }],
+      })
+
+      // Space dock should be in system 27
+      const system27Units = game.state.units['27'].space
+      const docks = system27Units.filter(u => u.owner === 'dennis' && u.type === 'space-dock')
+      expect(docks.length).toBe(1)
+
+      // No space dock left in saar-home space
+      const homeUnits = game.state.units['saar-home'].space
+      const homeDocks = homeUnits.filter(u => u.owner === 'dennis' && u.type === 'space-dock')
+      expect(homeDocks.length).toBe(0)
+    })
+
+    test('space dock is destroyed if blockaded', () => {
+      // Dennis (Saar) has a floating factory in system 27 with no ships
+      // Micah moves ships into system 27 — the factory should be destroyed
+      const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'saar-home': {
+              space: ['carrier'],
+              'lisis-ii': ['infantry'],
+            },
+            '27': {
+              space: ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            'hacan-home': {
+              'arretze': ['infantry', 'space-dock'],
+            },
+            '26': {
+              space: ['cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      // Micah picks leadership (initiative 1) so Micah goes first
+      pickStrategyCards(game, 'diplomacy', 'leadership')
+
+      // Micah uses strategic action (leadership) first
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass') // Dennis declines leadership secondary
+
+      // Dennis uses strategic action (diplomacy)
+      t.choose(game, 'Strategic Action')
+      // Diplomacy primary: choose a system
+      t.choose(game, 'saar-home')
+      t.choose(game, 'Pass') // Micah declines diplomacy secondary
+
+      // Micah activates system 27 and moves cruiser in from adjacent system 26
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: '26', count: 1 }],
+      })
+
+      // After tactical action ends, the floating factory should be destroyed
+      // (enemy ships in system, no friendly ships)
+      const system27Space = game.state.units['27'].space
+      const saarDocks = system27Space.filter(u => u.owner === 'dennis' && u.type === 'space-dock')
+      expect(saarDocks.length).toBe(0)
+
+      // Micah's cruiser should still be there
+      const micahCruisers = system27Space.filter(u => u.owner === 'micah' && u.type === 'cruiser')
+      expect(micahCruisers.length).toBe(1)
+    })
   })
 
   describe('Flagship — Son of Ragh', () => {

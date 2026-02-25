@@ -535,6 +535,37 @@ Twilight.prototype._isTechReady = function(player, techId) {
   return player.hasTechnology(techId) && !(player.exhaustedTechs || []).includes(techId)
 }
 
+// Floating Factory blockade: destroy space docks in space that are in systems
+// with enemy ships and no friendly ships
+Twilight.prototype._checkFloatingFactoryBlockade = function() {
+  for (const [systemId, systemUnits] of Object.entries(this.state.units)) {
+    const spaceDocks = systemUnits.space.filter(u => u.type === 'space-dock')
+    if (spaceDocks.length === 0) {
+      continue
+    }
+
+    for (const dock of spaceDocks) {
+      const friendlyShips = systemUnits.space.filter(
+        u => u.owner === dock.owner && u.type !== 'space-dock' && res.getUnit(u.type)?.category === 'ship'
+      )
+      const enemyShips = systemUnits.space.filter(
+        u => u.owner !== dock.owner && res.getUnit(u.type)?.category === 'ship'
+      )
+
+      if (enemyShips.length > 0 && friendlyShips.length === 0) {
+        const idx = systemUnits.space.indexOf(dock)
+        if (idx !== -1) {
+          systemUnits.space.splice(idx, 1)
+        }
+        this.log.add({
+          template: 'Floating Factory blockaded: {owner} space dock in system {system} is destroyed',
+          args: { owner: dock.owner, system: systemId },
+        })
+      }
+    }
+  }
+}
+
 Twilight.prototype._exhaustTech = function(player, techId) {
   if (!player.exhaustedTechs) {
     player.exhaustedTechs = []
@@ -1690,6 +1721,9 @@ Twilight.prototype._tacticalAction = function(player) {
   // Clear hegemonic trade swaps (Winnu)
   delete this.state.hegemonicTradeSwaps
 
+  // Floating Factory blockade: destroy Saar space docks in systems with enemy ships and no friendly ships
+  this._checkFloatingFactoryBlockade()
+
   // End-of-tactical-action faction triggers (e.g., Sardakk N'orr agent T'ro)
   this.factionAbilities.onTacticalActionEnd(player, systemId)
 
@@ -1727,7 +1761,10 @@ Twilight.prototype._movementStep = function(player, targetSystemId) {
       continue
     }
 
-    if (unitDef.category === 'ship' && !unitDef.requiresCapacity) {
+    // Saar Floating Factory: space docks with move > 0 move as ships
+    const isMovableShip = (unitDef.category === 'ship' && !unitDef.requiresCapacity)
+      || (m.unitType === 'space-dock' && unitDef.move > 0)
+    if (isMovableShip) {
       shipMovements.push(m)
     }
     else {
@@ -1756,7 +1793,20 @@ Twilight.prototype._movementStep = function(player, targetSystemId) {
     const baseMove = (mendosa && mendosa.playerName === player.name && mendosa.shipType === m.unitType)
       ? mendosa.moveValue
       : unitDef.move
+    // The Table's Grace: Mentak cruisers can move through enemy systems
+    // when the active system contains opponent non-fighter ships
+    if (m.unitType === 'cruiser' && player.hasTechnology('the-tables-grace')) {
+      const destUnits = this.state.units[targetSystemId]
+      const enemyNonFighters = destUnits
+        ? destUnits.space.filter(u => u.owner !== player.name && u.type !== 'fighter')
+        : []
+      if (enemyNonFighters.length > 0) {
+        this.state._tablesGraceActive = true
+      }
+    }
+
     const path = galaxy.findPath(fromSystemId, targetSystemId, player.name, baseMove + moveBonus + gravityDriveBonus + aetherstreamBonus)
+    delete this.state._tablesGraceActive
     if (!path) {
       continue  // Ship cannot reach the target
     }
@@ -3969,7 +4019,13 @@ Twilight.prototype._constructionPrimary = function(player) {
   const [firstType, firstPlanet] = firstSelection[0].split(':')
   const firstSystemId = this._findSystemForPlanet(firstPlanet)
   if (firstSystemId) {
-    this._addUnitToPlanet(firstSystemId, firstPlanet, firstType, player.name)
+    // Saar Floating Factory: space docks are placed in the space area
+    if (firstType === 'space-dock' && player.faction?.unitOverrides?.['space-dock']?.move > 0) {
+      this._addUnit(firstSystemId, 'space', 'space-dock', player.name)
+    }
+    else {
+      this._addUnitToPlanet(firstSystemId, firstPlanet, firstType, player.name)
+    }
   }
 
   // Second structure: PDS only
