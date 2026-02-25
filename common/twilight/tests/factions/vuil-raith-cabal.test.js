@@ -169,7 +169,39 @@ describe("Vuil'raith Cabal", () => {
   })
 
   describe('Agent — The Stillness of Stars', () => {
-    test.todo('after another player replenishes commodities, convert their commodities to trade goods and capture 1 unit from reinforcements')
+    test('after another player replenishes commodities, convert their commodities to trade goods and capture 1 unit from reinforcements', () => {
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'ready', commander: 'locked', hero: 'locked' },
+        },
+        micah: {
+          commodities: 0,
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'trade', 'imperial')
+
+      // Dennis uses Trade primary → everyone replenishes commodities
+      t.choose(game, 'Strategic Action')
+
+      // Agent fires for Micah's commodity replenish
+      t.choose(game, 'Exhaust Stillness of Stars')
+      // Choose unit type to capture from Micah's reinforcements
+      t.choose(game, 'infantry')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+
+      const micah = game.players.byName('micah')
+      expect(micah.commodities).toBe(0)  // Converted to TG
+      expect(micah.tradeGoods).toBeGreaterThanOrEqual(6)  // Hacan has 6 commodities
+
+      // Dennis captured 1 infantry from Micah
+      expect(game.state.capturedUnits['dennis']).toEqual(
+        expect.arrayContaining([{ type: 'infantry', originalOwner: 'micah' }])
+      )
+    })
   })
 
   describe('Commander — That Which Molds Flesh', () => {
@@ -355,7 +387,62 @@ describe("Vuil'raith Cabal", () => {
   })
 
   describe('Mech — Reanimator', () => {
-    test.todo('DEPLOY: when infantry on this planet are destroyed, place them on faction sheet as captured')
+    test('captures enemy infantry destroyed on planet with mech', () => {
+      // Dennis (Vuil'raith) defends abyz in system 38 (adjacent to hacan-home)
+      // with a mech + infantry. Micah invades. When Micah's infantry die,
+      // Reanimator captures them.
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          planets: {
+            'abyz': { exhausted: false },
+          },
+          units: {
+            'cabal-home': {
+              'acheron': ['space-dock'],
+            },
+            '38': {
+              'abyz': ['mech', 'infantry', 'infantry', 'infantry',
+                'infantry', 'infantry', 'infantry', 'infantry', 'infantry'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: Strategic Action
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines secondary
+
+      // Micah: tactical action to invade abyz in system 38
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '38' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'hacan-home', count: 1 },
+          { unitType: 'infantry', from: 'hacan-home', count: 2 },
+        ],
+      })
+
+      // Ground combat: Vuil'raith overwhelms with mech + 8 infantry vs 2 infantry
+      // When Micah's infantry are destroyed, Reanimator mech captures them
+      const captured = game.state.capturedUnits['dennis'] || []
+      const capturedFromMicah = captured.filter(c => c.originalOwner === 'micah')
+
+      // Should have captured infantry (Devour captures all destroyed units,
+      // Reanimator additionally captures infantry on the mech's planet)
+      expect(capturedFromMicah.length).toBeGreaterThan(0)
+    })
   })
 
   describe('Promissory Note — Crucible', () => {

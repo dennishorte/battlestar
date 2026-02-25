@@ -3692,8 +3692,11 @@ Twilight.prototype._tradePrimary = function(player) {
     args: { player },
   })
 
-  // Nomad Artuno: after commodities replenished, may exhaust for 1 TG
+  // Notify faction abilities about each player's commodity replenish
   this.factionAbilities.onCommoditiesReplenished(player)
+  for (const other of otherPlayers) {
+    this.factionAbilities.onCommoditiesReplenished(other)
+  }
 }
 
 

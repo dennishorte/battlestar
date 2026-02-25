@@ -44,6 +44,46 @@ module.exports = {
   },
 
   // ---------------------------------------------------------------------------
+  // Agent — Xander Alexin Victori III: At the start of a player's turn, you
+  // may exhaust this card to allow that player to spend their commodities as
+  // if they were trade goods during this turn.
+  // Simplified: when exhausted, convert that player's commodities to TG.
+  // ---------------------------------------------------------------------------
+
+  onAnyTurnStart(keleresPlayer, ctx, { activePlayer }) {
+    if (!keleresPlayer.isAgentReady()) {
+      return
+    }
+
+    // Only trigger if the active player has commodities
+    const target = ctx.players.byName(activePlayer.name)
+    if (!target || target.commodities <= 0) {
+      return
+    }
+
+    const choice = ctx.actions.choose(keleresPlayer, ['Exhaust Xander', 'Pass'], {
+      title: `Xander: ${activePlayer.name} has ${target.commodities} commodities. Exhaust to convert to TG?`,
+    })
+
+    if (choice[0] !== 'Exhaust Xander') {
+      return
+    }
+
+    keleresPlayer.exhaustAgent()
+
+    // Re-fetch target after agent exhaust (stale ref)
+    const updatedTarget = ctx.players.byName(activePlayer.name)
+    const commodities = updatedTarget.commodities
+    updatedTarget.addTradeGoods(commodities)
+    updatedTarget.commodities = 0
+
+    ctx.log.add({
+      template: 'Xander: {player} converts {count} commodities to trade goods for {target}',
+      args: { player: keleresPlayer.name, count: commodities, target: activePlayer.name },
+    })
+  },
+
+  // ---------------------------------------------------------------------------
   // Hero — Keleres heroes vary by sub-faction
   // Mentak: Harka Leeds — ERWAN'S COVENANT
   //   ACTION: Reveal cards from action card deck until 3 with component
