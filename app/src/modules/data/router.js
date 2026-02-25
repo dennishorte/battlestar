@@ -1,3 +1,4 @@
+import AgricolaCards from './components/AgricolaCards.vue'
 import AgricolaResults from './components/AgricolaResults.vue'
 import GameData from './components/GameData.vue'
 import HexTileDetail from './components/HexTileDetail.vue'
@@ -12,6 +13,12 @@ export default [
     name: 'GameData',
     title: 'GameData',
     component: GameData,
+  },
+  {
+    path: '/data/agricola/cards',
+    name: 'Agricola Cards',
+    title: 'Agricola Cards',
+    component: AgricolaCards,
   },
   {
     path: '/data/agricola/results',
