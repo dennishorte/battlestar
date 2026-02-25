@@ -4515,6 +4515,28 @@ Twilight.prototype._resolveTransaction = function(player, targetName) {
     return
   }
 
+  // Validate planet trading (Hacan mech — Pride of Kenara)
+  const offeredPlanet = offering.planet
+  const requestedPlanet = requesting.planet
+  if (offeredPlanet) {
+    const handler = this.factionAbilities._getPlayerHandler(player)
+    if (!handler?.canTradePlanet || !handler.canTradePlanet(player, this.factionAbilities, offeredPlanet)) {
+      return
+    }
+    if (this.state.planets[offeredPlanet]?.controller !== player.name) {
+      return
+    }
+  }
+  if (requestedPlanet) {
+    const handler = this.factionAbilities._getPlayerHandler(target)
+    if (!handler?.canTradePlanet || !handler.canTradePlanet(target, this.factionAbilities, requestedPlanet)) {
+      return
+    }
+    if (this.state.planets[requestedPlanet]?.controller !== target.name) {
+      return
+    }
+  }
+
   // Mahact Hubris: cannot receive Alliance promissory notes
   const offeredAllianceToMahact = (offering.promissoryNotes || [])
     .some(n => n.id === 'alliance') && this.factionAbilities._hasAbility(target, 'hubris')
@@ -4622,6 +4644,14 @@ Twilight.prototype._executeTransaction = function(player, target, offering, requ
     }
   }
 
+  // Planet trades (Hacan mech — Pride of Kenara)
+  if (offering.planet) {
+    this._transferPlanetInTransaction(player, target, offering.planet)
+  }
+  if (requesting.planet) {
+    this._transferPlanetInTransaction(target, player, requesting.planet)
+  }
+
   this.log.add({
     template: '{player} and {target} complete a transaction',
     args: { player, target },
@@ -4638,6 +4668,64 @@ Twilight.prototype._executeTransaction = function(player, target, offering, requ
   // Mentak Pillage: after transaction, Mentak neighbor can steal 1 TG/commodity
   this.factionAbilities.onTransactionComplete(player)
   this.factionAbilities.onTransactionComplete(target)
+}
+
+
+Twilight.prototype._transferPlanetInTransaction = function(giver, receiver, planetId) {
+  const systemId = this._findSystemForPlanet(planetId)
+  if (!systemId) {
+    return
+  }
+
+  // Transfer planet control
+  this.state.planets[planetId].controller = receiver.name
+
+  // Move all giver's units from this planet to another planet they control
+  const planetUnits = this.state.units[systemId]?.planets[planetId] || []
+  const giverUnits = planetUnits.filter(u => u.owner === giver.name)
+
+  if (giverUnits.length > 0) {
+    // Find another planet the giver controls to relocate units
+    const otherPlanets = giver.getControlledPlanets().filter(p => p !== planetId)
+
+    if (otherPlanets.length > 0) {
+      let destPlanet
+      if (otherPlanets.length === 1) {
+        destPlanet = otherPlanets[0]
+      }
+      else {
+        const sel = this.actions.choose(giver, otherPlanets, {
+          title: 'Pride of Kenara: Move units to which planet?',
+        })
+        destPlanet = sel[0]
+      }
+
+      const destSystem = this._findSystemForPlanet(destPlanet)
+      if (destSystem) {
+        // Move units
+        for (const unit of giverUnits) {
+          const idx = planetUnits.indexOf(unit)
+          if (idx !== -1) {
+            planetUnits.splice(idx, 1)
+          }
+          if (!this.state.units[destSystem].planets[destPlanet]) {
+            this.state.units[destSystem].planets[destPlanet] = []
+          }
+          this.state.units[destSystem].planets[destPlanet].push(unit)
+        }
+
+        this.log.add({
+          template: 'Pride of Kenara: {player} moves {count} unit(s) from {from} to {to}',
+          args: { player: giver.name, count: giverUnits.length, from: planetId, to: destPlanet },
+        })
+      }
+    }
+  }
+
+  this.log.add({
+    template: '{giver} trades planet {planet} to {receiver}',
+    args: { giver: giver.name, planet: planetId, receiver: receiver.name },
+  })
 }
 
 

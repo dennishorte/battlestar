@@ -339,7 +339,64 @@ describe('Emirates of Hacan', () => {
   })
 
   describe('Mech — Pride of Kenara', () => {
-    test.todo('planet card can be traded in transaction')
+    test('planet card can be traded in transaction', () => {
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'federation-of-sol'] })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 3,
+          units: {
+            'hacan-home': {
+              space: ['cruiser'],
+              'arretze': ['mech', 'infantry', 'infantry', 'space-dock'],
+              'hercant': ['infantry'],
+            },
+          },
+        },
+        micah: {
+          tradeGoods: 2,
+          units: {
+            '27': {
+              space: ['cruiser'],
+              'new-albion': ['infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis takes leadership strategic action
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines secondary
+
+      // Transaction window: Dennis offers planet arretze to micah
+      t.choose(game, 'micah')
+      t.action(game, 'trade-offer', {
+        offering: { planet: 'arretze' },
+        requesting: { tradeGoods: 2 },
+      })
+
+      // Micah accepts
+      t.choose(game, 'Accept')
+
+      // Dennis chooses where to move units (hercant or kamdorn in home system)
+      t.choose(game, 'hercant')
+
+      // Verify planet transferred to micah
+      expect(game.state.planets['arretze'].controller).toBe('micah')
+
+      // Verify Dennis received trade goods
+      const dennis = game.players.byName('dennis')
+      expect(dennis.tradeGoods).toBe(5) // 3 + 2
+
+      // Verify Dennis's units moved from arretze to hercant
+      const hercantUnits = game.state.units['hacan-home'].planets['hercant']
+        .filter(u => u.owner === 'dennis')
+      const arretzeUnits = game.state.units['hacan-home'].planets['arretze']
+        .filter(u => u.owner === 'dennis')
+      expect(arretzeUnits.length).toBe(0)
+      expect(hercantUnits.length).toBeGreaterThanOrEqual(3) // mech + infantry + infantry (+ original infantry)
+    })
   })
 
   describe('Promissory Note — Trade Convoys', () => {
