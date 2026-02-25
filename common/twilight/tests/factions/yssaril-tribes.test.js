@@ -473,6 +473,78 @@ describe('Yssaril Tribes', () => {
       })
     })
 
-    test.todo('Deepgloom Executable: share Stall Tactics/Scheming with other players')
+    describe('Deepgloom Executable', () => {
+      test('share Stall Tactics with other player', () => {
+        // Dennis = Yssaril (with Deepgloom), Micah = Hacan (can use shared Stall Tactics)
+        const game = t.fixture({ factions: ['yssaril-tribes', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['deepgloom-executable'],
+          },
+          micah: {
+            actionCards: ['focused-research', 'mining-initiative'],
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis uses strategic action (leadership)
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Pass') // Micah declines secondary
+
+        // Micah's turn — use shared Stall Tactics via Deepgloom
+        t.choose(game, 'Component Action')
+        t.choose(game, 'stall-tactics-deepgloom')
+
+        // Yssaril (Dennis) approves
+        t.choose(game, 'Allow')
+
+        // Micah discards an action card
+        t.choose(game, 'focused-research')
+
+        // Skip transaction
+        t.choose(game, 'Pass')
+
+        const micah = game.players.byName('micah')
+        expect(micah.actionCards.length).toBe(1)
+        expect(micah.actionCards[0].id).toBe('mining-initiative')
+      })
+
+      test('share Scheming when other player draws action cards', () => {
+        // Dennis = Yssaril (with Deepgloom), Micah = Hacan (draws action cards)
+        const game = t.fixture({ factions: ['yssaril-tribes', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['deepgloom-executable'],
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'politics', 'imperial')
+
+        // Dennis uses politics: first pick new speaker
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'dennis') // new speaker
+
+        // Scheming for Dennis: discard 1 (Dennis drew 2 + 1 extra = 3, discard 1 = 2)
+        const dennisCards = game.players.byName('dennis').actionCards
+        t.choose(game, dennisCards[0].id)
+
+        // Micah secondary: draw 2 action cards
+        t.choose(game, 'Use Secondary')
+
+        // Deepgloom: Dennis shares Scheming with Micah
+        t.choose(game, 'Share Scheming')
+
+        // Micah's Scheming: discard 1 (Micah drew 2 + 1 extra from Scheming = 3, discard 1 = 2)
+        const micahCards = game.players.byName('micah').actionCards
+        t.choose(game, micahCards[0].id)
+
+        // Transaction offer from Deepgloom
+        t.choose(game, 'Pass')
+
+        const micah = game.players.byName('micah')
+        expect(micah.actionCards.length).toBe(2)
+      })
+    })
   })
 })

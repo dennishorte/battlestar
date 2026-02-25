@@ -393,6 +393,16 @@ class FactionAbilities {
       )
     }
 
+    // Deepgloom Executable: Yssaril player may share Stall Tactics with other factions
+    if (player.faction?.id !== 'yssaril-tribes') {
+      const yssarilPlayer = this.players.all().find(p =>
+        p.faction?.id === 'yssaril-tribes' && p.hasTechnology('deepgloom-executable')
+      )
+      if (yssarilPlayer && (player.actionCards || []).length > 0) {
+        actions.push({ id: 'stall-tactics-deepgloom', name: 'Stall Tactics (Deepgloom)' })
+      }
+    }
+
     // Activatable promissory notes (ACTION type)
     actions.push(...this._getActivatablePNs(player))
 
@@ -444,6 +454,12 @@ class FactionAbilities {
       return
     }
 
+    // Deepgloom Executable: shared Stall Tactics
+    if (actionId === 'stall-tactics-deepgloom') {
+      this._executeDeepgloomStallTactics(player)
+      return
+    }
+
     const handler = this._getPlayerHandler(player)
     if (!handler?.componentActions) {
       return
@@ -457,6 +473,42 @@ class FactionAbilities {
     const methodName = actionId.replace(/-([a-z])/g, (_, c) => c.toUpperCase())
     if (handler[methodName]) {
       handler[methodName](this, player)
+    }
+  }
+
+  _executeDeepgloomStallTactics(player) {
+    const yssarilPlayer = this.players.all().find(p =>
+      p.faction?.id === 'yssaril-tribes' && p.hasTechnology('deepgloom-executable')
+    )
+    if (!yssarilPlayer) {
+      return
+    }
+
+    // Yssaril must approve
+    const approval = this.actions.choose(yssarilPlayer, ['Allow', 'Deny'], {
+      title: `Deepgloom Executable: Allow ${player.name} to use Stall Tactics?`,
+    })
+
+    if (approval[0] !== 'Allow') {
+      return
+    }
+
+    // Execute Stall Tactics for the requesting player
+    const { getHandler } = require('./factions/index.js')
+    const yssarilHandler = getHandler('yssaril-tribes')
+    yssarilHandler.stallTactics(this, player)
+
+    this.log.add({
+      template: 'Deepgloom Executable: {yssaril} allows {player} to use Stall Tactics',
+      args: { yssaril: yssarilPlayer.name, player: player.name },
+    })
+
+    // Offer optional transaction between Yssaril and the player
+    const transact = this.actions.choose(yssarilPlayer, ['Transact', 'Pass'], {
+      title: `Deepgloom Executable: Transact with ${player.name}?`,
+    })
+    if (transact[0] === 'Transact') {
+      this.game._resolveTransaction(yssarilPlayer, player.name)
     }
   }
 
@@ -935,6 +987,36 @@ class FactionAbilities {
   onActionCardDraw(player, drawn) {
     const handler = this._getPlayerHandler(player)
     handler?.onActionCardDraw?.(player, this, drawn)
+
+    // Deepgloom Executable: Yssaril may share Scheming with non-Yssaril players
+    if (player.faction?.id !== 'yssaril-tribes' && drawn.length > 0) {
+      const yssarilPlayer = this.players.all().find(p =>
+        p.faction?.id === 'yssaril-tribes' && p.hasTechnology('deepgloom-executable')
+      )
+      if (yssarilPlayer) {
+        const approval = this.actions.choose(yssarilPlayer, ['Share Scheming', 'Pass'], {
+          title: `Deepgloom Executable: Share Scheming with ${player.name}?`,
+        })
+        if (approval[0] === 'Share Scheming') {
+          const { getHandler } = require('./factions/index.js')
+          const yssarilHandler = getHandler('yssaril-tribes')
+          yssarilHandler.onActionCardDraw(player, this, drawn)
+
+          this.log.add({
+            template: 'Deepgloom Executable: {yssaril} shares Scheming with {player}',
+            args: { yssaril: yssarilPlayer.name, player: player.name },
+          })
+
+          // Offer optional transaction
+          const transact = this.actions.choose(yssarilPlayer, ['Transact', 'Pass'], {
+            title: `Deepgloom Executable: Transact with ${player.name}?`,
+          })
+          if (transact[0] === 'Transact') {
+            this.game._resolveTransaction(yssarilPlayer, player.name)
+          }
+        }
+      }
+    }
   }
 
   /**
