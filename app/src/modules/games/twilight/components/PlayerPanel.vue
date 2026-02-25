@@ -1,7 +1,7 @@
 <template>
   <div class="player-panel" :class="{ 'is-viewer': isViewer }" :style="borderStyle">
     <div class="panel-header" :style="headerStyle">
-      <div class="faction-name">{{ factionName }}</div>
+      <div class="faction-name clickable" @click="openFactionDetail">{{ factionName }}</div>
       <div class="player-name-line">{{ player.name }}</div>
       <div class="vp-badge">{{ player.getVictoryPoints() }} VP</div>
     </div>
@@ -256,6 +256,11 @@ export default {
       this.$modal('twilight-card-detail').show()
     },
 
+    openFactionDetail() {
+      const factionId = this.player.factionId
+      this.openCardDetail('faction', factionId)
+    },
+
     openLeaderDetail(role) {
       const factionId = this.player.factionId
       const status = this.player.leaders?.[role] || 'locked'
@@ -300,6 +305,11 @@ export default {
   font-weight: 700;
   font-size: .85em;
   flex: 1;
+}
+
+.faction-name.clickable:hover {
+  text-decoration: underline;
+  background: transparent;
 }
 
 .player-name-line {
