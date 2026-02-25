@@ -1848,8 +1848,13 @@ Twilight.prototype._movementStep = function(player, targetSystemId) {
       }
     }
 
+    // Void Tether: set context for adjacency check during pathfinding
+    if (this.state.voidTetherTokens?.length > 0) {
+      this.state._voidTetherCheckPlayer = player.name
+    }
     const path = galaxy.findPath(fromSystemId, targetSystemId, player.name, baseMove + moveBonus + gravityDriveBonus + aetherstreamBonus)
     delete this.state._tablesGraceActive
+    delete this.state._voidTetherCheckPlayer
     if (!path) {
       continue  // Ship cannot reach the target
     }
