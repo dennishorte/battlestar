@@ -637,8 +637,68 @@ describe("Vuil'raith Cabal", () => {
     })
 
     describe("Al'Raith Ix Ianovar", () => {
-      test.todo('causes The Fracture to enter play and move ingress tokens into gravity rift systems')
-      test.todo('+1 Move for ships starting in The Fracture')
+      test('causes The Fracture to enter play and move ingress tokens into gravity rift systems', () => {
+        const game = t.fixture({ factions: ['vuil-raith-cabal', 'federation-of-sol'] })
+        t.setBoard(game, {
+          dennis: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            technologies: ['self-assembly-routines', 'magen-defense-grid', 'neural-motivator'],  // yellow + red + green
+          },
+          micah: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'technology', 'imperial')
+
+        // Dennis uses Technology primary: research alraith-ix-ianovar
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'alraith-ix-ianovar')
+
+        // Ingress token placement: system 41 is the only gravity rift in the 2p map
+        // Auto-selected since there's only 1 gravity rift system
+
+        // Verify The Fracture entered play
+        expect(game.state.theFracture).toBeDefined()
+        expect(game.state.theFracture.owner).toBe('dennis')
+        expect(game.state.systems['the-fracture']).toBeDefined()
+        expect(game.state.units['the-fracture']).toBeDefined()
+
+        // Verify ingress token placed on gravity rift system
+        expect(game.state.theFracture.ingressTokens.length).toBe(1)
+        expect(game.state.theFracture.ingressTokens[0]).toBe('41')
+      })
+
+      test('+1 Move for ships starting in The Fracture', () => {
+        const { getHandler } = require('../../systems/factions/index.js')
+        const handler = getHandler('vuil-raith-cabal')
+
+        const game = t.fixture({ factions: ['vuil-raith-cabal', 'federation-of-sol'] })
+        t.setBoard(game, {
+          dennis: {
+            technologies: ['self-assembly-routines', 'magen-defense-grid', 'neural-motivator', 'alraith-ix-ianovar'],
+          },
+        })
+
+        // Set up The Fracture state
+        game.testSetBreakpoint('initialization-complete', (game) => {
+          game.state.theFracture = {
+            owner: 'dennis',
+            systemId: 'the-fracture',
+            ingressTokens: ['41'],
+          }
+        })
+
+        game.run()
+
+        const dennis = game.players.byName('dennis')
+
+        // Ships starting in The Fracture get +1 Move
+        expect(handler.getMovementBonus(dennis, game.factionAbilities, 'the-fracture')).toBe(1)
+
+        // Ships starting elsewhere get no bonus
+        expect(handler.getMovementBonus(dennis, game.factionAbilities, 'cabal-home')).toBe(0)
+      })
     })
   })
 })
