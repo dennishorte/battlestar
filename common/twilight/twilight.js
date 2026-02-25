@@ -537,6 +537,49 @@ Twilight.prototype._isTechReady = function(player, techId) {
 
 // Floating Factory blockade: destroy space docks in space that are in systems
 // with enemy ships and no friendly ships
+// Jol-Nar Commander: after rolling dice for a unit ability, may reroll any misses
+Twilight.prototype._offerUnitAbilityReroll = function(shooterName, missCombatValues) {
+  if (missCombatValues.length === 0) {
+    return 0
+  }
+
+  const shooterPlayer = this.players.byName(shooterName)
+  if (!shooterPlayer) {
+    return 0
+  }
+  if (shooterPlayer.faction?.id !== 'universities-of-jol-nar') {
+    return 0
+  }
+  if (!shooterPlayer.isCommanderUnlocked()) {
+    return 0
+  }
+
+  const choice = this.actions.choose(shooterPlayer, [`Reroll ${missCombatValues.length} dice`, 'Pass'], {
+    title: 'Agnlan Oln: Reroll missed unit ability dice?',
+  })
+
+  if (choice[0] === 'Pass') {
+    return 0
+  }
+
+  let additionalHits = 0
+  for (const combatValue of missCombatValues) {
+    const roll = Math.floor(this.random() * 10) + 1
+    if (roll >= combatValue) {
+      additionalHits++
+    }
+  }
+
+  if (additionalHits > 0) {
+    this.log.add({
+      template: 'Agnlan Oln: {player} rerolls — {hits} additional hits',
+      args: { player: shooterName, hits: additionalHits },
+    })
+  }
+
+  return additionalHits
+}
+
 Twilight.prototype._checkFloatingFactoryBlockade = function() {
   for (const [systemId, systemUnits] of Object.entries(this.state.units)) {
     const spaceDocks = systemUnits.space.filter(u => u.type === 'space-dock')
@@ -2133,6 +2176,7 @@ Twilight.prototype._antiFighterBarrage = function(systemId, attacker, defender) 
   for (const [shooter, target] of [[attacker, defender], [defender, attacker]]) {
     const ships = systemUnits.space.filter(u => u.owner === shooter)
     let totalAFBHits = 0
+    const afbMissCombatValues = []
 
     // Strike Wing Alpha II: track rolls of 9-10 from destroyers with this upgrade
     let swaIIInfantryKills = 0
@@ -2178,8 +2222,14 @@ Twilight.prototype._antiFighterBarrage = function(systemId, attacker, defender) 
             swaIIInfantryKills++
           }
         }
+        else {
+          afbMissCombatValues.push(combatValue)
+        }
       }
     }
+
+    // Jol-Nar Commander: reroll misses
+    totalAFBHits += this._offerUnitAbilityReroll(shooter, afbMissCombatValues)
 
     // AFB hits only affect fighters
     if (totalAFBHits > 0) {
@@ -2505,6 +2555,7 @@ Twilight.prototype._bombardment = function(systemId, planetId, attackerName) {
   // Ships with bombardment ability fire at the planet
   const attackerShips = systemUnits.space.filter(u => u.owner === attackerName)
   let totalHits = 0
+  const bombardMissCombatValues = []
   let bombardmentUsed = false
   const attackerPlayer = this.players.byName(attackerName)
   let plasmaUsed = false
@@ -2552,8 +2603,14 @@ Twilight.prototype._bombardment = function(systemId, planetId, attackerName) {
       if (roll >= combatValue) {
         totalHits++
       }
+      else {
+        bombardMissCombatValues.push(combatValue)
+      }
     }
   }
+
+  // Jol-Nar Commander: reroll misses
+  totalHits += this._offerUnitAbilityReroll(attackerName, bombardMissCombatValues)
 
   if (totalHits > 0) {
     this.log.add({
@@ -2607,6 +2664,7 @@ Twilight.prototype._spaceCannonOffense = function(activePlayer, systemId) {
   let totalHits = 0
   const plasmaUsedByOwner = {}  // Plasma Scoring: track per-owner first-unit bonus
   const commanderBonusUsedByOwner = {}  // Commander bonus: track per-owner first-unit bonus
+  const missesByOwner = {}  // Jol-Nar Commander: track misses per owner for rerolls
   // Antimass Deflectors: +1 combat value when firing at target with this tech
   const antimassDefense = activePlayer.hasTechnology('antimass-deflectors') ? 1 : 0
 
@@ -2636,7 +2694,10 @@ Twilight.prototype._spaceCannonOffense = function(activePlayer, systemId) {
             commanderBonusUsedByOwner[unit.owner] = true
           }
         }
-        totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense)
+        if (!missesByOwner[unit.owner]) {
+          missesByOwner[unit.owner] = []
+        }
+        totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense, missesByOwner[unit.owner])
       }
     }
   }
@@ -2722,10 +2783,18 @@ Twilight.prototype._spaceCannonOffense = function(activePlayer, systemId) {
               commanderBonusUsedByOwner[unit.owner] = true
             }
           }
-          totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense)
+          if (!missesByOwner[unit.owner]) {
+            missesByOwner[unit.owner] = []
+          }
+          totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense, missesByOwner[unit.owner])
         }
       }
     }
+  }
+
+  // Jol-Nar Commander: reroll misses per owner
+  for (const [ownerName, misses] of Object.entries(missesByOwner)) {
+    totalHits += this._offerUnitAbilityReroll(ownerName, misses)
   }
 
   // Graviton Laser System: auto-exhaust to force hits onto non-fighter ships
@@ -2818,6 +2887,7 @@ Twilight.prototype._spaceCannonDefense = function(systemId, planetId, attackerNa
 
   // Fire space cannon from defender's PDS and other units with space cannon on this planet
   let totalHits = 0
+  const defMisses = []
   const planetUnits = systemUnits.planets[planetId] || []
   let defenderPlasmaUsed = false
   let defenderCommanderBonusUsed = false
@@ -2851,9 +2921,12 @@ Twilight.prototype._spaceCannonDefense = function(systemId, planetId, attackerNa
           defenderCommanderBonusUsed = true
         }
       }
-      totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense)
+      totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense, defMisses)
     }
   }
+
+  // Jol-Nar Commander: reroll misses
+  totalHits += this._offerUnitAbilityReroll(defenderName, defMisses)
 
   if (totalHits > 0) {
     this.log.add({
@@ -2871,7 +2944,7 @@ Twilight.prototype._spaceCannonDefense = function(systemId, planetId, attackerNa
  * Roll space cannon dice for a single unit.
  * Returns number of hits scored.
  */
-Twilight.prototype._fireSpaceCannon = function(ownerName, unitType, extraDice, combatPenalty) {
+Twilight.prototype._fireSpaceCannon = function(ownerName, unitType, extraDice, combatPenalty, misses) {
   const unitStats = this._getUnitStats(ownerName, unitType)
   if (!unitStats) {
     return 0
@@ -2893,6 +2966,9 @@ Twilight.prototype._fireSpaceCannon = function(ownerName, unitType, extraDice, c
     const roll = Math.floor(this.random() * 10) + 1
     if (roll >= combatValue) {
       hits++
+    }
+    else if (misses) {
+      misses.push(combatValue)
     }
   }
   return hits
