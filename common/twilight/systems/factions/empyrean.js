@@ -411,6 +411,89 @@ module.exports = {
         }
       }
     }
+
+    // Void Tether: when Empyrean activates a system containing or adjacent to
+    // their units/planets, may place or move a void tether token on a border.
+    if (empyreanPlayer.name === activatingPlayer.name && empyreanPlayer.hasTechnology('void-tether')) {
+      this._offerVoidTether(empyreanPlayer, ctx, systemId)
+    }
+  },
+
+  _offerVoidTether(player, ctx, systemId) {
+    // Check: activated system must contain or be adjacent to a system with player's units/planets
+    const hasPresenceInSystem = this._hasPresence(player, ctx, systemId)
+    const adjacentSystems = ctx.game._getAdjacentSystems(systemId)
+    const hasPresenceInAdjacent = adjacentSystems.some(adjId => this._hasPresence(player, ctx, adjId))
+
+    if (!hasPresenceInSystem && !hasPresenceInAdjacent) {
+      return
+    }
+
+    // Get borders the activated system shares with other systems
+    const borderChoices = adjacentSystems.map(adjId => `Border ${systemId}-${adjId}`)
+    if (borderChoices.length === 0) {
+      return
+    }
+
+    const choices = [...borderChoices, 'Pass']
+    const selection = ctx.actions.choose(player, choices, {
+      title: 'Void Tether: Place or move a void tether token on which border?',
+    })
+
+    if (selection[0] === 'Pass') {
+      return
+    }
+
+    // Parse the selected border
+    const parts = selection[0].replace('Border ', '').split('-')
+    const sysA = parts[0]
+    const sysB = parts[1]
+
+    // Initialize token array
+    if (!ctx.state.voidTetherTokens) {
+      ctx.state.voidTetherTokens = []
+    }
+
+    // Remove existing token if moving (Empyrean has max 2 tokens but we simplify to 1 for now)
+    const existingIdx = ctx.state.voidTetherTokens.findIndex(t => t.owner === player.name)
+    if (existingIdx !== -1) {
+      ctx.state.voidTetherTokens.splice(existingIdx, 1)
+    }
+
+    ctx.state.voidTetherTokens.push({
+      owner: player.name,
+      systems: [sysA, sysB],
+    })
+
+    ctx.log.add({
+      template: 'Void Tether: {player} places token on border between systems {sysA} and {sysB}',
+      args: { player: player.name, sysA, sysB },
+    })
+  },
+
+  _hasPresence(player, ctx, systemId) {
+    const systemUnits = ctx.state.units[systemId]
+    if (!systemUnits) {
+      return false
+    }
+    // Check space units
+    if (systemUnits.space.some(u => u.owner === player.name)) {
+      return true
+    }
+    // Check planet units or planet control
+    const tile = ctx.game.res.getSystemTile(systemId) || ctx.game.res.getSystemTile(Number(systemId))
+    if (tile) {
+      for (const planetId of tile.planets) {
+        if (ctx.state.planets[planetId]?.controller === player.name) {
+          return true
+        }
+        const planetUnits = systemUnits.planets[planetId] || []
+        if (planetUnits.some(u => u.owner === player.name)) {
+          return true
+        }
+      }
+    }
+    return false
   },
 
 }

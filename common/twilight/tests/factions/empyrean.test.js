@@ -1038,8 +1038,94 @@ describe('Empyrean', () => {
     })
 
     describe('Void Tether', () => {
-      test.todo('when activating a system containing or adjacent to your unit or planet, may place or move a void tether token')
-      test.todo('other players do not treat those systems as adjacent unless you allow it')
+      test('when activating a system containing or adjacent to your unit or planet, may place or move a void tether token', () => {
+        const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            technologies: ['dark-energy-tap', 'void-tether'],
+            units: {
+              'empyrean-home': {
+                space: ['cruiser'],
+                'the-dark': ['space-dock', 'infantry'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis activates system 27 (adjacent to empyrean-home where he has units)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+
+        // Void Tether prompt: choose a border
+        t.choose(game, 'Border 27-26')
+
+        // Move ships
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: 'empyrean-home', count: 1 }],
+        })
+
+        // Verify void tether token placed
+        expect(game.state.voidTetherTokens).toHaveLength(1)
+        expect(game.state.voidTetherTokens[0].owner).toBe('dennis')
+        expect(game.state.voidTetherTokens[0].systems).toEqual(['27', '26'])
+      })
+
+      test('other players do not treat tethered systems as adjacent during movement', () => {
+        const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
+        t.setBoard(game, {
+          dennis: {
+            leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+            technologies: ['dark-energy-tap', 'void-tether'],
+            units: {
+              'empyrean-home': {
+                space: ['cruiser'],
+                'the-dark': ['space-dock', 'infantry'],
+              },
+            },
+          },
+          micah: {
+            units: {
+              '26': {
+                space: ['cruiser'],
+              },
+            },
+          },
+        })
+
+        // Pre-place void tether on border 27-26
+        game.testSetBreakpoint('initialization-complete', (game) => {
+          game.state.voidTetherTokens = [{ owner: 'dennis', systems: ['27', '26'] }]
+        })
+
+        game.run()
+        pickStrategyCards(game, 'diplomacy', 'leadership')
+
+        // Micah takes leadership strategic action first
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Pass')  // Dennis declines secondary
+
+        // Dennis takes diplomacy
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'empyrean-home')
+        t.choose(game, 'Pass')  // Micah declines secondary
+
+        // Micah tries to move cruiser from system 26 to system 27
+        // System 26 and 27 are normally adjacent, but void tether blocks it for Micah
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '27' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: '26', count: 1 }],
+        })
+
+        // Micah's cruiser should NOT have moved (path blocked by void tether)
+        const sys27Ships = game.state.units['27'].space.filter(u => u.owner === 'micah')
+        const sys26Ships = game.state.units['26'].space.filter(u => u.owner === 'micah')
+        expect(sys26Ships.length).toBe(1)  // Cruiser stays in 26
+        expect(sys27Ships.length).toBe(0)  // No Micah ships in 27
+      })
     })
   })
 })
