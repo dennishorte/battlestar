@@ -377,7 +377,7 @@ TestUtil.setBoard = function(game, state) {
               }
               catch { /* not registered yet */ }
               if (!card) {
-                card = new BaseCard(game, { id: cardId, ...tech })
+                card = new BaseCard(game, { ...tech, id: cardId })
                 game.cards.register(card)
               }
               techCards.push(card)

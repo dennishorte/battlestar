@@ -343,7 +343,43 @@ describe('Emirates of Hacan', () => {
   })
 
   describe('Promissory Note — Trade Convoys', () => {
-    test.todo('holder can trade with non-neighbors')
+    test('holder can trade with non-neighbors after activating Trade Convoys', () => {
+      // Dennis = Sol, Micah = Hacan. Dennis holds Hacan's Trade Convoys.
+      // They are NOT neighbors, so normally Dennis cannot trade with Micah.
+      const game = t.fixture({ factions: ['federation-of-sol', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [{ id: 'trade-convoys', owner: 'micah' }],
+          tradeGoods: 3,
+          units: {
+            'sol-home': {
+              space: ['carrier'],
+              'jord': ['space-dock', 'infantry'],
+            },
+          },
+        },
+        micah: {
+          tradeGoods: 3,
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis: Component Action → Trade Convoys
+      t.choose(game, 'Component Action')
+      t.choose(game, 'trade-convoys')
+
+      // After component action, transaction window opens.
+      // Dennis should see Micah as a trade partner (non-neighbor, but Trade Convoys active).
+      const choices = t.currentChoices(game)
+      expect(choices).toContain('micah')
+    })
   })
 
   describe('Faction Technologies', () => {

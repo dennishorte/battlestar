@@ -3774,7 +3774,7 @@ Twilight.prototype._researchTech = function(player) {
     card = this.cards.byId(cardId)
   }
   catch {
-    card = new BaseCard(this, { id: cardId, ...tech })
+    card = new BaseCard(this, { ...tech, id: cardId })
     this.cards.register(card)
   }
 
@@ -3833,7 +3833,7 @@ Twilight.prototype._grantTechnology = function(player, techId) {
     card = this.cards.byId(cardId)
   }
   catch {
-    card = new BaseCard(this, { id: cardId, ...tech })
+    card = new BaseCard(this, { ...tech, id: cardId })
     this.cards.register(card)
   }
 
