@@ -652,10 +652,9 @@ describe('Ghosts of Creuss', () => {
         t.choose(game, 'Component Action')
         t.choose(game, 'wormhole-generator')
 
-        // Try again — should not be available
-        t.choose(game, 'Component Action')
+        // Fleet Logistics bonus — wormhole-generator is exhausted, no other component actions
         const choices = t.currentChoices(game)
-        expect(choices).not.toContain('wormhole-generator')
+        expect(choices).not.toContain('Component Action')
       })
     })
 

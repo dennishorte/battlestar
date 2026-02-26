@@ -193,13 +193,9 @@ describe('Nekro Virus', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Enter Component Action menu
-      t.choose(game, 'Component Action')
-
-      // With agent exhausted and no tech component actions, nekro-malleon should not appear
-      // The game should have logged "No component actions available" and returned
-      // So we should be on micah's turn now
-      expect(game.waiting.selectors[0].actor).toBe('micah')
+      // With agent exhausted and no tech component actions, Component Action shouldn't be offered
+      const choices = t.currentChoices(game)
+      expect(choices).not.toContain('Component Action')
     })
   })
 

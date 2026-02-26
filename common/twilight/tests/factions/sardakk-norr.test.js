@@ -336,9 +336,9 @@ describe("Sardakk N'orr", () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
+      // With all leaders unavailable, Component Action shouldn't be offered
       const choices = t.currentChoices(game)
-      expect(choices).not.toContain('tekklar-conditioning')
+      expect(choices).not.toContain('Component Action')
     })
   })
 
