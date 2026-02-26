@@ -123,6 +123,15 @@ function convertLogMessage(entry) {
   for (const [arg, value] of Object.entries(entry.args)) {
     let replacement = value.value ?? 'UNDEFINED'
 
+    // Allow game-specific conversion via convertArg hook
+    if (funcs.convertArg) {
+      const custom = funcs.convertArg(arg, value)
+      if (custom !== undefined) {
+        msg = msg.replace(`{${arg}}`, custom)
+        continue
+      }
+    }
+
     if (arg === 'card') {
       if (value.classes?.includes('card-hidden')) {
         replacement = value.value ?? 'UNDEFINED'
