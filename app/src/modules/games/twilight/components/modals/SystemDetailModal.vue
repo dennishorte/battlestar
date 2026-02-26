@@ -54,6 +54,10 @@
         <div v-for="stack in spaceUnitStacks" :key="stack.owner" class="unit-stack-detail">
           <div class="stack-owner" :style="playerStyle(stack.owner)">{{ stack.owner }}</div>
           <div v-for="(count, type) in stack.types" :key="type" class="unit-entry">
+            <i v-if="shipIcon(type)"
+               :class="'bi ' + shipIcon(type)"
+               class="unit-type-icon"
+               :style="playerStyle(stack.owner)" />
             {{ count }}x {{ type }}
           </div>
         </div>
@@ -78,6 +82,16 @@
 import ModalBase from '@/components/ModalBase.vue'
 import { twilight } from 'battlestar-common'
 const res = twilight.res
+
+const SHIP_ICONS = {
+  'war-sun':     'bi-sun-fill',
+  'flagship':    'bi-flag-fill',
+  'dreadnought': 'bi-diamond-fill',
+  'carrier':     'bi-box-fill',
+  'cruiser':     'bi-triangle-fill',
+  'destroyer':   'bi-lightning-fill',
+  'fighter':     'bi-circle-fill',
+}
 
 export default {
   name: 'SystemDetailModal',
@@ -178,6 +192,10 @@ export default {
       }
       return { fontWeight: 600 }
     },
+
+    shipIcon(type) {
+      return SHIP_ICONS[type] || null
+    },
   },
 }
 </script>
@@ -277,6 +295,15 @@ export default {
   font-size: .85em;
   padding: .05em 0;
   text-transform: capitalize;
+  display: flex;
+  align-items: center;
+  gap: .35em;
+}
+
+.unit-type-icon {
+  font-size: .9em;
+  width: 1.1em;
+  text-align: center;
 }
 
 .stack-owner {

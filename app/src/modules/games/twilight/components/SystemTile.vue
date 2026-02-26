@@ -52,12 +52,18 @@
         <div
           v-for="stack in unitStacks"
           :key="stack.owner"
-          class="unit-stack"
+          class="fleet-row"
           :title="stack.summary"
+          :style="{ color: stack.color }"
         >
-          <div class="unit-dot" :style="{ backgroundColor: stack.color }">
-            {{ stack.count }}
-          </div>
+          <span
+            v-for="entry in stack.units"
+            :key="entry.type"
+            class="unit-entry"
+          >
+            <i :class="'bi ' + entry.icon" class="unit-icon" />
+            <span v-if="entry.count > 1" class="unit-count">{{ entry.count }}</span>
+          </span>
         </div>
       </div>
     </div>
@@ -67,6 +73,17 @@
 <script>
 import { twilight } from 'battlestar-common'
 const res = twilight.res
+
+const UNIT_ICONS = {
+  'war-sun':     'bi-sun-fill',
+  'flagship':    'bi-flag-fill',
+  'dreadnought': 'bi-diamond-fill',
+  'carrier':     'bi-box-fill',
+  'cruiser':     'bi-triangle-fill',
+  'destroyer':   'bi-lightning-fill',
+  'fighter':     'bi-circle-fill',
+}
+const UNIT_ORDER = ['war-sun', 'flagship', 'dreadnought', 'carrier', 'cruiser', 'destroyer', 'fighter']
 
 // Regular hexagon points (pointy-top)
 function hexCorner(cx, cy, size, i) {
@@ -206,18 +223,23 @@ export default {
           byOwner[unit.owner] = {
             owner: unit.owner,
             color: player?.color || '#666',
-            count: 0,
             types: {},
           }
         }
-        byOwner[unit.owner].count++
         byOwner[unit.owner].types[unit.type] = (byOwner[unit.owner].types[unit.type] || 0) + 1
       }
 
-      return Object.values(byOwner).map(stack => ({
-        ...stack,
-        summary: `${stack.owner}: ${Object.entries(stack.types).map(([t, c]) => `${c} ${t}`).join(', ')}`,
-      }))
+      return Object.values(byOwner).map(stack => {
+        const units = UNIT_ORDER
+          .filter(type => stack.types[type])
+          .map(type => ({
+            type,
+            icon: UNIT_ICONS[type] || 'bi-circle',
+            count: stack.types[type],
+          }))
+        const summary = `${stack.owner}: ${units.map(u => `${u.count} ${u.type}`).join(', ')}`
+        return { owner: stack.owner, color: stack.color, units, summary }
+      })
     },
 
     commandTokens() {
@@ -380,22 +402,35 @@ export default {
 
 .unit-stacks {
   display: flex;
-  gap: 2px;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
   margin-top: 1px;
 }
 
-.unit-dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
+.fleet-row {
   display: flex;
-  align-items: center;
+  align-items: baseline;
+  gap: 2px;
+  flex-wrap: wrap;
   justify-content: center;
-  font-size: .7em;
+  text-shadow: 0 0 3px rgba(0,0,0,.9), 0 0 1px rgba(0,0,0,.7);
+  line-height: 1;
+}
+
+.unit-entry {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.unit-icon {
+  font-size: .8em;
+}
+
+.unit-count {
+  font-size: .6em;
   font-weight: 700;
-  color: white;
-  border: 1px solid rgba(255,255,255,.4);
-  text-shadow: 0 0 2px rgba(0,0,0,.8);
+  margin-left: -1px;
 }
 
 .command-tokens {
