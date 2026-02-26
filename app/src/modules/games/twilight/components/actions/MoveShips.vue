@@ -89,7 +89,7 @@ export default {
 
       this.bus.emit('submit-action', {
         actor: this.actor.name,
-        selection: [{ action: 'move-ships', movements: result }],
+        selection: { action: 'move-ships', movements: result },
       })
     },
 
