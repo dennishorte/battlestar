@@ -406,6 +406,145 @@ describe('Clan of Saar', () => {
       const choices = t.currentChoices(game)
       expect(choices).not.toContain('Exhaust Captain Mendosa')
     })
+
+    test('pull flow: another player can request Mendosa and Saar accepts', () => {
+      // Micah (Hacan) activates a system. Dennis (Saar) has Mendosa ready.
+      // Micah has a carrier (move 1) and Dennis has a cruiser (move 2).
+      // Micah requests the favor, Dennis accepts → carrier boosted to move 2.
+      const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'saar-home': {
+              space: ['cruiser'],
+              'lisis-ii': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      // Micah picks leadership (initiative 1) so Micah goes first
+      pickStrategyCards(game, 'diplomacy', 'leadership')
+
+      // Micah uses strategic action (leadership)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass') // Dennis declines secondary
+
+      // Dennis uses strategic action (diplomacy)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'saar-home')
+      t.choose(game, 'Pass') // Micah declines secondary
+
+      // Micah activates system 38 (adjacent to hacan-home)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '38' })
+
+      // Micah sees the favor request prompt (carrier move 1 < cruiser move 2)
+      t.choose(game, 'Request Captain Mendosa from dennis')
+      // Dennis accepts
+      t.choose(game, 'Accept')
+
+      // Move the carrier (now boosted to move 2)
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'carrier', from: 'hacan-home', count: 1 }],
+      })
+
+      // Verify: agent is exhausted, carrier moved
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(false)
+      const carrierInTarget = game.state.units['38'].space
+        .filter(u => u.owner === 'micah' && u.type === 'carrier')
+      expect(carrierInTarget.length).toBe(1)
+    })
+
+    test('pull flow: Saar can decline a favor request', () => {
+      const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'saar-home': {
+              space: ['cruiser'],
+              'lisis-ii': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'diplomacy', 'leadership')
+
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'saar-home')
+      t.choose(game, 'Pass')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '38' })
+
+      // Micah requests, Dennis declines
+      t.choose(game, 'Request Captain Mendosa from dennis')
+      t.choose(game, 'Decline')
+
+      // Agent should still be ready (not exhausted)
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(true)
+    })
+
+    test('pull flow: active player can skip favors', () => {
+      const game = t.fixture({ factions: ['clan-of-saar', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'saar-home': {
+              space: ['cruiser'],
+              'lisis-ii': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            'hacan-home': {
+              space: ['carrier'],
+              'arretze': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'diplomacy', 'leadership')
+
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'saar-home')
+      t.choose(game, 'Pass')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '38' })
+
+      // Micah skips favors entirely
+      t.choose(game, 'Skip Favors')
+
+      // Agent should still be ready
+      const dennis = game.players.byName('dennis')
+      expect(dennis.isAgentReady()).toBe(true)
+    })
   })
 
   describe('Commander — Rowl Sarrig', () => {
