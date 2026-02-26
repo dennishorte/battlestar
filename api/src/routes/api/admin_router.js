@@ -389,4 +389,18 @@ router.post('/clear-all-impersonations', async (req, res) => {
   }
 })
 
+router.post('/game-summary', async (req, res) => {
+  try {
+    const result = await db.game.getActiveSummary()
+    res.status(200).json({ status: 'success', ...result })
+  }
+  catch (error) {
+    logger.error(`Game summary error: ${error.message}`)
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to get game summary',
+    })
+  }
+})
+
 export default router

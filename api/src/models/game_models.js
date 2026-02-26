@@ -205,4 +205,25 @@ Game.getCardOrder = async function(gameId, playerName) {
   return game?.cardOrder?.[playerName] || []
 }
 
+Game.getActiveSummary = async function() {
+  const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000
+  const activeFilter = { gameOver: false, killed: { $ne: true } }
+
+  const byVersion = await gameCollection.aggregate([
+    { $match: activeFilter },
+    { $group: {
+      _id: { game: '$settings.game', version: '$settings.version' },
+      count: { $sum: 1 },
+    }},
+    { $sort: { '_id.game': 1, '_id.version': 1 } },
+  ]).toArray()
+
+  const staleGames = await gameCollection.find(
+    { ...activeFilter, lastUpdated: { $lt: thirtyDaysAgo } },
+    { projection: { _id: 1, 'settings.game': 1, 'settings.version': 1, 'settings.players': 1, lastUpdated: 1 } },
+  ).sort({ lastUpdated: 1 }).toArray()
+
+  return { byVersion, staleGames }
+}
+
 export default Game

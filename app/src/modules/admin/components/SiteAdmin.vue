@@ -11,20 +11,43 @@
         </div>
       </div>
 
+      <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+          <a class="nav-link" :class="{ active: activeTab === 'actions' }" @click="activeTab = 'actions'">Actions</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" :class="{ active: activeTab === 'users' }" @click="activeTab = 'users'">Users</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" :class="{ active: activeTab === 'games' }" @click="activeTab = 'games'">Games</a>
+        </li>
+      </ul>
 
-      <div class="row">
-        <div class="col-4">
-          <CreateUser v-on:user-created="getAllUsers" />
-        </div>
+      <div v-if="activeTab === 'actions'">
+        <div class="row">
+          <div class="col-4">
+            <CreateUser v-on:user-created="getAllUsers" />
+          </div>
 
-        <div class="col">
-          <AdminActions :users="users" />
+          <div class="col">
+            <AdminActions :users="users" />
+          </div>
         </div>
       </div>
 
-      <div class="row">
-        <div class="col">
-          <UserList :users="users" v-on:users-updated="getAllUsers" />
+      <div v-if="activeTab === 'users'">
+        <div class="row">
+          <div class="col">
+            <UserList :users="users" v-on:users-updated="getAllUsers" />
+          </div>
+        </div>
+      </div>
+
+      <div v-if="activeTab === 'games'">
+        <div class="row">
+          <div class="col">
+            <GameSummary />
+          </div>
         </div>
       </div>
 
@@ -38,6 +61,7 @@ import GameHeader from '../../../../src/components/GameHeader.vue'
 
 import AdminActions from './AdminActions.vue'
 import CreateUser from './CreateUser.vue'
+import GameSummary from './GameSummary.vue'
 import UserList from './UserList.vue'
 import ImpersonationStatus from './ImpersonationStatus.vue'
 
@@ -48,11 +72,13 @@ export default {
 
     AdminActions,
     CreateUser,
+    GameSummary,
     UserList,
     ImpersonationStatus,
   },
   data() {
     return {
+      activeTab: 'actions',
       lobbies: [],
       users: [],
     }
