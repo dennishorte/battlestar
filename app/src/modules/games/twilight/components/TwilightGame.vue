@@ -80,8 +80,25 @@ import SystemDetailModal from './modals/SystemDetailModal.vue'
 import ObjectiveChip from './ObjectiveChip.vue'
 import StrategyCardChip from './StrategyCardChip.vue'
 
+import { h } from 'vue'
 import { twilight } from 'battlestar-common'
 const res = twilight.res
+
+// Inline component for action options that include strategy card chips
+const ActionWithCards = {
+  props: {
+    title: String,
+    cardIds: Array,
+  },
+  inject: ['game', 'ui'],
+  components: { StrategyCardChip },
+  render() {
+    return h('div', { style: { display: 'flex', alignItems: 'center', gap: '0.5em', flexWrap: 'wrap' } }, [
+      h('span', this.title),
+      ...this.cardIds.map(id => h(StrategyCardChip, { cardId: id })),
+    ])
+  },
+}
 
 
 export default {
@@ -204,6 +221,14 @@ export default {
       const name = option.title || option
       if (typeof name !== 'string') {
         return undefined
+      }
+
+      // Action type with embedded strategy card chips
+      if (option.strategyCardIds?.length > 0) {
+        return {
+          component: ActionWithCards,
+          props: { title: name, cardIds: option.strategyCardIds },
+        }
       }
 
       // Strategy cards (raw IDs like 'leadership', 'trade')

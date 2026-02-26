@@ -1030,21 +1030,31 @@ Twilight.prototype.actionPhase = function() {
     this.factionAbilities.onTurnStart(player)
 
     // Player must use strategy card before passing
-    const choices = ['Tactical Action', 'Component Action']
+    const choices = [
+      { title: 'Tactical Action', subtitles: ['Activate a system, move ships, invade planets'] },
+    ]
+    if (this._hasAvailableComponentActions(player)) {
+      choices.push({ title: 'Component Action', subtitles: ['Use a faction ability or technology'] })
+    }
     if (!player.hasUsedStrategyCard()) {
-      choices.push('Strategic Action')
+      const unusedCards = player.strategyCards.filter(c => !c.used).map(c => c.id)
+      choices.push({
+        title: 'Strategic Action',
+        subtitles: ['Resolve your strategy card\'s primary ability'],
+        strategyCardIds: unusedCards,
+      })
     }
     // Add action card option if player has action-timing cards
     const actionTimingCards = (player.actionCards || []).filter(c => c.timing === 'action')
     if (actionTimingCards.length > 0) {
-      choices.push('Play Action Card')
+      choices.push({ title: 'Play Action Card', subtitles: ['Play an action card from your hand'] })
     }
-    choices.push('Pass')
+    choices.push({ title: 'Pass', subtitles: ['End your turns for this round'] })
 
     // Cannot pass until strategy card is used
     const availableChoices = player.hasUsedStrategyCard()
       ? choices
-      : choices.filter(c => c !== 'Pass')
+      : choices.filter(c => c.title !== 'Pass')
 
     const selection = this.actions.choose(player, availableChoices, {
       title: 'Choose Action',
@@ -1107,15 +1117,25 @@ Twilight.prototype.actionPhase = function() {
       this.state.fleetLogisticsUsed[player.name] = true
 
       // Offer second action
-      const bonusChoices = ['Tactical Action', 'Component Action']
+      const bonusChoices = [
+        { title: 'Tactical Action', subtitles: ['Activate a system, move ships, invade planets'] },
+      ]
+      if (this._hasAvailableComponentActions(player)) {
+        bonusChoices.push({ title: 'Component Action', subtitles: ['Use a faction ability or technology'] })
+      }
       if (!player.hasUsedStrategyCard()) {
-        bonusChoices.push('Strategic Action')
+        const unusedCards = player.strategyCards.filter(c => !c.used).map(c => c.id)
+        bonusChoices.push({
+          title: 'Strategic Action',
+          subtitles: ['Resolve your strategy card\'s primary ability'],
+          strategyCardIds: unusedCards,
+        })
       }
       const bonusActionCards = (player.actionCards || []).filter(c => c.timing === 'action')
       if (bonusActionCards.length > 0) {
-        bonusChoices.push('Play Action Card')
+        bonusChoices.push({ title: 'Play Action Card', subtitles: ['Play an action card from your hand'] })
       }
-      bonusChoices.push('Decline')
+      bonusChoices.push({ title: 'Decline' })
 
       const bonusSelection = this.actions.choose(player, bonusChoices, {
         title: 'Fleet Logistics: Choose additional action',
@@ -4772,6 +4792,15 @@ Twilight.prototype._getLawOutcome = function(lawId) {
   }
   const law = this.state.activeLaws.find(l => l.id === lawId)
   return law ? law.resolvedOutcome : null
+}
+
+Twilight.prototype._hasAvailableComponentActions = function(player) {
+  const factionActions = this.factionAbilities.getAvailableComponentActions(player)
+  if (factionActions.length > 0) {
+    return true
+  }
+  const techActions = this._getTechComponentActions(player)
+  return techActions.length > 0
 }
 
 Twilight.prototype._componentAction = function(player) {
