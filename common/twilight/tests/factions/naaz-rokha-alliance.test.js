@@ -249,10 +249,9 @@ describe('Naaz-Rokha Alliance', () => {
 
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Component Action should not list Fabrication when no fragments
-      t.choose(game, 'Component Action')
+      // With no fragments and no other component actions, Component Action shouldn't be offered
       const choices = t.currentChoices(game)
-      expect(choices).not.toContain('fabrication')
+      expect(choices).not.toContain('Component Action')
     })
   })
 

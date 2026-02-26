@@ -60,8 +60,9 @@ describe('Yssaril Tribes', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      expect(game.waiting.selectors[0].actor).toBe('micah')
+      // Without action cards, Stall Tactics is unavailable so Component Action shouldn't be offered
+      const choices = t.currentChoices(game)
+      expect(choices).not.toContain('Component Action')
     })
   })
 
