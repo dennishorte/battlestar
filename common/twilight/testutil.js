@@ -198,6 +198,12 @@ TestUtil.fixture = function(options = {}) {
   game.testSetBreakpoint('initialization-complete', (game) => {
     game.state.skipInitialDraws = true
 
+    // Auto-assign colors so tests skip the color picker
+    const testColors = ['#73bbfa', '#f77278', '#fcfc6f', '#70fa73', '#7274f7', '#f772f7', '#d8f772', '#f77278']
+    for (let i = 0; i < game.players.all().length; i++) {
+      game.players.all()[i].color = testColors[i % testColors.length]
+    }
+
     // Apply deterministic galaxy layout for 2p tests
     if (deterministicLayout && options.numPlayers === 2) {
       _applyTestLayout(game, DEFAULT_2P_SYSTEMS)
@@ -318,6 +324,12 @@ TestUtil.setBoard = function(game, state) {
           game.state.systems[systemId].commandTokens = [...playerNames]
         }
       }
+    }
+
+    // Auto-assign colors so tests skip the color picker
+    const testColors = ['#73bbfa', '#f77278', '#fcfc6f', '#70fa73', '#7274f7', '#f772f7', '#d8f772', '#f77278']
+    for (let i = 0; i < game.players.all().length; i++) {
+      game.players.all()[i].color = testColors[i % testColors.length]
     }
 
     // Apply per-player state
