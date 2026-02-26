@@ -80,11 +80,12 @@ export default {
     confirm() {
       this.bus.emit('submit-action', {
         actor: this.actor.name,
-        selection: [{
+        selection: {
+          action: 'redistribute-tokens',
           tactics: this.tactics,
           strategy: this.strategy,
           fleet: this.fleet,
-        }],
+        },
       })
     },
   },

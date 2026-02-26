@@ -125,7 +125,7 @@ export default {
 
       this.bus.emit('submit-action', {
         actor: this.actor.name,
-        selection: [{ action: 'produce-units', units }],
+        selection: { action: 'produce-units', units },
       })
     },
 
