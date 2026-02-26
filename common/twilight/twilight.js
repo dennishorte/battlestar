@@ -191,11 +191,15 @@ Twilight.prototype._initializeFactions = function() {
     }
   }
 
+  // Default player colors (until color selection is implemented)
+  const playerColors = ['#1a75bb', '#c62828', '#fdd835', '#7b1fa2', '#2e7d32', '#e8811c', '#00897b', '#f48fb1']
+
   const players = this.players.all()
   for (let i = 0; i < players.length; i++) {
     const player = players[i]
     const factionId = assignedFactions[i] || allFactions[i]
     player.initializeFaction(factionId)
+    player.color = playerColors[i % playerColors.length]
 
     // Nomad The Company: initialize 3 agents instead of 1
     if (this.factionAbilities._hasAbility(player, 'the-company')) {

@@ -10,6 +10,17 @@
     </svg>
 
     <div class="tile-content">
+      <!-- Command tokens -->
+      <div class="command-tokens" v-if="commandTokens.length > 0">
+        <div
+          v-for="token in commandTokens"
+          :key="token"
+          class="cmd-token"
+          :style="{ backgroundColor: tokenColor(token) }"
+          :title="`${token}'s command token`"
+        />
+      </div>
+
       <!-- System type indicator -->
       <div class="tile-id">{{ displayId }}</div>
 
@@ -48,17 +59,6 @@
             {{ stack.count }}
           </div>
         </div>
-      </div>
-
-      <!-- Command tokens -->
-      <div class="command-tokens" v-if="commandTokens.length > 0">
-        <div
-          v-for="token in commandTokens"
-          :key="token"
-          class="cmd-token"
-          :style="{ backgroundColor: tokenColor(token) }"
-          :title="`${token}'s command token`"
-        />
       </div>
     </div>
   </div>
@@ -400,16 +400,14 @@ export default {
 
 .command-tokens {
   display: flex;
-  gap: 1px;
-  position: absolute;
-  bottom: 18px;
-  right: 22px;
+  gap: 2px;
 }
 
 .cmd-token {
-  width: 7px;
-  height: 7px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  border: 1px solid rgba(255,255,255,.3);
+  border: 1.5px solid rgba(255,255,255,.6);
+  box-shadow: 0 0 2px rgba(0,0,0,.5);
 }
 </style>
