@@ -6,6 +6,13 @@
 import { inject } from 'vue'
 import GameLog from '@/modules/games/common/components/log/GameLog.vue'
 import { useGameLogProvider } from '@/modules/games/common/composables/useGameLog'
+import { defaultMatchers } from '@/modules/games/common/composables/useLogTokenizer'
+import CardName from '@/modules/games/common/components/log/CardName.vue'
+import LocName from '@/modules/games/common/components/log/LocName.vue'
+import PlayerName from '@/modules/games/common/components/log/PlayerName.vue'
+import TiCardToken from './log/TiCardToken.vue'
+import TiTechToken from './log/TiTechToken.vue'
+import TiObjectiveToken from './log/TiObjectiveToken.vue'
 
 const game = inject('game')
 
@@ -66,10 +73,38 @@ function lineStyles(line) {
   }
 }
 
+function convertArg(arg, value) {
+  if (arg === 'card') {
+    return `ticard(${value.value})`
+  }
+  if (arg === 'tech') {
+    return `titech(${value.value})`
+  }
+  if (arg === 'objective') {
+    return `tiobj(${value.value})`
+  }
+  return undefined
+}
+
 useGameLogProvider({
   chatColors,
   lineClasses,
   lineStyles,
+  convertArg,
+  tokenMatchers: [
+    ...defaultMatchers,
+    { pattern: /ticard\(([^()]+)\)/, type: 'ticard', props: m => ({ name: m[1] }) },
+    { pattern: /titech\(([^()]+)\)/, type: 'titech', props: m => ({ name: m[1] }) },
+    { pattern: /tiobj\(([^()]+)\)/, type: 'tiobj', props: m => ({ name: m[1] }) },
+  ],
+  tokenComponents: {
+    card: CardName,
+    player: PlayerName,
+    loc: LocName,
+    ticard: TiCardToken,
+    titech: TiTechToken,
+    tiobj: TiObjectiveToken,
+  },
 })
 </script>
 
