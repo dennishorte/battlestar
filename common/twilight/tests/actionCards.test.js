@@ -63,7 +63,7 @@ describe('Action Cards', () => {
 
       // Dennis uses politics
       t.choose(game, 'Strategic Action')
-      t.choose(game, 'dennis')  // choose self as speaker
+      // Speaker choice auto-resolves to micah (dennis is current speaker)
       t.choose(game, 'Pass')   // micah declines secondary
 
       const dennis = game.players.byName('dennis')
