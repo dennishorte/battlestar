@@ -90,11 +90,11 @@ export default {
     submit() {
       this.bus.emit('submit-action', {
         actor: this.actor.name,
-        selection: [{
+        selection: {
           action: 'trade-offer',
           offering: { tradeGoods: this.offerTg, commodities: this.offerComm },
           requesting: { tradeGoods: this.requestTg, commodities: this.requestComm },
-        }],
+        },
       })
     },
 
