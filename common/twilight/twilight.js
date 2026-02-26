@@ -1802,6 +1802,94 @@ Twilight.prototype._tacticalAction = function(player) {
 ////////////////////////////////////////////////////////////////////////////////
 // Movement
 
+// Returns true if this unit type can move independently (not transported).
+// Used by getMovementPreview and the UI for movement validation.
+Twilight.prototype.isMovableUnitType = function(playerName, unitType) {
+  const unitDef = this._getUnitStats(playerName, unitType)
+  if (!unitDef) {
+    return false
+  }
+  // Ships that don't require capacity can move on their own
+  // Saar Floating Factory: space docks with move > 0 move as ships
+  return (unitDef.category === 'ship' && !unitDef.requiresCapacity)
+    || (unitType === 'space-dock' && unitDef.move > 0)
+}
+
+// Returns a preview of what a set of proposed movements will accomplish.
+// Used by both the engine (for classification) and the UI (for validation).
+Twilight.prototype.getMovementPreview = function(playerName, targetSystemId, movements) {
+  const shipMovements = []
+  const transportedUnits = []
+
+  for (const m of movements) {
+    const unitDef = this._getUnitStats(playerName, m.unitType)
+    if (!unitDef) {
+      continue
+    }
+
+    if (this.isMovableUnitType(playerName, m.unitType)) {
+      shipMovements.push(m)
+    }
+    else {
+      transportedUnits.push(m)
+    }
+  }
+
+  // Capacity from ships being moved to target
+  let totalCapacity = 0
+  for (const m of shipMovements) {
+    const unitDef = this._getUnitStats(playerName, m.unitType)
+    totalCapacity += (unitDef.capacity || 0) * m.count
+  }
+
+  // Capacity from player's ships already at target
+  const targetUnits = this.state.units[targetSystemId]?.space || []
+  for (const unit of targetUnits) {
+    if (unit.owner === playerName) {
+      const unitDef = this._getUnitStats(unit.owner, unit.type)
+      if (unitDef && !unitDef.requiresCapacity) {
+        totalCapacity += unitDef.capacity || 0
+      }
+    }
+  }
+
+  // Capacity already used by transported units at target
+  let usedCapacity = 0
+  for (const unit of targetUnits) {
+    if (unit.owner === playerName) {
+      const unitDef = this._getUnitStats(unit.owner, unit.type)
+      if (unitDef?.requiresCapacity) {
+        usedCapacity++
+      }
+    }
+  }
+
+  // Calculate how many of each transported unit type can actually move
+  const player = this.players.byName(playerName)
+  let capacityLeft = totalCapacity - usedCapacity
+  const transportCounts = {}
+  for (const m of transportedUnits) {
+    const isExempt = this.factionAbilities.isCapacityExempt(player, m.unitType)
+    if (isExempt) {
+      transportCounts[m.unitType] = (transportCounts[m.unitType] || 0) + m.count
+    }
+    else {
+      const canTransport = Math.max(0, Math.min(m.count, capacityLeft))
+      transportCounts[m.unitType] = (transportCounts[m.unitType] || 0) + canTransport
+      capacityLeft -= canTransport
+    }
+  }
+
+  return {
+    shipMovements,
+    transportedUnits,
+    totalCapacity,
+    usedCapacity,
+    availableCapacity: Math.max(0, totalCapacity - usedCapacity),
+    transportCounts,
+  }
+}
+
 Twilight.prototype._movementStep = function(player, targetSystemId) {
   const moveSelection = this.actions.choose(player, ['Done'], {
     title: 'Move Ships',
@@ -1819,26 +1907,9 @@ Twilight.prototype._movementStep = function(player, targetSystemId) {
 
   const galaxy = new (require('./model/Galaxy.js').Galaxy)(this)
 
-  // Separate ship movements from transported units
-  const shipMovements = []
-  const transportedUnits = []
-
-  for (const m of movements) {
-    const unitDef = this._getUnitStats(player.name, m.unitType)
-    if (!unitDef) {
-      continue
-    }
-
-    // Saar Floating Factory: space docks with move > 0 move as ships
-    const isMovableShip = (unitDef.category === 'ship' && !unitDef.requiresCapacity)
-      || (m.unitType === 'space-dock' && unitDef.move > 0)
-    if (isMovableShip) {
-      shipMovements.push(m)
-    }
-    else {
-      transportedUnits.push(m)
-    }
-  }
+  // Classify movements using shared preview logic
+  const preview = this.getMovementPreview(player.name, targetSystemId, movements)
+  const { shipMovements, transportedUnits } = preview
 
   // Validate and execute ship movements
   const movedShips = []
