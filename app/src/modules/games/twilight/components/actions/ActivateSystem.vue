@@ -28,7 +28,7 @@ export default {
     onSystemClick({ systemId }) {
       this.bus.emit('submit-action', {
         actor: this.actor.name,
-        selection: [systemId],
+        selection: { action: 'activate-system', systemId },
       })
     },
   },
