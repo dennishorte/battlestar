@@ -168,23 +168,25 @@ describe('Strategic Actions', () => {
       // Dennis has politics(3), micah has trade(5). Dennis goes first.
       t.choose(game, 'Strategic Action')
 
-      // Dennis picks new speaker — choose micah
-      t.choose(game, 'micah')
+      // Dennis is current speaker — only micah is eligible (auto-resolves in 2p)
       t.choose(game, 'Pass')  // micah declines politics secondary
 
       expect(game.state.speaker).toBe('micah')
     })
 
-    test('primary: can choose yourself as speaker', () => {
+    test('primary: current speaker is not eligible', () => {
       const game = t.fixture()
       game.run()
       pickStrategyCards(game, 'politics', 'trade')
 
+      expect(game.state.speaker).toBe('dennis')
+
       t.choose(game, 'Strategic Action')
-      t.choose(game, 'dennis')
+      // Auto-resolves to micah (only eligible player)
       t.choose(game, 'Pass')  // micah declines politics secondary
 
-      expect(game.state.speaker).toBe('dennis')
+      // Speaker must change — current speaker excluded from choices
+      expect(game.state.speaker).toBe('micah')
     })
   })
 
@@ -377,7 +379,7 @@ describe('Strategic Actions', () => {
 
       // Dennis uses politics (primary: choose speaker + draw 2 cards)
       t.choose(game, 'Strategic Action')
-      t.choose(game, 'dennis')  // keep dennis as speaker
+      // Speaker choice auto-resolves to micah (dennis is current speaker)
       // Micah uses politics secondary (draw 2 action cards)
       t.choose(game, 'Use Secondary')
 

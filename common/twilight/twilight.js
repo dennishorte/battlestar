@@ -4155,9 +4155,9 @@ Twilight.prototype._diplomacyPrimary = function(player) {
 // Strategy Card — Politics (#3)
 
 Twilight.prototype._politicsPrimary = function(player) {
-  // Choose a player to become the new speaker
+  // Choose a player to become the new speaker (current speaker is not eligible)
   const allPlayers = this.players.all()
-  const playerNames = allPlayers.map(p => p.name)
+  const playerNames = allPlayers.map(p => p.name).filter(n => n !== this.state.speaker)
 
   const selection = this.actions.choose(player, playerNames, {
     title: 'Choose New Speaker (Politics)',
@@ -4169,8 +4169,8 @@ Twilight.prototype._politicsPrimary = function(player) {
   this._drawActionCards(player, 2)
 
   this.log.add({
-    template: '{player} uses Politics. {speaker} is the new speaker',
-    args: { player, speaker: newSpeaker },
+    template: '{player} uses Politics. {playerSpeaker} is the new speaker',
+    args: { player, playerSpeaker: newSpeaker },
   })
 }
 
@@ -5829,7 +5829,7 @@ Twilight.prototype._drawActionCards = function(player, count) {
   player.actionCards.push(...drawn)
 
   this.log.add({
-    template: '{player} draws {count} action card(s)',
+    template: '{player} draws {count} action cards',
     args: { player, count: drawn.length },
   })
 
