@@ -26,6 +26,92 @@ class FactionAbilities {
 
 
   // ---------------------------------------------------------------------------
+  // Agent Favor System — pull-mode agent abilities
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Collect and offer available agent favors at a given timing point.
+   *
+   * Faction handlers export an `agentFavors` array. Each entry declares:
+   *   - timing: when it fires (e.g., 'on-system-activated')
+   *   - isAvailable(agentOwner, ctx, hookArgs): returns { description, context } or null
+   *   - execute(agentOwner, beneficiary, ctx, hookArgs, context): performs the effect
+   *
+   * Self-use (beneficiary owns the agent): direct prompt, no negotiation.
+   * Request (beneficiary asks another player): owner can accept or decline.
+   */
+  _offerFavors(timing, beneficiary, hookArgs) {
+    const availableFavors = []
+
+    for (const player of this.players.all()) {
+      const handler = this._getPlayerHandler(player)
+      if (!handler?.agentFavors) {
+        continue
+      }
+
+      for (const favor of handler.agentFavors) {
+        if (favor.timing !== timing) {
+          continue
+        }
+
+        const result = favor.isAvailable(player, this, hookArgs)
+        if (!result) {
+          continue
+        }
+
+        availableFavors.push({
+          favor,
+          agentOwner: player,
+          description: result.description,
+          context: result.context,
+        })
+      }
+    }
+
+    if (availableFavors.length === 0) {
+      return
+    }
+
+    // Self-use favors: direct prompt (no negotiation needed)
+    const selfFavors = availableFavors.filter(f => f.agentOwner.name === beneficiary.name)
+    for (const { favor, agentOwner, context } of selfFavors) {
+      const choice = this.actions.choose(beneficiary, [`Exhaust ${favor.name}`, 'Pass'], {
+        title: `${favor.name}: ${context.description || ''}`,
+      })
+      if (choice[0] === `Exhaust ${favor.name}`) {
+        favor.execute(agentOwner, beneficiary, this, hookArgs, context)
+      }
+    }
+
+    // Requestable favors from other players
+    const otherFavors = availableFavors.filter(f => f.agentOwner.name !== beneficiary.name)
+    if (otherFavors.length > 0) {
+      const choices = otherFavors.map(({ favor, agentOwner }) =>
+        `Request ${favor.name} from ${agentOwner.name}`
+      )
+      choices.push('Skip Favors')
+
+      const selection = this.actions.choose(beneficiary, choices, {
+        title: 'Request an agent favor?',
+      })
+
+      if (selection[0] !== 'Skip Favors') {
+        const selectedIndex = choices.indexOf(selection[0])
+        const selected = otherFavors[selectedIndex]
+
+        const response = this.actions.choose(selected.agentOwner, ['Accept', 'Decline'], {
+          title: `${beneficiary.name} requests ${selected.favor.name}: ${selected.description}`,
+        })
+
+        if (response[0] === 'Accept') {
+          selected.favor.execute(selected.agentOwner, beneficiary, this, hookArgs, selected.context)
+        }
+      }
+    }
+  }
+
+
+  // ---------------------------------------------------------------------------
   // A. Passive Modifiers — pure value queries, no mutation
   // ---------------------------------------------------------------------------
 
@@ -1912,11 +1998,14 @@ class FactionAbilities {
     const handler = this._getPlayerHandler(player)
     handler?.onSystemActivated?.(player, this, systemId)
 
-    // Agent abilities that trigger on any system activation (e.g., Captain Mendosa)
+    // Agent abilities that trigger on any system activation (push-mode agents)
     for (const otherPlayer of this.players.all()) {
       const otherHandler = this._getPlayerHandler(otherPlayer)
       otherHandler?.onAnySystemActivated?.(otherPlayer, this, { systemId, activatingPlayer: player })
     }
+
+    // Pull-mode agent favors (e.g., Captain Mendosa)
+    this._offerFavors('on-system-activated', player, { systemId, activatingPlayer: player })
 
     // Return activated PNs when holder activates system with PN faction's units
     this._checkActivatedPNReturn(playerName, systemId)
