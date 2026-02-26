@@ -77,6 +77,7 @@ import ShipOverviewModal from './modals/ShipOverviewModal.vue'
 import SystemDetailModal from './modals/SystemDetailModal.vue'
 
 // Selector option components
+import AgendaChip from './AgendaChip.vue'
 import ObjectiveChip from './ObjectiveChip.vue'
 import StrategyCardChip from './StrategyCardChip.vue'
 
@@ -240,7 +241,7 @@ export default {
         }
       }
 
-      // Detect "id: Name" pattern used for objectives
+      // Detect "id: Name" pattern used for objectives and agenda cards
       const colonIdx = name.indexOf(': ')
       if (colonIdx > 0) {
         const id = name.substring(0, colonIdx)
@@ -249,6 +250,13 @@ export default {
           return {
             component: ObjectiveChip,
             props: { objectiveId: id },
+          }
+        }
+        const agenda = res.getAgendaCard(id)
+        if (agenda) {
+          return {
+            component: AgendaChip,
+            props: { agendaId: id },
           }
         }
       }

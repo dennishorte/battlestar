@@ -151,7 +151,6 @@ Twilight.prototype._initializeZones = function() {
   for (const player of this.players.all()) {
     const p = player.name
     this.zones.create(this, `players.${p}.technologies`, 'Technologies', 'public', player)
-    this.zones.create(this, `players.${p}.action-cards`, 'Action Cards', 'private', player)
     this.zones.create(this, `players.${p}.secret-objectives`, 'Secret Objectives', 'private', player)
     this.zones.create(this, `players.${p}.scored-objectives`, 'Scored Objectives', 'public', player)
     this.zones.create(this, `players.${p}.promissory-notes`, 'Promissory Notes', 'private', player)
@@ -4165,13 +4164,76 @@ Twilight.prototype._politicsPrimary = function(player) {
   const newSpeaker = selection[0]
   this.state.speaker = newSpeaker
 
+  this.log.add({
+    template: '{playerSpeaker} is the new speaker',
+    args: { playerSpeaker: newSpeaker },
+  })
+
   // Draw 2 action cards
   this._drawActionCards(player, 2)
 
+  // Look at the top 2 cards of the agenda deck
+  this._politicsAgendaPeek(player)
+}
+
+Twilight.prototype._politicsAgendaPeek = function(player) {
+  // Initialize agenda deck if needed
+  if (!this.state.agendaDeck) {
+    const allAgendas = res.getAllAgendaCards()
+    const agendaDeck = [...allAgendas]
+    this._shuffle(agendaDeck)
+    this.state.agendaDeck = agendaDeck
+  }
+
+  if (this.state.agendaDeck.length === 0) {
+    return
+  }
+
+  // Take the top 2 cards (or 1 if only 1 left)
+  const peeked = this.state.agendaDeck.splice(0, Math.min(2, this.state.agendaDeck.length))
+  const cardLabel = (card) => `${card.id}: ${card.name}`
+
   this.log.add({
-    template: '{player} uses Politics. {playerSpeaker} is the new speaker',
-    args: { player, playerSpeaker: newSpeaker },
+    template: '{player} looks at the top {count} of the agenda deck',
+    args: { player, count: peeked.length === 1 ? 'card' : '2 cards' },
   })
+
+  // Place each card on top or bottom, player chooses order
+  const remaining = [...peeked]
+
+  for (let i = 0; i < peeked.length; i++) {
+    // Choose which card to place (if more than 1 remaining)
+    let card
+    if (remaining.length === 1) {
+      card = remaining[0]
+    }
+    else {
+      const cardChoices = remaining.map(c => cardLabel(c))
+      const pick = this.actions.choose(player, cardChoices, {
+        title: 'Choose an agenda card to place',
+      })
+      card = remaining.find(c => cardLabel(c) === pick[0])
+    }
+
+    // Choose top or bottom
+    const placement = this.actions.choose(player, ['Top of deck', 'Bottom of deck'], {
+      title: `Place ${card.name}:`,
+    })
+
+    if (placement[0] === 'Top of deck') {
+      this.state.agendaDeck.unshift(card)
+    }
+    else {
+      this.state.agendaDeck.push(card)
+    }
+
+    remaining.splice(remaining.indexOf(card), 1)
+
+    this.log.add({
+      template: '{player} places an agenda card on the {position} of the deck',
+      args: { player, position: placement[0] === 'Top of deck' ? 'top' : 'bottom' },
+    })
+  }
 }
 
 

@@ -230,8 +230,7 @@ export default {
     },
 
     actionCardCount() {
-      const zone = this.game.zones?.byId(`players.${this.player.name}.action-cards`)
-      return zone ? zone.cardlist().length : 0
+      return this.player.actionCards?.length || 0
     },
 
     promissoryNotes() {
