@@ -75,7 +75,7 @@ describe('Yssaril Tribes', () => {
       pickStrategyCards(game, 'politics', 'imperial')
 
       t.choose(game, 'Strategic Action')
-      t.choose(game, 'dennis')
+      // Speaker auto-resolves to micah (dennis is current speaker)
 
       const cardToDiscard = game.players.byName('dennis').actionCards[0].id
       t.choose(game, cardToDiscard)
@@ -566,9 +566,8 @@ describe('Yssaril Tribes', () => {
         game.run()
         pickStrategyCards(game, 'politics', 'imperial')
 
-        // Dennis uses politics: first pick new speaker
+        // Dennis uses politics: speaker auto-resolves to micah (dennis is current speaker)
         t.choose(game, 'Strategic Action')
-        t.choose(game, 'dennis') // new speaker
 
         // Scheming for Dennis: discard 1 (Dennis drew 2 + 1 extra = 3, discard 1 = 2)
         const dennisCards = game.players.byName('dennis').actionCards
