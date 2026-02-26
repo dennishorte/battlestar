@@ -4,7 +4,7 @@
     <template v-if="actionTypeHandler">
       <div class="alert alert-info mt-3">
         <div class="mb-2">{{ actionTypeHandler.message }}</div>
-        <button class="btn btn-primary" @click="actionTypeHandler.handler()">
+        <button v-if="actionTypeHandler.buttonLabel" class="btn btn-primary" @click="actionTypeHandler.handler()">
           {{ actionTypeHandler.buttonLabel }}
         </button>
       </div>
