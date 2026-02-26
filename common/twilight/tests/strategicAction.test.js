@@ -169,6 +169,10 @@ describe('Strategic Actions', () => {
       t.choose(game, 'Strategic Action')
 
       // Dennis is current speaker — only micah is eligible (auto-resolves in 2p)
+      // Agenda deck peek: pick first card, place top, then remaining card, place top
+      t.choose(game, t.currentChoices(game)[0])
+      t.choose(game, 'Top of deck')
+      t.choose(game, 'Top of deck')
       t.choose(game, 'Pass')  // micah declines politics secondary
 
       expect(game.state.speaker).toBe('micah')
@@ -183,10 +187,38 @@ describe('Strategic Actions', () => {
 
       t.choose(game, 'Strategic Action')
       // Auto-resolves to micah (only eligible player)
+      // Agenda deck peek: pick first card, place top, then remaining card, place top
+      t.choose(game, t.currentChoices(game)[0])
+      t.choose(game, 'Top of deck')
+      t.choose(game, 'Top of deck')
       t.choose(game, 'Pass')  // micah declines politics secondary
 
       // Speaker must change — current speaker excluded from choices
       expect(game.state.speaker).toBe('micah')
+    })
+
+    test('primary: agenda deck peek rearranges cards', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        agendaDeck: ['mutiny', 'economic-equality', 'seed-of-an-empire'],
+      })
+      game.run()
+      pickStrategyCards(game, 'politics', 'trade')
+
+      t.choose(game, 'Strategic Action')
+      // Speaker auto-resolves to micah
+
+      // Agenda peek: see mutiny and economic-equality
+      // Place economic-equality on top, mutiny on bottom
+      t.choose(game, 'economic-equality: Economic Equality')
+      t.choose(game, 'Top of deck')
+      t.choose(game, 'Bottom of deck')
+      t.choose(game, 'Pass')  // micah declines secondary
+
+      // Deck should now be: [economic-equality, seed-of-an-empire, ..., mutiny]
+      expect(game.state.agendaDeck[0].id).toBe('economic-equality')
+      expect(game.state.agendaDeck[1].id).toBe('seed-of-an-empire')
+      expect(game.state.agendaDeck[game.state.agendaDeck.length - 1].id).toBe('mutiny')
     })
   })
 
@@ -377,9 +409,13 @@ describe('Strategic Actions', () => {
       // Dennis uses leadership secondary
       t.choose(game, 'Use Secondary')
 
-      // Dennis uses politics (primary: choose speaker + draw 2 cards)
+      // Dennis uses politics (primary: choose speaker + draw 2 cards + agenda peek)
       t.choose(game, 'Strategic Action')
       // Speaker choice auto-resolves to micah (dennis is current speaker)
+      // Agenda deck peek
+      t.choose(game, t.currentChoices(game)[0])
+      t.choose(game, 'Top of deck')
+      t.choose(game, 'Top of deck')
       // Micah uses politics secondary (draw 2 action cards)
       t.choose(game, 'Use Secondary')
 

@@ -80,6 +80,11 @@ describe('Yssaril Tribes', () => {
       const cardToDiscard = game.players.byName('dennis').actionCards[0].id
       t.choose(game, cardToDiscard)
 
+      // Agenda deck peek
+      t.choose(game, t.currentChoices(game)[0])
+      t.choose(game, 'Top of deck')
+      t.choose(game, 'Top of deck')
+
       const dennis = game.players.byName('dennis')
       expect(dennis.actionCards.length).toBe(2)
 
@@ -572,6 +577,11 @@ describe('Yssaril Tribes', () => {
         // Scheming for Dennis: discard 1 (Dennis drew 2 + 1 extra = 3, discard 1 = 2)
         const dennisCards = game.players.byName('dennis').actionCards
         t.choose(game, dennisCards[0].id)
+
+        // Agenda deck peek
+        t.choose(game, t.currentChoices(game)[0])
+        t.choose(game, 'Top of deck')
+        t.choose(game, 'Top of deck')
 
         // Micah secondary: draw 2 action cards
         t.choose(game, 'Use Secondary')
