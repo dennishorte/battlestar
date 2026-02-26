@@ -617,11 +617,11 @@ Game.prototype.checkSameTeam = function(p1, p2) {
 }
 
 const playerColors = {
-  red: '#f77278',
-  orange: '#f77278',
-  yellow: '#fcfc6f',
+  red: '#d42e35',
+  orange: '#e8811c',
+  yellow: '#d4d426',
   lime: '#d8f772',
-  green: '#70fa73',
+  green: '#2ebd32',
   blue: '#73bbfa',
   indigo: '#7274f7',
   pink: '#f772f7',
