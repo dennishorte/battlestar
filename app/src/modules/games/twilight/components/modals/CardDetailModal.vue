@@ -139,6 +139,23 @@
         </div>
       </div>
 
+      <!-- Agenda Card -->
+      <div v-if="type === 'agenda' && agendaData">
+        <div class="detail-row">
+          <span class="agenda-type-badge" :class="agendaData.type === 'law' ? 'agenda-law' : 'agenda-directive'">{{ agendaData.type }}</span>
+          <span class="agenda-outcome-badge">{{ agendaOutcomeLabel }}</span>
+        </div>
+        <div class="description-text" v-if="agendaData.description">
+          {{ agendaData.description }}
+        </div>
+        <div v-if="agendaData.forEffect" class="agenda-effect">
+          <span class="info-key">For:</span> {{ agendaData.forEffect }}
+        </div>
+        <div v-if="agendaData.againstEffect" class="agenda-effect">
+          <span class="info-key">Against:</span> {{ agendaData.againstEffect }}
+        </div>
+      </div>
+
       <!-- Faction Ability -->
       <div v-if="type === 'faction-ability'">
         <div class="description-text" v-if="context?.description">
@@ -308,6 +325,9 @@ export default {
         const faction = res.getFaction(this.id)
         return faction ? `${faction.name} — Leaders` : 'Leaders'
       }
+      if (this.type === 'agenda' && this.agendaData) {
+        return this.agendaData.name
+      }
       if (this.type === 'faction-ability') {
         return this.context?.name || 'Faction Ability'
       }
@@ -401,6 +421,25 @@ export default {
         }
       }
       return null
+    },
+
+    agendaData() {
+      if (this.type !== 'agenda' || !this.id) {
+        return null
+      }
+      return res.getAgendaCard(this.id)
+    },
+
+    agendaOutcomeLabel() {
+      if (!this.agendaData) {
+        return ''
+      }
+      const labels = {
+        'for-against': 'For / Against',
+        'elect-player': 'Elect Player',
+        'elect-planet': 'Elect Planet',
+      }
+      return labels[this.agendaData.outcomeType] || this.agendaData.outcomeType
     },
 
     leadersAllData() {
@@ -735,5 +774,30 @@ export default {
 
 .faction-leader-name {
   font-weight: 600;
+}
+
+.agenda-type-badge {
+  font-size: .8em;
+  padding: .15em .5em;
+  border-radius: .2em;
+  text-transform: capitalize;
+  font-weight: 600;
+}
+
+.agenda-law { background: #c5cae9; color: #283593; }
+.agenda-directive { background: #ffe0b2; color: #e65100; }
+
+.agenda-outcome-badge {
+  font-size: .8em;
+  padding: .15em .5em;
+  border-radius: .2em;
+  background: #e0e0e0;
+  color: #555;
+  font-weight: 600;
+}
+
+.agenda-effect {
+  padding: .3em 0;
+  line-height: 1.4;
 }
 </style>
