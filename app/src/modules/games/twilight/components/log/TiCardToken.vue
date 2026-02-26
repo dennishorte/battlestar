@@ -3,7 +3,7 @@
     class="ti-card-token"
     :class="tokenClass"
     @click.stop="showDetails"
-  >{{ name }}</span>
+  ><span v-if="strategyCard" class="sc-number">{{ strategyCard.number }}</span>{{ name }}</span>
 </template>
 
 <script setup>
@@ -53,6 +53,18 @@ function showDetails() {
   background: #343a40;
   color: #fff;
   cursor: pointer;
+}
+.ti-strategy-card .sc-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  width: 1.3em;
+  height: 1.3em;
+  background: rgba(255,255,255,.2);
+  border-radius: 50%;
+  margin-right: .25em;
+  font-size: .9em;
 }
 .ti-strategy-card:hover {
   filter: brightness(1.2);
