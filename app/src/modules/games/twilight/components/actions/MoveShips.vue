@@ -10,7 +10,7 @@
           <div v-for="unit in mov.units" :key="unit.type" class="unit-selector">
             <button class="btn btn-sm btn-outline-secondary" @click="decrement(mov, unit.type)" :disabled="unit.selected <= 0">-</button>
             <span class="unit-count">{{ unit.selected }}</span>
-            <button class="btn btn-sm btn-outline-secondary" @click="increment(mov, unit.type)" :disabled="unit.selected >= unit.available">+</button>
+            <button class="btn btn-sm btn-outline-secondary" @click="increment(mov, unit.type)" :disabled="unit.selected >= maxSelectable(unit)">+</button>
             <span class="unit-type">{{ unit.type }}</span>
           </div>
         </div>
@@ -21,8 +21,16 @@
       Select origin systems from the map, or click Done if finished.
     </div>
 
+    <div v-if="preview.availableCapacity > 0 && preview.transportedUnits.length > 0" class="capacity-info">
+      Transport capacity: {{ preview.availableCapacity }} remaining
+    </div>
+
+    <div v-if="totalSelected > 0 && !hasMovableShip" class="no-movable-warning">
+      Fighters cannot move without a carrier ship.
+    </div>
+
     <div class="action-buttons">
-      <button class="btn btn-sm btn-primary" @click="confirmMoves" :disabled="totalSelected === 0">
+      <button class="btn btn-sm btn-primary" @click="confirmMoves" :disabled="!hasMovableShip">
         Confirm ({{ totalSelected }} ships)
       </button>
       <button class="btn btn-sm btn-secondary" @click="done">Done</button>
@@ -47,33 +55,11 @@ export default {
   },
 
   computed: {
-    totalSelected() {
-      let total = 0
-      for (const mov of this.movements) {
-        for (const unit of mov.units) {
-          total += unit.selected
-        }
-      }
-      return total
-    },
-  },
-
-  methods: {
-    increment(mov, unitType) {
-      const unit = mov.units.find(u => u.type === unitType)
-      if (unit && unit.selected < unit.available) {
-        unit.selected++
-      }
+    targetSystemId() {
+      return this.game.state.currentTacticalAction?.systemId
     },
 
-    decrement(mov, unitType) {
-      const unit = mov.units.find(u => u.type === unitType)
-      if (unit && unit.selected > 0) {
-        unit.selected--
-      }
-    },
-
-    confirmMoves() {
+    currentMovements() {
       const result = []
       for (const mov of this.movements) {
         for (const unit of mov.units) {
@@ -86,10 +72,108 @@ export default {
           }
         }
       }
+      return result
+    },
 
+    preview() {
+      if (!this.targetSystemId) {
+        return { shipMovements: [], transportedUnits: [], totalCapacity: 0, usedCapacity: 0, availableCapacity: 0, transportCounts: {} }
+      }
+      return this.game.getMovementPreview(this.actor.name, this.targetSystemId, this.currentMovements)
+    },
+
+    totalSelected() {
+      let total = 0
+      for (const mov of this.movements) {
+        for (const unit of mov.units) {
+          total += unit.selected
+        }
+      }
+      return total
+    },
+
+    hasMovableShip() {
+      return this.preview.shipMovements.length > 0
+    },
+  },
+
+  methods: {
+    maxSelectable(unit) {
+      if (!this.targetSystemId) {
+        return 0
+      }
+
+      // Movable ships: limited only by available count
+      if (this.game.isMovableUnitType(this.actor.name, unit.type)) {
+        return unit.available
+      }
+
+      // Capacity-exempt transported units: limited only by available count
+      const player = this.game.players.byName(this.actor.name)
+      if (this.game.factionAbilities.isCapacityExempt(player, unit.type)) {
+        return unit.available
+      }
+
+      // Transported unit: cap by available capacity minus other transported non-exempt selections
+      let otherUsed = 0
+      for (const mov of this.movements) {
+        for (const u of mov.units) {
+          if (u === unit || u.selected <= 0) {
+            continue
+          }
+          if (this.game.isMovableUnitType(this.actor.name, u.type)) {
+            continue
+          }
+          if (this.game.factionAbilities.isCapacityExempt(player, u.type)) {
+            continue
+          }
+          otherUsed += u.selected
+        }
+      }
+
+      return Math.min(unit.available, Math.max(0, this.preview.availableCapacity - otherUsed))
+    },
+
+    clampSelections() {
+      const player = this.game.players.byName(this.actor.name)
+      let used = 0
+      for (const mov of this.movements) {
+        for (const unit of mov.units) {
+          if (this.game.isMovableUnitType(this.actor.name, unit.type)) {
+            continue
+          }
+          if (this.game.factionAbilities.isCapacityExempt(player, unit.type)) {
+            continue
+          }
+          const remaining = Math.max(0, this.preview.availableCapacity - used)
+          if (unit.selected > remaining) {
+            unit.selected = remaining
+          }
+          used += unit.selected
+        }
+      }
+    },
+
+    increment(mov, unitType) {
+      const unit = mov.units.find(u => u.type === unitType)
+      if (unit && unit.selected < this.maxSelectable(unit)) {
+        unit.selected++
+        this.clampSelections()
+      }
+    },
+
+    decrement(mov, unitType) {
+      const unit = mov.units.find(u => u.type === unitType)
+      if (unit && unit.selected > 0) {
+        unit.selected--
+        this.clampSelections()
+      }
+    },
+
+    confirmMoves() {
       this.bus.emit('submit-action', {
         actor: this.actor.name,
-        selection: { action: 'move-ships', movements: result },
+        selection: { action: 'move-ships', movements: this.currentMovements },
       })
     },
 
@@ -203,6 +287,18 @@ export default {
   color: #888;
   font-style: italic;
   padding: .25em 0;
+}
+
+.capacity-info {
+  font-size: .75em;
+  color: #666;
+  margin-top: .25em;
+}
+
+.no-movable-warning {
+  font-size: .75em;
+  color: #c44;
+  margin-top: .25em;
 }
 
 .action-buttons {
