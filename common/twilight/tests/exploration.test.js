@@ -1021,4 +1021,243 @@ describe('Exploration', () => {
       })
     })
   })
+
+  // ==========================================================================
+  // Phase 3: Attachment Bonuses
+  // ==========================================================================
+
+  describe('Attachment Bonuses', () => {
+
+    test('Dyson Sphere adds +2 resources and +1 influence', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        explorationDecks: {
+          cultural: ['dyson-sphere'],
+          hazardous: [],
+          industrial: [],
+          frontier: [],
+        },
+        dennis: {
+          planets: {
+            'quann': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+
+      // Explore quann (cultural, 2 res / 1 inf) → attach Dyson Sphere (+2 res, +1 inf)
+      game._explorePlanet('quann', 'dennis')
+
+      const dennis = game.players.byName('dennis')
+      // quann base: 2 res, 1 inf → with Dyson Sphere: 4 res, 2 inf
+      expect(dennis.getTotalResources()).toBeGreaterThanOrEqual(4)
+      expect(dennis.getTotalInfluence()).toBeGreaterThanOrEqual(2)
+
+      // Verify attachment is present
+      expect(game.state.planets['quann'].attachments).toContain('dyson-sphere')
+    })
+
+    test('Mining World adds +2 resources', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        explorationDecks: {
+          cultural: [],
+          hazardous: ['mining-world'],
+          industrial: [],
+          frontier: [],
+        },
+        dennis: {
+          planets: {
+            'vefut-ii': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+
+      // Explore vefut-ii (hazardous, 2 res / 2 inf) → attach Mining World (+2 res)
+      game._explorePlanet('vefut-ii', 'dennis')
+
+      const dennis = game.players.byName('dennis')
+      // vefut-ii base: 2 res → with Mining World: 4 res
+      expect(dennis.getTotalResources()).toBeGreaterThanOrEqual(4)
+      expect(game.state.planets['vefut-ii'].attachments).toContain('mining-world')
+    })
+
+    test('Biotic Research Facility grants green tech specialty on planet without specialty', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        explorationDecks: {
+          cultural: [],
+          hazardous: [],
+          industrial: ['biotic-research-facility'],
+          frontier: [],
+        },
+        dennis: {
+          planets: {
+            'arinam': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+
+      // arinam is industrial, no existing tech specialty
+      game._explorePlanet('arinam', 'dennis')
+
+      const dennis = game.players.byName('dennis')
+      const prereqs = dennis.getTechPrerequisites()
+      // Should have at least 1 green from the attachment
+      expect(prereqs.green).toBeGreaterThanOrEqual(1)
+      expect(game.state.planets['arinam'].attachments).toContain('biotic-research-facility')
+    })
+
+    test('Research Facility fallback: +1/+1 when planet already has specialty', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        explorationDecks: {
+          cultural: [],
+          hazardous: [],
+          industrial: ['biotic-research-facility'],
+          frontier: [],
+        },
+        dennis: {
+          planets: {
+            // new-albion already has green tech specialty
+            'new-albion': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+
+      game._explorePlanet('new-albion', 'dennis')
+
+      // Fallback: +1 resource, +1 influence (no new specialty)
+      const bonuses = game._getPlanetAttachmentBonuses('new-albion')
+      expect(bonuses.resources).toBe(1)
+      expect(bonuses.influence).toBe(1)
+      expect(bonuses.techSpecialties).toEqual([])  // No new specialty — fallback used
+    })
+  })
+
+  // ==========================================================================
+  // Phase 4: Relic System
+  // ==========================================================================
+
+  describe('Relic System', () => {
+
+    test('3-fragment purge via component action gains a relic', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        relicDeck: ['scepter-of-emelpar'],
+        dennis: {
+          relicFragments: ['cultural', 'cultural', 'cultural'],
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'purge-relic-fragments')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.relicFragments.length).toBe(0)
+      expect(game.state.relicsGained['dennis']).toContain('scepter-of-emelpar')
+    })
+
+    test('unknown fragments work as wildcards for purge', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        relicDeck: ['the-codex'],
+        dennis: {
+          relicFragments: ['cultural', 'cultural', 'unknown'],
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'purge-relic-fragments')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.relicFragments.length).toBe(0)
+      expect(game.state.relicsGained['dennis']).toContain('the-codex')
+    })
+
+    test('Dead World frontier exploration grants a relic', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        explorationDecks: {
+          cultural: [],
+          hazardous: [],
+          industrial: [],
+          frontier: ['dead-world'],
+        },
+        relicDeck: ['dominus-orb'],
+        dennis: {
+          technologies: ['antimass-deflectors', 'gravity-drive', 'dark-energy-tap'],
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          units: {
+            'sol-home': {
+              'jord': ['infantry', 'infantry', 'space-dock'],
+            },
+            '27': {
+              space: ['cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Activate empty system 48 (frontier), move cruiser from 27
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '48' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: '27', count: 1 }],
+      })
+
+      expect(game.state.relicsGained['dennis']).toContain('dominus-orb')
+    })
+
+    test('Shard of the Throne grants +1 VP on gain', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        relicDeck: ['shard-of-the-throne'],
+        dennis: {
+          relicFragments: ['hazardous', 'hazardous', 'hazardous'],
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'purge-relic-fragments')
+
+      const dennis = game.players.byName('dennis')
+      expect(game.state.relicsGained['dennis']).toContain('shard-of-the-throne')
+      expect(dennis.victoryPoints).toBe(1)
+    })
+
+    test('The Obsidian grants 1 secret objective on gain', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        relicDeck: ['the-obsidian'],
+        dennis: {
+          relicFragments: ['industrial', 'industrial', 'industrial'],
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'purge-relic-fragments')
+
+      const dennis = game.players.byName('dennis')
+      expect(game.state.relicsGained['dennis']).toContain('the-obsidian')
+      expect(dennis.secretObjectives.length).toBe(1)
+    })
+  })
 })

@@ -253,6 +253,8 @@ module.exports = {
         template: '{player} purges 2 {type} fragments for a relic (Fabrication)',
         args: { player, type: fragType },
       })
+
+      ctx.game._gainRelic(player.name)
     }
 
     // Eidolon DEPLOY trigger: after using Fabrication, may place 1 mech
@@ -264,21 +266,13 @@ module.exports = {
   // strategy cards; during this action, spend command tokens from your
   // reinforcements instead of your strategy pool. Then, purge this card.
   perfectSynthesis(ctx, player) {
-    // 1. Gain 1 relic (tracked in game state since player objects are recreated)
-    if (!ctx.state.relicsGained) {
-      ctx.state.relicsGained = {}
-    }
-    if (!ctx.state.relicsGained[player.name]) {
-      ctx.state.relicsGained[player.name] = []
-    }
-    ctx.state.relicsGained[player.name].push('perfect-synthesis-relic')
-
+    // 1. Gain 1 relic
     ctx.log.add({
       template: 'Perfect Synthesis: {player} gains 1 relic',
       args: { player: player.name },
     })
 
-    ctx.game.factionAbilities.onRelicGained(player.name)
+    ctx.game._gainRelic(player.name)
 
     // 2. Perform secondary of up to 2 strategy cards
     // Eligible: all strategy cards that are "readied" (picked but not used) by any player,
