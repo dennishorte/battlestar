@@ -91,6 +91,16 @@
         </div>
       </div>
 
+      <!-- Action Card -->
+      <div v-if="type === 'action-card' && actionCardData">
+        <div class="detail-row">
+          <span class="timing-badge">{{ actionCardData.timing }}</span>
+        </div>
+        <div class="description-text" v-if="actionCardData.effect">
+          {{ actionCardData.effect }}
+        </div>
+      </div>
+
       <!-- Single Leader (for log links etc.) -->
       <div v-if="type === 'leader' && leaderData">
         <div class="detail-row">
@@ -315,6 +325,9 @@ export default {
       if (this.type === 'strategy-card' && this.strategyCardData) {
         return this.strategyCardData.name
       }
+      if (this.type === 'action-card' && this.actionCardData) {
+        return this.actionCardData.name
+      }
       if (this.type === 'leader' && this.leaderData) {
         return this.leaderData.name
       }
@@ -370,6 +383,13 @@ export default {
         return null
       }
       return res.getStrategyCard(this.id)
+    },
+
+    actionCardData() {
+      if (this.type !== 'action-card' || !this.id) {
+        return null
+      }
+      return res.getActionCard(this.id)
     },
 
     leaderData() {
