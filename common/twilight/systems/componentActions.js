@@ -8,7 +8,10 @@ module.exports = function(Twilight) {
       return true
     }
     const techActions = this._getTechComponentActions(player)
-    return techActions.length > 0
+    if (techActions.length > 0) {
+      return true
+    }
+    return this._canPurgeRelicFragments(player)
   }
 
   Twilight.prototype._componentAction = function(player) {
@@ -20,6 +23,14 @@ module.exports = function(Twilight) {
     // Technology-based component actions
     const techActions = this._getTechComponentActions(player)
     actions.push(...techActions)
+
+    // General relic fragment purge (3 of same type → 1 relic)
+    if (this._canPurgeRelicFragments(player)) {
+      actions.push({
+        id: 'purge-relic-fragments',
+        name: 'Purge Relic Fragments',
+      })
+    }
 
     if (actions.length === 0) {
       this.log.add({
@@ -42,6 +53,9 @@ module.exports = function(Twilight) {
     const techAction = techActions.find(a => a.id === actionId)
     if (techAction) {
       techAction.execute(player)
+    }
+    else if (actionId === 'purge-relic-fragments') {
+      this._executePurgeRelicFragments(player)
     }
     else {
       this.factionAbilities.executeComponentAction(player, actionId)
@@ -568,6 +582,90 @@ module.exports = function(Twilight) {
       template: '{player} uses Wormhole Generator to place Creuss wormhole token in system {system}',
       args: { player, system: targetSystem },
     })
+  }
+
+  Twilight.prototype._canPurgeRelicFragments = function(player) {
+    const fragments = player.relicFragments || []
+    if (fragments.length < 3) {
+      return false
+    }
+
+    const counts = {}
+    for (const f of fragments) {
+      counts[f] = (counts[f] || 0) + 1
+    }
+    const unknownCount = counts['unknown'] || 0
+    return Object.entries(counts).some(([type, count]) => {
+      if (type === 'unknown') {
+        return unknownCount >= 3
+      }
+      return count + unknownCount >= 3
+    })
+  }
+
+  Twilight.prototype._executePurgeRelicFragments = function(player) {
+    const fragments = player.relicFragments || []
+    const counts = {}
+    for (const f of fragments) {
+      counts[f] = (counts[f] || 0) + 1
+    }
+    const unknownCount = counts['unknown'] || 0
+
+    // Find which types can be purged (3 of same, using unknown as wildcard)
+    const purgeableTypes = Object.entries(counts)
+      .filter(([type, count]) => {
+        if (type === 'unknown') {
+          return unknownCount >= 3
+        }
+        return count + unknownCount >= 3
+      })
+      .map(([type]) => type)
+
+    if (purgeableTypes.length === 0) {
+      return
+    }
+
+    let fragType
+    if (purgeableTypes.length === 1) {
+      fragType = purgeableTypes[0]
+    }
+    else {
+      const sel = this.actions.choose(player, purgeableTypes, {
+        title: 'Choose fragment type to purge (3)',
+      })
+      fragType = sel[0]
+    }
+
+    // Remove 3 fragments: prefer typed fragments first, then unknown as needed
+    let remaining = 3
+    if (fragType !== 'unknown') {
+      // Remove typed fragments first
+      for (let i = 0; i < 3 && remaining > 0; i++) {
+        const idx = player.relicFragments.indexOf(fragType)
+        if (idx !== -1) {
+          player.relicFragments.splice(idx, 1)
+          remaining--
+        }
+      }
+    }
+    // Fill remainder with unknown fragments
+    while (remaining > 0) {
+      const idx = player.relicFragments.indexOf('unknown')
+      if (idx !== -1) {
+        player.relicFragments.splice(idx, 1)
+        remaining--
+      }
+      else {
+        break
+      }
+    }
+
+    this.log.add({
+      template: '{player} purges 3 {type} fragments for a relic',
+      args: { player: player.name, type: fragType },
+    })
+
+    this._gainRelic(player.name)
   }
 
 } // module.exports

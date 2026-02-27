@@ -213,6 +213,15 @@ class TwilightPlayer extends BasePlayer {
           counts[planet.techSpecialty]++
         }
       }
+
+      // Attachment-granted tech specialties
+      const attachBonuses = this.game._getPlanetAttachmentBonuses(planetId)
+      for (const spec of attachBonuses.techSpecialties) {
+        const isExhausted = this.game.state.planets[planetId]?.exhausted
+        if (counts[spec] !== undefined && (!isExhausted || hasPsychoarchaeology)) {
+          counts[spec]++
+        }
+      }
     }
 
     return counts
@@ -283,6 +292,8 @@ class TwilightPlayer extends BasePlayer {
       if (this.game.state.planets[planetId]?.terraform) {
         value += 1
       }
+      const attachBonuses = this.game._getPlanetAttachmentBonuses(planetId)
+      value += attachBonuses.resources
       return sum + value
     }, 0)
   }
@@ -294,6 +305,8 @@ class TwilightPlayer extends BasePlayer {
       if (this.game.state.planets[planetId]?.terraform) {
         value += 1
       }
+      const attachBonuses = this.game._getPlanetAttachmentBonuses(planetId)
+      value += attachBonuses.influence
       return sum + value
     }, 0)
   }

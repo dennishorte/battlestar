@@ -520,19 +520,12 @@ module.exports = {
       }
     }
 
-    // Gain 1 relic — tracked in game state since player objects are recreated
-    if (!ctx.state.relicsGained) {
-      ctx.state.relicsGained = {}
-    }
-    if (!ctx.state.relicsGained[player.name]) {
-      ctx.state.relicsGained[player.name] = []
-    }
-    ctx.state.relicsGained[player.name].push('vaults-relic')
-
     ctx.log.add({
       template: 'Vaults of the Heir: {player} purges {tech} to gain 1 relic',
       args: { player: player.name, tech: purgedTechId },
     })
+
+    ctx.game._gainRelic(player.name)
   },
 
 

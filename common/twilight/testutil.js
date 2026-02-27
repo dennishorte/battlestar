@@ -287,6 +287,15 @@ TestUtil.setBoard = function(game, state) {
     if (state.exploredPlanets !== undefined) {
       game.state.exploredPlanets = { ...state.exploredPlanets }
     }
+    if (state.relicDeck !== undefined) {
+      game.state.relicDeck = [...state.relicDeck]
+    }
+    if (state.relicsGained !== undefined) {
+      game.state.relicsGained = {}
+      for (const [name, relics] of Object.entries(state.relicsGained)) {
+        game.state.relicsGained[name] = [...relics]
+      }
+    }
     if (state.activeLaws !== undefined) {
       game.state.activeLaws = state.activeLaws.map(spec => {
         if (typeof spec === 'string') {

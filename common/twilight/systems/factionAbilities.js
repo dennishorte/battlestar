@@ -752,6 +752,8 @@ class FactionAbilities {
       args: { player: player.name, type: fragType },
     })
 
+    this.game._gainRelic(player.name)
+
     // Return PN to Naaz-Rokha
     const owner = this.players.byName(pn.owner)
     player.removePromissoryNote(pn.id, pn.owner)
