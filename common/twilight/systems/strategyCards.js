@@ -540,10 +540,6 @@ module.exports = function(Twilight) {
       case 'politics':
       // Draw 2 action cards
         this._drawActionCards(player, 2)
-        this.log.add({
-          template: '{player} draws 2 action cards (Politics secondary)',
-          args: { player },
-        })
         break
       case 'technology':
       // Research 1 technology (same as primary but costs strategy token)
