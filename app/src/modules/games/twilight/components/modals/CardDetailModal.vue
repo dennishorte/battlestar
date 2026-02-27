@@ -57,6 +57,10 @@
           <span>{{ planetState.controller || 'None' }}</span>
           <span v-if="planetState.exhausted" class="exhausted-badge">exhausted</span>
         </div>
+        <div class="detail-row" v-if="planetAttachments.length > 0">
+          <span class="info-key">Attachments:</span>
+          <span v-for="att in planetAttachments" :key="att.id" class="attachment-tag">{{ att.name }}</span>
+        </div>
       </div>
 
       <!-- Objective -->
@@ -98,6 +102,18 @@
         </div>
         <div class="description-text" v-if="actionCardData.effect">
           {{ actionCardData.effect }}
+        </div>
+      </div>
+
+      <!-- Relic -->
+      <div v-if="type === 'relic' && relicData">
+        <div class="detail-row">
+          <span class="relic-type-badge">{{ relicData.type }}</span>
+          <span v-if="relicData.exhaust" class="info-key">exhaustable</span>
+          <span v-if="relicData.purge" class="info-key">purge to use</span>
+        </div>
+        <div class="description-text" v-if="relicData.effect">
+          {{ relicData.effect }}
         </div>
       </div>
 
@@ -328,6 +344,9 @@ export default {
       if (this.type === 'action-card' && this.actionCardData) {
         return this.actionCardData.name
       }
+      if (this.type === 'relic' && this.relicData) {
+        return this.relicData.name
+      }
       if (this.type === 'leader' && this.leaderData) {
         return this.leaderData.name
       }
@@ -369,6 +388,24 @@ export default {
         return null
       }
       return this.game.state.planets[this.id] || null
+    },
+
+    relicData() {
+      if (this.type !== 'relic' || !this.id) {
+        return null
+      }
+      return res.getRelic(this.id)
+    },
+
+    planetAttachments() {
+      if (!this.planetData || !this.planetState) {
+        return []
+      }
+      const attachments = this.planetState.attachments || []
+      return attachments.map(cardId => {
+        const card = res.getExplorationCard(cardId)
+        return { id: cardId, name: card?.name || cardId }
+      })
     },
 
     objectiveData() {
@@ -819,5 +856,16 @@ export default {
 .agenda-effect {
   padding: .3em 0;
   line-height: 1.4;
+}
+
+.relic-type-badge {
+  font-size: .8em; padding: .15em .5em; border-radius: .2em;
+  text-transform: capitalize; font-weight: 600;
+  background: #fff3e0; color: #e65100;
+}
+
+.attachment-tag {
+  font-size: .8em; padding: .1em .35em; border-radius: .15em;
+  background: #fff3e0; color: #e65100; font-weight: 500;
 }
 </style>
