@@ -1344,30 +1344,7 @@ Twilight.prototype._tacticalAction = function(player) {
     const hasShipsInSystem = this.state.units[systemId]?.space.some(u => u.owner === player.name)
     const deTile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
     if (hasShipsInSystem && deTile && deTile.planets.length === 0) {
-      // Frontier system — draw from frontier exploration deck
-      if (!this.state.exploredPlanets) {
-        this.state.exploredPlanets = {}
-      }
-      if (!this.state.exploredPlanets[systemId]) {
-        this.state.exploredPlanets[systemId] = true
-        const card = this._drawExplorationCard('frontier')
-        if (card) {
-          this.log.add({
-            template: 'Dark Energy Tap: {player} explores frontier — {card}',
-            args: { player, card: card.name },
-          })
-          // Apply simple frontier effects (trade goods, relic fragments)
-          if (card.tradeGoods) {
-            player.addTradeGoods(card.tradeGoods)
-          }
-          if (card.relicFragment) {
-            if (!player.relicFragments) {
-              player.relicFragments = []
-            }
-            player.relicFragments.push(card.relicFragment)
-          }
-        }
-      }
+      this._exploreFrontier(systemId, player.name, 'Dark Energy Tap')
     }
   }
 
