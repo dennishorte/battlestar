@@ -6,6 +6,7 @@ module.exports = {
   cost: { clay: 6 },
   victoryPoints: 1,
   expansion: '5-6',
+  baseVersions: ['cooking-hearth-4', 'cooking-hearth-5'],
   upgradesFrom: ['fireplace-2', 'fireplace-3', 'fireplace-4'],
   upgradesTo: [],
   text: [

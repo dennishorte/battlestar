@@ -2,7 +2,19 @@ const { Agricola } = require('./agricola')
 
 Agricola.prototype.getAvailableMajorImprovements = function() {
   const majorZone = this.zones.byId('common.majorImprovements')
-  return majorZone.cardlist().map(c => c.id)
+  const allAvailable = majorZone.cardlist()
+  const availableIds = new Set(allAvailable.map(c => c.id))
+
+  // Filter out 5-6 player expansion cards whose base versions are still available
+  return allAvailable
+    .filter(card => {
+      const baseVersions = card.definition.baseVersions
+      if (baseVersions) {
+        return !baseVersions.some(baseId => availableIds.has(baseId))
+      }
+      return true
+    })
+    .map(c => c.id)
 }
 
 /**

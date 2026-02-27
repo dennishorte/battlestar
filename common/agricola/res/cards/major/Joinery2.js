@@ -6,6 +6,7 @@ module.exports = {
   cost: { wood: 2, stone: 3 },
   victoryPoints: 2,
   expansion: '5-6',
+  baseVersions: ['joinery'],
   text: [
     'Harvest: At most 1 time Wood \u2192 2 Food',
     'Scoring: 3/5/7 Wood \u2192 1/2/3 bonus points',

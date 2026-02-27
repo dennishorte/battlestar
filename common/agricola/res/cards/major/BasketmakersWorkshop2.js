@@ -6,6 +6,7 @@ module.exports = {
   cost: { reed: 2, stone: 3 },
   victoryPoints: 2,
   expansion: '5-6',
+  baseVersions: ['basketmakers-workshop'],
   text: [
     'Harvest: At most 1 time Reed \u2192 3 Food',
     'Scoring: 2/4/5 Reed \u2192 1/2/3 bonus points',

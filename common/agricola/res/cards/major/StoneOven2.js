@@ -6,6 +6,7 @@ module.exports = {
   cost: { clay: 2, stone: 3 },
   victoryPoints: 3,
   expansion: '5-6',
+  baseVersions: ['stone-oven'],
   text: [
     '"Bake Bread" action: Up to 2 times Grain \u2192 4 Food',
     'When you build this improvement, you can immediately take a "Bake Bread" action.',
