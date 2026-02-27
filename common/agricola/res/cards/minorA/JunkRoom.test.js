@@ -17,7 +17,7 @@ describe('Junk Room', () => {
 
     t.testBoard(game, {
       dennis: {
-        food: 3, // +1 from Meeting Place + 1 from onPlay + 1 from onBuildImprovement
+        food: 2, // +1 from Meeting Place + 1 from onBuildImprovement
         hand: [],
         minorImprovements: ['junk-room-a055'],
       },
