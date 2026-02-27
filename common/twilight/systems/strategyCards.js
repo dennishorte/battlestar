@@ -183,6 +183,9 @@ module.exports = function(Twilight) {
     // Jol-Nar Brilliant: exhaust 2 techs if this research required brilliant skip
     this.factionAbilities.onTechResearched(player, tech)
 
+    // Prophet's Tears: exhaust to draw 1 action card after research
+    this._offerProphetsTears(player)
+
     return techId
   }
 
@@ -486,8 +489,11 @@ module.exports = function(Twilight) {
         isFree = true
       }
 
-      // Skip if player has no strategy tokens to spend (unless free)
-      if (!isFree && player.commandTokens.strategy <= 0) {
+      // Scepter of Emelpar: can use secondary even with 0 strategy tokens
+      const hasScepter = !isFree && this._isRelicReady(player, 'scepter-of-emelpar')
+
+      // Skip if player has no strategy tokens to spend (unless free or has Scepter)
+      if (!isFree && !hasScepter && player.commandTokens.strategy <= 0) {
         continue
       }
 
@@ -498,8 +504,12 @@ module.exports = function(Twilight) {
 
       if (choice[0] === 'Use Secondary') {
         if (!isFree) {
-          player.spendStrategyToken()
-          this.factionAbilities.onStrategyTokenSpent(player, activePlayer.name)
+          // Scepter of Emelpar: offer to exhaust instead of spending strategy token
+          const scepterUsed = this._offerScepterOfEmelpar(player)
+          if (!scepterUsed) {
+            player.spendStrategyToken()
+            this.factionAbilities.onStrategyTokenSpent(player, activePlayer.name)
+          }
         }
         this._resolveSecondary(player, cardId)
 
