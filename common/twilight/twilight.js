@@ -688,7 +688,6 @@ Twilight.prototype.actionPhase = function() {
         break
       case 'Strategic Action':
         this._strategicAction(player)
-        this._resolveSecondaries(player, this.state.lastStrategyCard)
         break
       case 'Component Action':
         this._componentAction(player)
@@ -767,7 +766,6 @@ Twilight.prototype.actionPhase = function() {
             break
           case 'Strategic Action':
             this._strategicAction(player)
-            this._resolveSecondaries(player, this.state.lastStrategyCard)
             break
           case 'Component Action':
             this._componentAction(player)
