@@ -48,11 +48,29 @@ function lineClasses(line) {
   else if (line.event === 'round-start') {
     classes.push('round-header')
   }
-  else if (line.event === 'player-turn' || line.event === 'player-action') {
+  else if (line.event === 'player-turn') {
+    classes.push('player-turn')
+  }
+  else if (line.event === 'player-action') {
     classes.push('player-action')
   }
   else if (line.event === 'combat') {
-    classes.push('combat-entry')
+    classes.push('combat-header')
+  }
+  else if (line.event === 'scoring') {
+    classes.push('scoring-entry')
+  }
+  else if (line.event === 'agenda') {
+    classes.push('agenda-entry')
+  }
+  else if (line.event === 'agenda-outcome') {
+    classes.push('agenda-outcome')
+  }
+  else if (line.event === 'activate-system') {
+    classes.push('activate-system')
+  }
+  else if (line.indent >= 2) {
+    classes.push('indented-detail')
   }
 
   return classes
@@ -109,70 +127,162 @@ useGameLogProvider({
 </script>
 
 <style scoped>
+/* ── Indentation ── */
 #gamelog-twilight :deep(.indent-0),
-#gamelog-twilight :deep(.indent-1),
-#gamelog-twilight :deep(.indent-2) {
+#gamelog-twilight :deep(.indent-1) {
   margin-left: 0;
+  padding-left: .5em;
+}
+
+#gamelog-twilight :deep(.indent-2) {
+  margin-left: .75em;
+  padding-left: .5em;
 }
 
 #gamelog-twilight :deep(.indent-3) {
-  margin-left: 1em;
+  margin-left: 1.5em;
+  padding-left: .5em;
 }
 
 #gamelog-twilight :deep(.indent-4) {
-  margin-left: 2em;
+  margin-left: 2.25em;
+  padding-left: .5em;
 }
 
-/* Round header */
+#gamelog-twilight :deep(.indent-5) {
+  margin-left: 3em;
+  padding-left: .5em;
+}
+
+/* ── Indented detail lines (visual grouping) ── */
+#gamelog-twilight :deep(.indented-detail) {
+  border-left: 2px solid #dee2e6;
+  color: #495057;
+  font-size: 0.92em;
+}
+
+/* ── Round header ── */
 #gamelog-twilight :deep(.round-header) {
-  font-weight: bold;
+  font-weight: 800;
   text-align: center;
-  background-color: #1a1a2e;
-  color: #e0d68a;
-  padding: .25em .5em;
-  margin-top: 1em;
-  border-radius: .25em;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  color: #f0e68c;
+  padding: .4em .75em;
+  margin-top: 1.25em;
+  border-radius: .3em;
   display: flex;
   justify-content: center;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-size: 1.05em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 #gamelog-twilight :deep(.round-header > div) {
   display: block;
 }
 
-/* Phase headers */
+/* ── Phase headers ── */
 #gamelog-twilight :deep(.phase-header) {
-  font-weight: bold;
+  font-weight: 700;
   text-align: center;
-  padding: .2em .5em;
+  padding: .25em .5em;
   border-radius: .2em;
   margin-top: .5em;
   color: white;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-size: 0.85em;
 }
 
 #gamelog-twilight :deep(.phase-header > div) {
   display: block;
 }
 
-#gamelog-twilight :deep(.phase-strategy) { background-color: #0d6efd; }
-#gamelog-twilight :deep(.phase-action) { background-color: #198754; }
-#gamelog-twilight :deep(.phase-status) { background-color: #b8860b; }
-#gamelog-twilight :deep(.phase-agenda) { background-color: #6f42c1; }
-
-/* Player action */
-#gamelog-twilight :deep(.player-action) {
-  padding: .1em .5em;
-  border-radius: .15em;
-  margin-top: .25em;
-  font-weight: 600;
+#gamelog-twilight :deep(.phase-strategy) {
+  background: linear-gradient(135deg, #0d6efd, #3d8bfd);
 }
 
-/* Combat */
-#gamelog-twilight :deep(.combat-entry) {
-  background-color: #fff0f0;
-  border-left: 3px solid #dc3545;
+#gamelog-twilight :deep(.phase-action) {
+  background: linear-gradient(135deg, #146c43, #198754);
+}
+
+#gamelog-twilight :deep(.phase-status) {
+  background: linear-gradient(135deg, #996515, #b8860b);
+}
+
+#gamelog-twilight :deep(.phase-agenda) {
+  background: linear-gradient(135deg, #59359a, #6f42c1);
+}
+
+/* ── Player turn (main action choice) ── */
+#gamelog-twilight :deep(.player-turn) {
+  padding: .15em .6em;
+  border-radius: .2em;
+  margin-top: .4em;
+  font-weight: 700;
+  font-size: 0.95em;
+}
+
+/* ── Player action (secondary: pass, pick card, etc.) ── */
+#gamelog-twilight :deep(.player-action) {
   padding: .1em .5em;
-  margin-left: 1em;
+  margin-top: .15em;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+/* ── Combat header ── */
+#gamelog-twilight :deep(.combat-header) {
+  background-color: #fff0f0;
+  color: #842029;
+  border-left: 3px solid #dc3545;
+  padding: .2em .6em;
+  margin-top: .3em;
+  font-weight: 700;
+  font-size: 0.92em;
+  border-radius: 0 .2em .2em 0;
+}
+
+/* ── Scoring ── */
+#gamelog-twilight :deep(.scoring-entry) {
+  background-color: #d1e7dd;
+  color: #0a3622;
+  border-left: 3px solid #198754;
+  padding: .15em .6em;
+  margin-top: .15em;
+  font-weight: 700;
+  border-radius: 0 .2em .2em 0;
+}
+
+/* ── Agenda card ── */
+#gamelog-twilight :deep(.agenda-entry) {
+  background-color: #e8dff5;
+  color: #3b1f6e;
+  border-left: 3px solid #6f42c1;
+  padding: .15em .6em;
+  margin-top: .3em;
+  font-weight: 600;
+  border-radius: 0 .2em .2em 0;
+}
+
+/* ── Agenda outcome ── */
+#gamelog-twilight :deep(.agenda-outcome) {
+  background-color: #f0e8fa;
+  color: #4a2683;
+  border-left: 3px solid #a370d8;
+  padding: .15em .6em;
+  font-weight: 700;
+  border-radius: 0 .2em .2em 0;
+}
+
+/* ── System activation ── */
+#gamelog-twilight :deep(.activate-system) {
+  border-left: 2px solid #6c757d;
+  padding: .1em .5em;
+  margin-top: .15em;
+  color: #adb5bd;
+  font-size: 0.9em;
 }
 
 #gamelog-twilight :deep(.player-name) {
