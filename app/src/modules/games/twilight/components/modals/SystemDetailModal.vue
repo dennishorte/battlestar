@@ -20,6 +20,14 @@
           <span class="info-key">Wormhole:</span>
           <span>{{ tileData.wormholes.join(', ') }}</span>
         </div>
+        <div class="info-row" v-if="hasFrontierToken">
+          <span class="info-key">Frontier:</span>
+          <span class="frontier-tag">token available</span>
+        </div>
+        <div class="info-row" v-else-if="isFrontierSystem && !hasFrontierToken">
+          <span class="info-key">Frontier:</span>
+          <span class="frontier-explored">explored</span>
+        </div>
       </div>
 
       <!-- Planets -->
@@ -166,6 +174,15 @@ export default {
         byOwner[unit.owner].types[unit.type] = (byOwner[unit.owner].types[unit.type] || 0) + 1
       }
       return Object.values(byOwner)
+    },
+
+    isFrontierSystem() {
+      const planets = this.tileData.planets || []
+      return planets.length === 0 && this.tileData.type !== 'hyperlane'
+    },
+
+    hasFrontierToken() {
+      return this.isFrontierSystem && !this.game.state.exploredPlanets?.[this.systemId]
     },
 
     commandTokens() {
@@ -328,6 +345,13 @@ export default {
 .token-entry {
   font-size: .85em;
   padding: .05em 0;
+}
+
+.frontier-tag {
+  font-size: .85em; font-weight: 600; color: #0288d1;
+}
+.frontier-explored {
+  font-size: .85em; color: #999; font-style: italic;
 }
 
 .planet-attachments { display: flex; flex-wrap: wrap; gap: .2em; margin-top: .15em; }
