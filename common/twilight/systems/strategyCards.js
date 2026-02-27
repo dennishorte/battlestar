@@ -506,6 +506,13 @@ module.exports = function(Twilight) {
         // Acquiescence: return PN to Winnu after free secondary
         this.factionAbilities.returnAcquiescence(player, activePlayer)
       }
+      else {
+        this.log.add({
+          template: '{player} declines {secondary}',
+          args: { player, secondary: secondaryAvailable },
+          classes: ['player-action'],
+        })
+      }
     }
   }
 
