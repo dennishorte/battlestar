@@ -33,6 +33,7 @@ export default {
           switch (bonus) {
             case 10: return 'a'
             case 11: return 'b'
+            case 12: return 't'
             default: return bonus.toString()
           }
         })
