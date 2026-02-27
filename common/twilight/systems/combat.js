@@ -1,0 +1,663 @@
+const res = require('../res/index.js')
+
+module.exports = function(Twilight) {
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Space Combat
+
+  Twilight.prototype._spaceCombat = function(player, systemId) {
+    const systemUnits = this.state.units[systemId]
+    if (!systemUnits) {
+      return
+    }
+
+    // Find all players with ships in the system
+    const playerShips = {}
+    for (const unit of systemUnits.space) {
+      if (!playerShips[unit.owner]) {
+        playerShips[unit.owner] = []
+      }
+      playerShips[unit.owner].push(unit)
+    }
+
+    // Need exactly 2 players with ships for combat
+    const combatants = Object.keys(playerShips)
+    if (combatants.length < 2) {
+      return
+    }
+
+    const attacker = player.name
+    const defender = combatants.find(name => name !== attacker)
+    if (!defender) {
+      return
+    }
+
+    this.log.add({
+      template: 'Space combat in system {system}',
+      args: { system: systemId },
+      event: 'combat',
+    })
+    this.log.indent()
+
+    // Mentak Ambush (before AFB)
+    this.factionAbilities.onSpaceCombatStart(systemId, attacker, defender)
+
+    // Anti-Fighter Barrage (before combat)
+    this._antiFighterBarrage(systemId, attacker, defender)
+
+    // Assault Cannon: if a player has 3+ non-fighter ships and this tech, opponent destroys 1 non-fighter
+    for (const [acOwner, acTarget] of [[attacker, defender], [defender, attacker]]) {
+      const acPlayer = this.players.byName(acOwner)
+      if (acPlayer && acPlayer.hasTechnology('assault-cannon')) {
+        const ownShips = systemUnits.space.filter(
+          u => u.owner === acOwner && u.type !== 'fighter'
+        )
+        if (ownShips.length >= 3) {
+          const targetShips = systemUnits.space.filter(
+            u => u.owner === acTarget && u.type !== 'fighter'
+          )
+          if (targetShips.length > 0) {
+          // Destroy cheapest non-fighter
+            targetShips.sort((a, b) => {
+              const defA = this._getUnitStats(a.owner, a.type)
+              const defB = this._getUnitStats(b.owner, b.type)
+              return (defA?.cost || 0) - (defB?.cost || 0)
+            })
+            const victim = targetShips[0]
+            const idx = systemUnits.space.findIndex(u => u.id === victim.id)
+            if (idx !== -1) {
+              systemUnits.space.splice(idx, 1)
+              this.log.add({
+                template: 'Assault Cannon: {target} loses a {unit}',
+                args: { target: acTarget, unit: victim.type },
+              })
+            }
+          }
+        }
+      }
+    }
+
+    // Combat rounds
+    let round = 0
+    const MAX_ROUNDS = 20  // safety limit
+    while (round < MAX_ROUNDS) {
+      round++
+
+      const attackerShips = systemUnits.space.filter(u => u.owner === attacker)
+      const defenderShips = systemUnits.space.filter(u => u.owner === defender)
+
+      if (attackerShips.length === 0 || defenderShips.length === 0) {
+        break
+      }
+
+      // Start-of-round faction abilities (e.g., Letnev Munitions Reserves)
+      this.factionAbilities.onSpaceCombatRound(systemId, attacker, defender)
+
+      // Both sides roll simultaneously
+      this.state._combatOpponent = { [attacker]: defender, [defender]: attacker }
+      const combatContext = { combatType: 'space', systemId }
+      const attackerHits = this._rollCombatDice(attackerShips, combatContext)
+      const defenderHits = this._rollCombatDice(defenderShips, combatContext)
+      delete this.state._combatOpponent
+
+      this.log.add({
+        template: 'Round {round}: attacker scores {aHits} hits, defender scores {dHits} hits',
+        args: { round, aHits: attackerHits, dHits: defenderHits },
+      })
+
+      // Assign hits (auto-assign: sustain damage first, then cheapest units)
+      this._assignHits(systemId, defender, attackerHits, attacker)
+      this._assignHits(systemId, attacker, defenderHits, defender)
+
+      // Post-round faction abilities (e.g., Yin Devotion)
+      this.factionAbilities.afterSpaceCombatRound(systemId, attacker, defender)
+
+      // Check if either side wants to retreat (only after first round)
+      if (round >= 1) {
+      // Check for pending retreat announcements
+        const defenderRetreating = this.state.retreatAnnounced?.[defender]
+        const attackerRetreating = this.state.retreatAnnounced?.[attacker]
+
+        if (defenderRetreating) {
+          this._executeRetreat(systemId, defender, defenderRetreating)
+          delete this.state.retreatAnnounced[defender]
+          break
+        }
+        if (attackerRetreating) {
+          this._executeRetreat(systemId, attacker, attackerRetreating)
+          delete this.state.retreatAnnounced[attacker]
+          break
+        }
+      }
+    }
+
+    // Determine combat winner/loser for faction abilities (Mahact edict)
+    const aShipsAfter = systemUnits.space.filter(u => u.owner === attacker)
+    const dShipsAfter = systemUnits.space.filter(u => u.owner === defender)
+    if (aShipsAfter.length > 0 && dShipsAfter.length === 0) {
+      this.factionAbilities.afterCombatResolved(systemId, attacker, defender, 'space')
+      this._detectCombatSecrets(systemId, attacker, defender, 'space')
+    }
+    else if (dShipsAfter.length > 0 && aShipsAfter.length === 0) {
+      this.factionAbilities.afterCombatResolved(systemId, defender, attacker, 'space')
+      this._detectCombatSecrets(systemId, defender, attacker, 'space')
+    }
+
+    this.log.outdent()
+  }
+
+  // Announce retreat: called from action cards or before combat round
+  Twilight.prototype.announceRetreat = function(playerName, targetSystemId) {
+    if (!this.state.retreatAnnounced) {
+      this.state.retreatAnnounced = {}
+    }
+    this.state.retreatAnnounced[playerName] = targetSystemId
+  }
+
+  Twilight.prototype._executeRetreat = function(fromSystemId, playerName, toSystemId) {
+    const fromUnits = this.state.units[fromSystemId]
+
+    // Ensure target system unit structure exists
+    if (!this.state.units[toSystemId]) {
+      this.state.units[toSystemId] = { space: [], planets: {} }
+    }
+
+    // Move all ships belonging to this player
+    const ships = fromUnits.space.filter(u => u.owner === playerName)
+    fromUnits.space = fromUnits.space.filter(u => u.owner !== playerName)
+
+    for (const ship of ships) {
+      this.state.units[toSystemId].space.push(ship)
+    }
+
+    this.log.add({
+      template: '{player} retreats to {system}',
+      args: { player: playerName, system: toSystemId },
+    })
+  }
+
+  Twilight.prototype._getRetreatTargets = function(systemId, playerName) {
+    const adjacentSystems = this._getAdjacentSystems(systemId)
+    return adjacentSystems.filter(adjId => {
+      const adjUnits = this.state.units[adjId]
+      if (!adjUnits) {
+        return true
+      }
+      // Cannot retreat into a system with enemy ships
+      return !adjUnits.space.some(u => u.owner !== playerName)
+    })
+  }
+
+
+  Twilight.prototype._antiFighterBarrage = function(systemId, attacker, defender) {
+    const systemUnits = this.state.units[systemId]
+
+    // Both sides can have AFB
+    for (const [shooter, target] of [[attacker, defender], [defender, attacker]]) {
+      const ships = systemUnits.space.filter(u => u.owner === shooter)
+      let totalAFBHits = 0
+      const afbMissCombatValues = []
+
+      // Strike Wing Alpha II: track rolls of 9-10 from destroyers with this upgrade
+      let swaIIInfantryKills = 0
+      const shooterPlayer = this.players.byName(shooter)
+      const hasSWAII = shooterPlayer && shooterPlayer.hasTechnology('strike-wing-alpha-ii')
+
+      // Commander bonus: +N dice to the first unit that fires (e.g., Argent Commander)
+      let commanderBonusDice = this.factionAbilities.getUnitAbilityBonusDice(shooter)
+
+      for (const ship of ships) {
+        const unitDef = this._getUnitStats(ship.owner, ship.type)
+        if (!unitDef) {
+          continue
+        }
+
+        // The Cavalry: use override abilities if active for this ship
+        const effectiveAbilities = (this.state._cavalryActive?.unitId === ship.id)
+          ? this.state._cavalryActive.abilities
+          : unitDef.abilities
+
+        // Parse AFB ability: 'anti-fighter-barrage-Nx#' where N is combat value, # is dice count
+        const afbAbility = effectiveAbilities.find(a => a.startsWith('anti-fighter-barrage-'))
+        if (!afbAbility) {
+          continue
+        }
+
+        const parts = afbAbility.replace('anti-fighter-barrage-', '').split('x')
+        const combatValue = parseInt(parts[0])
+        let diceCount = parseInt(parts[1])
+
+        // Apply commander bonus dice to the first unit that fires
+        if (commanderBonusDice > 0) {
+          diceCount += commanderBonusDice
+          commanderBonusDice = 0
+        }
+
+        for (let i = 0; i < diceCount; i++) {
+          const roll = Math.floor(this.random() * 10) + 1
+          if (roll >= combatValue) {
+            totalAFBHits++
+            // Strike Wing Alpha II: results of 9 or 10 also destroy infantry
+            if (hasSWAII && ship.type === 'destroyer' && roll >= 9) {
+              swaIIInfantryKills++
+            }
+          }
+          else {
+            afbMissCombatValues.push(combatValue)
+          }
+        }
+      }
+
+      // Jol-Nar Commander: reroll misses
+      totalAFBHits += this._offerUnitAbilityReroll(shooter, afbMissCombatValues)
+
+      // AFB hits only affect fighters
+      if (totalAFBHits > 0) {
+        this.log.add({
+          template: '{shooter} scores {hits} anti-fighter barrage hits',
+          args: { shooter, hits: totalAFBHits },
+        })
+
+        let fightersDestroyed = 0
+        for (let i = 0; i < totalAFBHits; i++) {
+          const fighterIdx = systemUnits.space.findIndex(
+            u => u.owner === target && u.type === 'fighter'
+          )
+          if (fighterIdx !== -1) {
+            systemUnits.space.splice(fighterIdx, 1)
+            fightersDestroyed++
+          }
+        }
+
+        // fight-with-precision: destroyed all fighters during AFB
+        if (fightersDestroyed > 0) {
+          const remainingFighters = systemUnits.space.filter(
+            u => u.owner === target && u.type === 'fighter'
+          )
+          if (remainingFighters.length === 0) {
+            this._recordSecretTrigger(shooter, 'fight-with-precision')
+          }
+        }
+
+        // Strike Wing Alpha II: destroy opponent infantry in the space area
+        if (swaIIInfantryKills > 0) {
+          let infantryDestroyed = 0
+          for (let i = 0; i < swaIIInfantryKills; i++) {
+            const infantryIdx = systemUnits.space.findIndex(
+              u => u.owner === target && u.type === 'infantry'
+            )
+            if (infantryIdx !== -1) {
+              systemUnits.space.splice(infantryIdx, 1)
+              infantryDestroyed++
+            }
+          }
+          if (infantryDestroyed > 0) {
+            this.log.add({
+              template: 'Strike Wing Alpha II: {shooter} destroys {count} opponent infantry',
+              args: { shooter, count: infantryDestroyed },
+            })
+          }
+        }
+
+        // Argent raid-formation: excess AFB hits apply as sustain-damage to opponent ships
+        const excessHits = this.factionAbilities.getRaidFormationExcessHits(
+          shooter, totalAFBHits, fightersDestroyed
+        )
+        if (excessHits > 0) {
+          let remaining = excessHits
+          // Apply sustain damage to opponent ships
+          const sustainShips = systemUnits.space
+            .filter(u => u.owner === target && !u.damaged)
+            .filter(u => {
+              const def = this._getUnitStats(u.owner, u.type)
+              return def && def.abilities.includes('sustain-damage')
+            })
+          for (const ship of sustainShips) {
+            if (remaining <= 0) {
+              break
+            }
+            ship.damaged = true
+            remaining--
+          }
+          if (excessHits > 0) {
+            this.log.add({
+              template: '{shooter} Raid Formation: {hits} excess hits damage ships',
+              args: { shooter, hits: excessHits },
+            })
+          }
+        }
+      }
+    }
+  }
+
+  Twilight.prototype._rollCombatDice = function(ships, context) {
+    let hits = 0
+    for (const ship of ships) {
+      const unitDef = this._getUnitStats(ship.owner, ship.type)
+      if (!unitDef || !unitDef.combat) {
+        continue
+      }
+
+      // The Cavalry: override combat value for the chosen ship
+      const cavalryOverride = this.state._cavalryActive?.unitId === ship.id
+      const combatBase = cavalryOverride ? this.state._cavalryActive.combat : unitDef.combat
+
+      // Faction combat modifiers
+      const owner = this.players.byName(ship.owner)
+      let combatModifier = this.factionAbilities.getCombatModifier(owner)
+
+      // Space combat-specific modifiers (e.g., Gravleash Maneuvers)
+      if (context?.combatType === 'space' && context?.systemId) {
+        combatModifier += this.factionAbilities.getSpaceCombatModifier(owner, context.systemId)
+      }
+
+      // Ground combat per-unit modifiers (e.g., Shield Paling negates Fragile for infantry)
+      if (context?.combatType === 'ground' && context?.planetId) {
+        combatModifier += this.factionAbilities.getGroundCombatUnitModifier(owner, ship, context.systemId, context.planetId)
+      }
+
+      const effectiveCombat = Math.max(1, Math.min(combatBase + combatModifier, 10))
+
+      // Each ship rolls 1 die (war suns roll 3 dice per their combat value)
+      // bonusDice: temporary extra dice (e.g., Letnev agent Viscount Unlenn)
+      const baseDice = unitDef.type === 'war-sun' ? 3 : 1
+      const diceCount = baseDice + (ship.bonusDice || 0)
+      for (let i = 0; i < diceCount; i++) {
+        const roll = Math.floor(this.random() * 10) + 1
+        if (roll >= effectiveCombat) {
+          hits++
+        }
+      }
+    }
+    return hits
+  }
+
+  Twilight.prototype._assignHits = function(systemId, ownerName, hits, destroyerName) {
+    if (hits <= 0) {
+      return
+    }
+
+    // Allow faction abilities to cancel hits (e.g., Titans agent Tellurian)
+    const effectiveHits = this.factionAbilities.onHitsProduced(ownerName, systemId, hits, 'space')
+    if (effectiveHits <= 0) {
+      return
+    }
+
+    const systemUnits = this.state.units[systemId]
+    let remainingHits = effectiveHits
+
+    // Track which units just sustained this round (for Duranium Armor)
+    const justSustainedIds = new Set()
+
+    // Non-Euclidean Shielding: each sustain cancels 2 hits instead of 1
+    const owner = this.players.byName(ownerName)
+    const hitsPerSustain = owner
+      ? this.factionAbilities.getSustainDamageHitsCancel(owner)
+      : 1
+
+    // First, sustain damage on undamaged ships that have the ability
+    const sustainableShips = systemUnits.space
+      .filter(u => u.owner === ownerName && !u.damaged)
+      .filter(u => {
+      // The Cavalry: override abilities for the chosen ship
+        if (this.state._cavalryActive?.unitId === u.id) {
+          return this.state._cavalryActive.abilities.includes('sustain-damage')
+        }
+        const def = this._getUnitStats(u.owner, u.type)
+        return def && def.abilities.includes('sustain-damage')
+      })
+    // Prioritize most expensive ships for sustain
+      .sort((a, b) => {
+        const defA = this._getUnitStats(a.owner, a.type)
+        const defB = this._getUnitStats(b.owner, b.type)
+        return (defB?.cost || 0) - (defA?.cost || 0)
+      })
+
+    for (const ship of sustainableShips) {
+      if (remainingHits <= 0) {
+        break
+      }
+      ship.damaged = true
+      justSustainedIds.add(ship.id)
+      remainingHits = Math.max(0, remainingHits - hitsPerSustain)
+    }
+
+    // Faction hook: after units sustain damage (e.g., Letnev commander)
+    if (justSustainedIds.size > 0) {
+      this.factionAbilities.onUnitsSustainedDamage(ownerName, systemId, justSustainedIds.size)
+    }
+
+    // Then destroy cheapest ships first
+    while (remainingHits > 0) {
+      const ships = systemUnits.space.filter(u => u.owner === ownerName)
+      if (ships.length === 0) {
+        break
+      }
+
+      // Sort by cost ascending (destroy cheapest first)
+      ships.sort((a, b) => {
+        const defA = this._getUnitStats(a.owner, a.type)
+        const defB = this._getUnitStats(b.owner, b.type)
+        return (defA?.cost || 0) - (defB?.cost || 0)
+      })
+
+      const target = ships[0]
+      const idx = systemUnits.space.findIndex(u => u.id === target.id)
+      if (idx !== -1) {
+        const removed = systemUnits.space.splice(idx, 1)[0]
+        // Track destruction of war suns/flagships for secret objectives
+        if (destroyerName && (removed.type === 'war-sun' || removed.type === 'flagship')) {
+          this._recordSecretTrigger(destroyerName, 'destroy-their-greatest-ship')
+        }
+        if (destroyerName) {
+          this.factionAbilities.onUnitDestroyed(systemId, removed, destroyerName, null)
+        }
+
+        // Track destroyed ship types for Salvage Operations
+        if (!this.state._destroyedDuringCombat) {
+          this.state._destroyedDuringCombat = {}
+        }
+        if (!this.state._destroyedDuringCombat[ownerName]) {
+          this.state._destroyedDuringCombat[ownerName] = []
+        }
+        this.state._destroyedDuringCombat[ownerName].push(removed.type)
+      }
+      remainingHits--
+    }
+
+    // Duranium Armor: repair 1 damaged unit that did NOT sustain this round
+    if (owner && owner.hasTechnology('duranium-armor')) {
+      const repairCandidate = systemUnits.space.find(
+        u => u.owner === ownerName && u.damaged && !justSustainedIds.has(u.id)
+      )
+      if (repairCandidate) {
+        repairCandidate.damaged = false
+      }
+    }
+  }
+
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Invasion
+
+  Twilight.prototype._invasionStep = function(player, systemId) {
+    const systemUnits = this.state.units[systemId]
+    if (!systemUnits) {
+      return
+    }
+
+    const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+    if (!tile || tile.planets.length === 0) {
+    // No planets — just discard any ground forces in space (can't exist without planet)
+      this._discardGroundForcesInSpace(systemId, player.name)
+      return
+    }
+
+    // Find ground forces in space (in transit)
+    const groundForcesInSpace = systemUnits.space
+      .filter(u => u.owner === player.name && res.getUnit(u.type)?.category === 'ground')
+
+    // Find enemy-controlled planets in this system
+    const enemyPlanets = tile.planets.filter(planetId => {
+      const planetState = this.state.planets[planetId]
+      return planetState && planetState.controller && planetState.controller !== player.name
+    })
+
+    // Coalescence: Titans mech on a planet forces ground combat
+    const coalescencePlanets = tile.planets.filter(planetId => {
+      return this.factionAbilities.checkCoalescenceOnPlanet(systemId, planetId, player.name)
+    })
+
+    // Invasion if: enemy planets with ground forces to land, OR coalescence forces combat
+    const shouldInvade = (enemyPlanets.length > 0 && groundForcesInSpace.length > 0)
+    || coalescencePlanets.length > 0
+
+    if (shouldInvade) {
+    // Target the first enemy planet (prefer coalescence planet if no standard invasion target)
+      const targetPlanet = (enemyPlanets.length > 0 && groundForcesInSpace.length > 0)
+        ? enemyPlanets[0]
+        : coalescencePlanets[0]
+
+      // Snapshot defender structures before combat (for L1Z1X Assimilate)
+      const defenderName = this.state.planets[targetPlanet]?.controller
+      const preInvasionStructures = {}
+      if (defenderName) {
+        const planetUnits = systemUnits.planets[targetPlanet] || []
+        for (const unit of planetUnits) {
+          if (unit.owner === defenderName) {
+            const def = res.getUnit(unit.type)
+            if (def?.category === 'structure') {
+              preInvasionStructures[unit.type] = (preInvasionStructures[unit.type] || 0) + 1
+            }
+          }
+        }
+      }
+
+      // Step 1: Bombardment
+      this._bombardment(systemId, targetPlanet, player.name)
+
+      // Step 2: Space Cannon Defense (PDS fire at landing ground forces)
+      this._spaceCannonDefense(systemId, targetPlanet, player.name)
+
+      // Step 3: Commit ground forces from space to the planet
+      this._commitGroundForces(systemId, targetPlanet, player.name)
+
+      // Step 4: Ground combat
+      this._groundCombat(systemId, targetPlanet, player.name)
+
+      // Step 5: Establish control (pass pre-invasion structure counts)
+      this._establishControl(systemId, targetPlanet, player.name, preInvasionStructures)
+    }
+    else {
+    // No enemy planets — auto-place ground forces on the first friendly/empty planet
+      this._autoPlaceGroundForces(systemId, player.name, tile)
+    }
+  }
+
+  Twilight.prototype._bombardment = function(systemId, planetId, attackerName) {
+    const systemUnits = this.state.units[systemId]
+    const planetUnits = systemUnits.planets[planetId] || []
+
+    // Check for planetary shield on defending units
+    const defenderName = this.state.planets[planetId]?.controller
+    if (!defenderName) {
+      return
+    }
+
+    const hasShield = planetUnits.some(u => {
+      if (u.owner !== defenderName) {
+        return false
+      }
+      const def = this._getUnitStats(u.owner, u.type)
+      return def && def.abilities.includes('planetary-shield')
+    })
+
+    // Ships with bombardment ability fire at the planet
+    const attackerShips = systemUnits.space.filter(u => u.owner === attackerName)
+    let totalHits = 0
+    const bombardMissCombatValues = []
+    let bombardmentUsed = false
+    const attackerPlayer = this.players.byName(attackerName)
+    let plasmaUsed = false
+
+    // Commander bonus: +N dice to the first unit that fires (e.g., Argent Commander)
+    let commanderBonusDice = this.factionAbilities.getUnitAbilityBonusDice(attackerName)
+
+    for (const ship of attackerShips) {
+      const unitDef = this._getUnitStats(ship.owner, ship.type)
+      if (!unitDef) {
+        continue
+      }
+
+      // Parse bombardment ability: 'bombardment-NxD' where N is combat value, D is dice count
+      const bombAbility = unitDef.abilities.find(a => a.startsWith('bombardment-'))
+      if (!bombAbility) {
+        continue
+      }
+
+      const parts = bombAbility.replace('bombardment-', '').split('x')
+      const combatValue = parseInt(parts[0])
+      let diceCount = parseInt(parts[1])
+
+      // War suns ignore planetary shield; other bombardment is blocked by it
+      const isWarSun = unitDef.type === 'war-sun'
+      if (hasShield && !isWarSun) {
+        continue
+      }
+
+      // Plasma Scoring: +1 die for the first unit that fires bombardment
+      if (!plasmaUsed && attackerPlayer.hasTechnology('plasma-scoring')) {
+        diceCount++
+        plasmaUsed = true
+      }
+
+      // Commander bonus dice to the first unit that fires
+      if (commanderBonusDice > 0) {
+        diceCount += commanderBonusDice
+        commanderBonusDice = 0
+      }
+
+      bombardmentUsed = true
+      for (let i = 0; i < diceCount; i++) {
+        const roll = Math.floor(this.random() * 10) + 1
+        if (roll >= combatValue) {
+          totalHits++
+        }
+        else {
+          bombardMissCombatValues.push(combatValue)
+        }
+      }
+    }
+
+    // Jol-Nar Commander: reroll misses
+    totalHits += this._offerUnitAbilityReroll(attackerName, bombardMissCombatValues)
+
+    if (totalHits > 0) {
+      this.log.add({
+        template: '{attacker} bombardment scores {hits} hits on {planet}',
+        args: { attacker: attackerName, hits: totalHits, planet: planetId },
+      })
+
+      // Auto-assign bombardment hits to defender's ground forces (cheapest first)
+      this._assignGroundHits(systemId, planetId, defenderName, totalHits, null, 'bombardment')
+
+      // make-an-example-of-their-world: destroyed all ground forces via bombardment
+      const remainingGroundForces = (systemUnits.planets[planetId] || []).filter(u => {
+        if (u.owner !== defenderName) {
+          return false
+        }
+        const def = res.getUnit(u.type)
+        return def && def.category === 'ground'
+      })
+      if (remainingGroundForces.length === 0) {
+        this._recordSecretTrigger(attackerName, 'make-an-example-of-their-world')
+      }
+    }
+
+    // Mech DEPLOY triggers (e.g., L1Z1X Annihilator) — only if bombardment was used
+    if (bombardmentUsed) {
+      this.factionAbilities.afterBombardment(attackerName, systemId, planetId, totalHits)
+    }
+  }
+
+} // module.exports
