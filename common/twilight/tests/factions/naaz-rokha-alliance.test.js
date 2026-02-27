@@ -99,7 +99,7 @@ describe('Naaz-Rokha Alliance', () => {
       t.setBoard(game, {
         explorationDecks: {
           cultural: [],
-          hazardous: ['expedition'],
+          hazardous: ['rich-world'],
           industrial: [],
           frontier: [],
         },
@@ -120,22 +120,21 @@ describe('Naaz-Rokha Alliance', () => {
       game._explorePlanet('vefut-ii', 'dennis')
       expect(game.state.exploredPlanets['vefut-ii']).toBe(true)
 
-      // Expedition gives 2 trade goods
-      const dennis = game.players.byName('dennis')
-      expect(dennis.tradeGoods).toBe(2)
+      // Rich World is an attach card (+1 resource)
+      expect(game.state.planets['vefut-ii'].attachments).toContain('rich-world')
 
       // Deck should be empty (1 card consumed)
       expect(game.state.explorationDecks.hazardous.length).toBe(0)
     })
 
     test('exploring without mech draws only 1 card', () => {
-      // Deck: ['expedition', 'mining-world']. pop() returns mining-world first.
+      // Deck: ['rich-world', 'mining-world']. pop() returns mining-world first.
       // No mech = bonus 0, so only 1 card drawn = mining-world (attach).
       const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
       t.setBoard(game, {
         explorationDecks: {
           cultural: [],
-          hazardous: ['expedition', 'mining-world'],
+          hazardous: ['rich-world', 'mining-world'],
           industrial: [],
           frontier: [],
         },
@@ -264,7 +263,7 @@ describe('Naaz-Rokha Alliance', () => {
       t.setBoard(game, {
         explorationDecks: {
           cultural: [],
-          hazardous: ['expedition'],
+          hazardous: ['rich-world'],
           industrial: [],
           frontier: [],
         },
@@ -315,9 +314,8 @@ describe('Naaz-Rokha Alliance', () => {
       const dennis = game.players.byName('dennis')
       expect(dennis.isAgentReady()).toBe(false)
 
-      // Expedition gives 2 trade goods to the activating player (Micah)
-      const micah = game.players.byName('micah')
-      expect(micah.tradeGoods).toBe(2)
+      // Rich World is an attach card — verify it attached
+      expect(game.state.planets['vefut-ii'].attachments).toContain('rich-world')
     })
 
     test('exhausted agent cannot be used', () => {
@@ -325,7 +323,7 @@ describe('Naaz-Rokha Alliance', () => {
       t.setBoard(game, {
         explorationDecks: {
           cultural: [],
-          hazardous: ['expedition'],
+          hazardous: ['rich-world'],
           industrial: [],
           frontier: [],
         },
@@ -379,7 +377,7 @@ describe('Naaz-Rokha Alliance', () => {
       t.setBoard(game, {
         explorationDecks: {
           cultural: [],
-          hazardous: ['expedition'],
+          hazardous: ['rich-world'],
           industrial: [],
           frontier: [],
         },
@@ -415,8 +413,8 @@ describe('Naaz-Rokha Alliance', () => {
 
       const dennis = game.players.byName('dennis')
       expect(dennis.isAgentReady()).toBe(false)
-      // Expedition gives 2 trade goods
-      expect(dennis.tradeGoods).toBe(2)
+      // Rich World is an attach card — verify it attached
+      expect(game.state.planets['vefut-ii'].attachments).toContain('rich-world')
     })
 
     test('no prompt when active system has no explorable planets', () => {
@@ -461,7 +459,7 @@ describe('Naaz-Rokha Alliance', () => {
       t.setBoard(game, {
         explorationDecks: {
           cultural: [],
-          hazardous: ['expedition'],
+          hazardous: ['rich-world'],
           industrial: [],
           frontier: [],
         },
@@ -502,9 +500,8 @@ describe('Naaz-Rokha Alliance', () => {
       t.choose(game, 'Explore')
 
       expect(game.state.exploredPlanets['starpoint']).toBe(true)
-      // Expedition gives 2 trade goods
-      const dennis = game.players.byName('dennis')
-      expect(dennis.tradeGoods).toBe(2)
+      // Rich World is an attach card — verify it attached
+      expect(game.state.planets['starpoint'].attachments).toContain('rich-world')
     })
 
     test('locked commander does not trigger exploration', () => {
@@ -512,7 +509,7 @@ describe('Naaz-Rokha Alliance', () => {
       t.setBoard(game, {
         explorationDecks: {
           cultural: [],
-          hazardous: ['expedition'],
+          hazardous: ['rich-world'],
           industrial: [],
           frontier: [],
         },
@@ -1034,7 +1031,7 @@ describe('Naaz-Rokha Alliance', () => {
         t.setBoard(game, {
           explorationDecks: {
             cultural: [],
-            hazardous: ['expedition'],
+            hazardous: ['rich-world'],
             industrial: [],
             frontier: [],
           },
@@ -1061,9 +1058,8 @@ describe('Naaz-Rokha Alliance', () => {
         // Planet should be readied by Pre-Fab Arcologies
         expect(game.state.planets['vefut-ii'].exhausted).toBe(false)
 
-        // Expedition gives 2 trade goods
-        const dennis = game.players.byName('dennis')
-        expect(dennis.tradeGoods).toBe(2)
+        // Rich World is an attach card — verify it attached
+        expect(game.state.planets['vefut-ii'].attachments).toContain('rich-world')
       })
 
       test('does not ready planet without the tech', () => {
@@ -1071,7 +1067,7 @@ describe('Naaz-Rokha Alliance', () => {
         t.setBoard(game, {
           explorationDecks: {
             cultural: [],
-            hazardous: ['expedition'],
+            hazardous: ['rich-world'],
             industrial: [],
             frontier: [],
           },

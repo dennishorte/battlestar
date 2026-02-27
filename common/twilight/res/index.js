@@ -5,6 +5,7 @@ const factions = require('./factions/index.js')
 const mapLayouts = require('./mapLayouts.js')
 const objectives = require('./objectives.js')
 const planets = require('./planets.js')
+const relics = require('./relics.js')
 const promissoryNotes = require('./promissoryNotes.js')
 const strategyCards = require('./strategyCards.js')
 const systemTiles = require('./systemTiles.js')
@@ -19,6 +20,7 @@ module.exports = {
   ...mapLayouts,
   ...objectives,
   ...planets,
+  ...relics,
   ...promissoryNotes,
   ...strategyCards,
   ...systemTiles,
