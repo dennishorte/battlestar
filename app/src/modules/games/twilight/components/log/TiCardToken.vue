@@ -23,6 +23,10 @@ const strategyCard = computed(() => {
   return res.getAllStrategyCards().find(c => c.name === props.name)
 })
 
+const actionCard = computed(() => {
+  return res.getAllActionCards().find(c => c.name === props.name)
+})
+
 const tokenClass = computed(() => {
   if (strategyCard.value) {
     return 'ti-strategy-card'
@@ -34,6 +38,12 @@ function showDetails() {
   if (strategyCard.value) {
     ui.modals.cardDetail.type = 'strategy-card'
     ui.modals.cardDetail.id = strategyCard.value.id
+    ui.modals.cardDetail.context = null
+    modal.getModal('twilight-card-detail')?.show()
+  }
+  else if (actionCard.value) {
+    ui.modals.cardDetail.type = 'action-card'
+    ui.modals.cardDetail.id = actionCard.value.id
     ui.modals.cardDetail.context = null
     modal.getModal('twilight-card-detail')?.show()
   }
@@ -74,5 +84,9 @@ function showDetails() {
   background: #f0f0f0;
   color: #333;
   border: 1px solid #ccc;
+  cursor: pointer;
+}
+.ti-action-card:hover {
+  background: #e0e0e0;
 }
 </style>

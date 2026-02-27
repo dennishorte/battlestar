@@ -95,6 +95,10 @@ function convertArg(arg, value) {
   if (arg === 'card') {
     return `ticard(${value.value})`
   }
+  if (arg === 'cards') {
+    // Comma-separated card names (e.g. from draw events) → individual chips
+    return value.value.split(', ').map(name => `ticard(${name})`).join(', ')
+  }
   if (arg === 'tech') {
     return `titech(${value.value})`
   }
