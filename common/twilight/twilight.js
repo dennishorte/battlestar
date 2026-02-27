@@ -809,6 +809,7 @@ Twilight.prototype.mainLoop = function() {
     this.log.add({
       template: 'Round {round}',
       args: { round: this.state.round },
+      event: 'round-start',
     })
 
     this.strategyPhase()
@@ -909,7 +910,7 @@ Twilight.prototype._initialDraws = function() {
 
 Twilight.prototype.strategyPhase = function() {
   this.state.phase = 'strategy'
-  this.log.add({ template: 'Strategy Phase' })
+  this.log.add({ template: 'Strategy Phase', event: 'phase-start', args: { phase: 'strategy' } })
   this.log.indent()
 
   // Minister of Commerce law: elected player gains 1 TG
@@ -970,6 +971,7 @@ Twilight.prototype.strategyPhase = function() {
       this.log.add({
         template: '{player} chooses {card}',
         args: { player, card: res.getStrategyCard(cardId).name },
+        event: 'player-action',
       })
     }
   }
@@ -989,7 +991,7 @@ Twilight.prototype.strategyPhase = function() {
 
 Twilight.prototype.actionPhase = function() {
   this.state.phase = 'action'
-  this.log.add({ template: 'Action Phase' })
+  this.log.add({ template: 'Action Phase', event: 'phase-start', args: { phase: 'action' } })
   this.log.indent()
 
   // Reset passed state
@@ -1069,6 +1071,7 @@ Twilight.prototype.actionPhase = function() {
     this.log.add({
       template: '{player}: {action}',
       args: { player, action },
+      event: 'player-turn',
     })
 
     // Track which neighbors have been traded with this turn
@@ -1098,6 +1101,7 @@ Twilight.prototype.actionPhase = function() {
         this.log.add({
           template: '{player} passes',
           args: { player },
+          event: 'player-action',
         })
         break
     }
@@ -1196,7 +1200,7 @@ Twilight.prototype.actionPhase = function() {
 
 Twilight.prototype.statusPhase = function() {
   this.state.phase = 'status'
-  this.log.add({ template: 'Status Phase' })
+  this.log.add({ template: 'Status Phase', event: 'phase-start', args: { phase: 'status' } })
   this.log.indent()
 
   // Step 0: Faction status phase abilities
@@ -1311,7 +1315,7 @@ Twilight.prototype.statusPhase = function() {
 
 Twilight.prototype.agendaPhase = function() {
   this.state.phase = 'agenda'
-  this.log.add({ template: 'Agenda Phase' })
+  this.log.add({ template: 'Agenda Phase', event: 'phase-start', args: { phase: 'agenda' } })
   this.log.indent()
 
   // Resolve 2 agendas
@@ -1337,6 +1341,7 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
   this.log.add({
     template: `Agenda ${agendaNumber}: {name}`,
     args: { name: agenda.name },
+    event: 'agenda',
   })
   this.log.indent()
 
@@ -1528,6 +1533,7 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
   this.log.add({
     template: 'Outcome: {outcome} ({count} votes)',
     args: { outcome: winningOutcome, count: maxVotes },
+    event: 'agenda-outcome',
   })
 
   // Apply agenda effects
@@ -1646,6 +1652,7 @@ Twilight.prototype._tacticalAction = function(player) {
   this.log.add({
     template: '{player} activates system {system}',
     args: { player, system: systemId },
+    event: 'activate-system',
   })
 
   // Titans awaken: replace sleeper tokens with PDS
@@ -2116,6 +2123,7 @@ Twilight.prototype._spaceCombat = function(player, systemId) {
   this.log.add({
     template: 'Space combat in system {system}',
     args: { system: systemId },
+    event: 'combat',
   })
   this.log.indent()
 
@@ -3198,6 +3206,7 @@ Twilight.prototype._groundCombat = function(systemId, planetId, attackerName) {
   this.log.add({
     template: 'Ground combat on {planet}',
     args: { planet: planetId },
+    event: 'combat',
   })
 
   // Pre-combat faction abilities (e.g., Yin Indoctrination)
@@ -4099,6 +4108,7 @@ Twilight.prototype._imperialPrimary = function(player) {
     this.log.add({
       template: '{player} scores 1 VP from controlling Mecatol Rex (Imperial)',
       args: { player },
+      event: 'scoring',
     })
     this._checkVictory()
   }
@@ -5695,6 +5705,7 @@ Twilight.prototype._recordObjectiveScore = function(player, choiceString) {
   this.log.add({
     template: '{player} scores {objective} (+{points} VP)',
     args: { player, objective: obj.name, points: obj.points },
+    event: 'scoring',
   })
 
   this._checkVictory()
