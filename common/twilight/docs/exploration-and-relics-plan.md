@@ -8,20 +8,20 @@ Full implementation of the PoK exploration system: exploration card effects, pla
 - All 4 exploration decks defined in `res/explorationCards.js` (cultural, hazardous, industrial, frontier — 20 cards each, 80 total)
 - Core `_explorePlanet()` in `systems/exploration.js` — draws cards, stores attachments/fragments in state
 - Exploration triggers on invasion (establish control) and via Scanlink Drone Network tech
-- Faction hooks: Naaz-Rokha Distant Suns (bonus card), Titans sleeper placement, Naaz-Rokha Fabrication (2-fragment purge), Black Market Forgery PN, Empyrean Multiverse Shift, Mahact Vaults of the Heir
+- Faction hooks: Naaz-Rokha Distant Suns (bonus card), Titans sleeper placement, Naaz-Rokha Fabrication (2-fragment purge → real relic), Black Market Forgery PN (→ real relic), Empyrean Multiverse Shift, Mahact Vaults of the Heir (→ real relic), Perfect Synthesis hero (→ real relic)
 - Relic card data complete in `res/relics.js` (16 relics across PoK, Codex II, Codex IV)
-
-### Known bugs
-- **Dark Energy Tap** handler in `twilight.js` (~line 1342) references `card.tradeGoods` and `card.relicFragment` — these fields don't exist on frontier cards. Should use `card.resolve?.()` and `card.fragmentType`
-- **Empyrean Multiverse Shift** in `systems/factions/empyrean.js` (~line 213) references `card.relicFragment` instead of `card.fragmentType`
+- Attachment bonuses applied to resource/influence/tech calculations and agenda voting
+- Relic deck with `_initRelicDeck()` / `_gainRelic()`, on-gain effects (Shard of the Throne VP, The Obsidian secret objective)
+- General 3-fragment purge component action with unknown-wildcard support
+- `setBoard` supports `relicDeck` and `relicsGained` for tests
 
 ### Missing engine features
-- Attachment bonuses stored in `state.planets[id].attachments[]` but never applied to resource/influence/tech calculations
-- No relic deck, no relic draw mechanic — `relicsGained` is just a string array stub
-- No general 3-fragment purge action (only Naaz-Rokha Fabrication's 2-fragment variant exists)
-- All 42 action-type exploration cards need engine implementation (no `resolve()` functions)
-- 1 attach card (Demilitarized Zone) has an immediate effect on explore that needs implementation
 - Gamma wormhole attachment stored but not applied to adjacency
+- Demilitarized Zone immediate effect (return structures/ground forces) and ongoing restriction (no units committed/produced/placed)
+- 5 deferred action-type exploration cards (require complex subsystems)
+- Book of Latvinia on-gain effect (research 2 no-prereq techs)
+- Relic ACTION component actions (Dominus Orb, Stellar Converter, The Codex, Nano-Forge, etc.)
+- Relic passive/trigger effects in gameplay (Crown of Thalnos combat reroll, Scepter of Emelpar strategy token, etc.)
 
 ### Missing UI
 - No frontier token indicators on map
@@ -38,9 +38,9 @@ Full implementation of the PoK exploration system: exploration card effects, pla
 2. ~~**Fix Empyrean Multiverse Shift**~~ — replaced inline handler with `_exploreFrontier()` call
 3. Added shared `_resolveExplorationCard()` and `_exploreFrontier()` methods in `systems/exploration.js`
 
-## Phase 2: Exploration Card Effects — DONE (14 of 18 cards implemented)
+## Phase 2: Exploration Card Effects — DONE (15 of 18 cards implemented)
 
-Implemented `_resolveActionExploration()` dispatcher in `systems/exploration.js` with a switch on base card ID. 14 cards fully implemented with integration tests. 4 cards deferred (require complex subsystems).
+Implemented `_resolveActionExploration()` dispatcher in `systems/exploration.js` with a switch on base card ID. 15 cards fully implemented with integration tests. 3 cards deferred (require complex subsystems).
 
 ### Cultural actions (6 cards) — 3 of 6 done
 3. ~~**Mercenary Outfit** (x3)~~: place 1 infantry from reinforcements on this planet
@@ -55,63 +55,88 @@ Implemented `_resolveActionExploration()` dispatcher in `systems/exploration.js`
 ### Hazardous actions (9 cards) — 9 of 9 done
 9. ~~**Core Mine** (x3), **Expedition** (x3), **Volatile Fuel Source** (x3)~~: shared "if mech on planet OR remove 1 infantry" conditional. Core Mine → gain 1 TG, Expedition → ready planet, Volatile Fuel Source → gain 1 command token (pool selection)
 
-### Frontier actions (14 cards) — 8 of 14 done
+### Frontier actions (14 cards) — 9 of 14 done
 10. ~~**Lost Crew** (x2)~~: draw 2 action cards
 11. ~~**Merchant Station** (x2)~~: replenish commodities OR convert commodities to TG
 12. ~~**Derelict Vessel** (x2)~~: draw 1 secret objective
 13. ~~**Entropic Field** / **Major** / **Minor** (x3)~~: gain TG + command tokens (pool selection)
 14. ~~**Keleres Ship** (x2)~~: gain 2 command tokens (pool selection)
-15. **Enigmatic Device** (x2): DEFERRED — persistent card in play area with ACTION ability
-16. **Gamma Relay** (x1): DEFERRED — requires wormhole token system
-17. **Dead World** (x1): DEFERRED — depends on Phase 4 relic deck
+15. ~~**Dead World** (x1)~~: gain 1 relic from relic deck
+16. **Enigmatic Device** (x2): DEFERRED — persistent card in play area with ACTION ability
+17. **Gamma Relay** (x1): DEFERRED — requires wormhole token system
 18. **Ion Storm** (x1): DEFERRED — persistent token with flip mechanic
 19. **Mirage** (x1): DEFERRED — dynamic planet creation
 
 ### Attach card with immediate effect
 20. **Demilitarized Zone** (x1): DEFERRED — attaches correctly, but immediate effect (return structures/ground forces) and ongoing restriction (no units committed/produced/placed) not yet implemented
 
-## Phase 3: Attachment Bonuses
+## Phase 3: Attachment Bonuses — DONE
 
-20. **Update `TwilightPlayer.getTotalResources()`** to read `state.planets[planetId].attachments` and sum `getExplorationCard(cardId).attachment.resources`
-21. **Update `TwilightPlayer.getTotalInfluence()`** — same pattern for `.attachment.influence`
-22. **Update tech specialty handling** to include specialties from attached exploration cards. Research facilities have a fallback: if planet already has a specialty, grant +1/+1 instead
-23. **Apply Demilitarized Zone** restrictions to production and unit placement
-24. **Apply gamma wormhole** to adjacency/wormhole calculations
+Added `_getPlanetAttachmentBonuses(planetId)` helper in `systems/exploration.js`. Returns `{ resources, influence, techSpecialties[] }` from all attachments on a planet. Research facility fallback logic: if planet already has a tech specialty, grants +1/+1 resources/influence instead of a new specialty.
 
-## Phase 4: Relic System
+20. ~~**Update `TwilightPlayer.getTotalResources()`**~~ — adds attachment resource bonuses
+21. ~~**Update `TwilightPlayer.getTotalInfluence()`**~~ — adds attachment influence bonuses
+22. ~~**Update `getTechPrerequisites()`**~~ — counts attachment-granted tech specialties (respects exhaustion + Psychoarchaeology)
+23. ~~**Update agenda voting**~~ — both display string and vote tally include attachment influence
+24. **Apply Demilitarized Zone** restrictions to production and unit placement — DEFERRED
+25. **Apply gamma wormhole** to adjacency/wormhole calculations — DEFERRED
 
-25. **Implement relic deck** in state initialization — `state.relicDeck` as shuffled array of relic IDs
-26. **Implement `_gainRelic(playerName)`** — draw from relic deck, store full card info in player state, fire `onRelicGained` hook
-27. **Implement general 3-fragment purge** as an anytime/component action — purge 3 fragments of same type (unknown fragments act as wildcards) to gain 1 relic
-28. **Replace stub relic references** in Naaz-Rokha Fabrication, Black Market Forgery PN, Perfect Synthesis hero, and Mahact Vaults of the Heir to call real `_gainRelic()`
-29. **Implement relic on-gain effects** for relics with immediate effects: The Obsidian (draw secret objective), Book of Latvinia (research 2 no-prereq techs), Shard of the Throne (+1 VP)
+## Phase 4: Relic System — DONE
 
-## Phase 5: UI — Map
+26. ~~**Implement relic deck**~~ — `_initRelicDeck()` lazily initializes `state.relicDeck` as shuffled array of all 16 relic IDs
+27. ~~**Implement `_gainRelic(playerName)`**~~ — draws from relic deck, stores in `state.relicsGained[playerName][]`, logs, fires on-gain effects and `onRelicGained` hook
+28. ~~**Implement general 3-fragment purge**~~ — component action in `componentActions.js` with `_canPurgeRelicFragments` / `_executePurgeRelicFragments`. Unknown fragments work as wildcards. Prefers typed fragments when removing.
+29. ~~**Replace stub relic references**~~ — Naaz-Rokha Fabrication, Black Market Forgery PN, Perfect Synthesis hero, Mahact Vaults of the Heir all call `_gainRelic()` now
+30. ~~**On-gain effects**~~: Shard of the Throne (+1 VP), The Obsidian (draw secret objective)
+31. **Book of Latvinia** on-gain (research 2 no-prereq techs): DEFERRED — requires tech selection flow
+32. ~~**`setBoard` support**~~ — `relicDeck` and `relicsGained` in `testutil.js`
 
-30. **Frontier tokens on map** — show frontier token indicator on systems with no planets
-31. **Attachment indicators on planets** — show small icons on planets that have attachments (resource bonus, influence bonus, tech specialty, wormhole)
-32. **Gamma wormhole tokens** on systems where placed via exploration
+## Phase 5: Relic Abilities (not yet started)
 
-## Phase 6: UI — Player Tableau
+Relics that have ACTION, passive, or trigger effects need engine implementation:
 
-33. **Relic fragment chips** on player panel — show counts by type (cultural/hazardous/industrial/unknown) with purge action
-34. **Relic cards display** — show gained relics with their abilities (similar to technology cards)
-35. **Planet attachment display** — show attachment bonuses on planet cards in player area (e.g., "+2" overlay from Dyson Sphere)
+33. **Dominus Orb** (trigger: beforeMovement) — purge to move units from systems with your command tokens
+34. **Maw of Worlds** (trigger: startOfAgendaPhase) — purge + exhaust all planets to gain 1 tech
+35. **Scepter of Emelpar** (trigger: onSpendStrategyToken) — exhaust to spend from reinforcements instead
+36. **Stellar Converter** (action) — destroy all units on a non-home planet, place destroyed planet token
+37. **The Codex** (action) — purge to take up to 3 action cards from discard pile
+38. **The Crown of Emphidia** (trigger: afterTacticalAction) — exhaust to explore 1 planet; purge at status phase if controlling Tomb of Emphidia for +1 VP
+39. **The Crown of Thalnos** (passive) — combat reroll with +1, units that miss are destroyed
+40. **The Prophet's Tears** (trigger: onResearchTechnology) — exhaust to ignore 1 prereq or draw action card
+41. **Dynamis Core** (action + passive) — +2 commodity value; purge to gain TG equal to commodity value
+42. **JR-XS455-O** (action) — exhaust to let a player spend 3 resources for a structure or gain 1 TG
+43. **Nano-Forge** (action) — attach to planet for +2/+2 and legendary status
+44. **Circlet of the Void** (action + passive) — ignore gravity rifts/anomalies; exhaust to explore frontier
+45. **Neuraloop** (trigger: onPublicObjectiveRevealed) — purge a relic to replace objective
 
-## Phase 7: UI — Exploration Flow
+## Phase 6: UI — Map
 
-36. **Exploration card reveal** — when a planet is explored, show the drawn card before resolving (important for multi-card choice with Naaz-Rokha)
-37. **Exploration log entries** — ensure exploration results appear in game log with card names/effects
+46. **Frontier tokens on map** — show frontier token indicator on systems with no planets
+47. **Attachment indicators on planets** — show small icons on planets that have attachments (resource bonus, influence bonus, tech specialty, wormhole)
+48. **Gamma wormhole tokens** on systems where placed via exploration
+
+## Phase 7: UI — Player Tableau
+
+49. **Relic fragment chips** on player panel — show counts by type (cultural/hazardous/industrial/unknown) with purge action
+50. **Relic cards display** — show gained relics with their abilities (similar to technology cards)
+51. **Planet attachment display** — show attachment bonuses on planet cards in player area (e.g., "+2" overlay from Dyson Sphere)
+
+## Phase 8: UI — Exploration Flow
+
+52. **Exploration card reveal** — when a planet is explored, show the drawn card before resolving (important for multi-card choice with Naaz-Rokha)
+53. **Exploration log entries** — ensure exploration results appear in game log with card names/effects
 
 ---
 
 ## Dependencies
 
-- Phase 1 has no dependencies — can start immediately
-- Phase 2 depends on Phase 1 (bug fixes to card resolution path)
-- Phase 3 has no dependencies — can run in parallel with Phases 1-2
-- Phase 4 depends on `res/relics.js` (done); Dead World card (Phase 2 item 16) depends on Phase 4
-- Phases 5-7 (UI) can be done incrementally alongside or after engine work
+- Phase 1 has no dependencies — DONE
+- Phase 2 depends on Phase 1 — DONE (3 cards deferred for subsystems)
+- Phase 3 depends on attachment data — DONE (2 items deferred: Demilitarized Zone, gamma wormhole)
+- Phase 4 depends on `res/relics.js` — DONE (Book of Latvinia deferred)
+- Phase 5 (relic abilities) can be done incrementally, no hard blockers
+- Phases 6-8 (UI) can be done incrementally alongside or after engine work
+- Wormhole token system is shared blocker for Gamma Wormhole, Gamma Relay, and gamma adjacency
 
 ## Rules Reference
 
@@ -132,4 +157,4 @@ Key rules from the Living Rules Reference:
 
 ## Testing
 
-All tests must be integration tests per `docs/specs/testing.md`. No calling game methods directly — use `t.fixture()`, `t.setBoard()`, `t.choose()`, `t.action()`, `t.testBoard()`, and `t.currentChoices()` only. The engine is a black box. Reading `game.state.*` for assertions is OK but never mutate state after `game.run()`. Use `t.setBoard({ explorationDecks: { ... } })` to control which cards are drawn.
+All tests must be integration tests per `docs/specs/testing.md`. No calling game methods directly — use `t.fixture()`, `t.setBoard()`, `t.choose()`, `t.action()`, `t.testBoard()`, and `t.currentChoices()` only. The engine is a black box. Reading `game.state.*` for assertions is OK but never mutate state after `game.run()`. Use `t.setBoard({ explorationDecks: { ... } })` to control which cards are drawn. Use `t.setBoard({ relicDeck: [...] })` to control which relics are drawn.

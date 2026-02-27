@@ -24,6 +24,39 @@
       </div>
     </div>
 
+    <!-- Relic Fragments -->
+    <div class="panel-section" v-if="totalFragments > 0">
+      <div class="section-label">Relic Fragments</div>
+      <div class="fragment-row">
+        <span v-if="fragmentCounts.cultural"
+              class="fragment-count frag-cultural"
+              title="Cultural">C:{{ fragmentCounts.cultural }}</span>
+        <span v-if="fragmentCounts.hazardous"
+              class="fragment-count frag-hazardous"
+              title="Hazardous">H:{{ fragmentCounts.hazardous }}</span>
+        <span v-if="fragmentCounts.industrial"
+              class="fragment-count frag-industrial"
+              title="Industrial">I:{{ fragmentCounts.industrial }}</span>
+        <span v-if="fragmentCounts.unknown"
+              class="fragment-count frag-unknown"
+              title="Unknown">?:{{ fragmentCounts.unknown }}</span>
+      </div>
+    </div>
+
+    <!-- Relics -->
+    <div class="panel-section" v-if="relics.length > 0">
+      <div class="section-label">Relics ({{ relics.length }})</div>
+      <div class="relic-list">
+        <span v-for="relic in relics"
+              :key="relic.id"
+              class="relic-chip clickable"
+              :title="relic.effect"
+              @click="openCardDetail('relic', relic.id)">
+          {{ relic.name }}
+        </span>
+      </div>
+    </div>
+
     <!-- Strategy Cards -->
     <div class="panel-section" v-if="player.strategyCards.length > 0">
       <div class="section-label">Strategy</div>
@@ -78,8 +111,13 @@
           @click="openCardDetail('planet', p.id)"
         >
           <span class="planet-name">{{ p.name }}</span>
+          <span v-if="p.hasAttachments" class="attachment-indicator" title="Has attachments">+</span>
           <span class="planet-stats">{{ p.resources }}/{{ p.influence }}</span>
           <span v-if="p.techSpecialty" class="planet-tech" :class="`tech-${p.techSpecialty}`">{{ p.techSpecialty[0].toUpperCase() }}</span>
+          <span v-for="spec in p.attachmentTechSpecialties"
+                :key="spec"
+                class="planet-tech"
+                :class="`tech-${spec}`">{{ spec[0].toUpperCase() }}</span>
         </div>
       </div>
     </div>
@@ -216,12 +254,18 @@ export default {
       return controlled.map(planetId => {
         const planet = res.getPlanet(planetId)
         const state = this.game.state.planets[planetId]
+        const attachments = state?.attachments || []
+        const bonuses = attachments.length > 0
+          ? this.game._getPlanetAttachmentBonuses(planetId)
+          : { resources: 0, influence: 0, techSpecialties: [] }
         return {
           id: planetId,
           name: planet?.name || planetId,
-          resources: planet?.resources || 0,
-          influence: planet?.influence || 0,
+          resources: (planet?.resources || 0) + bonuses.resources,
+          influence: (planet?.influence || 0) + bonuses.influence,
           techSpecialty: planet?.techSpecialty || null,
+          attachmentTechSpecialties: bonuses.techSpecialties,
+          hasAttachments: attachments.length > 0,
           exhausted: state?.exhausted || false,
         }
       })
@@ -253,6 +297,27 @@ export default {
 
     actionCardCount() {
       return this.player.actionCards?.length || 0
+    },
+
+    fragmentCounts() {
+      const frags = this.player.relicFragments || []
+      const counts = {}
+      for (const f of frags) {
+        counts[f] = (counts[f] || 0) + 1
+      }
+      return counts
+    },
+
+    totalFragments() {
+      return (this.player.relicFragments || []).length
+    },
+
+    relics() {
+      const relicIds = this.game.state.relicsGained?.[this.player.name] || []
+      return relicIds.map(id => {
+        const relic = res.getRelic(id)
+        return relic || { id, name: id, effect: '' }
+      })
     },
 
     promissoryNotes() {
@@ -527,6 +592,24 @@ export default {
 
 .action-card-chip:hover {
   background: #e0e0e0;
+}
+
+.fragment-row { display: flex; gap: .5em; }
+.fragment-count { font-weight: 600; font-family: monospace; font-size: .85em; }
+.frag-cultural { color: #1565c0; }
+.frag-hazardous { color: #c62828; }
+.frag-industrial { color: #2e7d32; }
+.frag-unknown { color: #888; }
+
+.relic-list { display: flex; flex-wrap: wrap; gap: .15em; }
+.relic-chip {
+  font-size: .7em; padding: .1em .3em; border-radius: .15em;
+  border-left: 2px solid #e65100; background: #fff3e0; color: #333;
+}
+.relic-chip:hover { background: #ffe0b2; }
+
+.attachment-indicator {
+  font-size: .7em; font-weight: 700; color: #e65100;
 }
 
 .clickable {

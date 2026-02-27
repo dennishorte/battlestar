@@ -39,6 +39,11 @@
             Controlled by: <strong :style="playerStyle(planet.controller)">{{ planet.controller }}</strong>
             <span v-if="planet.exhausted" class="exhausted-badge">exhausted</span>
           </div>
+          <div class="planet-attachments" v-if="planetAttachments(planet.id).length > 0">
+            <span v-for="att in planetAttachments(planet.id)"
+                  :key="att.id"
+                  class="attachment-tag">{{ att.name }}</span>
+          </div>
           <div class="planet-units" v-if="planetUnits(planet.id).length > 0">
             <div v-for="unit in planetUnits(planet.id)" :key="unit.type + unit.owner" class="unit-entry">
               <span :style="playerStyle(unit.owner)">{{ unit.owner }}</span>:
@@ -185,6 +190,15 @@ export default {
       return Object.values(byKey)
     },
 
+    planetAttachments(planetId) {
+      const state = this.game.state.planets[planetId]
+      const attachments = state?.attachments || []
+      return attachments.map(cardId => {
+        const card = res.getExplorationCard(cardId)
+        return { id: cardId, name: card?.name || cardId }
+      })
+    },
+
     playerStyle(playerName) {
       const player = this.game.players.byName(playerName)
       if (player?.color) {
@@ -314,5 +328,11 @@ export default {
 .token-entry {
   font-size: .85em;
   padding: .05em 0;
+}
+
+.planet-attachments { display: flex; flex-wrap: wrap; gap: .2em; margin-top: .15em; }
+.attachment-tag {
+  font-size: .75em; padding: .1em .3em; border-radius: .15em;
+  background: #fff3e0; color: #e65100; font-weight: 500;
 }
 </style>
