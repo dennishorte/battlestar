@@ -316,6 +316,42 @@ describe('Naalu Collective', () => {
       const mabanAction = actions.find(a => a.id === 'maban-peek')
       expect(mabanAction).toBeFalsy()
     })
+
+    test('M\'aban peek log entries have per-player visibility', () => {
+      const game = t.fixture({ factions: ['naalu-collective', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'locked' },
+        },
+        agendaDeck: ['mutiny', 'economic-equality'],
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis (Naalu, Telepathic) goes first — use M'aban peek
+      t.choose(game, 'Component Action')
+      t.choose(game, 'maban-peek')
+      // Neighbor auto-resolves to micah (only option in 2p)
+
+      // Choose to peek at top of agenda deck
+      t.choose(game, 'Top')
+
+      // Check promissory notes log entry
+      const notesEntry = game.log._log.find(e =>
+        (e.template || '').includes("promissory notes")
+      )
+      expect(notesEntry).toBeTruthy()
+      expect(notesEntry.visibility).toEqual(['dennis'])
+      expect(notesEntry.redacted).toBe("M'aban: {player} views {target}'s promissory notes")
+
+      // Check agenda peek log entry
+      const peekEntry = game.log._log.find(e =>
+        (e.template || '').includes("peeks at top of agenda deck")
+      )
+      expect(peekEntry).toBeTruthy()
+      expect(peekEntry.visibility).toEqual(['dennis'])
+      expect(peekEntry.redacted).toBe("M'aban: {player} peeks at top of agenda deck")
+    })
   })
 
   describe('Hero — The Oracle', () => {

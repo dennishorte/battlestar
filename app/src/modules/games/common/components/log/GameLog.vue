@@ -12,7 +12,7 @@
 
         <div v-else
              class="log-line"
-             :class="[line.classes, lineClasses(line)]"
+             :class="[line.classes, lineClasses(line), { 'private-info': line.isPrivateInfo }]"
              :style="lineStyles(line)">
           <template v-if="line.type === 'chat'">
             <div class="chat-container">
@@ -178,6 +178,7 @@ function nestLog(entries, depth = 0) {
         args: displayEntry.args,
         indent: displayEntry.indent,
         event: displayEntry.event,
+        isPrivateInfo: !!(entry.visibility && entry.visibility.includes(game.value.viewerName)),
       }
 
       if (line.event === 'stack-push') {
@@ -321,5 +322,17 @@ onMounted(() => {
 .indent-2 { margin-left: calc(var(--log-indent-unit) * 2); }
 .indent-3 { margin-left: calc(var(--log-indent-unit) * 3); }
 .indent-4 { margin-left: calc(var(--log-indent-unit) * 4); }
+
+.private-info {
+  font-style: italic;
+}
+.private-info::before {
+  content: "\f341";
+  font-family: "bootstrap-icons";
+  font-style: normal;
+  font-size: 0.75em;
+  margin-right: 0.3em;
+  opacity: 0.5;
+}
 
 </style>

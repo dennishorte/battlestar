@@ -4239,9 +4239,12 @@ Twilight.prototype._politicsAgendaPeek = function(player) {
 
     remaining.splice(remaining.indexOf(card), 1)
 
+    const position = placement[0] === 'Top of deck' ? 'top' : 'bottom'
     this.log.add({
-      template: '{player} places an agenda card on the {position} of the deck',
-      args: { player, position: placement[0] === 'Top of deck' ? 'top' : 'bottom' },
+      template: '{player} places {card} on the {position} of the deck',
+      args: { player, card: card.name, position },
+      visibility: [player.name],
+      redacted: '{player} places an agenda card on the {position} of the deck',
     })
   }
 }
@@ -5901,9 +5904,12 @@ Twilight.prototype._drawActionCards = function(player, count) {
   }
   player.actionCards.push(...drawn)
 
+  const cardNames = drawn.map(c => c.name).join(', ')
   this.log.add({
-    template: '{player} draws {count} action cards',
-    args: { player, count: drawn.length },
+    template: '{player} draws {count} action cards: {cards}',
+    args: { player, count: drawn.length, cards: cardNames },
+    visibility: [player.name],
+    redacted: '{player} draws {count} action cards',
   })
 
   // Yssaril Scheming: draw 1 extra, then discard 1
