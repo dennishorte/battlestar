@@ -220,6 +220,58 @@ describe('Strategic Actions', () => {
       expect(game.state.agendaDeck[1].id).toBe('seed-of-an-empire')
       expect(game.state.agendaDeck[game.state.agendaDeck.length - 1].id).toBe('mutiny')
     })
+
+    test('primary: agenda peek log has per-player visibility', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        agendaDeck: ['mutiny', 'economic-equality', 'seed-of-an-empire'],
+      })
+      game.run()
+      pickStrategyCards(game, 'politics', 'trade')
+
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'economic-equality: Economic Equality')
+      t.choose(game, 'Top of deck')
+      t.choose(game, 'Bottom of deck')
+      t.choose(game, 'Pass')
+
+      const placeEntries = game.log._log.filter(e =>
+        (e.template || '').includes('places') && (e.template || '').includes('of the deck')
+      )
+      expect(placeEntries.length).toBe(2)
+
+      for (const entry of placeEntries) {
+        expect(entry.visibility).toEqual(['dennis'])
+        expect(entry.redacted).toBe('{player} places an agenda card on the {position} of the deck')
+        // Full template includes card name
+        expect(entry.template).toContain('{card}')
+      }
+    })
+
+    test('primary: action card draw log has per-player visibility', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'politics', 'trade')
+
+      t.choose(game, 'Strategic Action')
+      t.choose(game, t.currentChoices(game)[0])
+      t.choose(game, 'Top of deck')
+      t.choose(game, 'Top of deck')
+      t.choose(game, 'Pass')
+
+      const drawEntries = game.log._log.filter(e =>
+        (e.template || '').includes('draws') && (e.template || '').includes('action cards')
+      )
+      expect(drawEntries.length).toBeGreaterThanOrEqual(1)
+
+      const dennisDrawEntry = drawEntries.find(e =>
+        e.visibility && e.visibility.includes('dennis')
+      )
+      expect(dennisDrawEntry).toBeTruthy()
+      expect(dennisDrawEntry.redacted).toBe('{player} draws {count} action cards')
+      // Full template includes card names
+      expect(dennisDrawEntry.template).toContain('{cards}')
+    })
   })
 
   describe('Construction (#4)', () => {

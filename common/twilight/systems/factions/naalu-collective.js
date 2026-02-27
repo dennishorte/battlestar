@@ -210,7 +210,8 @@ module.exports = {
       ctx.log.add({
         template: "M'aban: {player} views {target}'s promissory notes: {notes}",
         args: { player: player.name, target: targetName, notes: noteDesc },
-        private: player.name,
+        visibility: [player.name],
+        redacted: "M'aban: {player} views {target}'s promissory notes",
       })
     }
 
@@ -226,7 +227,8 @@ module.exports = {
         ctx.log.add({
           template: "M'aban: {player} peeks at top of agenda deck: {card}",
           args: { player: player.name, card: topCard?.name || topCard?.id || 'unknown' },
-          private: player.name,
+          visibility: [player.name],
+          redacted: "M'aban: {player} peeks at top of agenda deck",
         })
       }
       else if (peekChoice[0] === 'Bottom') {
@@ -234,7 +236,8 @@ module.exports = {
         ctx.log.add({
           template: "M'aban: {player} peeks at bottom of agenda deck: {card}",
           args: { player: player.name, card: bottomCard?.name || bottomCard?.id || 'unknown' },
-          private: player.name,
+          visibility: [player.name],
+          redacted: "M'aban: {player} peeks at bottom of agenda deck",
         })
       }
     }
