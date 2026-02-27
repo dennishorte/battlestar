@@ -24,6 +24,9 @@
       <!-- System type indicator -->
       <div class="tile-id">{{ displayId }}</div>
 
+      <!-- Frontier token -->
+      <div class="frontier-badge" v-if="hasFrontierToken" title="Frontier token">F</div>
+
       <!-- Planets -->
       <div class="planet-indicators" v-if="tileData.planets?.length > 0">
         <div
@@ -34,6 +37,7 @@
           :title="`${planet.name} (${planet.resources}/${planet.influence})`"
         >
           <span class="planet-ri">{{ planet.resources }}/{{ planet.influence }}</span>
+          <span v-if="planet.hasAttachments" class="planet-attach-dot" />
         </div>
       </div>
 
@@ -184,6 +188,17 @@ export default {
       }
     },
 
+    hasFrontierToken() {
+      const planets = this.tileData.planets || []
+      if (planets.length > 0) {
+        return false
+      }
+      if (this.tileData.type === 'hyperlane') {
+        return false
+      }
+      return !this.game.state.exploredPlanets?.[this.systemId]
+    },
+
     planetDisplays() {
       return (this.tileData.planets || []).map(planetId => {
         const planet = res.getPlanet(planetId)
@@ -196,6 +211,7 @@ export default {
           trait: planet?.trait || null,
           techSpecialty: planet?.techSpecialty || null,
           controller: state?.controller || null,
+          hasAttachments: (state?.attachments || []).length > 0,
         }
       })
     },
@@ -368,6 +384,7 @@ export default {
 }
 
 .planet-dot {
+  position: relative;
   width: 22px;
   height: 12px;
   border-radius: 2px;
@@ -386,6 +403,24 @@ export default {
 .planet-ri {
   color: white;
   text-shadow: 0 0 2px rgba(0,0,0,.8);
+}
+
+.frontier-badge {
+  font-size: .85em;
+  font-weight: 700;
+  color: #adf;
+  opacity: .7;
+}
+
+.planet-attach-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #e65100;
+  border: 1px solid rgba(0,0,0,.3);
 }
 
 .wormhole-badge {

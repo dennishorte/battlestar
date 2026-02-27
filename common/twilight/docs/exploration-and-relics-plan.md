@@ -24,11 +24,7 @@ Full implementation of the PoK exploration system: exploration card effects, pla
 - Relic passive/trigger effects in gameplay (Crown of Thalnos combat reroll, Scepter of Emelpar strategy token, etc.)
 
 ### Missing UI
-- No frontier token indicators on map
-- No attachment indicators on planets (map or player tableau)
-- No relic fragment display on player tableau
-- No relic card display on player tableau
-- No exploration card reveal flow
+- Gamma wormhole tokens on map (deferred with gamma wormhole card)
 
 ---
 
@@ -109,22 +105,24 @@ Relics that have ACTION, passive, or trigger effects need engine implementation:
 44. **Circlet of the Void** (action + passive) — ignore gravity rifts/anomalies; exhaust to explore frontier
 45. **Neuraloop** (trigger: onPublicObjectiveRevealed) — purge a relic to replace objective
 
-## Phase 6: UI — Map
+## Phase 6: UI — Map — DONE
 
-46. **Frontier tokens on map** — show frontier token indicator on systems with no planets
-47. **Attachment indicators on planets** — show small icons on planets that have attachments (resource bonus, influence bonus, tech specialty, wormhole)
-48. **Gamma wormhole tokens** on systems where placed via exploration
+46. ~~**Frontier tokens on map**~~ — "F" badge on empty systems that haven't been explored yet
+47. ~~**Attachment indicators on planets**~~ — orange dot on planet indicators in hex tiles when attachments present
+48. **Gamma wormhole tokens** on systems where placed via exploration — DEFERRED (gamma wormhole card deferred)
 
-## Phase 7: UI — Player Tableau
+## Phase 7: UI — Player Tableau — DONE
 
-49. **Relic fragment chips** on player panel — show counts by type (cultural/hazardous/industrial/unknown) with purge action
-50. **Relic cards display** — show gained relics with their abilities (similar to technology cards)
-51. **Planet attachment display** — show attachment bonuses on planet cards in player area (e.g., "+2" overlay from Dyson Sphere)
+49. ~~**Relic fragment chips**~~ on player panel — monospace counts by type (C/H/I/?), color-coded, hidden when zero
+50. ~~**Relic cards display**~~ — orange-bordered chips on player panel, clickable to open CardDetailModal with relic type/effect
+51. ~~**Planet attachment display**~~ — planet R/I values include attachment bonuses, `+` indicator, attachment tech specialty circles
+52. ~~**Relic detail in CardDetailModal**~~ — type badge, exhaust/purge indicators, effect text
+53. ~~**Planet attachments in CardDetailModal**~~ — attachment names shown as orange tags below controller
+54. ~~**Planet attachments in SystemDetailModal**~~ — attachment names shown on planet detail cards
 
-## Phase 8: UI — Exploration Flow
+## Phase 8: UI — Exploration Log — DONE
 
-52. **Exploration card reveal** — when a planet is explored, show the drawn card before resolving (important for multi-card choice with Naaz-Rokha)
-53. **Exploration log entries** — ensure exploration results appear in game log with card names/effects
+55. ~~**Exploration log entries**~~ — `planet` args resolve to proper names, `relic` args render as clickable orange chips (TiRelicToken), `card` args already rendered as TiCardToken chips
 
 ---
 
@@ -135,7 +133,7 @@ Relics that have ACTION, passive, or trigger effects need engine implementation:
 - Phase 3 depends on attachment data — DONE (2 items deferred: Demilitarized Zone, gamma wormhole)
 - Phase 4 depends on `res/relics.js` — DONE (Book of Latvinia deferred)
 - Phase 5 (relic abilities) can be done incrementally, no hard blockers
-- Phases 6-8 (UI) can be done incrementally alongside or after engine work
+- Phases 6-8 (UI) — DONE (gamma wormhole token deferred with engine work)
 - Wormhole token system is shared blocker for Gamma Wormhole, Gamma Relay, and gamma adjacency
 
 ## Rules Reference
