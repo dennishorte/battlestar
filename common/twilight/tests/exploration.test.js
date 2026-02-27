@@ -8,27 +8,27 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 
 describe('Exploration', () => {
   describe('Exploration Cards Data', () => {
-    test('cultural exploration deck exists', () => {
+    test('cultural exploration deck has 20 cards', () => {
       const cards = res.getExplorationCards('cultural')
-      expect(cards.length).toBeGreaterThan(0)
+      expect(cards.length).toBe(20)
       expect(cards.every(c => c.trait === 'cultural')).toBe(true)
     })
 
-    test('hazardous exploration deck exists', () => {
+    test('hazardous exploration deck has 20 cards', () => {
       const cards = res.getExplorationCards('hazardous')
-      expect(cards.length).toBeGreaterThan(0)
+      expect(cards.length).toBe(20)
       expect(cards.every(c => c.trait === 'hazardous')).toBe(true)
     })
 
-    test('industrial exploration deck exists', () => {
+    test('industrial exploration deck has 20 cards', () => {
       const cards = res.getExplorationCards('industrial')
-      expect(cards.length).toBeGreaterThan(0)
+      expect(cards.length).toBe(20)
       expect(cards.every(c => c.trait === 'industrial')).toBe(true)
     })
 
-    test('frontier exploration deck exists', () => {
+    test('frontier exploration deck has 20 cards', () => {
       const cards = res.getExplorationCards('frontier')
-      expect(cards.length).toBeGreaterThan(0)
+      expect(cards.length).toBe(20)
       expect(cards.every(c => c.trait === 'frontier')).toBe(true)
     })
 
@@ -49,17 +49,46 @@ describe('Exploration', () => {
       expect(card.trait).toBe('cultural')
       expect(card.type).toBe('attach')
     })
+
+    test('multi-copy cards have suffixed IDs', () => {
+      expect(res.getExplorationCard('freelancers-1')).toBeTruthy()
+      expect(res.getExplorationCard('freelancers-2')).toBeTruthy()
+      expect(res.getExplorationCard('freelancers-3')).toBeTruthy()
+      expect(res.getExplorationCard('hazardous-relic-fragment-7')).toBeTruthy()
+      expect(res.getExplorationCard('cultural-relic-fragment-9')).toBeTruthy()
+    })
+
+    test('frontier deck includes Codex III cards', () => {
+      const cards = res.getExplorationCards('frontier')
+      const names = cards.map(c => c.name)
+      expect(names).toContain('Dead World')
+      expect(names).toContain('Entropic Field')
+      expect(names).toContain('Keleres Ship')
+      expect(names).toContain('Major Entropic Field')
+      expect(names).toContain('Minor Entropic Field')
+    })
+
+    test('attach cards have attachment data', () => {
+      const dyson = res.getExplorationCard('dyson-sphere')
+      expect(dyson.attachment).toEqual({ resources: 2, influence: 1 })
+
+      const lazax = res.getExplorationCard('lazax-survivors')
+      expect(lazax.attachment).toEqual({ resources: 1, influence: 2 })
+
+      const biotic = res.getExplorationCard('biotic-research-facility')
+      expect(biotic.attachment.techSpecialty).toBe('green')
+      expect(biotic.attachment.fallback).toEqual({ resources: 1, influence: 1 })
+    })
   })
 
   describe('Planet Exploration Trigger', () => {
-    test('exploring planet with trait draws from matching deck', () => {
+    test('exploring planet with trait marks it as explored', () => {
       const game = t.fixture()
-      // Use a specific deck so we know what card is drawn
       t.setBoard(game, {
         explorationDecks: {
-          cultural: ['freelancers'],
-          hazardous: ['expedition'],
-          industrial: ['core-mine'],
+          cultural: ['mercenary-outfit-1'],
+          hazardous: [],
+          industrial: [],
           frontier: [],
         },
         dennis: {
@@ -78,7 +107,6 @@ describe('Exploration', () => {
       // Find a system adjacent to sol-home that has a cultural planet
       const adjSystems = game._getAdjacentSystems('sol-home')
 
-      // We need to find a system with uncontrolled cultural planet
       let targetSystem = null
       let targetPlanet = null
       for (const sysId of adjSystems) {
@@ -116,10 +144,6 @@ describe('Exploration', () => {
 
       // Planet should now be explored
       expect(game.state.exploredPlanets[targetPlanet]).toBe(true)
-
-      // Freelancers gives 1 trade good
-      const dennis = game.players.byName('dennis')
-      expect(dennis.tradeGoods).toBe(1)
     })
 
     test('home system planets are not explored (no trait)', () => {
@@ -141,7 +165,7 @@ describe('Exploration', () => {
       const game = t.fixture()
       t.setBoard(game, {
         explorationDecks: {
-          cultural: ['freelancers', 'mercenary-outfit'],
+          cultural: ['dyson-sphere', 'paradise-world'],
           hazardous: [],
           industrial: [],
           frontier: [],
@@ -149,39 +173,17 @@ describe('Exploration', () => {
       })
       game.run()
 
-      // Manually trigger exploration twice on same planet
+      // First exploration attaches a card
       game._explorePlanet('quann', 'dennis')
-      const dennis = game.players.byName('dennis')
-      const tgAfterFirst = dennis.tradeGoods
+      const attachmentsAfterFirst = [...(game.state.planets['quann']?.attachments || [])]
 
+      // Second exploration of same planet should be a no-op
       game._explorePlanet('quann', 'dennis')
-      // Should not change — already explored
-      expect(dennis.tradeGoods).toBe(tgAfterFirst)
+      expect(game.state.planets['quann'].attachments).toEqual(attachmentsAfterFirst)
     })
   })
 
   describe('Exploration Card Types', () => {
-    test('action card with resolve gives immediate effect', () => {
-      const game = t.fixture()
-      t.setBoard(game, {
-        explorationDecks: {
-          cultural: [],
-          hazardous: ['expedition'],
-          industrial: [],
-          frontier: [],
-        },
-      })
-      game.run()
-
-      const dennis = game.players.byName('dennis')
-      const startTG = dennis.tradeGoods
-
-      // Expedition: gain 2 trade goods (hazardous action card)
-      game._explorePlanet('vefut-ii', 'dennis')
-
-      expect(dennis.tradeGoods).toBe(startTG + 2)
-    })
-
     test('attach card adds to planet attachments', () => {
       const game = t.fixture()
       t.setBoard(game, {
@@ -223,28 +225,25 @@ describe('Exploration', () => {
       const game = t.fixture()
       game.run()
 
-      // Decks should not be initialized yet (no exploration has happened)
-      // The decks get initialized on first _drawExplorationCard call
-      // Check that calling _initExplorationDecks works
       game._initExplorationDecks()
       expect(game.state.explorationDecks).toBeTruthy()
-      expect(game.state.explorationDecks.cultural.length).toBeGreaterThan(0)
+      expect(game.state.explorationDecks.cultural.length).toBe(20)
     })
 
     test('setBoard can pre-set exploration decks', () => {
       const game = t.fixture()
       t.setBoard(game, {
         explorationDecks: {
-          cultural: ['freelancers'],
-          hazardous: ['expedition'],
-          industrial: ['core-mine'],
+          cultural: ['dyson-sphere'],
+          hazardous: ['mining-world'],
+          industrial: ['biotic-research-facility'],
           frontier: [],
         },
       })
       game.run()
 
       expect(game.state.explorationDecks.cultural.length).toBe(1)
-      expect(game.state.explorationDecks.cultural[0].id).toBe('freelancers')
+      expect(game.state.explorationDecks.cultural[0].id).toBe('dyson-sphere')
     })
   })
 })
