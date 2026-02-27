@@ -40,9 +40,9 @@ module.exports = function(Twilight) {
         break
     }
 
-    // Secondary abilities resolved separately (players opt-in during action phase)
-    // Tracked so secondaries can be offered later
+    // Resolve secondary abilities for other players
     this.state.lastStrategyCard = usedCardId
+    this._resolveSecondaries(player, usedCardId)
 
     this.log.outdent()
   }
