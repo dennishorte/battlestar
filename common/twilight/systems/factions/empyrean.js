@@ -177,12 +177,7 @@ module.exports = {
 
     // Explore frontier tokens in systems with Empyrean ships
     let explored = 0
-    const allFrontierSystems = [
-      ...frontierSystems,
-      // Also include already-existing frontier tokens that haven't been explored
-    ]
-
-    for (const sysId of allFrontierSystems) {
+    for (const sysId of frontierSystems) {
       const systemUnits = ctx.state.units[sysId]
       if (!systemUnits) {
         continue
@@ -193,31 +188,10 @@ module.exports = {
         continue
       }
 
-      // Explore the frontier token
-      ctx.state.exploredPlanets[sysId] = true
-      if (ctx.state._frontierTokens) {
-        delete ctx.state._frontierTokens[sysId]
+      const didExplore = ctx.game._exploreFrontier(sysId, player.name, 'Multiverse Shift')
+      if (didExplore) {
+        explored++
       }
-
-      const card = ctx.game._drawExplorationCard('frontier')
-      if (card) {
-        ctx.log.add({
-          template: 'Multiverse Shift: {player} explores frontier in system {system} — {card}',
-          args: { player: player.name, system: sysId, card: card.name },
-        })
-
-        // Apply simple frontier effects
-        if (card.tradeGoods) {
-          player.addTradeGoods(card.tradeGoods)
-        }
-        if (card.relicFragment) {
-          if (!player.relicFragments) {
-            player.relicFragments = []
-          }
-          player.relicFragments.push(card.relicFragment)
-        }
-      }
-      explored++
     }
 
     ctx.log.add({
