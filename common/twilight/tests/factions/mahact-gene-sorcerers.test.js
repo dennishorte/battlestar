@@ -792,6 +792,7 @@ describe('Mahact Gene-Sorcerers', () => {
       test('exhaust and purge 1 technology to gain 1 relic', () => {
         const game = t.fixture({ factions: ['mahact-gene-sorcerers', 'emirates-of-hacan'] })
         t.setBoard(game, {
+          relicDeck: ['dominus-orb'],
           dennis: {
             technologies: ['bio-stims', 'predictive-intelligence', 'sarween-tools', 'vaults-of-the-heir'],
             leaders: { agent: 'ready', commander: 'locked', hero: 'locked' },
@@ -817,7 +818,7 @@ describe('Mahact Gene-Sorcerers', () => {
         // Should have gained a relic (tracked in game state)
         const relics = game.state.relicsGained?.dennis || []
         expect(relics.length).toBe(1)
-        expect(relics[0]).toBe('vaults-relic')
+        expect(relics[0]).toBe('dominus-orb')
 
         // The purged tech (bio-stims) should be gone
         const remainingTechs = dennis.getTechIds()

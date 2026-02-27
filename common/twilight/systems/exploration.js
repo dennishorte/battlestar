@@ -438,7 +438,7 @@ module.exports = function(Twilight) {
       }
 
       case 'dead-world': {
-        // Draw 1 relic — deferred until Phase 4 (relic deck implementation).
+        this._gainRelic(ownerName)
         break
       }
 
@@ -466,6 +466,77 @@ module.exports = function(Twilight) {
         break
       }
     }
+  }
+
+  Twilight.prototype._initRelicDeck = function() {
+    if (this.state.relicDeck) {
+      return
+    }
+    const allRelics = res.getAllRelics()
+    this.state.relicDeck = this._shuffle(allRelics.map(r => r.id))
+  }
+
+  Twilight.prototype._gainRelic = function(playerName) {
+    this._initRelicDeck()
+    if (this.state.relicDeck.length === 0) {
+      return null
+    }
+
+    const relicId = this.state.relicDeck.pop()
+    if (!this.state.relicsGained) {
+      this.state.relicsGained = {}
+    }
+    if (!this.state.relicsGained[playerName]) {
+      this.state.relicsGained[playerName] = []
+    }
+    this.state.relicsGained[playerName].push(relicId)
+
+    const relic = res.getRelic(relicId)
+    this.log.add({
+      template: '{player} gains relic: {relic}',
+      args: { player: playerName, relic: relic?.name || relicId },
+    })
+
+    // On-gain effects
+    if (relic?.onGain === 'drawSecretObjective') {
+      const player = this.players.byName(playerName)
+      this._drawSecretObjective(player)
+    }
+    else if (relic?.victoryPoints) {
+      const player = this.players.byName(playerName)
+      player.addVictoryPoints(relic.victoryPoints)
+    }
+
+    this.factionAbilities.onRelicGained(playerName)
+    return relicId
+  }
+
+  Twilight.prototype._getPlanetAttachmentBonuses = function(planetId) {
+    const bonuses = { resources: 0, influence: 0, techSpecialties: [] }
+    const attachments = this.state.planets[planetId]?.attachments || []
+    for (const cardId of attachments) {
+      const card = res.getExplorationCard(cardId)
+      if (!card?.attachment) {
+        continue
+      }
+      const att = card.attachment
+      const planet = res.getPlanet(planetId)
+
+      // Research facilities: fallback to +1/+1 if planet already has a specialty
+      if (att.techSpecialty) {
+        if (planet?.techSpecialty) {
+          bonuses.resources += att.fallback?.resources || 0
+          bonuses.influence += att.fallback?.influence || 0
+        }
+        else {
+          bonuses.techSpecialties.push(att.techSpecialty)
+        }
+      }
+
+      bonuses.resources += att.resources || 0
+      bonuses.influence += att.influence || 0
+    }
+    return bonuses
   }
 
 } // module.exports

@@ -1048,6 +1048,8 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
       if (this.state.planets[pId]?.terraform) {
         inf += 1
       }
+      const attachBonuses = this._getPlanetAttachmentBonuses(pId)
+      inf += attachBonuses.influence
       return `${pId} (${inf})`
     })
 
@@ -1066,6 +1068,8 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
         if (this.state.planets[planetId]?.terraform) {
           inf += 1
         }
+        const attachBonuses = this._getPlanetAttachmentBonuses(planetId)
+        inf += attachBonuses.influence
         totalInfluence += inf
         this.state.planets[planetId].exhausted = true
       }
