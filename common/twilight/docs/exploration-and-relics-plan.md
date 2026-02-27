@@ -19,9 +19,9 @@ Full implementation of the PoK exploration system: exploration card effects, pla
 - Gamma wormhole attachment stored but not applied to adjacency
 - Demilitarized Zone immediate effect (return structures/ground forces) and ongoing restriction (no units committed/produced/placed)
 - 5 deferred action-type exploration cards (require complex subsystems)
-- Book of Latvinia on-gain effect (research 2 no-prereq techs)
-- Relic ACTION component actions (Dominus Orb, Stellar Converter, The Codex, Nano-Forge, etc.)
-- Relic passive/trigger effects in gameplay (Crown of Thalnos combat reroll, Scepter of Emelpar strategy token, etc.)
+- Crown of Thalnos combat reroll (requires per-unit roll tracking refactor)
+- Neuraloop objective replacement (requires objective deck manipulation)
+- Circlet of the Void passive anomaly immunity (no gravity rift/anomaly movement logic yet)
 
 ### Missing UI
 - Gamma wormhole tokens on map (deferred with gamma wormhole card)
@@ -84,26 +84,27 @@ Added `_getPlanetAttachmentBonuses(planetId)` helper in `systems/exploration.js`
 28. ~~**Implement general 3-fragment purge**~~ — component action in `componentActions.js` with `_canPurgeRelicFragments` / `_executePurgeRelicFragments`. Unknown fragments work as wildcards. Prefers typed fragments when removing.
 29. ~~**Replace stub relic references**~~ — Naaz-Rokha Fabrication, Black Market Forgery PN, Perfect Synthesis hero, Mahact Vaults of the Heir all call `_gainRelic()` now
 30. ~~**On-gain effects**~~: Shard of the Throne (+1 VP), The Obsidian (draw secret objective)
-31. **Book of Latvinia** on-gain (research 2 no-prereq techs): DEFERRED — requires tech selection flow
+31. ~~**Book of Latvinia** on-gain (research 2 no-prereq techs)~~ — implemented in Phase 5 via `_executeBookOfLatviniaOnGain` using `_grantTechnology`
 32. ~~**`setBoard` support**~~ — `relicDeck` and `relicsGained` in `testutil.js`
 
-## Phase 5: Relic Abilities (not yet started)
+## Phase 5: Relic Abilities — DONE (12 of 13 relics implemented, 2 deferred)
 
-Relics that have ACTION, passive, or trigger effects need engine implementation:
+New module `systems/relicAbilities.js` provides state helpers (`_hasRelic`, `_isRelicReady`, `_exhaustRelic`, `_purgeRelic`) and `_getRelicComponentActions(player)` for ACTION-type relics, wired into `componentActions.js`. Exhausted relics refreshed during status phase. Tests in `tests/relicAbilities.test.js` (20 integration tests).
 
-33. **Dominus Orb** (trigger: beforeMovement) — purge to move units from systems with your command tokens
-34. **Maw of Worlds** (trigger: startOfAgendaPhase) — purge + exhaust all planets to gain 1 tech
-35. **Scepter of Emelpar** (trigger: onSpendStrategyToken) — exhaust to spend from reinforcements instead
-36. **Stellar Converter** (action) — destroy all units on a non-home planet, place destroyed planet token
-37. **The Codex** (action) — purge to take up to 3 action cards from discard pile
-38. **The Crown of Emphidia** (trigger: afterTacticalAction) — exhaust to explore 1 planet; purge at status phase if controlling Tomb of Emphidia for +1 VP
-39. **The Crown of Thalnos** (passive) — combat reroll with +1, units that miss are destroyed
-40. **The Prophet's Tears** (trigger: onResearchTechnology) — exhaust to ignore 1 prereq or draw action card
-41. **Dynamis Core** (action + passive) — +2 commodity value; purge to gain TG equal to commodity value
-42. **JR-XS455-O** (action) — exhaust to let a player spend 3 resources for a structure or gain 1 TG
-43. **Nano-Forge** (action) — attach to planet for +2/+2 and legendary status
-44. **Circlet of the Void** (action + passive) — ignore gravity rifts/anomalies; exhaust to explore frontier
-45. **Neuraloop** (trigger: onPublicObjectiveRevealed) — purge a relic to replace objective
+33. ~~**Dominus Orb** (trigger: beforeMovement)~~ — purge to move units from systems with your command tokens. Sets `state._dominusOrbActive` flag; `movement.js` skips command token check when active.
+34. ~~**Maw of Worlds** (trigger: startOfAgendaPhase)~~ — purge + exhaust all planets to gain any 1 tech (no prereqs). Hooked at start of `agendaPhase()`.
+35. ~~**Scepter of Emelpar** (trigger: onSpendStrategyToken)~~ — exhaust to spend from reinforcements instead. Hooked at strategy token spend in `strategyCards.js` (secondary use) and Production Biomes in `componentActions.js`.
+36. ~~**Stellar Converter** (action)~~ — purge to destroy a non-home, non-legendary planet adjacent to bombardment units. Clears units, attachments, marks `state.planets[id].destroyed`.
+37. ~~**The Codex** (action)~~ — purge to take up to 3 action cards from `state.actionCardDiscard`.
+38. ~~**The Crown of Emphidia** (trigger: afterTacticalAction)~~ — exhaust to explore 1 controlled planet after tactical action. Purge at end of status phase if controlling Tomb of Emphidia for +1 VP.
+39. **The Crown of Thalnos** (passive) — DEFERRED. Combat reroll with +1, units that miss are destroyed. Requires per-unit roll tracking refactor in `_rollCombatDice`.
+40. ~~**The Prophet's Tears** (trigger: onResearchTechnology)~~ — exhaust after research to draw 1 action card. Hooked after `onTechResearched` in `_researchTech`.
+41. ~~**Dynamis Core** (action + passive)~~ — passive +2 commodity value via `player.getEffectiveCommodityValue()` in `TwilightPlayer.js`. ACTION: gain TG equal to commodity value, then purge.
+42. ~~**JR-XS455-O** (action)~~ — exhaust, choose a player; they spend 3 resources for a structure or gain 1 TG.
+43. ~~**Nano-Forge** (action)~~ — attach to non-legendary, non-home planet for +2R/+2I and legendary. `_getPlanetAttachmentBonuses` updated to fall back to `res.getRelic()` for relic attachments.
+44. ~~**Circlet of the Void** (action + passive)~~ — ACTION: exhaust to explore a frontier token in a system without enemy ships. Passive anomaly immunity: DEFERRED (no gravity rift/anomaly movement logic yet).
+45. **Neuraloop** (trigger: onPublicObjectiveRevealed) — DEFERRED. Requires objective deck manipulation logic.
+46. ~~**Book of Latvinia** (action + on-gain)~~ — on-gain: research up to 2 no-prereq techs via `_grantTechnology`. ACTION: purge — if all 4 tech specialties across controlled planets, gain 1 VP; otherwise gain speaker token.
 
 ## Phase 6: UI — Map — DONE
 
@@ -131,8 +132,8 @@ Relics that have ACTION, passive, or trigger effects need engine implementation:
 - Phase 1 has no dependencies — DONE
 - Phase 2 depends on Phase 1 — DONE (3 cards deferred for subsystems)
 - Phase 3 depends on attachment data — DONE (2 items deferred: Demilitarized Zone, gamma wormhole)
-- Phase 4 depends on `res/relics.js` — DONE (Book of Latvinia deferred)
-- Phase 5 (relic abilities) can be done incrementally, no hard blockers
+- Phase 4 depends on `res/relics.js` — DONE
+- Phase 5 depends on Phase 4 — DONE (Crown of Thalnos, Neuraloop deferred)
 - Phases 6-8 (UI) — DONE (gamma wormhole token deferred with engine work)
 - Wormhole token system is shared blocker for Gamma Wormhole, Gamma Relay, and gamma adjacency
 

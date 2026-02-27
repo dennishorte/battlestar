@@ -100,7 +100,16 @@ class TwilightPlayer extends BasePlayer {
   }
 
   replenishCommodities() {
-    this.commodities = this.maxCommodities
+    this.commodities = this.getEffectiveCommodityValue()
+  }
+
+  getEffectiveCommodityValue() {
+    let value = this.maxCommodities
+    // Dynamis Core: +2 commodity value
+    if (this.game._getDynamisCoreCommodityBonus) {
+      value += this.game._getDynamisCoreCommodityBonus(this)
+    }
+    return value
   }
 
   // ---------------------------------------------------------------------------
