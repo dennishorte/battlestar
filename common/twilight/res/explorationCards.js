@@ -5,8 +5,22 @@
 //
 // Card types:
 //   attach     - Attaches to the planet (permanent bonus)
-//   action     - Immediate effect, then discarded
+//   action     - Resolved immediately, then discarded
 //   fragment   - Relic fragment, kept by the player
+//
+// Each deck has 20 cards. Cards with multiple copies use the copies() helper.
+
+function copies(base, count) {
+  if (count === 1) {
+    return [base]
+  }
+  return Array.from({ length: count }, (_, i) => ({
+    ...base,
+    id: `${base.id}-${i + 1}`,
+  }))
+}
+
+// --- Cultural Exploration (20 cards) ---
 
 const culturalExploration = [
   {
@@ -14,17 +28,39 @@ const culturalExploration = [
     name: 'Demilitarized Zone',
     trait: 'cultural',
     type: 'attach',
-    effect: 'This planet has PRODUCTION 1 and gains the CULTURAL trait.',
-    attachment: { production: 1 },
+    effect: 'Return all structures on this planet to your reinforcements. Then, return all ground forces on this planet to the space area. ATTACH: Units cannot be committed to, produced on or placed on this planet. During the agenda phase, this planet\'s planet card can be traded as part of a transaction.',
+    attachment: { demilitarized: true },
   },
   {
     id: 'dyson-sphere',
     name: 'Dyson Sphere',
     trait: 'cultural',
     type: 'attach',
-    effect: 'This planet\'s resource value is increased by 2.',
-    attachment: { resources: 2 },
+    effect: 'This planet\'s resource value is increased by 2 and its influence value is increased by 1.',
+    attachment: { resources: 2, influence: 1 },
   },
+  ...copies({
+    id: 'freelancers',
+    name: 'Freelancers',
+    trait: 'cultural',
+    type: 'action',
+    effect: 'You may produce 1 unit in this system; you may spend influence as if it were resources to produce this unit.',
+  }, 3),
+  {
+    id: 'gamma-wormhole',
+    name: 'Gamma Wormhole',
+    trait: 'cultural',
+    type: 'action',
+    purge: true,
+    effect: 'Place a gamma wormhole token in this system. Then, purge this card.',
+  },
+  ...copies({
+    id: 'mercenary-outfit',
+    name: 'Mercenary Outfit',
+    trait: 'cultural',
+    type: 'action',
+    effect: 'You may place 1 infantry from your reinforcements on this planet.',
+  }, 3),
   {
     id: 'paradise-world',
     name: 'Paradise World',
@@ -38,83 +74,101 @@ const culturalExploration = [
     name: 'Tomb of Emphidia',
     trait: 'cultural',
     type: 'attach',
-    effect: 'This planet\'s influence value is increased by 1. Gain 1 relic fragment.',
+    effect: 'This planet\'s influence value is increased by 1.',
     attachment: { influence: 1 },
   },
-  {
-    id: 'cultural-relic-fragment-1',
+  ...copies({
+    id: 'cultural-relic-fragment',
     name: 'Cultural Relic Fragment',
     trait: 'cultural',
     type: 'fragment',
     fragmentType: 'cultural',
-    effect: 'Relic fragment. Purge 3 cultural fragments to gain 1 relic.',
-  },
-  {
-    id: 'cultural-relic-fragment-2',
-    name: 'Cultural Relic Fragment',
-    trait: 'cultural',
-    type: 'fragment',
-    fragmentType: 'cultural',
-    effect: 'Relic fragment. Purge 3 cultural fragments to gain 1 relic.',
-  },
-  {
-    id: 'cultural-relic-fragment-3',
-    name: 'Cultural Relic Fragment',
-    trait: 'cultural',
-    type: 'fragment',
-    fragmentType: 'cultural',
-    effect: 'Relic fragment. Purge 3 cultural fragments to gain 1 relic.',
-  },
-  {
-    id: 'freelancers',
-    name: 'Freelancers',
-    trait: 'cultural',
-    type: 'action',
-    effect: 'Gain 1 trade good.',
-    resolve: (player) => {
-      player.tradeGoods += 1
-    },
-  },
-  {
-    id: 'gamma-wormhole',
-    name: 'Gamma Wormhole',
-    trait: 'cultural',
-    type: 'attach',
-    effect: 'This system now contains a gamma wormhole.',
-    attachment: { wormhole: 'gamma' },
-  },
-  {
-    id: 'mercenary-outfit',
-    name: 'Mercenary Outfit',
-    trait: 'cultural',
-    type: 'action',
-    effect: 'Gain 1 trade good.',
-    resolve: (player) => {
-      player.tradeGoods += 1
-    },
-  },
+    effect: 'ACTION: Purge 3 of your cultural relic fragments to gain 1 relic.',
+  }, 9),
 ]
 
-const hazardousExploration = [
+// --- Industrial Exploration (20 cards) ---
+
+const industrialExploration = [
+  ...copies({
+    id: 'abandoned-warehouses',
+    name: 'Abandoned Warehouses',
+    trait: 'industrial',
+    type: 'action',
+    effect: 'You may gain 2 commodities, or you may convert up to 2 of your commodities to trade goods.',
+  }, 4),
   {
+    id: 'biotic-research-facility',
+    name: 'Biotic Research Facility',
+    trait: 'industrial',
+    type: 'attach',
+    effect: 'This planet has a green technology specialty; if this planet already has a technology specialty, this planet\'s resource and influence values are each increased by 1 instead.',
+    attachment: { techSpecialty: 'green', fallback: { resources: 1, influence: 1 } },
+  },
+  {
+    id: 'cybernetic-research-facility',
+    name: 'Cybernetic Research Facility',
+    trait: 'industrial',
+    type: 'attach',
+    effect: 'This planet has a yellow technology specialty; if this planet already has a technology specialty, this planet\'s resource and influence values are each increased by 1 instead.',
+    attachment: { techSpecialty: 'yellow', fallback: { resources: 1, influence: 1 } },
+  },
+  ...copies({
+    id: 'functioning-base',
+    name: 'Functioning Base',
+    trait: 'industrial',
+    type: 'action',
+    effect: 'You may gain 1 commodity, or you may spend 1 trade good or 1 commodity to draw 1 action card.',
+  }, 4),
+  ...copies({
+    id: 'local-fabricators',
+    name: 'Local Fabricators',
+    trait: 'industrial',
+    type: 'action',
+    effect: 'You may gain 1 commodity, or you may spend 1 trade good or 1 commodity to place 1 mech from your reinforcements on this planet.',
+  }, 4),
+  {
+    id: 'propulsion-research-facility',
+    name: 'Propulsion Research Facility',
+    trait: 'industrial',
+    type: 'attach',
+    effect: 'This planet has a blue technology specialty; if this planet already has a technology specialty, this planet\'s resource and influence values are each increased by 1 instead.',
+    attachment: { techSpecialty: 'blue', fallback: { resources: 1, influence: 1 } },
+  },
+  ...copies({
+    id: 'industrial-relic-fragment',
+    name: 'Industrial Relic Fragment',
+    trait: 'industrial',
+    type: 'fragment',
+    fragmentType: 'industrial',
+    effect: 'ACTION: Purge 3 of your industrial relic fragments to gain 1 relic.',
+  }, 5),
+]
+
+// --- Hazardous Exploration (20 cards) ---
+
+const hazardousExploration = [
+  ...copies({
+    id: 'core-mine',
+    name: 'Core Mine',
+    trait: 'hazardous',
+    type: 'action',
+    effect: 'If you have at least 1 mech on this planet, or if you remove 1 infantry from this planet, gain 1 trade good.',
+  }, 3),
+  ...copies({
     id: 'expedition',
     name: 'Expedition',
     trait: 'hazardous',
     type: 'action',
-    effect: 'Gain 2 trade goods.',
-    resolve: (player) => {
-      player.tradeGoods += 2
-    },
-  },
+    effect: 'If you have at least 1 mech on this planet, or if you remove 1 infantry from this planet, ready this planet.',
+  }, 3),
   {
-    id: 'volatile-fuel-source',
-    name: 'Volatile Fuel Source',
+    id: 'lazax-survivors',
+    name: 'Lazax Survivors',
     trait: 'hazardous',
-    type: 'action',
-    effect: 'Gain 2 trade goods.',
-    resolve: (player) => {
-      player.tradeGoods += 2
-    },
+    type: 'attach',
+    effect: 'This planet\'s resource value is increased by 1 and its influence value is increased by 2.',
+    attachment: { resources: 1, influence: 2 },
   },
   {
     id: 'mining-world',
@@ -132,227 +186,137 @@ const hazardousExploration = [
     effect: 'This planet\'s resource value is increased by 1.',
     attachment: { resources: 1 },
   },
-  {
-    id: 'hazardous-relic-fragment-1',
-    name: 'Hazardous Relic Fragment',
+  ...copies({
+    id: 'volatile-fuel-source',
+    name: 'Volatile Fuel Source',
     trait: 'hazardous',
-    type: 'fragment',
-    fragmentType: 'hazardous',
-    effect: 'Relic fragment. Purge 3 hazardous fragments to gain 1 relic.',
-  },
-  {
-    id: 'hazardous-relic-fragment-2',
-    name: 'Hazardous Relic Fragment',
-    trait: 'hazardous',
-    type: 'fragment',
-    fragmentType: 'hazardous',
-    effect: 'Relic fragment. Purge 3 hazardous fragments to gain 1 relic.',
-  },
-  {
-    id: 'hazardous-relic-fragment-3',
-    name: 'Hazardous Relic Fragment',
-    trait: 'hazardous',
-    type: 'fragment',
-    fragmentType: 'hazardous',
-    effect: 'Relic fragment. Purge 3 hazardous fragments to gain 1 relic.',
-  },
+    type: 'action',
+    effect: 'If you have at least 1 mech on this planet, or if you remove 1 infantry from this planet, gain 1 command token.',
+  }, 3),
   {
     id: 'warfare-research-facility',
     name: 'Warfare Research Facility',
     trait: 'hazardous',
     type: 'attach',
-    effect: 'This planet gains a red tech specialty.',
-    attachment: { techSpecialty: 'red' },
+    effect: 'This planet has a red technology specialty; if this planet already has a technology specialty, this planet\'s resource and influence values are each increased by 1 instead.',
+    attachment: { techSpecialty: 'red', fallback: { resources: 1, influence: 1 } },
   },
-  {
-    id: 'lazax-survivors',
-    name: 'Lazax Survivors',
+  ...copies({
+    id: 'hazardous-relic-fragment',
+    name: 'Hazardous Relic Fragment',
     trait: 'hazardous',
-    type: 'action',
-    effect: 'Gain 1 infantry on this planet.',
-  },
-  {
-    id: 'functioning-base',
-    name: 'Functioning Base',
-    trait: 'hazardous',
-    type: 'action',
-    effect: 'Gain 1 commodity.',
-    resolve: (player) => {
-      player.commodities += 1
-    },
-  },
+    type: 'fragment',
+    fragmentType: 'hazardous',
+    effect: 'ACTION: Purge 3 of your hazardous relic fragments to gain 1 relic.',
+  }, 7),
 ]
 
-const industrialExploration = [
-  {
-    id: 'biotic-research-facility',
-    name: 'Biotic Research Facility',
-    trait: 'industrial',
-    type: 'attach',
-    effect: 'This planet gains a green tech specialty.',
-    attachment: { techSpecialty: 'green' },
-  },
-  {
-    id: 'cybernetics-research-facility',
-    name: 'Cybernetics Research Facility',
-    trait: 'industrial',
-    type: 'attach',
-    effect: 'This planet gains a yellow tech specialty.',
-    attachment: { techSpecialty: 'yellow' },
-  },
-  {
-    id: 'propulsion-research-facility',
-    name: 'Propulsion Research Facility',
-    trait: 'industrial',
-    type: 'attach',
-    effect: 'This planet gains a blue tech specialty.',
-    attachment: { techSpecialty: 'blue' },
-  },
-  {
-    id: 'industrial-relic-fragment-1',
-    name: 'Industrial Relic Fragment',
-    trait: 'industrial',
-    type: 'fragment',
-    fragmentType: 'industrial',
-    effect: 'Relic fragment. Purge 3 industrial fragments to gain 1 relic.',
-  },
-  {
-    id: 'industrial-relic-fragment-2',
-    name: 'Industrial Relic Fragment',
-    trait: 'industrial',
-    type: 'fragment',
-    fragmentType: 'industrial',
-    effect: 'Relic fragment. Purge 3 industrial fragments to gain 1 relic.',
-  },
-  {
-    id: 'industrial-relic-fragment-3',
-    name: 'Industrial Relic Fragment',
-    trait: 'industrial',
-    type: 'fragment',
-    fragmentType: 'industrial',
-    effect: 'Relic fragment. Purge 3 industrial fragments to gain 1 relic.',
-  },
-  {
-    id: 'core-mine',
-    name: 'Core Mine',
-    trait: 'industrial',
-    type: 'action',
-    effect: 'Gain 1 trade good.',
-    resolve: (player) => {
-      player.tradeGoods += 1
-    },
-  },
-  {
-    id: 'local-fabricators',
-    name: 'Local Fabricators',
-    trait: 'industrial',
-    type: 'action',
-    effect: 'Gain 1 commodity.',
-    resolve: (player) => {
-      player.commodities += 1
-    },
-  },
-  {
-    id: 'abandoned-warehouses',
-    name: 'Abandoned Warehouses',
-    trait: 'industrial',
-    type: 'action',
-    effect: 'Gain 2 commodities.',
-    resolve: (player) => {
-      player.commodities += 2
-    },
-  },
-  {
-    id: 'agency-supply-depot',
-    name: 'Agency Supply Depot',
-    trait: 'industrial',
-    type: 'action',
-    effect: 'Gain 2 trade goods.',
-    resolve: (player) => {
-      player.tradeGoods += 2
-    },
-  },
-]
+// --- Frontier Exploration (20 cards) ---
 
 const frontierExploration = [
-  {
+  // Prophecy of Kings (14 cards)
+  ...copies({
     id: 'derelict-vessel',
     name: 'Derelict Vessel',
     trait: 'frontier',
     type: 'action',
-    effect: 'Draw 2 action cards.',
-  },
-  {
+    effect: 'Draw 1 secret objective.',
+  }, 2),
+  ...copies({
     id: 'enigmatic-device',
     name: 'Enigmatic Device',
     trait: 'frontier',
     type: 'action',
-    effect: 'Gain 2 trade goods.',
-    resolve: (player) => {
-      player.tradeGoods += 2
-    },
-  },
+    persistent: true,
+    effect: 'Place this card face up in your play area. ACTION: You may spend 6 resources and purge this card to research 1 technology.',
+  }, 2),
   {
     id: 'gamma-relay',
     name: 'Gamma Relay',
     trait: 'frontier',
     type: 'action',
-    effect: 'Place a gamma wormhole in this system.',
+    purge: true,
+    effect: 'Place a gamma wormhole token in this system. Then, purge this card.',
   },
   {
     id: 'ion-storm',
     name: 'Ion Storm',
     trait: 'frontier',
     type: 'action',
-    effect: 'Place the Ion Storm token in this or an adjacent system with your ships.',
+    persistent: true,
+    effect: 'Place the ion storm token in this system with either side face up. Then, place this card in the common play area. At the end of a "Move Ships" or "Retreat" sub-step of a tactical action during which 1 or more of your ships use the ion storm wormhole, flip the ion storm token to its opposing side.',
   },
-  {
+  ...copies({
     id: 'lost-crew',
     name: 'Lost Crew',
     trait: 'frontier',
     type: 'action',
     effect: 'Draw 2 action cards.',
-  },
-  {
+  }, 2),
+  ...copies({
     id: 'merchant-station',
     name: 'Merchant Station',
     trait: 'frontier',
     type: 'action',
-    effect: 'Gain 2 trade goods.',
-    resolve: (player) => {
-      player.tradeGoods += 2
-    },
-  },
+    effect: 'You may replenish your commodities, or you may convert your commodities to trade goods.',
+  }, 2),
   {
     id: 'mirage',
     name: 'Mirage',
     trait: 'frontier',
-    type: 'attach',
-    effect: 'This system gains a planet: Mirage (1/2).',
+    type: 'action',
+    purge: true,
+    effect: 'Place the Mirage planet token in this system. Gain the Mirage planet card and ready it. Then, purge this card.',
   },
-  {
-    id: 'unknown-relic-fragment-1',
+  ...copies({
+    id: 'unknown-relic-fragment',
     name: 'Unknown Relic Fragment',
     trait: 'frontier',
     type: 'fragment',
     fragmentType: 'unknown',
-    effect: 'Relic fragment. Can substitute for any type of fragment.',
+    effect: 'This card counts as a relic fragment of any type.',
+  }, 3),
+
+  // Codex Volume III: Vigil (6 cards)
+  {
+    id: 'dead-world',
+    name: 'Dead World',
+    trait: 'frontier',
+    type: 'action',
+    expansion: 'codex-iii',
+    effect: 'Draw 1 relic.',
   },
   {
-    id: 'unknown-relic-fragment-2',
-    name: 'Unknown Relic Fragment',
+    id: 'entropic-field',
+    name: 'Entropic Field',
     trait: 'frontier',
-    type: 'fragment',
-    fragmentType: 'unknown',
-    effect: 'Relic fragment. Can substitute for any type of fragment.',
+    type: 'action',
+    expansion: 'codex-iii',
+    effect: 'Gain 1 command token and 2 trade goods.',
+  },
+  ...copies({
+    id: 'keleres-ship',
+    name: 'Keleres Ship',
+    trait: 'frontier',
+    type: 'action',
+    expansion: 'codex-iii',
+    effect: 'Gain 2 command tokens.',
+  }, 2),
+  {
+    id: 'major-entropic-field',
+    name: 'Major Entropic Field',
+    trait: 'frontier',
+    type: 'action',
+    expansion: 'codex-iii',
+    effect: 'Gain 1 command token and 3 trade goods.',
   },
   {
-    id: 'unknown-relic-fragment-3',
-    name: 'Unknown Relic Fragment',
+    id: 'minor-entropic-field',
+    name: 'Minor Entropic Field',
     trait: 'frontier',
-    type: 'fragment',
-    fragmentType: 'unknown',
-    effect: 'Relic fragment. Can substitute for any type of fragment.',
+    type: 'action',
+    expansion: 'codex-iii',
+    effect: 'Gain 1 command token and 1 trade good.',
   },
 ]
 
