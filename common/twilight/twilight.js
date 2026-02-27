@@ -898,6 +898,11 @@ Twilight.prototype.statusPhase = function() {
       player.readyAgent()
     }
     player.exhaustedTechs = []
+
+    // Ready exhausted relics
+    if (this.state.exhaustedRelics?.[player.name]) {
+      this.state.exhaustedRelics[player.name] = []
+    }
   }
 
   // Step 9: Return strategy cards
@@ -910,6 +915,11 @@ Twilight.prototype.statusPhase = function() {
     this.factionAbilities.onStatusPhaseEnd(player)
   }
 
+  // Step 10b: Crown of Emphidia — purge for +1 VP if controlling Tomb of Emphidia
+  for (const player of this._getPlayersInInitiativeOrder()) {
+    this._offerCrownOfEmphidiaStatusPhase(player)
+  }
+
   this.log.outdent()
 }
 
@@ -917,6 +927,11 @@ Twilight.prototype.agendaPhase = function() {
   this.state.phase = 'agenda'
   this.log.add({ template: 'Agenda Phase', event: 'phase-start', args: { phase: 'agenda' } })
   this.log.indent()
+
+  // Maw of Worlds: purge + exhaust all planets to gain any 1 tech
+  for (const player of this._getPlayersInInitiativeOrder()) {
+    this._offerMawOfWorlds(player)
+  }
 
   // Resolve 2 agendas
   for (let i = 0; i < 2; i++) {
@@ -1340,8 +1355,14 @@ Twilight.prototype._tacticalAction = function(player) {
   // Empyrean Aetherpassage: prompt before movement
   this.factionAbilities.onPreMovement(player, systemId)
 
+  // Dominus Orb: purge to move from systems with own command tokens
+  this._offerDominusOrb(player)
+
   // Step 2: Move ships
   this._movementStep(player, systemId)
+
+  // Clear Dominus Orb flag after movement
+  delete this.state._dominusOrbActive
 
   // Dark Energy Tap: explore frontier token in activated system if player has ships
   if (player.hasTechnology('dark-energy-tap')) {
@@ -1381,6 +1402,9 @@ Twilight.prototype._tacticalAction = function(player) {
 
   // End-of-tactical-action faction triggers (e.g., Sardakk N'orr agent T'ro)
   this.factionAbilities.onTacticalActionEnd(player, systemId)
+
+  // Crown of Emphidia: exhaust to explore a controlled planet after tactical action
+  this._offerCrownOfEmphidiaAfterTactical(player)
 
   this.log.outdent()
 }
@@ -1496,3 +1520,4 @@ require('./systems/objectives.js')(Twilight)
 require('./systems/actionCards.js')(Twilight)
 require('./systems/leaders.js')(Twilight)
 require('./systems/exploration.js')(Twilight)
+require('./systems/relicAbilities.js')(Twilight)

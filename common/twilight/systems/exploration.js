@@ -502,6 +502,10 @@ module.exports = function(Twilight) {
       const player = this.players.byName(playerName)
       this._drawSecretObjective(player)
     }
+    else if (relic?.onGain === 'researchTwoNoPrereq') {
+      const player = this.players.byName(playerName)
+      this._executeBookOfLatviniaOnGain(player)
+    }
     else if (relic?.victoryPoints) {
       const player = this.players.byName(playerName)
       player.addVictoryPoints(relic.victoryPoints)
@@ -515,7 +519,8 @@ module.exports = function(Twilight) {
     const bonuses = { resources: 0, influence: 0, techSpecialties: [] }
     const attachments = this.state.planets[planetId]?.attachments || []
     for (const cardId of attachments) {
-      const card = res.getExplorationCard(cardId)
+      // Check exploration cards first, then relics (for Nano-Forge)
+      const card = res.getExplorationCard(cardId) || res.getRelic(cardId)
       if (!card?.attachment) {
         continue
       }
@@ -535,6 +540,9 @@ module.exports = function(Twilight) {
 
       bonuses.resources += att.resources || 0
       bonuses.influence += att.influence || 0
+      if (att.legendary) {
+        bonuses.legendary = true
+      }
     }
     return bonuses
   }

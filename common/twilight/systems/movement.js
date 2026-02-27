@@ -117,8 +117,9 @@ module.exports = function(Twilight) {
     for (const m of shipMovements) {
       const fromSystemId = String(m.from)
 
-      // Cannot move ships from a system with own command token
-      if (this.state.systems[fromSystemId]?.commandTokens.includes(player.name)) {
+      // Cannot move ships from a system with own command token (unless Dominus Orb active)
+      if (!this.state._dominusOrbActive
+        && this.state.systems[fromSystemId]?.commandTokens.includes(player.name)) {
         continue
       }
 

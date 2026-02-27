@@ -11,6 +11,10 @@ module.exports = function(Twilight) {
     if (techActions.length > 0) {
       return true
     }
+    const relicActions = this._getRelicComponentActions(player)
+    if (relicActions.length > 0) {
+      return true
+    }
     return this._canPurgeRelicFragments(player)
   }
 
@@ -23,6 +27,10 @@ module.exports = function(Twilight) {
     // Technology-based component actions
     const techActions = this._getTechComponentActions(player)
     actions.push(...techActions)
+
+    // Relic-based component actions
+    const relicActions = this._getRelicComponentActions(player)
+    actions.push(...relicActions)
 
     // General relic fragment purge (3 of same type → 1 relic)
     if (this._canPurgeRelicFragments(player)) {
@@ -53,6 +61,10 @@ module.exports = function(Twilight) {
     const techAction = techActions.find(a => a.id === actionId)
     if (techAction) {
       techAction.execute(player)
+    }
+    // Check if it's a relic component action
+    else if (relicActions.find(a => a.id === actionId)) {
+      relicActions.find(a => a.id === actionId).execute(player)
     }
     else if (actionId === 'purge-relic-fragments') {
       this._executePurgeRelicFragments(player)
@@ -115,7 +127,8 @@ module.exports = function(Twilight) {
     // Scanlink Drone Network: registered as passive (in tactical action), not here
 
     // Production Biomes (Hacan): exhaust + spend 1 strategy token for 4 TG + give 2 TG to another player
-    if (this._isTechReady(player, 'production-biomes') && player.commandTokens.strategy >= 1) {
+    if (this._isTechReady(player, 'production-biomes')
+      && (player.commandTokens.strategy >= 1 || this._isRelicReady(player, 'scepter-of-emelpar'))) {
       actions.push({
         id: 'production-biomes',
         name: 'Production Biomes',
@@ -401,7 +414,12 @@ module.exports = function(Twilight) {
 
   Twilight.prototype._executeProductionBiomes = function(player) {
     this._exhaustTech(player, 'production-biomes')
-    player.commandTokens.strategy -= 1
+
+    // Scepter of Emelpar: offer to exhaust instead of spending strategy token
+    const scepterUsed = this._offerScepterOfEmelpar(player)
+    if (!scepterUsed) {
+      player.commandTokens.strategy -= 1
+    }
 
     // Gain 4 trade goods
     player.addTradeGoods(4)
