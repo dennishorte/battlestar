@@ -395,7 +395,6 @@ module.exports = {
         break
       case 'Strategic Action':
         ctx.game._strategicAction(player)
-        ctx.game._resolveSecondaries(player, ctx.state.lastStrategyCard)
         break
       case 'Component Action':
         ctx.game._componentAction(player)
