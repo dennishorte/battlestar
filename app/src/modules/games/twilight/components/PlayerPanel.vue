@@ -95,8 +95,22 @@
       </div>
     </div>
 
-    <!-- Action Cards (count for opponents, hidden) -->
-    <div class="panel-section" v-if="!isViewer">
+    <!-- Action Cards (chips for viewer, count for opponents) -->
+    <div class="panel-section" v-if="isViewer && actionCards.length > 0">
+      <div class="section-label">Action Cards ({{ actionCards.length }})</div>
+      <div class="action-card-list">
+        <span
+          v-for="(ac, i) in actionCards"
+          :key="ac.id + '-' + i"
+          class="action-card-chip clickable"
+          :title="ac.effect"
+          @click="openCardDetail('action-card', ac.id)"
+        >
+          {{ ac.name }}
+        </span>
+      </div>
+    </div>
+    <div class="panel-section" v-else-if="!isViewer">
       <div class="section-label">Action Cards: {{ actionCardCount }}</div>
     </div>
 
@@ -226,6 +240,14 @@ export default {
       return scored.map(id => {
         const obj = res.getObjective?.(id)
         return { id, name: obj?.name || id }
+      })
+    },
+
+    actionCards() {
+      const cards = this.player.actionCards || []
+      return cards.map(c => {
+        const def = res.getActionCard(c.id)
+        return def || { id: c.id, name: c.name || c.id, timing: '', effect: '' }
       })
     },
 
@@ -486,6 +508,25 @@ export default {
 
 .prom-from {
   color: #888;
+}
+
+.action-card-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .15em;
+}
+
+.action-card-chip {
+  font-size: .7em;
+  padding: .1em .3em;
+  border-radius: .15em;
+  border-left: 2px solid #6c757d;
+  background: #f0f0f0;
+  color: #333;
+}
+
+.action-card-chip:hover {
+  background: #e0e0e0;
 }
 
 .clickable {
