@@ -11,6 +11,10 @@ module.exports = {
   onPlay(game, player) {
     const harvests = game.getCompletedHarvestCount()
     const occs = player.getOccupationCount()
+    game.log.add({
+      template: '{card}: {harvests} completed harvests, {occs} played occupations',
+      args: { card: this, harvests, occs },
+    })
     if (harvests === occs) {
       player.addResource('food', 1)
       player.addResource('grain', 1)
