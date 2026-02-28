@@ -270,6 +270,12 @@ module.exports = function(Twilight) {
     // Transport units (fighters and ground forces go to space area — in transit)
     for (const m of transportedUnits) {
       const fromSystemId = String(m.from)
+
+      // Rule 95.3: cannot pick up units from systems with own command token
+      if (this.state.systems[fromSystemId]?.commandTokens.includes(player.name)) {
+        continue
+      }
+
       const unitDef = this._getUnitStats(player.name, m.unitType)
       if (!unitDef) {
         continue
