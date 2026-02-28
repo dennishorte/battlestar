@@ -117,20 +117,21 @@ These sections are fully implemented and have adequate test coverage:
 ### HIGH — Core Mechanics Missing
 
 #### 41. Gravity Rift
-- **IMPL: ~20%** — Core mechanics not implemented
-- **TEST: ~30%**
-- Missing: +1 move for ships moving out of or through gravity rift
-- Missing: Die roll per ship exiting (1-3 = ship removed from board)
-- Missing: Transported units removed if ship removed
-- Missing: Can affect same ship multiple times
+- **IMPL: ~80%** — Core mechanics implemented
+- **TEST: ~80%**
+- Implemented: +1 move for ships exiting gravity rift (0-cost exit in BFS pathfinding)
+- Implemented: Die roll per ship exiting (1d10, 1-3 = ship removed, not destroyed)
+- Implemented: Circlet of the Void exemption
+- Missing: Can affect same ship multiple times (multiple rifts in path)
 - Missing: Multiple rifts in system = single rift
 - Implemented: Gravity rift as valid destination, Vuil'raith faction +1 move
 
 #### 59. Nebula
-- **IMPL: ~60%** — Movement into restricted, but key mechanics missing
-- **TEST: ~40%**
-- Missing: Move value set to 1 when ship starts movement in nebula
-- Missing: Defender gets +1 to each combat roll in nebula
+- **IMPL: ~95%** — All key mechanics implemented
+- **TEST: ~90%**
+- Implemented: Move value set to 1 when ship starts in nebula (bonuses still stack on top)
+- Implemented: Defender gets +1 to each combat roll in nebula space combat
+- Implemented: Circlet of the Void exemption for move clamp
 - Implemented: Can only move into if active system, can't move through
 
 #### 95. Transport
@@ -148,9 +149,11 @@ These sections are fully implemented and have adequate test coverage:
 - Implemented: Mallice placement, gamma wormhole
 
 #### 78. Space Combat — Excess Capacity
-- **IMPL: Partial** — Post-combat capacity enforcement missing
-- **TEST: Partial**
-- Missing: After combat ends, winner must remove fighters/ground forces exceeding ship capacity in system (Rule 78.10a)
+- **IMPL: ~90%** — Post-combat capacity enforcement implemented
+- **TEST: ~80%**
+- Implemented: After space combat, excess fighters/ground forces removed (cheapest first)
+- Implemented: Only enforced when space combat actually occurred (not during transit)
+- Implemented: Capacity-exempt units (faction abilities) respected
 
 #### 31. Destroyed
 - **IMPL: Partial**
