@@ -119,6 +119,167 @@ AgricolaActionManager.prototype._getZigzagPlowSpaces = function(player) {
   return validSpaces
 }
 
+// Helper: handle one sow iteration (build selector, parse response, execute sow, log)
+// Returns { cropType, row, col } for regular fields, { cropType } for virtual fields,
+// or false if "Done Sowing" was selected.
+AgricolaActionManager.prototype._sowOneField = function(player, options) {
+  const {
+    fields,
+    regularFields,
+    emptyVirtualFields,
+    canSowGrain,
+    canSowVeg,
+    title = 'Choose field to sow',
+    card,
+    canDone = false,
+  } = options
+
+  // Build nested choices showing crop types with their available fields
+  const nestedChoices = []
+
+  if (canSowGrain) {
+    const grainFields = fields
+      .filter(f => !f.cropRestriction || f.cropRestriction === 'grain')
+      .map(f => f.isVirtualField ? `Field (${f.label})` : `Field (${f.row},${f.col})`)
+    if (grainFields.length > 0) {
+      nestedChoices.push({
+        title: 'Grain',
+        choices: grainFields,
+        min: 0,
+        max: 1,
+      })
+    }
+  }
+
+  if (canSowVeg) {
+    const vegFields = fields
+      .filter(f => !f.cropRestriction || f.cropRestriction === 'vegetables')
+      .map(f => f.isVirtualField ? `Field (${f.label})` : `Field (${f.row},${f.col})`)
+    if (vegFields.length > 0) {
+      nestedChoices.push({
+        title: 'Vegetables',
+        choices: vegFields,
+        min: 0,
+        max: 1,
+      })
+    }
+  }
+
+  if (canDone) {
+    nestedChoices.push('Done Sowing')
+  }
+
+  const logSuffix = card ? ' ({card})' : ''
+  const logCardArg = card ? { card } : {}
+
+  const selector = {
+    type: 'select',
+    actor: player.name,
+    title,
+    choices: nestedChoices,
+    min: 1,
+    max: 1,
+    allowsAction: ['sow-field', 'sow-virtual-field'],
+    validSpaces: regularFields,
+    canSowGrain,
+    canSowVeg,
+    emptyVirtualFields,
+  }
+
+  const result = this.game.requestInputSingle(selector)
+
+  // Handle action-based response for regular field
+  if (result.action === 'sow-field') {
+    const { row, col, cropType } = result
+
+    const isValidField = regularFields.some(f => f.row === row && f.col === col)
+    if (!isValidField) {
+      throw new Error(`Invalid sow space: (${row}, ${col}) is not a valid field`)
+    }
+    if (cropType === 'grain' && !canSowGrain) {
+      throw new Error('No grain available to sow')
+    }
+    if (cropType === 'vegetables' && !canSowVeg) {
+      throw new Error('No vegetables available to sow')
+    }
+
+    player.sowField(row, col, cropType)
+    const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
+    this.log.add({
+      template: `{player} sows {crop} at ({row},{col}) - {amount} total${logSuffix}`,
+      args: { player, crop: cropType, row, col, amount, ...logCardArg },
+    })
+    return { cropType, row, col }
+  }
+
+  // Handle virtual field sowing action
+  if (result.action === 'sow-virtual-field') {
+    const { fieldId, cropType } = result
+    const virtualField = player.getVirtualField(fieldId)
+
+    if (!virtualField) {
+      throw new Error(`Virtual field not found: ${fieldId}`)
+    }
+    if (!player.canSowVirtualField(fieldId, cropType)) {
+      throw new Error(`Cannot sow ${cropType} in ${virtualField.label}`)
+    }
+
+    player.sowVirtualField(fieldId, cropType)
+    const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
+    this.log.add({
+      template: `{player} sows {crop} in {label} - {amount} total${logSuffix}`,
+      args: { player, crop: cropType, label: virtualField.label, amount, ...logCardArg },
+    })
+    return { cropType }
+  }
+
+  // Handle standard selection response
+  const choice = result[0]
+
+  if (choice === 'Done Sowing') {
+    return false
+  }
+
+  // Handle nested selection (object with title and selection)
+  if (typeof choice === 'object' && choice.title && choice.selection && choice.selection.length > 0) {
+    const selectedField = choice.selection[0]
+    const cropType = choice.title.startsWith('Grain') ? 'grain' : 'vegetables'
+    const coordMatch = selectedField.match(/Field \((\d+),(\d+)\)/)
+
+    if (coordMatch) {
+      const row = parseInt(coordMatch[1])
+      const col = parseInt(coordMatch[2])
+
+      player.sowField(row, col, cropType)
+      const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
+      this.log.add({
+        template: `{player} sows {crop} at ({row},{col}) - {amount} total${logSuffix}`,
+        args: { player, crop: cropType, row, col, amount, ...logCardArg },
+      })
+      return { cropType, row, col }
+    }
+    else {
+      // Virtual field — match "Field (Label)"
+      const labelMatch = selectedField.match(/Field \((.+)\)/)
+      if (labelMatch) {
+        const label = labelMatch[1]
+        const vf = emptyVirtualFields.find(f => f.label === label)
+        if (vf) {
+          player.sowVirtualField(vf.id, cropType)
+          const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
+          this.log.add({
+            template: `{player} sows {crop} in {label} - {amount} total${logSuffix}`,
+            args: { player, crop: cropType, label: vf.label, amount, ...logCardArg },
+          })
+          return { cropType }
+        }
+      }
+    }
+  }
+
+  return false
+}
+
 AgricolaActionManager.prototype.sow = function(player) {
   const sowableFields = player.getSowableFields()
   if (sowableFields.length === 0) {
@@ -170,172 +331,26 @@ AgricolaActionManager.prototype.sow = function(player) {
       break
     }
 
-    // Build nested choices showing crop types with their available fields
-    const nestedChoices = []
-
-    if (canSowGrain) {
-      const grainFields = currentSowableFields
-        .filter(f => !f.cropRestriction || f.cropRestriction === 'grain')
-        .map(f => f.isVirtualField ? `Field (${f.label})` : `Field (${f.row},${f.col})`)
-      if (grainFields.length > 0) {
-        nestedChoices.push({
-          title: 'Grain',
-          choices: grainFields,
-          min: 0,
-          max: 1,
-        })
-      }
-    }
-
-    if (canSowVeg) {
-      const vegFields = currentSowableFields
-        .filter(f => !f.cropRestriction || f.cropRestriction === 'vegetables')
-        .map(f => f.isVirtualField ? `Field (${f.label})` : `Field (${f.row},${f.col})`)
-      if (vegFields.length > 0) {
-        nestedChoices.push({
-          title: 'Vegetables',
-          choices: vegFields,
-          min: 0,
-          max: 1,
-        })
-      }
-    }
-
-    nestedChoices.push('Done Sowing')
-
-    // Request input - supports both nested selector and direct farm board clicks
-    const selector = {
-      type: 'select',
-      actor: player.name,
-      title: 'Choose field to sow',
-      choices: nestedChoices,
-      min: 1,
-      max: 1,
-      // Mark this as accepting action-based input for sowing
-      allowsAction: ['sow-field', 'sow-virtual-field'],
-      validSpaces: regularSowableFields,  // Only regular fields, virtual fields are handled separately in UI
+    const result = this._sowOneField(player, {
+      fields: currentSowableFields,
+      regularFields: regularSowableFields,
+      emptyVirtualFields,
       canSowGrain,
       canSowVeg,
-      emptyVirtualFields,  // Virtual fields that can be sown
-    }
+      canDone: true,
+    })
 
-    const result = this.game.requestInputSingle(selector)
-
-    // Handle action-based response (from clicking the farm board)
-    if (result.action === 'sow-field') {
-      const { row, col, cropType } = result
-
-      // Validate the space is a valid sowable field
-      const isValidField = regularSowableFields.some(f => f.row === row && f.col === col)
-      if (!isValidField) {
-        throw new Error(`Invalid sow space: (${row}, ${col}) is not a valid field`)
-      }
-
-      // Validate player has the crop
-      if (cropType === 'grain' && !canSowGrain) {
-        throw new Error('No grain available to sow')
-      }
-      if (cropType === 'vegetables' && !canSowVeg) {
-        throw new Error('No vegetables available to sow')
-      }
-
-      player.sowField(row, col, cropType)
-      sownFieldKeys.add(`${row},${col}`)
-      sowedAny = true
-      sowedTypes.push(cropType)
-      if (cropType === 'vegetables') {
-        sowedVegetables = true
-      }
-
-      const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
-      this.log.add({
-        template: '{player} sows {crop} at ({row},{col}) - {amount} total',
-        args: { player, crop: cropType, row, col, amount },
-      })
-      continue
-    }
-
-    // Handle virtual field sowing (from clicking a virtual field cell)
-    if (result.action === 'sow-virtual-field') {
-      const { fieldId, cropType } = result
-      const virtualField = player.getVirtualField(fieldId)
-
-      if (!virtualField) {
-        throw new Error(`Virtual field not found: ${fieldId}`)
-      }
-      if (!player.canSowVirtualField(fieldId, cropType)) {
-        throw new Error(`Cannot sow ${cropType} in ${virtualField.label}`)
-      }
-
-      player.sowVirtualField(fieldId, cropType)
-      sowedAny = true
-      sowedTypes.push(cropType)
-      if (cropType === 'vegetables') {
-        sowedVegetables = true
-      }
-
-      const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
-      this.log.add({
-        template: '{player} sows {crop} in {label} - {amount} total',
-        args: { player, crop: cropType, label: virtualField.label, amount },
-      })
-      continue
-    }
-
-    // Handle standard selection response
-    const choice = result[0]
-
-    if (choice === 'Done Sowing') {
+    if (!result) {
       break
     }
 
-    // Handle nested selection (object with title and selection)
-    if (typeof choice === 'object' && choice.title && choice.selection && choice.selection.length > 0) {
-      const selectedField = choice.selection[0]
-      const coordMatch = selectedField.match(/Field \((\d+),(\d+)\)/)
-
-      if (coordMatch) {
-        const row = parseInt(coordMatch[1])
-        const col = parseInt(coordMatch[2])
-        const cropType = choice.title.startsWith('Grain') ? 'grain' : 'vegetables'
-
-        player.sowField(row, col, cropType)
-        sownFieldKeys.add(`${row},${col}`)
-        sowedAny = true
-        sowedTypes.push(cropType)
-        if (cropType === 'vegetables') {
-          sowedVegetables = true
-        }
-
-        const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
-        this.log.add({
-          template: '{player} sows {crop} at ({row},{col}) - {amount} total',
-          args: { player, crop: cropType, row, col, amount },
-        })
-      }
-      else {
-        // Virtual field — match "Field (Label)"
-        const labelMatch = selectedField.match(/Field \((.+)\)/)
-        if (labelMatch) {
-          const label = labelMatch[1]
-          const vf = emptyVirtualFields.find(f => f.label === label)
-          if (vf) {
-            const cropType = choice.title.startsWith('Grain') ? 'grain' : 'vegetables'
-            player.sowVirtualField(vf.id, cropType)
-            sowedAny = true
-            sowedTypes.push(cropType)
-            if (cropType === 'vegetables') {
-              sowedVegetables = true
-            }
-
-            const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
-            this.log.add({
-              template: '{player} sows {crop} in {label} - {amount} total',
-              args: { player, crop: cropType, label: vf.label, amount },
-            })
-          }
-        }
-      }
+    if (result.row !== undefined) {
+      sownFieldKeys.add(`${result.row},${result.col}`)
+    }
+    sowedAny = true
+    sowedTypes.push(result.cropType)
+    if (result.cropType === 'vegetables') {
+      sowedVegetables = true
     }
   }
 
@@ -391,108 +406,17 @@ AgricolaActionManager.prototype.sowSingleField = function(player, card) {
     return false
   }
 
-  const selector = {
-    type: 'select',
-    actor: player.name,
-    title: `${card.name}: Choose field to sow`,
-    choices: sowableFields.map(f => f.isVirtualField ? `Field (${f.label})` : `Field (${f.row},${f.col})`),
-    min: 1,
-    max: 1,
-    allowsAction: ['sow-field', 'sow-virtual-field'],
-    validSpaces: regularSowableFields,
+  const result = this._sowOneField(player, {
+    fields: sowableFields,
+    regularFields: regularSowableFields,
+    emptyVirtualFields,
     canSowGrain,
     canSowVeg,
-    emptyVirtualFields,
-  }
+    title: `${card.name}: Choose field to sow`,
+    card: card.name,
+  })
 
-  const result = this.game.requestInputSingle(selector)
-
-  if (result.action === 'sow-field') {
-    const { row, col, cropType } = result
-    player.sowField(row, col, cropType)
-    const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
-    this.log.add({
-      template: '{player} sows {crop} at ({row},{col}) - {amount} total ({card})',
-      args: { player, crop: cropType, row, col, amount, card: card.name },
-    })
-  }
-  else if (result.action === 'sow-virtual-field') {
-    const { fieldId, cropType } = result
-    player.sowVirtualField(fieldId, cropType)
-    const virtualField = player.getVirtualField(fieldId)
-    const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
-    this.log.add({
-      template: '{player} sows {crop} in {label} - {amount} total ({card})',
-      args: { player, crop: cropType, label: virtualField.label, amount, card: card.name },
-    })
-  }
-  else {
-    const choice = result[0]
-    const coordMatch = choice.match(/Field \((\d+),(\d+)\)/)
-    if (coordMatch) {
-      const row = parseInt(coordMatch[1])
-      const col = parseInt(coordMatch[2])
-      // Need to determine crop type — if only one is available, use it
-      let cropType
-      if (canSowGrain && !canSowVeg) {
-        cropType = 'grain'
-      }
-      else if (!canSowGrain && canSowVeg) {
-        cropType = 'vegetables'
-      }
-      else {
-        // Both available — ask
-        const cropSelection = this.choose(player, ['Grain', 'Vegetables'], {
-          title: 'Choose crop type',
-          min: 1,
-          max: 1,
-        })
-        cropType = cropSelection[0].toLowerCase()
-      }
-      player.sowField(row, col, cropType)
-      const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
-      this.log.add({
-        template: '{player} sows {crop} at ({row},{col}) - {amount} total ({card})',
-        args: { player, crop: cropType, row, col, amount, card: card.name },
-      })
-    }
-    else {
-      // Virtual field — match "Field (Label)"
-      const labelMatch = choice.match(/Field \((.+)\)/)
-      if (labelMatch) {
-        const label = labelMatch[1]
-        const vf = emptyVirtualFields.find(f => f.label === label)
-        if (vf) {
-          let cropType
-          if (vf.cropRestriction) {
-            cropType = vf.cropRestriction
-          }
-          else if (canSowGrain && !canSowVeg) {
-            cropType = 'grain'
-          }
-          else if (!canSowGrain && canSowVeg) {
-            cropType = 'vegetables'
-          }
-          else {
-            const cropSelection = this.choose(player, ['Grain', 'Vegetables'], {
-              title: 'Choose crop type',
-              min: 1,
-              max: 1,
-            })
-            cropType = cropSelection[0].toLowerCase()
-          }
-          player.sowVirtualField(vf.id, cropType)
-          const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
-          this.log.add({
-            template: '{player} sows {crop} in {label} - {amount} total ({card})',
-            args: { player, crop: cropType, label: vf.label, amount, card: card.name },
-          })
-        }
-      }
-    }
-  }
-
-  return true
+  return !!result
 }
 
 AgricolaActionManager.prototype.bakeBread = function(player) {
