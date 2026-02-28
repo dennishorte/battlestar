@@ -39,7 +39,7 @@ module.exports = {
     }
     const match = selection[0].match(/Breed (\w+)/)
     const animalType = match[1]
-    player.addAnimals(animalType, 1)
+    game.actions.handleAnimalPlacement(player, { [animalType]: 1 })
     game.log.add({
       template: '{player} breeds 1 {type} ({card})',
       args: { player, type: animalType , card: this},

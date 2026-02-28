@@ -20,7 +20,7 @@ module.exports = {
           max: 1,
         })
         if (selection[0] === '2 sheep') {
-          p.addAnimals('sheep', 2)
+          game.actions.handleAnimalPlacement(p, { sheep: 2 })
           game.log.add({
             template: '{player} gets 2 sheep from {card}',
             args: { player: p , card: this},
@@ -46,7 +46,7 @@ module.exports = {
 
     // Card owner also gets 1 cattle
     if (player.canPlaceAnimals('cattle', 1)) {
-      player.addAnimals('cattle', 1)
+      game.actions.handleAnimalPlacement(player, { cattle: 1 })
       game.log.add({
         template: '{player} gets 1 cattle from {card}',
         args: { player , card: this},

@@ -22,7 +22,7 @@ module.exports = {
       const sheepOnMarket = game.getAccumulatedResources('take-sheep').sheep || 0
       if (sheepOnMarket > 0) {
         game.removeFromAccumulationSpace('take-sheep', 'sheep', 1)
-        player.addAnimals('sheep', 1)
+        game.actions.handleAnimalPlacement(player, { sheep: 1 })
         game.log.add({
           template: '{player} takes 1 sheep from Sheep Market via {card}',
           args: { player , card: this},

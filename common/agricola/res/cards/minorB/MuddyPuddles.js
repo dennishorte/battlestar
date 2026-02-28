@@ -41,7 +41,7 @@ module.exports = {
     const good = state.stack.pop()
     player.removeResource('clay', 1)
     if (['sheep', 'boar', 'cattle'].includes(good)) {
-      player.addAnimals(good, 1)
+      game.actions.handleAnimalPlacement(player, { [good]: 1 })
     }
     else {
       player.addResource(good, 1)

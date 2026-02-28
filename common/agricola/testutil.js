@@ -245,7 +245,7 @@ TestUtil.setAnimals = function(player, animals) {
   // animals is an object like { sheep: 3, boar: 2, cattle: 1 }
   for (const [type, count] of Object.entries(animals)) {
     if (count > 0) {
-      player.addAnimals(type, count)
+      player.placeAnimals(type, count)
     }
   }
 }
@@ -566,7 +566,7 @@ TestUtil.setPlayerBoard = function(game, playerName, playerState) {
   if (playerState.animals) {
     for (const [type, count] of Object.entries(playerState.animals)) {
       if (count > 0) {
-        player.addAnimals(type, count)
+        player.placeAnimals(type, count)
       }
     }
   }

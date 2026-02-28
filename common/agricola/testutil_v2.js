@@ -604,7 +604,7 @@ TestUtil.setPlayerBoard = function(game, playerName, playerState) {
   if (playerState.animals) {
     for (const [type, count] of Object.entries(playerState.animals)) {
       if (count > 0) {
-        player.addAnimals(type, count)
+        player.placeAnimals(type, count)
       }
     }
   }

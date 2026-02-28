@@ -36,7 +36,7 @@ module.exports = {
       }
       else if (selection[0] === 'Exchange 1 vegetable for 1 cattle') {
         player.payCost({ vegetables: 1 })
-        player.addAnimals('cattle', 1)
+        game.actions.handleAnimalPlacement(player, { cattle: 1 })
       }
       else if (selection[0] === 'Exchange 2 sheep for 1 vegetable') {
         player.removeAnimals('sheep', 2)
@@ -44,7 +44,7 @@ module.exports = {
       }
       else if (selection[0] === 'Exchange 1 vegetable for 2 sheep') {
         player.payCost({ vegetables: 1 })
-        player.addAnimals('sheep', 2)
+        game.actions.handleAnimalPlacement(player, { sheep: 2 })
       }
       else if (selection[0] === 'Exchange 2 food for 1 grain') {
         player.payCost({ food: 2 })

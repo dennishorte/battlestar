@@ -35,10 +35,10 @@ module.exports = {
         player.addResource('vegetables', 1)
       }
       else if (selection[0] === 'Take 1 wild boar') {
-        player.addAnimals('boar', 1)
+        game.actions.handleAnimalPlacement(player, { boar: 1 })
       }
       else if (selection[0] === 'Take 1 cattle') {
-        player.addAnimals('cattle', 1)
+        game.actions.handleAnimalPlacement(player, { cattle: 1 })
       }
       game.log.add({
         template: '{player} uses {card} to get {choice}',

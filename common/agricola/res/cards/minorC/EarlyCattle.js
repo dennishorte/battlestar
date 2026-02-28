@@ -10,7 +10,7 @@ module.exports = {
   category: "Livestock Provider",
   text: "When you play this card, you immediately get 2 cattle.",
   onPlay(game, player) {
-    player.addAnimals('cattle', 2)
+    game.actions.handleAnimalPlacement(player, { cattle: 2 })
     game.log.add({
       template: '{player} gets 2 cattle from {card}',
       args: { player , card: this},

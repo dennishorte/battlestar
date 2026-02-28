@@ -9,7 +9,7 @@ module.exports = {
   holdsAnimals: { sheep: true },
   onPlay(game, player) {
     if (player.canPlaceAnimals('sheep', 1)) {
-      player.addAnimals('sheep', 1)
+      game.actions.handleAnimalPlacement(player, { sheep: 1 })
       game.log.add({
         template: '{player} gets 1 sheep from {card}',
         args: { player , card: this},

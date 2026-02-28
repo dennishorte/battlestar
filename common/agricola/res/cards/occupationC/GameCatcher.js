@@ -12,8 +12,7 @@ module.exports = {
     const harvestsLeft = harvestRounds.filter(r => r >= game.state.round).length
     if (player.food >= harvestsLeft && player.canPlaceAnimals('cattle', 1) && player.canPlaceAnimals('boar', 1)) {
       player.payCost({ food: harvestsLeft })
-      player.addAnimals('cattle', 1)
-      player.addAnimals('boar', 1)
+      game.actions.handleAnimalPlacement(player, { cattle: 1, boar: 1 })
       game.log.add({
         template: '{player} pays {food} food for 1 cattle and 1 wild boar from {card}',
         args: { player, food: harvestsLeft , card: this},

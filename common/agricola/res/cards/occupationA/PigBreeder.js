@@ -8,7 +8,7 @@ module.exports = {
   text: "When you play this card, you immediately get 1 wild boar. Your wild boar breed at the end of round 12 (if there is room for the new wild boar).",
   onPlay(game, player) {
     if (player.canPlaceAnimals('boar', 1)) {
-      player.addAnimals('boar', 1)
+      game.actions.handleAnimalPlacement(player, { boar: 1 })
       game.log.add({
         template: '{player} gets 1 wild boar from {card}',
         args: { player , card: this},
@@ -19,7 +19,7 @@ module.exports = {
     if (round === 12) {
       const boarCount = player.getTotalAnimals('boar')
       if (boarCount >= 2 && player.canPlaceAnimals('boar', 1)) {
-        player.addAnimals('boar', 1)
+        game.actions.handleAnimalPlacement(player, { boar: 1 })
         game.log.add({
           template: "{player}'s wild boar breed from {card}",
           args: { player, card: this },

@@ -17,7 +17,7 @@ module.exports = {
       })
       if (selection[0] !== 'Skip') {
         player.payCost({ grain: 1 })
-        player.addAnimals('boar', 1)
+        game.actions.handleAnimalPlacement(player, { boar: 1 })
         game.log.add({
           template: '{player} pays 1 grain for 1 boar from {card}',
           args: { player , card: this},

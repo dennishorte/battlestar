@@ -18,7 +18,7 @@ module.exports = {
         }
       }
       if (hasStable && pasture.animalType && player.canPlaceAnimals(pasture.animalType, 1)) {
-        player.addAnimals(pasture.animalType, 1)
+        game.actions.handleAnimalPlacement(player, { [pasture.animalType]: 1 })
         game.log.add({
           template: '{player} gets 1 {animal} from {card}',
           args: { player, animal: pasture.animalType , card: this},

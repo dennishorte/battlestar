@@ -29,7 +29,7 @@ module.exports = {
     }
     else {
       player.payCost({ reed: 1 })
-      player.addAnimals('cattle', 1)
+      game.actions.handleAnimalPlacement(player, { cattle: 1 })
       game.log.add({
         template: '{player} exchanges 1 reed for 1 cattle from {card}',
         args: { player, card },

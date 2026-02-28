@@ -59,7 +59,7 @@ module.exports = {
 
       if (selection[0].includes('sheep')) {
         payBuildingResources(2)
-        player.addAnimals('sheep', 1)
+        game.actions.handleAnimalPlacement(player, { sheep: 1 })
         game.log.add({
           template: '{player} buys 1 sheep for 2 building resources using {card}',
           args: { player, card: this },
@@ -67,7 +67,7 @@ module.exports = {
       }
       else if (selection[0].includes('boar')) {
         payBuildingResources(3)
-        player.addAnimals('boar', 1)
+        game.actions.handleAnimalPlacement(player, { boar: 1 })
         game.log.add({
           template: '{player} buys 1 wild boar for 3 building resources using {card}',
           args: { player, card: this },
@@ -75,7 +75,7 @@ module.exports = {
       }
       else if (selection[0].includes('cattle')) {
         payBuildingResources(4)
-        player.addAnimals('cattle', 1)
+        game.actions.handleAnimalPlacement(player, { cattle: 1 })
         game.log.add({
           template: '{player} buys 1 cattle for 4 building resources using {card}',
           args: { player, card: this },

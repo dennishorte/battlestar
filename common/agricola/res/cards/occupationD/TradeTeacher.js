@@ -43,7 +43,7 @@ module.exports = {
       const cost = parseInt(match[2])
       player.removeResource('food', cost)
       if (resource === 'sheep' || resource === 'boar' || resource === 'cattle') {
-        player.addAnimals(resource, 1)
+        game.actions.handleAnimalPlacement(player, { [resource]: 1 })
       }
       else {
         player.addResource(resource, 1)

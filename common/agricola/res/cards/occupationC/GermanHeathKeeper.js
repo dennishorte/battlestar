@@ -8,7 +8,7 @@ module.exports = {
   text: "Each time any player (including you) uses the \"Pig Market\" accumulation space, you get 1 sheep from the general supply.",
   onAnyAction(game, actingPlayer, actionId, cardOwner) {
     if (actionId === 'take-boar' && cardOwner.canPlaceAnimals('sheep', 1)) {
-      cardOwner.addAnimals('sheep', 1)
+      game.actions.handleAnimalPlacement(cardOwner, { sheep: 1 })
       game.log.add({
         template: '{player} gets 1 sheep from {card}',
         args: { player: cardOwner , card: this},

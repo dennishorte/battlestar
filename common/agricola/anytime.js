@@ -491,7 +491,7 @@ Agricola.prototype.executeAnytimeCardExchange = function(player, action) {
   // Gain to resources
   for (const [res, amt] of Object.entries(action.to)) {
     if (['sheep', 'boar', 'cattle'].includes(res)) {
-      player.addAnimals(res, amt)
+      this.actions.handleAnimalPlacement(player, { [res]: amt })
     }
     else {
       player.addResource(res, amt)

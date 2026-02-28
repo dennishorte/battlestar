@@ -418,7 +418,7 @@ AgricolaPlayer.prototype.canPlaceAnimals = function(animalType, count) {
   return currentCount + count <= capacity
 }
 
-AgricolaPlayer.prototype.addAnimals = function(animalType, count) {
+AgricolaPlayer.prototype.placeAnimals = function(animalType, count) {
   // Try to place animals automatically
   let remaining = count
 
@@ -894,7 +894,7 @@ AgricolaPlayer.prototype.breedAnimals = function() {
     if (count >= required) {
       // Can breed - but only if we can house the baby
       if (this.canPlaceAnimals(type, 1)) {
-        this.addAnimals(type, 1)
+        this.placeAnimals(type, 1)
         bred[type] = 1
       }
     }

@@ -16,7 +16,7 @@ module.exports = {
       const good = s.goods[round]
       if (good === 'boar' || good === 'cattle') {
         if (player.canPlaceAnimals(good, 1)) {
-          player.addAnimals(good, 1)
+          game.actions.handleAnimalPlacement(player, { [good]: 1 })
           game.log.add({
             template: '{player} gets 1 {animal} from {card}',
             args: { player, animal: good , card: this},

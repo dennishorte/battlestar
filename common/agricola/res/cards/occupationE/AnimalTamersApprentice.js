@@ -12,21 +12,21 @@ module.exports = {
     const stoneRooms = player.getUnoccupiedRoomsByType('stone')
 
     if (woodRooms > 0 && player.canPlaceAnimals('sheep', woodRooms)) {
-      player.addAnimals('sheep', woodRooms)
+      game.actions.handleAnimalPlacement(player, { sheep: woodRooms })
       game.log.add({
         template: '{player} gets {count} sheep from {card}',
         args: { player, count: woodRooms, card: this },
       })
     }
     if (clayRooms > 0 && player.canPlaceAnimals('boar', clayRooms)) {
-      player.addAnimals('boar', clayRooms)
+      game.actions.handleAnimalPlacement(player, { boar: clayRooms })
       game.log.add({
         template: '{player} gets {count} wild boar from {card}',
         args: { player, count: clayRooms, card: this },
       })
     }
     if (stoneRooms > 0 && player.canPlaceAnimals('cattle', stoneRooms)) {
-      player.addAnimals('cattle', stoneRooms)
+      game.actions.handleAnimalPlacement(player, { cattle: stoneRooms })
       game.log.add({
         template: '{player} gets {count} cattle from {card}',
         args: { player, count: stoneRooms, card: this },

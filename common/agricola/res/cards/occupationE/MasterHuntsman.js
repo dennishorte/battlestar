@@ -8,7 +8,7 @@ module.exports = {
   text: "When you play this card and each time you build a major improvement, you get 1 wild boar.",
   onPlay(game, player) {
     if (player.canPlaceAnimals('boar', 1)) {
-      player.addAnimals('boar', 1)
+      game.actions.handleAnimalPlacement(player, { boar: 1 })
       game.log.add({
         template: '{player} gets 1 wild boar from {card}',
         args: { player , card: this},
@@ -17,7 +17,7 @@ module.exports = {
   },
   onBuildMajor(game, player) {
     if (player.canPlaceAnimals('boar', 1)) {
-      player.addAnimals('boar', 1)
+      game.actions.handleAnimalPlacement(player, { boar: 1 })
       game.log.add({
         template: '{player} gets 1 wild boar from {card}',
         args: { player , card: this},

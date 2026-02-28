@@ -22,9 +22,7 @@ module.exports = {
         ], { title: 'Animal Catcher', min: 1, max: 1 })
         if (selection[0] !== 'Do not catch animals') {
           player.payCost({ food: harvestsLeft })
-          player.addAnimals('sheep', 1)
-          player.addAnimals('boar', 1)
-          player.addAnimals('cattle', 1)
+          game.actions.handleAnimalPlacement(player, { sheep: 1, boar: 1, cattle: 1 })
           game.log.add({
             template: '{player} pays {food} food for 3 animals from {card}',
             args: { player, food: harvestsLeft , card: this},

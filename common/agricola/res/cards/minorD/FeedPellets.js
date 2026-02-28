@@ -8,11 +8,11 @@ module.exports = {
   category: "Livestock Provider",
   text: "When you play this card, you immediately get 1 sheep. In the feeding phase of each harvest, you can exchange exactly 1 vegetable for 1 animal of a type you already have.",
   onPlay(game, player) {
-    player.addAnimals('sheep', 1)
     game.log.add({
       template: '{player} gets 1 sheep from {card}',
       args: { player , card: this},
     })
+    game.actions.handleAnimalPlacement(player, { sheep: 1 })
   },
   onFeedingPhase(game, player) {
     const animalTypes = ['sheep', 'boar', 'cattle'].filter(type =>
@@ -29,11 +29,11 @@ module.exports = {
       if (selection[0] !== 'Skip') {
         const type = animalTypes.find(t => selection[0] === `Pay 1 vegetable for 1 ${t}`)
         player.payCost({ vegetables: 1 })
-        player.addAnimals(type, 1)
         game.log.add({
           template: '{player} exchanges 1 vegetable for 1 {type} using {card}',
           args: { player, type, card: this },
         })
+        game.actions.handleAnimalPlacement(player, { [type]: 1 })
       }
     }
   },

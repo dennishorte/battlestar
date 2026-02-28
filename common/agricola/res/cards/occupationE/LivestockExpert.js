@@ -48,7 +48,7 @@ module.exports = {
 
       if (type) {
         const count = player.getTotalAnimals(type)
-        player.addAnimals(type, count)
+        game.actions.handleAnimalPlacement(player, { [type]: count })
         game.log.add({
           template: '{player} doubles {type} to {total} using {card}',
           args: { player, type, total: count * 2 , card: this},

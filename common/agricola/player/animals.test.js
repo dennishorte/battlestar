@@ -6,7 +6,7 @@ describe('animals', () => {
     game.run()
 
     const dennis = game.players.byName('dennis')
-    expect(dennis.addAnimals('sheep', 1)).toBe(true)
+    expect(dennis.placeAnimals('sheep', 1)).toBe(true)
 
     expect(dennis.pet).toBe('sheep')
     expect(dennis.getTotalAnimals('sheep')).toBe(1)
@@ -19,7 +19,7 @@ describe('animals', () => {
     const dennis = game.players.byName('dennis')
     dennis.buildStable(2, 0)
 
-    expect(dennis.addAnimals('sheep', 2)).toBe(true)
+    expect(dennis.placeAnimals('sheep', 2)).toBe(true)
     expect(dennis.getTotalAnimals('sheep')).toBe(2)
   })
 
@@ -31,7 +31,7 @@ describe('animals', () => {
     t.addPasture(dennis, [{ row: 2, col: 0 }, { row: 2, col: 1 }])
 
     // 2 spaces * 2 = 4 capacity, plus 1 pet = 5 total
-    expect(dennis.addAnimals('sheep', 5)).toBe(true)
+    expect(dennis.placeAnimals('sheep', 5)).toBe(true)
     expect(dennis.getTotalAnimals('sheep')).toBe(5)
   })
 
@@ -154,7 +154,7 @@ describe('animals', () => {
     dennis.pet = 'boar'
 
     // Try to add sheep - should fail since there's nowhere to put them
-    expect(dennis.addAnimals('sheep', 1)).toBe(false)
+    expect(dennis.placeAnimals('sheep', 1)).toBe(false)
     expect(dennis.getTotalAnimals('sheep')).toBe(0)
     // Boar should still be in pet slot
     expect(dennis.pet).toBe('boar')

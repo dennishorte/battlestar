@@ -168,7 +168,7 @@ class AgricolaActionManager extends BaseActionManager {
           this.handleAnimalPlacement(player, { [resource]: count }, { forceModal: true })
         }
         else if (allAccommodated) {
-          player.addAnimals(resource, count)
+          player.placeAnimals(resource, count)
         }
         else {
           this.handleAnimalOverflow(player, resource, count)
@@ -234,7 +234,7 @@ class AgricolaActionManager extends BaseActionManager {
       for (const [animalType, count] of Object.entries(animals)) {
         let remaining = count
         while (remaining > 0 && player.canPlaceAnimals(animalType, 1)) {
-          player.addAnimals(animalType, 1)
+          player.placeAnimals(animalType, 1)
           remaining--
         }
         if (remaining > 0) {

@@ -24,17 +24,17 @@ module.exports = {
         const selection = game.actions.choose(cardOwner, () => choices, { title: 'Cattle Buyer', min: 1, max: 1 })
         if (selection[0] === 'Buy 1 sheep for 1 food') {
           cardOwner.payCost({ food: 1 })
-          cardOwner.addAnimals('sheep', 1)
+          game.actions.handleAnimalPlacement(cardOwner, { sheep: 1 })
           game.log.add({ template: '{player} buys 1 sheep from {card}', args: { player: cardOwner, card: this } })
         }
         else if (selection[0] === 'Buy 1 wild boar for 2 food') {
           cardOwner.payCost({ food: 2 })
-          cardOwner.addAnimals('boar', 1)
+          game.actions.handleAnimalPlacement(cardOwner, { boar: 1 })
           game.log.add({ template: '{player} buys 1 wild boar from {card}', args: { player: cardOwner, card: this } })
         }
         else if (selection[0] === 'Buy 1 cattle for 2 food') {
           cardOwner.payCost({ food: 2 })
-          cardOwner.addAnimals('cattle', 1)
+          game.actions.handleAnimalPlacement(cardOwner, { cattle: 1 })
           game.log.add({ template: '{player} buys 1 cattle from {card}', args: { player: cardOwner, card: this } })
         }
       }

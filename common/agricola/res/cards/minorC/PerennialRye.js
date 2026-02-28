@@ -26,7 +26,7 @@ module.exports = {
       if (selection[0] !== 'Skip') {
         const type = breedableTypes.find(t => selection[0] === `Pay 1 grain to breed ${t}`)
         player.payCost({ grain: 1 })
-        player.addAnimals(type, 1)
+        game.actions.handleAnimalPlacement(player, { [type]: 1 })
         game.log.add({
           template: '{player} pays 1 grain to breed 1 {type} using {card}',
           args: { player, type, card: this },

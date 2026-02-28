@@ -20,7 +20,7 @@ module.exports = {
       return
     }
     player.removeResource('wood', 1)
-    player.addAnimals('sheep', 1)
+    game.actions.handleAnimalPlacement(player, { sheep: 1 })
     const state = game.state.actionSpaces[actionId]
     if (state && typeof state.accumulated === 'number') {
       state.accumulated = (state.accumulated || 0) + 1

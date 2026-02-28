@@ -136,7 +136,7 @@ AgricolaActionManager.prototype.offerBuyAnimal = function(player, card, animalTy
 
   if (selection[0] !== 'Skip') {
     player.payCost({ food: 1 })
-    player.addAnimals(animalType, 1)
+    this.handleAnimalPlacement(player, { [animalType]: 1 })
     this.log.add({
       template: '{player} buys 1 {animal} for 1 food using {card}',
       args: { player, animal: animalType, card: card },
@@ -442,7 +442,7 @@ AgricolaActionManager.prototype.animalMarket = function(player) {
   }
 
   if (selection[0] === 'Take 1 sheep and 1 food') {
-    player.addAnimals('sheep', 1)
+    this.handleAnimalPlacement(player, { sheep: 1 })
     player.addResource('food', 1)
     this.log.add({
       template: '{player} takes 1 sheep and 1 food from the Animal Market',
@@ -451,7 +451,7 @@ AgricolaActionManager.prototype.animalMarket = function(player) {
   }
   else if (selection[0] === 'Pay 1 food for 1 cattle') {
     player.payCost({ food: 1 })
-    player.addAnimals('cattle', 1)
+    this.handleAnimalPlacement(player, { cattle: 1 })
     this.log.add({
       template: '{player} pays 1 food for 1 cattle from the Animal Market',
       args: { player },
@@ -589,7 +589,7 @@ AgricolaActionManager.prototype.corral = function(player) {
     return false
   }
 
-  player.addAnimals(animalToGet, 1)
+  player.placeAnimals(animalToGet, 1)
   this.log.add({
     template: '{player} takes 1 {animal} from the Corral',
     args: { player, animal: animalToGet },

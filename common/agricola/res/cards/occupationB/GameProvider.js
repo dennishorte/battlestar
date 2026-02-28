@@ -80,13 +80,13 @@ module.exports = {
     }
 
     if (player.canPlaceAnimals('boar', boarToGain)) {
-      player.addAnimals('boar', boarToGain)
+      game.actions.handleAnimalPlacement(player, { boar: boarToGain })
     }
     else {
       // Add as many as can be placed
       for (let i = 0; i < boarToGain; i++) {
         if (player.canPlaceAnimals('boar', 1)) {
-          player.addAnimals('boar', 1)
+          game.actions.handleAnimalPlacement(player, { boar: 1 })
         }
       }
     }

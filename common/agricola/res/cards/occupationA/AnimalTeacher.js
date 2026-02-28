@@ -47,7 +47,7 @@ module.exports = {
     if (chosen.food > 0) {
       player.payCost({ food: chosen.food })
     }
-    player.addAnimals(chosen.animal, 1)
+    game.actions.handleAnimalPlacement(player, { [chosen.animal]: 1 })
     game.log.add({
       template: '{player} buys 1 {animal} for {food} food using {card}',
       args: { player, animal: chosen.animal, food: chosen.food, card: cardName },

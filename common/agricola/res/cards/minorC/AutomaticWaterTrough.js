@@ -28,7 +28,7 @@ module.exports = {
       max: 1,
     })
     if (selection[0] === 'Buy 1 sheep (free)') {
-      player.addAnimals('sheep', 1)
+      game.actions.handleAnimalPlacement(player, { sheep: 1 })
       game.log.add({
         template: '{player} buys 1 sheep using {card}',
         args: { player, card: this },
@@ -36,7 +36,7 @@ module.exports = {
     }
     else if (selection[0] === 'Buy 1 wild boar for 1 food') {
       player.payCost({ food: 1 })
-      player.addAnimals('boar', 1)
+      game.actions.handleAnimalPlacement(player, { boar: 1 })
       game.log.add({
         template: '{player} buys 1 wild boar for 1 food using {card}',
         args: { player, card: this },
@@ -44,7 +44,7 @@ module.exports = {
     }
     else if (selection[0] === 'Buy 1 cattle for 2 food') {
       player.payCost({ food: 2 })
-      player.addAnimals('cattle', 1)
+      game.actions.handleAnimalPlacement(player, { cattle: 1 })
       game.log.add({
         template: '{player} buys 1 cattle for 2 food using {card}',
         args: { player, card: this },

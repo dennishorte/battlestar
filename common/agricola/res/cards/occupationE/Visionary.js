@@ -11,7 +11,7 @@ module.exports = {
       player.addResource('stone', 1)
       player.addResource('vegetables', 1)
       if (player.canPlaceAnimals('boar', 2)) {
-        player.addAnimals('boar', 2)
+        game.actions.handleAnimalPlacement(player, { boar: 2 })
       }
       player.cannotGrowFamilyUntilRound11 = true
       game.log.add({

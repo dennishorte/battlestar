@@ -10,7 +10,7 @@ module.exports = {
   onBuildPasture(game, player, pasture) {
     if (pasture.spaces.length >= 4) {
       if (player.canPlaceAnimals('sheep', 2)) {
-        player.addAnimals('sheep', 2)
+        game.actions.handleAnimalPlacement(player, { sheep: 2 })
         game.log.add({
           template: '{player} gets 2 sheep from {card}',
           args: { player, card: this },

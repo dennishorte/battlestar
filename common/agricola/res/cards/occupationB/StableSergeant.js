@@ -27,9 +27,7 @@ module.exports = {
 
     if (choice[0] === 'Pay 2 food for 1 sheep, 1 boar, 1 cattle') {
       player.payCost({ food: 2 })
-      player.addAnimals('sheep', 1)
-      player.addAnimals('boar', 1)
-      player.addAnimals('cattle', 1)
+      game.actions.handleAnimalPlacement(player, { sheep: 1, boar: 1, cattle: 1 })
       game.log.add({
         template: '{player} pays 2 food for 1 sheep, 1 boar, 1 cattle from {card}',
         args: { player , card: this},

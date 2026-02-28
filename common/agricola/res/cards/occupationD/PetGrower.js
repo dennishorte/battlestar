@@ -10,7 +10,7 @@ module.exports = {
   onAction(game, player, actionId) {
     if (game.isAnimalAccumulationSpace(actionId)) {
       if (player.getAnimalsInHouse() === 0 && player.canPlaceAnimals('sheep', 1)) {
-        player.addAnimals('sheep', 1)
+        game.actions.handleAnimalPlacement(player, { sheep: 1 })
         game.log.add({
           template: '{player} gets 1 sheep from {card}',
           args: { player , card: this},

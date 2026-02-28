@@ -49,7 +49,7 @@ module.exports = {
     // 7. Place animals back into new pastures
     for (const [type, count] of Object.entries(savedAnimals)) {
       if (count > 0) {
-        player.addAnimals(type, count)
+        game.actions.handleAnimalPlacement(player, { [type]: count })
       }
     }
   },

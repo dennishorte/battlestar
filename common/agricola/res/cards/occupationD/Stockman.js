@@ -10,7 +10,7 @@ module.exports = {
     const animals = { 2: 'cattle', 3: 'boar', 4: 'sheep' }
     const animal = animals[stableNumber]
     if (animal && player.canPlaceAnimals(animal, 1)) {
-      player.addAnimals(animal, 1)
+      game.actions.handleAnimalPlacement(player, { [animal]: 1 })
       game.log.add({
         template: '{player} gets 1 {animal} from {card}',
         args: { player, animal , card: this},

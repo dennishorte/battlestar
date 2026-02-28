@@ -52,7 +52,7 @@ module.exports = {
                 space.crop = null
               }
             }
-            player.addAnimals(animalType, 1)
+            game.actions.handleAnimalPlacement(player, { [animalType]: 1 })
             game.log.add({
               template: '{player} pays 1 grain to breed {animal} using {card}',
               args: { player, animal: animalType, card },

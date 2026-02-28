@@ -17,7 +17,7 @@ module.exports = {
       }
       const selection = game.actions.choose(player, () => choices, { title: 'Animal Feeder', min: 1, max: 1 })
       if (selection[0] === '1 sheep') {
-        player.addAnimals('sheep', 1)
+        game.actions.handleAnimalPlacement(player, { sheep: 1 })
         game.log.add({ template: '{player} gets 1 sheep from {card}', args: { player, card: this } })
       }
       else if (selection[0] === '1 grain') {
@@ -26,12 +26,12 @@ module.exports = {
       }
       else if (selection[0] === 'Pay 1 food for 1 wild boar') {
         player.payCost({ food: 1 })
-        player.addAnimals('boar', 1)
+        game.actions.handleAnimalPlacement(player, { boar: 1 })
         game.log.add({ template: '{player} buys 1 wild boar from {card}', args: { player, card: this } })
       }
       else if (selection[0] === 'Pay 2 food for 1 cattle') {
         player.payCost({ food: 2 })
-        player.addAnimals('cattle', 1)
+        game.actions.handleAnimalPlacement(player, { cattle: 1 })
         game.log.add({ template: '{player} buys 1 cattle from {card}', args: { player, card: this } })
       }
     }

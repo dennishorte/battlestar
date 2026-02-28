@@ -22,7 +22,7 @@ module.exports = {
           if (otherState) {
             otherState.accumulated = (otherState.accumulated || 0) + 1
           }
-          player.addAnimals('cattle', 1)
+          game.actions.handleAnimalPlacement(player, { cattle: 1 })
           game.log.add({
             template: '{player} moves 1 food to {other} and gets 1 cattle via {card}',
             args: { player, other: otherName , card: this},

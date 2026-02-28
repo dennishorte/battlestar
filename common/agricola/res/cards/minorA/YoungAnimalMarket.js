@@ -10,7 +10,7 @@ module.exports = {
   text: "You immediately get 1 cattle. (Effectively, you are exchanging 1 sheep for 1 cattle.)",
   onPlay(game, player) {
     if (player.canPlaceAnimals('cattle', 1)) {
-      player.addAnimals('cattle', 1)
+      game.actions.handleAnimalPlacement(player, { cattle: 1 })
       game.log.add({
         template: '{player} gets 1 cattle from {card}',
         args: { player , card: this},
