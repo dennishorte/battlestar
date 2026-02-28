@@ -121,7 +121,7 @@ describe('Naaz-Rokha Alliance', () => {
       try {
         game._explorePlanet('vefut-ii', 'dennis')
       }
-      catch (_e) { /* Eidolon DEPLOY */ }
+      catch { /* Eidolon DEPLOY */ }
       expect(game.state.exploredPlanets['vefut-ii']).toBe(true)
 
       // Rich World is an attach card (+1 resource)
@@ -158,7 +158,7 @@ describe('Naaz-Rokha Alliance', () => {
       try {
         game._explorePlanet('vefut-ii', 'dennis')
       }
-      catch (_e) { /* Eidolon DEPLOY */ }
+      catch { /* Eidolon DEPLOY */ }
       expect(game.state.exploredPlanets['vefut-ii']).toBe(true)
 
       // Mining World is an attach card (no trade goods)
@@ -1124,7 +1124,7 @@ describe('Naaz-Rokha Alliance', () => {
         try {
           game._explorePlanet('vefut-ii', 'dennis')
         }
-        catch (_e) { /* Eidolon DEPLOY */ }
+        catch { /* Eidolon DEPLOY */ }
 
         // Planet should be readied by Pre-Fab Arcologies
         expect(game.state.planets['vefut-ii'].exhausted).toBe(false)
@@ -1158,7 +1158,7 @@ describe('Naaz-Rokha Alliance', () => {
         try {
           game._explorePlanet('vefut-ii', 'dennis')
         }
-        catch (_e) { /* Eidolon DEPLOY */ }
+        catch { /* Eidolon DEPLOY */ }
 
         // Without Pre-Fab Arcologies, planet stays exhausted
         expect(game.state.planets['vefut-ii'].exhausted).toBe(true)
