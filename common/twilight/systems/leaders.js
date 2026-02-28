@@ -412,4 +412,160 @@ module.exports = function(Twilight) {
     return count
   }
 
+  ////////////////////////////////////////////////////////////////////////////////
+  // Elimination (Rule 33)
+
+  /**
+   * Check all players for elimination conditions.
+   * A player is eliminated when they have:
+   * 1. No ground forces (infantry or mechs) on the board
+   * 2. No units with the Production ability (space docks)
+   * 3. No controlled planets
+   */
+  Twilight.prototype._checkElimination = function() {
+    if (!this.state.eliminatedPlayers) {
+      this.state.eliminatedPlayers = []
+    }
+
+    for (const player of this.players.all()) {
+      if (this.state.eliminatedPlayers.includes(player.name)) {
+        continue
+      }
+
+      const groundForces = this._countGroundForces(player.name)
+      const hasProductionUnit = this._hasProductionUnit(player.name)
+      const controlledPlanets = player.getControlledPlanets().length
+
+      if (groundForces === 0 && !hasProductionUnit && controlledPlanets === 0) {
+        this._eliminatePlayer(player)
+      }
+    }
+  }
+
+  /**
+   * Check if a player has any unit with the Production ability on the board.
+   */
+  Twilight.prototype._hasProductionUnit = function(playerName) {
+    for (const systemUnits of Object.values(this.state.units)) {
+      // Check planet-based units (space docks are on planets)
+      for (const planetUnits of Object.values(systemUnits.planets)) {
+        for (const unit of planetUnits) {
+          if (unit.owner === playerName) {
+            const unitDef = res.getUnit(unit.type)
+            if (unitDef && unitDef.abilities && unitDef.abilities.includes('production')) {
+              return true
+            }
+          }
+        }
+      }
+      // Check space-based units (Saar floating factories)
+      for (const unit of systemUnits.space) {
+        if (unit.owner === playerName) {
+          const unitDef = res.getUnit(unit.type)
+          if (unitDef && unitDef.abilities && unitDef.abilities.includes('production')) {
+            return true
+          }
+        }
+      }
+    }
+    return false
+  }
+
+  /**
+   * Handle player elimination: remove all their components from the game.
+   */
+  Twilight.prototype._eliminatePlayer = function(player) {
+    this.state.eliminatedPlayers.push(player.name)
+
+    this.log.add({
+      template: '{player} has been eliminated!',
+      args: { player },
+      event: 'elimination',
+    })
+
+    // (33.2) Remove all units from the board
+    for (const [, systemUnits] of Object.entries(this.state.units)) {
+      systemUnits.space = systemUnits.space.filter(u => u.owner !== player.name)
+      for (const planetId of Object.keys(systemUnits.planets)) {
+        systemUnits.planets[planetId] = systemUnits.planets[planetId]
+          .filter(u => u.owner !== player.name)
+      }
+    }
+
+    // (33.2) Remove command tokens from board
+    for (const system of Object.values(this.state.systems)) {
+      system.commandTokens = system.commandTokens.filter(name => name !== player.name)
+    }
+
+    // (33.4) Return other players' promissory notes to their owners
+    const notes = player.getPromissoryNotes ? player.getPromissoryNotes() : []
+    for (const note of notes) {
+      if (note.owner !== player.name) {
+        const owner = this.players.byName(note.owner)
+        if (owner) {
+          owner.addPromissoryNote(note.id, note.owner)
+        }
+      }
+    }
+    // Clear the eliminated player's promissory notes
+    if (player.promissoryNotes) {
+      player.promissoryNotes = []
+    }
+
+    // (33.5) Discard action cards
+    player.actionCards = []
+
+    // (33.6) Return strategy cards to common play area
+    player.strategyCards = []
+
+    // (33.7) Shuffle secret objectives back into deck
+    if (player.secretObjectives && player.secretObjectives.length > 0) {
+      if (!this.state.secretObjectiveDeck) {
+        this.state.secretObjectiveDeck = []
+      }
+      for (const objId of player.secretObjectives) {
+        this.state.secretObjectiveDeck.push(objId)
+      }
+      this._shuffle(this.state.secretObjectiveDeck)
+      player.secretObjectives = []
+    }
+
+    // (33.8) If speaker is eliminated, pass to next player (left)
+    if (this.state.speaker === player.name) {
+      const allPlayers = this.players.all()
+      const speakerIndex = allPlayers.findIndex(p => p.name === player.name)
+      // Find next non-eliminated player
+      for (let i = 1; i < allPlayers.length; i++) {
+        const nextIndex = (speakerIndex + i) % allPlayers.length
+        const nextPlayer = allPlayers[nextIndex]
+        if (!this.state.eliminatedPlayers.includes(nextPlayer.name)) {
+          this.state.speaker = nextPlayer.name
+          this.log.add({
+            template: 'Speaker passes to {player}',
+            args: { player: nextPlayer },
+          })
+          break
+        }
+      }
+    }
+
+    // (33.11) Return captured units to original owners' reinforcements
+    const capturedUnits = this.state.capturedUnits[player.name] || []
+    if (capturedUnits.length > 0) {
+      this.state.capturedUnits[player.name] = []
+    }
+
+    // Mark player as passed so they're skipped in action phase
+    if (player.pass) {
+      player.pass()
+    }
+  }
+
+  /**
+   * Check if a player has been eliminated.
+   */
+  Twilight.prototype._isEliminated = function(playerName) {
+    return (this.state.eliminatedPlayers || []).includes(playerName)
+  }
+
 } // module.exports

@@ -52,7 +52,8 @@ module.exports = function(Twilight) {
   // Strategy Card — Leadership (#1)
 
   Twilight.prototype._leadershipPrimary = function(player) {
-  // Gain 3 command tokens (added to tactics by default)
+  // Rule 52: Gain 3 command tokens
+  // TODO: After gaining 3 tokens, may spend influence for 1 additional token per 3 influence
     player.commandTokens.tactics += 3
 
     this.log.add({
@@ -95,7 +96,22 @@ module.exports = function(Twilight) {
   // Strategy Card — Technology (#7)
 
   Twilight.prototype._technologyPrimary = function(player) {
+  // Rule 91: Research 1 tech, then may spend 6 resources for 1 additional tech
     this._researchTech(player)
+
+    const tgValue = this.factionAbilities.getTradeGoodResourceValue(player)
+    const availableResources = this._getAvailableResources(player) + player.tradeGoods * tgValue
+    if (availableResources >= 6) {
+      const choice = this.actions.choose(player, ['Research Additional Tech (6 resources)', 'Skip'], {
+        title: 'Spend 6 resources for additional research?',
+        noAutoRespond: true,
+      })
+
+      if (choice[0] !== 'Skip') {
+        this._payResources(player, 6)
+        this._researchTech(player)
+      }
+    }
   }
 
   Twilight.prototype._researchTech = function(player) {
@@ -224,7 +240,43 @@ module.exports = function(Twilight) {
   // Strategy Card — Imperial (#8)
 
   Twilight.prototype._imperialPrimary = function(player) {
-  // If you control Mecatol Rex, gain 1 VP
+  // Rule 45: Three parts
+  // Part 1: May score 1 public objective if requirements met
+    const revealedObjectives = this.state.revealedObjectives || []
+    const playerScored = this.state.scoredObjectives[player.name] || []
+    const controlsHome = this._controlsHomeSystemPlanets(player)
+
+    if (revealedObjectives.length > 0 && controlsHome) {
+      const scorable = revealedObjectives.filter(objId => {
+        if (playerScored.includes(objId)) {
+          return false
+        }
+        const obj = res.getObjective(objId)
+        if (!obj || !obj.check) {
+          return false
+        }
+        return obj.check(player, this)
+      })
+
+      if (scorable.length > 0) {
+        const choices = ['Skip', ...scorable.map(id => {
+          const obj = res.getObjective(id)
+          return `${id}: ${obj.name}`
+        })]
+
+        const selection = this.actions.choose(player, choices, {
+          title: 'Score Public Objective (Imperial)',
+          noAutoRespond: true,
+        })
+
+        const chosen = selection[0]
+        if (chosen !== 'Skip') {
+          this._recordObjectiveScore(player, chosen)
+        }
+      }
+    }
+
+    // Part 2: If controlling Mecatol Rex, gain 1 VP
     if (this.state.planets['mecatol-rex']?.controller === player.name) {
       player.addVictoryPoints(1)
       this.log.add({
@@ -233,6 +285,10 @@ module.exports = function(Twilight) {
         event: 'scoring',
       })
       this._checkVictory()
+    }
+    else {
+    // Part 3: If not controlling Mecatol Rex, draw 1 secret objective
+      this._drawSecretObjective(player)
     }
   }
 
@@ -471,7 +527,9 @@ module.exports = function(Twilight) {
   // Secondary Abilities
 
   Twilight.prototype._resolveSecondaries = function(activePlayer, cardId) {
-    const otherPlayers = this.players.all().filter(p => p.name !== activePlayer.name)
+    const otherPlayers = this.players.all().filter(p =>
+      p.name !== activePlayer.name && !this._isEliminated(p.name)
+    )
 
     for (const player of otherPlayers) {
     // Determine what secondary this card offers
@@ -480,9 +538,11 @@ module.exports = function(Twilight) {
         continue
       }
 
+      // Leadership secondary has no strategy token cost (Rule 52.2)
       // Hacan Masters of Trade: free Trade secondary (no strategy token cost)
-      let isFree = cardId === 'trade'
-      && this.factionAbilities.canSkipTradeSecondaryCost(player)
+      let isFree = cardId === 'leadership'
+      || (cardId === 'trade'
+      && this.factionAbilities.canSkipTradeSecondaryCost(player))
 
       // Acquiescence (Winnu PN): free secondary when Winnu uses strategic action
       if (!isFree && this.factionAbilities.hasAcquiescence(player, activePlayer)) {
@@ -497,7 +557,9 @@ module.exports = function(Twilight) {
         continue
       }
 
-      const costLabel = isFree ? 'free' : 'costs 1 strategy token'
+      const costLabel = isFree ? 'free'
+        : cardId === 'technology' ? 'costs 1 strategy token + 4 resources'
+          : 'costs 1 strategy token'
       const choice = this.actions.choose(player, ['Use Secondary', 'Pass'], {
         title: `${secondaryAvailable} (${costLabel})`,
       })
@@ -528,13 +590,13 @@ module.exports = function(Twilight) {
 
   Twilight.prototype._getSecondaryDescription = function(cardId) {
     switch (cardId) {
-      case 'leadership': return 'Spend influence to gain command tokens'
+      case 'leadership': return 'Gain 1 command token'
       case 'diplomacy': return 'Ready exhausted planets'
       case 'politics': return 'Draw 2 action cards'
       case 'construction': return 'Place 1 structure'
       case 'trade': return 'Replenish commodities'
       case 'warfare': return 'Produce units in your home system'
-      case 'technology': return 'Research 1 technology'
+      case 'technology': return 'Research 1 technology (4 resources)'
       case 'imperial': return 'Draw 1 secret objective'
       default: return null
     }
@@ -543,7 +605,8 @@ module.exports = function(Twilight) {
   Twilight.prototype._resolveSecondary = function(player, cardId) {
     switch (cardId) {
       case 'leadership':
-      // Spend 3 influence to gain 1 command token
+      // Rule 52.2: Gain 1 command token (free, no strategy token cost)
+      // TODO: Should be "spend influence for 1 token per 3 influence" instead of flat 1 token
         player.commandTokens.tactics += 1
         this.log.add({
           template: '{player} gains 1 command token (Leadership secondary)',
@@ -558,10 +621,22 @@ module.exports = function(Twilight) {
       // Draw 2 action cards
         this._drawActionCards(player, 2)
         break
-      case 'technology':
-      // Research 1 technology (same as primary but costs strategy token)
-        this._researchTech(player)
+      case 'technology': {
+      // Rule 91.3: Research 1 technology (costs strategy token + 4 resources)
+        const tgVal = this.factionAbilities.getTradeGoodResourceValue(player)
+        const availRes = this._getAvailableResources(player) + player.tradeGoods * tgVal
+        if (availRes >= 4) {
+          this._payResources(player, 4)
+          this._researchTech(player)
+        }
+        else {
+          this.log.add({
+            template: '{player} cannot afford 4 resources for Technology secondary',
+            args: { player },
+          })
+        }
         break
+      }
       case 'warfare':
       // Produce units in home system
         this._warfareSecondary(player)
@@ -621,27 +696,57 @@ module.exports = function(Twilight) {
   }
 
   Twilight.prototype._constructionSecondary = function(player) {
-  // Place 1 PDS or 1 space dock on a planet you control
+  // Rule 24.3: Place command token in a system with your planet, then build 1 structure there
     const controlledPlanets = player.getControlledPlanets()
     if (controlledPlanets.length === 0) {
       return
     }
 
-    const choices = controlledPlanets.map(p => `pds:${p}`)
-      .concat(controlledPlanets.map(p => `space-dock:${p}`))
+    // Get unique systems containing controlled planets
+    const systemsWithPlanets = []
+    for (const planetId of controlledPlanets) {
+      const systemId = this._findSystemForPlanet(planetId)
+      if (systemId && !systemsWithPlanets.includes(systemId)) {
+        systemsWithPlanets.push(systemId)
+      }
+    }
+
+    if (systemsWithPlanets.length === 0) {
+      return
+    }
+
+    // Choose system to place command token in
+    const systemSelection = this.actions.choose(player, systemsWithPlanets, {
+      title: 'Place Command Token in System (Construction Secondary)',
+    })
+    const chosenSystem = systemSelection[0]
+
+    // Place the command token (the spent strategy token goes on the board)
+    if (!this.state.systems[chosenSystem].commandTokens.includes(player.name)) {
+      this.state.systems[chosenSystem].commandTokens.push(player.name)
+    }
+
+    // Get planets in the chosen system that the player controls
+    const planetsInSystem = this._getSystemPlanets(chosenSystem)
+      .filter(pId => this.state.planets[pId]?.controller === player.name)
+
+    if (planetsInSystem.length === 0) {
+      return
+    }
+
+    // Place 1 structure (PDS or space dock) on a planet in that system
+    const choices = planetsInSystem.map(p => `pds:${p}`)
+      .concat(planetsInSystem.map(p => `space-dock:${p}`))
 
     const selection = this.actions.choose(player, choices, {
       title: 'Place Structure (Construction Secondary)',
     })
     const [unitType, planetId] = selection[0].split(':')
-    const systemId = this._findSystemForPlanet(planetId)
-    if (systemId) {
-      this._addUnitToPlanet(systemId, planetId, unitType, player.name)
-    }
+    this._addUnitToPlanet(chosenSystem, planetId, unitType, player.name)
 
     this.log.add({
-      template: '{player} places a {type} (Construction secondary)',
-      args: { player, type: unitType },
+      template: '{player} places a {type} in {system} (Construction secondary)',
+      args: { player, type: unitType, system: chosenSystem },
     })
   }
 
@@ -669,6 +774,70 @@ module.exports = function(Twilight) {
     })
   }
 
+
+  Twilight.prototype._offerInfluenceForTokens = function(player) {
+  // Rule 52: Spend influence to gain 1 command token per 3 influence
+    const totalInfluence = player.getTotalInfluence()
+    const maxTokens = Math.floor(totalInfluence / 3)
+
+    if (maxTokens <= 0) {
+      return
+    }
+
+    const choices = ['Skip']
+    for (let i = 1; i <= maxTokens; i++) {
+      choices.push(`${i} token${i > 1 ? 's' : ''} (${i * 3} influence)`)
+    }
+
+    const selection = this.actions.choose(player, choices, {
+      title: 'Spend Influence for Command Tokens (1 per 3 influence)',
+    })
+
+    if (selection[0] !== 'Skip') {
+      const tokenCount = parseInt(selection[0])
+      const influenceCost = tokenCount * 3
+      player.commandTokens.tactics += tokenCount
+      this._payInfluence(player, influenceCost)
+
+      this.log.add({
+        template: '{player} spends {influence} influence to gain {tokens} command token(s)',
+        args: { player, influence: influenceCost, tokens: tokenCount },
+      })
+    }
+  }
+
+  Twilight.prototype._payResources = function(player, cost) {
+  // Auto-exhaust planets to pay resource cost (cheapest first to conserve value)
+    let remaining = cost
+    const canSpendFlexibly = this.factionAbilities.canSpendFlexibly(player)
+    const tgResourceValue = this.factionAbilities.getTradeGoodResourceValue(player)
+    const readyPlanets = player.getReadyPlanets()
+      .map(pId => {
+        const planet = res.getPlanet(pId)
+        let resources = planet?.resources || 0
+        if (canSpendFlexibly) {
+          resources += (planet?.influence || 0)
+        }
+        return { id: pId, resources }
+      })
+      .sort((a, b) => a.resources - b.resources)
+
+    for (const planet of readyPlanets) {
+      if (remaining <= 0) {
+        break
+      }
+      this.state.planets[planet.id].exhausted = true
+      remaining -= planet.resources
+    }
+
+    // Spend trade goods for remainder
+    if (remaining > 0) {
+      const tgNeeded = Math.ceil(remaining / tgResourceValue)
+      if (player.tradeGoods >= tgNeeded) {
+        player.spendTradeGoods(tgNeeded)
+      }
+    }
+  }
 
   Twilight.prototype._payInfluence = function(player, cost) {
   // Auto-exhaust planets to pay influence cost (cheapest first to conserve value)

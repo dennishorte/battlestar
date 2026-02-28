@@ -63,7 +63,7 @@ describe('Strategic Actions', () => {
       // Sol starts with neural-motivator (green) + antimass-deflectors (blue)
       // Sarween Tools has no prerequisites — should be available
       t.choose(game, 'sarween-tools')
-      t.choose(game, 'Pass')  // micah declines technology secondary
+      // Micah can't afford tech secondary (Hacan has 3R < 4R required), skipped
 
       const dennis = game.players.byName('dennis')
       expect(dennis.hasTechnology('sarween-tools')).toBe(true)
@@ -78,7 +78,7 @@ describe('Strategic Actions', () => {
 
       // Sol has 1 blue (antimass) — can research gravity-drive (needs 1 blue)
       t.choose(game, 'gravity-drive')
-      t.choose(game, 'Pass')  // micah declines technology secondary
+      // Micah can't afford tech secondary (Hacan has 3R < 4R required), skipped
 
       const dennis = game.players.byName('dennis')
       expect(dennis.hasTechnology('gravity-drive')).toBe(true)
@@ -365,18 +365,17 @@ describe('Strategic Actions', () => {
     test('other players can resolve secondary', () => {
       const game = t.fixture()
       game.run()
-      pickStrategyCards(game, 'leadership', 'diplomacy')
+      pickStrategyCards(game, 'diplomacy', 'construction')
 
-      // Dennis uses leadership
+      // Dennis has diplomacy(2), micah has construction(4). Dennis goes first.
       t.choose(game, 'Strategic Action')
-      // Micah uses the leadership secondary (spend 1 strategy token, gain 1 tactic token)
+      t.choose(game, 'sol-home')  // diplomacy: choose system
+      // Micah uses the diplomacy secondary (costs 1 strategy token, readies 2 planets)
       t.choose(game, 'Use Secondary')
 
       const micah = game.players.byName('micah')
       // Strategy: 2 - 1 (spent) = 1
       expect(micah.commandTokens.strategy).toBe(1)
-      // Tactics: 3 + 1 (secondary) = 4
-      expect(micah.commandTokens.tactics).toBe(4)
     })
 
     test('secondary costs strategy command token', () => {
@@ -387,11 +386,12 @@ describe('Strategic Actions', () => {
         },
       })
       game.run()
-      pickStrategyCards(game, 'leadership', 'diplomacy')
+      pickStrategyCards(game, 'diplomacy', 'construction')
 
-      // Dennis uses leadership
+      // Dennis has diplomacy(2), micah has construction(4). Dennis goes first.
       t.choose(game, 'Strategic Action')
-      // Micah has 0 strategy tokens — should NOT be prompted for secondary
+      t.choose(game, 'sol-home')  // diplomacy: choose system
+      // Micah has 0 strategy tokens — should NOT be prompted for diplomacy secondary
 
       // Should go straight to micah's turn without secondary prompt
       expect(game.waiting.selectors[0].actor).toBe('micah')
@@ -425,23 +425,31 @@ describe('Strategic Actions', () => {
       expect(dennis.commandTokens.strategy).toBe(1)
     })
 
-    test('technology secondary: research 1 technology', () => {
+    test('technology secondary: research 1 technology (costs 4 resources)', () => {
       const game = t.fixture()
+      t.setBoard(game, {
+        micah: {
+          tradeGoods: 1,  // Hacan has 3R planets + 1TG = 4R for tech secondary
+        },
+      })
       game.run()
       pickStrategyCards(game, 'technology', 'leadership')
 
       // Micah has leadership(1), goes first
       t.choose(game, 'Strategic Action')  // micah: leadership
-      // Dennis uses leadership secondary
+      // Leadership secondary is free — Dennis is prompted
       t.choose(game, 'Use Secondary')
+      // Dennis has 2 influence (Jord), maxTokens=0, so no influence prompt
+
+      // Hacan transaction prompt (has trade goods)
+      t.choose(game, 'Skip Transaction')
 
       // Dennis uses technology (primary: research 1 tech)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'sarween-tools')
-      // Micah uses technology secondary (costs 1 strategy token)
+      // Micah uses technology secondary (costs 1 strategy token + 4 resources)
       t.choose(game, 'Use Secondary')
-      // Micah picks a tech — Hacan starts with quantum-datahub-node and production-biomes
-      // Actually Hacan starts with sarween-tools and antimass-deflectors
+      // Micah picks a tech
       const micahChoices = t.currentChoices(game)
       t.choose(game, micahChoices[0])
 
@@ -592,6 +600,265 @@ describe('Strategic Actions', () => {
       // Micah also replenished
       const micah = game.players.byName('micah')
       expect(micah.commodities).toBe(6)  // Hacan max commodities
+    })
+  })
+
+  describe('Strategy Card Rule Fixes', () => {
+    describe('Imperial primary — public objective scoring (Rule 45)', () => {
+      test('score public objective when requirements met', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          revealedObjectives: ['develop-weaponry'],
+          dennis: {
+            technologies: ['neural-motivator', 'antimass-deflectors', 'infantry-ii', 'carrier-ii'],
+            planets: { 'mecatol-rex': { exhausted: false } },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'imperial', 'leadership')
+
+        // Micah has leadership(1), goes first
+        t.choose(game, 'Strategic Action')  // micah: leadership
+        t.choose(game, 'Pass')  // dennis declines leadership secondary (free)
+
+        // Dennis uses imperial
+        t.choose(game, 'Strategic Action')
+        // Dennis qualifies for develop-weaponry (2 unit upgrades) — offered to score
+        t.choose(game, 'develop-weaponry: Develop Weaponry')
+        t.choose(game, 'Pass')  // micah declines imperial secondary
+
+        const dennis = game.players.byName('dennis')
+        expect(game.state.scoredObjectives['dennis']).toContain('develop-weaponry')
+        // 1 VP from objective + 1 VP from Mecatol Rex = 2
+        expect(dennis.getVictoryPoints()).toBe(2)
+      })
+
+      test('skip public objective scoring if no objectives revealed', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            planets: { 'mecatol-rex': { exhausted: false } },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'imperial', 'leadership')
+
+        t.choose(game, 'Strategic Action')  // micah: leadership
+        t.choose(game, 'Pass')  // dennis declines secondary
+
+        // Dennis uses imperial — no revealed objectives, skips to Mecatol check
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Pass')  // micah declines imperial secondary
+
+        const dennis = game.players.byName('dennis')
+        // Only Mecatol VP, no objective scored
+        expect(dennis.getVictoryPoints()).toBe(1)
+      })
+
+      test('draw secret objective when not controlling Mecatol Rex', () => {
+        const game = t.fixture()
+        game.run()
+        pickStrategyCards(game, 'imperial', 'leadership')
+
+        t.choose(game, 'Strategic Action')  // micah: leadership
+        t.choose(game, 'Pass')  // dennis declines secondary
+
+        // Dennis uses imperial — no Mecatol Rex → draws secret objective
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Pass')  // micah declines imperial secondary
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.getVictoryPoints()).toBe(0)
+        expect(dennis.secretObjectives.length).toBe(1)
+      })
+    })
+
+    describe('Leadership — free secondary (Rule 52)', () => {
+      test('primary: gains 3 command tokens', () => {
+        const game = t.fixture()
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Pass')  // micah declines secondary
+
+        const dennis = game.players.byName('dennis')
+        // 3 (start) + 3 (leadership) = 6
+        expect(dennis.commandTokens.tactics).toBe(6)
+      })
+
+      test('secondary: free (no strategy token cost)', () => {
+        const game = t.fixture()
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Strategic Action')
+        // Micah gets leadership secondary prompt (it's free)
+        t.choose(game, 'Use Secondary')
+
+        const micah = game.players.byName('micah')
+        // Strategy NOT spent (leadership secondary is free)
+        expect(micah.commandTokens.strategy).toBe(2)
+        // Gains 1 command token
+        expect(micah.commandTokens.tactics).toBe(4)
+      })
+    })
+
+    describe('Technology — 2nd research + secondary cost (Rule 91)', () => {
+      test('primary: spend 6 resources for additional tech', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: { tradeGoods: 2 },  // 4R (Jord) + 2TG = 6R
+        })
+        game.run()
+        pickStrategyCards(game, 'technology', 'imperial')
+
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'sarween-tools')  // first tech (free)
+        // 2nd tech prompt appears (6R available)
+        t.choose(game, 'Research Additional Tech (6 resources)')
+        t.choose(game, 'gravity-drive')  // second tech (costs 6R)
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.hasTechnology('sarween-tools')).toBe(true)
+        expect(dennis.hasTechnology('gravity-drive')).toBe(true)
+        // Paid 6 resources: Jord exhausted (4R) + 2TG spent
+        expect(game.state.planets['jord'].exhausted).toBe(true)
+        expect(dennis.tradeGoods).toBe(0)
+      })
+
+      test('primary: skip 2nd tech', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: { tradeGoods: 2 },
+        })
+        game.run()
+        pickStrategyCards(game, 'technology', 'imperial')
+
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'sarween-tools')
+        t.choose(game, 'Skip')  // decline 2nd tech
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.hasTechnology('sarween-tools')).toBe(true)
+        expect(dennis.tradeGoods).toBe(2)  // not spent
+      })
+
+      test('primary: no 2nd tech prompt when insufficient resources', () => {
+        const game = t.fixture()
+        game.run()
+        pickStrategyCards(game, 'technology', 'imperial')
+
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'sarween-tools')
+        // Dennis has 4R (Jord), < 6 — no 2nd tech prompt
+
+        // Should be at Micah's turn (tech secondary skipped — Micah has 3R < 4R)
+        expect(game.waiting.selectors[0].actor).toBe('micah')
+      })
+
+      test('secondary: player with insufficient resources can pass', () => {
+        const game = t.fixture()
+        game.run()
+        pickStrategyCards(game, 'technology', 'imperial')
+
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'sarween-tools')
+        // Micah has 3R (Hacan planets) < 4R — prompt still appears but player passes
+        t.choose(game, 'Pass')
+
+        // Should be at Micah's turn now
+        expect(game.waiting.selectors[0].actor).toBe('micah')
+        expect(game.waiting.selectors[0].title).toBe('Choose Action')
+      })
+
+      test('secondary: exhausts planets to pay 4 resources', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          micah: { tradeGoods: 1 },  // 3R + 1TG = 4R
+        })
+        game.run()
+        pickStrategyCards(game, 'technology', 'leadership')
+
+        t.choose(game, 'Strategic Action')  // micah: leadership
+        t.choose(game, 'Use Secondary')  // dennis: free leadership secondary
+        t.choose(game, 'Skip Transaction')  // hacan transaction prompt (has TG)
+
+        t.choose(game, 'Strategic Action')  // dennis: technology
+        t.choose(game, 'sarween-tools')  // dennis researches
+        // Micah uses tech secondary (costs strategy token + 4 resources)
+        t.choose(game, 'Use Secondary')
+        const micahChoices = t.currentChoices(game)
+        t.choose(game, micahChoices[0])  // micah researches a tech
+
+        const micah = game.players.byName('micah')
+        expect(micah.getTechIds().length).toBeGreaterThan(2)
+        expect(micah.commandTokens.strategy).toBe(1)
+        // Paid 4R: planets exhausted + TG spent
+        expect(micah.tradeGoods).toBe(0)
+      })
+    })
+
+    describe('Construction secondary — system restriction (Rule 24)', () => {
+      test('secondary: places command token in chosen system', () => {
+        const game = t.fixture()
+        game.run()
+        pickStrategyCards(game, 'construction', 'leadership')
+
+        // Micah uses leadership first
+        t.choose(game, 'Strategic Action')  // micah: leadership
+        t.choose(game, 'Use Secondary')  // dennis: free leadership secondary
+
+        // Dennis uses construction (primary)
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'pds:jord')
+        t.choose(game, 'pds:jord')
+        // Micah uses construction secondary
+        t.choose(game, 'Use Secondary')
+        // System selection auto-resolves to hacan-home (only system with controlled planets)
+        // Structure selection
+        const choices = t.currentChoices(game)
+        t.choose(game, choices[0])
+
+        // Command token should be placed in hacan-home
+        expect(game.state.systems['hacan-home'].commandTokens).toContain('micah')
+      })
+
+      test('secondary: can only build on planets in chosen system', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          micah: {
+            planets: {
+              'new-albion': { exhausted: false },  // system 27
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'construction', 'leadership')
+
+        t.choose(game, 'Strategic Action')  // micah: leadership
+        t.choose(game, 'Use Secondary')  // dennis: free leadership secondary
+
+        t.choose(game, 'Strategic Action')  // dennis: construction
+        t.choose(game, 'pds:jord')
+        t.choose(game, 'pds:jord')
+        // Micah uses construction secondary
+        t.choose(game, 'Use Secondary')
+        // Now Micah must choose a system: hacan-home or 27
+        t.choose(game, 'hacan-home')
+        // Structure choices should only include planets in hacan-home
+        const choices = t.currentChoices(game)
+        const planetChoices = choices.filter(c => c.includes(':'))
+        for (const choice of planetChoices) {
+          const planet = choice.split(':')[1]
+          // Should only have hacan-home planets, not new-albion (system 27)
+          expect(['arretze', 'hercant', 'kamdorn']).toContain(planet)
+        }
+        t.choose(game, choices[0])
+
+        // Command token in hacan-home
+        expect(game.state.systems['hacan-home'].commandTokens).toContain('micah')
+      })
     })
   })
 })

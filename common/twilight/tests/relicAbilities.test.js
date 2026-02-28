@@ -81,12 +81,15 @@ describe('Relic Abilities', () => {
         },
       })
       game.run()
-      pickStrategyCards(game, 'leadership', 'diplomacy')
+      pickStrategyCards(game, 'imperial', 'leadership')
 
-      // Dennis uses Leadership primary
+      // Micah goes first (Leadership, initiative 1)
+      t.choose(game, 'Strategic Action')  // Micah uses Leadership
+      t.choose(game, 'Pass')  // Dennis declines free Leadership secondary
+
+      // Dennis's turn — uses Imperial (draws secret, no Mecatol)
       t.choose(game, 'Strategic Action')
-
-      // Micah: use Leadership secondary (costs 1 strategy token)
+      // Micah: use Imperial secondary (costs 1 strategy token)
       t.choose(game, 'Use Secondary')
 
       // Micah offered Scepter choice
@@ -108,11 +111,15 @@ describe('Relic Abilities', () => {
         },
       })
       game.run()
-      pickStrategyCards(game, 'leadership', 'diplomacy')
+      pickStrategyCards(game, 'imperial', 'leadership')
 
+      // Micah goes first (Leadership, initiative 1)
+      t.choose(game, 'Strategic Action')  // Micah uses Leadership
+      t.choose(game, 'Pass')  // Dennis declines free Leadership secondary
+
+      // Dennis's turn — uses Imperial
       t.choose(game, 'Strategic Action')
-
-      // Micah: use Leadership secondary
+      // Micah: use Imperial secondary
       t.choose(game, 'Use Secondary')
 
       // Decline Scepter
