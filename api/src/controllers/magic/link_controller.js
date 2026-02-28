@@ -102,7 +102,7 @@ export const deleteLink = async (req, res) => {
  */
 export const fetchDrafts = async (req, res) => {
   const cursor = await db.game.collection.find({
-    'settings.game': 'CubeDraft',
+    'settings.game': { $in: ['Cube Draft', 'Set Draft'] },
     'settings.players': { $elemMatch: { _id: req.body.userId } },
     killed: { $ne: true },
   }).sort({
@@ -123,7 +123,7 @@ export const fetchDrafts = async (req, res) => {
  */
 export const fetchDraftsByCube = async (req, res) => {
   const cursor = await db.game.collection.find({
-    'settings.game': 'CubeDraft',
+    'settings.game': { $in: ['Cube Draft', 'Set Draft'] },
     'settings.cubeId': req.body.cubeId,
     killed: { $ne: true },
   }).sort({
