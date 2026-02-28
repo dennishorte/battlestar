@@ -300,7 +300,7 @@ module.exports = function(Twilight) {
     }
   }
 
-  Twilight.prototype._offerNeuraloop = function(objectiveId, deck, stage) {
+  Twilight.prototype._offerNeuraloop = function(objectiveId, deck, _stage) {
     const players = this.players.all()
 
     for (const player of players) {
