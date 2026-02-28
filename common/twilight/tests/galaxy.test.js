@@ -295,17 +295,25 @@ describe('Galaxy', () => {
     })
 
     test('cannot path through enemy fleet (except destination)', () => {
+      // Ring1 systems in the default 2p layout: 26, 20, 19, 25, 34, 35
       const game = t.fixture()
+      t.setBoard(game, {
+        micah: {
+          units: {
+            '26': { space: ['cruiser'] },
+            '20': { space: ['cruiser'] },
+            '19': { space: ['cruiser'] },
+            '25': { space: ['cruiser'] },
+            '34': { space: ['cruiser'] },
+            '35': { space: ['cruiser'] },
+          },
+        },
+      })
       game.run()
       const galaxy = new Galaxy(game)
 
-      // Place enemy ships in all ring1 systems
       const ring1Systems = findSystemsAtDistance(game, 1)
       expect(ring1Systems.length).toBe(6)
-
-      for (const sysId of ring1Systems) {
-        game._addUnit(sysId, 'space', 'cruiser', 'micah')
-      }
 
       // Can still move TO a ring1 system (destination with enemy fleet)
       const pathTo = galaxy.findPath('18', ring1Systems[0], 'dennis', 1)
