@@ -115,9 +115,8 @@ module.exports = {
       }
     }
 
-    // TODO: Eidolon DEPLOY also triggers after exploration, but the current
-    // afterExploration hook fires from _explorePlanet (used in direct-call tests).
-    // Deferring exploration DEPLOY trigger to avoid breaking existing test flow.
+    // Eidolon DEPLOY: after exploring a planet, may place 1 mech
+    this._offerEidolonDeploy(player, ctx)
   },
 
   componentActions: [
