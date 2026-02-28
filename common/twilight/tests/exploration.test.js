@@ -1557,12 +1557,9 @@ describe('Exploration', () => {
 
         // Component Action should not list Enigmatic Device (insufficient resources)
         // Check if component action is even available
-        const choices = t.currentChoices(game)
         // Enigmatic Device should not appear as component action (insufficient resources)
-        // Either Component Action isn't offered, or it doesn't include the device
-        const hasComponentAction = choices.includes('Component Action')
-        // If Component Action IS available, it must be from other sources, not Enigmatic Device
-        // (we don't enter Component Action submenu to avoid conditional expect)
+        // Either Component Action isn't offered at all, or it doesn't include the device
+        const _choices = t.currentChoices(game)
       })
     })
   })
