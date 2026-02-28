@@ -17,6 +17,13 @@ router.post('/create', linkController.create)
 router.post('/fetch_drafts', linkController.fetchDrafts)
 
 /**
+ * @route POST /api/magic/link/fetch_drafts_by_cube
+ * @desc Fetch drafts associated with a cube
+ * @access Private
+ */
+router.post('/fetch_drafts_by_cube', linkController.fetchDraftsByCube)
+
+/**
  * @route POST /api/magic/link/fetch_by_draft
  * @desc Fetch games linked to a draft
  * @access Private

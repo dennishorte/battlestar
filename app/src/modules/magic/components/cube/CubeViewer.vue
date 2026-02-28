@@ -80,6 +80,11 @@
         :users="users"
       />
 
+      <CubeDrafts
+        v-if="showing === 'drafts'"
+        :cube="cube"
+      />
+
 
       <CardSearchModal @card-selected="addOneCard" id="cube-add-modal" />
       <CubeImportModal @cube-updates="updateCube" />
@@ -108,6 +113,7 @@ import UICardWrapper from '@/modules/magic/util/card.wrapper.js'
 
 import AchievementSearchLinkerModal from './AchievementSearchLinkerModal.vue'
 import CubeAchievements from './CubeAchievements/CubeAchievements.vue'
+import CubeDrafts from './CubeDrafts.vue'
 import CardEditorModal from '../CardEditorModal.vue'
 import CubeBreakdown from './CubeBreakdown.vue'
 import CardSearchModal from '../CardSearchModal.vue'
@@ -126,6 +132,7 @@ export default {
   components: {
     AchievementSearchLinkerModal,
     CubeAchievements,
+    CubeDrafts,
     CardEditorModal,
     CardFilters,
     CardSearchModal,

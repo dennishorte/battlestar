@@ -4,6 +4,10 @@
       cards ({{ cube.cards().length }})
     </button>
 
+    <button class="btn" :class="buttonClassesDrafts" @click="navigate('drafts')">
+      drafts
+    </button>
+
     <template v-if="cube.flags.legacy">
       <button class="btn" :class="buttonClassesScars" @click="navigate('scars')">
         scars ({{ cube.scarsUnused().length }})
@@ -59,6 +63,7 @@ const actor = inject('actor')
 const buttonClassesCards = computed(() => props.showing === 'cards' ? 'btn-primary' : 'btn-secondary')
 const buttonClassesScars = computed(() => props.showing === 'scars' ? 'btn-primary' : 'btn-secondary')
 const buttonClassesAchievements = computed(() => props.showing === 'achievements' ? 'btn-primary' : 'btn-secondary')
+const buttonClassesDrafts = computed(() => props.showing === 'drafts' ? 'btn-primary' : 'btn-secondary')
 const viewerIsOwner = computed(() => props.cube ? actor._id === props.cube.userId : false)
 
 function navigate(tab) {

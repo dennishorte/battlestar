@@ -117,6 +117,30 @@ export const fetchDrafts = async (req, res) => {
 }
 
 /**
+ * Fetch drafts associated with a cube
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const fetchDraftsByCube = async (req, res) => {
+  const cursor = await db.game.collection.find({
+    'settings.game': 'CubeDraft',
+    'settings.cubeId': req.body.cubeId,
+    killed: { $ne: true },
+  }).sort({
+    lastUpdated: -1,
+  }).project({
+    responses: 0,
+    state: 0,
+  })
+  const array = await cursor.toArray()
+
+  res.json({
+    status: 'success',
+    drafts: array,
+  })
+}
+
+/**
  * Fetch games linked to a draft
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
