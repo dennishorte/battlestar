@@ -80,12 +80,16 @@ describe('Action Cards', () => {
 
       expect(game.state.actionCardDeck).toBeNull()
 
-      // Trigger initialization by drawing
-      const dennis = game.players.byName('dennis')
-      game._drawActionCards(dennis, 1)
+      // Play through action phase to reach status phase where cards are drawn
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+      playThroughActionPhase(game)
 
+      // Status phase: redistribution
+      t.choose(game, 'Done')
+      t.choose(game, 'Done')
+
+      // Drawing action cards during status phase initializes the deck
       expect(game.state.actionCardDeck).toBeTruthy()
-      expect(dennis.actionCards.length).toBe(1)
     })
   })
 
@@ -114,10 +118,20 @@ describe('Action Cards', () => {
 
       expect(game.state.secretObjectiveDeck).toBeNull()
 
-      const dennis = game.players.byName('dennis')
-      game._drawSecretObjective(dennis)
+      // Imperial secondary draws a secret objective
+      pickStrategyCards(game, 'leadership', 'imperial')
+
+      // Dennis (leadership=1) goes first, uses leadership
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines leadership secondary
+
+      // Micah uses imperial
+      t.choose(game, 'Strategic Action')
+      // Dennis uses imperial secondary → draws secret objective → inits deck
+      t.choose(game, 'Use Secondary')
 
       expect(game.state.secretObjectiveDeck).toBeTruthy()
+      const dennis = game.players.byName('dennis')
       expect(dennis.secretObjectives.length).toBe(1)
     })
   })

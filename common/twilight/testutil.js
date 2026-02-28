@@ -441,6 +441,14 @@ TestUtil.setBoard = function(game, state) {
         }
       }
 
+      // Exhausted Technologies
+      if (playerState.exhaustedTechs) {
+        if (!game.state.exhaustedTechs) {
+          game.state.exhaustedTechs = {}
+        }
+        game.state.exhaustedTechs[player.name] = [...playerState.exhaustedTechs]
+      }
+
       // Units
       if (playerState.units) {
         // Clear all existing units for this player
