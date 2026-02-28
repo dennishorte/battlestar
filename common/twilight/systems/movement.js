@@ -114,6 +114,7 @@ module.exports = function(Twilight) {
 
     // Validate and execute ship movements
     const movedShips = []
+    const movedShipPaths = []  // parallel array: path for each moved ship
     for (const m of shipMovements) {
       const fromSystemId = String(m.from)
 
@@ -131,9 +132,19 @@ module.exports = function(Twilight) {
       const aetherstreamBonus = (this.state.currentTacticalAction?.aetherstreamBonus === player.name) ? 1 : 0
       // Captain Mendosa: override move value for one ship type
       const mendosa = this.state.currentTacticalAction?.mendosaBonus
-      const baseMove = (mendosa && mendosa.playerName === player.name && mendosa.shipType === m.unitType)
+      let baseMove = (mendosa && mendosa.playerName === player.name && mendosa.shipType === m.unitType)
         ? mendosa.moveValue
         : unitDef.move
+
+      // Nebula: ships starting in a nebula have their move value set to 1 (Rule 59.2)
+      const fromTile = galaxy.getSystemTile(fromSystemId)
+      if (fromTile?.anomaly === 'nebula') {
+        const movingPlayer = this.players.byName(player.name)
+        if (!movingPlayer || !this._hasRelic?.(movingPlayer, 'circlet-of-the-void')) {
+          baseMove = 1
+        }
+      }
+
       // The Table's Grace: Mentak cruisers can move through enemy systems
       // when the active system contains opponent non-fighter ships
       if (m.unitType === 'cruiser' && player.hasTechnology('the-tables-grace')) {
@@ -174,6 +185,40 @@ module.exports = function(Twilight) {
         const unit = systemUnits.space.splice(unitIdx, 1)[0]
         this.state.units[targetSystemId].space.push(unit)
         movedShips.push(unit)
+        movedShipPaths.push(path)
+      }
+    }
+
+    // Gravity Rift die roll: ships passing through or out of a gravity rift
+    // roll 1d10; on 1-3 the ship is removed (not destroyed) (Rule 41.2)
+    const movingPlayer = this.players.byName(player.name)
+    const hasCirclet = movingPlayer && this._hasRelic?.(movingPlayer, 'circlet-of-the-void')
+    if (!hasCirclet) {
+      for (let i = movedShips.length - 1; i >= 0; i--) {
+        const shipPath = movedShipPaths[i]
+        // Check if any system in path (excluding destination) is a gravity rift
+        const passedThroughRift = shipPath.slice(0, -1).some(sysId => {
+          const tile = galaxy.getSystemTile(sysId)
+          return tile?.anomaly === 'gravity-rift'
+        })
+        if (!passedThroughRift) {
+          continue
+        }
+
+        const roll = Math.floor(this.random() * 10) + 1
+        if (roll <= 3) {
+          const ship = movedShips[i]
+          const idx = this.state.units[targetSystemId].space.findIndex(u => u.id === ship.id)
+          if (idx !== -1) {
+            this.state.units[targetSystemId].space.splice(idx, 1)
+            this.log.add({
+              template: '{player} loses a {unit} to gravity rift (rolled {roll})',
+              args: { player, unit: ship.type, roll },
+            })
+          }
+          movedShips.splice(i, 1)
+          movedShipPaths.splice(i, 1)
+        }
       }
     }
 
