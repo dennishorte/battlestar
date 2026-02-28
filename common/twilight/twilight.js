@@ -578,6 +578,10 @@ Twilight.prototype.strategyPhase = function() {
     const pickOrder = round === 0 ? clockwiseOrder : [...clockwiseOrder].reverse()
 
     for (const player of pickOrder) {
+      if (this._isEliminated(player.name)) {
+        continue
+      }
+
       // On the first strategy phase, each player picks their color before their first card
       if (round === 0 && this.state.round === 1) {
         this.chooseColor(player)
@@ -653,7 +657,7 @@ Twilight.prototype.actionPhase = function() {
     const player = turnOrder[activeIndex % turnOrder.length]
     activeIndex++
 
-    if (player.hasPassed()) {
+    if (player.hasPassed() || this._isEliminated(player.name)) {
       continue
     }
 
@@ -739,6 +743,11 @@ Twilight.prototype.actionPhase = function() {
     // Check for action phase secret objective scoring
     if (action !== 'Pass') {
       this._checkActionPhaseSecrets()
+    }
+
+    // Check for player elimination after actions that can destroy units/take planets
+    if (action !== 'Pass') {
+      this._checkElimination()
     }
 
     // After action (except pass), offer transaction window
@@ -855,7 +864,7 @@ Twilight.prototype.statusPhase = function() {
   }
 
   // Step 3b: Enforce action card hand limit
-  for (const player of this.players.all()) {
+  for (const player of this._getPlayersInInitiativeOrder()) {
     const limit = this.factionAbilities.getActionCardHandLimit(player)
     const cards = player.actionCards || []
     while (cards.length > limit) {
@@ -874,7 +883,7 @@ Twilight.prototype.statusPhase = function() {
   }
 
   // Step 5: Gain and redistribute command tokens
-  for (const player of this.players.all()) {
+  for (const player of this._getPlayersInInitiativeOrder()) {
     // Gain 2 tokens (Sol gets 3 via Versatile ability; Hyper Metabolism adds 1)
     const bonusTokens = this.factionAbilities.getStatusPhaseTokenBonus(player)
     const hyperBase = player.hasTechnology('hyper-metabolism') ? 3 : 2
@@ -1560,6 +1569,7 @@ Twilight.prototype._getFleetLimit = function(player) {
 
 Twilight.prototype._getPlayersInInitiativeOrder = function() {
   const players = this.players.all()
+    .filter(p => !this._isEliminated(p.name))
   return [...players].sort((a, b) => {
     return this._getInitiative(a) - this._getInitiative(b)
   })
