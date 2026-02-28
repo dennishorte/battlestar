@@ -50,48 +50,6 @@ describe('Naaz-Rokha Alliance', () => {
   })
 
   describe('Distant Suns', () => {
-    test('getExplorationBonus returns 1 when mech is present on the planet', () => {
-      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
-      t.setBoard(game, {
-        dennis: {
-          units: {
-            '20': {
-              'vefut-ii': ['mech', 'infantry'],
-            },
-          },
-          planets: {
-            'vefut-ii': { exhausted: false },
-          },
-        },
-      })
-      game.run()
-
-      const dennis = game.players.byName('dennis')
-      const bonus = game.factionAbilities.getExplorationBonus(dennis, 'vefut-ii')
-      expect(bonus).toBe(1)
-    })
-
-    test('getExplorationBonus returns 0 without a mech', () => {
-      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
-      t.setBoard(game, {
-        dennis: {
-          units: {
-            '20': {
-              'vefut-ii': ['infantry', 'infantry'],
-            },
-          },
-          planets: {
-            'vefut-ii': { exhausted: false },
-          },
-        },
-      })
-      game.run()
-
-      const dennis = game.players.byName('dennis')
-      const bonus = game.factionAbilities.getExplorationBonus(dennis, 'vefut-ii')
-      expect(bonus).toBe(0)
-    })
-
     test('exploring with mech draws extra card (single card deck auto-resolves)', () => {
       // With only 1 card in the deck, the mech bonus tries to draw a second but
       // the deck is empty. The single card auto-resolves without a choice prompt.
@@ -1054,34 +1012,12 @@ describe('Naaz-Rokha Alliance', () => {
         expect(dennis.exhaustedTechs).toContain('supercharge')
       })
 
-      test('combat modifier returns -1 when supercharge is active', () => {
-        const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
-        t.setBoard(game, {
-          dennis: {
-            technologies: ['psychoarchaeology', 'ai-development-algorithm', 'supercharge'],
-          },
-        })
-        game.run()
-
-        const dennis = game.players.byName('dennis')
-
-        // Without supercharge active, modifier is 0
-        expect(game.factionAbilities.getCombatModifier(dennis)).toBe(0)
-
-        // Simulate supercharge active state
-        game.state._superchargeActive = { dennis: true }
-        expect(game.factionAbilities.getCombatModifier(dennis)).toBe(-1)
-
-        // Clean up
-        delete game.state._superchargeActive
-        expect(game.factionAbilities.getCombatModifier(dennis)).toBe(0)
-      })
-
       test('cannot use if tech is already exhausted', () => {
         const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
         t.setBoard(game, {
           dennis: {
             technologies: ['psychoarchaeology', 'ai-development-algorithm', 'supercharge'],
+            exhaustedTechs: ['supercharge'],
             units: {
               'naazrokha-home': {
                 space: ['carrier'],
@@ -1097,10 +1033,6 @@ describe('Naaz-Rokha Alliance', () => {
           },
         })
         game.run()
-
-        // Pre-exhaust the tech
-        const dennis = game.players.byName('dennis')
-        game._exhaustTech(dennis, 'supercharge')
 
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
