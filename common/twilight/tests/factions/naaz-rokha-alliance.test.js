@@ -117,7 +117,11 @@ describe('Naaz-Rokha Alliance', () => {
       game.run()
 
       // Explore directly. Mech bonus = 1, but only 1 card in deck so only 1 drawn.
-      game._explorePlanet('vefut-ii', 'dennis')
+      // Eidolon DEPLOY prompt fires after exploration (InputRequestEvent in direct calls)
+      try {
+        game._explorePlanet('vefut-ii', 'dennis')
+      }
+      catch (_e) { /* Eidolon DEPLOY */ }
       expect(game.state.exploredPlanets['vefut-ii']).toBe(true)
 
       // Rich World is an attach card (+1 resource)
@@ -151,7 +155,10 @@ describe('Naaz-Rokha Alliance', () => {
       })
       game.run()
 
-      game._explorePlanet('vefut-ii', 'dennis')
+      try {
+        game._explorePlanet('vefut-ii', 'dennis')
+      }
+      catch (_e) { /* Eidolon DEPLOY */ }
       expect(game.state.exploredPlanets['vefut-ii']).toBe(true)
 
       // Mining World is an attach card (no trade goods)
@@ -409,6 +416,9 @@ describe('Naaz-Rokha Alliance', () => {
       // Agent prompt at end of tactical action (no production since no space dock)
       t.choose(game, 'Exhaust Garv and Gunn')
 
+      // Eidolon DEPLOY fires after exploration — decline
+      t.choose(game, 'Pass')
+
       expect(game.state.exploredPlanets['vefut-ii']).toBe(true)
 
       const dennis = game.players.byName('dennis')
@@ -498,6 +508,9 @@ describe('Naaz-Rokha Alliance', () => {
 
       // Commander prompt: explore starpoint after taking from micah
       t.choose(game, 'Explore')
+
+      // Eidolon DEPLOY fires after exploration — decline
+      t.choose(game, 'Pass')
 
       expect(game.state.exploredPlanets['starpoint']).toBe(true)
       // Rich World is an attach card — verify it attached
@@ -702,6 +715,61 @@ describe('Naaz-Rokha Alliance', () => {
       const { getUnit } = require('../../res/units.js')
       const mechDef = getUnit('mech')
       expect(mechDef.abilities).toContain('sustain-damage')
+    })
+
+    test('DEPLOY: after exploration, may place 1 mech on a controlled planet', () => {
+      const game = t.fixture({ factions: ['naaz-rokha-alliance', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        explorationDecks: {
+          cultural: [],
+          hazardous: ['rich-world'],
+          industrial: [],
+          frontier: [],
+        },
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'locked' },
+          units: {
+            'naazrokha-home': {
+              space: ['carrier'],
+              'naazir': ['infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              'starpoint': ['infantry'],
+            },
+          },
+          planets: {
+            'starpoint': { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis invades system 27 — takes starpoint from micah
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'naazrokha-home', count: 1 },
+          { unitType: 'infantry', from: 'naazrokha-home', count: 4 },
+        ],
+      })
+
+      // Commander: explore starpoint after gaining control
+      t.choose(game, 'Explore')
+
+      // Eidolon DEPLOY fires after exploration
+      t.choose(game, 'Deploy Eidolon')
+      t.choose(game, 'naazir')
+
+      // Verify a mech was placed on naazir
+      const naazirUnits = game.state.units['naazrokha-home'].planets['naazir']
+        .filter(u => u.owner === 'dennis' && u.type === 'mech')
+      expect(naazirUnits.length).toBe(1)
     })
 
     test('flips to Z-Grav Eidolon at start of space combat if in space area', () => {
@@ -1053,7 +1121,10 @@ describe('Naaz-Rokha Alliance', () => {
         expect(game.state.planets['vefut-ii'].exhausted).toBe(true)
 
         // Explore the planet
-        game._explorePlanet('vefut-ii', 'dennis')
+        try {
+          game._explorePlanet('vefut-ii', 'dennis')
+        }
+        catch (_e) { /* Eidolon DEPLOY */ }
 
         // Planet should be readied by Pre-Fab Arcologies
         expect(game.state.planets['vefut-ii'].exhausted).toBe(false)
@@ -1084,7 +1155,10 @@ describe('Naaz-Rokha Alliance', () => {
         })
         game.run()
 
-        game._explorePlanet('vefut-ii', 'dennis')
+        try {
+          game._explorePlanet('vefut-ii', 'dennis')
+        }
+        catch (_e) { /* Eidolon DEPLOY */ }
 
         // Without Pre-Fab Arcologies, planet stays exhausted
         expect(game.state.planets['vefut-ii'].exhausted).toBe(true)
