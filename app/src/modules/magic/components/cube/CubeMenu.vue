@@ -4,10 +4,6 @@
       cards ({{ cube.cards().length }})
     </button>
 
-    <button class="btn" :class="buttonClassesDrafts" @click="navigate('drafts')">
-      drafts
-    </button>
-
     <template v-if="cube.flags.legacy">
       <button class="btn" :class="buttonClassesScars" @click="navigate('scars')">
         scars ({{ cube.scarsUnused().length }})
@@ -20,6 +16,10 @@
     <button class="btn btn-secondary" @click="toggleSearch">
       search
       <input type="checkbox" class="form-check-input" @click="emit('toggle-search')" />
+    </button>
+
+    <button class="btn" :class="buttonClassesDrafts" @click="navigate('drafts')">
+      drafts
     </button>
 
     <BDropdown text="menu">
