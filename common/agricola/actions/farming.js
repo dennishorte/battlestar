@@ -176,7 +176,7 @@ AgricolaActionManager.prototype.sow = function(player) {
     if (canSowGrain) {
       const grainFields = currentSowableFields
         .filter(f => !f.cropRestriction || f.cropRestriction === 'grain')
-        .map(f => `Field (${f.row},${f.col})`)
+        .map(f => f.isVirtualField ? `Field (${f.label})` : `Field (${f.row},${f.col})`)
       if (grainFields.length > 0) {
         nestedChoices.push({
           title: 'Grain',
@@ -190,7 +190,7 @@ AgricolaActionManager.prototype.sow = function(player) {
     if (canSowVeg) {
       const vegFields = currentSowableFields
         .filter(f => !f.cropRestriction || f.cropRestriction === 'vegetables')
-        .map(f => `Field (${f.row},${f.col})`)
+        .map(f => f.isVirtualField ? `Field (${f.label})` : `Field (${f.row},${f.col})`)
       if (vegFields.length > 0) {
         nestedChoices.push({
           title: 'Vegetables',
@@ -314,6 +314,29 @@ AgricolaActionManager.prototype.sow = function(player) {
           args: { player, crop: cropType, row, col, amount },
         })
       }
+      else {
+        // Virtual field — match "Field (Label)"
+        const labelMatch = selectedField.match(/Field \((.+)\)/)
+        if (labelMatch) {
+          const label = labelMatch[1]
+          const vf = emptyVirtualFields.find(f => f.label === label)
+          if (vf) {
+            const cropType = choice.title.startsWith('Grain') ? 'grain' : 'vegetables'
+            player.sowVirtualField(vf.id, cropType)
+            sowedAny = true
+            sowedTypes.push(cropType)
+            if (cropType === 'vegetables') {
+              sowedVegetables = true
+            }
+
+            const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
+            this.log.add({
+              template: '{player} sows {crop} in {label} - {amount} total',
+              args: { player, crop: cropType, label: vf.label, amount },
+            })
+          }
+        }
+      }
     }
   }
 
@@ -373,7 +396,7 @@ AgricolaActionManager.prototype.sowSingleField = function(player, card) {
     type: 'select',
     actor: player.name,
     title: `${card.name}: Choose field to sow`,
-    choices: sowableFields.map(f => `Field (${f.row},${f.col})`),
+    choices: sowableFields.map(f => f.isVirtualField ? `Field (${f.label})` : `Field (${f.row},${f.col})`),
     min: 1,
     max: 1,
     allowsAction: ['sow-field', 'sow-virtual-field'],
@@ -434,6 +457,40 @@ AgricolaActionManager.prototype.sowSingleField = function(player, card) {
         template: '{player} sows {crop} at ({row},{col}) - {amount} total ({card})',
         args: { player, crop: cropType, row, col, amount, card: card.name },
       })
+    }
+    else {
+      // Virtual field — match "Field (Label)"
+      const labelMatch = choice.match(/Field \((.+)\)/)
+      if (labelMatch) {
+        const label = labelMatch[1]
+        const vf = emptyVirtualFields.find(f => f.label === label)
+        if (vf) {
+          let cropType
+          if (vf.cropRestriction) {
+            cropType = vf.cropRestriction
+          }
+          else if (canSowGrain && !canSowVeg) {
+            cropType = 'grain'
+          }
+          else if (!canSowGrain && canSowVeg) {
+            cropType = 'vegetables'
+          }
+          else {
+            const cropSelection = this.choose(player, ['Grain', 'Vegetables'], {
+              title: 'Choose crop type',
+              min: 1,
+              max: 1,
+            })
+            cropType = cropSelection[0].toLowerCase()
+          }
+          player.sowVirtualField(vf.id, cropType)
+          const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
+          this.log.add({
+            template: '{player} sows {crop} in {label} - {amount} total ({card})',
+            args: { player, crop: cropType, label: vf.label, amount, card: card.name },
+          })
+        }
+      }
     }
   }
 
