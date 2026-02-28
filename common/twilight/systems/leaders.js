@@ -6,7 +6,10 @@ module.exports = function(Twilight) {
   // Victory
 
   Twilight.prototype._checkVictory = function() {
-    for (const player of this.players.all()) {
+    // Rule 98.7: if multiple players reach 10 VP simultaneously,
+    // the player earliest in initiative order wins
+    const players = this._getPlayersInInitiativeOrder()
+    for (const player of players) {
       if (player.getVictoryPoints() >= 10) {
         this.youWin(player, `${player.name} has reached 10 victory points!`)
       }

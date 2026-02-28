@@ -91,7 +91,7 @@ These sections are fully implemented and have adequate test coverage:
 - **TEST: Yes** — Tests in `strategicAction.test.js`
 - Implemented: Primary allows scoring 1 public objective if requirements met
 - Implemented: Mecatol VP + secret draw logic
-- TODO: 3-objective hand limit enforcement for secrets (Rule 61.21)
+- Implemented: Max 3 secret objectives hand limit (Rule 61.21)
 
 #### 52. Leadership (Strategy Card) — PARTIALLY IMPLEMENTED
 - **IMPL: Partial** — Secondary is now free; influence spending deferred
@@ -138,7 +138,7 @@ These sections are fully implemented and have adequate test coverage:
 - **IMPL: ~60%** — Basic transport works but intermediate pickup missing
 - **TEST: ~70%**
 - Missing: Pick up units from systems moved through (only picks from origin system)
-- Missing: Cannot pick up units from non-active systems that contain own command token (Rule 95.3)
+- Implemented: Cannot pick up units from systems with own command token (Rule 95.3)
 
 #### 100. Wormhole Nexus
 - **IMPL: ~40%** — Activation mechanics missing
@@ -177,7 +177,7 @@ These sections are fully implemented and have adequate test coverage:
 #### 32. Diplomacy (Strategy Card)
 - **IMPL: Partial**
 - **TEST: Partial**
-- Missing: Cannot choose Mecatol Rex system in primary
+- Implemented: Cannot choose Mecatol Rex system in primary (Rule 32)
 - Missing: If player has no reinforcement tokens, they must place from command sheet
 - Missing: Secondary should let player choose which 2 planets to ready (currently auto-selects)
 
@@ -210,14 +210,14 @@ These sections are fully implemented and have adequate test coverage:
 #### 61. Objectives
 - **IMPL: Partial**
 - **TEST: Partial**
-- Missing: Max 3 secret objectives hand limit enforcement (Rule 61.21)
+- Implemented: Max 3 secret objectives hand limit (Rule 61.21)
 - Missing: Game ends immediately if speaker cannot reveal an objective card (Rule 61.15)
-- Missing: Tie-breaking when multiple players reach 10 VP simultaneously (Rule 98.7)
+- Implemented: Tie-breaking when multiple players reach 10 VP simultaneously (Rule 98.7)
 
 #### 98. Victory Points
 - **IMPL: Partial**
 - **TEST: Partial**
-- Missing: Simultaneous 10 VP tie-breaking (earliest in initiative order wins)
+- Implemented: Simultaneous 10 VP tie-breaking (earliest in initiative order wins)
 - Missing: Game end from no unrevealed objectives (most VP wins, tie = first in initiative order)
 
 #### 84. Strategy Phase — 3-4 Player Rules
@@ -349,22 +349,22 @@ These sections are fully implemented and have adequate test coverage:
 6. ~~**Construction secondary system restriction** (Rule 24)~~ — **IMPLEMENTED** — Command token + system scoping
 
 ### HIGH (Core mechanics incomplete)
-7. **Gravity Rift** (Rule 41) — Die roll, ship removal, +1 move not implemented
-8. **Nebula combat/movement** (Rule 59) — Move value=1, defender +1 combat missing
-9. **Transport from path** (Rule 95) — Can't pick up from intermediate systems
+7. ~~**Gravity Rift** (Rule 41)~~ — **~80% IMPLEMENTED** — +1 move, die roll, Circlet exemption
+8. ~~**Nebula combat/movement** (Rule 59)~~ — **~95% IMPLEMENTED** — Move clamp, defender bonus
+9. **Transport from path** (Rule 95) — Can't pick up from intermediate systems; command token restriction implemented (Rule 95.3)
 10. **Wormhole Nexus activation** (Rule 100) — Inactive/active state missing
-11. **Post-combat excess capacity** (Rule 78) — Not enforced after combat
+11. ~~**Post-combat excess capacity** (Rule 78)~~ — **~90% IMPLEMENTED** — Cheapest-first removal after combat
 12. **Deploy ability** (Rule 30) — General deploy mechanic not wired
 13. **Destroyed vs Removed distinction** (Rule 31) — Different trigger semantics missing
 
 ### MEDIUM (Secondary features)
-14. **Diplomacy Mecatol exclusion** (Rule 32)
+14. ~~**Diplomacy Mecatol exclusion** (Rule 32)~~ — **IMPLEMENTED**
 15. **Warfare token redistribution** (Rule 99)
 16. **Legendary Planets** (Rule 53) — Ability cards not implemented
 17. **3-4 player dual strategy card pass restriction** (Rules 3.4, 82.2)
 18. **Game end from no objectives** (Rule 61.15)
-19. **Simultaneous VP tiebreaking** (Rule 98.7)
-20. **Max 3 secret objectives** (Rule 61.21)
+19. ~~**Simultaneous VP tiebreaking** (Rule 98.7)~~ — **IMPLEMENTED**
+20. ~~**Max 3 secret objectives** (Rule 61.21)~~ — **IMPLEMENTED**
 21. **Agenda phase transactions** (Rule 94.6)
 22. **Promissory note return/limit** (Rule 69)
 23. **Sustain Damage vs direct destroy** (Rule 87.5)
