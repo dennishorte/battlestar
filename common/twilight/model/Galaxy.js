@@ -286,7 +286,11 @@ class Galaxy {
         }
 
         const newPath = [...path, neighborId]
-        const newDistance = distance + 1
+
+        // Gravity Rift: exiting a gravity rift costs 0 movement (Rule 41.1)
+        const currentTile = this.getSystemTile(systemId)
+        const isGravityRift = currentTile?.anomaly === 'gravity-rift'
+        const newDistance = isGravityRift ? distance : distance + 1
 
         if (neighborId === String(toSystemId)) {
           return newPath

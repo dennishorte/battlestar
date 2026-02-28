@@ -97,7 +97,8 @@ module.exports = function(Twilight) {
       this.state._combatOpponent = { [attacker]: defender, [defender]: attacker }
       const combatContext = { combatType: 'space', systemId }
       const attackerRoll = this._rollCombatDice(attackerShips, combatContext)
-      const defenderRoll = this._rollCombatDice(defenderShips, combatContext)
+      const defenderContext = { ...combatContext, isDefender: true }
+      const defenderRoll = this._rollCombatDice(defenderShips, defenderContext)
       delete this.state._combatOpponent
 
       // Crown of Thalnos: reroll missed dice (+1), destroy units that still miss
@@ -354,6 +355,14 @@ module.exports = function(Twilight) {
       // Space combat-specific modifiers (e.g., Gravleash Maneuvers)
       if (context?.combatType === 'space' && context?.systemId) {
         combatModifier += this.factionAbilities.getSpaceCombatModifier(owner, context.systemId)
+      }
+
+      // Nebula: defender gets +1 to combat rolls in space combat (Rule 59.3)
+      if (context?.combatType === 'space' && context?.isDefender && context?.systemId) {
+        const tile = res.getSystemTile(context.systemId) || res.getSystemTile(Number(context.systemId))
+        if (tile?.anomaly === 'nebula') {
+          combatModifier -= 1  // negative = bonus (lower threshold = easier to hit)
+        }
       }
 
       // Ground combat per-unit modifiers (e.g., Shield Paling negates Fragile for infantry)
@@ -736,6 +745,68 @@ module.exports = function(Twilight) {
     // Mech DEPLOY triggers (e.g., L1Z1X Annihilator) — only if bombardment was used
     if (bombardmentUsed) {
       this.factionAbilities.afterBombardment(attackerName, systemId, planetId, totalHits)
+    }
+  }
+
+  // After space combat, if transports were destroyed, cargo (fighters/ground forces
+  // in space) may exceed remaining capacity. Auto-remove excess cheapest first. (Rule 78.10a)
+  Twilight.prototype._enforcePostCombatCapacity = function(systemId) {
+    const systemUnits = this.state.units[systemId]
+    if (!systemUnits) {
+      return
+    }
+
+    // Check each player with units in the system
+    const owners = new Set(systemUnits.space.map(u => u.owner))
+    for (const ownerName of owners) {
+      const player = this.players.byName(ownerName)
+      if (!player) {
+        continue
+      }
+
+      // Count total capacity from this player's non-capacity-requiring ships
+      let totalCapacity = 0
+      const capacityUnits = []
+      for (const unit of systemUnits.space) {
+        if (unit.owner !== ownerName) {
+          continue
+        }
+        const unitDef = this._getUnitStats(ownerName, unit.type)
+        if (!unitDef) {
+          continue
+        }
+        if (unitDef.requiresCapacity && !this.factionAbilities.isCapacityExempt(player, unit.type)) {
+          capacityUnits.push(unit)
+        }
+        else if (!unitDef.requiresCapacity) {
+          totalCapacity += unitDef.capacity || 0
+        }
+      }
+
+      const excess = capacityUnits.length - totalCapacity
+      if (excess <= 0) {
+        continue
+      }
+
+      // Sort by cost ascending (remove cheapest first: fighters before infantry)
+      capacityUnits.sort((a, b) => {
+        const defA = this._getUnitStats(ownerName, a.type)
+        const defB = this._getUnitStats(ownerName, b.type)
+        return (defA?.cost || 0) - (defB?.cost || 0)
+      })
+
+      for (let i = 0; i < excess; i++) {
+        const unit = capacityUnits[i]
+        const idx = systemUnits.space.findIndex(u => u.id === unit.id)
+        if (idx !== -1) {
+          systemUnits.space.splice(idx, 1)
+        }
+      }
+
+      this.log.add({
+        template: '{player} removes {count} excess units due to insufficient capacity',
+        args: { player: ownerName, count: excess },
+      })
     }
   }
 

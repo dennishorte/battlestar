@@ -1440,7 +1440,17 @@ Twilight.prototype._tacticalAction = function(player) {
   this._spaceCannonOffense(player, systemId)
 
   // Step 4: Space combat (Titans Coalescence forces combat if flagship present)
+  // Track whether combat actually occurred (need 2+ players with ships)
+  const preCombatOwners = new Set(
+    (this.state.units[systemId]?.space || []).map(u => u.owner)
+  )
   this._spaceCombat(player, systemId)
+
+  // Step 4b: Remove excess fighters/ground forces if capacity was lost (Rule 78.10a)
+  // Only enforce after actual combat (units in transit before invasion are OK)
+  if (preCombatOwners.size >= 2) {
+    this._enforcePostCombatCapacity(systemId)
+  }
 
   // Step 5: Invasion (Coalescence: force ground combat if Titans mech on planet)
   this._invasionStep(player, systemId)
