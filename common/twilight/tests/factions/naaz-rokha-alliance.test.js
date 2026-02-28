@@ -105,6 +105,10 @@ describe('Naaz-Rokha Alliance', () => {
         },
         dennis: {
           units: {
+            'naazrokha-home': {
+              space: ['carrier'],
+              'naazir': ['infantry', 'space-dock'],
+            },
             '20': {
               'vefut-ii': ['mech', 'infantry'],
             },
@@ -116,12 +120,19 @@ describe('Naaz-Rokha Alliance', () => {
       })
       game.run()
 
-      // Explore directly. Mech bonus = 1, but only 1 card in deck so only 1 drawn.
-      // Eidolon DEPLOY prompt fires after exploration (InputRequestEvent in direct calls)
-      try {
-        game._explorePlanet('vefut-ii', 'dennis')
-      }
-      catch { /* Eidolon DEPLOY */ }
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Tactical action to trigger Agent
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '20' })
+      t.action(game, 'move-ships', { movements: [] })
+
+      // Agent explores vefut-ii. Mech bonus = 1, but only 1 card so only 1 drawn.
+      t.choose(game, 'Exhaust Garv and Gunn')
+
+      // Eidolon DEPLOY fires after exploration — decline
+      t.choose(game, 'Pass')
+
       expect(game.state.exploredPlanets['vefut-ii']).toBe(true)
 
       // Rich World is an attach card (+1 resource)
@@ -144,6 +155,10 @@ describe('Naaz-Rokha Alliance', () => {
         },
         dennis: {
           units: {
+            'naazrokha-home': {
+              space: ['carrier'],
+              'naazir': ['infantry', 'space-dock'],
+            },
             '20': {
               'vefut-ii': ['infantry'],
             },
@@ -155,10 +170,19 @@ describe('Naaz-Rokha Alliance', () => {
       })
       game.run()
 
-      try {
-        game._explorePlanet('vefut-ii', 'dennis')
-      }
-      catch { /* Eidolon DEPLOY */ }
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Tactical action to trigger Agent
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '20' })
+      t.action(game, 'move-ships', { movements: [] })
+
+      // Agent explores vefut-ii. No mech = no bonus, only 1 card drawn.
+      t.choose(game, 'Exhaust Garv and Gunn')
+
+      // Eidolon DEPLOY fires after exploration — decline
+      t.choose(game, 'Pass')
+
       expect(game.state.exploredPlanets['vefut-ii']).toBe(true)
 
       // Mining World is an attach card (no trade goods)
@@ -1106,6 +1130,10 @@ describe('Naaz-Rokha Alliance', () => {
           dennis: {
             technologies: ['psychoarchaeology', 'ai-development-algorithm', 'pre-fab-arcologies'],
             units: {
+              'naazrokha-home': {
+                space: ['carrier'],
+                'naazir': ['infantry', 'space-dock'],
+              },
               20: {
                 'vefut-ii': ['infantry'],
               },
@@ -1120,11 +1148,18 @@ describe('Naaz-Rokha Alliance', () => {
         // Planet starts exhausted
         expect(game.state.planets['vefut-ii'].exhausted).toBe(true)
 
-        // Explore the planet
-        try {
-          game._explorePlanet('vefut-ii', 'dennis')
-        }
-        catch { /* Eidolon DEPLOY */ }
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Tactical action to trigger Agent
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '20' })
+        t.action(game, 'move-ships', { movements: [] })
+
+        // Agent explores vefut-ii
+        t.choose(game, 'Exhaust Garv and Gunn')
+
+        // Eidolon DEPLOY fires after exploration — decline
+        t.choose(game, 'Pass')
 
         // Planet should be readied by Pre-Fab Arcologies
         expect(game.state.planets['vefut-ii'].exhausted).toBe(false)
@@ -1144,6 +1179,10 @@ describe('Naaz-Rokha Alliance', () => {
           },
           dennis: {
             units: {
+              'naazrokha-home': {
+                space: ['carrier'],
+                'naazir': ['infantry', 'space-dock'],
+              },
               20: {
                 'vefut-ii': ['infantry'],
               },
@@ -1155,10 +1194,18 @@ describe('Naaz-Rokha Alliance', () => {
         })
         game.run()
 
-        try {
-          game._explorePlanet('vefut-ii', 'dennis')
-        }
-        catch { /* Eidolon DEPLOY */ }
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Tactical action to trigger Agent
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '20' })
+        t.action(game, 'move-ships', { movements: [] })
+
+        // Agent explores vefut-ii
+        t.choose(game, 'Exhaust Garv and Gunn')
+
+        // Eidolon DEPLOY fires after exploration — decline
+        t.choose(game, 'Pass')
 
         // Without Pre-Fab Arcologies, planet stays exhausted
         expect(game.state.planets['vefut-ii'].exhausted).toBe(true)
