@@ -275,6 +275,12 @@ TestUtil.setBoard = function(game, state) {
     if (state.revealedObjectives !== undefined) {
       game.state.revealedObjectives = [...state.revealedObjectives]
     }
+    if (state.objectiveDeckI !== undefined) {
+      game.state.objectiveDeckI = [...state.objectiveDeckI]
+    }
+    if (state.objectiveDeckII !== undefined) {
+      game.state.objectiveDeckII = [...state.objectiveDeckII]
+    }
     if (state.explorationDecks !== undefined) {
       game.state.explorationDecks = {}
       for (const [trait, cardIds] of Object.entries(state.explorationDecks)) {
@@ -304,6 +310,33 @@ TestUtil.setBoard = function(game, state) {
         }
         return spec
       })
+    }
+
+    // Exploration token state
+    if (state.gammaWormholeTokens !== undefined) {
+      game.state.gammaWormholeTokens = [...state.gammaWormholeTokens]
+    }
+    if (state.ionStormToken !== undefined) {
+      game.state.ionStormToken = state.ionStormToken ? { ...state.ionStormToken } : null
+    }
+    if (state.persistentCards !== undefined) {
+      game.state.persistentCards = {}
+      for (const [name, cards] of Object.entries(state.persistentCards)) {
+        game.state.persistentCards[name] = [...cards]
+      }
+    }
+    if (state.miragePlanet !== undefined) {
+      game.state.miragePlanet = state.miragePlanet
+      // Initialize mirage planet state and unit storage
+      if (state.miragePlanet) {
+        const mirageSystemId = String(state.miragePlanet)
+        if (!game.state.planets['mirage']) {
+          game.state.planets['mirage'] = { controller: null, exhausted: false, attachments: [] }
+        }
+        if (game.state.units[mirageSystemId] && !game.state.units[mirageSystemId].planets['mirage']) {
+          game.state.units[mirageSystemId].planets['mirage'] = []
+        }
+      }
     }
 
     // Faction-specific game state

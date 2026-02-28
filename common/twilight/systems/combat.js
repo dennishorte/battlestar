@@ -96,9 +96,13 @@ module.exports = function(Twilight) {
       // Both sides roll simultaneously
       this.state._combatOpponent = { [attacker]: defender, [defender]: attacker }
       const combatContext = { combatType: 'space', systemId }
-      const attackerHits = this._rollCombatDice(attackerShips, combatContext)
-      const defenderHits = this._rollCombatDice(defenderShips, combatContext)
+      const attackerRoll = this._rollCombatDice(attackerShips, combatContext)
+      const defenderRoll = this._rollCombatDice(defenderShips, combatContext)
       delete this.state._combatOpponent
+
+      // Crown of Thalnos: reroll missed dice (+1), destroy units that still miss
+      let attackerHits = attackerRoll.hits + this._offerCrownOfThalnos(attacker, attackerRoll, combatContext)
+      let defenderHits = defenderRoll.hits + this._offerCrownOfThalnos(defender, defenderRoll, combatContext)
 
       this.log.add({
         template: 'Round {round}: attacker scores {aHits} hits, defender scores {dHits} hits',
@@ -332,6 +336,7 @@ module.exports = function(Twilight) {
 
   Twilight.prototype._rollCombatDice = function(ships, context) {
     let hits = 0
+    const rolls = []
     for (const ship of ships) {
       const unitDef = this._getUnitStats(ship.owner, ship.type)
       if (!unitDef || !unitDef.combat) {
@@ -362,14 +367,83 @@ module.exports = function(Twilight) {
       // bonusDice: temporary extra dice (e.g., Letnev agent Viscount Unlenn)
       const baseDice = unitDef.type === 'war-sun' ? 3 : 1
       const diceCount = baseDice + (ship.bonusDice || 0)
+      const diceResults = []
       for (let i = 0; i < diceCount; i++) {
         const roll = Math.floor(this.random() * 10) + 1
-        if (roll >= effectiveCombat) {
+        const hit = roll >= effectiveCombat
+        if (hit) {
           hits++
         }
+        diceResults.push({ roll, hit })
+      }
+      rolls.push({ ship, effectiveCombat, diceResults })
+    }
+    return { hits, rolls }
+  }
+
+  Twilight.prototype._offerCrownOfThalnos = function(ownerName, rollResult, context) {
+    const player = this.players.byName(ownerName)
+    if (!player || !this._hasRelic(player, 'the-crown-of-thalnos')) {
+      return 0
+    }
+
+    // Find units with missed dice
+    const unitsWithMisses = rollResult.rolls.filter(r =>
+      r.ship.owner === ownerName && r.diceResults.some(d => !d.hit)
+    )
+    if (unitsWithMisses.length === 0) {
+      return 0
+    }
+
+    const totalMisses = unitsWithMisses.reduce(
+      (sum, r) => sum + r.diceResults.filter(d => !d.hit).length, 0
+    )
+
+    const choice = this.actions.choose(player, [
+      `Reroll ${totalMisses} missed dice (+1 each)`,
+      'Pass',
+    ], {
+      title: 'Crown of Thalnos: Reroll dice? Units that miss are destroyed.',
+      noAutoRespond: true,
+    })
+
+    if (choice[0] === 'Pass') {
+      return 0
+    }
+
+    let additionalHits = 0
+    const unitsToDestroy = []
+
+    for (const unitRoll of unitsWithMisses) {
+      const missedDice = unitRoll.diceResults.filter(d => !d.hit)
+      let unitGotHit = false
+
+      for (const _die of missedDice) {
+        const reroll = Math.floor(this.random() * 10) + 1
+        // +1 bonus applied to result
+        if (reroll + 1 >= unitRoll.effectiveCombat) {
+          additionalHits++
+          unitGotHit = true
+        }
+      }
+
+      if (!unitGotHit) {
+        unitsToDestroy.push(unitRoll.ship)
       }
     }
-    return hits
+
+    // Destroy units that rerolled but didn't produce any hits
+    const location = context.combatType === 'space' ? 'space' : context.planetId
+    for (const ship of unitsToDestroy) {
+      this._removeUnit(context.systemId, location, ship.id)
+    }
+
+    this.log.add({
+      template: '{player} uses Crown of Thalnos: {hits} additional hits, {destroyed} units destroyed',
+      args: { player, hits: additionalHits, destroyed: unitsToDestroy.length },
+    })
+
+    return additionalHits
   }
 
   Twilight.prototype._assignHits = function(systemId, ownerName, hits, destroyerName) {
@@ -486,25 +560,30 @@ module.exports = function(Twilight) {
       return
     }
 
-    const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
-    if (!tile || tile.planets.length === 0) {
+    const systemPlanets = this._getSystemPlanets(systemId)
+    if (systemPlanets.length === 0) {
     // No planets — just discard any ground forces in space (can't exist without planet)
       this._discardGroundForcesInSpace(systemId, player.name)
       return
     }
 
+    const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+
     // Find ground forces in space (in transit)
     const groundForcesInSpace = systemUnits.space
       .filter(u => u.owner === player.name && res.getUnit(u.type)?.category === 'ground')
 
-    // Find enemy-controlled planets in this system
-    const enemyPlanets = tile.planets.filter(planetId => {
+    // Find enemy-controlled planets in this system (skip DMZ planets)
+    const enemyPlanets = systemPlanets.filter(planetId => {
+      if (this._isDemilitarizedZone?.(planetId)) {
+        return false
+      }
       const planetState = this.state.planets[planetId]
       return planetState && planetState.controller && planetState.controller !== player.name
     })
 
     // Coalescence: Titans mech on a planet forces ground combat
-    const coalescencePlanets = tile.planets.filter(planetId => {
+    const coalescencePlanets = systemPlanets.filter(planetId => {
       return this.factionAbilities.checkCoalescenceOnPlanet(systemId, planetId, player.name)
     })
 
@@ -550,7 +629,7 @@ module.exports = function(Twilight) {
     }
     else {
     // No enemy planets — auto-place ground forces on the first friendly/empty planet
-      this._autoPlaceGroundForces(systemId, player.name, tile)
+      this._autoPlaceGroundForces(systemId, player.name, tile, systemPlanets)
     }
   }
 

@@ -505,12 +505,390 @@ describe('Exploration', () => {
       })
     })
 
+    describe('Demilitarized Zone', () => {
+      test('immediate: structures removed, ground forces moved to space', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          explorationDecks: {
+            cultural: ['demilitarized-zone'],
+            hazardous: [],
+            industrial: [],
+            frontier: [],
+          },
+          dennis: {
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            planets: {
+              'quann': { exhausted: false },
+            },
+            units: {
+              'sol-home': {
+                'jord': ['space-dock'],
+              },
+              '25': {
+                space: ['carrier'],
+                'quann': ['infantry', 'infantry', 'pds', 'space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+
+        // Explore quann — draws Demilitarized Zone, immediate effect fires
+        game._explorePlanet('quann', 'dennis')
+
+        // Structures (PDS, space dock) should be removed from planet
+        const quannUnits = game.state.units['25']?.planets['quann'] || []
+        const structures = quannUnits.filter(u =>
+          u.owner === 'dennis' && (u.type === 'pds' || u.type === 'space-dock')
+        )
+        expect(structures.length).toBe(0)
+
+        // Ground forces (infantry) should be moved to space
+        const infantryOnPlanet = quannUnits.filter(u =>
+          u.owner === 'dennis' && u.type === 'infantry'
+        )
+        expect(infantryOnPlanet.length).toBe(0)
+
+        const infantryInSpace = game.state.units['25'].space.filter(u =>
+          u.owner === 'dennis' && u.type === 'infantry'
+        )
+        expect(infantryInSpace.length).toBe(2)
+
+        // DMZ attachment should be on the planet
+        expect(game.state.planets['quann'].attachments).toContain('demilitarized-zone')
+      })
+
+      test('cannot land ground forces on DMZ planet during invasion', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          dennis: {
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'sol-home': {
+                'jord': ['space-dock'],
+              },
+              '27': {
+                space: ['carrier'],
+                'new-albion': ['infantry'],
+              },
+            },
+            planets: {
+              'new-albion': { exhausted: false },
+            },
+          },
+          micah: {
+            units: {
+              '26': {
+                space: ['carrier'],
+                'lodor': ['infantry'],
+              },
+            },
+            planets: {
+              'lodor': { exhausted: false },
+            },
+          },
+        })
+
+        // Attach DMZ to lodor
+        game.testSetBreakpoint('initialization-complete', (game) => {
+          if (!game.state.planets['lodor']) {
+            game.state.planets['lodor'] = { controller: 'micah', exhausted: false, attachments: [] }
+          }
+          game.state.planets['lodor'].attachments = ['demilitarized-zone']
+        })
+
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Dennis activates system 26 and moves carrier + infantry
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '26' })
+        t.action(game, 'move-ships', {
+          movements: [
+            { unitType: 'carrier', from: '27', count: 1 },
+            { unitType: 'infantry', from: '27', count: 1 },
+          ],
+        })
+
+        // DMZ planet should NOT be invaded — lodor should still be micah's
+        expect(game.state.planets['lodor'].controller).toBe('micah')
+      })
+    })
+
     describe('Freelancers', () => {
-      test.todo('allows producing 1 unit in the system')
+      test('produce 1 infantry using influence', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          explorationDecks: {
+            cultural: ['freelancers-1'],
+            hazardous: [],
+            industrial: [],
+            frontier: [],
+          },
+          dennis: {
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            planets: {
+              // new-albion has 1R/1I — influence counts as resources for Freelancers
+              'new-albion': { exhausted: false },
+            },
+            units: {
+              'sol-home': {
+                'jord': ['space-dock'],
+              },
+              '27': {
+                space: ['carrier'],
+                'new-albion': ['infantry'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Move from system 27 to system 26 (Lodor, cultural) — draws Freelancers
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '26' })
+        t.action(game, 'move-ships', {
+          movements: [
+            { unitType: 'carrier', from: '27', count: 1 },
+            { unitType: 'infantry', from: '27', count: 1 },
+          ],
+        })
+
+        // Freelancers prompts: produce 1 unit (influence counts as resources)
+        const choices = t.currentChoices(game)
+        expect(choices).toContain('infantry')
+        t.choose(game, 'infantry')
+
+        // Should have placed infantry on lodor
+        const lodorUnits = game.state.units['26']?.planets['lodor'] || []
+        const dennisInfantry = lodorUnits.filter(u => u.type === 'infantry' && u.owner === 'dennis')
+        // 1 from carrier + 1 from freelancers
+        expect(dennisInfantry.length).toBe(2)
+      })
+
+      test('produce 1 fighter using resources + influence', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          explorationDecks: {
+            cultural: ['freelancers-1'],
+            hazardous: [],
+            industrial: [],
+            frontier: [],
+          },
+          dennis: {
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            planets: {
+              'new-albion': { exhausted: false },
+            },
+            units: {
+              'sol-home': {
+                'jord': ['space-dock'],
+              },
+              '27': {
+                space: ['carrier'],
+                'new-albion': ['infantry'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Move from system 27 to system 26 (Lodor, cultural) — draws Freelancers
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '26' })
+        t.action(game, 'move-ships', {
+          movements: [
+            { unitType: 'carrier', from: '27', count: 1 },
+            { unitType: 'infantry', from: '27', count: 1 },
+          ],
+        })
+
+        // Freelancers: produce a fighter
+        t.choose(game, 'fighter')
+
+        // Should have a fighter in space
+        const spaceUnits = game.state.units['26']?.space || []
+        const fighters = spaceUnits.filter(u => u.type === 'fighter' && u.owner === 'dennis')
+        expect(fighters.length).toBe(1)
+      })
     })
 
     describe('Gamma Wormhole', () => {
-      test.todo('places gamma wormhole token in the system')
+      test('places gamma wormhole token and creates adjacency', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          explorationDecks: {
+            cultural: ['gamma-wormhole'],
+            hazardous: [],
+            industrial: [],
+            frontier: [],
+          },
+          dennis: {
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'sol-home': {
+                'jord': ['space-dock'],
+              },
+              '27': {
+                space: ['carrier'],
+                'new-albion': ['infantry'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Move from 27 to 26 (Lodor, cultural planet) → draws gamma-wormhole
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '26' })
+        t.action(game, 'move-ships', {
+          movements: [
+            { unitType: 'carrier', from: '27', count: 1 },
+            { unitType: 'infantry', from: '27', count: 1 },
+          ],
+        })
+
+        // Gamma wormhole token should be placed in system 26
+        expect(game.state.gammaWormholeTokens).toContain('26')
+      })
+
+      test('gamma wormhole tokens create adjacency between systems', () => {
+        const game = t.fixture()
+        // Pre-place two gamma wormhole tokens
+        t.setBoard(game, {
+          gammaWormholeTokens: ['26', '38'],
+        })
+        game.run()
+
+        // Systems 26 and 38 should now be adjacent via gamma wormhole
+        const adj26 = game._getAdjacentSystems('26')
+        expect(adj26).toContain('38')
+
+        const adj38 = game._getAdjacentSystems('38')
+        expect(adj38).toContain('26')
+      })
+    })
+
+    describe('Gamma Relay', () => {
+      test('places gamma wormhole token in frontier system', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          explorationDecks: {
+            cultural: [],
+            hazardous: [],
+            industrial: [],
+            frontier: ['gamma-relay'],
+          },
+          dennis: {
+            technologies: ['antimass-deflectors', 'gravity-drive', 'dark-energy-tap'],
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'sol-home': {
+                'jord': ['infantry', 'infantry', 'space-dock'],
+              },
+              '27': {
+                space: ['cruiser'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Activate empty system 48 (frontier), move cruiser from 27
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '48' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: '27', count: 1 }],
+        })
+
+        // Gamma wormhole token should be placed in system 48
+        expect(game.state.gammaWormholeTokens).toContain('48')
+      })
+    })
+
+    describe('Ion Storm', () => {
+      test('creates wormhole adjacency on chosen side', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          ionStormToken: { systemId: '48', side: 'alpha' },
+          dennis: {
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'sol-home': {
+                'jord': ['space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+
+        // System 48 should be adjacent to other alpha wormhole systems
+        // System 39 has alpha wormhole and is not physically adjacent to 48
+        const adjacent = game._getAdjacentSystems('48')
+        expect(adjacent).toContain('39')
+      })
+
+      test('flips after ship movement into ion storm system', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          ionStormToken: { systemId: '48', side: 'alpha' },
+          dennis: {
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'sol-home': {
+                'jord': ['space-dock'],
+              },
+              '27': {
+                space: ['cruiser'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Move cruiser from system 27 to system 48 (ion storm system)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '48' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: '27', count: 1 }],
+        })
+
+        // Ion storm should have flipped to beta
+        expect(game.state.ionStormToken.side).toBe('beta')
+      })
+
+      test('adjacency changes after flip', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          ionStormToken: { systemId: '48', side: 'alpha' },
+          dennis: {
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'sol-home': {
+                'jord': ['space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+
+        // Initially alpha: adjacent to alpha wormhole systems (39 is alpha, not physically adjacent)
+        const adjAlpha = game._getAdjacentSystems('48')
+        expect(adjAlpha).toContain('39')  // system 39 has alpha wormhole
+
+        // Flip to beta
+        game.state.ionStormToken.side = 'beta'
+
+        // Now adjacent to beta wormhole systems, not alpha
+        const adjBeta = game._getAdjacentSystems('48')
+        expect(adjBeta).toContain('25')  // system 25 has beta wormhole
+        expect(adjBeta).not.toContain('39')  // system 39 no longer adjacent (alpha only)
+      })
     })
 
     // --- Industrial ---
@@ -1018,6 +1396,176 @@ describe('Exploration', () => {
         const dennis = game.players.byName('dennis')
         expect(dennis.commodities).toBe(0)
         expect(dennis.tradeGoods).toBe(3)
+      })
+    })
+
+    describe('Mirage', () => {
+      test('places Mirage planet in frontier system, controller set and ready', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          explorationDecks: {
+            cultural: [],
+            hazardous: [],
+            industrial: [],
+            frontier: ['mirage'],
+          },
+          dennis: {
+            technologies: ['antimass-deflectors', 'gravity-drive', 'dark-energy-tap'],
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            units: {
+              'sol-home': {
+                'jord': ['infantry', 'infantry', 'space-dock'],
+              },
+              '27': {
+                space: ['cruiser'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Move into empty system 48 (frontier) — Dark Energy Tap explores, draws Mirage
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '48' })
+        t.action(game, 'move-ships', {
+          movements: [{ unitType: 'cruiser', from: '27', count: 1 }],
+        })
+
+        // Mirage should be placed in system 48
+        expect(game.state.miragePlanet).toBe('48')
+
+        // Planet state should be initialized
+        const miragePlanet = game.state.planets['mirage']
+        expect(miragePlanet).toBeTruthy()
+        expect(miragePlanet.controller).toBe('dennis')
+        expect(miragePlanet.exhausted).toBe(false)
+
+        // Unit storage should exist
+        expect(game.state.units['48'].planets['mirage']).toBeDefined()
+
+        // Mirage should contribute to dennis's controlled planets
+        const dennis = game.players.byName('dennis')
+        expect(dennis.getControlledPlanets()).toContain('mirage')
+      })
+
+      test('ground forces can land on Mirage planet', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          miragePlanet: '48',
+          dennis: {
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            planets: {
+              'mirage': { exhausted: false },
+            },
+            units: {
+              'sol-home': {
+                'jord': ['space-dock'],
+              },
+              '27': {
+                space: ['carrier'],
+                'new-albion': ['infantry'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Move carrier + infantry from system 27 to system 48 (has Mirage)
+        t.choose(game, 'Tactical Action')
+        t.action(game, 'activate-system', { systemId: '48' })
+        t.action(game, 'move-ships', {
+          movements: [
+            { unitType: 'carrier', from: '27', count: 1 },
+            { unitType: 'infantry', from: '27', count: 1 },
+          ],
+        })
+
+        // Infantry should have landed on Mirage
+        const mirageUnits = game.state.units['48']?.planets['mirage'] || []
+        const dennisInfantry = mirageUnits.filter(u => u.type === 'infantry' && u.owner === 'dennis')
+        expect(dennisInfantry.length).toBe(1)
+      })
+    })
+
+    describe('Enigmatic Device', () => {
+      test('appears as component action, spend 6 resources to research tech', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          persistentCards: {
+            dennis: ['enigmatic-device-1'],
+          },
+          dennis: {
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            planets: {
+              'new-albion': { exhausted: false },
+              'starpoint': { exhausted: false },
+              'quann': { exhausted: false },
+            },
+            units: {
+              'sol-home': {
+                'jord': ['space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Component Action should be available
+        t.choose(game, 'Component Action')
+
+        // The persistent card action should appear
+        const choices = t.currentChoices(game)
+        expect(choices).toContain('persistent:enigmatic-device-1')
+        t.choose(game, 'persistent:enigmatic-device-1')
+
+        // Choose a tech to research (skip prereqs)
+        t.choose(game, 'plasma-scoring')
+
+        // Verify: tech was gained
+        const dennis = game.players.byName('dennis')
+        expect(dennis.hasTechnology('plasma-scoring')).toBe(true)
+
+        // Verify: persistent card was purged
+        expect(game.state.persistentCards['dennis']).not.toContain('enigmatic-device-1')
+      })
+
+      test('cannot use if insufficient resources', () => {
+        const game = t.fixture()
+        t.setBoard(game, {
+          persistentCards: {
+            dennis: ['enigmatic-device-1'],
+          },
+          dennis: {
+            commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+            tradeGoods: 0,
+            planets: {
+              // new-albion: 1R/1I = 1 resource, not enough for 6
+              'new-albion': { exhausted: false },
+            },
+            units: {
+              'sol-home': {
+                'jord': ['space-dock'],
+              },
+            },
+          },
+        })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        // Component Action should not list Enigmatic Device (insufficient resources)
+        // Check if component action is even available
+        const choices = t.currentChoices(game)
+        // If Enigmatic Device is the only possible component action, Component Action
+        // won't appear (or will show no actions). Let's verify:
+        if (choices.includes('Component Action')) {
+          t.choose(game, 'Component Action')
+          const actionChoices = t.currentChoices(game)
+          expect(actionChoices).not.toContain('persistent:enigmatic-device-1')
+        }
+        // If no component actions at all, that's also correct
       })
     })
   })

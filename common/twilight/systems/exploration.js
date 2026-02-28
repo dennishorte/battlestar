@@ -29,7 +29,7 @@ module.exports = function(Twilight) {
   // Shared card resolution logic used by both planet and frontier exploration.
   // context: { player, ownerName, planetId?, systemId? }
   Twilight.prototype._resolveExplorationCard = function(card, context) {
-    const { player, ownerName, planetId } = context
+    const { player, ownerName, planetId, systemId } = context
 
     if (card.type === 'attach') {
       if (planetId) {
@@ -46,6 +46,11 @@ module.exports = function(Twilight) {
           template: '{card} attached to {planet}',
           args: { card: card.name, planet: planetId },
         })
+
+        // Demilitarized Zone immediate effect
+        if (card.attachment?.demilitarized && systemId) {
+          this._applyDemilitarizedZone(systemId, planetId, ownerName)
+        }
       }
     }
     else if (card.type === 'fragment') {
@@ -174,7 +179,7 @@ module.exports = function(Twilight) {
       // === Cultural ===
 
       case 'mercenary-outfit': {
-        if (planetId && systemId) {
+        if (planetId && systemId && !this._isDemilitarizedZone(planetId)) {
           this._addUnit(systemId, planetId, 'infantry', ownerName)
           this.log.add({
             template: '{player} places 1 infantry on {planet}',
@@ -185,14 +190,103 @@ module.exports = function(Twilight) {
       }
 
       case 'freelancers': {
-        // Produce 1 unit in this system (may spend influence as resources).
-        // Deferred: requires mini-production flow.
+        if (!systemId) {
+          break
+        }
+
+        // Calculate available resources (influence counts as resources for Freelancers)
+        const controlledPlanets = player.getControlledPlanets()
+        const readyPlanets = controlledPlanets.filter(
+          pId => !this.state.planets[pId]?.exhausted
+        )
+        let availableForFreelancers = 0
+        for (const pId of readyPlanets) {
+          const p = res.getPlanet(pId)
+          if (p) {
+            availableForFreelancers += p.resources + p.influence
+          }
+          // Include attachment bonuses
+          const bonuses = this._getPlanetAttachmentBonuses(pId)
+          availableForFreelancers += bonuses.resources + bonuses.influence
+        }
+        availableForFreelancers += player.tradeGoods
+
+        // Offer unit type choices that the player can afford
+        const unitTypes = ['infantry', 'fighter', 'mech', 'pds', 'space-dock',
+          'destroyer', 'cruiser', 'carrier', 'dreadnought', 'war-sun']
+        const affordable = unitTypes.filter(type => {
+          const def = this._getUnitStats(ownerName, type)
+          return def && def.cost <= availableForFreelancers
+        })
+
+        if (affordable.length === 0) {
+          break
+        }
+
+        const choices = ['Pass', ...affordable]
+        const sel = this.actions.choose(player, choices, {
+          title: 'Freelancers: Produce 1 unit (influence counts as resources)',
+          noAutoRespond: true,
+        })
+
+        if (sel[0] === 'Pass') {
+          break
+        }
+
+        const unitType = sel[0]
+        const unitDef = this._getUnitStats(ownerName, unitType)
+        const unitCategory = res.getUnit(unitType)?.category
+
+        // Place the unit
+        if (unitCategory === 'ship') {
+          this._addUnit(systemId, 'space', unitType, ownerName)
+        }
+        else if (planetId) {
+          this._addUnit(systemId, planetId, unitType, ownerName)
+        }
+
+        // Pay cost: exhaust cheapest planets (both R+I count), then trade goods
+        let cost = unitDef.cost
+        const sortedPlanets = readyPlanets
+          .map(pId => {
+            const p = res.getPlanet(pId)
+            const bonuses = this._getPlanetAttachmentBonuses(pId)
+            const value = (p ? p.resources + p.influence : 0) + bonuses.resources + bonuses.influence
+            return { id: pId, value }
+          })
+          .sort((a, b) => a.value - b.value)
+
+        for (const { id: pId, value } of sortedPlanets) {
+          if (cost <= 0) {
+            break
+          }
+          this.state.planets[pId].exhausted = true
+          cost -= value
+        }
+        if (cost > 0) {
+          player.spendTradeGoods(Math.min(cost, player.tradeGoods))
+        }
+
+        this.log.add({
+          template: '{player} uses Freelancers to produce 1 {unit}',
+          args: { player: ownerName, unit: unitType },
+        })
         break
       }
 
       case 'gamma-wormhole': {
-        // Place gamma wormhole token in this system, then purge card.
-        // Deferred: requires wormhole token system.
+        if (systemId) {
+          if (!this.state.gammaWormholeTokens) {
+            this.state.gammaWormholeTokens = []
+          }
+          if (!this.state.gammaWormholeTokens.includes(String(systemId))) {
+            this.state.gammaWormholeTokens.push(String(systemId))
+          }
+          this.log.add({
+            template: 'Gamma wormhole token placed in system {system}',
+            args: { system: systemId },
+          })
+        }
         break
       }
 
@@ -443,26 +537,78 @@ module.exports = function(Twilight) {
       }
 
       case 'enigmatic-device': {
-        // Persistent card: ACTION: spend 6 resources + purge → research 1 tech.
-        // Deferred: requires persistent card tracking.
+        // Persistent card: place in play area
+        if (!this.state.persistentCards[ownerName]) {
+          this.state.persistentCards[ownerName] = []
+        }
+        this.state.persistentCards[ownerName].push(card.id)
+        this.log.add({
+          template: '{player} places {card} in play area',
+          args: { player: ownerName, card: card.name },
+        })
         break
       }
 
       case 'gamma-relay': {
-        // Place gamma wormhole token in this system, then purge card.
-        // Deferred: requires wormhole token system.
+        if (systemId) {
+          if (!this.state.gammaWormholeTokens) {
+            this.state.gammaWormholeTokens = []
+          }
+          if (!this.state.gammaWormholeTokens.includes(String(systemId))) {
+            this.state.gammaWormholeTokens.push(String(systemId))
+          }
+          this.log.add({
+            template: 'Gamma wormhole token placed in system {system}',
+            args: { system: systemId },
+          })
+        }
         break
       }
 
       case 'ion-storm': {
-        // Place ion storm token, persistent flip mechanic.
-        // Deferred.
+        if (!systemId) {
+          break
+        }
+
+        // Choose which wormhole side to start with
+        const sideSel = this.actions.choose(player, ['alpha', 'beta'], {
+          title: 'Ion Storm: Choose wormhole side',
+        })
+        const side = sideSel[0]
+
+        this.state.ionStormToken = { systemId: String(systemId), side }
+
+        this.log.add({
+          template: '{player} places Ion Storm ({side} wormhole) in system {system}',
+          args: { player: ownerName, side, system: systemId },
+        })
         break
       }
 
       case 'mirage': {
-        // Place Mirage planet token, dynamic planet creation.
-        // Deferred.
+        if (!systemId) {
+          break
+        }
+
+        // Place Mirage planet in this system
+        this.state.miragePlanet = String(systemId)
+
+        // Initialize planet state
+        this.state.planets['mirage'] = {
+          controller: ownerName,
+          exhausted: false,
+          attachments: [],
+        }
+
+        // Initialize unit storage
+        if (!this.state.units[systemId].planets['mirage']) {
+          this.state.units[systemId].planets['mirage'] = []
+        }
+
+        this.log.add({
+          template: '{player} places the Mirage planet in system {system}',
+          args: { player: ownerName, system: systemId },
+        })
         break
       }
     }
@@ -545,6 +691,58 @@ module.exports = function(Twilight) {
       }
     }
     return bonuses
+  }
+
+  // Check if a planet has the Demilitarized Zone attachment
+  Twilight.prototype._isDemilitarizedZone = function(planetId) {
+    return this.state.planets[planetId]?.attachments?.includes('demilitarized-zone') || false
+  }
+
+  // Immediate effect when DMZ is attached: remove structures, move ground forces to space
+  Twilight.prototype._applyDemilitarizedZone = function(systemId, planetId, ownerName) {
+    const systemUnits = this.state.units[systemId]
+    if (!systemUnits?.planets[planetId]) {
+      return
+    }
+
+    const planetUnits = systemUnits.planets[planetId]
+    const toRemove = []
+    const toSpace = []
+
+    for (let i = planetUnits.length - 1; i >= 0; i--) {
+      const unit = planetUnits[i]
+      if (unit.owner !== ownerName) {
+        continue
+      }
+      const unitDef = res.getUnit(unit.type)
+      if (!unitDef) {
+        continue
+      }
+      if (unitDef.category === 'structure') {
+        toRemove.push(planetUnits.splice(i, 1)[0])
+      }
+      else if (unitDef.category === 'ground') {
+        toSpace.push(planetUnits.splice(i, 1)[0])
+      }
+    }
+
+    // Move ground forces to space area
+    for (const unit of toSpace) {
+      systemUnits.space.push(unit)
+    }
+
+    if (toRemove.length > 0) {
+      this.log.add({
+        template: 'Demilitarized Zone: {count} structures returned to reinforcements',
+        args: { count: toRemove.length },
+      })
+    }
+    if (toSpace.length > 0) {
+      this.log.add({
+        template: 'Demilitarized Zone: {count} ground forces moved to space',
+        args: { count: toSpace.length },
+      })
+    }
   }
 
 } // module.exports
