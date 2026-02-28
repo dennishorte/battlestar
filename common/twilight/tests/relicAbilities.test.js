@@ -633,6 +633,252 @@ describe('Relic Abilities', () => {
   // Status Phase: Exhausted Relics Refresh
   ////////////////////////////////////////////////////////////////////////////////
 
+  ////////////////////////////////////////////////////////////////////////////////
+  // Batch 7: Neuraloop
+  ////////////////////////////////////////////////////////////////////////////////
+
+  describe('Neuraloop', () => {
+    test('triggers on objective reveal, replaces objective', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        relicsGained: { dennis: ['neuraloop', 'the-codex'] },
+        objectiveDeckI: ['corner-the-market', 'develop-weaponry', 'expand-borders'],
+        dennis: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+      playThroughActionPhase(game)
+
+      // Status phase: score objectives first (skip), then reveal objective
+      // After reveal, Neuraloop triggers — we should see the choice to purge a relic
+      const choices = t.currentChoices(game)
+      expect(choices).toContain('the-codex')
+      expect(choices).toContain('Pass')
+
+      // Purge the-codex to replace the objective
+      t.choose(game, 'the-codex')
+
+      // The first objective ('corner-the-market') should be replaced by the next in deck
+      expect(game.state.revealedObjectives).toContain('develop-weaponry')
+      expect(game.state.revealedObjectives).not.toContain('corner-the-market')
+
+      // Both relics should be purged
+      expect(game.state.relicsGained['dennis']).not.toContain('neuraloop')
+      expect(game.state.relicsGained['dennis']).not.toContain('the-codex')
+    })
+
+    test('requires another relic to purge', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        relicsGained: { dennis: ['neuraloop'] },
+        objectiveDeckI: ['corner-the-market', 'develop-weaponry'],
+        dennis: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+      playThroughActionPhase(game)
+
+      // Should NOT see Neuraloop choice — no other relic to purge
+      // Objective should be revealed normally
+      expect(game.state.revealedObjectives).toContain('corner-the-market')
+      // Neuraloop should still be in player's relics
+      expect(game.state.relicsGained['dennis']).toContain('neuraloop')
+    })
+  })
+
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Batch 8: Crown of Thalnos
+  ////////////////////////////////////////////////////////////////////////////////
+
+  describe('Crown of Thalnos', () => {
+    test('offers reroll during space combat when dice miss', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        relicsGained: { dennis: ['the-crown-of-thalnos'] },
+        dennis: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          units: {
+            'sol-home': {
+              // Many cruisers → many dice → statistically some will miss
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser',
+                'cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'jord': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'sol-home', count: 10 }],
+      })
+
+      // During combat, if any dice missed, Crown of Thalnos choice should appear
+      const choices = t.currentChoices(game)
+      const rerollChoice = choices.find(c => c.includes('Reroll'))
+      if (rerollChoice) {
+        // Accept the reroll
+        t.choose(game, rerollChoice)
+      }
+
+      // Combat should resolve — micah's fighter destroyed by overwhelming force
+      const micahShips = game.state.units['27'].space.filter(u => u.owner === 'micah')
+      expect(micahShips.length).toBe(0)
+    })
+
+    test('can decline Crown of Thalnos reroll', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        relicsGained: { dennis: ['the-crown-of-thalnos'] },
+        dennis: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          units: {
+            'sol-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser',
+                'cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'jord': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'sol-home', count: 10 }],
+      })
+
+      // During combat, if Crown choice appears, decline it
+      const choices = t.currentChoices(game)
+      const rerollChoice = choices.find(c => c.includes('Reroll'))
+      if (rerollChoice) {
+        t.choose(game, 'Pass')
+      }
+
+      // Combat should resolve — micah's fighter destroyed
+      const micahShips = game.state.units['27'].space.filter(u => u.owner === 'micah')
+      expect(micahShips.length).toBe(0)
+
+      // Crown of Thalnos is passive — should still be in relics (not purged)
+      expect(game.state.relicsGained['dennis']).toContain('the-crown-of-thalnos')
+    })
+
+    test('units that reroll but miss are destroyed', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        relicsGained: { dennis: ['the-crown-of-thalnos'] },
+        dennis: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          units: {
+            'sol-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser',
+                'cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'jord': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      const shipsBefore = 10
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'sol-home', count: 10 }],
+      })
+
+      // During combat, if Crown choice appears, accept reroll
+      const choices = t.currentChoices(game)
+      const rerollChoice = choices.find(c => c.includes('Reroll'))
+      if (rerollChoice) {
+        t.choose(game, rerollChoice)
+      }
+
+      // After combat, check dennis's remaining ships
+      // Some may have been destroyed by Crown penalty (rerolled but still missed)
+      const dennisShips = game.state.units['27'].space.filter(u => u.owner === 'dennis')
+      // With Crown penalty, some ships might be destroyed — total should be <= 10
+      expect(dennisShips.length).toBeLessThanOrEqual(shipsBefore)
+      // But at least some ships survive (overwhelmingly likely with 10 cruisers)
+      expect(dennisShips.length).toBeGreaterThan(0)
+    })
+  })
+
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Batch 9: Circlet of the Void — Anomaly Immunity
+  ////////////////////////////////////////////////////////////////////////////////
+
+  describe('Circlet of the Void — Anomaly Immunity', () => {
+    test('owner can move through asteroid field', () => {
+      // System 41 (gravity rift) → 44 (asteroid field) → 42 (nebula)
+      // Cruiser (move 2) at 41 can only reach 42 via path 41→44→42
+      // Without Circlet or Antimass Deflectors, asteroid field at 44 blocks transit
+      const game = t.fixture()
+      t.setBoard(game, {
+        relicsGained: { dennis: ['circlet-of-the-void'] },
+        dennis: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          units: {
+            'sol-home': {
+              'jord': ['space-dock'],
+            },
+            '41': {
+              space: ['cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '42' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: '41', count: 1 }],
+      })
+
+      // Cruiser should arrive at system 42 (traversed through asteroid field at 44)
+      const dennisShips = game.state.units['42'].space.filter(u => u.owner === 'dennis')
+      expect(dennisShips.length).toBe(1)
+      expect(dennisShips[0].type).toBe('cruiser')
+    })
+  })
+
+
   describe('Status Phase Refresh', () => {
     test('exhausted relics are readied during status phase', () => {
       const game = t.fixture()

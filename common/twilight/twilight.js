@@ -344,6 +344,21 @@ Twilight.prototype._getAdjacentSystems = function(systemId) {
     }
   }
 
+  // Gamma wormhole tokens (from exploration cards)
+  if (this.state.gammaWormholeTokens?.includes(String(systemId))) {
+    if (!tileWormholes.includes('gamma')) {
+      tileWormholes.push('gamma')
+    }
+  }
+
+  // Ion Storm token
+  const ionStorm = this.state.ionStormToken
+  if (ionStorm && String(ionStorm.systemId) === String(systemId)) {
+    if (!tileWormholes.includes(ionStorm.side)) {
+      tileWormholes.push(ionStorm.side)
+    }
+  }
+
   if (tileWormholes.length > 0) {
     for (const [otherId, otherSystem] of Object.entries(this.state.systems)) {
       if (otherId === String(systemId)) {
@@ -365,6 +380,20 @@ Twilight.prototype._getAdjacentSystems = function(systemId) {
           if (!otherWormholes.includes(w)) {
             otherWormholes.push(w)
           }
+        }
+      }
+
+      // Gamma wormhole tokens on other system
+      if (this.state.gammaWormholeTokens?.includes(String(otherId))) {
+        if (!otherWormholes.includes('gamma')) {
+          otherWormholes.push('gamma')
+        }
+      }
+
+      // Ion Storm token on other system
+      if (ionStorm && String(ionStorm.systemId) === String(otherId)) {
+        if (!otherWormholes.includes(ionStorm.side)) {
+          otherWormholes.push(ionStorm.side)
         }
       }
 
@@ -1358,8 +1387,30 @@ Twilight.prototype._tacticalAction = function(player) {
   // Dominus Orb: purge to move from systems with own command tokens
   this._offerDominusOrb(player)
 
+  // Snapshot ion storm ships before movement (for flip detection)
+  const ionStorm = this.state.ionStormToken
+  let ionStormShipsBefore = 0
+  if (ionStorm) {
+    const ionUnits = this.state.units[ionStorm.systemId]
+    ionStormShipsBefore = ionUnits ? ionUnits.space.filter(u => res.getUnit(u.type)?.category === 'ship').length : 0
+  }
+
   // Step 2: Move ships
   this._movementStep(player, systemId)
+
+  // Ion Storm: flip if ships moved into or out of the ion storm system
+  if (ionStorm) {
+    const ionUnits = this.state.units[ionStorm.systemId]
+    const ionStormShipsAfter = ionUnits ? ionUnits.space.filter(u => res.getUnit(u.type)?.category === 'ship').length : 0
+    const targetIsIonStorm = String(systemId) === String(ionStorm.systemId)
+    if (targetIsIonStorm || ionStormShipsBefore !== ionStormShipsAfter) {
+      this.state.ionStormToken.side = ionStorm.side === 'alpha' ? 'beta' : 'alpha'
+      this.log.add({
+        template: 'Ion Storm flips to {side} wormhole',
+        args: { side: this.state.ionStormToken.side },
+      })
+    }
+  }
 
   // Clear Dominus Orb flag after movement
   delete this.state._dominusOrbActive
@@ -1412,6 +1463,16 @@ Twilight.prototype._tacticalAction = function(player) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Helper: find system ID for a planet
+
+// Returns the planet list for a system, including dynamically placed planets (Mirage).
+Twilight.prototype._getSystemPlanets = function(systemId) {
+  const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+  const planets = tile ? [...tile.planets] : []
+  if (this.state.miragePlanet === String(systemId) && !planets.includes('mirage')) {
+    planets.push('mirage')
+  }
+  return planets
+}
 
 Twilight.prototype._findSystemForPlanet = function(planetId) {
   for (const [systemId, systemUnits] of Object.entries(this.state.units)) {

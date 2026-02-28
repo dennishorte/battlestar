@@ -108,6 +108,21 @@ class Galaxy {
       }
     }
 
+    // Gamma wormhole tokens (from exploration cards)
+    if (this.game.state.gammaWormholeTokens?.includes(String(systemId))) {
+      if (!tileWormholes.includes('gamma')) {
+        tileWormholes.push('gamma')
+      }
+    }
+
+    // Ion Storm token
+    const ionStorm = this.game.state.ionStormToken
+    if (ionStorm && String(ionStorm.systemId) === String(systemId)) {
+      if (!tileWormholes.includes(ionStorm.side)) {
+        tileWormholes.push(ionStorm.side)
+      }
+    }
+
     // Faction-granted additional adjacency (e.g., Spatial Conduit Cylinder)
     // stored as game.state.temporaryAdjacency = [{ systemId, adjacentTo: [...] }]
     if (this.game.state.temporaryAdjacency) {
@@ -153,6 +168,20 @@ class Galaxy {
             if (!otherWormholes.includes(w)) {
               otherWormholes.push(w)
             }
+          }
+        }
+
+        // Gamma wormhole tokens on other system
+        if (this.game.state.gammaWormholeTokens?.includes(String(otherId))) {
+          if (!otherWormholes.includes('gamma')) {
+            otherWormholes.push('gamma')
+          }
+        }
+
+        // Ion Storm token on other system
+        if (ionStorm && String(ionStorm.systemId) === String(otherId)) {
+          if (!otherWormholes.includes(ionStorm.side)) {
+            otherWormholes.push(ionStorm.side)
           }
         }
 
@@ -223,10 +252,13 @@ class Galaxy {
         // Check if we can move through this system
         const tile = this.getSystemTile(neighborId)
 
+        // Circlet of the Void: ignore all anomaly movement restrictions
+        const movingPlayer = this.game.players?.byName(playerName)
+        const hasCirclet = movingPlayer && this.game._hasRelic?.(movingPlayer, 'circlet-of-the-void')
+
         // Cannot move through asteroid fields (unless destination or Antimass Deflectors)
         if (tile?.anomaly === 'asteroid-field' && neighborId !== String(toSystemId)) {
-          const movingPlayer = this.game.players?.byName(playerName)
-          if (!movingPlayer || !movingPlayer.hasTechnology('antimass-deflectors')) {
+          if (!hasCirclet && (!movingPlayer || !movingPlayer.hasTechnology('antimass-deflectors'))) {
             continue
           }
         }
@@ -234,7 +266,7 @@ class Galaxy {
         // Cannot move through supernova (unless faction allows it)
         // canMoveThroughSupernovae allows transit (passing through)
         // canMoveIntoSupernovae allows entering as destination only
-        if (tile?.anomaly === 'supernova') {
+        if (tile?.anomaly === 'supernova' && !hasCirclet) {
           const canTransit = this.game.factionAbilities?.canMoveThroughSupernovae(playerName)
           const canEnter = this.game.factionAbilities?.canMoveIntoSupernovae(playerName)
           if (!canTransit && !canEnter) {
@@ -248,7 +280,7 @@ class Galaxy {
 
         // Nebula: ships must stop (cannot pass through, only enter as destination)
         if (tile?.anomaly === 'nebula' && neighborId !== String(toSystemId)) {
-          if (!this.game.factionAbilities?.canMoveThroughNebulae(playerName)) {
+          if (!hasCirclet && !this.game.factionAbilities?.canMoveThroughNebulae(playerName)) {
             continue
           }
         }
@@ -318,20 +350,66 @@ class Galaxy {
    */
   hasWormhole(systemId, wormholeType) {
     const tile = this.getSystemTile(systemId)
-    if (!tile) {
+    const tileWormholes = tile ? tile.wormholes : []
+
+    if (wormholeType) {
+      if (tileWormholes.includes(wormholeType)) {
+        return true
+      }
+      // Gamma wormhole tokens from exploration cards
+      if (wormholeType === 'gamma'
+        && this.game.state.gammaWormholeTokens?.includes(String(systemId))) {
+        return true
+      }
+      // Ion Storm token
+      const ionStorm = this.game.state.ionStormToken
+      if (ionStorm
+        && String(ionStorm.systemId) === String(systemId)
+        && ionStorm.side === wormholeType) {
+        return true
+      }
       return false
     }
-    if (wormholeType) {
-      return tile.wormholes.includes(wormholeType)
+
+    // No type specified — check if any wormhole is present
+    if (tileWormholes.length > 0) {
+      return true
     }
-    return tile.wormholes.length > 0
+    if (this.game.state.gammaWormholeTokens?.includes(String(systemId))) {
+      return true
+    }
+    const ionStorm = this.game.state.ionStormToken
+    if (ionStorm && String(ionStorm.systemId) === String(systemId)) {
+      return true
+    }
+    return false
   }
 
   /**
    * Get all systems containing a specific wormhole type.
    */
   getSystemsWithWormhole(wormholeType) {
-    return this.getAllSystemIds().filter(id => this.hasWormhole(id, wormholeType))
+    const systems = this.getAllSystemIds().filter(id => this.hasWormhole(id, wormholeType))
+
+    // Include gamma wormhole token systems
+    if (wormholeType === 'gamma' && this.game.state.gammaWormholeTokens) {
+      for (const sysId of this.game.state.gammaWormholeTokens) {
+        if (!systems.includes(String(sysId))) {
+          systems.push(String(sysId))
+        }
+      }
+    }
+
+    // Include ion storm system if matching
+    const ionStorm = this.game.state.ionStormToken
+    if (ionStorm && ionStorm.side === wormholeType) {
+      const stormId = String(ionStorm.systemId)
+      if (!systems.includes(stormId)) {
+        systems.push(stormId)
+      }
+    }
+
+    return systems
   }
 
   /**

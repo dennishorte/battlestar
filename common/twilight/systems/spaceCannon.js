@@ -502,14 +502,18 @@ module.exports = function(Twilight) {
 
       this.state._combatOpponent = { [attackerName]: defenderName, [defenderName]: attackerName }
       const groundContext = { combatType: 'ground', systemId, planetId }
-      const attackerHits = this._rollCombatDice(attackers, groundContext)
-      const defenderHits = this._rollCombatDice(defenders, groundContext)
+      const attackerRoll = this._rollCombatDice(attackers, groundContext)
+      const defenderRoll = this._rollCombatDice(defenders, groundContext)
       delete this.state._combatOpponent
 
       // Clean up temporary bonusDice from round-start hooks
       for (const u of [...attackers, ...defenders]) {
         delete u.bonusDice
       }
+
+      // Crown of Thalnos: reroll missed dice (+1), destroy units that still miss
+      const attackerHits = attackerRoll.hits + this._offerCrownOfThalnos(attackerName, attackerRoll, groundContext)
+      const defenderHits = defenderRoll.hits + this._offerCrownOfThalnos(defenderName, defenderRoll, groundContext)
 
       this._assignGroundHits(systemId, planetId, defenderName, attackerHits, attackerName)
       this._assignGroundHits(systemId, planetId, attackerName, defenderHits, defenderName)
@@ -791,7 +795,8 @@ module.exports = function(Twilight) {
     }
   }
 
-  Twilight.prototype._autoPlaceGroundForces = function(systemId, ownerName, tile) {
+  Twilight.prototype._autoPlaceGroundForces = function(systemId, ownerName, tile, systemPlanets) {
+    const planets = systemPlanets || (tile ? tile.planets : [])
     const systemUnits = this.state.units[systemId]
 
     // Find ground forces in space
@@ -810,8 +815,8 @@ module.exports = function(Twilight) {
       return
     }
 
-    // Place on first planet
-    const targetPlanet = tile.planets[0]
+    // Place on first non-DMZ planet
+    const targetPlanet = planets.find(pId => !this._isDemilitarizedZone?.(pId)) || planets[0]
     if (!systemUnits.planets[targetPlanet]) {
       systemUnits.planets[targetPlanet] = []
     }

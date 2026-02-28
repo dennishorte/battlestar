@@ -294,6 +294,68 @@ module.exports = function(Twilight) {
           args: { stage, name: obj.name },
         })
       }
+
+      // Neuraloop: player with this relic may purge another relic to replace the objective
+      this._offerNeuraloop(objectiveId, deck, stage)
+    }
+  }
+
+  Twilight.prototype._offerNeuraloop = function(objectiveId, deck, stage) {
+    const players = this.players.all()
+
+    for (const player of players) {
+      if (!this._hasRelic(player, 'neuraloop')) {
+        continue
+      }
+
+      // Must have at least 1 other relic to purge
+      const relics = this.state.relicsGained?.[player.name] || []
+      const otherRelics = relics.filter(r => r !== 'neuraloop')
+      if (otherRelics.length === 0) {
+        continue
+      }
+
+      // No replacement cards available
+      if (!deck || deck.length === 0) {
+        continue
+      }
+
+      const choices = ['Pass', ...otherRelics]
+      const sel = this.actions.choose(player, choices, {
+        title: `Neuraloop: Purge a relic to replace the revealed objective?`,
+        noAutoRespond: true,
+      })
+
+      if (sel[0] === 'Pass') {
+        continue
+      }
+
+      const purgedRelicId = sel[0]
+
+      // Purge the chosen relic
+      this._purgeRelic(player, purgedRelicId)
+
+      // Remove the revealed objective and put it back in the deck
+      const revIdx = this.state.revealedObjectives.indexOf(objectiveId)
+      if (revIdx !== -1) {
+        this.state.revealedObjectives.splice(revIdx, 1)
+      }
+      deck.push(objectiveId)
+
+      // Draw a replacement
+      const replacementId = deck.shift()
+      this.state.revealedObjectives.push(replacementId)
+
+      const replacement = res.getObjective(replacementId)
+      this.log.add({
+        template: '{player} purges {relic} (Neuraloop) to replace objective with {name}',
+        args: { player, relic: purgedRelicId, name: replacement?.name || replacementId },
+      })
+
+      // Purge the Neuraloop itself
+      this._purgeRelic(player, 'neuraloop')
+
+      break  // Only one player can use Neuraloop per reveal
     }
   }
 

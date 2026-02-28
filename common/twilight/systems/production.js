@@ -16,11 +16,13 @@ module.exports = function(Twilight) {
       return
     }
 
+    const systemPlanets = this._getSystemPlanets(systemId)
+
     // Find space dock(s) on planets in this system owned by this player
     let hasSpaceDock = false
     let productionCapacity = 0
 
-    for (const planetId of tile.planets) {
+    for (const planetId of systemPlanets) {
       const planetUnits = systemUnits.planets[planetId] || []
       const docks = planetUnits.filter(
         u => u.owner === player.name && u.type === 'space-dock'
@@ -216,16 +218,22 @@ module.exports = function(Twilight) {
         this._addUnit(systemId, 'space', unitDef.type, player.name)
       }
       else if (unitDef.category === 'ground') {
-      // Place on the first planet with a space dock
-        let dockPlanet = tile.planets.find(pId => {
+      // Place on the first planet with a space dock (skip DMZ planets)
+        let dockPlanet = systemPlanets.find(pId => {
+          if (this._isDemilitarizedZone?.(pId)) {
+            return false
+          }
           const pu = systemUnits.planets[pId] || []
           return pu.some(u => u.owner === player.name && u.type === 'space-dock')
         })
         // Floating Factory: space dock in space area — place on first controlled planet
         if (!dockPlanet && spaceDocks.length > 0) {
-          dockPlanet = tile.planets.find(
-            pId => this.state.planets[pId]?.controller === player.name
-          )
+          dockPlanet = systemPlanets.find(pId => {
+            if (this._isDemilitarizedZone?.(pId)) {
+              return false
+            }
+            return this.state.planets[pId]?.controller === player.name
+          })
         }
         if (dockPlanet) {
           this._addUnit(systemId, dockPlanet, unitDef.type, player.name)

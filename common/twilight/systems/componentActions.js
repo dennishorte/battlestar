@@ -1,4 +1,5 @@
 const res = require('../res/index.js')
+const { BaseCard } = require('../../lib/game/index.js')
 
 module.exports = function(Twilight) {
 
@@ -13,6 +14,10 @@ module.exports = function(Twilight) {
     }
     const relicActions = this._getRelicComponentActions(player)
     if (relicActions.length > 0) {
+      return true
+    }
+    const persistentActions = this._getPersistentCardComponentActions(player)
+    if (persistentActions.length > 0) {
       return true
     }
     return this._canPurgeRelicFragments(player)
@@ -31,6 +36,10 @@ module.exports = function(Twilight) {
     // Relic-based component actions
     const relicActions = this._getRelicComponentActions(player)
     actions.push(...relicActions)
+
+    // Persistent exploration card actions (e.g., Enigmatic Device)
+    const persistentActions = this._getPersistentCardComponentActions(player)
+    actions.push(...persistentActions)
 
     // General relic fragment purge (3 of same type → 1 relic)
     if (this._canPurgeRelicFragments(player)) {
@@ -65,6 +74,10 @@ module.exports = function(Twilight) {
     // Check if it's a relic component action
     else if (relicActions.find(a => a.id === actionId)) {
       relicActions.find(a => a.id === actionId).execute(player)
+    }
+    // Check if it's a persistent card action
+    else if (persistentActions.find(a => a.id === actionId)) {
+      persistentActions.find(a => a.id === actionId).execute(player)
     }
     else if (actionId === 'purge-relic-fragments') {
       this._executePurgeRelicFragments(player)
@@ -600,6 +613,119 @@ module.exports = function(Twilight) {
       template: '{player} uses Wormhole Generator to place Creuss wormhole token in system {system}',
       args: { player, system: targetSystem },
     })
+  }
+
+  Twilight.prototype._getPersistentCardComponentActions = function(player) {
+    const actions = []
+    const cards = this.state.persistentCards?.[player.name] || []
+
+    for (const cardId of cards) {
+      const baseId = cardId.replace(/-\d+$/, '')
+
+      if (baseId === 'enigmatic-device') {
+        // ACTION: spend 6 resources and purge → research 1 technology
+        const available = this._getAvailableResources(player) + player.tradeGoods
+        if (available >= 6) {
+          actions.push({
+            id: `persistent:${cardId}`,
+            name: 'Enigmatic Device',
+            execute: (p) => this._executeEnigmaticDevice(p, cardId),
+          })
+        }
+      }
+    }
+
+    return actions
+  }
+
+  Twilight.prototype._executeEnigmaticDevice = function(player, cardId) {
+    // Pay 6 resources
+    let cost = 6
+    const controlledPlanets = player.getControlledPlanets()
+    const readyPlanets = controlledPlanets.filter(
+      pId => !this.state.planets[pId]?.exhausted
+    )
+    for (const pId of readyPlanets) {
+      if (cost <= 0) {
+        break
+      }
+      const planet = res.getPlanet(pId)
+      if (planet) {
+        this.state.planets[pId].exhausted = true
+        cost -= planet.resources
+      }
+    }
+    if (cost > 0) {
+      player.spendTradeGoods(Math.min(cost, player.tradeGoods))
+    }
+
+    // Purge from persistent cards
+    const cards = this.state.persistentCards[player.name]
+    const idx = cards.indexOf(cardId)
+    if (idx !== -1) {
+      cards.splice(idx, 1)
+    }
+
+    // Research 1 technology (no prerequisite restrictions per card text —
+    // but _researchTech uses canResearchTechnology which includes prereqs.
+    // Per the actual TI4 rules, Enigmatic Device ignores prereqs.)
+    this._researchTechIgnorePrereqs(player)
+
+    this.log.add({
+      template: '{player} purges Enigmatic Device to research a technology',
+      args: { player },
+    })
+  }
+
+  Twilight.prototype._researchTechIgnorePrereqs = function(player) {
+    if (!this.factionAbilities.canResearchNormally(player)) {
+      return null
+    }
+
+    // Get all technologies the player doesn't already have
+    const allTechs = [...res.getGenericTechnologies()]
+    if (player.faction?.factionTechnologies) {
+      allTechs.push(...player.faction.factionTechnologies)
+    }
+    const playerTechIds = player.getTechIds()
+    const available = allTechs
+      .filter(t => !playerTechIds.includes(t.id))
+      .map(t => t.id)
+
+    if (available.length === 0) {
+      return null
+    }
+
+    const selection = this.actions.choose(player, available, {
+      title: 'Research Technology (Enigmatic Device — no prerequisites)',
+      noAutoRespond: true,
+    })
+
+    const techId = selection[0]
+    const tech = res.getTechnology(techId)
+    if (!tech) {
+      return null
+    }
+
+    // Create tech card and add to player's zone (same pattern as _researchTech)
+    const cardId = `${player.name}-${techId}`
+    let card
+    try {
+      card = this.cards.byId(cardId)
+    }
+    catch {
+      card = new BaseCard(this, { ...tech, id: cardId })
+      this.cards.register(card)
+    }
+
+    const techZone = this.zones.byPlayer(player, 'technologies')
+    techZone.push(card, techZone.nextIndex())
+
+    this.log.add({
+      template: '{player} researches {tech}',
+      args: { player, tech: tech.name },
+    })
+    return techId
   }
 
   Twilight.prototype._canPurgeRelicFragments = function(player) {
