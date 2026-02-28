@@ -62,6 +62,7 @@ module.exports = function(Twilight) {
 
     // Faction-specific state
     this.state.sleeperTokens = {}        // { planetId: ownerName } — Titans of Ul
+    this.state.eliminatedPlayers = []       // [playerName, ...] — players eliminated from the game
     this.state.capturedUnits = {}         // { playerName: [{ type, originalOwner }] } — Vuil'raith Cabal
     this.state.capturedCommandTokens = {} // { playerName: [otherPlayerName, ...] } — Mahact Gene-Sorcerers
     this.state.nekroPrediction = null     // { playerName, outcome } — Nekro Virus agenda prediction

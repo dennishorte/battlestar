@@ -209,16 +209,17 @@ describe('Action Phase', () => {
     test('other players can resolve secondary', () => {
       const game = t.fixture()
       game.run()
-      pickStrategyCards(game, 'leadership', 'diplomacy')
+      pickStrategyCards(game, 'construction', 'imperial')
 
-      // Dennis uses leadership
+      // Dennis uses construction
       t.choose(game, 'Strategic Action')
-      // Micah uses the leadership secondary (spend 1 strategy token, gain 1 tactic token)
+      t.choose(game, 'pds:jord')
+      t.choose(game, 'pds:jord')
+      // Micah uses construction secondary (costs 1 strategy token)
       t.choose(game, 'Use Secondary')
 
       const micah = game.players.byName('micah')
       expect(micah.commandTokens.strategy).toBe(1)
-      expect(micah.commandTokens.tactics).toBe(4)
     })
 
     test('secondary costs strategy command token', () => {
@@ -229,10 +230,12 @@ describe('Action Phase', () => {
         },
       })
       game.run()
-      pickStrategyCards(game, 'leadership', 'diplomacy')
+      pickStrategyCards(game, 'construction', 'imperial')
 
-      // Dennis uses leadership
+      // Dennis uses construction
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'pds:jord')
+      t.choose(game, 'pds:jord')
       // Micah has 0 strategy tokens — should NOT be prompted for secondary
 
       // Should go straight to micah's turn without secondary prompt

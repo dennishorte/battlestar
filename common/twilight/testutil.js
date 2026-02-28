@@ -348,6 +348,9 @@ TestUtil.setBoard = function(game, state) {
         game.state.capturedUnits[playerName] = units.map(u => ({ ...u }))
       }
     }
+    if (state.eliminatedPlayers !== undefined) {
+      game.state.eliminatedPlayers = [...state.eliminatedPlayers]
+    }
     if (state.capturedCommandTokens !== undefined) {
       for (const [playerName, tokens] of Object.entries(state.capturedCommandTokens)) {
         game.state.capturedCommandTokens[playerName] = [...tokens]
