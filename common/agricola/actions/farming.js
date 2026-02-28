@@ -217,7 +217,6 @@ AgricolaActionManager.prototype.sow = function(player) {
       canSowGrain,
       canSowVeg,
       emptyVirtualFields,  // Virtual fields that can be sown
-      help: 'You can also click on the farmyard to select.',
     }
 
     const result = this.game.requestInputSingle(selector)
@@ -404,7 +403,6 @@ AgricolaActionManager.prototype.sowSingleField = function(player, card) {
     canSowGrain,
     canSowVeg,
     emptyVirtualFields,
-    help: 'You can also click on the farmyard to select.',
   }
 
   const result = this.game.requestInputSingle(selector)
