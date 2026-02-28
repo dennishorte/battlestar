@@ -67,6 +67,9 @@ module.exports = function(Twilight) {
     this.state.nekroPrediction = null     // { playerName, outcome } — Nekro Virus agenda prediction
     this.state.assimilatorTokens = {}    // { x: { techId, ownerName }, y: { techId, ownerName } } — Nekro Valefar Assimilators
     this.state.creussWormholeToken = null  // systemId where Creuss wormhole token is placed
+    this.state.gammaWormholeTokens = []    // systemIds with gamma wormhole tokens (from exploration)
+    this.state.ionStormToken = null         // { systemId, side: 'alpha'|'beta' } or null
+    this.state.persistentCards = {}         // playerName → [cardId, ...] (e.g., Enigmatic Device)
   }
 
   Twilight.prototype._initializeZones = function() {

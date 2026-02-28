@@ -632,6 +632,15 @@ const planets = {
     resources: 0, influence: 3, trait: 'cultural',
     techSpecialty: 'yellow', legendary: true, systemId: 82,
   },
+
+  // ============================================================
+  // Mirage — dynamic planet from exploration card
+  // ============================================================
+  'mirage': {
+    id: 'mirage', name: 'Mirage',
+    resources: 1, influence: 2, trait: 'cultural',
+    techSpecialty: null, legendary: false, systemId: null,
+  },
 }
 
 function getPlanet(id) {
