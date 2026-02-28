@@ -371,6 +371,11 @@ module.exports = function(Twilight) {
       return
     }
 
+    // Rule 61.21: max 3 secret objectives in hand
+    if (player.secretObjectives && player.secretObjectives.length >= 3) {
+      return
+    }
+
     const objectiveId = this.state.secretObjectiveDeck.pop()
 
     if (!player.secretObjectives) {

@@ -256,6 +256,110 @@ describe('Anomalies', () => {
   // Post-Combat Excess Capacity (Rule 78.10a)
   // -------------------------------------------------------------------------
 
+  // -------------------------------------------------------------------------
+  // Secret Objectives Hand Limit (Rule 61.21)
+  // -------------------------------------------------------------------------
+
+  describe('Secret Objectives Hand Limit', () => {
+    test('cannot draw 4th secret objective', () => {
+      // Give player 3 secrets, then trigger Imperial primary (Mecatol holder draws secret)
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          secretObjectives: [
+            'destroy-their-greatest-ship',
+            'make-an-example-of-their-world',
+            'turn-their-fleets-to-dust',
+          ],
+          units: {
+            '18': { 'mecatol-rex': ['infantry', 'space-dock'] },
+            'sol-home': { 'jord': ['space-dock'] },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'imperial', 'diplomacy')
+
+      // dennis uses Imperial primary — should NOT draw a 4th secret
+      t.choose(game, 'Strategic Action')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.secretObjectives.length).toBe(3)
+    })
+  })
+
+  // -------------------------------------------------------------------------
+  // Diplomacy Mecatol Exclusion (Rule 32)
+  // -------------------------------------------------------------------------
+
+  describe('Diplomacy Mecatol Exclusion', () => {
+    test('cannot choose Mecatol Rex system for Diplomacy primary', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            '18': { 'mecatol-rex': ['infantry'] },
+            'sol-home': { 'jord': ['space-dock'] },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'diplomacy', 'leadership')
+
+      // dennis uses Diplomacy primary
+      t.choose(game, 'Strategic Action')
+
+      // The system choices should NOT include system 18 (Mecatol Rex)
+      const choices = t.currentChoices(game)
+      expect(choices).not.toContain('18')
+    })
+  })
+
+  // -------------------------------------------------------------------------
+  // Transport Command Token Restriction (Rule 95.3)
+  // -------------------------------------------------------------------------
+
+  describe('Transport Command Token Restriction', () => {
+    test('cannot pick up units from system with own command token', () => {
+      // Place infantry on a planet in system 34, then put dennis's command token there.
+      // Try to transport infantry from 34 to target system — should fail.
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            '35': { space: ['carrier'] },
+            '34': { 'bereg': ['infantry'] },
+            'sol-home': { 'jord': ['space-dock'] },
+          },
+        },
+      })
+      game.run()
+
+      // Place a command token in system 34 (simulating prior activation)
+      game.state.systems['34'].commandTokens.push('dennis')
+
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Tactical action: activate system 20, move carrier from 35
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '20' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'carrier', from: '35', count: 1 }],
+        transports: [{ unitType: 'infantry', from: '34', count: 1 }],
+      })
+
+      // Infantry should still be in system 34 (not transported)
+      const infantryAt34 = game.state.units['34'].planets?.bereg?.filter(
+        u => u.owner === 'dennis' && u.type === 'infantry'
+      ) || []
+      expect(infantryAt34.length).toBe(1)
+    })
+  })
+
+  // -------------------------------------------------------------------------
+  // Post-Combat Excess Capacity (Rule 78.10a)
+  // -------------------------------------------------------------------------
+
   describe('Post-Combat Excess Capacity', () => {
     test('excess fighters removed after carrier destroyed', () => {
       // dennis: 1 carrier (capacity 4) + 4 fighters at target

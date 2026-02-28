@@ -307,11 +307,17 @@ module.exports = function(Twilight) {
       }
     }
 
-    if (systemsWithControlledPlanets.length === 0) {
+    // Rule 32: cannot choose the Mecatol Rex system
+    const filteredSystems = systemsWithControlledPlanets.filter(systemId => {
+      const planets = this._getSystemPlanets(systemId)
+      return !planets.some(p => p.id === 'mecatol-rex')
+    })
+
+    if (filteredSystems.length === 0) {
       return
     }
 
-    const selection = this.actions.choose(player, systemsWithControlledPlanets, {
+    const selection = this.actions.choose(player, filteredSystems, {
       title: 'Choose System (Diplomacy)',
       noAutoRespond: true,
     })
