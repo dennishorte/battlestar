@@ -12,31 +12,9 @@ module.exports = {
     player.addResource('clay', 3)
     game.log.add({
       template: '{player} gets 3 clay from {card}',
-      args: { player , card: this},
+      args: { player, card: this },
     })
 
-    const card = this
-    const fromType = player.roomType
-    const toType = fromType === 'wood' ? 'clay' : (fromType === 'clay' ? 'stone' : null)
-    if (!toType) {
-      return
-    }
-
-    const choices = [
-      `Renovate from ${fromType} to ${toType} for free`,
-      'Skip',
-    ]
-    const selection = game.actions.choose(player, choices, {
-      title: `${card.name}: Renovate for free?`,
-      min: 1,
-      max: 1,
-    })
-
-    if (selection[0] !== 'Skip') {
-      game.actions._completeRenovation(player, toType, {
-        logTemplate: '{player} renovates from {old} to {new} for free using {card}',
-        logArgs: { card },
-      })
-    }
+    game.actions.freeRenovation(player, { card: this, canSkip: true })
   },
 }

@@ -536,3 +536,64 @@ AgricolaActionManager.prototype.offerRenovation = function(player, card) {
   return this.renovate(player)
 }
 
+/**
+ * Free renovation helper for cards that grant a no-cost renovation.
+ *
+ * @param {object} player
+ * @param {object} [options]
+ * @param {object} [options.card]        - the card triggering this (used in default log message)
+ * @param {string} [options.targetType]  - force a specific target (e.g. 'clay'); skips choice logic
+ * @param {boolean} [options.canSkip]    - if true, adds a "Skip" option; returns false if skipped
+ * @param {string} [options.title]       - title for the choice dialog
+ * @param {string} [options.logTemplate] - override log template
+ * @param {object} [options.logArgs]     - extra log args
+ *
+ * @returns {string|false} target type string if renovation happened, false if skipped/impossible
+ */
+AgricolaActionManager.prototype.freeRenovation = function(player, options = {}) {
+  let targetType = options.targetType
+
+  if (!targetType) {
+    if (player.roomType === 'wood' && player.canRenovateDirectlyToStone()) {
+      // Can go to clay or stone — let the player choose
+      const choices = ['Renovate to Clay for free', 'Renovate to Stone for free']
+      if (options.canSkip) {
+        choices.push('Skip')
+      }
+
+      const title = options.title || (options.card ? `${options.card.name}: Renovate for free?` : 'Renovate for free?')
+      const selection = this.choose(player, choices, { title, min: 1, max: 1 })
+
+      if (selection[0] === 'Skip') {
+        return false
+      }
+      targetType = selection[0].includes('Stone') ? 'stone' : 'clay'
+    }
+    else {
+      targetType = res.houseMaterialUpgrades[player.roomType]
+      if (!targetType) {
+        return false
+      }
+
+      if (options.canSkip) {
+        const title = options.title || (options.card ? `${options.card.name}: Renovate for free?` : 'Renovate for free?')
+        const selection = this.choose(player, [
+          `Renovate from ${player.roomType} to ${targetType} for free`,
+          'Skip',
+        ], { title, min: 1, max: 1 })
+        if (selection[0] === 'Skip') {
+          return false
+        }
+      }
+    }
+  }
+
+  const logTemplate = options.logTemplate || (options.card
+    ? '{player} renovates from {old} to {new} for free using {card}'
+    : '{player} renovates from {old} to {new} for free')
+  const logArgs = options.card ? { card: options.card, ...(options.logArgs || {}) } : (options.logArgs || {})
+
+  this._completeRenovation(player, targetType, { logTemplate, logArgs })
+  return targetType
+}
+

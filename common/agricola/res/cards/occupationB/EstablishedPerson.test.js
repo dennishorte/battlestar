@@ -1,16 +1,13 @@
 const t = require('../../../testutil_v2.js')
 
 describe('Established Person', () => {
-  test('onPlay with exactly 2 rooms and can renovate: free renovate then build fences', () => {
+  test('free renovation even when player cannot afford normal renovation', () => {
     const game = t.fixture({ cardSets: ['occupationB', 'test'], numPlayers: 2 })
     t.setBoard(game, {
       firstPlayer: 'dennis',
       dennis: {
         hand: ['established-person-b088'],
         roomType: 'wood',
-        wood: 5,
-        clay: 2,
-        reed: 1,
         farmyard: {
           rooms: [{ row: 0, col: 0 }, { row: 1, col: 0 }],
         },
@@ -20,7 +17,7 @@ describe('Established Person', () => {
 
     t.choose(game, 'Lessons A')
     t.choose(game, 'Established Person')
-    // Card renovates (wood→clay) then triggers buildFences. Cancel fencing (empty pasture = skip).
+    // Card renovates (wood→clay) then triggers buildFences. Cancel fencing.
     const sel = game.waiting && game.waiting.selectors && game.waiting.selectors[0]
     if (sel && (sel.title || '').toLowerCase().includes('pasture')) {
       t.action(game, 'build-pasture', { spaces: [] })
@@ -39,9 +36,6 @@ describe('Established Person', () => {
         occupations: ['established-person-b088'],
         roomType: 'clay',
         food: 1,
-        wood: 5,
-        clay: 2,
-        reed: 1,
         farmyard: {
           rooms: [{ row: 0, col: 0 }, { row: 1, col: 0 }],
         },
