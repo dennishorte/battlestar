@@ -6,7 +6,7 @@ module.exports = {
   biscuits: `cchc`,
   dogmaBiscuit: `c`,
   dogma: [
-    `If you have the most cards in your score pile, you win.`
+    `If you have the most cards in your score pile, you win. Otherwise, draw and reveal an {b}. Score all cards on your board of the color of the drawn card. If you do, return the drawn card. Otherwise, meld it.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
