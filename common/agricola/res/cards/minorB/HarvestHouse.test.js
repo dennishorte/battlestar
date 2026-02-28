@@ -1,11 +1,11 @@
 const t = require('../../../testutil_v2.js')
 
 describe('Harvest House', () => {
-  test('gives resources when completedHarvests equals occupations', () => {
+  test('gives resources when completedHarvests equals occupations + 1 (counting itself)', () => {
     const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
-    // Round 1: completedHarvestCount = 0, occupations = 0 → match
+    // Round 5: completedHarvestCount = 1 (round 4), occupations = 0, +1 for self → match
     t.setBoard(game, {
-      round: 1,
+      round: 5,
       firstPlayer: 'dennis',
       dennis: {
         hand: ['harvest-house-b071'],
@@ -14,7 +14,7 @@ describe('Harvest House', () => {
     })
     game.run()
 
-    // Play Harvest House → harvests(0) == occupations(0) → bonus
+    // Play Harvest House → harvests(1) == occupations(0+1) → bonus
     t.choose(game, 'Meeting Place')
     t.choose(game, 'Minor Improvement.Harvest House')
     // Micah
@@ -35,15 +35,14 @@ describe('Harvest House', () => {
     })
   })
 
-  test('no bonus when completedHarvests does not equal occupations', () => {
+  test('no bonus when completedHarvests does not equal occupations + 1', () => {
     const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
-    // Round 1: completedHarvestCount = 0, occupations = 2 → no match
+    // Round 1: completedHarvestCount = 0, occupations = 0, +1 for self = 1 → no match
     t.setBoard(game, {
       round: 1,
       firstPlayer: 'dennis',
       dennis: {
         hand: ['harvest-house-b071'],
-        occupations: ['test-occupation-1', 'test-occupation-2'],
         wood: 1, clay: 1, reed: 1,
       },
     })
@@ -62,7 +61,6 @@ describe('Harvest House', () => {
       dennis: {
         food: 1, // 1 from Meeting Place only (no Harvest House bonus)
         wood: 3, // 1 - 1 (cost) + 3 (Forest)
-        occupations: ['test-occupation-1', 'test-occupation-2'],
         minorImprovements: ['harvest-house-b071'],
       },
     })
