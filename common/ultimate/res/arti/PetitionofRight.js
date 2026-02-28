@@ -12,9 +12,9 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const count = game
-        .cards
-        .tops(player)
-        .filter(card => card.checkHasBiscuit('k'))
+        .zones
+        .colorStacks(player)
+        .filter(zone => zone.biscuits().k > 0)
         .length
       game.actions.chooseAndTransfer(
         player,
