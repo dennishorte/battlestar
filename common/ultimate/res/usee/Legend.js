@@ -29,7 +29,13 @@ module.exports = {
           return
         }
         game.actions.selfExecute(self, player, card)
-        const scored = game.actions.score(player, game.cards.top(player, firstCard.color))
+        const topAfter = game.cards.top(player, firstCard.color)
+        if (!topAfter) {
+          keepGoing = false
+          game.log.add({ template: 'No top card remaining in ' + firstCard.color })
+          return
+        }
+        const scored = game.actions.score(player, topAfter)
         if (scored) {
           totals[player.name] += scored.getAge()
           keepGoing = totals[player.name] < 9
