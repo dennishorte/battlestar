@@ -370,6 +370,104 @@ describe('Production', () => {
     })
   })
 
+  describe('Reinforcements Cap', () => {
+    test('cannot produce past unit type limit', () => {
+      const game = t.fixture()
+      // Dreadnought limit is 5. Place 4 on board, try to produce 2 more — only 1 should succeed
+      // Fleet pool must be high enough not to block, and resources sufficient
+      t.setBoard(game, {
+        dennis: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 6 },
+          tradeGoods: 8,
+          units: {
+            'sol-home': {
+              space: ['dreadnought', 'dreadnought', 'dreadnought', 'dreadnought'],
+              'jord': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'sol-home' })
+      t.choose(game, 'Done')
+
+      t.action(game, 'produce-units', {
+        units: [{ type: 'dreadnought', count: 2 }],
+      })
+
+      const dreads = game.state.units['sol-home'].space
+        .filter(u => u.owner === 'dennis' && u.type === 'dreadnought')
+      // 4 existing + 1 produced (2nd blocked by reinforcements cap of 5)
+      expect(dreads.length).toBe(5)
+    })
+
+    test('partial production when some units at limit', () => {
+      const game = t.fixture()
+      // Carrier limit is 4. Place 3, try to produce 2 — only 1 should succeed
+      // Fleet pool must be high enough not to block, and resources sufficient
+      t.setBoard(game, {
+        dennis: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 5 },
+          tradeGoods: 6,
+          units: {
+            'sol-home': {
+              space: ['carrier', 'carrier', 'carrier'],
+              'jord': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'sol-home' })
+      t.choose(game, 'Done')
+
+      t.action(game, 'produce-units', {
+        units: [{ type: 'carrier', count: 2 }],
+      })
+
+      const carriers = game.state.units['sol-home'].space
+        .filter(u => u.owner === 'dennis' && u.type === 'carrier')
+      // 3 existing + 1 produced (2nd blocked by reinforcements cap of 4)
+      expect(carriers.length).toBe(4)
+    })
+
+    test('unlimited types (fighters) are not capped', () => {
+      const game = t.fixture()
+      // Fighters have limit -1 (unlimited) — should produce freely
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'sol-home': {
+              space: ['carrier'],
+              'jord': ['space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'sol-home' })
+      t.choose(game, 'Done')
+
+      // Produce 4 fighters (2 resources for 4 via 2-for-1)
+      t.action(game, 'produce-units', {
+        units: [{ type: 'fighter', count: 4 }],
+      })
+
+      const fighters = game.state.units['sol-home'].space
+        .filter(u => u.owner === 'dennis' && u.type === 'fighter')
+      expect(fighters.length).toBe(4)
+    })
+  })
+
   describe('Fleet Pool', () => {
     test('cannot produce over fleet pool limit', () => {
       const game = t.fixture()
