@@ -279,9 +279,23 @@ module.exports = function(Twilight) {
       }
     }
 
+    // Rule 95: Build set of valid pickup systems (origin + intermediate systems on any ship's path)
+    const validPickupSystems = new Set()
+    for (const path of movedShipPaths) {
+      // All systems on the path except the destination (last element) are valid pickup points
+      for (let i = 0; i < path.length - 1; i++) {
+        validPickupSystems.add(String(path[i]))
+      }
+    }
+
     // Transport units (fighters and ground forces go to space area — in transit)
     for (const m of transportedUnits) {
       const fromSystemId = String(m.from)
+
+      // Rule 95: can only pick up from systems on a ship's movement path
+      if (validPickupSystems.size > 0 && !validPickupSystems.has(fromSystemId)) {
+        continue
+      }
 
       // Rule 95.3: cannot pick up units from systems with own command token
       if (this.state.systems[fromSystemId]?.commandTokens.includes(player.name)) {
