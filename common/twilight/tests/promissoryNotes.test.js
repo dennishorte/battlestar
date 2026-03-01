@@ -154,11 +154,11 @@ describe('Promissory Notes', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Pass')
 
-      // Dennis offers ceasefire note to micah
+      // Dennis offers political-favor note to micah (won't auto-trigger like ceasefire)
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: {
-          promissoryNotes: [{ id: 'ceasefire', owner: 'dennis' }],
+          promissoryNotes: [{ id: 'political-favor', owner: 'dennis' }],
         },
         requesting: {},
       })
@@ -166,7 +166,7 @@ describe('Promissory Notes', () => {
 
       const micah = game.players.byName('micah')
       const note = micah.promissoryNotes.find(
-        n => n.id === 'ceasefire' && n.owner === 'dennis'
+        n => n.id === 'political-favor' && n.owner === 'dennis'
       )
       expect(note).toBeTruthy()
       expect(note.owner).toBe('dennis')  // still dennis's note
@@ -203,6 +203,180 @@ describe('Promissory Notes', () => {
       const dennis = game.players.byName('dennis')
       const note = dennis.removePromissoryNote('nonexistent', 'dennis')
       expect(note).toBeNull()
+    })
+  })
+
+  // ---------------------------------------------------------------------------
+  // Support for the Throne (Rule 69)
+  // ---------------------------------------------------------------------------
+
+  describe('Support for the Throne', () => {
+    test('SFT gives +1 VP to holder', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [
+            { id: 'support-for-the-throne', owner: 'micah' },
+          ],
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      // Dennis holds micah's SFT → +1 VP
+      expect(dennis.getVictoryPoints()).toBe(1)
+    })
+
+    test('SFT from own player does not give VP', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [
+            { id: 'support-for-the-throne', owner: 'dennis' },
+          ],
+        },
+      })
+      game.run()
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.getVictoryPoints()).toBe(0)
+    })
+
+    test('SFT returned when activating system with giver units', () => {
+      const game = t.fixture()
+      const target = findAdjacent('sol-home')
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [
+            { id: 'support-for-the-throne', owner: 'micah' },
+          ],
+          units: {
+            'sol-home': { space: ['cruiser'] },
+          },
+        },
+        micah: {
+          units: {
+            [target]: { space: ['fighter'], 'bereg': ['infantry'] },
+            'hacan-home': { 'arretze': ['space-dock'] },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis activates target system which has micah's units
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: target })
+
+      // SFT should have been returned to micah
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+      expect(dennis.hasPromissoryNote('support-for-the-throne', 'micah')).toBe(false)
+      expect(micah.hasPromissoryNote('support-for-the-throne', 'micah')).toBe(true)
+    })
+
+    test('SFT not returned when activating system without giver units', () => {
+      const game = t.fixture()
+      const target = findAdjacent('sol-home')
+      t.setBoard(game, {
+        dennis: {
+          promissoryNotes: [
+            { id: 'support-for-the-throne', owner: 'micah' },
+          ],
+          units: {
+            'sol-home': { space: ['cruiser'] },
+          },
+        },
+        micah: {
+          units: {
+            'hacan-home': { 'arretze': ['space-dock'] },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis activates an empty system (no micah units)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: target })
+
+      // SFT should NOT be returned
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasPromissoryNote('support-for-the-throne', 'micah')).toBe(true)
+    })
+  })
+
+  // ---------------------------------------------------------------------------
+  // Trade Agreement (Rule 69)
+  // ---------------------------------------------------------------------------
+
+  describe('Trade Agreement', () => {
+    test('trade agreement returned at strategy phase, holder receives TGs', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        round: 2,
+        dennis: {
+          tradeGoods: 0,
+          promissoryNotes: [
+            { id: 'trade-agreement', owner: 'micah' },
+          ],
+        },
+      })
+      game.run()
+
+      // Strategy phase triggers trade agreement return
+      // Micah (Hacan) has commodity value 6 → dennis gets 6 TGs
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasPromissoryNote('trade-agreement', 'micah')).toBe(false)
+      expect(dennis.tradeGoods).toBe(6)
+
+      const micah = game.players.byName('micah')
+      expect(micah.hasPromissoryNote('trade-agreement', 'micah')).toBe(true)
+    })
+  })
+
+  // ---------------------------------------------------------------------------
+  // Ceasefire (Rule 69)
+  // ---------------------------------------------------------------------------
+
+  describe('Ceasefire', () => {
+    test('ceasefire returned at turn start, giver blocked from activating holder systems', () => {
+      const game = t.fixture()
+      const target = findAdjacent('hacan-home')
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'sol-home': { 'jord': ['space-dock'] },
+          },
+        },
+        micah: {
+          promissoryNotes: [
+            { id: 'ceasefire', owner: 'dennis' },
+          ],
+          units: {
+            'hacan-home': { 'arretze': ['space-dock'] },
+            [target]: { space: ['cruiser'] },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis goes first — takes any action (strategic)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines secondary
+
+      // Micah's turn — ceasefire triggers at turn start
+      // Micah had dennis's ceasefire → returned to dennis
+      // Dennis cannot activate systems with micah's units this round
+      const micah = game.players.byName('micah')
+      expect(micah.hasPromissoryNote('ceasefire', 'dennis')).toBe(false)
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.hasPromissoryNote('ceasefire', 'dennis')).toBe(true)
+
+      // ceasefireBlocks should be set
+      expect(game.state.ceasefireBlocks['dennis']).toBe('micah')
     })
   })
 })

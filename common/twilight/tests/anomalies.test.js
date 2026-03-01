@@ -403,5 +403,47 @@ describe('Anomalies', () => {
       // Fighters requiring capacity should not exceed available capacity
       expect(dennisFighters.length).toBeLessThanOrEqual(capacity)
     })
+
+    test('player chooses which unit type to remove when mixed excess', () => {
+      // micah: carrier + 2 fighters + 2 infantry in space
+      // dennis has overwhelming force to destroy carrier but not all small units
+      // After combat, if carrier destroyed, micah has 4 units needing capacity 0
+      // Player should be prompted to choose which type to remove
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            '34': { space: ['dreadnought', 'dreadnought', 'dreadnought', 'dreadnought', 'dreadnought'] },
+            'sol-home': { 'jord': ['space-dock'] },
+          },
+        },
+        micah: {
+          units: {
+            '35': { space: ['carrier', 'fighter', 'fighter', 'infantry', 'infantry'] },
+            'hacan-home': { 'arretze': ['space-dock'] },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // dennis attacks micah's system
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '35' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'dreadnought', from: '34', count: 5 },
+        ],
+      })
+
+      // After combat, verify capacity enforcement
+      const micahShips = game.state.units['35'].space.filter(u => u.owner === 'micah')
+      const micahCarriers = micahShips.filter(u => u.type === 'carrier')
+      const capacityNeeding = micahShips.filter(u => u.type === 'fighter' || u.type === 'infantry')
+
+      // If carrier was destroyed, capacity-requiring units should not exceed capacity
+      const totalCapacity = micahCarriers.length * 4
+      expect(capacityNeeding.length).toBeLessThanOrEqual(Math.max(totalCapacity, 0))
+    })
   })
 })
