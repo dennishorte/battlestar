@@ -46,7 +46,7 @@ module.exports = {
 
       // Mech DEPLOY: after Orbital Drop, may spend 3 resources to place 1 mech
       const availableResources = player.getTotalResources() + (player.tradeGoods || 0)
-      if (availableResources >= 3) {
+      if (availableResources >= 3 && ctx.game._hasReinforcementsAvailable(player.name, 'mech')) {
         const mechChoice = ctx.actions.choose(player, ['Deploy Mech', 'Pass'], {
           title: 'ZS Thunderbolt M2 DEPLOY: Spend 3 resources to place 1 mech?',
         })
