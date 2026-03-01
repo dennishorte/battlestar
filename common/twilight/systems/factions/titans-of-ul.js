@@ -225,14 +225,16 @@ module.exports = {
 
   // Hero — Ul The Progenitor: GEOFORM
   // Ready Elysium and attach this card to it, increasing resource and influence by 3.
-  // Elysium gains SPACE CANNON 5 (x3). Purge.
+  // Elysium gains SPACE CANNON 5 (x3). Hero attaches to Elysium (NOT purged — Rule 51 exception).
   componentActions: [
     {
       id: 'geoform',
       name: 'GEOFORM (Ul The Progenitor)',
       abilityId: 'awaken', // Use awaken as a proxy — all Titans have it
       isAvailable(player) {
+        // Hero attaches to Elysium rather than being purged; guard against re-use
         return player.isHeroUnlocked() && !player.isHeroPurged()
+          && !this._game.state.heroAttachments?.['elysium']
       },
     },
     {
@@ -325,11 +327,8 @@ module.exports = {
       args: { player: player.name },
     })
 
-    player.purgeHero()
-    ctx.log.add({
-      template: '{player} purges Ul The Progenitor',
-      args: { player: player.name },
-    })
+    // Rule 51 exception: Titans hero attaches to Elysium instead of being purged.
+    // The hero card becomes a permanent planet attachment with space cannon ability.
   },
 
   // Hel-Titan II: may fire space cannon from adjacent systems
