@@ -329,8 +329,10 @@ describe('Galaxy', () => {
 
     test('can path through wormhole', () => {
       // Seed 'alpha_seed' places tiles 39 and 82 which both have alpha wormholes
+      // Tile 82 (Wormhole Nexus) must be activated to expose alpha wormhole
       const game = t.fixture({ seed: 'alpha_seed', deterministicLayout: false })
       game.run()
+      game.state.wormholeNexusActive = true
       const galaxy = new Galaxy(game)
 
       const alphaSystems = findWormholeSystems(game, 'alpha')

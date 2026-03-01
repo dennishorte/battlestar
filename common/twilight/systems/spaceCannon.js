@@ -695,6 +695,15 @@ module.exports = function(Twilight) {
       this.state.planets[planetId].controller = attackerName
       this.state.planets[planetId].exhausted = true  // newly gained planets are exhausted
 
+      // Rule 100: Activate Wormhole Nexus when Mallice is controlled
+      if (planetId === 'mallice' && !this.state.wormholeNexusActive) {
+        this.state.wormholeNexusActive = true
+        this.log.add({
+          template: 'Wormhole Nexus activated — alpha, beta, and gamma wormholes now active',
+          args: {},
+        })
+      }
+
       // become-a-martyr: defender lost a planet in their home system
       if (previousController) {
         const previousPlayer = this.players.byName(previousController)

@@ -280,24 +280,36 @@ module.exports = function(Twilight) {
       stage = 'II'
     }
 
-    if (deck && deck.length > 0) {
-      const objectiveId = deck.shift()
-      if (!this.state.revealedObjectives) {
-        this.state.revealedObjectives = []
-      }
-      this.state.revealedObjectives.push(objectiveId)
-
-      const obj = res.getObjective(objectiveId)
-      if (obj) {
-        this.log.add({
-          template: 'Public Objective Stage {stage} revealed: {name}',
-          args: { stage, name: obj.name },
-        })
-      }
-
-      // Neuraloop: player with this relic may purge another relic to replace the objective
-      this._offerNeuraloop(objectiveId, deck, stage)
+    if (!deck || deck.length === 0) {
+      // Rule 61.15: game ends when speaker cannot reveal a public objective
+      this.log.add({
+        template: 'No Stage {stage} objectives remaining — game ends!',
+        args: { stage },
+      })
+      // Player with most VP wins; tiebreak by initiative order (same as _checkVictory)
+      const players = this._getPlayersInInitiativeOrder()
+      const maxVP = Math.max(...players.map(p => p.getVictoryPoints()))
+      const winner = players.find(p => p.getVictoryPoints() === maxVP)
+      this.youWin(winner, `${winner.name} wins with ${maxVP} victory points! (no objectives remaining)`)
+      return
     }
+
+    const objectiveId = deck.shift()
+    if (!this.state.revealedObjectives) {
+      this.state.revealedObjectives = []
+    }
+    this.state.revealedObjectives.push(objectiveId)
+
+    const obj = res.getObjective(objectiveId)
+    if (obj) {
+      this.log.add({
+        template: 'Public Objective Stage {stage} revealed: {name}',
+        args: { stage, name: obj.name },
+      })
+    }
+
+    // Neuraloop: player with this relic may purge another relic to replace the objective
+    this._offerNeuraloop(objectiveId, deck, stage)
   }
 
   Twilight.prototype._offerNeuraloop = function(objectiveId, deck, _stage) {

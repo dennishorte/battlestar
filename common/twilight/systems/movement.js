@@ -245,6 +245,18 @@ module.exports = function(Twilight) {
       }
     }
 
+    // Rule 100: Activate Wormhole Nexus when units enter
+    if (!this.state.wormholeNexusActive && movedShips.length > 0) {
+      const targetTile = galaxy.getSystemTile(targetSystemId)
+      if (targetTile?.id === 82) {
+        this.state.wormholeNexusActive = true
+        this.log.add({
+          template: 'Wormhole Nexus activated — alpha, beta, and gamma wormholes now active',
+          args: {},
+        })
+      }
+    }
+
     // Calculate total transport capacity of ships in target system
     let totalCapacity = 0
     for (const unit of this.state.units[targetSystemId].space) {
