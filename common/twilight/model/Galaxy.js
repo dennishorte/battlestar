@@ -33,6 +33,24 @@ class Galaxy {
   }
 
   /**
+   * Get effective tile wormholes, accounting for Wormhole Nexus activation state.
+   * Rule 100: inactive nexus has only gamma; active has alpha + beta + gamma.
+   */
+  _getTileWormholes(systemId) {
+    const tile = this.getSystemTile(systemId)
+    if (!tile) {
+      return []
+    }
+
+    // Wormhole Nexus (system 82): inactive = gamma only, active = all
+    if (tile.id === 82 && !this.game.state.wormholeNexusActive) {
+      return ['gamma']
+    }
+
+    return [...tile.wormholes]
+  }
+
+  /**
    * Get all systems adjacent to the given system.
    * Includes physical adjacency (hex neighbors) and wormhole adjacency.
    */
@@ -92,8 +110,7 @@ class Galaxy {
     // Wormhole adjacency — combine tile wormholes with faction-granted wormholes
     // Enforced Travel Ban: alpha/beta wormholes have no effect during movement
     const enforcedTravelBan = this.game._isLawActive?.('enforced-travel-ban') ?? false
-    const tile = this.getSystemTile(systemId)
-    let tileWormholes = tile ? [...tile.wormholes] : []
+    let tileWormholes = this._getTileWormholes(systemId)
     if (enforcedTravelBan) {
       tileWormholes = tileWormholes.filter(w => w !== 'alpha' && w !== 'beta')
     }
@@ -155,8 +172,7 @@ class Galaxy {
           continue
         }
 
-        const otherTile = this.getSystemTile(otherId)
-        let otherWormholes = otherTile ? [...otherTile.wormholes] : []
+        let otherWormholes = this._getTileWormholes(otherId)
         if (enforcedTravelBan) {
           otherWormholes = otherWormholes.filter(w => w !== 'alpha' && w !== 'beta')
         }
@@ -353,8 +369,7 @@ class Galaxy {
    * Check if a system has a specific wormhole type.
    */
   hasWormhole(systemId, wormholeType) {
-    const tile = this.getSystemTile(systemId)
-    const tileWormholes = tile ? tile.wormholes : []
+    const tileWormholes = this._getTileWormholes(systemId)
 
     if (wormholeType) {
       if (tileWormholes.includes(wormholeType)) {

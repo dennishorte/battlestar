@@ -521,11 +521,16 @@ module.exports = function(Twilight) {
 
   Twilight.prototype._redistributeTokens = function(player) {
     const totalTokens = player.commandTokens.tactics + player.commandTokens.strategy + player.commandTokens.fleet
-    this.actions.choose(player, ['Done'], {
+    const selection = this.actions.choose(player, ['Done'], {
       title: `Redistribute Tokens (${totalTokens} total)`,
+      allowsAction: 'redistribute-tokens',
       noAutoRespond: true,
     })
-  // For now, keep current distribution when player clicks Done
+
+    if (selection.action === 'redistribute-tokens') {
+      player.setCommandTokens(selection)
+    }
+    // Otherwise keep current distribution
   }
 
 

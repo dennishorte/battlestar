@@ -319,6 +319,9 @@ TestUtil.setBoard = function(game, state) {
     if (state.ionStormToken !== undefined) {
       game.state.ionStormToken = state.ionStormToken ? { ...state.ionStormToken } : null
     }
+    if (state.wormholeNexusActive !== undefined) {
+      game.state.wormholeNexusActive = state.wormholeNexusActive
+    }
     if (state.persistentCards !== undefined) {
       game.state.persistentCards = {}
       for (const [name, cards] of Object.entries(state.persistentCards)) {
