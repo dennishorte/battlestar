@@ -155,6 +155,35 @@ module.exports = function(Twilight) {
       }
     }
 
+    // Validate captured unit returns (Rule 17.2a — only non-fighter/infantry, Rule 17.4a)
+    const offeredCaptures = offering.capturedUnits || []
+    for (const cap of offeredCaptures) {
+      const playerCaptured = this.state.capturedUnits[player.name] || []
+      const exists = playerCaptured.some(
+        c => c.type === cap.type && c.originalOwner === targetName
+      )
+      if (!exists) {
+        return
+      }
+      if (cap.type === 'fighter' || cap.type === 'infantry') {
+        return
+      }
+    }
+
+    const requestedCaptures = requesting.capturedUnits || []
+    for (const cap of requestedCaptures) {
+      const targetCaptured = this.state.capturedUnits[targetName] || []
+      const exists = targetCaptured.some(
+        c => c.type === cap.type && c.originalOwner === player.name
+      )
+      if (!exists) {
+        return
+      }
+      if (cap.type === 'fighter' || cap.type === 'infantry') {
+        return
+      }
+    }
+
     // Mahact Hubris: cannot receive Alliance promissory notes
     const offeredAllianceToMahact = (offering.promissoryNotes || [])
       .some(n => n.id === 'alliance') && this.factionAbilities._hasAbility(target, 'hubris')
@@ -268,6 +297,29 @@ module.exports = function(Twilight) {
     }
     if (requesting.planet) {
       this._transferPlanetInTransaction(target, player, requesting.planet)
+    }
+
+    // Return captured units (Rule 17.2a)
+    const offeredCaptures = offering.capturedUnits || []
+    for (const cap of offeredCaptures) {
+      const captured = this.state.capturedUnits[player.name] || []
+      const idx = captured.findIndex(
+        c => c.type === cap.type && c.originalOwner === target.name
+      )
+      if (idx !== -1) {
+        captured.splice(idx, 1)
+      }
+    }
+
+    const requestedCaptures = requesting.capturedUnits || []
+    for (const cap of requestedCaptures) {
+      const captured = this.state.capturedUnits[target.name] || []
+      const idx = captured.findIndex(
+        c => c.type === cap.type && c.originalOwner === player.name
+      )
+      if (idx !== -1) {
+        captured.splice(idx, 1)
+      }
     }
 
     this.log.add({

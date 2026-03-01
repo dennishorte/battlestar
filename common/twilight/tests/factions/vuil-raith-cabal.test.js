@@ -701,4 +701,240 @@ describe("Vuil'raith Cabal", () => {
       })
     })
   })
+
+  describe('Blockade Prevents Capture (Rule 17.6)', () => {
+    test('Devour skipped when space dock is blockaded by opponent', () => {
+      // Set up: Cabal space dock on acheron (cabal-home), opponent ships in
+      // cabal-home space with NO Cabal ships → blockade.
+      // Combat in a DIFFERENT system destroys opponent unit → Devour should NOT fire.
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'cabal-home': {
+              // No ships in space → blockaded by micah's ships
+              'acheron': ['space-dock', 'infantry'],
+            },
+            '27': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            'cabal-home': {
+              space: ['cruiser'],  // Blockading Cabal's space dock
+            },
+            '35': {
+              space: ['fighter'],  // Target for combat
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis attacks system 35 where micah has a fighter
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '35' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: '27', count: 5 }],
+      })
+
+      // Micah's fighter destroyed but Devour should NOT capture because
+      // micah is blockading dennis's space dock
+      const captured = game.state.capturedUnits['dennis'] || []
+      const capturedFromMicah = captured.filter(c => c.originalOwner === 'micah')
+      expect(capturedFromMicah.length).toBe(0)
+    })
+  })
+
+  describe('Blockade Returns Captured Units (Rule 14.2)', () => {
+    test('non-fighter ships returned when blockade is established', () => {
+      // Cabal has a captured cruiser from micah. Micah moves ships to blockade
+      // cabal's space dock → captured cruiser should be returned.
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        capturedUnits: {
+          dennis: [{ type: 'cruiser', originalOwner: 'micah' }],
+        },
+        dennis: {
+          units: {
+            'cabal-home': {
+              // No ships → will be blockaded when micah moves ships here
+              'acheron': ['space-dock', 'infantry'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['cruiser', 'cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis passes (strategic action)
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines secondary
+
+      // Micah moves ships to cabal-home, establishing blockade
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'cabal-home' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: '27', count: 2 }],
+      })
+
+      // After tactical action ends, blockade check should return the captured cruiser
+      const captured = game.state.capturedUnits['dennis'] || []
+      const capturedCruisers = captured.filter(
+        c => c.type === 'cruiser' && c.originalOwner === 'micah'
+      )
+      expect(capturedCruisers.length).toBe(0)
+    })
+
+    test('captured fighters NOT returned on blockade', () => {
+      // Cabal has a captured fighter from micah. Blockade established →
+      // fighter should stay captured (Rule 17.4b).
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        capturedUnits: {
+          dennis: [{ type: 'fighter', originalOwner: 'micah' }],
+        },
+        dennis: {
+          units: {
+            'cabal-home': {
+              'acheron': ['space-dock', 'infantry'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['cruiser', 'cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')
+
+      // Micah establishes blockade
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'cabal-home' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: '27', count: 2 }],
+      })
+
+      // Fighter should still be captured
+      const captured = game.state.capturedUnits['dennis'] || []
+      const capturedFighters = captured.filter(
+        c => c.type === 'fighter' && c.originalOwner === 'micah'
+      )
+      expect(capturedFighters.length).toBe(1)
+    })
+  })
+
+  describe('Transaction Returns (Rule 17.2a)', () => {
+    test('can return captured ship via transaction', () => {
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        capturedUnits: {
+          dennis: [{ type: 'cruiser', originalOwner: 'micah' }],
+        },
+        dennis: {
+          commodities: 2,
+          units: {
+            'cabal-home': {
+              space: ['cruiser'],
+              'acheron': ['space-dock', 'infantry'],
+            },
+          },
+        },
+        micah: {
+          tradeGoods: 3,
+          units: {
+            '27': {
+              space: ['cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses leadership, then transaction window
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // micah declines secondary
+
+      // Dennis proposes transaction: return captured cruiser for 1 trade good
+      t.choose(game, 'micah')
+      t.action(game, 'trade-offer', {
+        offering: { capturedUnits: [{ type: 'cruiser' }] },
+        requesting: { tradeGoods: 1 },
+      })
+
+      // Micah accepts
+      t.choose(game, 'Accept')
+
+      // Captured cruiser should be removed
+      const captured = game.state.capturedUnits['dennis'] || []
+      expect(captured.filter(c => c.type === 'cruiser').length).toBe(0)
+
+      // Dennis should have received 1 trade good
+      const dennis = game.players.byName('dennis')
+      expect(dennis.tradeGoods).toBeGreaterThanOrEqual(1)
+    })
+
+    test('cannot return captured infantry via transaction (Rule 17.4a)', () => {
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        capturedUnits: {
+          dennis: [{ type: 'infantry', originalOwner: 'micah' }],
+        },
+        dennis: {
+          commodities: 2,
+          units: {
+            'cabal-home': {
+              space: ['cruiser'],
+              'acheron': ['space-dock', 'infantry'],
+            },
+          },
+        },
+        micah: {
+          tradeGoods: 3,
+          units: {
+            '27': {
+              space: ['cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')
+
+      // Dennis proposes transaction: return captured infantry for 1 trade good
+      t.choose(game, 'micah')
+      t.action(game, 'trade-offer', {
+        offering: { capturedUnits: [{ type: 'infantry' }] },
+        requesting: { tradeGoods: 1 },
+      })
+
+      // Validation rejects the transaction (infantry can't be returned via trade)
+      // so Accept/Reject prompt never appears — game moves on
+
+      // Infantry should still be captured (transaction was rejected)
+      const captured = game.state.capturedUnits['dennis'] || []
+      expect(captured.filter(c => c.type === 'infantry').length).toBe(1)
+    })
+  })
 })

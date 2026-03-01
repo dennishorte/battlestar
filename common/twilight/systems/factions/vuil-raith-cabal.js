@@ -12,6 +12,11 @@ module.exports = {
       return
     }
 
+    // Rule 17.6: cannot capture from players blockading your space docks
+    if (ctx.game._isSpaceDockBlockadedBy(player.name, unit.owner)) {
+      return
+    }
+
     if (!ctx.state.capturedUnits[player.name]) {
       ctx.state.capturedUnits[player.name] = []
     }
@@ -69,6 +74,11 @@ module.exports = {
       args: { player: cabalPlayer.name, count: commodities, target: updatedTarget.name },
     })
 
+    // Rule 17.6: cannot capture from players blockading your space docks
+    if (ctx.game._isSpaceDockBlockadedBy(cabalPlayer.name, updatedTarget.name)) {
+      return
+    }
+
     // Capture 1 unit from their reinforcements (choose unit type)
     const unitTypes = ['infantry', 'fighter', 'destroyer', 'cruiser', 'carrier', 'dreadnought']
     const captureChoice = ctx.actions.choose(cabalPlayer, unitTypes, {
@@ -116,6 +126,11 @@ module.exports = {
     )
 
     if (!hasMech) {
+      return
+    }
+
+    // Rule 17.6: cannot capture from players blockading your space docks
+    if (ctx.game._isSpaceDockBlockadedBy(cabalPlayer.name, unit.owner)) {
       return
     }
 
@@ -378,7 +393,20 @@ module.exports = {
       }
     }
 
-    const choices = uniqueTargets.map(t => `${t.type} from ${t.owner}`)
+    // Rule 17.6: filter out players blockading your space docks
+    const nonBlockadedTargets = uniqueTargets.filter(
+      t => !ctx.game._isSpaceDockBlockadedBy(player.name, t.owner)
+    )
+
+    if (nonBlockadedTargets.length === 0) {
+      ctx.log.add({
+        template: 'Vortex: All targets are blockading {player}',
+        args: { player: player.name },
+      })
+      return
+    }
+
+    const choices = nonBlockadedTargets.map(t => `${t.type} from ${t.owner}`)
     const selection = ctx.actions.choose(player, choices, {
       title: 'Vortex: Choose unit type to capture from reinforcements',
     })
@@ -388,7 +416,7 @@ module.exports = {
       return
     }
 
-    const target = uniqueTargets[idx]
+    const target = nonBlockadedTargets[idx]
 
     // Capture 1 unit of that type from their reinforcements
     if (!ctx.state.capturedUnits[player.name]) {
