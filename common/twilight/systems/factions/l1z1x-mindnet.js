@@ -338,6 +338,10 @@ module.exports = {
       return
     }
 
+    if (!ctx.game._hasReinforcementsAvailable(player.name, 'mech')) {
+      return
+    }
+
     const choice = ctx.actions.choose(player, ['Deploy Annihilator', 'Pass'], {
       title: 'Annihilator DEPLOY: Spend 2 resources to place 1 mech on the bombarded planet?',
     })

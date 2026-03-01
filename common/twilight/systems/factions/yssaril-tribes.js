@@ -64,7 +64,10 @@ module.exports = {
 
   // Blackshade Infiltrator DEPLOY
   _blackshadeInfiltratorDeploy(ctx, player) {
-    // Check if player has mechs available (simplified: always allow)
+    if (!ctx.game._hasReinforcementsAvailable(player.name, 'mech')) {
+      return
+    }
+
     const controlledPlanets = player.getControlledPlanets()
     if (controlledPlanets.length === 0) {
       return

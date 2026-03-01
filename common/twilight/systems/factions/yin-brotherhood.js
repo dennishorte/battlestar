@@ -414,7 +414,7 @@ module.exports = {
     // Mech DEPLOY — Moyin's Ashes: when using Indoctrination, spend 1 additional
     // influence to replace with mech instead of infantry
     let deployMech = false
-    if (player.getTotalInfluence() >= 3) {
+    if (player.getTotalInfluence() >= 3 && ctx.game._hasReinforcementsAvailable(player.name, 'mech')) {
       const mechChoice = ctx.actions.choose(player, ['Deploy Mech (+1 influence)', 'Infantry only'], {
         title: "Moyin's Ashes: Spend 1 extra influence to deploy mech instead of infantry?",
       })

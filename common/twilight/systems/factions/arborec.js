@@ -133,7 +133,7 @@ module.exports = {
     const planetUnits = ctx.state.units[systemId]?.planets[targetPlanet] || []
     const hasInfantry = planetUnits.some(u => u.owner === player.name && u.type === 'infantry')
 
-    if (hasInfantry) {
+    if (hasInfantry && ctx.game._hasReinforcementsAvailable(player.name, 'mech')) {
       const mechChoice = ctx.actions.choose(player, ['Place infantry', 'Deploy Mech (replace infantry)'], {
         title: 'Letani Behemoth: Deploy mech instead? (replaces 1 existing infantry)',
       })
@@ -310,6 +310,10 @@ module.exports = {
     }
 
     if (!hasStructure || planetsWithInfantry.length === 0) {
+      return
+    }
+
+    if (!ctx.game._hasReinforcementsAvailable(arborecPlayer.name, 'mech')) {
       return
     }
 

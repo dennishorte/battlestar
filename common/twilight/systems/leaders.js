@@ -235,6 +235,12 @@ module.exports = function(Twilight) {
     return count
   }
 
+  Twilight.prototype._hasReinforcementsAvailable = function(playerName, unitType) {
+    const onBoard = this._countUnitsOnBoard(playerName, unitType)
+    const unitDef = res.getUnit(unitType)
+    return !unitDef || unitDef.limit < 0 || onBoard < unitDef.limit
+  }
+
   Twilight.prototype._getTotalControlledInfluence = function(playerName) {
     let total = 0
     for (const [planetId, planetState] of Object.entries(this.state.planets)) {

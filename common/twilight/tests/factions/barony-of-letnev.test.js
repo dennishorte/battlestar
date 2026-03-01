@@ -583,6 +583,55 @@ describe('Barony of Letnev', () => {
         .filter(u => u.owner === 'dennis')
       expect(newAlbion.every(u => u.type !== 'mech')).toBe(true)
     })
+
+    test('DEPLOY skipped when all 4 mechs already on board', () => {
+      const game = t.fixture({
+        factions: ['barony-of-letnev', 'emirates-of-hacan'],
+      })
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 5,
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          units: {
+            'letnev-home': {
+              space: ['carrier'],
+              'arc-prime': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'mech', 'mech', 'space-dock'],
+              'wren-terra': ['mech', 'mech'],
+            },
+          },
+        },
+        micah: {
+          planets: {
+            'new-albion': { exhausted: false },
+          },
+          units: {
+            '27': {
+              'new-albion': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'letnev-home', count: 1 },
+          { unitType: 'infantry', from: 'letnev-home', count: 5 },
+        ],
+      })
+
+      // No Deploy Mech prompt — all 4 mechs already on board
+      // Combat resolves directly
+      expect(game.state.planets['new-albion'].controller).toBe('dennis')
+
+      // No mech should be on the contested planet (all 4 are elsewhere)
+      const newAlbion = game.state.units['27'].planets['new-albion']
+        .filter(u => u.owner === 'dennis')
+      expect(newAlbion.every(u => u.type !== 'mech')).toBe(true)
+    })
   })
 
   describe('Promissory Note — War Funding', () => {
