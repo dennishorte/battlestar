@@ -27,6 +27,7 @@ module.exports = function(Twilight) {
     const plasmaUsedByOwner = {}  // Plasma Scoring: track per-owner first-unit bonus
     const commanderBonusUsedByOwner = {}  // Commander bonus: track per-owner first-unit bonus
     const missesByOwner = {}  // Jol-Nar Commander: track misses per owner for rerolls
+    const firingOwners = new Set()  // Track all owners who fired (for onUnitDestroyed hooks)
     // Antimass Deflectors: +1 combat value when firing at target with this tech
     const antimassDefense = activePlayer.hasTechnology('antimass-deflectors') ? 1 : 0
 
@@ -59,6 +60,7 @@ module.exports = function(Twilight) {
           if (!missesByOwner[unit.owner]) {
             missesByOwner[unit.owner] = []
           }
+          firingOwners.add(unit.owner)
           totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense, missesByOwner[unit.owner])
         }
       }
@@ -88,6 +90,7 @@ module.exports = function(Twilight) {
             plasmaUsedByOwner[controller] = true
           }
         }
+        firingOwners.add(controller)
         for (let i = 0; i < diceCount + extraDice; i++) {
           const roll = Math.floor(this.random() * 10) + 1
           if (roll >= combatValue) {
@@ -148,6 +151,7 @@ module.exports = function(Twilight) {
             if (!missesByOwner[unit.owner]) {
               missesByOwner[unit.owner] = []
             }
+            firingOwners.add(unit.owner)
             totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense, missesByOwner[unit.owner])
           }
         }
@@ -187,7 +191,8 @@ module.exports = function(Twilight) {
       const hadNonFighters = activeShips.some(u => u.type !== 'fighter')
 
       // Active player assigns hits to their ships
-      this._assignSpaceCannonHits(systemId, activePlayer.name, totalHits, gravitonActive)
+      const shooterName = [...firingOwners][0] || null
+      this._assignSpaceCannonHits(systemId, activePlayer.name, totalHits, gravitonActive, shooterName)
 
       // turn-their-fleets-to-dust: all non-fighter ships destroyed by space cannon offense
       if (hadNonFighters) {
@@ -298,7 +303,7 @@ module.exports = function(Twilight) {
 
       // Hits are assigned to ground forces in space (before they commit)
       // Auto-assign to cheapest ground forces
-      this._assignGroundForcesInSpaceHits(systemId, attackerName, totalHits)
+      this._assignGroundForcesInSpaceHits(systemId, attackerName, totalHits, defenderName)
     }
   }
 
@@ -340,7 +345,7 @@ module.exports = function(Twilight) {
  * Assign space cannon offense hits to ships in the system.
  * Auto-assign cheapest first for now.
  */
-  Twilight.prototype._assignSpaceCannonHits = function(systemId, ownerName, hits, gravitonActive) {
+  Twilight.prototype._assignSpaceCannonHits = function(systemId, ownerName, hits, gravitonActive, destroyerName) {
     const systemUnits = this.state.units[systemId]
     if (!systemUnits || hits <= 0) {
       return
@@ -383,7 +388,10 @@ module.exports = function(Twilight) {
     for (let i = costOrder.length - 1; i >= 0 && remaining > 0; i--) {
       const idx = systemUnits.space.indexOf(costOrder[i])
       if (idx >= 0) {
-        systemUnits.space.splice(idx, 1)
+        const removed = systemUnits.space.splice(idx, 1)[0]
+        if (destroyerName) {
+          this.factionAbilities.onUnitDestroyed(systemId, removed, destroyerName, null)
+        }
         remaining--
       }
     }
@@ -392,7 +400,7 @@ module.exports = function(Twilight) {
   /**
  * Assign space cannon defense hits to ground forces in space (pre-commit).
  */
-  Twilight.prototype._assignGroundForcesInSpaceHits = function(systemId, ownerName, hits) {
+  Twilight.prototype._assignGroundForcesInSpaceHits = function(systemId, ownerName, hits, destroyerName) {
     const systemUnits = this.state.units[systemId]
     if (!systemUnits || hits <= 0) {
       return
@@ -406,7 +414,10 @@ module.exports = function(Twilight) {
       if (unit.owner === ownerName) {
         const def = res.getUnit(unit.type)
         if (def?.category === 'ground') {
-          systemUnits.space.splice(i, 1)
+          const removed = systemUnits.space.splice(i, 1)[0]
+          if (destroyerName) {
+            this.factionAbilities.onUnitDestroyed(systemId, removed, destroyerName, null)
+          }
           remaining--
         }
       }

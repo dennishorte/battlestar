@@ -362,7 +362,7 @@ These sections are fully implemented and have adequate test coverage:
 10. ~~**Wormhole Nexus activation** (Rule 100)~~ — **IMPLEMENTED** — Inactive/active state tracking, wormhole filtering
 11. ~~**Post-combat excess capacity** (Rule 78)~~ — **~90% IMPLEMENTED** — Cheapest-first removal after combat
 12. **Deploy ability** (Rule 30) — General deploy mechanic not wired
-13. **Destroyed vs Removed distinction** (Rule 31) — Different trigger semantics missing
+13. ~~**Destroyed vs Removed distinction** (Rule 31)~~ — **IMPLEMENTED** — `onUnitDestroyed` hooks for Assault Cannon, AFB, Crown of Thalnos, Space Cannon Offense/Defense; gravity rift/fleet pool remain hook-free (removal, not destruction)
 
 ### MEDIUM (Secondary features)
 14. ~~**Diplomacy Mecatol exclusion** (Rule 32)~~ — **IMPLEMENTED**

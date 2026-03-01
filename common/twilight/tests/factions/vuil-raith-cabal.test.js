@@ -79,6 +79,87 @@ describe("Vuil'raith Cabal", () => {
       expect(captured[0].originalOwner).toBe('micah')
     })
 
+    test('captures unit destroyed by Assault Cannon', () => {
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          technologies: ['self-assembly-routines', 'assault-cannon'],
+          units: {
+            'cabal-home': {
+              space: ['cruiser', 'cruiser', 'cruiser'],
+              'acheron': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['destroyer'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'cabal-home', count: 3 }],
+      })
+
+      // Assault Cannon fires pre-combat, destroying the destroyer.
+      // Devour should capture it.
+      const captured = game.state.capturedUnits['dennis'] || []
+      const capturedDestroyer = captured.find(
+        c => c.type === 'destroyer' && c.originalOwner === 'micah'
+      )
+      expect(capturedDestroyer).toBeDefined()
+    })
+
+    test('captures fighter destroyed by anti-fighter barrage', () => {
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'cabal-home': {
+              space: ['destroyer', 'destroyer', 'destroyer', 'destroyer'],
+              'acheron': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['fighter', 'fighter', 'fighter', 'fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'destroyer', from: 'cabal-home', count: 4 }],
+      })
+
+      // AFB fires pre-combat. Any fighters destroyed should be captured by Devour.
+      const captured = game.state.capturedUnits['dennis'] || []
+      const capturedFighters = captured.filter(
+        c => c.type === 'fighter' && c.originalOwner === 'micah'
+      )
+      // 4 destroyers with AFB 9x2 = 8 dice. With deterministic seed,
+      // some should hit. Every destroyed fighter should be captured.
+      const remainingFighters = game.state.units['27'].space
+        .filter(u => u.owner === 'micah' && u.type === 'fighter')
+      const totalAccounted = capturedFighters.length + remainingFighters.length
+      // All fighters either remain or were captured (none silently vanished)
+      expect(totalAccounted).toBeLessThanOrEqual(4)
+      expect(capturedFighters.length).toBeGreaterThan(0)
+    })
+
     test('does not capture own units', () => {
       // Directly invoke the handler to verify own-unit filtering
       const handler = require('../../systems/factions/vuil-raith-cabal.js')

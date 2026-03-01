@@ -51,6 +51,7 @@ describe('Yin Brotherhood', () => {
       const game = t.fixture({ factions: ['yin-brotherhood', 'emirates-of-hacan'] })
       t.setBoard(game, {
         dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
           units: {
             'yin-home': {
               space: ['cruiser', 'destroyer'],
