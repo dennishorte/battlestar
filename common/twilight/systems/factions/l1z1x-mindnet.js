@@ -218,7 +218,7 @@ module.exports = {
   // Harrow: ships with bombardment abilities fire at ground forces each round
   _harrowBombardment(player, ctx, systemId, planetId, opponentName) {
     const systemUnits = ctx.state.units[systemId]
-    const bombardShips = systemUnits.space.filter(u => {
+    let bombardShips = systemUnits.space.filter(u => {
       if (u.owner !== player.name || u.type === 'fighter') {
         return false
       }
@@ -228,6 +228,22 @@ module.exports = {
 
     if (bombardShips.length === 0) {
       return
+    }
+
+    // Planetary Shield check: only war suns ignore planetary shield (Rule 65)
+    const planetUnits = systemUnits.planets[planetId] || []
+    const hasShield = planetUnits.some(u => {
+      if (u.owner !== opponentName) {
+        return false
+      }
+      const def = ctx.game._getUnitStats(u.owner, u.type)
+      return def?.abilities?.includes('planetary-shield')
+    })
+    if (hasShield) {
+      bombardShips = bombardShips.filter(u => u.type === 'war-sun')
+      if (bombardShips.length === 0) {
+        return
+      }
     }
 
     let totalHits = 0

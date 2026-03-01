@@ -155,11 +155,17 @@ module.exports = function(Twilight) {
     // Commander production limit bonuses (e.g., Vuil'raith: up to 2 fighters/infantry free)
     const productionLimitBonusUsed = {}
 
+    // Reinforcements cap tracking (Rule 67)
+    const producedCounts = {}
+
     for (const req of requestedUnits) {
       const unitDef = this._getUnitStats(player.name, req.type)
       if (!unitDef) {
         continue
       }
+
+      // Get base unit limit from res (not faction-upgraded stats)
+      const baseUnitDef = res.getUnit(req.type)
 
       for (let i = 0; i < req.count; i++) {
       // Check blockade: can't produce ships when blockaded
@@ -173,6 +179,15 @@ module.exports = function(Twilight) {
             continue
           }
           producedNonFighters++
+        }
+
+        // Check reinforcements cap (Rule 67)
+        if (baseUnitDef && baseUnitDef.limit > 0) {
+          const onBoard = this._countUnitsOnBoard(player.name, req.type)
+          const beingProduced = producedCounts[req.type] || 0
+          if (onBoard + beingProduced >= baseUnitDef.limit) {
+            continue
+          }
         }
 
         // Check production capacity (some units may not count against limit)
@@ -209,6 +224,7 @@ module.exports = function(Twilight) {
 
         totalCost += unitCost
         validatedUnits.push(unitDef)
+        producedCounts[req.type] = (producedCounts[req.type] || 0) + 1
       }
     }
 
