@@ -571,6 +571,29 @@ module.exports = function(Twilight) {
       this.state.capturedUnits[player.name] = []
     }
 
+    // (33.10) Mahact: return captured command tokens to non-eliminated owners
+    const capturedTokens = this.state.capturedCommandTokens[player.name] || []
+    if (capturedTokens.length > 0) {
+      for (const tokenOwner of capturedTokens) {
+        if (!this.state.eliminatedPlayers.includes(tokenOwner)) {
+          const ownerPlayer = this.players.byName(tokenOwner)
+          if (ownerPlayer) {
+            ownerPlayer.commandTokens.tactics++
+          }
+        }
+      }
+      this.state.capturedCommandTokens[player.name] = []
+    }
+
+    // (33.10) Gift of Prescience: if holder eliminated, return PN to Naalu owner
+    if (this.state._giftOfPrescience && this.state._giftOfPrescience.holder === player.name) {
+      const naaluOwner = this.players.byName(this.state._giftOfPrescience.owner)
+      if (naaluOwner && !this.state.eliminatedPlayers.includes(naaluOwner.name)) {
+        naaluOwner.addPromissoryNote('gift-of-prescience', this.state._giftOfPrescience.owner)
+      }
+      this.state._giftOfPrescience = null
+    }
+
     // Mark player as passed so they're skipped in action phase
     if (player.pass) {
       player.pass()

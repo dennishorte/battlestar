@@ -1561,7 +1561,8 @@ class FactionAbilities {
     if (this.state._giftOfPrescience && this.state._giftOfPrescience.holder === player.name) {
       const { owner } = this.state._giftOfPrescience
       const naaluPlayer = this.players.byName(owner)
-      if (naaluPlayer) {
+      // Don't return PN to eliminated Naalu player
+      if (naaluPlayer && !(this.state.eliminatedPlayers || []).includes(naaluPlayer.name)) {
         naaluPlayer.addPromissoryNote('gift-of-prescience', owner)
       }
       this.log.add({
