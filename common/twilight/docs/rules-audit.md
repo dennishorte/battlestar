@@ -137,11 +137,12 @@ These sections are fully implemented and have adequate test coverage:
 - Implemented: Circlet of the Void exemption for move clamp
 - Implemented: Can only move into if active system, can't move through
 
-#### 95. Transport
-- **IMPL: ~60%** — Basic transport works but intermediate pickup missing
-- **TEST: ~70%**
-- Missing: Pick up units from systems moved through (only picks from origin system)
+#### 95. Transport — IMPLEMENTED
+- **IMPL: Yes** — Path-based pickup validation
+- **TEST: ~80%**
+- Implemented: Pick up units from origin AND intermediate systems along ship movement paths
 - Implemented: Cannot pick up units from systems with own command token (Rule 95.3)
+- Implemented: `validPickupSystems` built from all `movedShipPaths` (excluding destination)
 
 #### 100. Wormhole Nexus — IMPLEMENTED
 - **IMPL: Yes** — Activation state tracking + wormhole filtering
@@ -179,11 +180,11 @@ These sections are fully implemented and have adequate test coverage:
 ### MEDIUM — Secondary Features Missing
 
 #### 32. Diplomacy (Strategy Card)
-- **IMPL: Partial**
+- **IMPL: Mostly Complete**
 - **TEST: Partial**
 - Implemented: Cannot choose Mecatol Rex system in primary (Rule 32)
+- Implemented: Secondary lets player choose which 2 planets to ready
 - Missing: If player has no reinforcement tokens, they must place from command sheet
-- Missing: Secondary should let player choose which 2 planets to ready (currently auto-selects)
 
 #### 99. Warfare (Strategy Card) — IMPLEMENTED
 - **IMPL: Yes** — Token redistribution uses `redistribute-tokens` action (same as status phase)
@@ -224,11 +225,11 @@ These sections are fully implemented and have adequate test coverage:
 - Implemented: Simultaneous 10 VP tie-breaking (earliest in initiative order wins)
 - Implemented: Game end from no unrevealed objectives (most VP wins, tie = first in initiative order)
 
-#### 84. Strategy Phase — 3-4 Player Rules
-- **IMPL: Partial**
+#### 84. Strategy Phase — 3-4 Player Rules — IMPLEMENTED
+- **IMPL: Yes**
 - **TEST: Partial**
-- Missing: Players cannot pass until they have exhausted BOTH strategy cards in 3-4 player game (Rules 3.4a, 82.2a)
-- Note: Card picking (snake draft for 2 cards) works correctly
+- Implemented: Players cannot pass until all strategy cards used (`hasUsedStrategyCard()` checks `every(c => c.used)`)
+- Implemented: Card picking (snake draft for 2 cards) works correctly
 
 #### 87. Sustain Damage
 - **IMPL: Partial**
@@ -356,7 +357,7 @@ These sections are fully implemented and have adequate test coverage:
 ### HIGH (Core mechanics incomplete)
 7. ~~**Gravity Rift** (Rule 41)~~ — **~80% IMPLEMENTED** — +1 move, die roll, Circlet exemption
 8. ~~**Nebula combat/movement** (Rule 59)~~ — **~95% IMPLEMENTED** — Move clamp, defender bonus
-9. **Transport from path** (Rule 95) — Can't pick up from intermediate systems; command token restriction implemented (Rule 95.3)
+9. ~~**Transport from path** (Rule 95)~~ — **IMPLEMENTED** — Path-based pickup from origin + intermediate systems
 10. ~~**Wormhole Nexus activation** (Rule 100)~~ — **IMPLEMENTED** — Inactive/active state tracking, wormhole filtering
 11. ~~**Post-combat excess capacity** (Rule 78)~~ — **~90% IMPLEMENTED** — Cheapest-first removal after combat
 12. **Deploy ability** (Rule 30) — General deploy mechanic not wired
@@ -366,7 +367,7 @@ These sections are fully implemented and have adequate test coverage:
 14. ~~**Diplomacy Mecatol exclusion** (Rule 32)~~ — **IMPLEMENTED**
 15. ~~**Warfare token redistribution** (Rule 99)~~ — **IMPLEMENTED** — Uses `redistribute-tokens` action
 16. **Legendary Planets** (Rule 53) — Ability cards not implemented
-17. **3-4 player dual strategy card pass restriction** (Rules 3.4, 82.2)
+17. ~~**3-4 player dual strategy card pass restriction** (Rules 3.4, 82.2)~~ — **IMPLEMENTED** — `hasUsedStrategyCard()` already checks all cards
 18. ~~**Game end from no objectives** (Rule 61.15)~~ — **IMPLEMENTED**
 19. ~~**Simultaneous VP tiebreaking** (Rule 98.7)~~ — **IMPLEMENTED**
 20. ~~**Max 3 secret objectives** (Rule 61.21)~~ — **IMPLEMENTED**

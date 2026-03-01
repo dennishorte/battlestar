@@ -675,7 +675,7 @@ module.exports = function(Twilight) {
   }
 
   Twilight.prototype._diplomacySecondary = function(player) {
-  // Ready exhausted planets outside home system (simplified: ready any 2)
+  // Ready up to 2 exhausted planets
     const exhaustedPlanets = player.getControlledPlanets()
       .filter(pId => this.state.planets[pId].exhausted)
 
@@ -683,15 +683,34 @@ module.exports = function(Twilight) {
       return
     }
 
-    // Choose up to 2 planets to ready (simplified — just ready them all if ≤ 2)
-    const toReady = exhaustedPlanets.slice(0, 2)
+    const toReady = []
+    if (exhaustedPlanets.length <= 2) {
+      // Auto-select all if 2 or fewer
+      toReady.push(...exhaustedPlanets)
+    }
+    else {
+      // Let player choose which 2 planets to ready
+      const first = this.actions.choose(player, exhaustedPlanets, {
+        title: 'Ready planet 1 of 2 (Diplomacy secondary)',
+      })
+      toReady.push(first[0])
+
+      const remaining = exhaustedPlanets.filter(p => p !== first[0])
+      if (remaining.length > 0) {
+        const second = this.actions.choose(player, remaining, {
+          title: 'Ready planet 2 of 2 (Diplomacy secondary)',
+        })
+        toReady.push(second[0])
+      }
+    }
+
     for (const planetId of toReady) {
       this.state.planets[planetId].exhausted = false
     }
 
     this.log.add({
-      template: '{player} readies planets (Diplomacy secondary)',
-      args: { player },
+      template: '{player} readies {count} planet(s) (Diplomacy secondary)',
+      args: { player, count: toReady.length },
     })
 
     // Faction abilities after diplomacy (e.g., Xxcha Peace Accords)
