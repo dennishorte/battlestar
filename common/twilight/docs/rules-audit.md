@@ -241,7 +241,7 @@ These sections are fully implemented and have adequate test coverage:
 ### LOW — Edge Cases / Minor Gaps
 
 #### 9. Anomalies
-- Missing IMPL: Vuil'raith Dimensional Tear dynamic gravity rift for movement (Galaxy.js/movement.js only check static tile anomaly; leaders.js commander unlock check handles it separately)
+- ~~Missing IMPL: Vuil'raith Dimensional Tear dynamic gravity rift~~ — **IMPLEMENTED** in `twilight.js` (`_getDimensionalTearOwner`), `Galaxy.js` (pathfinding +1 move), `movement.js` (die roll with owner exemption). Tested in `rulesAuditLow.test.js`
 - Missing: Tests for systems that are two different anomalies simultaneously (edge case: no standard tiles have dual anomalies)
 
 #### 10. Anti-Fighter Barrage
