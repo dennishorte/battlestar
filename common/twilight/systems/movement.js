@@ -198,9 +198,14 @@ module.exports = function(Twilight) {
       for (let i = movedShips.length - 1; i >= 0; i--) {
         const shipPath = movedShipPaths[i]
         // Count gravity rifts in path (excluding destination)
+        // Includes Vuil'raith Dimensional Tear space docks (but owner's ships are exempt)
         const riftCount = shipPath.slice(0, -1).filter(sysId => {
           const tile = galaxy.getSystemTile(sysId)
-          return tile?.anomaly === 'gravity-rift'
+          if (tile?.anomaly === 'gravity-rift') {
+            return true
+          }
+          const tearOwner = this._getDimensionalTearOwner(sysId)
+          return tearOwner != null && tearOwner !== player.name
         }).length
         if (riftCount === 0) {
           continue

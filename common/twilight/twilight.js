@@ -1842,6 +1842,35 @@ Twilight.prototype._isCeasefireBlocked = function(playerName, systemId) {
 }
 
 
+/**
+ * Check if a system has a Vuil'raith Dimensional Tear (Cabal space dock).
+ * Returns the owner name if found, null otherwise.
+ * Used by Galaxy.js pathfinding (+1 move) and movement.js (gravity rift die roll).
+ */
+Twilight.prototype._getDimensionalTearOwner = function(systemId) {
+  const systemUnits = this.state.units[systemId]
+  if (!systemUnits) {
+    return null
+  }
+
+  // Check space area (floating factories) and planet areas for Cabal space docks
+  const allUnits = [
+    ...systemUnits.space,
+    ...Object.values(systemUnits.planets).flat(),
+  ]
+  for (const unit of allUnits) {
+    if (unit.type === 'space-dock') {
+      const owner = this.players.byName(unit.owner)
+      if (owner?.factionId === 'vuil-raith-cabal') {
+        return unit.owner
+      }
+    }
+  }
+
+  return null
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // System file requires
 
