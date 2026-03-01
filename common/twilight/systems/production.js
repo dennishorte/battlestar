@@ -84,7 +84,17 @@ module.exports = function(Twilight) {
       productionCapacity += structureProdBonus
     }
 
-    if (!hasSpaceDock && !hasParticleSynthesis && !hasStructureProduction) {
+    // Custodia Vigilia: PRODUCTION 3 on Mecatol Rex system (IIHQ Modernization)
+    let hasCustodiaVigilia = false
+    if (this.state.iihqModernization
+        && this.state.iihqModernization.owner === player.name
+        && this.state.planets['custodia-vigilia']?.controller === player.name
+        && String(systemId) === '18') {
+      hasCustodiaVigilia = true
+      productionCapacity += 3
+    }
+
+    if (!hasSpaceDock && !hasParticleSynthesis && !hasStructureProduction && !hasCustodiaVigilia) {
       return
     }
 
@@ -228,6 +238,15 @@ module.exports = function(Twilight) {
         })
         // Floating Factory: space dock in space area — place on first controlled planet
         if (!dockPlanet && spaceDocks.length > 0) {
+          dockPlanet = systemPlanets.find(pId => {
+            if (this._isDemilitarizedZone?.(pId)) {
+              return false
+            }
+            return this.state.planets[pId]?.controller === player.name
+          })
+        }
+        // Custodia Vigilia: PRODUCTION without space dock — place on first controlled planet
+        if (!dockPlanet && hasCustodiaVigilia) {
           dockPlanet = systemPlanets.find(pId => {
             if (this._isDemilitarizedZone?.(pId)) {
               return false

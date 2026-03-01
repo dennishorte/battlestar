@@ -515,7 +515,17 @@ describe('Secret Objectives — Status Phase', () => {
       },
     })
     game.run()
-    playToStatusPhase(game)
+    pickStrategyCards(game, 'leadership', 'diplomacy')
+
+    // Dennis uses leadership
+    t.choose(game, 'Strategic Action')
+    t.choose(game, 'Pass')              // micah declines secondary
+    t.choose(game, 'Decline')           // dennis declines legendary planet ability
+    t.choose(game, 'Strategic Action')  // micah: diplomacy
+    t.choose(game, 'hacan-home')        // micah picks system
+    t.choose(game, 'Pass')              // dennis declines secondary
+    t.choose(game, 'Pass')              // dennis passes
+    t.choose(game, 'Pass')              // micah passes
 
     t.choose(game, 'seize-an-icon: Seize An Icon')
 

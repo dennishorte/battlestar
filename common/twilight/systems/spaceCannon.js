@@ -100,6 +100,49 @@ module.exports = function(Twilight) {
       }
     }
 
+    // 1c. Custodia Vigilia: SPACE CANNON 5 from Mecatol Rex system (IIHQ Modernization)
+    if (this.state.iihqModernization) {
+      const cvOwner = this.state.iihqModernization.owner
+      if (cvOwner !== activePlayer.name && this.state.planets['custodia-vigilia']?.controller === cvOwner) {
+        const mecatolSystem = '18'
+        const isInOrAdjacentToMecatol = systemId === mecatolSystem
+          || this._getAdjacentSystems(mecatolSystem).includes(String(systemId))
+        if (isInOrAdjacentToMecatol) {
+          const owner = this.players.byName(cvOwner)
+          if (owner) {
+            let extraDice = 0
+            if (!plasmaUsedByOwner[cvOwner] && owner.hasTechnology('plasma-scoring')) {
+              extraDice = 1
+              plasmaUsedByOwner[cvOwner] = true
+            }
+            if (!commanderBonusUsedByOwner[cvOwner]) {
+              const bonus = this.factionAbilities.getUnitAbilityBonusDice(cvOwner)
+              if (bonus > 0) {
+                extraDice += bonus
+                commanderBonusUsedByOwner[cvOwner] = true
+              }
+            }
+            if (!missesByOwner[cvOwner]) {
+              missesByOwner[cvOwner] = []
+            }
+            firingOwners.add(cvOwner)
+            // Space Cannon 5, 1 die
+            const combatValue = Math.min(10, 5 + antimassDefense)
+            const diceCount = 1 + extraDice
+            for (let i = 0; i < diceCount; i++) {
+              const roll = Math.floor(this.random() * 10) + 1
+              if (roll >= combatValue) {
+                totalHits++
+              }
+              else {
+                missesByOwner[cvOwner].push(combatValue)
+              }
+            }
+          }
+        }
+      }
+    }
+
     // 2. PDS II in adjacent systems (check if owner has PDS II upgrade)
     const adjacentSystems = this._getAdjacentSystems(systemId)
     for (const adjSystemId of adjacentSystems) {
@@ -289,6 +332,40 @@ module.exports = function(Twilight) {
           }
         }
         totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense, defMisses)
+      }
+    }
+
+    // Custodia Vigilia: SPACE CANNON 5 defense on Mecatol Rex system
+    if (this.state.iihqModernization && systemId === '18') {
+      const cvOwner = this.state.iihqModernization.owner
+      if (cvOwner === defenderName && this.state.planets['custodia-vigilia']?.controller === cvOwner) {
+        let extraDice = 0
+        if (!defenderPlasmaUsed) {
+          const defender = this.players.byName(defenderName)
+          if (defender && defender.hasTechnology('plasma-scoring')) {
+            extraDice = 1
+            defenderPlasmaUsed = true
+          }
+        }
+        if (!defenderCommanderBonusUsed) {
+          const bonus = this.factionAbilities.getUnitAbilityBonusDice(defenderName)
+          if (bonus > 0) {
+            extraDice += bonus
+            defenderCommanderBonusUsed = true
+          }
+        }
+        // Space Cannon 5, 1 die
+        const combatValue = Math.min(10, 5 + antimassDefense)
+        const diceCount = 1 + extraDice
+        for (let i = 0; i < diceCount; i++) {
+          const roll = Math.floor(this.random() * 10) + 1
+          if (roll >= combatValue) {
+            totalHits++
+          }
+          else {
+            defMisses.push(combatValue)
+          }
+        }
       }
     }
 

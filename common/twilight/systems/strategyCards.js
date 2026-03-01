@@ -242,6 +242,7 @@ module.exports = function(Twilight) {
   Twilight.prototype._imperialPrimary = function(player) {
   // Rule 45: Three parts
   // Part 1: May score 1 public objective if requirements met
+    let scoredVP = false
     const revealedObjectives = this.state.revealedObjectives || []
     const playerScored = this.state.scoredObjectives[player.name] || []
     const controlsHome = this._controlsHomeSystemPlanets(player)
@@ -272,6 +273,7 @@ module.exports = function(Twilight) {
         const chosen = selection[0]
         if (chosen !== 'Skip') {
           this._recordObjectiveScore(player, chosen)
+          scoredVP = true
         }
       }
     }
@@ -279,6 +281,7 @@ module.exports = function(Twilight) {
     // Part 2: If controlling Mecatol Rex, gain 1 VP
     if (this.state.planets['mecatol-rex']?.controller === player.name) {
       player.addVictoryPoints(1)
+      scoredVP = true
       this.log.add({
         template: '{player} scores 1 VP from controlling Mecatol Rex (Imperial)',
         args: { player },
@@ -289,6 +292,24 @@ module.exports = function(Twilight) {
     else {
     // Part 3: If not controlling Mecatol Rex, draw 1 secret objective
       this._drawSecretObjective(player)
+    }
+
+    // Custodia Vigilia reactive: Keleres player gains 1 command token when another player scores VP via Imperial
+    if (scoredVP && this.state.iihqModernization) {
+      const cvOwner = this.state.iihqModernization.owner
+      if (cvOwner !== player.name && this.state.planets['custodia-vigilia']?.controller === cvOwner) {
+        const keleresPlayer = this.players.byName(cvOwner)
+        if (keleresPlayer) {
+          const poolChoice = this.actions.choose(keleresPlayer, ['tactics', 'fleet', 'strategy'], {
+            title: 'Custodia Vigilia: Gain 1 command token — choose pool',
+          })
+          keleresPlayer.commandTokens[poolChoice[0]]++
+          this.log.add({
+            template: 'Custodia Vigilia: {player} gains 1 command token ({pool})',
+            args: { player: keleresPlayer, pool: poolChoice[0] },
+          })
+        }
+      }
     }
   }
 
