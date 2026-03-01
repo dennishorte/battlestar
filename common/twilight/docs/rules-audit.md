@@ -72,7 +72,7 @@ These sections are fully implemented and have adequate test coverage:
 
 #### 33. Elimination — IMPLEMENTED
 - **IMPL: Yes** — Core elimination detection and handling
-- **TEST: Yes** — 5 integration tests in `elimination.test.js`
+- **TEST: Yes** — 11 integration tests in `elimination.test.js`
 - Implemented: Check for (no ground forces AND no production units AND no planets)
 - Implemented: Remove all units from board
 - Implemented: Remove command tokens from board
@@ -83,7 +83,9 @@ These sections are fully implemented and have adequate test coverage:
 - Implemented: Speaker passes to next player on elimination (Rule 80.7)
 - Implemented: Eliminated player skipped in strategy/action/status phases
 - Implemented: Return captured units to original owners
-- TODO: Faction-specific elimination rules (Nekro, Creuss, Naalu, Titans, Mahact)
+- Implemented: Mahact captured command tokens returned to non-eliminated owners on elimination (Rule 33.10)
+- Implemented: Gift of Prescience cleanup — holder eliminated returns PN to Naalu, Naalu eliminated preserves holder's initiative 0 (Rule 33.10)
+- Verified: Creuss wormhole token, Nekro assimilator tokens, Titans sleeper tokens persist through elimination (game-level state)
 
 ---
 
