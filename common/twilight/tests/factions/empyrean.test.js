@@ -594,6 +594,7 @@ describe('Empyrean', () => {
 
       // Dennis: Strategic Action (Leadership) → Micah declines secondary
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Empyrean, 4I)
       t.choose(game, 'Pass')
 
       // Micah: Component Action → Dark Pact
@@ -713,6 +714,7 @@ describe('Empyrean', () => {
 
       // Dennis: Strategic Action → Micah declines
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Empyrean, 4I)
       t.choose(game, 'Pass')
 
       // Micah: Component Action → Blood Pact
@@ -833,6 +835,7 @@ describe('Empyrean', () => {
 
         // Dennis does a strategic action first
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Empyrean, 4I)
         t.choose(game, 'Pass')
 
         // Micah activates system 35 (adjacent to gravity rift 41)

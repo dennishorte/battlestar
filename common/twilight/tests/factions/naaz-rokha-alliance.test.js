@@ -286,6 +286,7 @@ describe('Naaz-Rokha Alliance', () => {
 
       // Dennis uses Leadership (strategic action) so he can pass later
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Naaz-Rokha, 4I)
       t.choose(game, 'Pass') // micah declines leadership secondary
 
       // Micah activates system 20 (no space dock there, so no production prompt)
@@ -347,6 +348,7 @@ describe('Naaz-Rokha Alliance', () => {
 
       // Dennis uses strategy card first
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Naaz-Rokha, 4I)
       t.choose(game, 'Pass') // micah declines
 
       // Micah activates system 20
@@ -575,6 +577,7 @@ describe('Naaz-Rokha Alliance', () => {
 
       // Choose first secondary: leadership (gain 1 command token)
       t.choose(game, 'leadership')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Naaz-Rokha, 4I)
 
       // Choose Done (only use 1 secondary)
       t.choose(game, 'Done')
@@ -582,9 +585,9 @@ describe('Naaz-Rokha Alliance', () => {
       // Verify: hero is purged, relic gained, command token gained
       const dennis = game.players.byName('dennis')
       expect(dennis.isHeroPurged()).toBe(true)
-      // Leadership secondary gives +1 tactics token (started with 3, used 1 for activation = 2, +1 from secondary = 3...
-      // Actually no activation yet; started with 3, +1 from leadership secondary = 4
-      expect(dennis.commandTokens.tactics).toBe(4)
+      // Leadership secondary now only gives tokens via influence spending
+      // Dennis chose Skip, so no tokens gained; started with 3 tactics
+      expect(dennis.commandTokens.tactics).toBe(3)
     })
 
     test('purge hero after use', () => {
@@ -644,7 +647,7 @@ describe('Naaz-Rokha Alliance', () => {
       t.choose(game, 'Component Action')
       t.choose(game, 'perfect-synthesis')
 
-      // Choose first secondary: leadership
+      // Choose first secondary: leadership (with exhausted planets, no influence to spend)
       t.choose(game, 'leadership')
 
       // Choose second secondary: diplomacy (readies 2 planets)
@@ -653,7 +656,7 @@ describe('Naaz-Rokha Alliance', () => {
       // Verify: both secondaries executed
       const dennis = game.players.byName('dennis')
       expect(dennis.isHeroPurged()).toBe(true)
-      expect(dennis.commandTokens.tactics).toBe(4) // +1 from leadership secondary
+      expect(dennis.commandTokens.tactics).toBe(3) // leadership secondary offers influence-for-tokens, but planets were exhausted
     })
   })
 

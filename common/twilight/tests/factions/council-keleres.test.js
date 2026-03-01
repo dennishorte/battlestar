@@ -85,6 +85,7 @@ describe('Council Keleres', () => {
 
       // Dennis does strategic action
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Keleres/Xxcha, 5I)
       t.choose(game, 'Pass')  // micah declines secondary
 
       // Now micah's turn — law blanking should clear

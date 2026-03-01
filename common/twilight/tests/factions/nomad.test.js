@@ -117,6 +117,7 @@ describe('Nomad', () => {
 
       // Dennis uses leadership (strategic action)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Nomad, 4I)
       t.choose(game, 'Pass')              // micah declines leadership secondary
 
       // Micah uses diplomacy (strategic action)
@@ -687,6 +688,7 @@ describe('Nomad', () => {
 
         // Dennis does strategic action to pass turn
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Nomad, 4I)
         t.choose(game, 'Pass')  // micah declines leadership secondary
 
         // Micah's turn starts — Thunder's Paradox triggers for Nomad

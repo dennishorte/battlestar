@@ -28,6 +28,10 @@ function playToStatusPhase(game) {
 
   // Dennis (leadership=1) goes first
   t.choose(game, 'Strategic Action')  // dennis: leadership
+  // Skip influence-for-tokens prompt if it appears (when dennis has >= 3 influence)
+  if (t.currentChoices(game).includes('Skip')) {
+    t.choose(game, 'Skip')
+  }
   t.choose(game, 'Pass')              // micah declines secondary
   t.choose(game, 'Strategic Action')  // micah: diplomacy
   t.choose(game, 'hacan-home')        // micah picks system
@@ -519,6 +523,7 @@ describe('Secret Objectives — Status Phase', () => {
 
     // Dennis uses leadership
     t.choose(game, 'Strategic Action')
+    t.choose(game, 'Skip')              // dennis skips influence-for-tokens (Sol 2I + Primor 1I = 3I)
     t.choose(game, 'Pass')              // micah declines secondary
     t.choose(game, 'Decline')           // dennis declines legendary planet ability
     t.choose(game, 'Strategic Action')  // micah: diplomacy

@@ -52,14 +52,15 @@ module.exports = function(Twilight) {
   // Strategy Card — Leadership (#1)
 
   Twilight.prototype._leadershipPrimary = function(player) {
-  // Rule 52: Gain 3 command tokens
-  // TODO: After gaining 3 tokens, may spend influence for 1 additional token per 3 influence
+  // Rule 52.2: Gain 3 command tokens, then may spend influence (1 token per 3 influence)
     player.commandTokens.tactics += 3
 
     this.log.add({
       template: '{player} gains 3 command tokens',
       args: { player },
     })
+
+    this._offerInfluenceForTokens(player)
   }
 
 
@@ -622,7 +623,7 @@ module.exports = function(Twilight) {
 
   Twilight.prototype._getSecondaryDescription = function(cardId) {
     switch (cardId) {
-      case 'leadership': return 'Gain 1 command token'
+      case 'leadership': return 'Spend influence for command tokens'
       case 'diplomacy': return 'Ready exhausted planets'
       case 'politics': return 'Draw 2 action cards'
       case 'construction': return 'Place 1 structure'
@@ -637,13 +638,8 @@ module.exports = function(Twilight) {
   Twilight.prototype._resolveSecondary = function(player, cardId) {
     switch (cardId) {
       case 'leadership':
-      // Rule 52.2: Gain 1 command token (free, no strategy token cost)
-      // TODO: Should be "spend influence for 1 token per 3 influence" instead of flat 1 token
-        player.commandTokens.tactics += 1
-        this.log.add({
-          template: '{player} gains 1 command token (Leadership secondary)',
-          args: { player },
-        })
+      // Rule 52.3: Spend influence for 1 token per 3 influence (free, no strategy token cost)
+        this._offerInfluenceForTokens(player)
         break
       case 'diplomacy':
       // Ready 2 exhausted planets (simplified)

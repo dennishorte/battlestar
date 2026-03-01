@@ -656,6 +656,7 @@ describe('Arborec', () => {
 
         // Play through action phase
         t.choose(game, 'Strategic Action')  // dennis: leadership
+        t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Arborec, 3I)
         t.choose(game, 'Pass')  // micah declines secondary
         t.choose(game, 'Strategic Action')  // micah: diplomacy
         t.choose(game, 'hacan-home')

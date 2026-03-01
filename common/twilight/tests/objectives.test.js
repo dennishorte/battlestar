@@ -9,6 +9,10 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 function playToStatusPhase(game) {
   pickStrategyCards(game, 'leadership', 'diplomacy')
   t.choose(game, 'Strategic Action')  // dennis: leadership
+  // Skip influence-for-tokens prompt if it appears (when dennis has >= 3 influence)
+  if (t.currentChoices(game).includes('Skip')) {
+    t.choose(game, 'Skip')
+  }
   t.choose(game, 'Pass')  // micah declines leadership secondary
   t.choose(game, 'Strategic Action')  // micah: diplomacy
   t.choose(game, 'hacan-home')
