@@ -236,9 +236,9 @@ These sections are fully implemented and have adequate test coverage:
 - Implemented: Card picking (snake draft for 2 cards) works correctly
 
 #### 87. Sustain Damage
-- **IMPL: Partial**
+- **IMPL: Complete**
 - **TEST: Partial**
-- Missing: Cannot cancel direct-destroy effects (Rule 87.5) — no distinction between "hits" and "direct destroy"
+- ~~Missing: Cannot cancel direct-destroy effects (Rule 87.5)~~ — Already correct: all direct-destroy effects use `splice()` bypassing the sustain/hit-assignment system
 
 ---
 
@@ -256,6 +256,7 @@ These sections are fully implemented and have adequate test coverage:
 - Missing test: L1Z1X Harrow doesn't target own ground forces
 - ~~Missing test: Plasma Scoring +1 die bonus~~ — **TESTED** in `invasion.test.js`
 - Missing test: Multiple planet bombardment in single invasion
+- ~~X-89 Bacterial Weapon ΩΩ~~ — **IMPLEMENTED** — Doubles bombardment hits + exhausts bombarded planet (`combat.js`), tested in `x89BacterialWeapon.test.js`
 
 #### 16. Capacity
 - ~~Missing: Explicit excess capacity removal mechanism mid-game~~ — Covered by Rule 78 implementation (post-combat excess capacity with player choice)
@@ -298,7 +299,7 @@ These sections are fully implemented and have adequate test coverage:
 - No gaps identified
 
 #### 65. Planetary Shield
-- Missing: X-89 Bacterial Weapon bypass (X-89 tech may not be fully implemented)
+- ~~Missing: X-89 Bacterial Weapon bypass~~ — ΩΩ version doubles hits instead of bypassing shields; shields still block non-war-sun bombardment normally. **IMPLEMENTED** in `combat.js`
 - Missing test: L1Z1X Harrow blocked by Planetary Shield
 
 #### 66. Politics (Strategy Card)
@@ -377,4 +378,4 @@ These sections are fully implemented and have adequate test coverage:
 20. ~~**Max 3 secret objectives** (Rule 61.21)~~ — **IMPLEMENTED**
 21. ~~**Agenda phase transactions** (Rule 94.6)~~ — **IMPLEMENTED** — Transaction option in vote prompt
 22. ~~**Promissory note return/limit** (Rule 69)~~ — **IMPLEMENTED** — SFT VP + return, Trade Agreement, Ceasefire
-23. **Sustain Damage vs direct destroy** (Rule 87.5)
+23. ~~**Sustain Damage vs direct destroy** (Rule 87.5)~~ — **ALREADY CORRECT** — Direct-destroy effects use `splice()` bypassing sustain/hit-assignment

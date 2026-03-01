@@ -600,8 +600,17 @@ module.exports = function(Twilight) {
       }
 
       // Crown of Thalnos: reroll missed dice (+1), destroy units that still miss
-      const attackerHits = attackerRoll.hits + this._offerCrownOfThalnos(attackerName, attackerRoll, groundContext)
-      const defenderHits = defenderRoll.hits + this._offerCrownOfThalnos(defenderName, defenderRoll, groundContext)
+      let attackerHits = attackerRoll.hits + this._offerCrownOfThalnos(attackerName, attackerRoll, groundContext)
+      let defenderHits = defenderRoll.hits + this._offerCrownOfThalnos(defenderName, defenderRoll, groundContext)
+
+      // X-89 Bacterial Weapon ΩΩ: double ground combat hits
+      const attackerPlayer = this.players.byName(attackerName)
+      if (attackerPlayer?.hasTechnology('x89-bacterial-weapon')) {
+        attackerHits *= 2
+      }
+      if (defenderPlayer?.hasTechnology('x89-bacterial-weapon')) {
+        defenderHits *= 2
+      }
 
       this._assignGroundHits(systemId, planetId, defenderName, attackerHits, attackerName)
       this._assignGroundHits(systemId, planetId, attackerName, defenderHits, defenderName)
