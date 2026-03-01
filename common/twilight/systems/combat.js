@@ -608,40 +608,61 @@ module.exports = function(Twilight) {
     || coalescencePlanets.length > 0
 
     if (shouldInvade) {
-    // Target the first enemy planet (prefer coalescence planet if no standard invasion target)
-      const targetPlanet = (enemyPlanets.length > 0 && groundForcesInSpace.length > 0)
-        ? enemyPlanets[0]
-        : coalescencePlanets[0]
-
-      // Snapshot defender structures before combat (for L1Z1X Assimilate)
-      const defenderName = this.state.planets[targetPlanet]?.controller
-      const preInvasionStructures = {}
-      if (defenderName) {
-        const planetUnits = systemUnits.planets[targetPlanet] || []
-        for (const unit of planetUnits) {
-          if (unit.owner === defenderName) {
-            const def = res.getUnit(unit.type)
-            if (def?.category === 'structure') {
-              preInvasionStructures[unit.type] = (preInvasionStructures[unit.type] || 0) + 1
-            }
-          }
+      // Build list of planets to invade (enemy planets first, then coalescence-only)
+      const planetsToInvade = [...enemyPlanets]
+      for (const p of coalescencePlanets) {
+        if (!planetsToInvade.includes(p)) {
+          planetsToInvade.push(p)
         }
       }
 
-      // Step 1: Bombardment
-      this._bombardment(systemId, targetPlanet, player.name)
+      for (const targetPlanet of planetsToInvade) {
+        // Check if there are still ground forces in space to commit
+        const remainingForces = systemUnits.space
+          .filter(u => u.owner === player.name && res.getUnit(u.type)?.category === 'ground')
 
-      // Step 2: Space Cannon Defense (PDS fire at landing ground forces)
-      this._spaceCannonDefense(systemId, targetPlanet, player.name)
+        // Skip if no ground forces and not a coalescence planet
+        if (remainingForces.length === 0 && !coalescencePlanets.includes(targetPlanet)) {
+          continue
+        }
 
-      // Step 3: Commit ground forces from space to the planet
-      this._commitGroundForces(systemId, targetPlanet, player.name)
+        // Snapshot defender structures before combat (for L1Z1X Assimilate)
+        const defenderName = this.state.planets[targetPlanet]?.controller
+        const preInvasionStructures = {}
+        if (defenderName) {
+          const planetUnits = systemUnits.planets[targetPlanet] || []
+          for (const unit of planetUnits) {
+            if (unit.owner === defenderName) {
+              const def = res.getUnit(unit.type)
+              if (def?.category === 'structure') {
+                preInvasionStructures[unit.type] = (preInvasionStructures[unit.type] || 0) + 1
+              }
+            }
+          }
+        }
 
-      // Step 4: Ground combat
-      this._groundCombat(systemId, targetPlanet, player.name)
+        // Step 1: Bombardment
+        this._bombardment(systemId, targetPlanet, player.name)
 
-      // Step 5: Establish control (pass pre-invasion structure counts)
-      this._establishControl(systemId, targetPlanet, player.name, preInvasionStructures)
+        // Step 2: Space Cannon Defense (PDS fire at landing ground forces)
+        this._spaceCannonDefense(systemId, targetPlanet, player.name)
+
+        // Step 3: Commit ground forces from space to the planet
+        this._commitGroundForces(systemId, targetPlanet, player.name)
+
+        // Step 4: Ground combat
+        this._groundCombat(systemId, targetPlanet, player.name)
+
+        // Step 5: Establish control (pass pre-invasion structure counts)
+        this._establishControl(systemId, targetPlanet, player.name, preInvasionStructures)
+      }
+
+      // After all invasions, auto-place any remaining ground forces on friendly/empty planets
+      const remainingGround = systemUnits.space
+        .filter(u => u.owner === player.name && res.getUnit(u.type)?.category === 'ground')
+      if (remainingGround.length > 0) {
+        this._autoPlaceGroundForces(systemId, player.name, tile, systemPlanets)
+      }
     }
     else {
     // No enemy planets — auto-place ground forces on the first friendly/empty planet

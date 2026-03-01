@@ -251,7 +251,7 @@ These sections are fully implemented and have adequate test coverage:
 #### 15. Bombardment
 - ~~Missing test: L1Z1X Harrow doesn't target own ground forces~~ — **TESTED** in `rulesAuditLow.test.js`
 - ~~Missing test: Plasma Scoring +1 die bonus~~ — **TESTED** in `invasion.test.js`
-- Missing IMPL: Multiple planet invasion in single tactical action (code only invades `enemyPlanets[0]`; TI4 rules allow invading all planets in the active system)
+- ~~Missing IMPL: Multiple planet invasion~~ — **IMPLEMENTED**: `_invasionStep` loops over all enemy planets; auto-commits ground forces to first planet, subsequent planets get bombardment/combat if forces remain in space. Tested in `rulesAuditLow.test.js`
 - ~~X-89 Bacterial Weapon ΩΩ~~ — **IMPLEMENTED** — Doubles bombardment hits + exhausts bombarded planet (`combat.js`), tested in `x89BacterialWeapon.test.js`
 
 #### 16. Capacity
