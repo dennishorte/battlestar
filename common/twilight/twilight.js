@@ -181,6 +181,36 @@ Twilight.prototype._offerUnitAbilityReroll = function(shooterName, missCombatVal
   return additionalHits
 }
 
+// Rule 17.6 / 14.2: Check whether ANY of captor's space docks are blockaded by opponent
+// (opponent has ships in system, captor has no ships)
+Twilight.prototype._isSpaceDockBlockadedBy = function(captorName, opponentName) {
+  for (const [_systemId, systemUnits] of Object.entries(this.state.units)) {
+    // Find systems with captor's space dock (on planets)
+    let hasCaptorDock = false
+    for (const planetUnits of Object.values(systemUnits.planets)) {
+      if (planetUnits.some(u => u.owner === captorName && u.type === 'space-dock')) {
+        hasCaptorDock = true
+        break
+      }
+    }
+    if (!hasCaptorDock) {
+      continue
+    }
+
+    // Check: opponent has ships AND captor has no ships in space
+    const captorShips = systemUnits.space.filter(
+      u => u.owner === captorName && res.getUnit(u.type)?.category === 'ship'
+    )
+    const opponentShips = systemUnits.space.filter(
+      u => u.owner === opponentName && res.getUnit(u.type)?.category === 'ship'
+    )
+    if (opponentShips.length > 0 && captorShips.length === 0) {
+      return true
+    }
+  }
+  return false
+}
+
 Twilight.prototype._checkFloatingFactoryBlockade = function() {
   for (const [systemId, systemUnits] of Object.entries(this.state.units)) {
     const spaceDocks = systemUnits.space.filter(u => u.type === 'space-dock')
@@ -204,6 +234,51 @@ Twilight.prototype._checkFloatingFactoryBlockade = function() {
         this.log.add({
           template: 'Floating Factory blockaded: {owner} space dock in system {system} is destroyed',
           args: { owner: dock.owner, system: systemId },
+        })
+      }
+    }
+  }
+}
+
+// Rule 14.2: When a player blockades a captor's space dock, return non-fighter/infantry
+// ships and mechs captured from the blockading player
+Twilight.prototype._checkCaptureBlockadeReturns = function() {
+  for (const captor of this.players.all()) {
+    if (!this.state.capturedUnits[captor.name]?.length) {
+      continue
+    }
+
+    for (const opponent of this.players.all()) {
+      if (opponent.name === captor.name) {
+        continue
+      }
+      if (!this._isSpaceDockBlockadedBy(captor.name, opponent.name)) {
+        continue
+      }
+
+      const captured = this.state.capturedUnits[captor.name]
+      // Return non-fighter/infantry units captured from this opponent
+      const toReturn = []
+      const toKeep = []
+      for (const unit of captured) {
+        if (unit.originalOwner !== opponent.name) {
+          toKeep.push(unit)
+          continue
+        }
+        // Rule 17.4b: fighters/infantry NOT returned via blockade
+        if (unit.type === 'fighter' || unit.type === 'infantry') {
+          toKeep.push(unit)
+        }
+        else {
+          toReturn.push(unit)
+        }
+      }
+
+      if (toReturn.length > 0) {
+        this.state.capturedUnits[captor.name] = toKeep
+        this.log.add({
+          template: 'Blockade: {opponent} blockades {captor} — {count} captured unit(s) returned',
+          args: { opponent: opponent.name, captor: captor.name, count: toReturn.length },
         })
       }
     }
@@ -1469,6 +1544,9 @@ Twilight.prototype._tacticalAction = function(player) {
 
   // Floating Factory blockade: destroy Saar space docks in systems with enemy ships and no friendly ships
   this._checkFloatingFactoryBlockade()
+
+  // Rule 14.2: blockade returns captured units
+  this._checkCaptureBlockadeReturns()
 
   // End-of-tactical-action faction triggers (e.g., Sardakk N'orr agent T'ro)
   this.factionAbilities.onTacticalActionEnd(player, systemId)
