@@ -1048,6 +1048,8 @@ Twilight.prototype.agendaPhase = function() {
 
   // Resolve 2 agendas
   for (let i = 0; i < 2; i++) {
+    // Reset per-agenda transaction tracking (Rule 94.6)
+    this.state.agendaTransactions = {}
     this._resolveAgenda(i + 1)
   }
 
@@ -1139,12 +1141,26 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
       chosen = preVote.forcedOutcome
     }
     else {
-      const voteChoices = ['Abstain', ...outcomes]
-      const selection = this.actions.choose(player, voteChoices, {
-        title: `Vote on ${agenda.name} (${availableInfluence} influence available)`,
-        noAutoRespond: true,
-      })
-      chosen = selection[0]
+      // Rule 94.6: Allow transactions before voting (any player, 1 per player per agenda)
+      while (true) {
+        const agendaPartners = this._getAgendaTradePartners(player)
+        const hasPartners = agendaPartners.length > 0
+        const voteChoices = ['Abstain', ...outcomes]
+        if (hasPartners) {
+          voteChoices.push('Transaction')
+        }
+        const selection = this.actions.choose(player, voteChoices, {
+          title: `Vote on ${agenda.name} (${availableInfluence} influence available)`,
+          noAutoRespond: true,
+        })
+        chosen = selection[0]
+
+        if (chosen === 'Transaction') {
+          this._offerAgendaTransactions(player)
+          continue
+        }
+        break
+      }
     }
 
     if (chosen === 'Abstain') {

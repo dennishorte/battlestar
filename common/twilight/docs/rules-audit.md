@@ -119,15 +119,15 @@ These sections are fully implemented and have adequate test coverage:
 
 ### HIGH — Core Mechanics Missing
 
-#### 41. Gravity Rift
-- **IMPL: ~80%** — Core mechanics implemented
-- **TEST: ~80%**
+#### 41. Gravity Rift — IMPLEMENTED
+- **IMPL: Yes** — All key mechanics implemented
+- **TEST: ~85%**
 - Implemented: +1 move for ships exiting gravity rift (0-cost exit in BFS pathfinding)
-- Implemented: Die roll per ship exiting (1d10, 1-3 = ship removed, not destroyed)
+- Implemented: Die roll per rift in path (1d10, 1-3 = ship removed, not destroyed)
+- Implemented: Multiple rifts in path = multiple rolls per ship
 - Implemented: Circlet of the Void exemption
-- Missing: Can affect same ship multiple times (multiple rifts in path)
-- Missing: Multiple rifts in system = single rift
 - Implemented: Gravity rift as valid destination, Vuil'raith faction +1 move
+- Note: Multiple rifts in same system is a map construction edge case (single anomaly per tile)
 
 #### 59. Nebula
 - **IMPL: ~95%** — All key mechanics implemented
@@ -206,10 +206,11 @@ These sections are fully implemented and have adequate test coverage:
 - Missing: Return-after-resolve mechanic
 - Missing: Eliminated player's promissory notes returned to game box
 
-#### 94. Transactions
-- **IMPL: Partial**
+#### 94. Transactions — IMPLEMENTED
+- **IMPL: Yes**
 - **TEST: Partial**
-- Missing: Agenda phase transactions (1 transaction per player per agenda, not just neighbors)
+- Implemented: Agenda phase transactions (Rule 94.6) — 1 transaction per player per agenda, any player (not just neighbors)
+- Implemented: "Transaction" option in vote prompt, per-agenda tracking via `state.agendaTransactions`
 - Implemented: Max 1 promissory per transaction enforcement (Rule 69.2)
 
 #### 61. Objectives — IMPLEMENTED
@@ -321,14 +322,14 @@ These sections are fully implemented and have adequate test coverage:
 - Implemented: Space dock destroyed when attacker takes control of planet (in `_establishControl`)
 - Note: Rule 79.4 covered by existing invasion flow — defender structures removed when attacker has forces and defender doesn't
 
-#### 80. Speaker
-- Missing: Speaker passes left on elimination (see Elimination section)
+#### 80. Speaker — IMPLEMENTED
+- Implemented: Speaker passes to next player on elimination (Rule 80.7) — see Elimination section
 
 #### 81. Status Phase
 - No major gaps — all 8 steps implemented
 
-#### 82. Strategic Action
-- Missing: 3-4 player must resolve both strategy cards before passing (see Strategy Phase)
+#### 82. Strategic Action — IMPLEMENTED
+- Implemented: 3-4 player must resolve both strategy cards before passing (see Strategy Phase section)
 
 #### 83. Strategy Card (General)
 - No gaps
@@ -355,7 +356,7 @@ These sections are fully implemented and have adequate test coverage:
 6. ~~**Construction secondary system restriction** (Rule 24)~~ — **IMPLEMENTED** — Command token + system scoping
 
 ### HIGH (Core mechanics incomplete)
-7. ~~**Gravity Rift** (Rule 41)~~ — **~80% IMPLEMENTED** — +1 move, die roll, Circlet exemption
+7. ~~**Gravity Rift** (Rule 41)~~ — **IMPLEMENTED** — +1 move, per-rift die roll, Circlet exemption
 8. ~~**Nebula combat/movement** (Rule 59)~~ — **~95% IMPLEMENTED** — Move clamp, defender bonus
 9. ~~**Transport from path** (Rule 95)~~ — **IMPLEMENTED** — Path-based pickup from origin + intermediate systems
 10. ~~**Wormhole Nexus activation** (Rule 100)~~ — **IMPLEMENTED** — Inactive/active state tracking, wormhole filtering
@@ -371,6 +372,6 @@ These sections are fully implemented and have adequate test coverage:
 18. ~~**Game end from no objectives** (Rule 61.15)~~ — **IMPLEMENTED**
 19. ~~**Simultaneous VP tiebreaking** (Rule 98.7)~~ — **IMPLEMENTED**
 20. ~~**Max 3 secret objectives** (Rule 61.21)~~ — **IMPLEMENTED**
-21. **Agenda phase transactions** (Rule 94.6)
+21. ~~**Agenda phase transactions** (Rule 94.6)~~ — **IMPLEMENTED** — Transaction option in vote prompt
 22. **Promissory note return/limit** (Rule 69) — Max 1 per transaction implemented; return-after-resolve missing
 23. **Sustain Damage vs direct destroy** (Rule 87.5)
