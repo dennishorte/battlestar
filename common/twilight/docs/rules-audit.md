@@ -271,7 +271,7 @@ These sections are fully implemented and have adequate test coverage:
 - Missing test: Start/end of combat timing window hooks
 
 #### 51. Leaders
-- Missing: Hero purge mechanism after abilities resolved (Rule 51.12)
+- Implemented: Hero purge mechanism — all 25 faction handlers call `player.purgeHero()` after hero ability resolves
 - Missing: Agent ready-in-status-phase explicit wiring
 - Missing test: Titans hero exception (not purged, attached to Elysium)
 
