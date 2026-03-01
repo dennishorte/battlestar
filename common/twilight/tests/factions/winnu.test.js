@@ -324,6 +324,7 @@ describe('Winnu', () => {
 
       // Dennis: Strategic Action (leadership)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Winnu, 3I)
       t.choose(game, 'Pass')  // micah declines secondary
 
       // Micah: tactical action — invade abyz in system 38
@@ -374,6 +375,7 @@ describe('Winnu', () => {
 
       // Dennis: Strategic Action (leadership)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Winnu, 3I)
       t.choose(game, 'Pass')  // micah declines secondary
 
       // Micah: tactical action — invade abyz in system 38
@@ -425,13 +427,16 @@ describe('Winnu', () => {
 
       // Dennis: Strategic Action (Leadership)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Winnu, 3I)
       // Micah: normally couldn't do secondary (0 strategy tokens)
       // But Acquiescence makes it free
       t.choose(game, 'Use Secondary')
 
+      // Micah uses leadership secondary — but now it only gives tokens via influence spending
+      // Micah has Hacan home planets (2I total), so Math.floor(2/3) = 0 → no influence prompt
+      // With new leadership secondary behavior, Micah gets no free token
       const micah = game.players.byName('micah')
-      // Micah got Leadership secondary (1 command token) for free
-      expect(micah.commandTokens.tactics).toBe(4) // was 3, gained 1
+      expect(micah.commandTokens.tactics).toBe(3) // no tokens gained (Hacan 2I < 3)
 
       // Acquiescence returned to Winnu
       const dennis = game.players.byName('dennis')

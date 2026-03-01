@@ -82,6 +82,7 @@ describe('Xxcha Kingdom', () => {
 
       // Play through action phase
       t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens
       t.choose(game, 'Pass')  // micah declines secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
@@ -133,6 +134,7 @@ describe('Xxcha Kingdom', () => {
 
       // Dennis: strategic action (leadership)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens
       t.choose(game, 'Pass')  // micah declines secondary
       // No transaction step for Xxcha (not Hacan)
 
@@ -438,6 +440,7 @@ describe('Xxcha Kingdom', () => {
 
       // Play through action phase quickly
       t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens
       t.choose(game, 'Pass')  // micah declines secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
@@ -509,6 +512,7 @@ describe('Xxcha Kingdom', () => {
 
       // Micah (leadership=1) goes first
       t.choose(game, 'Strategic Action')  // Micah uses leadership
+      t.choose(game, 'Skip')  // micah skips influence-for-tokens
       t.choose(game, 'Pass')              // Dennis declines secondary
       // Dennis (diplomacy=2) goes next
       t.choose(game, 'Strategic Action')  // Dennis uses diplomacy
@@ -564,6 +568,7 @@ describe('Xxcha Kingdom', () => {
       pickStrategyCards(game, 'diplomacy', 'leadership')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // micah skips influence-for-tokens (Xxcha, 3I)
       t.choose(game, 'Pass')
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
@@ -606,6 +611,7 @@ describe('Xxcha Kingdom', () => {
 
         // Dennis: strategic action (leadership=1 goes first)
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Skip')  // dennis skips influence-for-tokens
         t.choose(game, 'Pass')  // micah declines secondary
 
         // Micah plays action card - Mining Initiative
@@ -655,6 +661,7 @@ describe('Xxcha Kingdom', () => {
 
         // Dennis: strategic action (leadership)
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Skip')  // dennis skips influence-for-tokens
         t.choose(game, 'Pass')  // micah declines secondary
 
         // Micah: tactical action — activate system 26 (where Xxcha has a cruiser)

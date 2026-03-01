@@ -354,7 +354,7 @@ These sections are fully implemented and have adequate test coverage:
 1. ~~**Capture system** (Rule 17)~~ — Blockade restrictions, transaction returns, production prevention (Rule 17.5) all implemented
 2. ~~**Elimination system** (Rule 33)~~ — **IMPLEMENTED** — Core detection, component removal, speaker transfer
 3. ~~**Imperial primary** (Rule 45)~~ — **IMPLEMENTED** — Public objective scoring in primary
-4. ~~**Leadership influence spending** (Rule 52)~~ — **PARTIAL** — Free secondary implemented; influence spending deferred
+4. ~~**Leadership influence spending** (Rule 52)~~ — **IMPLEMENTED** — Primary: 3 tokens + spend influence; Secondary: free influence spending
 5. ~~**Technology 2nd research + secondary cost** (Rule 91)~~ — **IMPLEMENTED** — 6R 2nd tech + 4R secondary cost
 6. ~~**Construction secondary system restriction** (Rule 24)~~ — **IMPLEMENTED** — Command token + system scoping
 

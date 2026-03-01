@@ -99,6 +99,7 @@ describe('Legendary Planets', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Primor 1I = 3I)
       t.choose(game, 'Pass')
 
       t.choose(game, 'The Atrament')
@@ -134,6 +135,7 @@ describe('Legendary Planets', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Mallice 3I = 5I)
       t.choose(game, 'Pass')
 
       t.choose(game, 'Exterrix Headquarters')
@@ -163,6 +165,7 @@ describe('Legendary Planets', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Mallice 3I = 5I)
       t.choose(game, 'Pass')
 
       t.choose(game, 'Exterrix Headquarters')
@@ -198,6 +201,7 @@ describe('Legendary Planets', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Mirage 2I = 4I)
       t.choose(game, 'Pass')
 
       t.choose(game, 'Mirage Flight Academy')
@@ -233,6 +237,7 @@ describe('Legendary Planets', () => {
 
       // Dennis uses Strategic Action (leadership) — turn 1
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Primor 1I = 3I)
       t.choose(game, 'Pass')  // micah declines secondary
 
       // Use The Atrament
@@ -276,6 +281,7 @@ describe('Legendary Planets', () => {
 
       // Dennis: leadership
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Mallice 3I = 5I)
       t.choose(game, 'Pass')
 
       // Use Exterrix Headquarters

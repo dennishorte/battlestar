@@ -170,6 +170,7 @@ describe('Naalu Collective', () => {
 
       // Dennis (Naalu, telepathic=0) goes first — use leadership
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
       t.choose(game, 'Pass')         // micah declines leadership secondary
 
       // Micah (Hacan) takes tactical action — activates system 27
@@ -220,6 +221,7 @@ describe('Naalu Collective', () => {
 
       // Dennis (Naalu) goes first — use leadership
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
       t.choose(game, 'Pass')         // micah declines leadership secondary
 
       // Micah activates system 27
@@ -270,6 +272,7 @@ describe('Naalu Collective', () => {
 
       // Dennis (Naalu) goes first — use leadership
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
       t.choose(game, 'Pass')         // micah declines leadership secondary
 
       // Micah activates system 27 — no Z'eu prompt expected (agent exhausted)
@@ -558,6 +561,7 @@ describe('Naalu Collective', () => {
 
         // Dennis (Naalu, telepathic=0) goes first — use leadership
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
         t.choose(game, 'Pass')         // micah declines leadership secondary
 
         // Micah activates system 27, which has Naalu's fighter
@@ -602,6 +606,7 @@ describe('Naalu Collective', () => {
 
         // Dennis (Naalu) goes first — use leadership
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
         t.choose(game, 'Pass')         // micah declines leadership secondary
 
         // Micah activates system 27, which has Naalu's fighter
