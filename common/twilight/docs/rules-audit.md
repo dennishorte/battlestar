@@ -67,7 +67,7 @@ These sections are fully implemented and have adequate test coverage:
 - Implemented: Blockade returns captured units (Rule 14.2) — non-fighter/infantry units returned when blockade established
 - Implemented: Transaction-based capture returns (Rule 17.2a) — can return non-fighter/infantry captured units via trade
 - Implemented: Fighter/infantry cannot be returned via blockade or transaction (Rule 17.4a/b)
-- TODO: Production prevention for captured unit types (Rule 17.5) — depends on unit limits / reinforcement pool tracking (Rule 67)
+- Implemented: Captured units reduce reinforcement pool (Rule 17.5) — `_countUnitsOnBoard` counts captured units held by other players
 - NOTE: Fighter/infantry token tracking (Rule 17.3) is cosmetic in digital; functional distinction enforced via type checks
 
 #### 33. Elimination — IMPLEMENTED
@@ -304,8 +304,9 @@ These sections are fully implemented and have adequate test coverage:
 - **IMPL: Yes** — Reinforcements cap enforced in `production.js` (Rule 67)
 - **TEST: Yes** — `production.test.js`: 3 tests for reinforcements cap (at limit, partial, unlimited)
 
-#### 68. Production (Unit Ability)
-- Missing: Arborec space dock restriction (can't produce infantry from space docks)
+#### 68. Production (Unit Ability) — IMPLEMENTED
+- Implemented: Arborec space dock restriction (can't produce infantry from space docks) — `isProductionRestricted` hook
+- **TEST: Yes** — 2 tests in `arborec.test.js`
 
 #### 70. Purge
 - Implemented for relics and heroes; no general gaps
@@ -348,7 +349,7 @@ These sections are fully implemented and have adequate test coverage:
 ## Summary by Priority
 
 ### CRITICAL (Resolved or partially resolved)
-1. ~~**Capture system** (Rule 17)~~ — Blockade restrictions, transaction returns implemented; production prevention (Rule 17.5) deferred pending unit limits (Rule 67)
+1. ~~**Capture system** (Rule 17)~~ — Blockade restrictions, transaction returns, production prevention (Rule 17.5) all implemented
 2. ~~**Elimination system** (Rule 33)~~ — **IMPLEMENTED** — Core detection, component removal, speaker transfer
 3. ~~**Imperial primary** (Rule 45)~~ — **IMPLEMENTED** — Public objective scoring in primary
 4. ~~**Leadership influence spending** (Rule 52)~~ — **PARTIAL** — Free secondary implemented; influence spending deferred
@@ -368,6 +369,8 @@ These sections are fully implemented and have adequate test coverage:
 24. ~~**Reinforcements cap in production** (Rule 67)~~ — **IMPLEMENTED** — `production.js` validates per-unit-type limits
 25. ~~**Harrow ignores planetary shield** (Rule 65)~~ — **FIXED** — `_harrowBombardment` in `l1z1x-mindnet.js` now checks planetary shield
 26. ~~**Missing tests** (Rules 10, 15, 18, 42, 58, 65)~~ — **TESTED** — 6 integration tests in `rulesAuditLow.test.js`
+27. ~~**Arborec infantry restriction** (Rule 68)~~ — **IMPLEMENTED** — `isProductionRestricted` hook in factionAbilities
+28. ~~**Captured units block production** (Rule 17.5)~~ — **IMPLEMENTED** — `_countUnitsOnBoard` includes captured units
 
 ### MEDIUM (Secondary features)
 14. ~~**Diplomacy Mecatol exclusion** (Rule 32)~~ — **IMPLEMENTED**

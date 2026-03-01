@@ -232,6 +232,13 @@ module.exports = function(Twilight) {
         ).length
       }
     }
+    // Count units captured by other players (Rule 17.5)
+    for (const [captorName, captured] of Object.entries(this.state.capturedUnits)) {
+      if (captorName === playerName) {
+        continue
+      }
+      count += captured.filter(u => u.originalOwner === playerName && u.type === unitType).length
+    }
     return count
   }
 
