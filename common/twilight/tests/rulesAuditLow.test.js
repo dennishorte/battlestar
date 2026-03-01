@@ -543,6 +543,58 @@ describe('Rules Audit — LOW Priority', () => {
     })
   })
 
+  describe('Rule 15 — Multi-planet invasion', () => {
+    test('invade first enemy planet in a 2-planet system', () => {
+      // System 27 has planets new-albion and starpoint.
+      // Micah controls both. Dennis invades with 6 infantry.
+      // All forces auto-commit to the first planet (new-albion) and win.
+      // Second planet (starpoint) stays under Micah's control (no forces left in space).
+      const game = t.fixture({ factions: ['emirates-of-hacan', 'barony-of-letnev'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'hacan-home': {
+              space: ['carrier', 'carrier'],
+              'arretze': ['infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          planets: {
+            'new-albion': { exhausted: false },
+            'starpoint': { exhausted: false },
+          },
+          units: {
+            '27': {
+              'new-albion': ['infantry'],
+              'starpoint': ['infantry'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'hacan-home', count: 2 },
+          { unitType: 'infantry', from: 'hacan-home', count: 6 },
+        ],
+      })
+
+      // Letnev agent prompt — decline mech deployment
+      t.choose(game, 'Pass')
+
+      // Dennis should take new-albion (first enemy planet)
+      expect(game.state.planets['new-albion'].controller).toBe('dennis')
+
+      // Starpoint stays under Micah's control (no ground forces available for second planet)
+      expect(game.state.planets['starpoint'].controller).toBe('micah')
+    })
+  })
+
   describe('Rule 15 — Harrow only hits enemy ground forces', () => {
     test('L1Z1X infantry survives own Harrow', () => {
       // L1Z1X invades with dreadnoughts (Harrow bombardment) + infantry
