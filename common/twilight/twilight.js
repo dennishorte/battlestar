@@ -903,6 +903,11 @@ Twilight.prototype.actionPhase = function() {
         }
       }
     }
+
+    // Legendary planet abilities: offered at end of turn
+    if (action !== 'Pass') {
+      this._offerLegendaryAbilities(player)
+    }
   }
 
   // Prove Endurance: last player to pass scores this secret
@@ -1022,6 +1027,11 @@ Twilight.prototype.statusPhase = function() {
     // Ready exhausted relics
     if (this.state.exhaustedRelics?.[player.name]) {
       this.state.exhaustedRelics[player.name] = []
+    }
+
+    // Ready exhausted legendary abilities
+    if (this.state.exhaustedLegendaryAbilities?.[player.name]) {
+      this.state.exhaustedLegendaryAbilities[player.name] = []
     }
   }
 
@@ -1848,3 +1858,4 @@ require('./systems/actionCards.js')(Twilight)
 require('./systems/leaders.js')(Twilight)
 require('./systems/exploration.js')(Twilight)
 require('./systems/relicAbilities.js')(Twilight)
+require('./systems/legendaryPlanets.js')(Twilight)

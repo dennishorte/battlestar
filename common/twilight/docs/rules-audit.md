@@ -193,13 +193,11 @@ These sections are fully implemented and have adequate test coverage:
 - **TEST: Partial**
 - Implemented: `_redistributeTokens()` accepts player token allocation via action
 
-#### 53. Legendary Planets
-- **IMPL: No**
-- **TEST: No**
-- Missing: Legendary planet ability cards gained with planet control
-- Missing: Ready/exhaust state for ability cards
-- Missing: Purge ability card when planet card purged
-- Note: Planet data includes legendary flag but no mechanical effect
+#### 53. Legendary Planets — IMPLEMENTED
+- **IMPL: Yes** — 4 standard legendary abilities (Hope's End, Primor, Mallice, Mirage) + Custodia Vigilia (space cannon, production, imperial reactive)
+- **TEST: Yes** — `tests/legendaryPlanets.test.js` (11 tests)
+- Exhaust/ready at end-of-turn pattern in `systems/legendaryPlanets.js`
+- Custodia Vigilia wired into `spaceCannon.js`, `production.js`, `strategyCards.js`
 
 #### 69. Promissory Notes — IMPLEMENTED
 - **IMPL: Yes**
@@ -372,7 +370,7 @@ These sections are fully implemented and have adequate test coverage:
 ### MEDIUM (Secondary features)
 14. ~~**Diplomacy Mecatol exclusion** (Rule 32)~~ — **IMPLEMENTED**
 15. ~~**Warfare token redistribution** (Rule 99)~~ — **IMPLEMENTED** — Uses `redistribute-tokens` action
-16. **Legendary Planets** (Rule 53) — Ability cards not implemented
+16. ~~**Legendary Planets** (Rule 53)~~ — **IMPLEMENTED** — 4 standard + Custodia Vigilia abilities
 17. ~~**3-4 player dual strategy card pass restriction** (Rules 3.4, 82.2)~~ — **IMPLEMENTED** — `hasUsedStrategyCard()` already checks all cards
 18. ~~**Game end from no objectives** (Rule 61.15)~~ — **IMPLEMENTED**
 19. ~~**Simultaneous VP tiebreaking** (Rule 98.7)~~ — **IMPLEMENTED**
