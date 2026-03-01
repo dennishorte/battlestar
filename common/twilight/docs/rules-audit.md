@@ -285,8 +285,8 @@ These sections are fully implemented and have adequate test coverage:
 - ~~Missing test: Ship moving through own command tokens~~ — **TESTED** in `rulesAuditLow.test.js`
 - Missing: Explicit handling that ability movement follows ability rules, not normal movement rules
 
-#### 62. Opponent
-- Missing IMPL+test: Non-participants can't use opponent-targeting abilities (requires 3-player combat scenario)
+#### 62. Opponent — ENFORCED BY ARCHITECTURE
+- ~~Missing IMPL+test: Non-participants can't use opponent-targeting abilities~~ — Combat hooks only fire for `[attacker, defender]` (2 players). Non-participants never have their faction abilities called during combat. See `factionAbilities.js:892` — `onSpaceCombatStart` iterates `[[attacker, defender], [defender, attacker]]`.
 
 #### 63. PDS — IMPLEMENTED
 - **IMPL: Yes** — PDS destroyed via `_establishControl` when attacker takes planet
