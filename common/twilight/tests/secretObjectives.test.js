@@ -555,7 +555,7 @@ describe('Secret Objectives — Status Phase', () => {
       dennis: {
         secretObjectives: ['strengthen-bonds'],
         promissoryNotes: [
-          { id: 'trade-agreement', owner: 'micah' },
+          { id: 'political-favor', owner: 'micah' },
         ],
       },
     })
@@ -972,7 +972,7 @@ describe('Secret Objectives — Action Phase', () => {
       dennis: {
         secretObjectives: ['betray-a-friend'],
         promissoryNotes: [
-          { id: 'trade-agreement', owner: 'micah' },
+          { id: 'political-favor', owner: 'micah' },
         ],
         units: {
           'sol-home': {

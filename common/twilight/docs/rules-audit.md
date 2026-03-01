@@ -129,13 +129,13 @@ These sections are fully implemented and have adequate test coverage:
 - Implemented: Gravity rift as valid destination, Vuil'raith faction +1 move
 - Note: Multiple rifts in same system is a map construction edge case (single anomaly per tile)
 
-#### 59. Nebula
-- **IMPL: ~95%** — All key mechanics implemented
-- **TEST: ~90%**
+#### 59. Nebula — IMPLEMENTED
+- **IMPL: Yes** — All key mechanics implemented
+- **TEST: Yes**
 - Implemented: Move value set to 1 when ship starts in nebula (bonuses still stack on top)
 - Implemented: Defender gets +1 to each combat roll in nebula space combat
 - Implemented: Circlet of the Void exemption for move clamp
-- Implemented: Can only move into if active system, can't move through
+- Implemented: Can only move into if active system, can't move through (enforced by Galaxy.js pathfinding + tactical action flow)
 
 #### 95. Transport — IMPLEMENTED
 - **IMPL: Yes** — Path-based pickup validation
@@ -153,10 +153,12 @@ These sections are fully implemented and have adequate test coverage:
 - Implemented: Activates when Mallice is controlled (_establishControl)
 - Implemented: Galaxy.js `_getTileWormholes()` filters wormholes based on activation state
 
-#### 78. Space Combat — Excess Capacity
-- **IMPL: ~90%** — Post-combat capacity enforcement implemented
-- **TEST: ~80%**
-- Implemented: After space combat, excess fighters/ground forces removed (cheapest first)
+#### 78. Space Combat — Excess Capacity — IMPLEMENTED
+- **IMPL: Yes** — Post-combat capacity enforcement with player choice
+- **TEST: Yes**
+- Implemented: After space combat, excess fighters/ground forces removed
+- Implemented: Player chooses which unit type to remove when mixed types present (Rule 78)
+- Implemented: Auto-removes when only one capacity-requiring type exists
 - Implemented: Only enforced when space combat actually occurred (not during transit)
 - Implemented: Capacity-exempt units (faction abilities) respected
 
@@ -199,12 +201,15 @@ These sections are fully implemented and have adequate test coverage:
 - Missing: Purge ability card when planet card purged
 - Note: Planet data includes legendary flag but no mechanical effect
 
-#### 69. Promissory Notes
-- **IMPL: Partial**
-- **TEST: Partial**
+#### 69. Promissory Notes — IMPLEMENTED
+- **IMPL: Yes**
+- **TEST: Yes**
 - Implemented: Max 1 promissory note per side per transaction (Rule 69.2)
-- Missing: Return-after-resolve mechanic
-- Missing: Eliminated player's promissory notes returned to game box
+- Implemented: Support for the Throne passive +1 VP to holder
+- Implemented: Support for the Throne returned when activating system with giver's units
+- Implemented: Trade Agreement returned at strategy phase start, holder receives TGs equal to owner's commodity value
+- Implemented: Ceasefire returned at turn start, giver blocked from activating holder's systems for the round
+- Note: Eliminated player's promissory notes returned to game box — covered by elimination logic
 
 #### 94. Transactions — IMPLEMENTED
 - **IMPL: Yes**
@@ -357,10 +362,10 @@ These sections are fully implemented and have adequate test coverage:
 
 ### HIGH (Core mechanics incomplete)
 7. ~~**Gravity Rift** (Rule 41)~~ — **IMPLEMENTED** — +1 move, per-rift die roll, Circlet exemption
-8. ~~**Nebula combat/movement** (Rule 59)~~ — **~95% IMPLEMENTED** — Move clamp, defender bonus
+8. ~~**Nebula combat/movement** (Rule 59)~~ — **IMPLEMENTED** — Move clamp, defender bonus, active-system-only entry
 9. ~~**Transport from path** (Rule 95)~~ — **IMPLEMENTED** — Path-based pickup from origin + intermediate systems
 10. ~~**Wormhole Nexus activation** (Rule 100)~~ — **IMPLEMENTED** — Inactive/active state tracking, wormhole filtering
-11. ~~**Post-combat excess capacity** (Rule 78)~~ — **~90% IMPLEMENTED** — Cheapest-first removal after combat
+11. ~~**Post-combat excess capacity** (Rule 78)~~ — **IMPLEMENTED** — Player choice for mixed-type removal after combat
 12. ~~**Deploy ability** (Rule 30)~~ — **IMPLEMENTED** — `_hasReinforcementsAvailable` helper validates reinforcement limits for all 12 faction deploy mechanics
 13. ~~**Destroyed vs Removed distinction** (Rule 31)~~ — **IMPLEMENTED** — `onUnitDestroyed` hooks for Assault Cannon, AFB, Crown of Thalnos, Space Cannon Offense/Defense; gravity rift/fleet pool remain hook-free (removal, not destruction)
 
@@ -373,5 +378,5 @@ These sections are fully implemented and have adequate test coverage:
 19. ~~**Simultaneous VP tiebreaking** (Rule 98.7)~~ — **IMPLEMENTED**
 20. ~~**Max 3 secret objectives** (Rule 61.21)~~ — **IMPLEMENTED**
 21. ~~**Agenda phase transactions** (Rule 94.6)~~ — **IMPLEMENTED** — Transaction option in vote prompt
-22. **Promissory note return/limit** (Rule 69) — Max 1 per transaction implemented; return-after-resolve missing
+22. ~~**Promissory note return/limit** (Rule 69)~~ — **IMPLEMENTED** — SFT VP + return, Trade Agreement, Ceasefire
 23. **Sustain Damage vs direct destroy** (Rule 87.5)
