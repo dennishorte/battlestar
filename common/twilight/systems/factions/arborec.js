@@ -1,6 +1,11 @@
 const res = require('../../res/index.js')
 
 module.exports = {
+  // Rule 68: Arborec space docks cannot produce infantry
+  isProductionRestricted(player, _ctx, unitType) {
+    return unitType === 'infantry'
+  },
+
   // Letani Warrior II: at start of turn, place revived infantry on a planet in home system
   onTurnStart(player, ctx) {
     const revivalCount = ctx.state.letaniRevival?.[player.name] || 0

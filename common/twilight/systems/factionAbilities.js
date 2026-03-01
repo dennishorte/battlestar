@@ -2117,6 +2117,11 @@ class FactionAbilities {
     return 0
   }
 
+  isProductionRestricted(player, unitType) {
+    const handler = this._getPlayerHandler(player)
+    return handler?.isProductionRestricted?.(player, this, unitType) || false
+  }
+
   afterProduction(player, systemId, unitCount, producedUnits) {
     const handler = this._getPlayerHandler(player)
     handler?.afterProduction?.(player, this, { systemId, unitCount, producedUnits: producedUnits || [] })
