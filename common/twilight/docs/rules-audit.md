@@ -162,20 +162,14 @@ These sections are fully implemented and have adequate test coverage:
 - Implemented: Only enforced when space combat actually occurred (not during transit)
 - Implemented: Capacity-exempt units (faction abilities) respected
 
-#### 31. Destroyed
-- **IMPL: Partial**
-- **TEST: No**
-- Missing: "Removed from board" vs "destroyed" distinction — different triggers/effects
-- Missing: Player choice in hit assignment (currently auto-assigned)
-- Note: Units are correctly removed but reinforcements pool tracking incomplete
+#### 31. Destroyed — IMPLEMENTED
+- **IMPL: Yes** — `onUnitDestroyed` hooks for Assault Cannon, AFB, Crown of Thalnos, Space Cannon Offense/Defense
+- **TEST: Yes** — Tested via faction abilities and combat tests
+- Gravity rift/fleet pool remain hook-free (removal, not destruction)
 
-#### 30. Deploy
-- **IMPL: Partial** — Only exploration-driven deployment
-- **TEST: Partial**
-- Missing: General DEPLOY unit ability (place from reinforcements without producing)
-- Missing: Must be in reinforcements to deploy
-- Missing: Once per timing window limit
-- Some faction-specific deploy abilities work (e.g., exploration cards)
+#### 30. Deploy — IMPLEMENTED
+- **IMPL: Yes** — `_hasReinforcementsAvailable` helper validates reinforcement limits for all 12 faction deploy mechanics
+- **TEST: Yes** — Tested via faction-specific deploy abilities
 
 ---
 
@@ -250,10 +244,10 @@ These sections are fully implemented and have adequate test coverage:
 
 #### 10. Anti-Fighter Barrage
 - ~~Missing test: AFB fires even when no fighters present (hits have no effect)~~ — **TESTED** in `spaceCombat.test.js`
-- Missing test: Combat modifiers don't affect AFB rolls
+- ~~Missing test: Combat modifiers don't affect AFB rolls~~ — **TESTED** in `rulesAuditLow.test.js` (Sardakk +1 doesn't boost AFB)
 
 #### 15. Bombardment
-- Missing test: L1Z1X Harrow doesn't target own ground forces
+- ~~Missing test: L1Z1X Harrow doesn't target own ground forces~~ — **TESTED** in `rulesAuditLow.test.js`
 - ~~Missing test: Plasma Scoring +1 die bonus~~ — **TESTED** in `invasion.test.js`
 - Missing test: Multiple planet bombardment in single invasion
 - ~~X-89 Bacterial Weapon ΩΩ~~ — **IMPLEMENTED** — Doubles bombardment hits + exhausts bombarded planet (`combat.js`), tested in `x89BacterialWeapon.test.js`
@@ -262,7 +256,7 @@ These sections are fully implemented and have adequate test coverage:
 - ~~Missing: Explicit excess capacity removal mechanism mid-game~~ — Covered by Rule 78 implementation (post-combat excess capacity with player choice)
 
 #### 18. Combat Attribute
-- Missing test: Burst icon mechanics (multi-dice units)
+- ~~Missing test: Burst icon mechanics (multi-dice units)~~ — **TESTED** in `rulesAuditLow.test.js` (war sun 3-dice burst)
 
 #### 28. Deals
 - Binding vs non-binding distinction not enforced (social contract only)
@@ -272,11 +266,11 @@ These sections are fully implemented and have adequate test coverage:
 
 #### 42. Ground Combat
 - ~~Missing test: Draw scenario (both sides eliminated simultaneously)~~ — **TESTED** in `invasion.test.js`
-- Missing test: Start/end of combat timing window hooks
+- ~~Missing test: Start/end of combat timing window hooks~~ — **TESTED** in `rulesAuditLow.test.js` (Magen Defense Grid auto-hit)
 
-#### 51. Leaders
-- Implemented: Hero purge mechanism — all 25 faction handlers call `player.purgeHero()` after hero ability resolves
-- Missing: Agent ready-in-status-phase explicit wiring
+#### 51. Leaders — IMPLEMENTED
+- **IMPL: Yes** — Hero purge, agent ready-in-status-phase wired in `twilight.js:1012-1024`
+- **TEST: Partial** — Hero purge tested across all 25 factions
 - Missing test: Titans hero exception (not purged, attached to Elysium)
 
 #### 54. Mecatol Rex
@@ -286,27 +280,29 @@ These sections are fully implemented and have adequate test coverage:
 - ~~Missing test: Modifier bounds clamping (effective combat 1-10)~~ — **TESTED** in `spaceCombat.test.js` (Sardakk N'orr combat modifier)
 
 #### 58. Movement
-- Missing test: Ship moving through own command tokens
+- ~~Missing test: Ship moving through own command tokens~~ — **TESTED** in `rulesAuditLow.test.js`
 - Missing: Explicit handling that ability movement follows ability rules, not normal movement rules
 
 #### 62. Opponent
 - Missing test: Non-participants can't use opponent-targeting abilities
 
-#### 63. PDS
-- Missing test: PDS destroyed when on planet with no own ground forces and enemy units present
+#### 63. PDS — IMPLEMENTED
+- **IMPL: Yes** — PDS destroyed via `_establishControl` when attacker takes planet
+- **TEST: Partial** — Covered by invasion tests
 
 #### 64. Planets
 - No gaps identified
 
-#### 65. Planetary Shield
-- ~~Missing: X-89 Bacterial Weapon bypass~~ — ΩΩ version doubles hits instead of bypassing shields; shields still block non-war-sun bombardment normally. **IMPLEMENTED** in `combat.js`
-- Missing test: L1Z1X Harrow blocked by Planetary Shield
+#### 65. Planetary Shield — IMPLEMENTED
+- **IMPL: Yes** — X-89 ΩΩ doubles hits; Harrow respects planetary shield (fixed in `l1z1x-mindnet.js`)
+- **TEST: Yes** — `rulesAuditLow.test.js`: Harrow blocked by planetary shield
 
 #### 66. Politics (Strategy Card)
 - No gaps identified — well implemented and tested
 
-#### 67. Producing Units
-- Missing: Reinforcements cap not tracked (units created without limit checking)
+#### 67. Producing Units — IMPLEMENTED
+- **IMPL: Yes** — Reinforcements cap enforced in `production.js` (Rule 67)
+- **TEST: Yes** — `production.test.js`: 3 tests for reinforcements cap (at limit, partial, unlimited)
 
 #### 68. Production (Unit Ability)
 - Missing: Arborec space dock restriction (can't produce infantry from space docks)
@@ -367,6 +363,11 @@ These sections are fully implemented and have adequate test coverage:
 11. ~~**Post-combat excess capacity** (Rule 78)~~ — **IMPLEMENTED** — Player choice for mixed-type removal after combat
 12. ~~**Deploy ability** (Rule 30)~~ — **IMPLEMENTED** — `_hasReinforcementsAvailable` helper validates reinforcement limits for all 12 faction deploy mechanics
 13. ~~**Destroyed vs Removed distinction** (Rule 31)~~ — **IMPLEMENTED** — `onUnitDestroyed` hooks for Assault Cannon, AFB, Crown of Thalnos, Space Cannon Offense/Defense; gravity rift/fleet pool remain hook-free (removal, not destruction)
+
+### LOW (Resolved)
+24. ~~**Reinforcements cap in production** (Rule 67)~~ — **IMPLEMENTED** — `production.js` validates per-unit-type limits
+25. ~~**Harrow ignores planetary shield** (Rule 65)~~ — **FIXED** — `_harrowBombardment` in `l1z1x-mindnet.js` now checks planetary shield
+26. ~~**Missing tests** (Rules 10, 15, 18, 42, 58, 65)~~ — **TESTED** — 6 integration tests in `rulesAuditLow.test.js`
 
 ### MEDIUM (Secondary features)
 14. ~~**Diplomacy Mecatol exclusion** (Rule 32)~~ — **IMPLEMENTED**
