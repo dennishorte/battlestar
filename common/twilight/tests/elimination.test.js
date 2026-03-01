@@ -182,3 +182,273 @@ describe('Elimination', () => {
     expect(hasTrade).toBe(true)
   })
 })
+
+
+// ---------------------------------------------------------------------------
+// Faction-specific elimination rules (Rule 33.10)
+// ---------------------------------------------------------------------------
+
+function addInvadingInfantry(g, systemId) {
+  for (let i = 0; i < 5; i++) {
+    g.state.units[systemId].space.push({
+      id: `micah-inf-${i}`,
+      type: 'infantry',
+      owner: 'micah',
+    })
+  }
+}
+
+describe('Faction-Specific Elimination', () => {
+  test('Creuss wormhole token persists after elimination', () => {
+    const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
+    t.setBoard(game, {
+      dennis: {
+        leaders: { agent: 'exhausted' },
+        units: {
+          'creuss-home': {
+            'creuss': ['infantry'],
+          },
+        },
+      },
+      micah: {
+        units: {
+          'hacan-home': {
+            'arretze': ['space-dock'],
+          },
+          'creuss-home': {
+            space: ['carrier'],
+          },
+        },
+      },
+    })
+    game.testSetBreakpoint('initialization-complete', (g) => {
+      g.state.creussWormholeToken = '27'
+      addInvadingInfantry(g, 'creuss-home')
+    })
+    game.run()
+    pickStrategyCards(game, 'diplomacy', 'leadership')
+
+    t.choose(game, 'Tactical Action')
+    t.action(game, 'activate-system', { systemId: 'creuss-home' })
+    t.action(game, 'move-ships', { movements: [] })
+
+    expect(game.state.eliminatedPlayers).toContain('dennis')
+    expect(game.state.creussWormholeToken).toBe('27')
+  })
+
+  test('Nekro assimilator tokens persist after elimination', () => {
+    const game = t.fixture({ factions: ['nekro-virus', 'emirates-of-hacan'] })
+    t.setBoard(game, {
+      dennis: {
+        leaders: { agent: 'exhausted' },
+        units: {
+          'nekro-home': {
+            'mordai-ii': ['infantry'],
+          },
+        },
+      },
+      micah: {
+        units: {
+          'hacan-home': {
+            'arretze': ['space-dock'],
+          },
+          'nekro-home': {
+            space: ['carrier'],
+          },
+        },
+      },
+    })
+    game.testSetBreakpoint('initialization-complete', (g) => {
+      g.state.assimilatorTokens = {
+        x: { techId: 'neural-motivator', ownerName: 'micah' },
+      }
+      addInvadingInfantry(g, 'nekro-home')
+    })
+    game.run()
+    pickStrategyCards(game, 'diplomacy', 'leadership')
+
+    t.choose(game, 'Tactical Action')
+    t.action(game, 'activate-system', { systemId: 'nekro-home' })
+    t.action(game, 'move-ships', { movements: [] })
+
+    // Nekro's Technological Singularity: decline to copy tech
+    t.choose(game, 'Pass')
+
+    expect(game.state.eliminatedPlayers).toContain('dennis')
+    expect(game.state.assimilatorTokens.x).toEqual({
+      techId: 'neural-motivator',
+      ownerName: 'micah',
+    })
+  })
+
+  test('Titans sleeper tokens persist after elimination', () => {
+    const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+    t.setBoard(game, {
+      sleeperTokens: { 'wellon': 'dennis' },
+      dennis: {
+        leaders: { agent: 'exhausted' },
+        units: {
+          'titans-home': {
+            'elysium': ['infantry'],
+          },
+        },
+      },
+      micah: {
+        units: {
+          'hacan-home': {
+            'arretze': ['space-dock'],
+          },
+          'titans-home': {
+            space: ['carrier'],
+          },
+        },
+      },
+    })
+    game.testSetBreakpoint('initialization-complete', (g) => {
+      addInvadingInfantry(g, 'titans-home')
+    })
+    game.run()
+    pickStrategyCards(game, 'diplomacy', 'leadership')
+
+    t.choose(game, 'Tactical Action')
+    t.action(game, 'activate-system', { systemId: 'titans-home' })
+    t.action(game, 'move-ships', { movements: [] })
+
+    expect(game.state.eliminatedPlayers).toContain('dennis')
+    expect(game.state.sleeperTokens['wellon']).toBe('dennis')
+  })
+
+  test('Mahact captured command tokens returned to owners on elimination', () => {
+    const game = t.fixture({ factions: ['mahact-gene-sorcerers', 'emirates-of-hacan'] })
+    t.setBoard(game, {
+      capturedCommandTokens: { dennis: ['micah'] },
+      dennis: {
+        leaders: { agent: 'exhausted' },
+        units: {
+          'mahact-home': {
+            'ixth': ['infantry'],
+          },
+        },
+      },
+      micah: {
+        commandTokens: { tactics: 3, strategy: 2, fleet: 2 },
+        units: {
+          'hacan-home': {
+            'arretze': ['space-dock'],
+          },
+          'mahact-home': {
+            space: ['carrier'],
+          },
+        },
+      },
+    })
+    game.testSetBreakpoint('initialization-complete', (g) => {
+      addInvadingInfantry(g, 'mahact-home')
+    })
+    game.run()
+    pickStrategyCards(game, 'diplomacy', 'leadership')
+
+    t.choose(game, 'Tactical Action')
+    t.action(game, 'activate-system', { systemId: 'mahact-home' })
+    t.action(game, 'move-ships', { movements: [] })
+
+    // Mahact's Crimson Legionnaire mech: decline commodity
+    t.choose(game, 'Decline')
+
+    expect(game.state.eliminatedPlayers).toContain('dennis')
+    // Micah spent 1 tactic (activation) but got 1 back (returned token) → net 3
+    const micah = game.players.byName('micah')
+    expect(micah.commandTokens.tactics).toBe(3)
+    expect(game.state.capturedCommandTokens['dennis']).toEqual([])
+  })
+
+  test('Gift of Prescience returned to Naalu when holder is eliminated', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        leaders: { agent: 'exhausted' },
+        units: {
+          'sol-home': {
+            'jord': ['infantry'],
+          },
+        },
+      },
+      micah: {
+        units: {
+          'hacan-home': {
+            'arretze': ['space-dock'],
+          },
+          'sol-home': {
+            space: ['carrier'],
+          },
+        },
+      },
+    })
+    game.testSetBreakpoint('initialization-complete', (g) => {
+      // Dennis holds GoP, micah is the Naalu owner
+      g.state._giftOfPrescience = { holder: 'dennis', owner: 'micah' }
+      addInvadingInfantry(g, 'sol-home')
+    })
+    game.run()
+    pickStrategyCards(game, 'diplomacy', 'leadership')
+
+    // Dennis has GoP (initiative 0), goes first — do a harmless tactical action
+    t.choose(game, 'Tactical Action')
+    t.action(game, 'activate-system', { systemId: '27' })
+    t.action(game, 'move-ships', { movements: [] })
+
+    // Micah invades sol-home
+    t.choose(game, 'Tactical Action')
+    t.action(game, 'activate-system', { systemId: 'sol-home' })
+    t.action(game, 'move-ships', { movements: [] })
+
+    expect(game.state.eliminatedPlayers).toContain('dennis')
+    expect(game.state._giftOfPrescience).toBeNull()
+    // Micah (PN owner) should have GoP back
+    const micah = game.players.byName('micah')
+    const hasGoP = micah.getPromissoryNotes().some(n => n.id === 'gift-of-prescience')
+    expect(hasGoP).toBe(true)
+  })
+
+  test('Gift of Prescience persists when Naalu owner is eliminated', () => {
+    const game = t.fixture({ factions: ['naalu-collective', 'emirates-of-hacan'] })
+    t.setBoard(game, {
+      dennis: {
+        leaders: { agent: 'exhausted' },
+        units: {
+          'naalu-home': {
+            'maaluuk': ['infantry'],
+          },
+        },
+      },
+      micah: {
+        units: {
+          'hacan-home': {
+            'arretze': ['space-dock'],
+          },
+          'naalu-home': {
+            space: ['carrier'],
+          },
+        },
+      },
+    })
+    game.testSetBreakpoint('initialization-complete', (g) => {
+      // Micah holds GoP, dennis (Naalu) is the owner
+      g.state._giftOfPrescience = { holder: 'micah', owner: 'dennis' }
+      // Clear dennis's control of druaa so elimination triggers with only maaluuk lost
+      g.state.planets['druaa'].controller = null
+      addInvadingInfantry(g, 'naalu-home')
+    })
+    game.run()
+    pickStrategyCards(game, 'diplomacy', 'leadership')
+
+    // Micah has GoP (initiative 0), goes first — invades naalu-home
+    t.choose(game, 'Tactical Action')
+    t.action(game, 'activate-system', { systemId: 'naalu-home' })
+    t.action(game, 'move-ships', { movements: [] })
+
+    expect(game.state.eliminatedPlayers).toContain('dennis')
+    // GoP should persist — holder (micah) keeps initiative 0
+    expect(game.state._giftOfPrescience).toEqual({ holder: 'micah', owner: 'dennis' })
+  })
+})
