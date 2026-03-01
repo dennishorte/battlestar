@@ -639,7 +639,7 @@ const planets = {
   'mirage': {
     id: 'mirage', name: 'Mirage',
     resources: 1, influence: 2, trait: 'cultural',
-    techSpecialty: null, legendary: false, systemId: null,
+    techSpecialty: null, legendary: true, systemId: null,
   },
 }
 
