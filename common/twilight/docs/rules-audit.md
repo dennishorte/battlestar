@@ -251,16 +251,16 @@ These sections are fully implemented and have adequate test coverage:
 - Missing: Tests for systems that are two different anomalies simultaneously
 
 #### 10. Anti-Fighter Barrage
-- Missing test: AFB fires even when no fighters present (hits have no effect)
+- ~~Missing test: AFB fires even when no fighters present (hits have no effect)~~ — **TESTED** in `spaceCombat.test.js`
 - Missing test: Combat modifiers don't affect AFB rolls
 
 #### 15. Bombardment
 - Missing test: L1Z1X Harrow doesn't target own ground forces
-- Missing test: Plasma Scoring +1 die bonus
+- ~~Missing test: Plasma Scoring +1 die bonus~~ — **TESTED** in `invasion.test.js`
 - Missing test: Multiple planet bombardment in single invasion
 
 #### 16. Capacity
-- Missing: Explicit excess capacity removal mechanism mid-game
+- ~~Missing: Explicit excess capacity removal mechanism mid-game~~ — Covered by Rule 78 implementation (post-combat excess capacity with player choice)
 
 #### 18. Combat Attribute
 - Missing test: Burst icon mechanics (multi-dice units)
@@ -272,7 +272,7 @@ These sections are fully implemented and have adequate test coverage:
 - Missing: Explicit edge detection function (inferred from position)
 
 #### 42. Ground Combat
-- Missing test: Draw scenario (both sides eliminated simultaneously)
+- ~~Missing test: Draw scenario (both sides eliminated simultaneously)~~ — **TESTED** in `invasion.test.js`
 - Missing test: Start/end of combat timing window hooks
 
 #### 51. Leaders
@@ -284,7 +284,7 @@ These sections are fully implemented and have adequate test coverage:
 - Implemented via custodians token — no separate gaps
 
 #### 56. Modifiers
-- Missing test: Modifier bounds clamping (effective combat 1-10)
+- ~~Missing test: Modifier bounds clamping (effective combat 1-10)~~ — **TESTED** in `spaceCombat.test.js` (Sardakk N'orr combat modifier)
 
 #### 58. Movement
 - Missing test: Ship moving through own command tokens
@@ -319,8 +319,8 @@ These sections are fully implemented and have adequate test coverage:
 - No gaps beyond fleet pool (covered in 37)
 
 #### 77. Space Cannon
-- Missing test: Graviton Laser System (SC hits target non-fighter ships)
-- Missing test: Plasma Scoring bonus
+- ~~Missing test: Graviton Laser System (SC hits target non-fighter ships)~~ — **TESTED** in `spaceCannon.test.js`
+- ~~Missing test: Plasma Scoring bonus~~ — **TESTED** in `spaceCannon.test.js`
 - Missing test: Hero attachment space cannon abilities
 
 #### 79. Space Dock
@@ -346,7 +346,7 @@ These sections are fully implemented and have adequate test coverage:
 - No gaps — well implemented
 
 #### 101. Wormholes
-- Missing test: PDS II firing through wormholes (integration test)
+- ~~Missing test: PDS II firing through wormholes (integration test)~~ — **TESTED** in `spaceCannon.test.js`
 
 ---
 
