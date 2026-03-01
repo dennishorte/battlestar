@@ -167,6 +167,11 @@ module.exports = function(Twilight) {
       // Get base unit limit from res (not faction-upgraded stats)
       const baseUnitDef = res.getUnit(req.type)
 
+      // Rule 68: Arborec space docks cannot produce infantry
+      if (this.factionAbilities.isProductionRestricted(player, req.type)) {
+        continue
+      }
+
       for (let i = 0; i < req.count; i++) {
       // Check blockade: can't produce ships when blockaded
         if (isBlockaded && unitDef.category === 'ship') {

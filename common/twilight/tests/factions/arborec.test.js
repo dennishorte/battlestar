@@ -75,6 +75,69 @@ describe('Arborec', () => {
     })
   })
 
+  describe('Production Restriction (Rule 68)', () => {
+    test('Arborec cannot produce infantry from space dock', () => {
+      const game = t.fixture({ factions: ['arborec', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted' },
+          units: {
+            'arborec-home': {
+              space: ['carrier'],
+              'nestphar': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'arborec-home' })
+      t.choose(game, 'Done')  // skip movement
+
+      // Try to produce infantry — should be blocked
+      t.action(game, 'produce-units', {
+        units: [{ type: 'infantry', count: 2 }],
+      })
+
+      // Infantry count should be unchanged (still 2)
+      const infantry = game.state.units['arborec-home'].planets['nestphar']
+        .filter(u => u.owner === 'dennis' && u.type === 'infantry')
+      expect(infantry.length).toBe(2)
+    })
+
+    test('Arborec can still produce mechs from space dock', () => {
+      const game = t.fixture({ factions: ['arborec', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted' },
+          units: {
+            'arborec-home': {
+              space: ['carrier'],
+              'nestphar': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'arborec-home' })
+      t.choose(game, 'Done')  // skip movement
+
+      // Produce 1 mech (cost 2, Nestphar has 3 resources)
+      t.action(game, 'produce-units', {
+        units: [{ type: 'mech', count: 1 }],
+      })
+
+      const mechs = game.state.units['arborec-home'].planets['nestphar']
+        .filter(u => u.owner === 'dennis' && u.type === 'mech')
+      expect(mechs.length).toBe(1)
+    })
+  })
+
   describe('Mitosis', () => {
     test('places 1 infantry on controlled planet during status phase', () => {
       const game = t.fixture({ factions: ['arborec', 'emirates-of-hacan'] })
