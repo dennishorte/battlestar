@@ -132,11 +132,34 @@ export const fetchDraftsByCube = async (req, res) => {
     responses: 0,
     state: 0,
   })
-  const array = await cursor.toArray()
+  const drafts = await cursor.toArray()
+
+  // Count active games linked to each draft via settings.linkedDraftId
+  const draftIds = drafts.map(d => d._id)
+  const activeCountsByDraft = {}
+  if (draftIds.length > 0) {
+    const counts = await db.game.collection.aggregate([
+      {
+        $match: {
+          'settings.linkedDraftId': { $in: draftIds },
+          gameOver: { $ne: true },
+          killed: { $ne: true },
+        },
+      },
+      { $group: { _id: '$settings.linkedDraftId', count: { $sum: 1 } } },
+    ]).toArray()
+    for (const { _id, count } of counts) {
+      activeCountsByDraft[_id.toString()] = count
+    }
+  }
+
+  for (const draft of drafts) {
+    draft.activeGameCount = activeCountsByDraft[draft._id.toString()] || 0
+  }
 
   res.json({
     status: 'success',
-    drafts: array,
+    drafts,
   })
 }
 

@@ -6,6 +6,7 @@
           <th>name</th>
           <th>players</th>
           <th>status</th>
+          <th>active games</th>
         </tr>
       </thead>
 
@@ -18,6 +19,7 @@
           </td>
           <td>{{ playerNames(draft) }}</td>
           <td>{{ draftStatus(draft) }}</td>
+          <td>{{ draft.activeGameCount || 0 }}</td>
         </tr>
       </tbody>
     </table>
@@ -66,7 +68,7 @@ export default {
     },
 
     draftStatus(draft) {
-      return draft.done ? 'complete' : 'in progress'
+      return draft.gameOver ? 'complete' : 'in progress'
     },
   },
 
