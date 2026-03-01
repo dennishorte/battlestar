@@ -81,11 +81,11 @@ class CubeWrapper {
   }
 
   achievementsUnclaimed() {
-    return this.achievements().filter(ach => !ach.claimedAt).sort((l, r) => r.createdAt - l.createdAt)
+    return this.achievements().filter(ach => !ach.claimedAt).sort((l, r) => new Date(r.createdAt) - new Date(l.createdAt))
   }
 
   achievementsClaimed() {
-    return this.achievements().filter(ach => ach.claimedAt).sort((l, r) => r.claimedAt - l.claimedAt)
+    return this.achievements().filter(ach => ach.claimedAt).sort((l, r) => new Date(r.claimedAt) - new Date(l.claimedAt))
   }
 
   deleteAchievement(achievement) {
