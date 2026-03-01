@@ -66,11 +66,12 @@ module.exports = function(Twilight) {
             const victim = targetShips[0]
             const idx = systemUnits.space.findIndex(u => u.id === victim.id)
             if (idx !== -1) {
-              systemUnits.space.splice(idx, 1)
+              const removed = systemUnits.space.splice(idx, 1)[0]
               this.log.add({
                 template: 'Assault Cannon: {target} loses a {unit}',
                 args: { target: acTarget, unit: victim.type },
               })
+              this.factionAbilities.onUnitDestroyed(systemId, removed, acOwner, null)
             }
           }
         }
@@ -269,7 +270,8 @@ module.exports = function(Twilight) {
             u => u.owner === target && u.type === 'fighter'
           )
           if (fighterIdx !== -1) {
-            systemUnits.space.splice(fighterIdx, 1)
+            const removed = systemUnits.space.splice(fighterIdx, 1)[0]
+            this.factionAbilities.onUnitDestroyed(systemId, removed, shooter, null)
             fightersDestroyed++
           }
         }
@@ -292,7 +294,8 @@ module.exports = function(Twilight) {
               u => u.owner === target && u.type === 'infantry'
             )
             if (infantryIdx !== -1) {
-              systemUnits.space.splice(infantryIdx, 1)
+              const removed = systemUnits.space.splice(infantryIdx, 1)[0]
+              this.factionAbilities.onUnitDestroyed(systemId, removed, shooter, null)
               infantryDestroyed++
             }
           }
@@ -444,7 +447,11 @@ module.exports = function(Twilight) {
     // Destroy units that rerolled but didn't produce any hits
     const location = context.combatType === 'space' ? 'space' : context.planetId
     for (const ship of unitsToDestroy) {
-      this._removeUnit(context.systemId, location, ship.id)
+      const removed = this._removeUnit(context.systemId, location, ship.id)
+      if (removed) {
+        this.factionAbilities.onUnitDestroyed(context.systemId, removed, ownerName,
+          context.combatType === 'space' ? null : context.planetId)
+      }
     }
 
     this.log.add({
