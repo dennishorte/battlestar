@@ -727,6 +727,11 @@ module.exports = function(Twilight) {
     // Jol-Nar Commander: reroll misses
     totalHits += this._offerUnitAbilityReroll(attackerName, bombardMissCombatValues)
 
+    // X-89 Bacterial Weapon ΩΩ: double bombardment hits
+    if (attackerPlayer.hasTechnology('x89-bacterial-weapon')) {
+      totalHits *= 2
+    }
+
     if (totalHits > 0) {
       this.log.add({
         template: '{attacker} bombardment scores {hits} hits on {planet}',
@@ -735,6 +740,17 @@ module.exports = function(Twilight) {
 
       // Auto-assign bombardment hits to defender's ground forces (cheapest first)
       this._assignGroundHits(systemId, planetId, defenderName, totalHits, null, 'bombardment')
+
+      // X-89 Bacterial Weapon ΩΩ: exhaust bombarded planet
+      if (attackerPlayer.hasTechnology('x89-bacterial-weapon')) {
+        if (this.state.planets[planetId]) {
+          this.state.planets[planetId].exhausted = true
+        }
+        this.log.add({
+          template: 'X-89 Bacterial Weapon: {planet} is exhausted',
+          args: { planet: planetId },
+        })
+      }
 
       // make-an-example-of-their-world: destroyed all ground forces via bombardment
       const remainingGroundForces = (systemUnits.planets[planetId] || []).filter(u => {
