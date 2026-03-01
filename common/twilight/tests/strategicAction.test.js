@@ -673,7 +673,7 @@ describe('Strategic Actions', () => {
       })
     })
 
-    describe('Leadership — free secondary (Rule 52)', () => {
+    describe('Leadership — influence spending (Rule 52)', () => {
       test('primary: gains 3 command tokens', () => {
         const game = t.fixture()
         game.run()
@@ -685,6 +685,39 @@ describe('Strategic Actions', () => {
         const dennis = game.players.byName('dennis')
         // 3 (start) + 3 (leadership) = 6
         expect(dennis.commandTokens.tactics).toBe(6)
+      })
+
+      test('primary: can spend influence for additional tokens', () => {
+        const game = t.fixture({ factions: ['xxcha-kingdom', 'emirates-of-hacan'] })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Strategic Action')
+        // Xxcha has 4 influence — can buy 1 token (3 influence)
+        t.choose(game, '1 token (3 influence)')
+        t.choose(game, 'Pass')  // micah declines secondary
+
+        const dennis = game.players.byName('dennis')
+        // 3 (start) + 3 (leadership) + 1 (influence) = 7
+        expect(dennis.commandTokens.tactics).toBe(7)
+        // Both planets exhausted to pay 3 influence (1I + 3I, cheapest first)
+        expect(dennis.getTotalInfluence()).toBe(0)
+      })
+
+      test('primary: can skip influence spending', () => {
+        const game = t.fixture({ factions: ['xxcha-kingdom', 'emirates-of-hacan'] })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Skip')  // decline influence spending
+        t.choose(game, 'Pass')  // micah declines secondary
+
+        const dennis = game.players.byName('dennis')
+        // 3 (start) + 3 (leadership) = 6, no extra tokens
+        expect(dennis.commandTokens.tactics).toBe(6)
+        // No influence spent
+        expect(dennis.getTotalInfluence()).toBe(4)
       })
 
       test('secondary: free (no strategy token cost)', () => {
@@ -699,8 +732,29 @@ describe('Strategic Actions', () => {
         const micah = game.players.byName('micah')
         // Strategy NOT spent (leadership secondary is free)
         expect(micah.commandTokens.strategy).toBe(2)
-        // Gains 1 command token
+        // Hacan has 2 influence — not enough for a token (requires 3 per token)
+        expect(micah.commandTokens.tactics).toBe(3)
+      })
+
+      test('secondary: can spend influence for tokens', () => {
+        const game = t.fixture({ factions: ['emirates-of-hacan', 'xxcha-kingdom'] })
+        game.run()
+        pickStrategyCards(game, 'leadership', 'diplomacy')
+
+        t.choose(game, 'Strategic Action')
+        // Dennis (Hacan, 2I) — no influence prompt
+        // Micah (Xxcha, 4I) gets free secondary prompt
+        t.choose(game, 'Use Secondary')
+        // Xxcha has 4 influence — can buy 1 token
+        t.choose(game, '1 token (3 influence)')
+
+        const micah = game.players.byName('micah')
+        // Strategy NOT spent (leadership secondary is free)
+        expect(micah.commandTokens.strategy).toBe(2)
+        // 3 (start) + 1 (influence) = 4
         expect(micah.commandTokens.tactics).toBe(4)
+        // Both planets exhausted to pay 3 influence (1I + 3I, cheapest first)
+        expect(micah.getTotalInfluence()).toBe(0)
       })
     })
 
@@ -837,6 +891,7 @@ describe('Strategic Actions', () => {
         pickStrategyCards(game, 'construction', 'leadership')
 
         t.choose(game, 'Strategic Action')  // micah: leadership
+        t.choose(game, 'Skip')  // micah: skip influence spending (3I with new-albion)
         t.choose(game, 'Use Secondary')  // dennis: free leadership secondary
 
         t.choose(game, 'Strategic Action')  // dennis: construction

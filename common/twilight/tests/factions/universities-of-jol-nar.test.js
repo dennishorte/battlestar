@@ -211,6 +211,7 @@ describe('Universities of Jol-Nar', () => {
 
       // Dennis goes first — use leadership
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Jol-Nar, 3I)
 
       // Dennis declines the leadership secondary offer (micah)
       t.choose(game, 'Pass')

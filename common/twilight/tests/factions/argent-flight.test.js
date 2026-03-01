@@ -154,6 +154,7 @@ describe('Argent Flight', () => {
 
       // Dennis uses strategic action (leadership), then it's micah's turn
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Argent, 3I)
       t.choose(game, 'Pass')  // micah declines leadership secondary
 
       // Now it's micah's turn. Micah activates system 27 (adjacent to argent-home)
@@ -238,6 +239,7 @@ describe('Argent Flight', () => {
 
       // Dennis uses strategy card (leadership), then it's micah's turn
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Argent, 3I)
       t.choose(game, 'Pass')  // micah declines leadership secondary
 
       // Now it's micah's turn. Micah activates system 38 (far from argent)
@@ -692,6 +694,7 @@ describe('Argent Flight', () => {
 
         // Dennis does a strategic action
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Argent, 3I)
         t.choose(game, 'Pass')
 
         // Micah activates Mecatol (system 18) and tries to move cruiser
