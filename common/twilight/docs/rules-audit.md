@@ -233,7 +233,7 @@ These sections are fully implemented and have adequate test coverage:
 
 #### 87. Sustain Damage
 - **IMPL: Complete**
-- **TEST: Partial**
+- **TEST: Yes** — Dreadnought and war sun sustain damage tested in `rulesAuditLow.test.js`
 - ~~Missing: Cannot cancel direct-destroy effects (Rule 87.5)~~ — Already correct: all direct-destroy effects use `splice()` bypassing the sustain/hit-assignment system
 
 ---
@@ -241,8 +241,8 @@ These sections are fully implemented and have adequate test coverage:
 ### LOW — Edge Cases / Minor Gaps
 
 #### 9. Anomalies
-- Missing: Abilities that dynamically make a system an anomaly (e.g., Vuil'raith Dimensional Tear)
-- Missing: Tests for systems that are two different anomalies simultaneously
+- Missing IMPL: Vuil'raith Dimensional Tear dynamic gravity rift for movement (Galaxy.js/movement.js only check static tile anomaly; leaders.js commander unlock check handles it separately)
+- Missing: Tests for systems that are two different anomalies simultaneously (edge case: no standard tiles have dual anomalies)
 
 #### 10. Anti-Fighter Barrage
 - ~~Missing test: AFB fires even when no fighters present (hits have no effect)~~ — **TESTED** in `spaceCombat.test.js`
@@ -251,7 +251,7 @@ These sections are fully implemented and have adequate test coverage:
 #### 15. Bombardment
 - ~~Missing test: L1Z1X Harrow doesn't target own ground forces~~ — **TESTED** in `rulesAuditLow.test.js`
 - ~~Missing test: Plasma Scoring +1 die bonus~~ — **TESTED** in `invasion.test.js`
-- Missing test: Multiple planet bombardment in single invasion
+- Missing IMPL: Multiple planet invasion in single tactical action (code only invades `enemyPlanets[0]`; TI4 rules allow invading all planets in the active system)
 - ~~X-89 Bacterial Weapon ΩΩ~~ — **IMPLEMENTED** — Doubles bombardment hits + exhausts bombarded planet (`combat.js`), tested in `x89BacterialWeapon.test.js`
 
 #### 16. Capacity
@@ -272,8 +272,8 @@ These sections are fully implemented and have adequate test coverage:
 
 #### 51. Leaders — IMPLEMENTED
 - **IMPL: Yes** — Hero purge, agent ready-in-status-phase wired in `twilight.js:1012-1024`
-- **TEST: Partial** — Hero purge tested across all 25 factions
-- Missing test: Titans hero exception (not purged, attached to Elysium)
+- **TEST: Yes** — Hero purge tested across all 25 factions
+- ~~Missing test: Titans hero exception (not purged, attached to Elysium)~~ — **FIXED + TESTED** — `geoform` no longer purges hero (Rule 51 exception); tested in `rulesAuditLow.test.js` and `titans-of-ul.test.js`
 
 #### 54. Mecatol Rex
 - Implemented via custodians token — no separate gaps
@@ -286,7 +286,7 @@ These sections are fully implemented and have adequate test coverage:
 - Missing: Explicit handling that ability movement follows ability rules, not normal movement rules
 
 #### 62. Opponent
-- Missing test: Non-participants can't use opponent-targeting abilities
+- Missing IMPL+test: Non-participants can't use opponent-targeting abilities (requires 3-player combat scenario)
 
 #### 63. PDS — IMPLEMENTED
 - **IMPL: Yes** — PDS destroyed via `_establishControl` when attacker takes planet
@@ -319,7 +319,7 @@ These sections are fully implemented and have adequate test coverage:
 #### 77. Space Cannon
 - ~~Missing test: Graviton Laser System (SC hits target non-fighter ships)~~ — **TESTED** in `spaceCannon.test.js`
 - ~~Missing test: Plasma Scoring bonus~~ — **TESTED** in `spaceCannon.test.js`
-- Missing test: Hero attachment space cannon abilities
+- ~~Missing test: Hero attachment space cannon abilities~~ — **TESTED** in `rulesAuditLow.test.js` (Titans Geoform Elysium fires space cannon offense)
 
 #### 79. Space Dock
 - Implemented: Space dock destroyed when attacker takes control of planet (in `_establishControl`)

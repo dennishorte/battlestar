@@ -425,9 +425,9 @@ describe('Titans of Ul', () => {
       t.choose(game, 'Component Action')
       t.choose(game, 'geoform')
 
-      // Verify: hero is purged
+      // Verify: hero is NOT purged (Rule 51 — attached to Elysium instead)
       const dennis = game.players.byName('dennis')
-      expect(dennis.isHeroPurged()).toBe(true)
+      expect(dennis.isHeroPurged()).toBe(false)
 
       // Verify: Elysium is readied
       expect(game.state.planets['elysium'].exhausted).toBe(false)
