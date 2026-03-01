@@ -406,4 +406,56 @@ module.exports = function(Twilight) {
     })
   }
 
+  ////////////////////////////////////////////////////////////////////////////////
+  // Agenda Phase Transactions (Rule 94.6)
+  // During agenda phase, players can trade with ANY player (not just neighbors),
+  // one transaction per other player per agenda round.
+
+  Twilight.prototype._offerAgendaTransactions = function(player) {
+    while (true) {
+      const partners = this._getAgendaTradePartners(player)
+      if (partners.length === 0) {
+        break
+      }
+
+      const hasResources = player.tradeGoods > 0 || player.commodities > 0
+      const partnerHasResources = partners.some(n => {
+        const p = this.players.byName(n)
+        return p.tradeGoods > 0 || p.commodities > 0
+      })
+      if (!hasResources && !partnerHasResources) {
+        break
+      }
+
+      const choices = ['Skip Transaction', ...partners]
+      const selection = this.actions.choose(player, choices, {
+        title: 'Propose Transaction? (Agenda)',
+      })
+
+      const targetName = selection[0]
+      if (targetName === 'Skip Transaction') {
+        break
+      }
+
+      // Track this transaction for the current agenda
+      if (!this.state.agendaTransactions) {
+        this.state.agendaTransactions = {}
+      }
+      if (!this.state.agendaTransactions[player.name]) {
+        this.state.agendaTransactions[player.name] = {}
+      }
+      this.state.agendaTransactions[player.name][targetName] = true
+
+      this._resolveTransaction(player, targetName)
+    }
+  }
+
+  Twilight.prototype._getAgendaTradePartners = function(player) {
+    const traded = this.state.agendaTransactions?.[player.name] || {}
+    return this.players.all()
+      .filter(p => p.name !== player.name)
+      .filter(p => !traded[p.name])
+      .map(p => p.name)
+  }
+
 } // module.exports
