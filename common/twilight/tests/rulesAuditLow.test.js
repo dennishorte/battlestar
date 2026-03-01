@@ -233,6 +233,199 @@ describe('Rules Audit — LOW Priority', () => {
     })
   })
 
+  describe('Rule 51 — Titans hero NOT purged (attached to Elysium)', () => {
+    test('Geoform attaches hero instead of purging', () => {
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'unlocked' },
+          units: {
+            'titans-home': {
+              space: ['cruiser'],
+              'elysium': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Component Action')
+      t.choose(game, 'geoform')
+
+      const dennis = game.players.byName('dennis')
+      // Rule 51 exception: Titans hero attaches to Elysium, NOT purged
+      expect(dennis.isHeroPurged()).toBe(false)
+      // Attachment exists with space cannon ability
+      expect(game.state.heroAttachments?.['elysium']).toBeTruthy()
+      expect(game.state.heroAttachments['elysium'].spaceCannonAbility).toBe('space-cannon-5x3')
+    })
+
+    test('Geoform cannot be used twice (attachment guard)', () => {
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'unlocked' },
+          units: {
+            'titans-home': {
+              space: ['cruiser'],
+              'elysium': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Use geoform first time
+      t.choose(game, 'Component Action')
+      t.choose(game, 'geoform')
+
+      // Try to use component action again — geoform should NOT appear
+      const choices = t.currentChoices(game)
+      expect(choices).not.toContain('geoform')
+      expect(choices).not.toContain('GEOFORM (Ul The Progenitor)')
+    })
+  })
+
+  describe('Rule 77 — Hero attachment space cannon fires at incoming ships', () => {
+    test('Titans Geoform Elysium fires space cannon offense', () => {
+      // Dennis (Titans): hero attaches space cannon 5x3 to Elysium
+      // Micah moves ships into Titans home system — space cannon should fire
+      const game = t.fixture({ factions: ['titans-of-ul', 'emirates-of-hacan'] })
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'unlocked' },
+          units: {
+            'titans-home': {
+              space: ['cruiser'],
+              'elysium': ['infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Dennis uses hero — attaches space cannon 5x3 to Elysium
+      t.choose(game, 'Component Action')
+      t.choose(game, 'geoform')
+
+      // Micah activates Titans home system, moves ships in
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: 'titans-home' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: '27', count: 5 }],
+      })
+
+      // Space cannon offense should have fired from Elysium attachment (3 dice at combat 5)
+      // Log template: 'Space Cannon Offense scores {hits} hit(s) against {player}'
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Space Cannon Offense'))).toBe(true)
+    })
+  })
+
+  describe('Rule 87 — Sustain damage absorbs hits in combat', () => {
+    test('dreadnought survives combat via sustain damage', () => {
+      // Dennis: 2 dreadnoughts (combat 5, sustain damage) + 1 cruiser
+      // Micah: 1 destroyer (combat 9, very unlikely to hit)
+      // Dreadnoughts should crush the destroyer; even a lucky hit is sustained
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'sol-home': {
+              space: ['dreadnought', 'dreadnought', 'cruiser'],
+              'jord': ['infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['destroyer'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'dreadnought', from: 'sol-home', count: 2 },
+          { unitType: 'cruiser', from: 'sol-home', count: 1 },
+        ],
+      })
+
+      // Dennis should win — dreadnoughts survive even if a hit is scored (sustain)
+      const dennisShips = game.state.units['27'].space
+        .filter(u => u.owner === 'dennis')
+      expect(dennisShips.length).toBeGreaterThanOrEqual(2)
+
+      // At least one dreadnought should remain
+      const dreadnoughts = dennisShips.filter(u => u.type === 'dreadnought')
+      expect(dreadnoughts.length).toBeGreaterThanOrEqual(1)
+
+      // Micah's destroyer should be destroyed
+      const micahShips = game.state.units['27'].space
+        .filter(u => u.owner === 'micah')
+      expect(micahShips.length).toBe(0)
+    })
+
+    test('war sun sustains damage and wins against multiple ships', () => {
+      // War Sun: combat 3 (3 dice), sustain damage, bombardment
+      // vs 2 cruisers: combat 7, 1 die each
+      // War sun expected ~2.4 hits/round, cruisers ~0.8 hits/round
+      // Even if both cruisers hit, war sun sustains and keeps fighting
+      const game = t.fixture({ factions: ['embers-of-muaat', 'federation-of-sol'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'muaat-home': {
+              space: ['war-sun'],
+              'muaat': ['infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '27': {
+              space: ['cruiser', 'cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '27' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'war-sun', from: 'muaat-home', count: 1 }],
+      })
+
+      // War sun should survive via sustain damage
+      const dennisShips = game.state.units['27'].space
+        .filter(u => u.owner === 'dennis')
+      expect(dennisShips.some(u => u.type === 'war-sun')).toBe(true)
+
+      // Cruisers should be destroyed
+      const micahShips = game.state.units['27'].space
+        .filter(u => u.owner === 'micah')
+      expect(micahShips.length).toBe(0)
+    })
+  })
+
   describe('Rule 15 — Harrow only hits enemy ground forces', () => {
     test('L1Z1X infantry survives own Harrow', () => {
       // L1Z1X invades with dreadnoughts (Harrow bombardment) + infantry
