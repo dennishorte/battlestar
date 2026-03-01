@@ -306,6 +306,7 @@ class Galaxy {
         // Gravity Rift: exiting a gravity rift costs 0 movement (Rule 41.1)
         const currentTile = this.getSystemTile(systemId)
         const isGravityRift = currentTile?.anomaly === 'gravity-rift'
+          || !!this.game._getDimensionalTearOwner?.(systemId)
         const newDistance = isGravityRift ? distance : distance + 1
 
         if (neighborId === String(toSystemId)) {

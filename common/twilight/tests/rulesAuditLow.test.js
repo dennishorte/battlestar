@@ -7,6 +7,123 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 
 describe('Rules Audit — LOW Priority', () => {
 
+  describe('Rule 9 — Dimensional Tear creates dynamic gravity rift', () => {
+    test('Vuil\'raith space dock gives +1 movement to ships exiting system', () => {
+      // Dennis (Vuil'raith) has a Dimensional Tear (space dock) in system 35.
+      // A dreadnought (move 1) in system 35 should reach system 20 (2 hops: 35→18→20)
+      // because exiting a gravity rift costs 0 movement.
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'federation-of-sol'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'cabal-home': {
+              'acheron': ['space-dock'],
+            },
+            '35': {
+              space: ['dreadnought'],
+              'bereg': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      // Activate system 20 (2 hops from 35: 35→18→20)
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '20' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'dreadnought', from: '35', count: 1 }],
+      })
+
+      // Dreadnought (move 1) should arrive at system 20 thanks to rift +1 bonus
+      const dennisAt20 = game.state.units['20'].space
+        .filter(u => u.owner === 'dennis' && u.type === 'dreadnought')
+      expect(dennisAt20.length).toBe(1)
+    })
+
+    test('Vuil\'raith ships don\'t roll for their own Dimensional Tear', () => {
+      // Dennis (Vuil'raith) has Dimensional Tear in system 35.
+      // Dennis moves 3 cruisers out — no gravity rift die roll should occur.
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'federation-of-sol'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'cabal-home': {
+              'acheron': ['space-dock'],
+            },
+            '35': {
+              space: ['cruiser', 'cruiser', 'cruiser'],
+              'bereg': ['infantry', 'space-dock'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '18' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: '35', count: 3 }],
+      })
+
+      // All 3 cruisers should survive — Vuil'raith ships are exempt from their own rift
+      const dennisAt18 = game.state.units['18'].space
+        .filter(u => u.owner === 'dennis' && u.type === 'cruiser')
+      expect(dennisAt18.length).toBe(3)
+
+      // No gravity rift removal log entries
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('gravity rift'))).toBe(false)
+    })
+
+    test('non-Vuil\'raith ships roll for Dimensional Tear gravity rift', () => {
+      // Dennis (Vuil'raith) has Dimensional Tear in system 35.
+      // Micah has 3 cruisers in system 35 (in space).
+      // Micah moves cruisers out — gravity rift die roll should apply.
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'federation-of-sol'] })
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'cabal-home': {
+              'acheron': ['space-dock'],
+            },
+            '35': {
+              'bereg': ['infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            '35': {
+              space: ['cruiser', 'cruiser', 'cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'diplomacy', 'leadership')
+
+      // Micah goes first (Leadership), moves cruisers from 35 to 18
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: '18' })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: '35', count: 3 }],
+      })
+
+      // Gravity rift die roll triggered for non-Vuil'raith ships
+      // With seed 'test_seed': 1 cruiser removed (rolled 1-3), 2 survive
+      const logEntries = game.log._log.map(e => e.template || '')
+      const riftLogs = logEntries.filter(e => e.includes('gravity rift'))
+      expect(riftLogs.length).toBe(1)
+
+      const micahAt18 = game.state.units['18'].space
+        .filter(u => u.owner === 'micah' && u.type === 'cruiser')
+      expect(micahAt18.length).toBe(2)
+    })
+  })
+
   describe('Rule 10 — AFB uses own combat value, not faction modifiers', () => {
     test("Sardakk +1 combat doesn't boost AFB rolls", () => {
       // Sardakk N'orr has Unrelenting: +1 to all combat rolls (getCombatModifier returns -1).
