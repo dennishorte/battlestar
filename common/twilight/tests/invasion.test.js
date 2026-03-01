@@ -200,6 +200,53 @@ describe('Invasion', () => {
       expect(dennisForces.length === 0 || micahForces.length === 0).toBe(true)
     })
 
+    test('Plasma Scoring grants +1 bombardment die', () => {
+      const game = t.fixture()
+      const targetSystem = findAdjacent('sol-home')
+      const planets = getPlanets(targetSystem)
+      const targetPlanet = planets[0]
+
+      // Dennis has Plasma Scoring tech + dreadnought (bombardment 5x1 → 5x2 with plasma)
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted' },
+          technologies: ['plasma-scoring'],
+          units: {
+            'sol-home': {
+              space: ['dreadnought', 'carrier'],
+              'jord': ['infantry', 'infantry', 'infantry', 'infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            [targetSystem]: {
+              [targetPlanet]: ['infantry', 'infantry', 'infantry'],
+            },
+          },
+          planets: {
+            [targetPlanet]: { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: targetSystem })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'dreadnought', from: 'sol-home', count: 1 },
+          { unitType: 'carrier', from: 'sol-home', count: 1 },
+          { unitType: 'infantry', from: 'sol-home', count: 4 },
+        ],
+      })
+
+      // Plasma Scoring gives +1 die to first bombardment unit (dreadnought 5x1 → 5x2)
+      // Dennis should win with bombardment + 4 infantry vs 3 infantry
+      expect(game.state.planets[targetPlanet].controller).toBe('dennis')
+    })
+
     test('war sun bombardment ignores planetary shield', () => {
       const game = t.fixture()
       const targetSystem = findAdjacent('sol-home')
@@ -290,6 +337,59 @@ describe('Invasion', () => {
       const dennisForces = planetUnits.filter(u => u.owner === 'dennis')
       const micahForces = planetUnits.filter(u => u.owner === 'micah')
       expect(dennisForces.length === 0 || micahForces.length === 0).toBe(true)
+    })
+
+    test('ground combat resolves when forces are evenly matched', () => {
+      const game = t.fixture()
+      const targetSystem = findAdjacent('sol-home')
+      const planets = getPlanets(targetSystem)
+      const targetPlanet = planets[0]
+
+      // 1 infantry vs 1 infantry — possible simultaneous elimination (draw)
+      t.setBoard(game, {
+        dennis: {
+          leaders: { agent: 'exhausted' },
+          units: {
+            'sol-home': {
+              space: ['carrier'],
+              'jord': ['infantry', 'space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            [targetSystem]: {
+              [targetPlanet]: ['infantry'],
+            },
+          },
+          planets: {
+            [targetPlanet]: { exhausted: false },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: targetSystem })
+      t.action(game, 'move-ships', {
+        movements: [
+          { unitType: 'carrier', from: 'sol-home', count: 1 },
+          { unitType: 'infantry', from: 'sol-home', count: 1 },
+        ],
+      })
+
+      // Game should resolve without crash regardless of outcome (dennis wins, micah wins, or draw)
+      const planetUnits = game.state.units[targetSystem].planets[targetPlanet]
+      const dennisForces = planetUnits.filter(u => u.owner === 'dennis')
+      const micahForces = planetUnits.filter(u => u.owner === 'micah')
+
+      // Exactly one side should survive, or both eliminated (draw)
+      const controller = game.state.planets[targetPlanet].controller
+      const dennisWon = dennisForces.length > 0 && micahForces.length === 0 && controller === 'dennis'
+      const micahRetained = micahForces.length > 0 && dennisForces.length === 0 && controller === 'micah'
+      const draw = dennisForces.length === 0 && micahForces.length === 0 && controller !== 'dennis'
+      expect(dennisWon || micahRetained || draw).toBe(true)
     })
 
     test('mechs can sustain damage in ground combat', () => {

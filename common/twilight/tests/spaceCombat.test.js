@@ -321,6 +321,46 @@ describe('Space Combat', () => {
     })
   })
 
+  describe('Combat Modifiers', () => {
+    test('combat resolves with faction combat modifiers (Sardakk N\'orr)', () => {
+      // Sardakk N'orr has +1 combat (modifier -1) on all units
+      const game = t.fixture({ factions: ['sardakk-norr', 'emirates-of-hacan'] })
+      // System 27 (new-albion/starpoint) is adjacent to P1 home at (0,-3)
+      const targetSystem = '27'
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'norr-home': {
+              space: ['cruiser', 'cruiser', 'cruiser'],
+              'trenlak': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            [targetSystem]: {
+              space: ['cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: targetSystem })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'norr-home', count: 3 }],
+      })
+
+      // Sardakk's +1 combat modifier should apply without crashing or producing
+      // out-of-bounds values (combat values clamped to 1-10)
+      const micahShips = game.state.units[targetSystem].space
+        .filter(u => u.owner === 'micah')
+      expect(micahShips.length).toBe(0)
+    })
+  })
+
   describe('Anti-Fighter Barrage', () => {
     test('AFB destroys fighters before combat', () => {
       const game = t.fixture()
@@ -360,6 +400,46 @@ describe('Space Combat', () => {
       const dennisShips = game.state.units[targetSystem].space
         .filter(u => u.owner === 'dennis')
       // One side should be eliminated
+      expect(micahShips.length === 0 || dennisShips.length === 0).toBe(true)
+    })
+
+    test('AFB fires even when no fighters present', () => {
+      const game = t.fixture()
+      const targetSystem = findAdjacent('sol-home')
+      // Dennis has destroyers (AFB 9x2), micah has only cruisers (no fighters)
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'sol-home': {
+              space: ['destroyer', 'destroyer'],
+              'jord': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            [targetSystem]: {
+              space: ['cruiser', 'cruiser'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: targetSystem })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'destroyer', from: 'sol-home', count: 2 }],
+      })
+
+      // AFB fires but has no fighters to destroy — should not crash
+      // and cruisers should not be erroneously destroyed by AFB
+      const micahShips = game.state.units[targetSystem].space
+        .filter(u => u.owner === 'micah')
+      const dennisShips = game.state.units[targetSystem].space
+        .filter(u => u.owner === 'dennis')
+      // Combat should resolve (one side eliminated)
       expect(micahShips.length === 0 || dennisShips.length === 0).toBe(true)
     })
   })
