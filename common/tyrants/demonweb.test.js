@@ -1232,11 +1232,11 @@ describe('Demonweb', () => {
         return positions.filter((other, j) => i !== j && isAdjacent(pos, other)).length
       })
 
-      // Corner C hexes (indices 1 and 5) have 2 neighbors each
+      // Corner B hexes (indices 1 and 5) have 2 neighbors each
       expect(neighborCounts[1]).toBe(2)
       expect(neighborCounts[5]).toBe(2)
 
-      // B hexes and inner C hexes (indices 0, 2, 4, 6) have 3 neighbors each
+      // C hexes (indices 0, 2, 4, 6) have 3 neighbors each
       expect(neighborCounts[0]).toBe(3)
       expect(neighborCounts[2]).toBe(3)
       expect(neighborCounts[4]).toBe(3)

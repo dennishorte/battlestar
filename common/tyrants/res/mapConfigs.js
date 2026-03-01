@@ -8,18 +8,18 @@
 const mapConfigs = {
   // 2-Player Small: 7 hexes in slid hexagon (parallelogram)
   // Hexagon with left side slid up, right side slid down
-  // Center column B-A-B, two C tiles on each side
+  // B tiles at extreme ends, A in center, C tiles filling in between
   'demonweb-2s': {
     playerCount: 2,
     totalHexes: 7,
     layout: [
-      { position: { q: 0, r: -1 }, category: 'B', pool: ['B1', 'B2'] },
-      { position: { q: -1, r: -1 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
+      { position: { q: 0, r: -1 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
+      { position: { q: -1, r: -1 }, category: 'B', pool: ['B1', 'B2'] },
       { position: { q: -1, r: 0 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
       { position: { q: 0, r: 0 }, category: 'A', pool: ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9'] },
       { position: { q: 1, r: 0 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
-      { position: { q: 1, r: 1 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
-      { position: { q: 0, r: 1 }, category: 'B', pool: ['B1', 'B2'] },
+      { position: { q: 1, r: 1 }, category: 'B', pool: ['B1', 'B2'] },
+      { position: { q: 0, r: 1 }, category: 'C', pool: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'] },
     ],
   },
 
