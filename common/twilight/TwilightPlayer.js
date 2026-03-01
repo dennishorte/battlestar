@@ -325,7 +325,10 @@ class TwilightPlayer extends BasePlayer {
   // ---------------------------------------------------------------------------
 
   getVictoryPoints() {
-    return this.victoryPoints
+    const sftBonus = (this.promissoryNotes || [])
+      .filter(n => n.id === 'support-for-the-throne' && n.owner !== this.name)
+      .length
+    return this.victoryPoints + sftBonus
   }
 
   addVictoryPoints(amount) {

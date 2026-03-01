@@ -795,16 +795,32 @@ module.exports = function(Twilight) {
         continue
       }
 
-      // Sort by cost ascending (remove cheapest first: fighters before infantry)
-      capacityUnits.sort((a, b) => {
-        const defA = this._getUnitStats(ownerName, a.type)
-        const defB = this._getUnitStats(ownerName, b.type)
-        return (defA?.cost || 0) - (defB?.cost || 0)
-      })
-
+      // Player must choose which units to remove (Rule 78)
       for (let i = 0; i < excess; i++) {
-        const unit = capacityUnits[i]
-        const idx = systemUnits.space.findIndex(u => u.id === unit.id)
+        // Recalculate remaining capacity units
+        const remaining = systemUnits.space.filter(u => {
+          if (u.owner !== ownerName) {
+            return false
+          }
+          const def = this._getUnitStats(ownerName, u.type)
+          return def?.requiresCapacity && !this.factionAbilities.isCapacityExempt(player, u.type)
+        })
+        const remainingTypes = [...new Set(remaining.map(u => u.type))]
+
+        let typeToRemove
+        if (remainingTypes.length <= 1) {
+          typeToRemove = remainingTypes[0]
+        }
+        else {
+          const selection = this.actions.choose(player, remainingTypes, {
+            title: 'Choose unit type to remove (excess capacity)',
+          })
+          typeToRemove = selection[0]
+        }
+
+        const idx = systemUnits.space.findIndex(
+          u => u.owner === ownerName && u.type === typeToRemove
+        )
         if (idx !== -1) {
           systemUnits.space.splice(idx, 1)
         }
