@@ -123,6 +123,10 @@ module.exports = {
       return
     }
 
+    if (!ctx.game._hasReinforcementsAvailable(player.name, 'mech')) {
+      return
+    }
+
     const choice = ctx.actions.choose(player, ['Deploy Mech', 'Pass'], {
       title: 'Dunlain Reaper: Spend 2 resources to replace 1 infantry with 1 mech?',
     })

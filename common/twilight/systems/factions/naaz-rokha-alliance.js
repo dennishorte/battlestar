@@ -141,9 +141,7 @@ module.exports = {
   // ---------------------------------------------------------------------------
 
   _offerEidolonDeploy(player, ctx) {
-    // Check if player has mechs in reinforcements (limit 4)
-    const mechsOnBoard = ctx.game._countUnitsOnBoard(player.name, 'mech')
-    if (mechsOnBoard >= 4) {
+    if (!ctx.game._hasReinforcementsAvailable(player.name, 'mech')) {
       return
     }
 

@@ -20,6 +20,10 @@ module.exports = {
   // Mech — Reclaimer DEPLOY: After another player gains control of a planet
   // you control, you may place 1 mech from your reinforcements on that planet.
   onPlanetLost(player, ctx, { planetId, systemId, gainingPlayerName: _gainingPlayerName }) {
+    if (!ctx.game._hasReinforcementsAvailable(player.name, 'mech')) {
+      return
+    }
+
     const choice = ctx.actions.choose(player, ['Deploy Mech', 'Pass'], {
       title: `Reclaimer: Deploy 1 mech on ${planetId}?`,
     })

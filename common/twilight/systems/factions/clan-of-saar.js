@@ -21,7 +21,7 @@ module.exports = {
 
     // Mech DEPLOY: Scavenger Zeta — after gaining control of a planet,
     // may spend 1 trade good to place 1 mech on that planet
-    if (player.tradeGoods >= 1) {
+    if (player.tradeGoods >= 1 && ctx.game._hasReinforcementsAvailable(player.name, 'mech')) {
       const mechChoice = ctx.actions.choose(player, ['Deploy Scavenger Zeta', 'Pass'], {
         title: 'Scavenger Zeta DEPLOY: Spend 1 trade good to place 1 mech?',
       })

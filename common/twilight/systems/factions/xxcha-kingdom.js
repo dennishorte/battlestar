@@ -168,6 +168,10 @@ module.exports = {
       return
     }
 
+    if (!ctx.game._hasReinforcementsAvailable(player.name, 'mech')) {
+      return
+    }
+
     const controlledPlanets = player.getControlledPlanets()
     if (controlledPlanets.length === 0) {
       return

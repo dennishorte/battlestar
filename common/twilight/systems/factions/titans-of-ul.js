@@ -36,18 +36,28 @@ module.exports = {
 
       // Hecatoncheires DEPLOY: when placing a PDS on a planet,
       // may place 1 mech and 1 infantry instead
-      const deployChoice = ctx.actions.choose(player, ['Deploy Mech + Infantry', 'Place PDS'], {
-        title: `Hecatoncheires: Place mech + infantry on ${planetId} instead of PDS?`,
-      })
-
-      if (deployChoice[0] === 'Deploy Mech + Infantry') {
-        ctx.game._addUnitToPlanet(systemId, planetId, 'mech', player.name)
-        ctx.game._addUnitToPlanet(systemId, planetId, 'infantry', player.name)
-
-        ctx.log.add({
-          template: '{player} deploys mech + infantry on {planet} (Hecatoncheires)',
-          args: { player, planet: planetId },
+      if (ctx.game._hasReinforcementsAvailable(player.name, 'mech')) {
+        const deployChoice = ctx.actions.choose(player, ['Deploy Mech + Infantry', 'Place PDS'], {
+          title: `Hecatoncheires: Place mech + infantry on ${planetId} instead of PDS?`,
         })
+
+        if (deployChoice[0] === 'Deploy Mech + Infantry') {
+          ctx.game._addUnitToPlanet(systemId, planetId, 'mech', player.name)
+          ctx.game._addUnitToPlanet(systemId, planetId, 'infantry', player.name)
+
+          ctx.log.add({
+            template: '{player} deploys mech + infantry on {planet} (Hecatoncheires)',
+            args: { player, planet: planetId },
+          })
+        }
+        else {
+          ctx.game._addUnitToPlanet(systemId, planetId, 'pds', player.name)
+
+          ctx.log.add({
+            template: '{player} awakens sleeper on {planet}: PDS deployed (Awaken)',
+            args: { player, planet: planetId },
+          })
+        }
       }
       else {
         ctx.game._addUnitToPlanet(systemId, planetId, 'pds', player.name)
