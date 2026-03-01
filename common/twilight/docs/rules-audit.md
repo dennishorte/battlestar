@@ -59,13 +59,16 @@ These sections are fully implemented and have adequate test coverage:
 ### CRITICAL — Partially Implemented
 
 #### 17. Capture
-- **IMPL: Partial** — Vuil'raith-specific capture fully implemented; general framework deferred
-- **TEST: Partial** — Vuil'raith capture tests pass
-- Implemented: Devour, Amalgamation, Riftmeld, Vortex, Dimensional Anchor (all Vuil'raith)
+- **IMPL: Mostly Complete** — Vuil'raith capture, blockade restrictions, and transaction returns implemented
+- **TEST: Yes** — 27 Vuil'raith tests including blockade and transaction capture rules
+- Implemented: Devour, Amalgamation, Riftmeld, Vortex, Dimensional Anchor, Reanimator, Agent (all Vuil'raith)
 - Implemented: `state.capturedUnits` tracking, `onUnitDestroyed` hooks
-- TODO: Transaction-based capture returns (Rule 17.2)
-- TODO: Production prevention for captured unit types (Rule 17.1)
-- TODO: Blockade restrictions on capture returns (Rule 17.3)
+- Implemented: Blockade prevents capture (Rule 17.6) — all 4 capture entry points check `_isSpaceDockBlockadedBy`
+- Implemented: Blockade returns captured units (Rule 14.2) — non-fighter/infantry units returned when blockade established
+- Implemented: Transaction-based capture returns (Rule 17.2a) — can return non-fighter/infantry captured units via trade
+- Implemented: Fighter/infantry cannot be returned via blockade or transaction (Rule 17.4a/b)
+- TODO: Production prevention for captured unit types (Rule 17.5) — depends on unit limits / reinforcement pool tracking (Rule 67)
+- NOTE: Fighter/infantry token tracking (Rule 17.3) is cosmetic in digital; functional distinction enforced via type checks
 
 #### 33. Elimination — IMPLEMENTED
 - **IMPL: Yes** — Core elimination detection and handling
@@ -341,7 +344,7 @@ These sections are fully implemented and have adequate test coverage:
 ## Summary by Priority
 
 ### CRITICAL (Resolved or partially resolved)
-1. ~~**Capture system** (Rule 17)~~ — Vuil'raith capture fully implemented; general framework (transactions, production prevention) deferred
+1. ~~**Capture system** (Rule 17)~~ — Blockade restrictions, transaction returns implemented; production prevention (Rule 17.5) deferred pending unit limits (Rule 67)
 2. ~~**Elimination system** (Rule 33)~~ — **IMPLEMENTED** — Core detection, component removal, speaker transfer
 3. ~~**Imperial primary** (Rule 45)~~ — **IMPLEMENTED** — Public objective scoring in primary
 4. ~~**Leadership influence spending** (Rule 52)~~ — **PARTIAL** — Free secondary implemented; influence spending deferred
