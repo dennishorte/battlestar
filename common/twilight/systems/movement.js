@@ -191,33 +191,37 @@ module.exports = function(Twilight) {
 
     // Gravity Rift die roll: ships passing through or out of a gravity rift
     // roll 1d10; on 1-3 the ship is removed (not destroyed) (Rule 41.2)
+    // A ship rolls once per gravity rift in its path (multiple rifts = multiple rolls)
     const movingPlayer = this.players.byName(player.name)
     const hasCirclet = movingPlayer && this._hasRelic?.(movingPlayer, 'circlet-of-the-void')
     if (!hasCirclet) {
       for (let i = movedShips.length - 1; i >= 0; i--) {
         const shipPath = movedShipPaths[i]
-        // Check if any system in path (excluding destination) is a gravity rift
-        const passedThroughRift = shipPath.slice(0, -1).some(sysId => {
+        // Count gravity rifts in path (excluding destination)
+        const riftCount = shipPath.slice(0, -1).filter(sysId => {
           const tile = galaxy.getSystemTile(sysId)
           return tile?.anomaly === 'gravity-rift'
-        })
-        if (!passedThroughRift) {
+        }).length
+        if (riftCount === 0) {
           continue
         }
 
-        const roll = Math.floor(this.random() * 10) + 1
-        if (roll <= 3) {
-          const ship = movedShips[i]
-          const idx = this.state.units[targetSystemId].space.findIndex(u => u.id === ship.id)
-          if (idx !== -1) {
-            this.state.units[targetSystemId].space.splice(idx, 1)
-            this.log.add({
-              template: '{player} loses a {unit} to gravity rift (rolled {roll})',
-              args: { player, unit: ship.type, roll },
-            })
+        for (let r = 0; r < riftCount; r++) {
+          const roll = Math.floor(this.random() * 10) + 1
+          if (roll <= 3) {
+            const ship = movedShips[i]
+            const idx = this.state.units[targetSystemId].space.findIndex(u => u.id === ship.id)
+            if (idx !== -1) {
+              this.state.units[targetSystemId].space.splice(idx, 1)
+              this.log.add({
+                template: '{player} loses a {unit} to gravity rift (rolled {roll})',
+                args: { player, unit: ship.type, roll },
+              })
+            }
+            movedShips.splice(i, 1)
+            movedShipPaths.splice(i, 1)
+            break  // Ship is gone, no more rolls needed
           }
-          movedShips.splice(i, 1)
-          movedShipPaths.splice(i, 1)
         }
       }
     }
