@@ -71,6 +71,7 @@ module.exports = function(Twilight) {
     this.state.gammaWormholeTokens = []    // systemIds with gamma wormhole tokens (from exploration)
     this.state.ionStormToken = null         // { systemId, side: 'alpha'|'beta' } or null
     this.state.persistentCards = {}         // playerName → [cardId, ...] (e.g., Enigmatic Device)
+    this.state.wormholeNexusActive = false  // Rule 100: Wormhole Nexus flips to active when units enter or Mallice controlled
   }
 
   Twilight.prototype._initializeZones = function() {

@@ -143,13 +143,14 @@ These sections are fully implemented and have adequate test coverage:
 - Missing: Pick up units from systems moved through (only picks from origin system)
 - Implemented: Cannot pick up units from systems with own command token (Rule 95.3)
 
-#### 100. Wormhole Nexus
-- **IMPL: ~40%** — Activation mechanics missing
-- **TEST: ~20%**
-- Missing: Inactive/active state tracking for nexus tile
-- Missing: Flip to active side when unit enters or Mallice controlled
-- Missing: Active side has alpha + beta + gamma wormholes (inactive has only gamma)
-- Implemented: Mallice placement, gamma wormhole
+#### 100. Wormhole Nexus — IMPLEMENTED
+- **IMPL: Yes** — Activation state tracking + wormhole filtering
+- **TEST: Yes** — Galaxy tests updated for nexus activation
+- Implemented: `state.wormholeNexusActive` tracks inactive/active state
+- Implemented: Inactive = gamma only; active = alpha + beta + gamma
+- Implemented: Activates when units enter nexus system (movement)
+- Implemented: Activates when Mallice is controlled (_establishControl)
+- Implemented: Galaxy.js `_getTileWormholes()` filters wormholes based on activation state
 
 #### 78. Space Combat — Excess Capacity
 - **IMPL: ~90%** — Post-combat capacity enforcement implemented
@@ -184,10 +185,10 @@ These sections are fully implemented and have adequate test coverage:
 - Missing: If player has no reinforcement tokens, they must place from command sheet
 - Missing: Secondary should let player choose which 2 planets to ready (currently auto-selects)
 
-#### 99. Warfare (Strategy Card)
-- **IMPL: Partial**
+#### 99. Warfare (Strategy Card) — IMPLEMENTED
+- **IMPL: Yes** — Token redistribution uses `redistribute-tokens` action (same as status phase)
 - **TEST: Partial**
-- Missing: Token redistribution is a placeholder ("Done" button, no actual redistribution options)
+- Implemented: `_redistributeTokens()` accepts player token allocation via action
 
 #### 53. Legendary Planets
 - **IMPL: No**
@@ -200,7 +201,7 @@ These sections are fully implemented and have adequate test coverage:
 #### 69. Promissory Notes
 - **IMPL: Partial**
 - **TEST: Partial**
-- Missing: Max 1 promissory note per transaction not enforced
+- Implemented: Max 1 promissory note per side per transaction (Rule 69.2)
 - Missing: Return-after-resolve mechanic
 - Missing: Eliminated player's promissory notes returned to game box
 
@@ -208,20 +209,20 @@ These sections are fully implemented and have adequate test coverage:
 - **IMPL: Partial**
 - **TEST: Partial**
 - Missing: Agenda phase transactions (1 transaction per player per agenda, not just neighbors)
-- Missing: Max 1 promissory per transaction enforcement
+- Implemented: Max 1 promissory per transaction enforcement (Rule 69.2)
 
-#### 61. Objectives
-- **IMPL: Partial**
-- **TEST: Partial**
+#### 61. Objectives — IMPLEMENTED
+- **IMPL: Yes**
+- **TEST: Yes**
 - Implemented: Max 3 secret objectives hand limit (Rule 61.21)
-- Missing: Game ends immediately if speaker cannot reveal an objective card (Rule 61.15)
+- Implemented: Game ends when speaker cannot reveal an objective card (Rule 61.15) — most VP wins, tiebreak by initiative order
 - Implemented: Tie-breaking when multiple players reach 10 VP simultaneously (Rule 98.7)
 
-#### 98. Victory Points
-- **IMPL: Partial**
-- **TEST: Partial**
+#### 98. Victory Points — IMPLEMENTED
+- **IMPL: Yes**
+- **TEST: Yes**
 - Implemented: Simultaneous 10 VP tie-breaking (earliest in initiative order wins)
-- Missing: Game end from no unrevealed objectives (most VP wins, tie = first in initiative order)
+- Implemented: Game end from no unrevealed objectives (most VP wins, tie = first in initiative order)
 
 #### 84. Strategy Phase — 3-4 Player Rules
 - **IMPL: Partial**
@@ -316,7 +317,8 @@ These sections are fully implemented and have adequate test coverage:
 - Missing test: Hero attachment space cannon abilities
 
 #### 79. Space Dock
-- Missing: Space dock destroyed when on planet with no own ground forces and enemy units (Rule 79.4)
+- Implemented: Space dock destroyed when attacker takes control of planet (in `_establishControl`)
+- Note: Rule 79.4 covered by existing invasion flow — defender structures removed when attacker has forces and defender doesn't
 
 #### 80. Speaker
 - Missing: Speaker passes left on elimination (see Elimination section)
@@ -355,19 +357,19 @@ These sections are fully implemented and have adequate test coverage:
 7. ~~**Gravity Rift** (Rule 41)~~ — **~80% IMPLEMENTED** — +1 move, die roll, Circlet exemption
 8. ~~**Nebula combat/movement** (Rule 59)~~ — **~95% IMPLEMENTED** — Move clamp, defender bonus
 9. **Transport from path** (Rule 95) — Can't pick up from intermediate systems; command token restriction implemented (Rule 95.3)
-10. **Wormhole Nexus activation** (Rule 100) — Inactive/active state missing
+10. ~~**Wormhole Nexus activation** (Rule 100)~~ — **IMPLEMENTED** — Inactive/active state tracking, wormhole filtering
 11. ~~**Post-combat excess capacity** (Rule 78)~~ — **~90% IMPLEMENTED** — Cheapest-first removal after combat
 12. **Deploy ability** (Rule 30) — General deploy mechanic not wired
 13. **Destroyed vs Removed distinction** (Rule 31) — Different trigger semantics missing
 
 ### MEDIUM (Secondary features)
 14. ~~**Diplomacy Mecatol exclusion** (Rule 32)~~ — **IMPLEMENTED**
-15. **Warfare token redistribution** (Rule 99)
+15. ~~**Warfare token redistribution** (Rule 99)~~ — **IMPLEMENTED** — Uses `redistribute-tokens` action
 16. **Legendary Planets** (Rule 53) — Ability cards not implemented
 17. **3-4 player dual strategy card pass restriction** (Rules 3.4, 82.2)
-18. **Game end from no objectives** (Rule 61.15)
+18. ~~**Game end from no objectives** (Rule 61.15)~~ — **IMPLEMENTED**
 19. ~~**Simultaneous VP tiebreaking** (Rule 98.7)~~ — **IMPLEMENTED**
 20. ~~**Max 3 secret objectives** (Rule 61.21)~~ — **IMPLEMENTED**
 21. **Agenda phase transactions** (Rule 94.6)
-22. **Promissory note return/limit** (Rule 69)
+22. **Promissory note return/limit** (Rule 69) — Max 1 per transaction implemented; return-after-resolve missing
 23. **Sustain Damage vs direct destroy** (Rule 87.5)

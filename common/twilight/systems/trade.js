@@ -133,6 +133,14 @@ module.exports = function(Twilight) {
       return
     }
 
+    // Rule 69.2: max 1 promissory note per side per transaction
+    if ((offering.promissoryNotes || []).length > 1) {
+      return
+    }
+    if ((requesting.promissoryNotes || []).length > 1) {
+      return
+    }
+
     // Validate planet trading (Hacan mech — Pride of Kenara)
     const offeredPlanet = offering.planet
     const requestedPlanet = requesting.planet
