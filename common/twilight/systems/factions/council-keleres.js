@@ -53,6 +53,8 @@ module.exports = {
       template: '{player} replenishes commodities and gains 1 TG (Council Patronage)',
       args: { player },
     })
+
+    ctx.game.factionAbilities.onCommoditiesReplenished(player)
   },
 
   // ---------------------------------------------------------------------------

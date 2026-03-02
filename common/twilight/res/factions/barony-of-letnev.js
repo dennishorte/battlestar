@@ -66,7 +66,7 @@ module.exports = {
   promissoryNote: {
     id: 'war-funding',
     name: 'War Funding',
-    description: 'At the start of a round of space combat: The Letnev player loses 2 trade goods. During this combat round, re-roll any number of your dice. Then, return this card to the Letnev player.',
+    description: 'After you and your opponent roll dice during space combat: You may reroll all of your opponent\'s dice. You may reroll any number of your dice. Then, return this card to the Letnev player.',
   },
   factionTechnologies: [
     {

@@ -637,9 +637,6 @@ Twilight.prototype.strategyPhase = function() {
     this.factionAbilities.onStrategyPhaseStart(player)
   }
 
-  // Trade Agreement: return to owner, owner gives holder TGs (Rule 69)
-  this._checkTradeAgreementReturn()
-
   // Reset strategy cards
   this.state.availableStrategyCards = res.getAllStrategyCards().map(c => c.id)
 
@@ -707,8 +704,7 @@ Twilight.prototype.actionPhase = function() {
   this.log.add({ template: 'Action Phase', event: 'phase-start', args: { phase: 'action' } })
   this.log.indent()
 
-  // Reset passed state and ceasefire blocks
-  this.state.ceasefireBlocks = {}
+  // Reset passed state
   for (const player of this.players.all()) {
     player.resetPassed()
   }
@@ -748,9 +744,6 @@ Twilight.prototype.actionPhase = function() {
 
     // Keleres laws-order: spend 1 influence to blank all laws this turn
     this.factionAbilities.onTurnStart(player)
-
-    // Ceasefire: return to owner, owner cannot activate holder's systems this round (Rule 69)
-    this._checkCeasefireReturn(player)
 
     // Player must use strategy card before passing
     const choices = [
@@ -979,7 +972,23 @@ Twilight.prototype.statusPhase = function() {
     // Gain 2 tokens (Sol gets 3 via Versatile ability; Hyper Metabolism adds 1)
     const bonusTokens = this.factionAbilities.getStatusPhaseTokenBonus(player)
     const hyperBase = player.hasTechnology('hyper-metabolism') ? 3 : 2
-    const newTokens = hyperBase + bonusTokens
+    let newTokens = hyperBase + bonusTokens
+
+    // Cybernetic Enhancements (L1Z1X PN): gain 1 additional token during status phase
+    const cePn = player.getPromissoryNotes()
+      .find(n => n.id === 'cybernetic-enhancements' && n.owner !== player.name)
+    if (cePn) {
+      newTokens += 1
+      const l1z1xPlayer = this.players.byName(cePn.owner)
+      player.removePromissoryNote('cybernetic-enhancements', cePn.owner)
+      if (l1z1xPlayer) {
+        l1z1xPlayer.addPromissoryNote('cybernetic-enhancements', cePn.owner)
+      }
+      this.log.add({
+        template: 'Cybernetic Enhancements: {player} gains 1 additional command token. Card returned to {owner}.',
+        args: { player: player.name, owner: cePn.owner },
+      })
+    }
 
     // For now, add to tactics pool. Later: let player distribute.
     const selection = this.actions.choose(player, ['Done'], {
@@ -1409,17 +1418,6 @@ Twilight.prototype._tacticalAction = function(player) {
     return
   }
 
-  // Ceasefire: cannot activate system containing protected player's units (Rule 69)
-  if (this._isCeasefireBlocked(player.name, systemId)) {
-    const protectedPlayer = this.state.ceasefireBlocks[player.name]
-    this.log.add({
-      template: '{player} cannot activate system {system} (Ceasefire protects {target})',
-      args: { player, system: systemId, target: protectedPlayer },
-    })
-    this.log.outdent()
-    return
-  }
-
   player.spendTacticToken()
   this.state.systems[systemId].commandTokens.push(player.name)
 
@@ -1447,6 +1445,9 @@ Twilight.prototype._tacticalAction = function(player) {
 
   // Support for the Throne: return if activating system with giver's units (Rule 69)
   this._checkSupportForTheThroneReturn(player, systemId)
+
+  // Ceasefire: if holder has units in this system, owner cannot move units in (Rule 69)
+  this._checkCeasefire(player, systemId)
 
   // Nullification Field: Xxcha can end the activating player's turn immediately
   if (this.state.nullificationFieldActive) {
@@ -1540,9 +1541,18 @@ Twilight.prototype._tacticalAction = function(player) {
     ionStormShipsBefore = ionUnits ? ionUnits.space.filter(u => res.getUnit(u.type)?.category === 'ship').length : 0
   }
 
-  // Step 2: Move ships
+  // Step 2: Move ships (blocked by Ceasefire — owner cannot move units into system)
   this.state.currentTacticalAction.step = 'move'
-  this._movementStep(player, systemId)
+  if (this.state._ceasefireMovementBlock) {
+    this.log.add({
+      template: 'Ceasefire: {player} cannot move units into the active system',
+      args: { player },
+    })
+  }
+  else {
+    this._movementStep(player, systemId)
+  }
+  delete this.state._ceasefireMovementBlock
 
   // Ion Storm: flip if ships moved into or out of the ion storm system
   if (ionStorm) {
@@ -1771,93 +1781,82 @@ Twilight.prototype._checkSupportForTheThroneReturn = function(player, systemId) 
   }
 }
 
-// Trade Agreement: at start of strategy phase, each holder returns the note
-// and receives TGs equal to the owner's commodity value.
-Twilight.prototype._checkTradeAgreementReturn = function() {
+// Trade Agreement: when owner replenishes commodities, owner gives all
+// commodities to the holder. Return note to owner.
+// Called from onCommoditiesReplenished in factionAbilities.js.
+Twilight.prototype._checkTradeAgreementOnReplenish = function(replenishingPlayer) {
   for (const holder of this.players.all()) {
-    // Collect all trade-agreement notes from other players
-    const tradeAgreements = holder.getPromissoryNotes()
-      .filter(n => n.id === 'trade-agreement' && n.owner !== holder.name)
-
-    for (const noteInfo of tradeAgreements) {
-      const note = holder.removePromissoryNote('trade-agreement', noteInfo.owner)
-      if (!note) {
-        continue
-      }
-
-      const owner = this.players.byName(noteInfo.owner)
-      if (!owner) {
-        continue
-      }
-
-      // Return note to owner
-      owner.addPromissoryNote('trade-agreement', noteInfo.owner)
-
-      // Owner gives holder TGs equal to owner's commodity value
-      const tgAmount = owner.getEffectiveCommodityValue()
-      holder.addTradeGoods(tgAmount)
-
-      this.log.add({
-        template: '{holder} returns Trade Agreement to {owner} and receives {amount} trade goods',
-        args: { holder: holder.name, owner: noteInfo.owner, amount: tgAmount },
-      })
+    if (holder.name === replenishingPlayer.name) {
+      continue
     }
-  }
-}
-
-// Ceasefire: at start of turn, holder returns the note. The owner (giver)
-// cannot activate systems with the holder's units for the rest of the round.
-Twilight.prototype._checkCeasefireReturn = function(player) {
-  const ceasefires = player.getPromissoryNotes()
-    .filter(n => n.id === 'ceasefire' && n.owner !== player.name)
-
-  for (const noteInfo of ceasefires) {
-    const note = player.removePromissoryNote('ceasefire', noteInfo.owner)
-    if (!note) {
+    const pn = holder.getPromissoryNotes()
+      .find(n => n.id === 'trade-agreement' && n.owner === replenishingPlayer.name)
+    if (!pn) {
       continue
     }
 
-    const owner = this.players.byName(noteInfo.owner)
-    if (!owner) {
-      continue
+    // Owner gives all commodities to holder
+    const amount = replenishingPlayer.commodities
+    if (amount > 0) {
+      holder.addTradeGoods(amount)
+      replenishingPlayer.commodities = 0
     }
 
     // Return note to owner
-    owner.addPromissoryNote('ceasefire', noteInfo.owner)
-
-    // Block the owner from activating systems with this player's units
-    this.state.ceasefireBlocks[noteInfo.owner] = player.name
+    holder.removePromissoryNote('trade-agreement', replenishingPlayer.name)
+    replenishingPlayer.addPromissoryNote('trade-agreement', replenishingPlayer.name)
 
     this.log.add({
-      template: '{player} returns Ceasefire to {owner}; {owner} cannot activate systems with {player} units this round',
-      args: { player: player.name, owner: noteInfo.owner },
+      template: 'Trade Agreement: {owner} gives {amount} commodities to {holder}. Card returned.',
+      args: { holder: holder.name, owner: replenishingPlayer.name, amount },
     })
+    break  // only one trade agreement per owner
   }
 }
 
-// Check if a player is blocked from activating a system due to ceasefire.
-Twilight.prototype._isCeasefireBlocked = function(playerName, systemId) {
-  const protectedPlayer = this.state.ceasefireBlocks[playerName]
-  if (!protectedPlayer) {
-    return false
-  }
-
+// Ceasefire: after owner activates a system containing holder's units,
+// owner cannot move units into the active system. Return note to owner.
+Twilight.prototype._checkCeasefire = function(player, systemId) {
   const systemUnits = this.state.units[systemId]
   if (!systemUnits) {
-    return false
+    return
   }
 
-  // Check if protected player has any units in the system
-  if (systemUnits.space.some(u => u.owner === protectedPlayer)) {
-    return true
-  }
-  for (const planetUnits of Object.values(systemUnits.planets)) {
-    if (planetUnits.some(u => u.owner === protectedPlayer)) {
-      return true
+  // Find all other players who hold this player's ceasefire note
+  for (const holder of this.players.all()) {
+    if (holder.name === player.name) {
+      continue
     }
-  }
+    const pn = holder.getPromissoryNotes()
+      .find(n => n.id === 'ceasefire' && n.owner === player.name)
+    if (!pn) {
+      continue
+    }
 
-  return false
+    // Check if holder has any units in the activated system
+    const holderHasUnits =
+      systemUnits.space.some(u => u.owner === holder.name) ||
+      Object.values(systemUnits.planets).some(planetUnits =>
+        planetUnits.some(u => u.owner === holder.name)
+      )
+
+    if (!holderHasUnits) {
+      continue
+    }
+
+    // Block movement into this system
+    this.state._ceasefireMovementBlock = true
+
+    // Return note to owner
+    holder.removePromissoryNote('ceasefire', player.name)
+    player.addPromissoryNote('ceasefire', player.name)
+
+    this.log.add({
+      template: 'Ceasefire: {owner} cannot move units into {system} ({holder} has units). Card returned.',
+      args: { owner: player.name, system: systemId, holder: holder.name },
+    })
+    break  // only one ceasefire note per owner
+  }
 }
 
 
