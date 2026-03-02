@@ -571,6 +571,7 @@ module.exports = function(Twilight) {
       attacker: attackerName,
       defender: defenderName,
     })
+    this.state.currentCombat = { systemId, planetId, type: 'ground', step: 'combat-round' }
 
     // Pre-combat faction abilities (e.g., Yin Indoctrination)
     this.factionAbilities.onGroundCombatStart(systemId, planetId, attackerName, defenderName)
@@ -598,6 +599,7 @@ module.exports = function(Twilight) {
     const MAX_ROUNDS = 20
     while (round < MAX_ROUNDS) {
       round++
+      this.state.currentCombat.round = round
 
       const attackers = planetUnits.filter(u => u.owner === attackerName)
       const defenders = planetUnits.filter(u => u.owner === defenderName)
@@ -683,6 +685,8 @@ module.exports = function(Twilight) {
         })
       }
     }
+
+    delete this.state.currentCombat
   }
 
   Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, hits, destroyerName, hitSource) {

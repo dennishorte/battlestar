@@ -57,6 +57,7 @@ module.exports = function(Twilight) {
       attacker,
       defender,
     })
+    this.state.currentCombat = { systemId, type: 'space', step: 'afb' }
     this.log.indent()
 
     // Mentak Ambush (before AFB)
@@ -102,8 +103,10 @@ module.exports = function(Twilight) {
     let round = 0
     let retreatedPlayer = null
     const MAX_ROUNDS = 20  // safety limit
+    this.state.currentCombat.step = 'combat-round'
     while (round < MAX_ROUNDS) {
       round++
+      this.state.currentCombat.round = round
 
       const attackerShips = systemUnits.space.filter(u => u.owner === attacker)
       const defenderShips = systemUnits.space.filter(u => u.owner === defender)
@@ -144,6 +147,7 @@ module.exports = function(Twilight) {
       })
 
       // Assign hits (auto-assign: sustain damage first, then cheapest units)
+      this.state.currentCombat.step = 'assign-hits'
       this._assignHits(systemId, defender, attackerHits, attacker)
       this._assignHits(systemId, attacker, defenderHits, defender)
 
@@ -151,6 +155,7 @@ module.exports = function(Twilight) {
       this.factionAbilities.afterSpaceCombatRound(systemId, attacker, defender)
 
       // Check if either side wants to retreat (only after first round)
+      this.state.currentCombat.step = 'retreat'
       if (round >= 1) {
       // Check for pending retreat announcements
         const defenderRetreating = this.state.retreatAnnounced?.[defender]
@@ -196,6 +201,7 @@ module.exports = function(Twilight) {
       this._detectCombatSecrets(systemId, defender, attacker, 'space')
     }
 
+    delete this.state.currentCombat
     this.log.outdent()
   }
 
@@ -710,20 +716,27 @@ module.exports = function(Twilight) {
         }
 
         // Step 1: Bombardment
+        this.state.currentInvasion = { systemId, planetId: targetPlanet, step: 'bombardment' }
         this._bombardment(systemId, targetPlanet, player.name)
 
         // Step 2: Space Cannon Defense (PDS fire at landing ground forces)
+        this.state.currentInvasion.step = 'space-cannon-defense'
         this._spaceCannonDefense(systemId, targetPlanet, player.name)
 
         // Step 3: Commit ground forces from space to the planet
+        this.state.currentInvasion.step = 'commit-forces'
         this._commitGroundForces(systemId, targetPlanet, player.name)
 
         // Step 4: Ground combat
+        this.state.currentInvasion.step = 'ground-combat'
         this._groundCombat(systemId, targetPlanet, player.name)
 
         // Step 5: Establish control (pass pre-invasion structure counts)
+        this.state.currentInvasion.step = 'establish-control'
         this._establishControl(systemId, targetPlanet, player.name, preInvasionStructures)
       }
+
+      delete this.state.currentInvasion
 
       // After all invasions, auto-place any remaining ground forces on friendly/empty planets
       const remainingGround = systemUnits.space
