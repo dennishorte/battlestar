@@ -14,12 +14,22 @@ module.exports = {
     })
   },
   onHarvest(game, player) {
-    const grainFields = player.getGrainFieldCount()
-    if (grainFields > 0) {
-      player.addResource('grain', grainFields)
+    let amount = 0
+    for (const field of player.getFieldSpaces()) {
+      if (field.crop === 'grain' && field.cropCount > 0) {
+        const space = player.getSpace(field.row, field.col)
+        space.cropCount -= 1
+        amount += 1
+        if (space.cropCount === 0) {
+          space.crop = null
+        }
+      }
+    }
+    if (amount > 0) {
+      player.addResource('grain', amount)
       game.log.add({
         template: '{player} harvests {amount} additional grain from {card}',
-        args: { player, amount: grainFields , card: this},
+        args: { player, amount, card: this},
       })
     }
   },

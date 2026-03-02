@@ -51,8 +51,8 @@ describe('Scythe Worker', () => {
     t.choose(game, 'Clay Pit')     // micah
 
     // Harvest field phase:
-    //   Normal harvest: 2 grain (1 from each field)
-    //   Scythe Worker: 2 additional grain (both fields still have grain after harvest)
+    //   Normal harvest: 2 grain (1 from each field): fields go to cropCount 2 and 1
+    //   Scythe Worker: 2 additional grain from fields: fields go to cropCount 1 and 0
     // Feeding: dennis pays 4 food
 
     t.testBoard(game, {
@@ -64,8 +64,8 @@ describe('Scythe Worker', () => {
         occupations: ['scythe-worker-a112'],
         farmyard: {
           fields: [
-            { row: 0, col: 2, crop: 'grain', cropCount: 2 },
-            { row: 0, col: 3, crop: 'grain', cropCount: 1 },
+            { row: 0, col: 2, crop: 'grain', cropCount: 1 },
+            { row: 0, col: 3 }, // empty: cropCount 2 → 1 (harvest) → 0 (Scythe Worker)
           ],
         },
       },
