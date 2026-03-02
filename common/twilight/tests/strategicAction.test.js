@@ -157,6 +157,41 @@ describe('Strategic Actions', () => {
       // Micah should now have a command token in sol-home
       expect(game.state.systems['sol-home'].commandTokens).toContain('micah')
     })
+
+    test('primary: deducts command token from affected player (Rule 32)', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'diplomacy', 'trade')
+
+      const micahBefore = game.players.byName('micah')
+      const tacticsBefore = micahBefore.commandTokens.tactics
+
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'sol-home')
+      t.choose(game, 'Pass')  // micah declines diplomacy secondary
+
+      const micah = game.players.byName('micah')
+      // Token placed in sol-home AND deducted from micah's tactics pool
+      expect(game.state.systems['sol-home'].commandTokens).toContain('micah')
+      expect(micah.commandTokens.tactics).toBe(tacticsBefore - 1)
+    })
+
+    test('primary: no token placed if player has no command tokens', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        micah: { commandTokens: { tactics: 0, fleet: 0, strategy: 0 } },
+      })
+      game.run()
+      pickStrategyCards(game, 'diplomacy', 'trade')
+
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'sol-home')
+      // Micah has no tokens — cannot place, no secondary prompt either
+      // (Micah can't use Trade secondary without strategy tokens)
+
+      // No token placed for micah
+      expect(game.state.systems['sol-home'].commandTokens).not.toContain('micah')
+    })
   })
 
   describe('Politics (#3)', () => {
@@ -579,9 +614,9 @@ describe('Strategic Actions', () => {
       t.choose(game, 'Done')  // dennis
       t.choose(game, 'Done')  // micah
 
-      // Dennis: 3 (start) + 3 (leadership) + 3 (status: 2+1 versatile) = 9
+      // Dennis: 3 (start) + 3 (leadership) - 1 (diplomacy token) + 3 (status: 2+1 versatile) = 8
       const dennis = game.players.byName('dennis')
-      expect(dennis.commandTokens.tactics).toBe(9)
+      expect(dennis.commandTokens.tactics).toBe(8)
     })
 
     test('trade goods from Trade persist', () => {
