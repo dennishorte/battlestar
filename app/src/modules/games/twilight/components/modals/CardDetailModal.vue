@@ -143,6 +143,7 @@
           <div class="detail-row" v-if="entry.data.unlockCondition && entry.status === 'locked'">
             <span class="info-key">Unlock:</span>
             <span>{{ entry.data.unlockCondition }}</span>
+            <span v-if="entry.role === 'hero'" class="hero-progress">{{ heroObjectivesScored }}/3 objectives scored</span>
           </div>
           <div class="description-text" v-if="entry.data.description">
             {{ entry.data.description }}
@@ -525,6 +526,14 @@ export default {
         }))
     },
 
+    heroObjectivesScored() {
+      const playerName = this.context?.player
+      if (!playerName) {
+        return 0
+      }
+      return (this.game.state.scoredObjectives?.[playerName] || []).length
+    },
+
     factionData() {
       if (this.type !== 'faction' || !this.id) {
         return null
@@ -867,5 +876,11 @@ export default {
 .attachment-tag {
   font-size: .8em; padding: .1em .35em; border-radius: .15em;
   background: #fff3e0; color: #e65100; font-weight: 500;
+}
+
+.hero-progress {
+  font-size: .85em; font-weight: 600; color: #e65100;
+  background: #fff3e0; padding: .1em .4em; border-radius: .2em;
+  margin-left: auto;
 }
 </style>
