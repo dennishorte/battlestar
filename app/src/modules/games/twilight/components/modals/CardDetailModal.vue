@@ -190,6 +190,114 @@
         </div>
       </div>
 
+      <!-- Card Zone (multi-card list) -->
+      <div v-if="type === 'card-zone' && context">
+        <div v-for="(item, i) in resolvedZoneItems"
+             :key="item.id || i"
+             class="zone-card-item clickable"
+             @click="drillToCard(context.zoneType, item)">
+
+          <!-- Technology items -->
+          <template v-if="context.zoneType === 'technology'">
+            <div class="detail-row">
+              <span class="color-badge" :class="`badge-${item.color}`">{{ item.color }}</span>
+              <span class="zone-item-name">{{ item.name }}</span>
+              <span v-if="item.faction" class="faction-badge">Faction</span>
+              <span v-if="item.isExhausted" class="exhausted-badge">exhausted</span>
+            </div>
+            <div class="detail-row" v-if="item.prerequisites && item.prerequisites.length > 0">
+              <span class="info-key">Prerequisites:</span>
+              <span class="prereq-list">
+                <span v-for="(pre, j) in item.prerequisites"
+                      :key="j"
+                      class="prereq-pip"
+                      :class="`pip-${pre}`"/>
+              </span>
+            </div>
+            <div class="detail-row" v-if="item.stats">
+              <span v-for="(val, key) in item.stats" :key="key" class="stat-entry">
+                {{ key }}: {{ val }}
+              </span>
+            </div>
+            <div class="description-text" v-if="item.description">{{ item.description }}</div>
+          </template>
+
+          <!-- Action Card items -->
+          <template v-if="context.zoneType === 'action-card'">
+            <div class="detail-row">
+              <span class="timing-badge">{{ item.timing }}</span>
+              <span class="zone-item-name">{{ item.name }}</span>
+            </div>
+            <div class="description-text" v-if="item.effect">{{ item.effect }}</div>
+          </template>
+
+          <!-- Relic items -->
+          <template v-if="context.zoneType === 'relic'">
+            <div class="detail-row">
+              <span class="relic-type-badge">{{ item.type }}</span>
+              <span class="zone-item-name">{{ item.name }}</span>
+              <span v-if="item.isExhausted" class="exhausted-badge">exhausted</span>
+              <span v-if="item.exhaust" class="info-key">exhaustable</span>
+              <span v-if="item.purge" class="info-key">purge to use</span>
+            </div>
+            <div class="description-text" v-if="item.effect">{{ item.effect }}</div>
+          </template>
+
+          <!-- Promissory Note items -->
+          <template v-if="context.zoneType === 'promissory-note'">
+            <div class="detail-row">
+              <span class="zone-item-name">{{ item.name || item.id }}</span>
+              <span class="prom-owner">({{ item.owner }})</span>
+              <span v-if="item.timing" class="timing-badge">{{ item.timing }}</span>
+            </div>
+            <div class="description-text" v-if="item.description">{{ item.description }}</div>
+          </template>
+
+          <!-- Scored Objective items -->
+          <template v-if="context.zoneType === 'scored-objective'">
+            <div class="detail-row">
+              <span v-if="item.stage" class="stage-badge" :class="`stage-${item.stage}`">Stage {{ item.stage }}</span>
+              <span v-if="item.points" class="points-badge">{{ item.points }} VP</span>
+              <span class="zone-item-name">{{ item.name }}</span>
+            </div>
+            <div class="condition-text" v-if="item.condition">{{ item.condition }}</div>
+          </template>
+
+          <!-- Secret Objective items -->
+          <template v-if="context.zoneType === 'secret-objective'">
+            <div class="detail-row">
+              <span class="secret-badge">Secret</span>
+              <span v-if="item.points" class="points-badge">{{ item.points }} VP</span>
+              <span class="zone-item-name">{{ item.name }}</span>
+            </div>
+            <div class="condition-text" v-if="item.condition">{{ item.condition }}</div>
+          </template>
+
+          <!-- Planet items -->
+          <template v-if="context.zoneType === 'planet'">
+            <div class="detail-row">
+              <span class="zone-item-name">{{ item.name }}</span>
+              <span v-if="item.exhausted" class="exhausted-badge">exhausted</span>
+              <span class="planet-stats-badge">{{ item.resources }}R / {{ item.influence }}I</span>
+              <span v-if="item.techSpecialty" class="tech-spec" :class="`spec-${item.techSpecialty}`">{{ item.techSpecialty }}</span>
+              <span v-for="spec in item.attachmentTechSpecialties"
+                    :key="spec"
+                    class="tech-spec"
+                    :class="`spec-${spec}`">{{ spec }}</span>
+            </div>
+            <div class="detail-row" v-if="item.trait || item.legendary">
+              <span v-if="item.trait" class="trait-badge" :class="`trait-${item.trait}`">{{ item.trait }}</span>
+              <span v-if="item.legendary" class="legendary-badge">Legendary</span>
+            </div>
+            <div class="detail-row" v-if="item.hasAttachments">
+              <span class="info-key">Has attachments</span>
+            </div>
+          </template>
+
+        </div>
+        <div v-if="resolvedZoneItems.length === 0" class="empty-zone">No cards</div>
+      </div>
+
       <!-- Faction Detail -->
       <div v-if="type === 'faction' && factionData">
 
@@ -364,6 +472,18 @@ export default {
       if (this.type === 'faction-ability') {
         return this.context?.name || 'Faction Ability'
       }
+      if (this.type === 'card-zone') {
+        const labels = {
+          technology: 'Technologies',
+          'action-card': 'Action Cards',
+          relic: 'Relics',
+          'promissory-note': 'Promissory Notes',
+          'scored-objective': 'Scored Objectives',
+          'secret-objective': 'Secret Objectives',
+          planet: 'Planets',
+        }
+        return labels[this.context?.zoneType] || 'Cards'
+      }
       if (this.type === 'faction' && this.factionData) {
         return this.factionData.name
       }
@@ -534,6 +654,37 @@ export default {
       return (this.game.state.scoredObjectives?.[playerName] || []).length
     },
 
+    resolvedZoneItems() {
+      if (this.type !== 'card-zone' || !this.context?.items) {
+        return []
+      }
+      const { zoneType, items } = this.context
+      return items.map(item => {
+        if (zoneType === 'scored-objective' || zoneType === 'secret-objective') {
+          const obj = res.getObjective(item.id)
+          return { ...item, ...(obj || {}) }
+        }
+        if (zoneType === 'promissory-note') {
+          let note = res.getPromissoryNote(item.id)
+          if (!note && item.owner) {
+            const ownerPlayer = this.game.players.byName(item.owner)
+            if (ownerPlayer?.factionId) {
+              const faction = res.getFaction(ownerPlayer.factionId)
+              if (faction?.promissoryNote?.id === item.id) {
+                note = faction.promissoryNote
+              }
+            }
+          }
+          return { ...item, ...(note || {}) }
+        }
+        if (zoneType === 'planet') {
+          const planet = res.getPlanet(item.id)
+          return { ...item, trait: planet?.trait || null, legendary: planet?.legendary || false }
+        }
+        return item
+      })
+    },
+
     factionData() {
       if (this.type !== 'faction' || !this.id) {
         return null
@@ -543,6 +694,22 @@ export default {
   },
 
   methods: {
+    drillToCard(zoneType, item) {
+      const typeMap = {
+        'scored-objective': 'objective',
+        'secret-objective': 'objective',
+      }
+      const type = typeMap[zoneType] || zoneType
+      let context = null
+      if (zoneType === 'promissory-note') {
+        const ownerPlayer = this.game.players.byName(item.owner)
+        context = { owner: item.owner, factionId: ownerPlayer?.factionId || null }
+      }
+      this.ui.modals.cardDetail.type = type
+      this.ui.modals.cardDetail.id = item.id
+      this.ui.modals.cardDetail.context = context
+    },
+
     leaderStatusClassFor(status) {
       if (status === 'ready' || status === 'unlocked') {
         return 'status-ready'
@@ -882,5 +1049,43 @@ export default {
   font-size: .85em; font-weight: 600; color: #e65100;
   background: #fff3e0; padding: .1em .4em; border-radius: .2em;
   margin-left: auto;
+}
+
+.zone-card-item {
+  padding: .5em 0;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.zone-card-item:last-child {
+  border-bottom: none;
+}
+
+.zone-card-item:hover {
+  background: rgba(0, 0, 0, .03);
+}
+
+.zone-item-name {
+  font-weight: 600;
+  font-size: .95em;
+}
+
+.planet-stats-badge {
+  font-family: monospace;
+  font-weight: 500;
+  font-size: .85em;
+  color: #555;
+  margin-left: auto;
+}
+
+.prom-owner {
+  color: #888;
+  font-size: .9em;
+}
+
+.empty-zone {
+  color: #999;
+  font-style: italic;
+  padding: .5em 0;
 }
 </style>
