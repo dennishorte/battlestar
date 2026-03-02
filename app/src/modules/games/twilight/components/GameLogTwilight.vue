@@ -9,7 +9,7 @@ import { useGameLogProvider } from '@/modules/games/common/composables/useGameLo
 import { defaultMatchers } from '@/modules/games/common/composables/useLogTokenizer'
 import CardName from '@/modules/games/common/components/log/CardName.vue'
 import LocName from '@/modules/games/common/components/log/LocName.vue'
-import PlayerName from '@/modules/games/common/components/log/PlayerName.vue'
+import TiPlayerToken from './log/TiPlayerToken.vue'
 import TiCardToken from './log/TiCardToken.vue'
 import TiTechToken from './log/TiTechToken.vue'
 import TiObjectiveToken from './log/TiObjectiveToken.vue'
@@ -132,7 +132,7 @@ useGameLogProvider({
   ],
   tokenComponents: {
     card: CardName,
-    player: PlayerName,
+    player: TiPlayerToken,
     loc: LocName,
     ticard: TiCardToken,
     titech: TiTechToken,
