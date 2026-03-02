@@ -3,9 +3,9 @@ const res = require('../res/index.js')
 
 module.exports = function(Twilight) {
 
-  Twilight.prototype._strategicAction = function(player) {
+  Twilight.prototype._strategicAction = function(player, cardId) {
     this.log.indent()
-    const usedCardId = player.useStrategyCard()
+    const usedCardId = player.useStrategyCard(cardId)
 
     this.log.add({
       template: '{player} uses {card}',
