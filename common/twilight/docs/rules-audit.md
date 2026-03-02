@@ -242,7 +242,7 @@ These sections are fully implemented and have adequate test coverage:
 
 #### 9. Anomalies
 - ~~Missing IMPL: Vuil'raith Dimensional Tear dynamic gravity rift~~ — **IMPLEMENTED** in `twilight.js` (`_getDimensionalTearOwner`), `Galaxy.js` (pathfinding +1 move), `movement.js` (die roll with owner exemption). Tested in `rulesAuditLow.test.js`
-- Missing: Tests for systems that are two different anomalies simultaneously (edge case: no standard tiles have dual anomalies)
+- ~~Missing: Tests for systems that are two different anomalies simultaneously~~ — **NOT APPLICABLE**: No standard tiles have dual anomalies. Dimensional Tear (dynamic gravity rift) could theoretically overlap with a tile anomaly, but code handles each anomaly type independently (movement.js checks gravity rift, movement.js checks nebula move clamp separately)
 
 #### 10. Anti-Fighter Barrage
 - ~~Missing test: AFB fires even when no fighters present (hits have no effect)~~ — **TESTED** in `spaceCombat.test.js`
@@ -260,11 +260,11 @@ These sections are fully implemented and have adequate test coverage:
 #### 18. Combat Attribute
 - ~~Missing test: Burst icon mechanics (multi-dice units)~~ — **TESTED** in `rulesAuditLow.test.js` (war sun 3-dice burst)
 
-#### 28. Deals
-- Binding vs non-binding distinction not enforced (social contract only)
+#### 28. Deals — BY DESIGN
+- ~~Binding vs non-binding distinction not enforced~~ — Social contract only; engine cannot enforce player honesty. Transactions (trade goods, promissory notes) are enforced mechanically; deal promises are inherently social
 
-#### 39. Game Board
-- Missing: Explicit edge detection function (inferred from position)
+#### 39. Game Board — HANDLED BY ARCHITECTURE
+- ~~Missing: Explicit edge detection function~~ — Galaxy.js hex grid adjacency handles edge systems naturally (fewer neighbors). No game mechanic explicitly references "edge" systems; adjacency is computed dynamically via BFS pathfinding
 
 #### 42. Ground Combat
 - ~~Missing test: Draw scenario (both sides eliminated simultaneously)~~ — **TESTED** in `invasion.test.js`
@@ -283,7 +283,7 @@ These sections are fully implemented and have adequate test coverage:
 
 #### 58. Movement
 - ~~Missing test: Ship moving through own command tokens~~ — **TESTED** in `rulesAuditLow.test.js`
-- Missing: Explicit handling that ability movement follows ability rules, not normal movement rules
+- ~~Missing: Explicit handling that ability movement follows ability rules~~ — **HANDLED BY ARCHITECTURE**: Each ability implements its own movement logic (direct unit splice/push) rather than calling `_movementStep`. Tactical movement uses `_movementStep` (activation, command tokens, pathfinding, capacity); ability movement uses per-ability code that bypasses these restrictions
 
 #### 62. Opponent — ENFORCED BY ARCHITECTURE
 - ~~Missing IMPL+test: Non-participants can't use opponent-targeting abilities~~ — Combat hooks only fire for `[attacker, defender]` (2 players). Non-participants never have their faction abilities called during combat. See `factionAbilities.js:892` — `onSpaceCombatStart` iterates `[[attacker, defender], [defender, attacker]]`.
@@ -375,7 +375,7 @@ These sections are fully implemented and have adequate test coverage:
 28. ~~**Captured units block production** (Rule 17.5)~~ — **IMPLEMENTED** — `_countUnitsOnBoard` includes captured units
 
 ### MEDIUM (Secondary features)
-14. ~~**Diplomacy Mecatol exclusion** (Rule 32)~~ — **IMPLEMENTED**
+14. ~~**Diplomacy token deduction** (Rule 32)~~ — **IMPLEMENTED** — Token deduction from command sheet + Mecatol exclusion
 15. ~~**Warfare token redistribution** (Rule 99)~~ — **IMPLEMENTED** — Uses `redistribute-tokens` action
 16. ~~**Legendary Planets** (Rule 53)~~ — **IMPLEMENTED** — 4 standard + Custodia Vigilia abilities
 17. ~~**3-4 player dual strategy card pass restriction** (Rules 3.4, 82.2)~~ — **IMPLEMENTED** — `hasUsedStrategyCard()` already checks all cards
