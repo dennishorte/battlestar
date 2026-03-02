@@ -71,7 +71,7 @@ module.exports = {
   promissoryNote: {
     id: 'cybernetic-enhancements',
     name: 'Cybernetic Enhancements',
-    description: 'At the start of your turn: Remove 1 token from the L1Z1X player\'s strategy pool, if able, and return it to their reinforcements. Then, place 1 command token from your reinforcements in your strategy pool. Then, return this card to the L1Z1X player.',
+    description: 'When you gain command tokens during the status phase: Gain 1 additional command token. Then, return this card to the L1Z1X player.',
   },
   factionTechnologies: [
     {

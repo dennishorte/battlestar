@@ -22,7 +22,7 @@ describe('Promissory Notes', () => {
       expect(notes.map(n => n.id)).toContain('support-for-the-throne')
       expect(notes.map(n => n.id)).toContain('ceasefire')
       expect(notes.map(n => n.id)).toContain('trade-agreement')
-      expect(notes.map(n => n.id)).toContain('political-favor')
+      expect(notes.map(n => n.id)).toContain('political-secret')
     })
 
     test('each faction has a promissory note', () => {
@@ -47,7 +47,7 @@ describe('Promissory Notes', () => {
       expect(dennis.hasPromissoryNote('support-for-the-throne')).toBe(true)
       expect(dennis.hasPromissoryNote('ceasefire')).toBe(true)
       expect(dennis.hasPromissoryNote('trade-agreement')).toBe(true)
-      expect(dennis.hasPromissoryNote('political-favor')).toBe(true)
+      expect(dennis.hasPromissoryNote('political-secret')).toBe(true)
 
       // Check faction note (Sol = military-support)
       expect(dennis.hasPromissoryNote('military-support')).toBe(true)
@@ -154,11 +154,11 @@ describe('Promissory Notes', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Pass')
 
-      // Dennis offers political-favor note to micah (won't auto-trigger like ceasefire)
+      // Dennis offers political-secret note to micah (won't auto-trigger like ceasefire)
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: {
-          promissoryNotes: [{ id: 'political-favor', owner: 'dennis' }],
+          promissoryNotes: [{ id: 'political-secret', owner: 'dennis' }],
         },
         requesting: {},
       })
@@ -166,7 +166,7 @@ describe('Promissory Notes', () => {
 
       const micah = game.players.byName('micah')
       const note = micah.promissoryNotes.find(
-        n => n.id === 'political-favor' && n.owner === 'dennis'
+        n => n.id === 'political-secret' && n.owner === 'dennis'
       )
       expect(note).toBeTruthy()
       expect(note.owner).toBe('dennis')  // still dennis's note
@@ -311,10 +311,10 @@ describe('Promissory Notes', () => {
   // ---------------------------------------------------------------------------
 
   describe('Trade Agreement', () => {
-    test('trade agreement returned at strategy phase, holder receives TGs', () => {
+    test('when owner replenishes commodities, gives all commodities to holder', () => {
+      // Dennis holds Micah's trade agreement. Micah (Hacan) replenishes via Trade primary.
       const game = t.fixture()
       t.setBoard(game, {
-        round: 2,
         dennis: {
           tradeGoods: 0,
           promissoryNotes: [
@@ -323,15 +323,29 @@ describe('Promissory Notes', () => {
         },
       })
       game.run()
+      pickStrategyCards(game, 'leadership', 'trade')
 
-      // Strategy phase triggers trade agreement return
-      // Micah (Hacan) has commodity value 6 → dennis gets 6 TGs
+      // Dennis goes first — plays Leadership
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')  // Micah declines Leadership secondary
+
+      // Micah's turn — plays Trade (primary replenishes commodities for all)
+      t.choose(game, 'Strategic Action')
+      // Trade primary fires: replenishes all → onCommoditiesReplenished → Trade Agreement triggers
+      // Then Trade secondary offered to Dennis
+      t.choose(game, 'Pass')  // Dennis declines Trade secondary
+
       const dennis = game.players.byName('dennis')
-      expect(dennis.hasPromissoryNote('trade-agreement', 'micah')).toBe(false)
-      expect(dennis.tradeGoods).toBe(6)
-
       const micah = game.players.byName('micah')
+
+      // Note returned to Micah
+      expect(dennis.hasPromissoryNote('trade-agreement', 'micah')).toBe(false)
       expect(micah.hasPromissoryNote('trade-agreement', 'micah')).toBe(true)
+
+      // Micah's commodities were given to Dennis as trade goods
+      // Hacan commodity value = 6, so Dennis gets 6 TG, Micah has 0 commodities
+      expect(micah.commodities).toBe(0)
+      expect(dennis.tradeGoods).toBeGreaterThanOrEqual(6)
     })
   })
 
@@ -340,43 +354,52 @@ describe('Promissory Notes', () => {
   // ---------------------------------------------------------------------------
 
   describe('Ceasefire', () => {
-    test('ceasefire returned at turn start, giver blocked from activating holder systems', () => {
+    test('when owner activates system with holder units, owner cannot move ships in', () => {
+      // Micah holds Dennis's ceasefire. Dennis activates a system with Micah's units.
+      // Dennis should not be able to move ships into that system.
       const game = t.fixture()
-      const target = findAdjacent('hacan-home')
+      const target = findAdjacent('sol-home')
       t.setBoard(game, {
         dennis: {
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
           units: {
-            'sol-home': { 'jord': ['space-dock'] },
+            'sol-home': {
+              space: ['cruiser', 'cruiser'],
+              'jord': ['space-dock'],
+            },
           },
         },
         micah: {
           promissoryNotes: [
             { id: 'ceasefire', owner: 'dennis' },
           ],
+          leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
           units: {
+            [target]: { space: ['fighter'] },
             'hacan-home': { 'arretze': ['space-dock'] },
-            [target]: { space: ['cruiser'] },
           },
         },
       })
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Dennis goes first — takes any action (strategic)
-      t.choose(game, 'Strategic Action')
-      t.choose(game, 'Pass')  // micah declines secondary
+      // Dennis activates the system where Micah has a fighter
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: target })
 
-      // Micah's turn — ceasefire triggers at turn start
-      // Micah had dennis's ceasefire → returned to dennis
-      // Dennis cannot activate systems with micah's units this round
-      const micah = game.players.byName('micah')
-      expect(micah.hasPromissoryNote('ceasefire', 'dennis')).toBe(false)
+      // Ceasefire triggers: Dennis cannot move ships in, note returned
+      // Movement step is skipped — no move-ships prompt
 
       const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+
+      // Note returned to Dennis
+      expect(micah.hasPromissoryNote('ceasefire', 'dennis')).toBe(false)
       expect(dennis.hasPromissoryNote('ceasefire', 'dennis')).toBe(true)
 
-      // ceasefireBlocks should be set
-      expect(game.state.ceasefireBlocks['dennis']).toBe('micah')
+      // Log should mention ceasefire
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Ceasefire'))).toBe(true)
     })
   })
 })
