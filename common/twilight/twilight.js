@@ -1418,6 +1418,7 @@ Twilight.prototype._tacticalAction = function(player) {
   this.state.currentTacticalAction = {
     activatingPlayer: player.name,
     systemId: systemId,
+    step: 'activate',
     promissoryNotesAtStart: {},
   }
   for (const p of this.players.all()) {
@@ -1441,6 +1442,7 @@ Twilight.prototype._tacticalAction = function(player) {
   // Nullification Field: Xxcha can end the activating player's turn immediately
   if (this.state.nullificationFieldActive) {
     delete this.state.nullificationFieldActive
+    this.state.currentTacticalAction.step = null
     this.log.outdent()
     return
   }
@@ -1448,6 +1450,7 @@ Twilight.prototype._tacticalAction = function(player) {
   // Mahact Commander (Il Na Viroset): reactivated a system with own token — end turn
   if (this.state.mahactReactivation) {
     delete this.state.mahactReactivation
+    this.state.currentTacticalAction.step = null
     this.log.outdent()
     return
   }
@@ -1455,6 +1458,7 @@ Twilight.prototype._tacticalAction = function(player) {
   // Mahact Mech (Starlancer): opponent activated system with Mahact mech — end their turn
   if (this.state.mahactMechEndTurn) {
     delete this.state.mahactMechEndTurn
+    this.state.currentTacticalAction.step = null
     this.log.outdent()
     return
   }
@@ -1528,6 +1532,7 @@ Twilight.prototype._tacticalAction = function(player) {
   }
 
   // Step 2: Move ships
+  this.state.currentTacticalAction.step = 'move'
   this._movementStep(player, systemId)
 
   // Ion Storm: flip if ships moved into or out of the ion storm system
@@ -1563,6 +1568,7 @@ Twilight.prototype._tacticalAction = function(player) {
   this._spaceCannonOffense(player, systemId)
 
   // Step 4: Space combat (Titans Coalescence forces combat if flagship present)
+  this.state.currentTacticalAction.step = 'combat'
   // Track whether combat actually occurred (need 2+ players with ships)
   const preCombatOwners = new Set(
     (this.state.units[systemId]?.space || []).map(u => u.owner)
@@ -1576,9 +1582,11 @@ Twilight.prototype._tacticalAction = function(player) {
   }
 
   // Step 5: Invasion (Coalescence: force ground combat if Titans mech on planet)
+  this.state.currentTacticalAction.step = 'invade'
   this._invasionStep(player, systemId)
 
   // Step 6: Production
+  this.state.currentTacticalAction.step = 'produce'
   this._productionStep(player, systemId)
 
   // Clear aetherpassage grant
@@ -1602,6 +1610,7 @@ Twilight.prototype._tacticalAction = function(player) {
   // Crown of Emphidia: exhaust to explore a controlled planet after tactical action
   this._offerCrownOfEmphidiaAfterTactical(player)
 
+  this.state.currentTacticalAction.step = null
   this.log.outdent()
 }
 

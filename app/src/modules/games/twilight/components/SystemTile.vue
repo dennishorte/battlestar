@@ -63,8 +63,17 @@
       </div>
 
       <!-- Wormholes (native + gamma tokens + ion storm) -->
-      <div class="wormhole-badge" v-if="allWormholes.length > 0">
+      <div class="wormhole-badge" v-if="allWormholes.length > 0 || isWormholeNexus">
         <span v-for="w in allWormholes" :key="w" class="wormhole-symbol">{{ wormholeSymbol(w) }}</span>
+        <template v-if="isWormholeNexus && !nexusActive">
+          <span class="wormhole-symbol wormhole-inactive">&alpha;</span>
+          <span class="wormhole-symbol wormhole-inactive">&beta;</span>
+        </template>
+      </div>
+
+      <!-- Nexus badge -->
+      <div v-if="isWormholeNexus" class="nexus-badge" :class="{ 'nexus-active': nexusActive }">
+        NEXUS
       </div>
 
       <!-- Ion storm indicator -->
@@ -245,8 +254,20 @@ export default {
       return token
     },
 
+    isWormholeNexus() {
+      return this.tileData.id === 82
+    },
+
+    nexusActive() {
+      return this.isWormholeNexus && !!this.game.state.wormholeNexusActive
+    },
+
     allWormholes() {
-      const native = this.tileData.wormholes || []
+      let native = this.tileData.wormholes || []
+      // Wormhole Nexus: when inactive, only gamma is active
+      if (this.isWormholeNexus && !this.nexusActive) {
+        native = ['gamma']
+      }
       const wormholes = [...native]
 
       // Gamma wormhole tokens from exploration
@@ -575,6 +596,25 @@ export default {
   font-size: 1em;
   color: #aef;
   font-weight: 700;
+}
+
+.wormhole-inactive {
+  opacity: .35;
+}
+
+.nexus-badge {
+  font-size: .5em;
+  font-weight: 700;
+  padding: .05em .25em;
+  border-radius: .15em;
+  background: rgba(128, 128, 128, .6);
+  color: #aaa;
+  letter-spacing: .05em;
+}
+
+.nexus-badge.nexus-active {
+  background: rgba(0, 180, 80, .6);
+  color: #cfc;
 }
 
 .ion-storm-badge {

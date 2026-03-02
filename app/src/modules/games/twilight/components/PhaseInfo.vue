@@ -5,6 +5,19 @@
       <span class="round-badge" v-if="round > 0">Round {{ round }}</span>
     </div>
 
+    <!-- Tactical action step breadcrumb -->
+    <div class="tactical-breadcrumb" v-if="tacticalStep">
+      <span
+        v-for="(s, i) in tacticalSteps"
+        :key="s.id"
+        class="tac-step"
+        :class="s.status"
+      >
+        <span v-if="i > 0" class="tac-arrow">&rsaquo;</span>
+        {{ s.label }}
+      </span>
+    </div>
+
     <div class="phase-details">
       <div class="detail-row" v-if="speaker">
         <span class="detail-label">Speaker:</span>
@@ -119,6 +132,28 @@ export default {
 
     phaseClass() {
       return `phase-${this.phase}`
+    },
+
+    tacticalStep() {
+      if (this.phase !== 'action') {
+        return null
+      }
+      return this.game.state.currentTacticalAction?.step || null
+    },
+
+    tacticalSteps() {
+      const steps = [
+        { id: 'activate', label: 'Activate' },
+        { id: 'move', label: 'Move' },
+        { id: 'combat', label: 'Combat' },
+        { id: 'invade', label: 'Invade' },
+        { id: 'produce', label: 'Produce' },
+      ]
+      const currentIdx = steps.findIndex(s => s.id === this.tacticalStep)
+      return steps.map((s, i) => ({
+        ...s,
+        status: i < currentIdx ? 'completed' : i === currentIdx ? 'active' : 'future',
+      }))
     },
 
     speaker() {
@@ -263,6 +298,41 @@ export default {
   font-size: .8em;
   color: #666;
   font-weight: 600;
+}
+
+.tactical-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: .15em;
+  padding: .2em .5em;
+  background: #e8f5e9;
+  border-radius: .2em;
+  margin-bottom: .25em;
+  font-size: .75em;
+}
+
+.tac-step {
+  display: inline-flex;
+  align-items: center;
+  gap: .15em;
+}
+
+.tac-step.completed {
+  color: #888;
+}
+
+.tac-step.active {
+  color: #198754;
+  font-weight: 700;
+}
+
+.tac-step.future {
+  color: #bbb;
+}
+
+.tac-arrow {
+  color: #aaa;
+  font-size: 1.1em;
 }
 
 .phase-details {

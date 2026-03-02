@@ -22,6 +22,11 @@ The following items have been implemented:
 - **VP target fix** — Dynamic `vpTarget` computed; VP bars scale to target instead of hardcoded 10
 - **Active laws display** — PhaseInfo shows laws from `game.state.activeLaws` with purple border, clickable to open detail
 - **Public objectives area** — PhaseInfo lists revealed objectives with stage I (green) / stage II (blue) borders and colored scorer pips
+- **Player name tokens in log** — TiPlayerToken.vue renders player names as colored chips with contrast text in game log
+- **Reinforcements / unit supply display** — Collapsible "Supply" section in PlayerPanel showing remaining/limit for 9 unit types, color-coded green/orange/red
+- **Wormhole Nexus activation state** — SystemTile shows only active γ when nexus inactive, grayed-out α β when inactive, NEXUS badge with green/gray state
+- **Off-map system rendering** — GalaxyMap filters off-map systems (q≥50 or r≥50) from hex grid, renders in separate panel below; fixes Creuss home viewport distortion
+- **Tactical action step tracker** — Engine tracks `currentTacticalAction.step` through activate/move/combat/invade/produce; PhaseInfo shows breadcrumb
 
 ---
 
@@ -35,10 +40,8 @@ The following items have been implemented:
 
 ### 2. Player Panel
 
-#### Missing: Reinforcements / unit supply display
-**Rules**: 72.1, 96.2, 23.4 -- Players need to see how many units remain in their reinforcements. Unit limits per player: 3 space docks, 10 fighters, 6 PDS, 8 destroyers, 8 cruisers, 2 war suns, 12 infantry, 4 carriers, 5 dreadnoughts, 1 flagship, 4 mechs.
-**Current**: No reinforcements display anywhere in the UI. Players must mentally track remaining units.
-**Recommendation**: Add a collapsible "Supply" section to PlayerPanel showing remaining unit counts per type.
+#### ~~Reinforcements / unit supply display~~ **DONE**
+Collapsible "Supply" section in PlayerPanel shows remaining/limit for 9 limited unit types (WS, FS, DN, CV, CR, DD, MH, PDS, SD), color-coded green/orange/red.
 
 #### Missing: Captured units display
 **Rules**: 17.1, 17.3 -- Captured ships/mechs are placed on the capturing player's faction sheet. Captured fighters/infantry are represented by tokens.
@@ -49,10 +52,8 @@ The following items have been implemented:
 
 ### 3. Phase and Step Indicators
 
-#### Missing: Tactical action step tracker
-**Rules**: 89.1-89.5 -- Tactical actions follow five sequential steps: Activation, Movement, Space Combat, Invasion, Production.
-**Current**: PhaseInfo shows "Action Phase" but not which step of a tactical action is active. Players must infer the current step from the choices presented.
-**Recommendation**: When a tactical action is in progress, show a step indicator (e.g., highlighted breadcrumb: Activate > **Move** > Combat > Invade > Produce).
+#### ~~Tactical action step tracker~~ **DONE**
+Engine sets `currentTacticalAction.step` through activate/move/combat/invade/produce (null on early returns and completion). PhaseInfo shows green breadcrumb with completed/active/future styling.
 
 #### Missing: Combat step tracker
 **Rules**: 78.3-78.7 -- Space combat has sub-steps: Anti-Fighter Barrage (round 1 only), Announce Retreats, Roll Dice, Assign Hits, Retreat.
@@ -130,10 +131,8 @@ Five dedicated action UIs exist: ActivateSystem, MoveShips, ProduceUnits, TradeO
 
 Existing log tokens: TiCardToken, TiTechToken, TiObjectiveToken, TiRelicToken
 
-#### Missing: Player name tokens in log
-**Rules**: Multiple -- Player names appear frequently in log entries.
-**Current**: Player names in log entries are plain text.
-**Recommendation**: Color player names in log entries with the player's faction color for quick scanning.
+#### ~~Player name tokens in log~~ **DONE**
+TiPlayerToken.vue renders player names as colored chips with backgroundColor + contrast text color. Wired into GameLogTwilight.vue replacing generic PlayerName component.
 
 #### Missing: Planet/system tokens in log
 **Current**: Planet and system references in log entries are plain text.
@@ -164,18 +163,11 @@ Existing log tokens: TiCardToken, TiTechToken, TiObjectiveToken, TiRelicToken
 
 ### 9. Off-Map Systems (GalaxyMap)
 
-#### Missing: Off-map system rendering (Creuss home, Wormhole Nexus)
-**Rules**: 39.5, 51.3, 101.4a -- The Ghosts of Creuss home system is placed to the side of the game board (not in the hex grid), connected only via delta wormhole. The Wormhole Nexus (tile 82) is placed on the edge of the game board.
-**Current**: GalaxyMap.vue renders ALL systems from `game.state.systems` at hex coordinates with no concept of "off-map" or "edge" systems.
-- **Creuss home** (tile 51) is placed at sentinel position `{q: 99, r: 99}` during initialization, which would render far off-screen or cause viewport issues. It is connected to the on-board Creuss Gate (tile 17) via delta wormhole.
-- **Wormhole Nexus** (tile 82) is defined as `type: 'blue'` and placed as a regular hex tile, taking a normal tile slot instead of sitting on the edge.
-**Engine**: Adjacency works correctly via wormhole matching in `Galaxy.js` regardless of position — no engine changes needed.
-**Recommendation**: Add an "off-map systems" panel adjacent to the galaxy map (e.g., below or beside it) that renders systems flagged as off-map. GalaxyMap should exclude these from the hex grid. Systems to include: Creuss home (always, when Ghosts of Creuss are in the game) and Wormhole Nexus (if the game uses PoK exploration). Each off-map tile should show the same information as regular SystemTile (units, planets, wormholes, command tokens).
+#### ~~Off-map system rendering (Creuss home, Wormhole Nexus)~~ **DONE**
+GalaxyMap filters systems with q≥50 or r≥50 into a separate "Off-Map" panel below the hex grid. Off-map tiles render at fixed hexSize=40, remain fully interactive (click, highlights). Fixes Creuss home (q:99, r:99) distorting the viewport.
 
-#### Missing: Wormhole Nexus activation state display
-**Rules**: 101.4a -- The Wormhole Nexus starts inactive (gamma wormhole only) and activates when a player moves ships into or through it (adding alpha and beta wormholes).
-**Current**: `game.state.wormholeNexusActive` is tracked in state. `Galaxy.js._getTileWormholes()` correctly filters wormholes based on this flag. However, there is no visual indicator on the tile showing its activation state or which wormholes are currently active.
-**Recommendation**: Show the nexus tile's current wormhole set (γ only when inactive; α+β+γ when active) and a visual indicator of its activation state.
+#### ~~Wormhole Nexus activation state display~~ **DONE**
+SystemTile checks `wormholeNexusActive` for tile 82. When inactive: only γ is active, α β shown grayed-out. NEXUS badge shows green when active, gray when inactive.
 
 ---
 
@@ -190,9 +182,9 @@ Existing log tokens: TiCardToken, TiTechToken, TiObjectiveToken, TiRelicToken
 6. ~~Available (ready) resources/influence totals~~ **DONE**
 
 ### Medium Priority (quality of life)
-7. Off-map system rendering (Creuss home, Wormhole Nexus)
-8. Tactical action step tracker
-9. Reinforcements display
+7. ~~Off-map system rendering (Creuss home, Wormhole Nexus)~~ **DONE**
+8. ~~Tactical action step tracker~~ **DONE**
+9. ~~Reinforcements display~~ **DONE**
 10. Agenda voting UI
 11. ~~Active laws display~~ **DONE**
 12. ~~Planet controller colors on map~~ **DONE**
@@ -202,7 +194,7 @@ Existing log tokens: TiCardToken, TiTechToken, TiObjectiveToken, TiRelicToken
 16. Influence/resource spending UI
 
 ### Lower Priority (polish)
-17. Wormhole Nexus activation state display
+17. ~~Wormhole Nexus activation state display~~ **DONE**
 18. ~~Exhausted relic/tech indicators~~ **DONE**
 19. Captured units display
 20. Combat/invasion/status step trackers
@@ -212,4 +204,4 @@ Existing log tokens: TiCardToken, TiTechToken, TiObjectiveToken, TiRelicToken
 24. Blockade indicators
 25. Neighbor indicators
 26. Commander/hero unlock progress
-27. Log entry enhancements (colored names, clickable references)
+27. ~~Log entry enhancements (colored names, clickable references)~~ **DONE** (player names; planet/system tokens still pending)
