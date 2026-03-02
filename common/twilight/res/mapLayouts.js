@@ -59,7 +59,7 @@ const layout6p = {
   // Ring 1 (6 tiles) + Ring 2 (12 tiles) + remaining Ring 3 (12 tiles) = 30 tiles
   ring1: hexRing({ q: 0, r: 0 }, 1),
   ring2: hexRing({ q: 0, r: 0 }, 2),
-  // Ring 3 minus home positions (filled dynamically)
+  outerPositions: hexRing({ q: 0, r: 0 }, 3),
   blueTileCount: 18,
   redTileCount: 12,
 }
