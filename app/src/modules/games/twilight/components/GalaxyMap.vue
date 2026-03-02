@@ -1,46 +1,68 @@
 <template>
-  <div class="galaxy-map" ref="wrapper">
-    <div class="galaxy-viewport" :style="viewportStyle">
-      <!-- Hyperlane route paths -->
-      <svg v-if="hyperlanePaths.length > 0" class="hyperlane-overlay">
-        <defs>
-          <filter id="hyperlane-glow"
-                  filterUnits="userSpaceOnUse"
-                  x="-10000"
-                  y="-10000"
-                  width="20000"
-                  height="20000">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-        <path
-          v-for="(p, i) in hyperlanePaths"
-          :key="'glow' + i"
-          :d="p.d"
-          class="hyperlane-glow"
-        />
-        <path
-          v-for="(p, i) in hyperlanePaths"
-          :key="i"
-          :d="p.d"
-          class="hyperlane-route"
-        />
-      </svg>
+  <div class="galaxy-wrapper">
+    <div class="galaxy-main" ref="wrapper">
+      <div class="galaxy-viewport" :style="viewportStyle">
+        <!-- Hyperlane route paths -->
+        <svg v-if="hyperlanePaths.length > 0" class="hyperlane-overlay">
+          <defs>
+            <filter id="hyperlane-glow"
+                    filterUnits="userSpaceOnUse"
+                    x="-10000"
+                    y="-10000"
+                    width="20000"
+                    height="20000">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+          <path
+            v-for="(p, i) in hyperlanePaths"
+            :key="'glow' + i"
+            :d="p.d"
+            class="hyperlane-glow"
+          />
+          <path
+            v-for="(p, i) in hyperlanePaths"
+            :key="i"
+            :d="p.d"
+            class="hyperlane-route"
+          />
+        </svg>
 
-      <SystemTile
-        v-for="(system, systemId) in systems"
-        :key="systemId"
-        :systemId="systemId"
-        :system="system"
-        :hexSize="hexSize"
-        :highlighted="isHighlighted(systemId)"
-        :interactive="isInteractive(systemId)"
-        @click="handleSystemClick"
-      />
+        <SystemTile
+          v-for="(system, systemId) in onMapSystems"
+          :key="systemId"
+          :systemId="systemId"
+          :system="system"
+          :hexSize="hexSize"
+          :highlighted="isHighlighted(systemId)"
+          :interactive="isInteractive(systemId)"
+          @click="handleSystemClick"
+        />
+      </div>
+    </div>
+
+    <div class="offmap-panel" v-if="offMapSystemEntries.length > 0">
+      <div class="offmap-label">Off-Map</div>
+      <div class="offmap-tiles">
+        <div
+          v-for="[systemId, system] in offMapSystemEntries"
+          :key="'offmap-' + systemId"
+          class="offmap-tile-container"
+        >
+          <SystemTile
+            :systemId="systemId"
+            :system="system"
+            :hexSize="40"
+            :highlighted="isHighlighted(systemId)"
+            :interactive="isInteractive(systemId)"
+            @click="handleSystemClick"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -83,9 +105,29 @@ export default {
       return this.game.state.systems || {}
     },
 
+    onMapSystems() {
+      const result = {}
+      for (const [id, sys] of Object.entries(this.systems)) {
+        if (sys.position.q < 50 && sys.position.r < 50) {
+          result[id] = sys
+        }
+      }
+      return result
+    },
+
+    offMapSystemEntries() {
+      const entries = []
+      for (const [id, sys] of Object.entries(this.systems)) {
+        if (sys.position.q >= 50 || sys.position.r >= 50) {
+          entries.push([id, sys])
+        }
+      }
+      return entries
+    },
+
     // Coordinate bounds in hex q,r space
     coordBounds() {
-      const entries = Object.values(this.systems)
+      const entries = Object.values(this.onMapSystems)
       if (entries.length === 0) {
         return { minQ: 0, maxQ: 0, minR: 0, maxR: 0 }
       }
@@ -223,7 +265,14 @@ export default {
 </script>
 
 <style scoped>
-.galaxy-map {
+.galaxy-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.galaxy-main {
   flex: 1;
   overflow: hidden;
   background: #0a0a1a;
@@ -262,5 +311,40 @@ export default {
   stroke-width: 2;
   stroke-linecap: round;
   opacity: 0.8;
+}
+
+.offmap-panel {
+  background: #111122;
+  border-top: 1px solid #334;
+  padding: .35em .5em;
+  display: flex;
+  align-items: center;
+  gap: .75em;
+}
+
+.offmap-label {
+  color: #889;
+  font-size: .75em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  white-space: nowrap;
+}
+
+.offmap-tiles {
+  display: flex;
+  gap: .5em;
+}
+
+.offmap-tile-container {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.offmap-tile-container :deep(.system-tile) {
+  transform: none !important;
+  margin-left: 0 !important;
+  margin-top: 0 !important;
 }
 </style>

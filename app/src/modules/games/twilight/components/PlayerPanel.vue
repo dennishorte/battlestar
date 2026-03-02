@@ -24,6 +24,22 @@
       </div>
     </div>
 
+    <!-- Unit Supply -->
+    <div class="panel-section">
+      <div class="section-label clickable" @click="supplyExpanded = !supplyExpanded">
+        Supply {{ supplyExpanded ? '&#9662;' : '&#9656;' }}
+      </div>
+      <div class="supply-grid" v-if="supplyExpanded">
+        <span
+          v-for="entry in unitSupply"
+          :key="entry.type"
+          class="supply-entry"
+          :class="entry.colorClass"
+          :title="`${entry.name}: ${entry.remaining} of ${entry.limit} remaining`"
+        >{{ entry.short }} {{ entry.remaining }}/{{ entry.limit }}</span>
+      </div>
+    </div>
+
     <!-- Relic Fragments -->
     <div class="panel-section" v-if="totalFragments > 0">
       <div class="section-label">Relic Fragments</div>
@@ -195,6 +211,12 @@ export default {
 
   inject: ['actor', 'game', 'ui'],
 
+  data() {
+    return {
+      supplyExpanded: false,
+    }
+  },
+
   computed: {
     isViewer() {
       return this.player.name === this.actor.name
@@ -304,6 +326,63 @@ export default {
 
     readyInfluence() {
       return this.planets.filter(p => !p.exhausted).reduce((sum, p) => sum + p.influence, 0)
+    },
+
+    unitSupply() {
+      const supplyTypes = [
+        { type: 'war-sun', short: 'WS', name: 'War Sun' },
+        { type: 'flagship', short: 'FS', name: 'Flagship' },
+        { type: 'dreadnought', short: 'DN', name: 'Dreadnought' },
+        { type: 'carrier', short: 'CV', name: 'Carrier' },
+        { type: 'cruiser', short: 'CR', name: 'Cruiser' },
+        { type: 'destroyer', short: 'DD', name: 'Destroyer' },
+        { type: 'mech', short: 'MH', name: 'Mech' },
+        { type: 'pds', short: 'PDS', name: 'PDS' },
+        { type: 'space-dock', short: 'SD', name: 'Space Dock' },
+      ]
+      const playerName = this.player.name
+      const allUnits = this.game.state.units || {}
+
+      // Count units on the board for this player
+      const onBoard = {}
+      for (const systemUnits of Object.values(allUnits)) {
+        for (const u of (systemUnits.space || [])) {
+          if (u.owner === playerName) {
+            onBoard[u.type] = (onBoard[u.type] || 0) + 1
+          }
+        }
+        for (const planetUnits of Object.values(systemUnits.planets || {})) {
+          for (const u of planetUnits) {
+            if (u.owner === playerName) {
+              onBoard[u.type] = (onBoard[u.type] || 0) + 1
+            }
+          }
+        }
+      }
+
+      // Also count captured units held by other players
+      const captured = this.game.state.capturedUnits || {}
+      for (const [holder, units] of Object.entries(captured)) {
+        if (holder !== playerName) {
+          for (const u of units) {
+            if (u.owner === playerName) {
+              onBoard[u.type] = (onBoard[u.type] || 0) + 1
+            }
+          }
+        }
+      }
+
+      return supplyTypes.map(({ type, short, name }) => {
+        const unitDef = res.getUnit(type)
+        const limit = unitDef?.limit || 0
+        if (limit <= 0) {
+          return null
+        }
+        const used = onBoard[type] || 0
+        const remaining = Math.max(0, limit - used)
+        const colorClass = remaining === 0 ? 'supply-red' : remaining <= 2 ? 'supply-orange' : 'supply-green'
+        return { type, short, name, limit, remaining, colorClass }
+      }).filter(Boolean)
     },
 
     scoredObjectives() {
@@ -677,6 +756,25 @@ export default {
 .attachment-indicator {
   font-size: .7em; font-weight: 700; color: #e65100;
 }
+
+.supply-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .2em;
+}
+
+.supply-entry {
+  font-size: .7em;
+  font-family: monospace;
+  font-weight: 600;
+  padding: .1em .25em;
+  border-radius: .15em;
+  background: #f8f9fa;
+}
+
+.supply-green { color: #198754; }
+.supply-orange { color: #e67700; }
+.supply-red { color: #dc3545; font-weight: 700; }
 
 .clickable {
   cursor: pointer;
