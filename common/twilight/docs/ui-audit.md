@@ -1,6 +1,6 @@
 # Twilight Imperium UI Audit
 
-Cross-reference of living rules against the current UI implementation (21 Vue components).
+Cross-reference of living rules against the current UI implementation (22 Vue components).
 Items are grouped by category and prioritized by gameplay impact.
 
 ---
@@ -40,12 +40,14 @@ The following items have been implemented:
 - **Errata text fixes** — Direct Hit corrected to errata wording; added missing action cards: Bribery, Veto, Unstable Planet
 - **Combat UI (verified)** — CombatDisplay.vue already shows dice rolls with hit/miss coloring, AFB/bombardment summaries, sustain/destroy assignment chips, round numbers, and win/retreat/draw outcomes. Engine auto-assigns hits; no interactive buttons needed.
 - **Agenda voting UI** — AgendaVote.vue dedicated component with three modes: outcome selection (For/Against/Abstain buttons with influence display), planet exhaustion (checkbox list with running vote total), and trade good spending (+/- controls with vote preview)
+- **Technology research UI** — ResearchTech.vue dedicated component grouping available techs by color (Propulsion/Warfare/Cybernetic/Biotic/Unit Upgrades/Faction) with colored left borders and prerequisite dots. Enigmatic Device variant shows "No prerequisites required" badge.
+- **Influence/resource spending UI (N/A)** — Engine auto-pays resource/influence costs via `_payResources`/`_payInfluence` (cheapest-first planet exhaustion, no player choice). Only interactive spending (agenda votes) already handled by AgendaVote.vue.
 - **FAQ: Dice "0" = 10 (verified)** — Engine rolls `Math.floor(random() * 10) + 1` producing range [1, 10]; combat value clamped to [1, 10]. No 0 is ever produced.
 - **FAQ: Fighters block movement (verified)** — `Galaxy.js:_getEnemyShipsInSystem()` returns all space units regardless of type. Fighter-only systems correctly block movement.
 
 ---
 
-## Remaining Items
+## All Items (by category)
 
 ### 1. Map Display (SystemTile / GalaxyMap)
 
@@ -81,7 +83,7 @@ Engine sets `state.statusPhaseStep` through score-objectives/reveal-objective/dr
 
 ### 4. Dedicated Action UIs
 
-Five dedicated action UIs exist: ActivateSystem, MoveShips, ProduceUnits, TradeOffer, RedistributeTokens. The following high-impact interactions use the generic text-based WaitingChoice selector and would benefit from dedicated UIs.
+Seven dedicated action UIs: ActivateSystem, MoveShips, ProduceUnits, TradeOffer, RedistributeTokens, AgendaVote, ResearchTech.
 
 #### ~~Combat UI~~ **DONE**
 CombatDisplay.vue already shows dice rolls with hit/miss coloring, AFB/bombardment summaries, sustain/destroy assignment chips, round numbers, and win/retreat/draw outcomes. Engine auto-assigns hits; no interactive buttons needed.
@@ -89,15 +91,11 @@ CombatDisplay.vue already shows dice rolls with hit/miss coloring, AFB/bombardme
 #### ~~Agenda voting UI~~ **DONE**
 AgendaVote.vue dedicated component with three modes: outcome selection (For/Against/Abstain buttons with influence display), planet exhaustion (checkbox list with running vote total), and trade good spending (+/- controls with vote preview). Wired into TwilightGame.vue via `activeActionType === 'agenda-vote'`.
 
-#### Missing: Technology research UI
-**Rules**: 90.9-90.15 -- Researching technology requires checking prerequisites (colored symbols), potentially exhausting planets with tech specialties to skip prerequisites.
-**Current**: Tech selection is a plain text list in WaitingChoice.
-**Recommendation**: Build a tech research UI showing: available technologies with prerequisite indicators, which prerequisites are met, and tech specialty planets that can be exhausted.
+#### ~~Technology research UI~~ **DONE**
+ResearchTech.vue dedicated component groups available techs by color (Propulsion/Warfare/Cybernetic/Biotic/Unit Upgrades/Faction) with colored left borders and prerequisite dots. Enigmatic Device variant shows "No prerequisites required" badge. Wired into TwilightGame.vue via `activeActionType === 'research-tech'`.
 
-#### Missing: Influence/resource spending UI
-**Rules**: 47.2, 75.2, 27.2, 52.2 -- Many actions require spending resources or influence by exhausting planets. Examples: removing custodians token (6 influence), Leadership (influence for tokens), objectives.
-**Current**: Spending choices are plain text selections. Players cannot see which planets to exhaust or the running total.
-**Recommendation**: Build a generic spending UI showing: available planets with their resource/influence values, running total vs. required amount, and trade goods as optional supplement.
+#### ~~Influence/resource spending UI~~ **N/A**
+Engine auto-pays resource/influence costs via `_payResources(player, cost)` and `_payInfluence(player, cost)` using cheapest-first planet exhaustion — no player choice involved. The only interactive spending (agenda planet exhaustion for votes) is already handled by AgendaVote.vue. No dedicated UI needed.
 
 ---
 
@@ -178,8 +176,8 @@ SystemTile checks `wormholeNexusActive` for tile 82. When inactive: only γ is a
 12. ~~Planet controller colors on map~~ **DONE**
 13. ~~Custodians token display~~ **DONE**
 14. ~~VP target (10 vs 14) fix~~ **DONE**
-15. Technology research UI
-16. Influence/resource spending UI
+15. ~~Technology research UI~~ **DONE**
+16. ~~Influence/resource spending UI~~ **N/A**
 
 ### Lower Priority (polish)
 17. ~~Wormhole Nexus activation state display~~ **DONE**
@@ -194,3 +192,7 @@ SystemTile checks `wormholeNexusActive` for tile 82. When inactive: only γ is a
 26. ~~Commander/hero unlock progress~~ **DONE**
 27. ~~Log entry enhancements (colored names, clickable references)~~ **DONE**
 28. ~~Errata text fixes (Direct Hit, missing action cards)~~ **DONE**
+
+---
+
+**UI Audit Complete** — All 28 items addressed (26 implemented, 1 verified N/A, 1 FAQ-only). Seven dedicated action UIs: ActivateSystem, MoveShips, ProduceUnits, TradeOffer, RedistributeTokens, AgendaVote, ResearchTech.
