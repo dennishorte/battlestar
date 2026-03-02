@@ -32,13 +32,55 @@
       </div>
     </div>
 
+    <!-- Public Objectives -->
+    <div class="public-objectives" v-if="publicObjectives.length > 0">
+      <div class="detail-label">Public Objectives:</div>
+      <div class="objective-list">
+        <div
+          v-for="obj in publicObjectives"
+          :key="obj.id"
+          class="pub-obj-entry"
+          :class="obj.stageClass"
+        >
+          <span class="obj-points">{{ obj.points }}</span>
+          <span class="obj-name">{{ obj.name }}</span>
+          <span class="scorer-pips" v-if="obj.scorers.length > 0">
+            <span
+              v-for="scorer in obj.scorers"
+              :key="scorer.player"
+              class="scorer-pip"
+              :style="{ backgroundColor: scorer.color }"
+              :title="scorer.player"
+            />
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Laws -->
+    <div class="active-laws" v-if="activeLaws.length > 0">
+      <div class="detail-label">Active Laws:</div>
+      <div class="law-list">
+        <div
+          v-for="law in activeLaws"
+          :key="law.id"
+          class="law-entry clickable"
+          @click="openLawDetail(law.id)"
+          :title="law.outcome"
+        >
+          {{ law.name }}
+          <span v-if="law.outcome" class="law-outcome">({{ law.outcome }})</span>
+        </div>
+      </div>
+    </div>
+
     <div class="vp-standings" v-if="vpStandings.length > 0">
-      <div class="detail-label">Victory Points:</div>
+      <div class="detail-label">Victory Points ({{ vpTarget }}):</div>
       <div class="vp-list">
         <div v-for="entry in vpStandings" :key="entry.player" class="vp-entry">
           <span class="vp-player" :style="playerStyle(entry.player)">{{ entry.player }}</span>
           <div class="vp-bar-wrapper">
-            <div class="vp-bar" :style="{ width: (entry.vp / 10 * 100) + '%', backgroundColor: entry.color }"/>
+            <div class="vp-bar" :style="{ width: Math.min(entry.vp / vpTarget * 100, 100) + '%', backgroundColor: entry.color }"/>
           </div>
           <span class="vp-count">{{ entry.vp }}</span>
         </div>
@@ -53,7 +95,7 @@ const res = twilight.res
 
 export default {
   name: 'PhaseInfo',
-  inject: ['game'],
+  inject: ['game', 'ui'],
 
   computed: {
     round() {
@@ -110,6 +152,10 @@ export default {
         .sort((a, b) => a.number - b.number)
     },
 
+    vpTarget() {
+      return this.game.settings?.vpTarget || this.game.state.vpTarget || 10
+    },
+
     vpStandings() {
       return this.game.players.all()
         .map(p => ({
@@ -118,6 +164,49 @@ export default {
           color: p.color || '#666',
         }))
         .sort((a, b) => b.vp - a.vp)
+    },
+
+    publicObjectives() {
+      const revealed = this.game.state.revealedObjectives || []
+      const scored = this.game.state.scoredObjectives || {}
+
+      return revealed.map(id => {
+        const obj = res.getObjective?.(id)
+        const stage = obj?.stage || 1
+        const scorers = []
+
+        // Find all players who scored this objective
+        for (const [playerName, objectives] of Object.entries(scored)) {
+          if (objectives.includes(id)) {
+            const player = this.game.players.byName(playerName)
+            scorers.push({
+              player: playerName,
+              color: player?.color || '#666',
+            })
+          }
+        }
+
+        return {
+          id,
+          name: obj?.name || id,
+          points: obj?.points || stage,
+          stage,
+          stageClass: stage === 2 ? 'stage-ii' : 'stage-i',
+          scorers,
+        }
+      })
+    },
+
+    activeLaws() {
+      const laws = this.game.state.activeLaws || []
+      return laws.map(law => {
+        const card = res.getAgendaCard?.(law.id) || law
+        return {
+          id: law.id,
+          name: card.name || law.name || law.id,
+          outcome: law.resolvedOutcome || null,
+        }
+      })
     },
   },
 
@@ -128,6 +217,15 @@ export default {
         return { color: player.color, fontWeight: 600 }
       }
       return { fontWeight: 600 }
+    },
+
+    openLawDetail(lawId) {
+      if (this.ui?.modals?.cardDetail) {
+        this.ui.modals.cardDetail.type = 'agenda-card'
+        this.ui.modals.cardDetail.id = lawId
+        this.ui.modals.cardDetail.context = null
+        this.$modal('twilight-card-detail').show()
+      }
     },
   },
 }
@@ -212,6 +310,74 @@ export default {
   opacity: .7;
 }
 
+.public-objectives {
+  margin-top: .35em;
+}
+
+.objective-list {
+  margin-top: .15em;
+}
+
+.pub-obj-entry {
+  display: flex;
+  align-items: center;
+  gap: .35em;
+  font-size: .75em;
+  padding: .1em .25em;
+  border-left: 2px solid;
+  margin-bottom: .1em;
+}
+
+.pub-obj-entry.stage-i {
+  border-color: #198754;
+}
+
+.pub-obj-entry.stage-ii {
+  border-color: #0d6efd;
+}
+
+.obj-points {
+  font-weight: 700;
+  min-width: 1em;
+  text-align: center;
+}
+
+.obj-name {
+  flex: 1;
+}
+
+.scorer-pips {
+  display: flex;
+  gap: 2px;
+}
+
+.scorer-pip {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,.2);
+}
+
+.active-laws {
+  margin-top: .35em;
+}
+
+.law-list {
+  margin-top: .15em;
+}
+
+.law-entry {
+  font-size: .75em;
+  padding: .1em .25em;
+  border-left: 2px solid #6f42c1;
+  margin-bottom: .1em;
+}
+
+.law-outcome {
+  color: #888;
+  font-style: italic;
+}
+
 .vp-standings {
   margin-top: .35em;
 }
@@ -251,5 +417,13 @@ export default {
   min-width: 1.5em;
   text-align: right;
   font-weight: 600;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  background: rgba(0, 0, 0, .05);
 }
 </style>

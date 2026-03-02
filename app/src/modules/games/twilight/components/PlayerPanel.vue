@@ -50,6 +50,7 @@
         <span v-for="relic in relics"
               :key="relic.id"
               class="relic-chip clickable"
+              :class="{ exhausted: relic.isExhausted }"
               :title="relic.effect"
               @click="openCardDetail('relic', relic.id)">
           {{ relic.name }}
@@ -88,7 +89,7 @@
           v-for="tech in technologies"
           :key="tech.id"
           class="tech-chip clickable"
-          :class="`tech-${tech.color}`"
+          :class="[`tech-${tech.color}`, { exhausted: tech.isExhausted }]"
           :title="tech.name"
           @click="openCardDetail('technology', tech.id)"
         >
@@ -100,7 +101,7 @@
     <!-- Planets -->
     <div class="panel-section" v-if="planets.length > 0">
       <div class="section-label">
-        Planets ({{ totalResources }}R / {{ totalInfluence }}I)
+        Planets ({{ readyResources }}/{{ totalResources }}R / {{ readyInfluence }}/{{ totalInfluence }}I)
       </div>
       <div class="planet-list">
         <div
@@ -131,6 +132,20 @@
              class="objective-entry clickable"
              @click="openCardDetail('objective', obj.id)">{{ obj.name }}</div>
       </div>
+    </div>
+
+    <!-- Secret Objectives (viewer only sees names, opponents see count) -->
+    <div class="panel-section" v-if="isViewer && secretObjectives.length > 0">
+      <div class="section-label">Secret Objectives ({{ secretObjectives.length }})</div>
+      <div class="secret-list">
+        <div v-for="obj in secretObjectives"
+             :key="obj.id"
+             class="secret-entry clickable"
+             @click="openCardDetail('objective', obj.id)">{{ obj.name }}</div>
+      </div>
+    </div>
+    <div class="panel-section" v-else-if="!isViewer && secretObjectiveCount > 0">
+      <div class="section-label">Secret Objectives: {{ secretObjectiveCount }}</div>
     </div>
 
     <!-- Action Cards (chips for viewer, count for opponents) -->
@@ -243,9 +258,13 @@ export default {
 
     technologies() {
       const techIds = this.player.getTechIds()
+      const exhaustedTechs = this.player.exhaustedTechs || []
       return techIds.map(id => {
         const tech = res.getTechnology(id)
-        return tech || { id, name: id, color: 'unknown' }
+        return {
+          ...(tech || { id, name: id, color: 'unknown' }),
+          isExhausted: exhaustedTechs.includes(id),
+        }
       })
     },
 
@@ -279,12 +298,37 @@ export default {
       return this.planets.reduce((sum, p) => sum + p.influence, 0)
     },
 
+    readyResources() {
+      return this.planets.filter(p => !p.exhausted).reduce((sum, p) => sum + p.resources, 0)
+    },
+
+    readyInfluence() {
+      return this.planets.filter(p => !p.exhausted).reduce((sum, p) => sum + p.influence, 0)
+    },
+
     scoredObjectives() {
       const scored = this.game.state.scoredObjectives?.[this.player.name] || []
       return scored.map(id => {
         const obj = res.getObjective?.(id)
         return { id, name: obj?.name || id }
       })
+    },
+
+    secretObjectives() {
+      const secrets = this.player.secretObjectives || []
+      const scored = this.game.state.scoredObjectives?.[this.player.name] || []
+      return secrets
+        .filter(id => !scored.includes(id))
+        .map(id => {
+          const obj = res.getObjective?.(id)
+          return { id, name: obj?.name || id }
+        })
+    },
+
+    secretObjectiveCount() {
+      const secrets = this.player.secretObjectives || []
+      const scored = this.game.state.scoredObjectives?.[this.player.name] || []
+      return secrets.filter(id => !scored.includes(id)).length
     },
 
     actionCards() {
@@ -314,9 +358,13 @@ export default {
 
     relics() {
       const relicIds = this.game.state.relicsGained?.[this.player.name] || []
+      const exhaustedRelics = this.game.state.exhaustedRelics?.[this.player.name] || []
       return relicIds.map(id => {
         const relic = res.getRelic(id)
-        return relic || { id, name: id, effect: '' }
+        return {
+          ...(relic || { id, name: id, effect: '' }),
+          isExhausted: exhaustedRelics.includes(id),
+        }
       })
     },
 
@@ -501,6 +549,10 @@ export default {
   background: #f8f9fa;
 }
 
+.tech-chip.exhausted {
+  opacity: .45;
+}
+
 .tech-blue { border-color: #0d6efd; }
 .tech-red { border-color: #dc3545; }
 .tech-yellow { border-color: #ffc107; }
@@ -563,6 +615,19 @@ export default {
   padding: .1em 0;
 }
 
+.secret-list {
+  display: flex;
+  flex-direction: column;
+  gap: .1em;
+}
+
+.secret-entry {
+  font-size: .75em;
+  padding: .1em 0;
+  border-left: 2px solid #6f42c1;
+  padding-left: .35em;
+}
+
 .prom-list {
   font-size: .75em;
 }
@@ -607,6 +672,7 @@ export default {
   border-left: 2px solid #e65100; background: #fff3e0; color: #333;
 }
 .relic-chip:hover { background: #ffe0b2; }
+.relic-chip.exhausted { opacity: .45; }
 
 .attachment-indicator {
   font-size: .7em; font-weight: 700; color: #e65100;

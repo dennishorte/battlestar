@@ -56,6 +56,7 @@
             <div v-for="unit in planetUnits(planet.id)" :key="unit.type + unit.owner" class="unit-entry">
               <span :style="playerStyle(unit.owner)">{{ unit.owner }}</span>:
               {{ unit.count }}x {{ unit.type }}
+              <span v-if="unit.damagedCount > 0" class="damaged-badge">({{ unit.damagedCount }} damaged)</span>
             </div>
           </div>
         </div>
@@ -66,12 +67,13 @@
         <div class="section-label">Ships in Space</div>
         <div v-for="stack in spaceUnitStacks" :key="stack.owner" class="unit-stack-detail">
           <div class="stack-owner" :style="playerStyle(stack.owner)">{{ stack.owner }}</div>
-          <div v-for="(count, type) in stack.types" :key="type" class="unit-entry">
-            <i v-if="shipIcon(type)"
-               :class="'bi ' + shipIcon(type)"
+          <div v-for="entry in stack.units" :key="entry.type" class="unit-entry">
+            <i v-if="shipIcon(entry.type)"
+               :class="'bi ' + shipIcon(entry.type)"
                class="unit-type-icon"
                :style="playerStyle(stack.owner)" />
-            {{ count }}x {{ type }}
+            {{ entry.count }}x {{ entry.type }}
+            <span v-if="entry.damaged > 0" class="damaged-badge">({{ entry.damaged }} damaged)</span>
           </div>
         </div>
       </div>
@@ -105,6 +107,8 @@ const SHIP_ICONS = {
   'destroyer':   'bi-lightning-fill',
   'fighter':     'bi-circle-fill',
 }
+
+const UNIT_ORDER = ['war-sun', 'flagship', 'dreadnought', 'carrier', 'cruiser', 'destroyer', 'fighter']
 
 export default {
   name: 'SystemDetailModal',
@@ -169,11 +173,23 @@ export default {
       const byOwner = {}
       for (const unit of this.spaceUnits) {
         if (!byOwner[unit.owner]) {
-          byOwner[unit.owner] = { owner: unit.owner, types: {} }
+          byOwner[unit.owner] = { owner: unit.owner, types: {}, damaged: {} }
         }
         byOwner[unit.owner].types[unit.type] = (byOwner[unit.owner].types[unit.type] || 0) + 1
+        if (unit.damaged) {
+          byOwner[unit.owner].damaged[unit.type] = (byOwner[unit.owner].damaged[unit.type] || 0) + 1
+        }
       }
-      return Object.values(byOwner)
+      return Object.values(byOwner).map(stack => {
+        const units = UNIT_ORDER
+          .filter(type => stack.types[type])
+          .map(type => ({
+            type,
+            count: stack.types[type],
+            damaged: stack.damaged[type] || 0,
+          }))
+        return { owner: stack.owner, units }
+      })
     },
 
     isFrontierSystem() {
@@ -200,9 +216,12 @@ export default {
       for (const unit of unitData) {
         const key = `${unit.owner}-${unit.type}`
         if (!byKey[key]) {
-          byKey[key] = { type: unit.type, owner: unit.owner, count: 0 }
+          byKey[key] = { type: unit.type, owner: unit.owner, count: 0, damagedCount: 0 }
         }
         byKey[key].count++
+        if (unit.damaged) {
+          byKey[key].damagedCount++
+        }
       }
       return Object.values(byKey)
     },
@@ -315,6 +334,12 @@ export default {
 .exhausted-badge {
   font-size: .75em;
   color: #999;
+  font-style: italic;
+}
+
+.damaged-badge {
+  font-size: .85em;
+  color: #dc3545;
   font-style: italic;
 }
 
