@@ -37,6 +37,7 @@ The following items have been implemented:
 - **Status phase step tracker** — Engine tracks `statusPhaseStep` through 8 steps; PhaseInfo shows yellow-tinted breadcrumb
 - **Neighbor indicators** — PlayerPanel shows "Neighbors" section with colored-border chips during action phase
 - **Capacity tracking enhancement** — MoveShips shows "Capacity: N/M" with colored progress bar (green/orange/red)
+- **Errata text fixes** — Direct Hit corrected to errata wording; added missing action cards: Bribery, Veto, Unstable Planet
 
 ---
 
@@ -133,10 +134,8 @@ TiPlanetToken.vue renders planet names as clickable chips with trait-colored lef
 
 ### 7. Errata Compliance
 
-#### Missing: Corrected card texts
-**Rules**: errata.md -- Several cards have official errata (Diplomacy, Direct Hit, Harrow, Hyper Metabolism, Matriarch, etc.).
-**Current**: CardDetailModal displays card data from res files. Need to verify that the underlying data files reflect the errata corrections.
-**Recommendation**: Verify all errata items from `errata.md` are reflected in the card data in `res/` files.
+#### ~~Corrected card texts~~ **DONE**
+Direct Hit errata applied (targets ship using SUSTAIN DAMAGE, not generic hit assignment). Missing action cards added: Bribery, Veto, Unstable Planet.
 
 ---
 
@@ -196,3 +195,4 @@ SystemTile checks `wormholeNexusActive` for tile 82. When inactive: only γ is a
 25. ~~Neighbor indicators~~ **DONE**
 26. ~~Commander/hero unlock progress~~ **DONE**
 27. ~~Log entry enhancements (colored names, clickable references)~~ **DONE**
+28. ~~Errata text fixes (Direct Hit, missing action cards)~~ **DONE**

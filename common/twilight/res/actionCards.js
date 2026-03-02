@@ -16,7 +16,7 @@ const actionCards = [
     id: 'direct-hit',
     name: 'Direct Hit',
     timing: 'after-combat-round',
-    effect: 'After another player assigns hits to their units: Destroy 1 of those units that has SUSTAIN DAMAGE.',
+    effect: 'After another player\'s ship uses SUSTAIN DAMAGE to cancel a hit produced by your units or abilities: Destroy that ship.',
     count: 4,
   },
   {
@@ -70,6 +70,20 @@ const actionCards = [
     effect: 'After an agenda is revealed: Gain 3 trade goods if the elected outcome is resolved.',
     count: 1,
   },
+  {
+    id: 'bribery',
+    name: 'Bribery',
+    timing: 'after-speaker-votes',
+    effect: 'After the speaker votes on an agenda: Spend any number of trade goods. For each trade good spent, cast 1 additional vote for the outcome on which you voted.',
+    count: 1,
+  },
+  {
+    id: 'veto',
+    name: 'Veto',
+    timing: 'when-agenda-revealed',
+    effect: 'When an agenda is revealed: Discard that agenda and reveal 1 agenda from the top of the deck. Players vote on this agenda instead.',
+    count: 1,
+  },
 
   // Economic
   {
@@ -114,6 +128,13 @@ const actionCards = [
     name: 'War Machine',
     timing: 'after-activation',
     effect: 'After you activate a system that contains 1 or more of your space docks: You may produce up to 2 additional units in that system.',
+    count: 2,
+  },
+  {
+    id: 'unstable-planet',
+    name: 'Unstable Planet',
+    timing: 'action',
+    effect: 'ACTION: Choose 1 hazardous planet. Exhaust that planet and destroy up to 3 infantry on it.',
     count: 2,
   },
 
