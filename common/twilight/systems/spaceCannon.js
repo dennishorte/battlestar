@@ -1,5 +1,16 @@
 const res = require('../res/index.js')
 
+// Snapshot roll data to plain objects (strips live unit refs)
+function _mapRolls(rollResult) {
+  return rollResult.rolls.map(r => ({
+    unitType: r.ship.type,
+    unitId: r.ship.id,
+    owner: r.ship.owner,
+    effectiveCombat: r.effectiveCombat,
+    dice: r.diceResults.map(d => ({ roll: d.roll, hit: d.hit })),
+  }))
+}
+
 module.exports = function(Twilight) {
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -550,6 +561,16 @@ module.exports = function(Twilight) {
       args: { planet: planetId },
       event: 'combat',
     })
+    if (!this.state._combatLog) {
+      this.state._combatLog = []
+    }
+    this.state._combatLog.push({
+      type: 'ground-combat-start',
+      systemId,
+      planetId,
+      attacker: attackerName,
+      defender: defenderName,
+    })
 
     // Pre-combat faction abilities (e.g., Yin Indoctrination)
     this.factionAbilities.onGroundCombatStart(systemId, planetId, attackerName, defenderName)
@@ -612,6 +633,18 @@ module.exports = function(Twilight) {
         defenderHits *= 2
       }
 
+      this.state._combatLog.push({
+        type: 'combat-round',
+        combatType: 'ground',
+        systemId,
+        planetId,
+        round,
+        sides: {
+          attacker: { name: attackerName, rolls: _mapRolls(attackerRoll), totalHits: attackerHits },
+          defender: { name: defenderName, rolls: _mapRolls(defenderRoll), totalHits: defenderHits },
+        },
+      })
+
       this._assignGroundHits(systemId, planetId, defenderName, attackerHits, attackerName)
       this._assignGroundHits(systemId, planetId, attackerName, defenderHits, defenderName)
 
@@ -625,6 +658,15 @@ module.exports = function(Twilight) {
     const groundWinner = (aForcesAfter.length > 0 && dForcesAfter.length === 0) ? attackerName
       : (dForcesAfter.length > 0 && aForcesAfter.length === 0) ? defenderName
         : null
+
+    this.state._combatLog.push({
+      type: 'combat-end',
+      combatType: 'ground',
+      systemId,
+      planetId,
+      winner: groundWinner,
+      loser: groundWinner ? (groundWinner === attackerName ? defenderName : attackerName) : null,
+    })
 
     if (groundWinner) {
       const loser = groundWinner === attackerName ? defenderName : attackerName
@@ -662,6 +704,7 @@ module.exports = function(Twilight) {
 
     let remainingHits = hits
     const justSustainedIds = new Set()
+    const assignments = []
 
     // Non-Euclidean Shielding: each sustain cancels 2 hits instead of 1
     const groundOwner = this.players.byName(ownerName)
@@ -706,6 +749,7 @@ module.exports = function(Twilight) {
       }
       unit.damaged = true
       justSustainedIds.add(unit.id)
+      assignments.push({ owner: ownerName, unitType: unit.type, unitId: unit.id, result: 'sustained' })
       remainingHits = Math.max(0, remainingHits - groundHitsPerSustain)
     }
 
@@ -740,6 +784,7 @@ module.exports = function(Twilight) {
       const idx = planetUnits.findIndex(u => u.id === target.id)
       if (idx !== -1) {
         const removed = planetUnits.splice(idx, 1)[0]
+        assignments.push({ owner: ownerName, unitType: removed.type, unitId: removed.id, result: 'destroyed' })
         if (destroyerName) {
           this.factionAbilities.onUnitDestroyed(systemId, removed, destroyerName, planetId)
         }
@@ -755,6 +800,16 @@ module.exports = function(Twilight) {
       if (repairCandidate) {
         repairCandidate.damaged = false
       }
+    }
+
+    if (assignments.length > 0) {
+      this.state._combatLog.push({
+        type: 'hits-assigned',
+        combatType: hitSource || 'ground',
+        systemId,
+        planetId,
+        assignments,
+      })
     }
   }
 

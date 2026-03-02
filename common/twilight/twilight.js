@@ -1374,6 +1374,7 @@ Twilight.prototype._resolveAgendaOutcome = function(agenda, outcome, playerVotes
 // Action stubs
 
 Twilight.prototype._tacticalAction = function(player) {
+  this.state._combatLog = []
   this.log.indent()
 
   // Step 1: Activate a system
