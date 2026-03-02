@@ -62,16 +62,207 @@ const DEFAULT_2P_SYSTEMS = {
   48: { q: -1, r: -1 },  // empty
 }
 
+// 3-player layout (seed: 'test_seed', factions: sol/hacan/letnev)
+// Home systems: P1 at (0,-3), P2 at (3,0), P3 at (-3,3)
+const DEFAULT_3P_SYSTEMS = {
+  // Ring 1
+  36: { q: -1, r:  0 },   // Arnor + Lor
+  61: { q: -1, r:  1 },   // Ang
+  70: { q:  0, r: -1 },   // Kraag + Siig
+  30: { q:  0, r:  1 },   // Mellon + Zohbat
+  64: { q:  1, r: -1 },   // Atlas (beta wormhole)
+  72: { q:  1, r:  0 },   // Lisis + Velnor
+  // Ring 2
+  41: { q: -2, r:  0 },   // empty (gravity-rift)
+  76: { q: -2, r:  1 },   // Rigel I + Rigel II + Rigel III
+  34: { q: -2, r:  2 },   // Centauri + Gral
+  45: { q: -1, r: -1 },   // empty (asteroid-field)
+  66: { q: -1, r:  2 },   // Hope's End
+  35: { q:  0, r: -2 },   // Bereg + Lirta IV
+  59: { q:  0, r:  2 },   // Archon Vail
+  33: { q:  1, r: -2 },   // Corneeq + Resculon
+  29: { q:  1, r:  1 },   // Qucen'n + Rarron
+  32: { q:  2, r: -2 },   // Dal Bootha + Xxehan
+  20: { q:  2, r: -1 },   // Vefut II
+  24: { q:  2, r:  0 },   // Mehar Xull
+  // Ring 3
+  42: { q: -3, r:  2 },   // empty (nebula)
+  40: { q: -2, r:  3 },   // empty (beta wormhole)
+  67: { q: -1, r: -2 },   // Cormund (gravity-rift)
+  47: { q:  1, r: -3 },   // empty
+  78: { q:  2, r:  1 },   // empty
+  46: { q:  3, r: -1 },   // empty
+}
+
+// 4-player layout (seed: 'test_seed', factions: sol/hacan/letnev/sardakk)
+// Home systems: P1 at (-1,-2), P2 at (3,-2), P3 at (1,2), P4 at (-3,2)
+const DEFAULT_4P_SYSTEMS = {
+  // Ring 1
+  36: { q: -1, r:  0 },   // Arnor + Lor
+  61: { q: -1, r:  1 },   // Ang
+  70: { q:  0, r: -1 },   // Kraag + Siig
+  30: { q:  0, r:  1 },   // Mellon + Zohbat
+  64: { q:  1, r: -1 },   // Atlas (beta wormhole)
+  72: { q:  1, r:  0 },   // Lisis + Velnor
+  // Ring 2
+  27: { q: -2, r:  0 },   // New Albion + Starpoint
+  76: { q: -2, r:  1 },   // Rigel I + Rigel II + Rigel III
+  34: { q: -2, r:  2 },   // Centauri + Gral
+  62: { q: -1, r: -1 },   // Sem-Lore
+  66: { q: -1, r:  2 },   // Hope's End
+  35: { q:  0, r: -2 },   // Bereg + Lirta IV
+  59: { q:  0, r:  2 },   // Archon Vail
+  33: { q:  1, r: -2 },   // Corneeq + Resculon
+  29: { q:  1, r:  1 },   // Qucen'n + Rarron
+  32: { q:  2, r: -2 },   // Dal Bootha + Xxehan
+  20: { q:  2, r: -1 },   // Vefut II
+  24: { q:  2, r:  0 },   // Mehar Xull
+  // Ring 3
+  39: { q: -3, r:  0 },   // empty (alpha wormhole)
+  43: { q: -3, r:  1 },   // empty (supernova)
+  40: { q: -3, r:  3 },   // empty (beta wormhole)
+  68: { q: -2, r: -1 },   // Everra (nebula)
+  42: { q: -2, r:  3 },   // empty (nebula)
+  78: { q: -1, r:  3 },   // empty
+  82: { q:  0, r: -3 },   // Mallice (alpha, beta, gamma wormhole)
+  46: { q:  0, r:  3 },   // empty
+  22: { q:  1, r: -3 },   // Tar'Mann
+  31: { q:  2, r: -3 },   // Lazar + Sakulag
+  67: { q:  2, r:  1 },   // Cormund (gravity-rift)
+  41: { q:  3, r: -3 },   // empty (gravity-rift)
+  45: { q:  3, r: -1 },   // empty (asteroid-field)
+  47: { q:  3, r:  0 },   // empty
+}
+
+// 5-player layout (seed: 'test_seed', factions: sol/hacan/letnev/sardakk/mentak)
+// Home systems: P1 at (2,-3), P2 at (3,0), P3 at (0,3), P4 at (-3,3), P5 at (-2,-1)
+const DEFAULT_5P_SYSTEMS = {
+  // Ring 1
+  36: { q: -1, r:  0 },   // Arnor + Lor
+  61: { q: -1, r:  1 },   // Ang
+  70: { q:  0, r: -1 },   // Kraag + Siig
+  30: { q:  0, r:  1 },   // Mellon + Zohbat
+  64: { q:  1, r: -1 },   // Atlas (beta wormhole)
+  72: { q:  1, r:  0 },   // Lisis + Velnor
+  // Ring 2
+  27: { q: -2, r:  0 },   // New Albion + Starpoint
+  76: { q: -2, r:  1 },   // Rigel I + Rigel II + Rigel III
+  34: { q: -2, r:  2 },   // Centauri + Gral
+  62: { q: -1, r: -1 },   // Sem-Lore
+  66: { q: -1, r:  2 },   // Hope's End
+  35: { q:  0, r: -2 },   // Bereg + Lirta IV
+  59: { q:  0, r:  2 },   // Archon Vail
+  33: { q:  1, r: -2 },   // Corneeq + Resculon
+  29: { q:  1, r:  1 },   // Qucen'n + Rarron
+  32: { q:  2, r: -2 },   // Dal Bootha + Xxehan
+  20: { q:  2, r: -1 },   // Vefut II
+  24: { q:  2, r:  0 },   // Mehar Xull
+  // Ring 3
+  43: { q: -3, r:  0 },   // empty (supernova)
+  40: { q: -3, r:  1 },   // empty (beta wormhole)
+  42: { q: -3, r:  2 },   // empty (nebula)
+  78: { q: -2, r:  3 },   // empty
+  39: { q: -1, r: -2 },   // empty (alpha wormhole)
+  46: { q: -1, r:  3 },   // empty
+  82: { q:  0, r: -3 },   // Mallice (alpha, beta, gamma wormhole)
+  22: { q:  1, r: -3 },   // Tar'Mann
+  67: { q:  1, r:  2 },   // Cormund (gravity-rift)
+  47: { q:  2, r:  1 },   // empty
+  31: { q:  3, r: -3 },   // Lazar + Sakulag
+  41: { q:  3, r: -2 },   // empty (gravity-rift)
+  45: { q:  3, r: -1 },   // empty (asteroid-field)
+}
+
+// 5-player hyperlane layout (seed: 'test_seed', factions: sol/hacan/letnev/sardakk/mentak)
+// Home systems: P1 at (0,-3), P2 at (3,-3), P3 at (-3,0), P4 at (3,0), P5 at (-3,3)
+const DEFAULT_5P_HYPERLANE_SYSTEMS = {
+  // Ring 1
+  34: { q: -1, r:  0 },   // Centauri + Gral
+  47: { q: -1, r:  1 },   // empty
+  20: { q:  0, r: -1 },   // Vefut II
+  24: { q:  1, r: -1 },   // Mehar Xull
+  76: { q:  1, r:  0 },   // Rigel I + Rigel II + Rigel III
+  // Ring 2
+  66: { q: -2, r:  0 },   // Hope's End
+  45: { q: -2, r:  1 },   // empty (asteroid-field)
+  78: { q: -2, r:  2 },   // empty
+  32: { q: -1, r: -1 },   // Dal Bootha + Xxehan
+  30: { q:  0, r: -2 },   // Mellon + Zohbat
+  42: { q:  0, r:  2 },   // empty (nebula)
+  61: { q:  1, r: -2 },   // Ang
+  36: { q:  2, r: -2 },   // Arnor + Lor
+  29: { q:  2, r: -1 },   // Qucen'n + Rarron
+  27: { q:  2, r:  0 },   // New Albion + Starpoint
+  // Ring 3
+  41: { q: -3, r:  1 },   // empty (gravity-rift)
+  46: { q: -3, r:  2 },   // empty
+  33: { q: -2, r: -1 },   // Corneeq + Resculon
+  40: { q: -2, r:  3 },   // empty (beta wormhole)
+  72: { q: -1, r: -2 },   // Lisis + Velnor
+  70: { q:  1, r: -3 },   // Kraag + Siig
+  64: { q:  2, r: -3 },   // Atlas (beta wormhole)
+  67: { q:  2, r:  1 },   // Cormund (gravity-rift)
+  35: { q:  3, r: -2 },   // Bereg + Lirta IV
+  59: { q:  3, r: -1 },   // Archon Vail
+}
+
+// 6-player layout (seed: 'test_seed', factions: sol/hacan/letnev/sardakk/mentak/naalu)
+// Home systems: P1 at (0,-3), P2 at (3,-3), P3 at (3,0), P4 at (0,3), P5 at (-3,3), P6 at (-3,0)
+const DEFAULT_6P_SYSTEMS = {
+  // Ring 1
+  36: { q: -1, r:  0 },   // Arnor + Lor
+  61: { q: -1, r:  1 },   // Ang
+  70: { q:  0, r: -1 },   // Kraag + Siig
+  30: { q:  0, r:  1 },   // Mellon + Zohbat
+  64: { q:  1, r: -1 },   // Atlas (beta wormhole)
+  72: { q:  1, r:  0 },   // Lisis + Velnor
+  // Ring 2
+  27: { q: -2, r:  0 },   // New Albion + Starpoint
+  76: { q: -2, r:  1 },   // Rigel I + Rigel II + Rigel III
+  34: { q: -2, r:  2 },   // Centauri + Gral
+  62: { q: -1, r: -1 },   // Sem-Lore
+  66: { q: -1, r:  2 },   // Hope's End
+  35: { q:  0, r: -2 },   // Bereg + Lirta IV
+  59: { q:  0, r:  2 },   // Archon Vail
+  33: { q:  1, r: -2 },   // Corneeq + Resculon
+  29: { q:  1, r:  1 },   // Qucen'n + Rarron
+  32: { q:  2, r: -2 },   // Dal Bootha + Xxehan
+  20: { q:  2, r: -1 },   // Vefut II
+  24: { q:  2, r:  0 },   // Mehar Xull
+  // Ring 3
+  39: { q: -3, r:  1 },   // empty (alpha wormhole)
+  43: { q: -3, r:  2 },   // empty (supernova)
+  68: { q: -2, r: -1 },   // Everra (nebula)
+  40: { q: -2, r:  3 },   // empty (beta wormhole)
+  79: { q: -1, r: -2 },   // empty (asteroid-field) (alpha wormhole)
+  42: { q: -1, r:  3 },   // empty (nebula)
+  41: { q:  1, r: -3 },   // empty (gravity-rift)
+  78: { q:  1, r:  2 },   // empty
+  45: { q:  2, r: -3 },   // empty (asteroid-field)
+  46: { q:  2, r:  1 },   // empty
+  47: { q:  3, r: -2 },   // empty
+  67: { q:  3, r: -1 },   // Cormund (gravity-rift)
+}
+
 // Export for tests that need to reference the layout
 TestUtil.DEFAULT_2P_SYSTEMS = DEFAULT_2P_SYSTEMS
+TestUtil.DEFAULT_3P_SYSTEMS = DEFAULT_3P_SYSTEMS
+TestUtil.DEFAULT_4P_SYSTEMS = DEFAULT_4P_SYSTEMS
+TestUtil.DEFAULT_5P_SYSTEMS = DEFAULT_5P_SYSTEMS
+TestUtil.DEFAULT_5P_HYPERLANE_SYSTEMS = DEFAULT_5P_HYPERLANE_SYSTEMS
+TestUtil.DEFAULT_6P_SYSTEMS = DEFAULT_6P_SYSTEMS
 
 
 /**
  * Replace non-home, non-mecatol systems with a deterministic layout.
+ * Preserves hyperlane systems (used in 5-player hyperlane map).
  */
 function _applyTestLayout(game, layout) {
-  // Remove all non-home, non-mecatol systems
+  // Remove all non-home, non-mecatol, non-hyperlane systems
   for (const systemId of Object.keys(game.state.systems)) {
+    if (game.state.systems[systemId]?.isHyperlane) {
+      continue
+    }
     const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
     if (tile && (tile.type === 'home' || tile.type === 'mecatol')) {
       continue
@@ -156,7 +347,7 @@ TestUtil.action = function(game, actionName, opts = {}) {
  *   factions            - Array of faction IDs (default: auto-assigned)
  *   players             - Player list (default: dennis, micah, scott, ...)
  *   seed                - Random seed (default: 'test_seed')
- *   deterministicLayout - Use fixed galaxy layout (default: true for 2p)
+ *   deterministicLayout - Use fixed galaxy layout (default: true)
  *
  * Returns a game instance ready for setBoard + run.
  */
@@ -204,9 +395,21 @@ TestUtil.fixture = function(options = {}) {
       game.players.all()[i].color = testColors[i % testColors.length]
     }
 
-    // Apply deterministic galaxy layout for 2p tests
-    if (deterministicLayout && options.numPlayers === 2) {
-      _applyTestLayout(game, DEFAULT_2P_SYSTEMS)
+    // Apply deterministic galaxy layout
+    if (deterministicLayout) {
+      const layoutKey = options.mapLayout || options.numPlayers
+      const defaultLayouts = {
+        2: DEFAULT_2P_SYSTEMS,
+        3: DEFAULT_3P_SYSTEMS,
+        4: DEFAULT_4P_SYSTEMS,
+        5: DEFAULT_5P_SYSTEMS,
+        '5-hyperlane': DEFAULT_5P_HYPERLANE_SYSTEMS,
+        6: DEFAULT_6P_SYSTEMS,
+      }
+      const layout = defaultLayouts[layoutKey]
+      if (layout) {
+        _applyTestLayout(game, layout)
+      }
     }
   })
 
