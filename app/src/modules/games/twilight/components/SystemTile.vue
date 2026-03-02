@@ -27,23 +27,49 @@
       <!-- Frontier token -->
       <div class="frontier-badge" v-if="hasFrontierToken" title="Frontier token">F</div>
 
-      <!-- Planets -->
+      <!-- Custodians token on Mecatol Rex -->
+      <div class="custodians-badge" v-if="hasCustodiansToken" title="Custodians token">C</div>
+
+      <!-- Planets with ground units -->
       <div class="planet-indicators" v-if="tileData.planets?.length > 0">
         <div
           v-for="planet in planetDisplays"
           :key="planet.id"
-          class="planet-dot"
-          :class="planetClass(planet)"
-          :title="`${planet.name} (${planet.resources}/${planet.influence})`"
+          class="planet-with-units"
         >
-          <span class="planet-ri">{{ planet.resources }}/{{ planet.influence }}</span>
-          <span v-if="planet.hasAttachments" class="planet-attach-dot" />
+          <div
+            class="planet-dot"
+            :class="planetClass(planet)"
+            :style="planetStyle(planet)"
+            :title="`${planet.name} (${planet.resources}/${planet.influence})`"
+          >
+            <span class="planet-ri">{{ planet.resources }}/{{ planet.influence }}</span>
+            <span v-if="planet.hasAttachments" class="planet-attach-dot" />
+          </div>
+          <!-- Ground units below planet dot -->
+          <div class="ground-units" v-if="planet.groundStacks.length > 0">
+            <span
+              v-for="gs in planet.groundStacks"
+              :key="gs.type + gs.owner"
+              class="ground-entry"
+              :style="{ color: gs.color }"
+              :title="`${gs.owner}: ${gs.count} ${gs.type}`"
+            >
+              <i :class="'bi ' + gs.icon" class="ground-icon" />
+              <span v-if="gs.count > 1" class="ground-count">{{ gs.count }}</span>
+            </span>
+          </div>
         </div>
       </div>
 
-      <!-- Wormholes -->
-      <div class="wormhole-badge" v-if="tileData.wormholes?.length > 0">
-        <span v-for="w in tileData.wormholes" :key="w" class="wormhole-symbol">{{ wormholeSymbol(w) }}</span>
+      <!-- Wormholes (native + gamma tokens + ion storm) -->
+      <div class="wormhole-badge" v-if="allWormholes.length > 0">
+        <span v-for="w in allWormholes" :key="w" class="wormhole-symbol">{{ wormholeSymbol(w) }}</span>
+      </div>
+
+      <!-- Ion storm indicator -->
+      <div class="ion-storm-badge" v-if="ionStormInfo" title="Ion Storm">
+        <i class="bi bi-cloud-lightning-fill" />
       </div>
 
       <!-- Anomaly indicator -->
@@ -67,6 +93,7 @@
           >
             <i :class="'bi ' + entry.icon" class="unit-icon" />
             <span v-if="entry.count > 1" class="unit-count">{{ entry.count }}</span>
+            <span v-if="entry.damagedCount > 0" class="damage-pip">*</span>
           </span>
         </div>
       </div>
@@ -88,6 +115,13 @@ const UNIT_ICONS = {
   'fighter':     'bi-circle-fill',
 }
 const UNIT_ORDER = ['war-sun', 'flagship', 'dreadnought', 'carrier', 'cruiser', 'destroyer', 'fighter']
+
+const GROUND_ICONS = {
+  'infantry':    'bi-person-fill',
+  'mech':        'bi-gear-fill',
+  'pds':         'bi-crosshair',
+  'space-dock':  'bi-building',
+}
 
 // Regular hexagon points (pointy-top)
 function hexCorner(cx, cy, size, i) {
@@ -199,10 +233,46 @@ export default {
       return !this.game.state.exploredPlanets?.[this.systemId]
     },
 
+    hasCustodiansToken() {
+      return this.tileData.type === 'mecatol' && !this.game.state.custodiansRemoved
+    },
+
+    ionStormInfo() {
+      const token = this.game.state.ionStormToken
+      if (!token || String(token.systemId) !== String(this.systemId)) {
+        return null
+      }
+      return token
+    },
+
+    allWormholes() {
+      const native = this.tileData.wormholes || []
+      const wormholes = [...native]
+
+      // Gamma wormhole tokens from exploration
+      const gammaTokens = this.game.state.gammaWormholeTokens || []
+      if (gammaTokens.includes(String(this.systemId)) || gammaTokens.includes(Number(this.systemId))) {
+        if (!wormholes.includes('gamma')) {
+          wormholes.push('gamma')
+        }
+      }
+
+      // Ion storm token adds its active wormhole side
+      if (this.ionStormInfo) {
+        const side = this.ionStormInfo.side
+        if (!wormholes.includes(side)) {
+          wormholes.push(side)
+        }
+      }
+
+      return wormholes
+    },
+
     planetDisplays() {
       return (this.tileData.planets || []).map(planetId => {
         const planet = res.getPlanet(planetId)
         const state = this.game.state.planets[planetId]
+        const groundStacks = this._getGroundStacks(planetId)
         return {
           id: planetId,
           name: planet?.name || planetId,
@@ -212,6 +282,7 @@ export default {
           techSpecialty: planet?.techSpecialty || null,
           controller: state?.controller || null,
           hasAttachments: (state?.attachments || []).length > 0,
+          groundStacks,
         }
       })
     },
@@ -240,9 +311,13 @@ export default {
             owner: unit.owner,
             color: player?.color || '#666',
             types: {},
+            damaged: {},
           }
         }
         byOwner[unit.owner].types[unit.type] = (byOwner[unit.owner].types[unit.type] || 0) + 1
+        if (unit.damaged) {
+          byOwner[unit.owner].damaged[unit.type] = (byOwner[unit.owner].damaged[unit.type] || 0) + 1
+        }
       }
 
       return Object.values(byOwner).map(stack => {
@@ -252,8 +327,15 @@ export default {
             type,
             icon: UNIT_ICONS[type] || 'bi-circle',
             count: stack.types[type],
+            damagedCount: stack.damaged[type] || 0,
           }))
-        const summary = `${stack.owner}: ${units.map(u => `${u.count} ${u.type}`).join(', ')}`
+        const summary = `${stack.owner}: ${units.map(u => {
+          let s = `${u.count} ${u.type}`
+          if (u.damagedCount > 0) {
+            s += ` (${u.damagedCount} damaged)`
+          }
+          return s
+        }).join(', ')}`
         return { owner: stack.owner, color: stack.color, units, summary }
       })
     },
@@ -287,9 +369,39 @@ export default {
       return classes
     },
 
+    planetStyle(planet) {
+      if (planet.controller) {
+        const player = this.game.players.byName(planet.controller)
+        if (player?.color) {
+          return { borderColor: player.color }
+        }
+      }
+      return {}
+    },
+
     tokenColor(playerName) {
       const player = this.game.players.byName(playerName)
       return player?.color || '#888'
+    },
+
+    _getGroundStacks(planetId) {
+      const unitData = this.game.state.units[this.systemId]?.planets?.[planetId] || []
+      const byKey = {}
+      for (const unit of unitData) {
+        const key = `${unit.owner}-${unit.type}`
+        if (!byKey[key]) {
+          const player = this.game.players.byName(unit.owner)
+          byKey[key] = {
+            type: unit.type,
+            owner: unit.owner,
+            count: 0,
+            icon: GROUND_ICONS[unit.type] || 'bi-circle',
+            color: player?.color || '#666',
+          }
+        }
+        byKey[key].count++
+      }
+      return Object.values(byKey)
     },
   },
 }
@@ -383,6 +495,12 @@ export default {
   margin-top: 1px;
 }
 
+.planet-with-units {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .planet-dot {
   position: relative;
   width: 22px;
@@ -394,6 +512,7 @@ export default {
   font-size: .7em;
   font-weight: 600;
   background: #556;
+  border: 2px solid transparent;
 }
 
 .planet-dot.trait-cultural { background: #2664a0; }
@@ -412,6 +531,13 @@ export default {
   opacity: .7;
 }
 
+.custodians-badge {
+  font-size: .85em;
+  font-weight: 700;
+  color: #ffd700;
+  text-shadow: 0 0 3px rgba(0,0,0,.9);
+}
+
 .planet-attach-dot {
   position: absolute;
   top: -2px;
@@ -423,10 +549,38 @@ export default {
   border: 1px solid rgba(0,0,0,.3);
 }
 
+.ground-units {
+  display: flex;
+  gap: 1px;
+  margin-top: 0;
+}
+
+.ground-entry {
+  display: inline-flex;
+  align-items: baseline;
+  text-shadow: 0 0 3px rgba(0,0,0,.9), 0 0 1px rgba(0,0,0,.7);
+}
+
+.ground-icon {
+  font-size: .55em;
+}
+
+.ground-count {
+  font-size: .45em;
+  font-weight: 700;
+  margin-left: -1px;
+}
+
 .wormhole-badge {
   font-size: 1em;
   color: #aef;
   font-weight: 700;
+}
+
+.ion-storm-badge {
+  font-size: .85em;
+  color: #ffeb3b;
+  text-shadow: 0 0 3px rgba(0,0,0,.9);
 }
 
 .anomaly-badge {
@@ -466,6 +620,13 @@ export default {
   font-size: .6em;
   font-weight: 700;
   margin-left: -1px;
+}
+
+.damage-pip {
+  color: #ff4444;
+  font-weight: 700;
+  font-size: .7em;
+  text-shadow: 0 0 3px rgba(0,0,0,.9);
 }
 
 .command-tokens {
