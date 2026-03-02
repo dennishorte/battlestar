@@ -346,14 +346,26 @@ module.exports = function(Twilight) {
     const chosenSystem = selection[0]
 
     // Each other player places a command token from reinforcements in that system
+    // Rule 32.1a: skip if player already has a command token there
     const otherPlayers = this.players.all().filter(p => p.name !== player.name)
     for (const other of otherPlayers) {
-    // Only if they have tokens to place
-      if (other.commandTokens.tactics > 0) {
-        if (!this.state.systems[chosenSystem].commandTokens.includes(other.name)) {
-          this.state.systems[chosenSystem].commandTokens.push(other.name)
-        }
+      if (this.state.systems[chosenSystem].commandTokens.includes(other.name)) {
+        continue
       }
+      // Take from command sheet: tactics → strategy → fleet
+      if (other.commandTokens.tactics > 0) {
+        other.commandTokens.tactics--
+      }
+      else if (other.commandTokens.strategy > 0) {
+        other.commandTokens.strategy--
+      }
+      else if (other.commandTokens.fleet > 0) {
+        other.commandTokens.fleet--
+      }
+      else {
+        continue  // No tokens available
+      }
+      this.state.systems[chosenSystem].commandTokens.push(other.name)
     }
 
     this.log.add({
