@@ -38,6 +38,10 @@ The following items have been implemented:
 - **Neighbor indicators** — PlayerPanel shows "Neighbors" section with colored-border chips during action phase
 - **Capacity tracking enhancement** — MoveShips shows "Capacity: N/M" with colored progress bar (green/orange/red)
 - **Errata text fixes** — Direct Hit corrected to errata wording; added missing action cards: Bribery, Veto, Unstable Planet
+- **Combat UI (verified)** — CombatDisplay.vue already shows dice rolls with hit/miss coloring, AFB/bombardment summaries, sustain/destroy assignment chips, round numbers, and win/retreat/draw outcomes. Engine auto-assigns hits; no interactive buttons needed.
+- **Agenda voting UI** — AgendaVote.vue dedicated component with three modes: outcome selection (For/Against/Abstain buttons with influence display), planet exhaustion (checkbox list with running vote total), and trade good spending (+/- controls with vote preview)
+- **FAQ: Dice "0" = 10 (verified)** — Engine rolls `Math.floor(random() * 10) + 1` producing range [1, 10]; combat value clamped to [1, 10]. No 0 is ever produced.
+- **FAQ: Fighters block movement (verified)** — `Galaxy.js:_getEnemyShipsInSystem()` returns all space units regardless of type. Fighter-only systems correctly block movement.
 
 ---
 
@@ -79,15 +83,11 @@ Engine sets `state.statusPhaseStep` through score-objectives/reveal-objective/dr
 
 Five dedicated action UIs exist: ActivateSystem, MoveShips, ProduceUnits, TradeOffer, RedistributeTokens. The following high-impact interactions use the generic text-based WaitingChoice selector and would benefit from dedicated UIs.
 
-#### Missing: Combat UI (dice rolls, hit assignment, sustain damage)
-**Rules**: 78.5, 42.1, 87.1, 15.1, 10.1 -- Combat involves rolling dice, displaying results, choosing sustain damage, and assigning hits. Bombardment, anti-fighter barrage, and space cannon also involve dice.
-**Current**: All combat interactions use generic text choice lists. No dice are shown. Hit assignment is a plain text selection.
-**Recommendation**: Build a combat UI showing: dice rolls with hit/miss highlighting, sustain damage buttons per eligible unit, and visual hit assignment.
+#### ~~Combat UI~~ **DONE**
+CombatDisplay.vue already shows dice rolls with hit/miss coloring, AFB/bombardment summaries, sustain/destroy assignment chips, round numbers, and win/retreat/draw outcomes. Engine auto-assigns hits; no interactive buttons needed.
 
-#### Missing: Agenda voting UI
-**Rules**: 8.5-8.17 -- Voting involves exhausting planets for influence, declaring an outcome (For/Against or elect target), and handling special voting effects.
-**Current**: Voting uses the generic choice selector. No display of available influence, no planet exhaustion visualization.
-**Recommendation**: Build a voting UI showing: available influence per planet, running vote tally, outcome selection, and abstain option.
+#### ~~Agenda voting UI~~ **DONE**
+AgendaVote.vue dedicated component with three modes: outcome selection (For/Against/Abstain buttons with influence display), planet exhaustion (checkbox list with running vote total), and trade good spending (+/- controls with vote preview). Wired into TwilightGame.vue via `activeActionType === 'agenda-vote'`.
 
 #### Missing: Technology research UI
 **Rules**: 90.9-90.15 -- Researching technology requires checking prerequisites (colored symbols), potentially exhausting planets with tech specialties to skip prerequisites.
@@ -141,13 +141,11 @@ Direct Hit errata applied (targets ship using SUSTAIN DAMAGE, not generic hit as
 
 ### 8. FAQ Edge Cases
 
-#### Dice display: "0" = 10
-**Rules**: FAQ General Q1 -- The "0" face on d10 represents 10.
-**Current**: If dice are ever displayed, ensure 0 renders as 10.
+#### ~~Dice display: "0" = 10~~ **VERIFIED**
+Engine rolls `Math.floor(random() * 10) + 1` producing range [1, 10]; combat value clamped to [1, 10]. No 0 is ever produced. No fix needed.
 
-#### Fighters block movement
-**Rules**: FAQ General Q3 -- Systems containing only enemy fighters still block movement.
-**Current**: Verify movement path calculation accounts for fighter-only systems.
+#### ~~Fighters block movement~~ **VERIFIED**
+`Galaxy.js:_getEnemyShipsInSystem()` returns all space units regardless of type. Fighter-only systems correctly block movement. No fix needed.
 
 ---
 
@@ -166,7 +164,7 @@ SystemTile checks `wormholeNexusActive` for tile 82. When inactive: only γ is a
 ### High Priority (affects core gameplay experience)
 1. ~~Ground units/structures on map tiles~~ **DONE**
 2. ~~Public objectives area with scoring tokens~~ **DONE**
-3. Combat UI (dice, sustain, hit assignment)
+3. ~~Combat UI (dice, sustain, hit assignment)~~ **DONE**
 4. ~~Damaged unit indicators~~ **DONE**
 5. ~~Secret objectives for owning player~~ **DONE**
 6. ~~Available (ready) resources/influence totals~~ **DONE**
@@ -175,7 +173,7 @@ SystemTile checks `wormholeNexusActive` for tile 82. When inactive: only γ is a
 7. ~~Off-map system rendering (Creuss home, Wormhole Nexus)~~ **DONE**
 8. ~~Tactical action step tracker~~ **DONE**
 9. ~~Reinforcements display~~ **DONE**
-10. Agenda voting UI
+10. ~~Agenda voting UI~~ **DONE**
 11. ~~Active laws display~~ **DONE**
 12. ~~Planet controller colors on map~~ **DONE**
 13. ~~Custodians token display~~ **DONE**
