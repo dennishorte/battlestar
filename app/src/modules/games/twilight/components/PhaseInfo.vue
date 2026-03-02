@@ -3,6 +3,7 @@
     <div class="phase-header">
       <span class="phase-badge" :class="phaseClass">{{ phaseName }}</span>
       <span class="round-badge" v-if="round > 0">Round {{ round }}</span>
+      <button class="help-btn" @click="openPhaseHelp" title="Rules Reference">?</button>
     </div>
 
     <!-- Tactical action step breadcrumb -->
@@ -87,9 +88,9 @@
     </div>
 
     <!-- Public Objectives -->
-    <div class="public-objectives" v-if="publicObjectives.length > 0">
+    <div class="public-objectives">
       <div class="detail-label">Public Objectives:</div>
-      <div class="objective-list">
+      <div class="objective-list" v-if="publicObjectives.length > 0">
         <div
           v-for="obj in publicObjectives"
           :key="obj.id"
@@ -109,6 +110,7 @@
           </span>
         </div>
       </div>
+      <div v-else class="none-yet">None revealed yet</div>
     </div>
 
     <!-- Active Laws -->
@@ -351,6 +353,28 @@ export default {
       })
     },
 
+    phaseRuleFilter() {
+      // Map current phase/step to a rules reference search term
+      const stepFilters = {
+        activate: 'Tactical Action',
+        move: 'Movement',
+        combat: 'Space Combat',
+        invade: 'Invasion',
+        produce: 'Production',
+      }
+      if (this.tacticalStep && stepFilters[this.tacticalStep]) {
+        return stepFilters[this.tacticalStep]
+      }
+      const phaseFilters = {
+        setup: 'Setup',
+        strategy: 'Strategy Phase',
+        action: 'Action Phase',
+        status: 'Status Phase',
+        agenda: 'Agenda Phase',
+      }
+      return phaseFilters[this.phase] || this.phaseName
+    },
+
     activeLaws() {
       const laws = this.game.state.activeLaws || []
       return laws.map(law => {
@@ -371,6 +395,14 @@ export default {
         return { color: player.color, fontWeight: 600 }
       }
       return { fontWeight: 600 }
+    },
+
+    openPhaseHelp() {
+      const ruleFilter = this.phaseRuleFilter
+      if (this.ui?.modals?.rulesReference) {
+        this.ui.modals.rulesReference.filter = ruleFilter
+      }
+      this.$modal('twilight-rules-reference').show()
     },
 
     openLawDetail(lawId) {
@@ -417,6 +449,28 @@ export default {
   font-size: .8em;
   color: #666;
   font-weight: 600;
+}
+
+.help-btn {
+  width: 1.4em;
+  height: 1.4em;
+  border-radius: 50%;
+  border: 1px solid #aaa;
+  background: #e9ecef;
+  color: #555;
+  font-size: .75em;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-left: auto;
+}
+
+.help-btn:hover {
+  background: #dee2e6;
+  color: #333;
 }
 
 .tactical-breadcrumb {
@@ -600,6 +654,13 @@ export default {
   height: 8px;
   border-radius: 50%;
   border: 1px solid rgba(0,0,0,.2);
+}
+
+.none-yet {
+  font-size: .75em;
+  color: #888;
+  font-style: italic;
+  margin-top: .15em;
 }
 
 .active-laws {

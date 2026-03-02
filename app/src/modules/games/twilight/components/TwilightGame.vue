@@ -25,6 +25,7 @@
 
           <div class="toolbar">
             <button class="btn btn-sm btn-outline-secondary" @click="openShipOverview">Units</button>
+            <button class="btn btn-sm btn-outline-secondary" @click="openRulesReference">Rules</button>
           </div>
 
           <WaitingPanel />
@@ -49,6 +50,7 @@
 
     <SystemDetailModal />
     <CardDetailModal />
+    <RulesReferenceModal />
     <ShipOverviewModal />
     <DebugModal />
   </div>
@@ -79,6 +81,7 @@ import TradeOffer from './actions/TradeOffer.vue'
 
 // Modals
 import CardDetailModal from './modals/CardDetailModal.vue'
+import RulesReferenceModal from './modals/RulesReferenceModal.vue'
 import ShipOverviewModal from './modals/ShipOverviewModal.vue'
 import SystemDetailModal from './modals/SystemDetailModal.vue'
 
@@ -126,6 +129,7 @@ export default {
     ProduceUnits,
     RedistributeTokens,
     ResearchTech,
+    RulesReferenceModal,
     ShipOverviewModal,
     SystemDetailModal,
     TradeOffer,
@@ -144,6 +148,7 @@ export default {
         modals: {
           systemDetail: { systemId: null },
           cardDetail: { type: null, id: null, context: null },
+          rulesReference: { filter: null },
         },
         highlightedSystems: [],
         interactiveSystems: [],
@@ -318,6 +323,13 @@ export default {
 
     openShipOverview() {
       this.$modal('twilight-ship-overview').show()
+    },
+
+    openRulesReference(filter) {
+      if (typeof filter === 'string') {
+        this.ui.modals.rulesReference.filter = filter
+      }
+      this.$modal('twilight-rules-reference').show()
     },
 
     openSystemDetail(systemId) {

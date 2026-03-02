@@ -10,6 +10,7 @@ const promissoryNotes = require('./promissoryNotes.js')
 const strategyCards = require('./strategyCards.js')
 const systemTiles = require('./systemTiles.js')
 const technologies = require('./technologies.js')
+const livingRules = require('./livingRules.js')
 const units = require('./units.js')
 
 module.exports = {
@@ -17,6 +18,7 @@ module.exports = {
   ...agendaCards,
   ...explorationCards,
   ...factions,
+  ...livingRules,
   ...mapLayouts,
   ...objectives,
   ...planets,
