@@ -74,7 +74,7 @@
 
     <!-- Relics -->
     <div class="panel-section" v-if="relics.length > 0">
-      <div class="section-label">Relics ({{ relics.length }})</div>
+      <div class="section-label clickable" @click="openCardZone('relic', relics)">Relics ({{ relics.length }})</div>
       <div class="relic-list">
         <span v-for="relic in relics"
               :key="relic.id"
@@ -136,7 +136,7 @@
 
     <!-- Technologies -->
     <div class="panel-section" v-if="technologies.length > 0">
-      <div class="section-label">Technologies ({{ technologies.length }})</div>
+      <div class="section-label clickable" @click="openCardZone('technology', technologies)">Technologies ({{ technologies.length }})</div>
       <div class="tech-list">
         <span
           v-for="tech in technologies"
@@ -153,7 +153,7 @@
 
     <!-- Planets -->
     <div class="panel-section" v-if="planets.length > 0">
-      <div class="section-label">
+      <div class="section-label clickable" @click="openCardZone('planet', planets)">
         Planets ({{ readyResources }}/{{ totalResources }}R / {{ readyInfluence }}/{{ totalInfluence }}I)
       </div>
       <div class="planet-list">
@@ -178,7 +178,7 @@
 
     <!-- Scored Objectives -->
     <div class="panel-section" v-if="scoredObjectives.length > 0">
-      <div class="section-label">Scored Objectives</div>
+      <div class="section-label clickable" @click="openCardZone('scored-objective', scoredObjectives)">Scored Objectives</div>
       <div class="objective-list">
         <div v-for="obj in scoredObjectives"
              :key="obj.id"
@@ -189,7 +189,7 @@
 
     <!-- Secret Objectives (viewer only sees names, opponents see count) -->
     <div class="panel-section" v-if="isViewer && secretObjectives.length > 0">
-      <div class="section-label">Secret Objectives ({{ secretObjectives.length }})</div>
+      <div class="section-label clickable" @click="openCardZone('secret-objective', secretObjectives)">Secret Objectives ({{ secretObjectives.length }})</div>
       <div class="secret-list">
         <div v-for="obj in secretObjectives"
              :key="obj.id"
@@ -203,7 +203,7 @@
 
     <!-- Action Cards (chips for viewer, count for opponents) -->
     <div class="panel-section" v-if="isViewer && actionCards.length > 0">
-      <div class="section-label">Action Cards ({{ actionCards.length }})</div>
+      <div class="section-label clickable" @click="openCardZone('action-card', actionCards)">Action Cards ({{ actionCards.length }})</div>
       <div class="action-card-list">
         <span
           v-for="(ac, i) in actionCards"
@@ -222,7 +222,7 @@
 
     <!-- Promissory Notes -->
     <div class="panel-section" v-if="promissoryNotes.length > 0">
-      <div class="section-label">Promissory Notes</div>
+      <div class="section-label clickable" @click="openCardZone('promissory-note', promissoryNotes)">Promissory Notes</div>
       <div class="prom-list">
         <div v-for="note in promissoryNotes"
              :key="note.id + note.owner"
@@ -537,6 +537,13 @@ export default {
       this.ui.modals.cardDetail.type = type
       this.ui.modals.cardDetail.id = id
       this.ui.modals.cardDetail.context = context || null
+      this.$modal('twilight-card-detail').show()
+    },
+
+    openCardZone(zoneType, items) {
+      this.ui.modals.cardDetail.type = 'card-zone'
+      this.ui.modals.cardDetail.id = null
+      this.ui.modals.cardDetail.context = { zoneType, items }
       this.$modal('twilight-card-detail').show()
     },
 
