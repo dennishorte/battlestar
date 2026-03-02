@@ -771,9 +771,30 @@ describe('Empyrean', () => {
       })
 
       test('does not trigger when system is not adjacent to an anomaly', () => {
-        // System 27 (New Albion at 0,-2) is not adjacent to any anomaly
+        // Custom layout: place only non-anomaly tiles around the target system (27).
+        // Anomaly tiles (41=gravity rift, 42=nebula, 44=asteroid field) are far away.
+        // Empyrean home (nebula) is at (0,-3); system 27 at (0,2) is not adjacent.
         const game = t.fixture({ factions: ['empyrean', 'emirates-of-hacan'] })
         t.setBoard(game, {
+          systems: {
+            27: { q: 0, r: 2 },    // target — far from empyrean-home (0,-3)
+            26: { q: 0, r: 1 },    // neighbor of 27, no anomaly
+            20: { q: 1, r: 1 },    // neighbor of 27, no anomaly
+            25: { q: 0, r: -1 },
+            35: { q: -1, r: 0 },
+            34: { q: -1, r: 1 },
+            41: { q: -2, r: 0 },   // gravity rift — far from 27
+            42: { q: -2, r: -1 },  // nebula — far from 27
+            44: { q: -2, r: 1 },   // asteroid field — far from 27
+            37: { q: 1, r: -2 },
+            24: { q: 2, r: -2 },
+            39: { q: 2, r: -1 },
+            38: { q: -1, r: 2 },
+            36: { q: 1, r: 2 },
+            40: { q: 2, r: 0 },
+            47: { q: 1, r: -1 },
+            48: { q: -1, r: -1 },
+          },
           dennis: {
             technologies: ['dark-energy-tap', 'gravity-drive', 'aetherstream'],
             leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
@@ -788,11 +809,11 @@ describe('Empyrean', () => {
         game.run()
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
-        // Dennis activates system 27 (NOT adjacent to anomaly)
+        // Dennis activates system 27 (NOT adjacent to any anomaly in this layout)
         t.choose(game, 'Tactical Action')
         t.action(game, 'activate-system', { systemId: '27' })
 
-        // No Aetherstream prompt — system 27 is not adjacent to an anomaly
+        // No Aetherstream prompt
         const choices = t.currentChoices(game)
         expect(choices).not.toContain('Apply Aetherstream')
       })
