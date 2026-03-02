@@ -443,4 +443,68 @@ describe('Space Combat', () => {
       expect(micahShips.length === 0 || dennisShips.length === 0).toBe(true)
     })
   })
+
+  describe('Combat Log', () => {
+    test('_combatLog records space combat events', () => {
+      const game = t.fixture()
+      const targetSystem = findAdjacent('sol-home')
+      t.setBoard(game, {
+        dennis: {
+          units: {
+            'sol-home': {
+              space: ['cruiser', 'cruiser', 'cruiser', 'cruiser', 'cruiser'],
+              'jord': ['space-dock'],
+            },
+          },
+        },
+        micah: {
+          units: {
+            [targetSystem]: {
+              space: ['fighter'],
+            },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Tactical Action')
+      t.action(game, 'activate-system', { systemId: targetSystem })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'sol-home', count: 5 }],
+      })
+
+      const log = game.state._combatLog
+      expect(Array.isArray(log)).toBe(true)
+      expect(log.length).toBeGreaterThan(0)
+
+      // Should have space-combat-start
+      const start = log.find(e => e.type === 'space-combat-start')
+      expect(start).toBeDefined()
+      expect(start.systemId).toBe(targetSystem)
+      expect(start.attacker).toBe('dennis')
+      expect(start.defender).toBe('micah')
+
+      // Should have at least one combat-round
+      const rounds = log.filter(e => e.type === 'combat-round')
+      expect(rounds.length).toBeGreaterThan(0)
+      const round1 = rounds[0]
+      expect(round1.combatType).toBe('space')
+      expect(round1.round).toBe(1)
+      expect(round1.sides.attacker.name).toBe('dennis')
+      expect(round1.sides.defender.name).toBe('micah')
+      expect(round1.sides.attacker.rolls.length).toBeGreaterThan(0)
+      expect(round1.sides.attacker.rolls[0]).toHaveProperty('unitType')
+      expect(round1.sides.attacker.rolls[0]).toHaveProperty('effectiveCombat')
+      expect(round1.sides.attacker.rolls[0]).toHaveProperty('dice')
+      expect(round1.sides.attacker.rolls[0].dice[0]).toHaveProperty('roll')
+      expect(round1.sides.attacker.rolls[0].dice[0]).toHaveProperty('hit')
+
+      // Should have combat-end
+      const end = log.find(e => e.type === 'combat-end')
+      expect(end).toBeDefined()
+      expect(end.combatType).toBe('space')
+      expect(end.winner).toBe('dennis')  // 5 cruisers vs 1 fighter
+    })
+  })
 })

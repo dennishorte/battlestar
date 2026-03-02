@@ -12,6 +12,7 @@
         <!-- Game Column: Phase Info + Actions -->
         <div class="col game-column center-column">
           <PhaseInfo />
+          <CombatDisplay />
 
           <!-- Custom action UIs -->
           <ActivateSystem v-if="activeActionType === 'activate-system'" />
@@ -59,6 +60,7 @@ import WaitingPanel from '@/modules/games/common/components/WaitingPanel.vue'
 import DebugModal from '@/modules/games/common/components/DebugModal.vue'
 
 // Twilight Components
+import CombatDisplay from './CombatDisplay.vue'
 import GalaxyMap from './GalaxyMap.vue'
 import GameLogTwilight from './GameLogTwilight.vue'
 import PhaseInfo from './PhaseInfo.vue'
@@ -108,6 +110,7 @@ export default {
   components: {
     ActivateSystem,
     CardDetailModal,
+    CombatDisplay,
     DebugModal,
     GalaxyMap,
     GameLogTwilight,

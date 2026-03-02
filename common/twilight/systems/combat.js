@@ -1,5 +1,16 @@
 const res = require('../res/index.js')
 
+// Snapshot roll data to plain objects (strips live unit refs)
+function _mapRolls(rollResult) {
+  return rollResult.rolls.map(r => ({
+    unitType: r.ship.type,
+    unitId: r.ship.id,
+    owner: r.ship.owner,
+    effectiveCombat: r.effectiveCombat,
+    dice: r.diceResults.map(d => ({ roll: d.roll, hit: d.hit })),
+  }))
+}
+
 module.exports = function(Twilight) {
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -36,6 +47,15 @@ module.exports = function(Twilight) {
       template: 'Space combat in system {system}',
       args: { system: systemId },
       event: 'combat',
+    })
+    if (!this.state._combatLog) {
+      this.state._combatLog = []
+    }
+    this.state._combatLog.push({
+      type: 'space-combat-start',
+      systemId,
+      attacker,
+      defender,
     })
     this.log.indent()
 
@@ -80,6 +100,7 @@ module.exports = function(Twilight) {
 
     // Combat rounds
     let round = 0
+    let retreatedPlayer = null
     const MAX_ROUNDS = 20  // safety limit
     while (round < MAX_ROUNDS) {
       round++
@@ -106,6 +127,17 @@ module.exports = function(Twilight) {
       let attackerHits = attackerRoll.hits + this._offerCrownOfThalnos(attacker, attackerRoll, combatContext)
       let defenderHits = defenderRoll.hits + this._offerCrownOfThalnos(defender, defenderRoll, combatContext)
 
+      this.state._combatLog.push({
+        type: 'combat-round',
+        combatType: 'space',
+        systemId,
+        round,
+        sides: {
+          attacker: { name: attacker, rolls: _mapRolls(attackerRoll), totalHits: attackerHits },
+          defender: { name: defender, rolls: _mapRolls(defenderRoll), totalHits: defenderHits },
+        },
+      })
+
       this.log.add({
         template: 'Round {round}: attacker scores {aHits} hits, defender scores {dHits} hits',
         args: { round, aHits: attackerHits, dHits: defenderHits },
@@ -127,11 +159,13 @@ module.exports = function(Twilight) {
         if (defenderRetreating) {
           this._executeRetreat(systemId, defender, defenderRetreating)
           delete this.state.retreatAnnounced[defender]
+          retreatedPlayer = defender
           break
         }
         if (attackerRetreating) {
           this._executeRetreat(systemId, attacker, attackerRetreating)
           delete this.state.retreatAnnounced[attacker]
+          retreatedPlayer = attacker
           break
         }
       }
@@ -140,6 +174,19 @@ module.exports = function(Twilight) {
     // Determine combat winner/loser for faction abilities (Mahact edict)
     const aShipsAfter = systemUnits.space.filter(u => u.owner === attacker)
     const dShipsAfter = systemUnits.space.filter(u => u.owner === defender)
+
+    const spaceWinner = aShipsAfter.length > 0 && dShipsAfter.length === 0 ? attacker
+      : dShipsAfter.length > 0 && aShipsAfter.length === 0 ? defender
+        : null
+    this.state._combatLog.push({
+      type: 'combat-end',
+      combatType: 'space',
+      systemId,
+      winner: spaceWinner,
+      loser: spaceWinner ? (spaceWinner === attacker ? defender : attacker) : null,
+      retreated: retreatedPlayer,
+    })
+
     if (aShipsAfter.length > 0 && dShipsAfter.length === 0) {
       this.factionAbilities.afterCombatResolved(systemId, attacker, defender, 'space')
       this._detectCombatSecrets(systemId, attacker, defender, 'space')
@@ -275,6 +322,15 @@ module.exports = function(Twilight) {
             fightersDestroyed++
           }
         }
+
+        this.state._combatLog.push({
+          type: 'afb',
+          systemId,
+          shooter,
+          target,
+          hits: totalAFBHits,
+          fightersDestroyed,
+        })
 
         // fight-with-precision: destroyed all fighters during AFB
         if (fightersDestroyed > 0) {
@@ -475,6 +531,7 @@ module.exports = function(Twilight) {
 
     const systemUnits = this.state.units[systemId]
     let remainingHits = effectiveHits
+    const assignments = []
 
     // Track which units just sustained this round (for Duranium Armor)
     const justSustainedIds = new Set()
@@ -509,6 +566,7 @@ module.exports = function(Twilight) {
       }
       ship.damaged = true
       justSustainedIds.add(ship.id)
+      assignments.push({ owner: ownerName, unitType: ship.type, unitId: ship.id, result: 'sustained' })
       remainingHits = Math.max(0, remainingHits - hitsPerSustain)
     }
 
@@ -550,6 +608,7 @@ module.exports = function(Twilight) {
         if (!this.state._destroyedDuringCombat[ownerName]) {
           this.state._destroyedDuringCombat[ownerName] = []
         }
+        assignments.push({ owner: ownerName, unitType: removed.type, unitId: removed.id, result: 'destroyed' })
         this.state._destroyedDuringCombat[ownerName].push(removed.type)
       }
       remainingHits--
@@ -563,6 +622,15 @@ module.exports = function(Twilight) {
       if (repairCandidate) {
         repairCandidate.damaged = false
       }
+    }
+
+    if (assignments.length > 0) {
+      this.state._combatLog.push({
+        type: 'hits-assigned',
+        combatType: 'space',
+        systemId,
+        assignments,
+      })
     }
   }
 
@@ -754,6 +822,14 @@ module.exports = function(Twilight) {
     }
 
     if (totalHits > 0) {
+      this.state._combatLog.push({
+        type: 'bombardment',
+        systemId,
+        planetId,
+        attacker: attackerName,
+        hits: totalHits,
+      })
+
       this.log.add({
         template: '{attacker} bombardment scores {hits} hits on {planet}',
         args: { attacker: attackerName, hits: totalHits, planet: planetId },
