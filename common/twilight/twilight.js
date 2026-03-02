@@ -648,6 +648,13 @@ Twilight.prototype.strategyPhase = function() {
   const numPlayers = this.players.all().length
   const cardsPerPlayer = (numPlayers >= 3 && numPlayers <= 4) ? 2 : 1
 
+  if (cardsPerPlayer === 2) {
+    this.log.add({
+      template: 'Each player picks 2 strategy cards (snake draft). Both must be used before passing.',
+      event: 'memo',
+    })
+  }
+
   for (let round = 0; round < cardsPerPlayer; round++) {
     // Snake draft: first round clockwise, second round reverse
     const pickOrder = round === 0 ? clockwiseOrder : [...clockwiseOrder].reverse()
