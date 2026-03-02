@@ -934,12 +934,15 @@ Twilight.prototype.statusPhase = function() {
   }
 
   // Step 1: Score objectives (in initiative order)
+  this.state.statusPhaseStep = 'score-objectives'
   this._scoreObjectives()
 
   // Step 2: Reveal public objective
+  this.state.statusPhaseStep = 'reveal-objective'
   this._revealObjective()
 
   // Step 3: Draw action cards (each player draws 1; Neural Motivator draws 2)
+  this.state.statusPhaseStep = 'draw-cards'
   for (const player of this._getPlayersInInitiativeOrder()) {
     let drawCount = player.hasTechnology('neural-motivator') ? 2 : 1
     // Slumberstate Computing: draw 1 additional per coexisting player
@@ -965,11 +968,13 @@ Twilight.prototype.statusPhase = function() {
   }
 
   // Step 4: Remove command tokens from board
+  this.state.statusPhaseStep = 'remove-tokens'
   for (const systemId of Object.keys(this.state.systems)) {
     this.state.systems[systemId].commandTokens = []
   }
 
   // Step 5: Gain and redistribute command tokens
+  this.state.statusPhaseStep = 'redistribute'
   for (const player of this._getPlayersInInitiativeOrder()) {
     // Gain 2 tokens (Sol gets 3 via Versatile ability; Hyper Metabolism adds 1)
     const bonusTokens = this.factionAbilities.getStatusPhaseTokenBonus(player)
@@ -992,11 +997,13 @@ Twilight.prototype.statusPhase = function() {
   }
 
   // Step 6: Ready cards
+  this.state.statusPhaseStep = 'ready-cards'
   for (const planetId of Object.keys(this.state.planets)) {
     this.state.planets[planetId].exhausted = false
   }
 
   // Step 7: Repair units (remove damage)
+  this.state.statusPhaseStep = 'repair'
   for (const systemId of Object.keys(this.state.units)) {
     const systemUnits = this.state.units[systemId]
     for (const unit of systemUnits.space) {
@@ -1036,6 +1043,7 @@ Twilight.prototype.statusPhase = function() {
   }
 
   // Step 9: Return strategy cards
+  this.state.statusPhaseStep = 'return-strategy'
   for (const player of this.players.all()) {
     player.returnStrategyCard()
   }
@@ -1050,6 +1058,7 @@ Twilight.prototype.statusPhase = function() {
     this._offerCrownOfEmphidiaStatusPhase(player)
   }
 
+  delete this.state.statusPhaseStep
   this.log.outdent()
 }
 

@@ -24,6 +24,19 @@
       </div>
     </div>
 
+    <!-- Neighbors -->
+    <div class="panel-section" v-if="isViewer && neighbors.length > 0">
+      <div class="section-label">Neighbors</div>
+      <div class="neighbor-list">
+        <span
+          v-for="n in neighbors"
+          :key="n.name"
+          class="neighbor-chip"
+          :style="{ borderLeftColor: n.color }"
+        >{{ n.name }}</span>
+      </div>
+    </div>
+
     <!-- Unit Supply -->
     <div class="panel-section">
       <div class="section-label clickable" @click="supplyExpanded = !supplyExpanded">
@@ -244,6 +257,16 @@ export default {
   computed: {
     isViewer() {
       return this.player.name === this.actor.name
+    },
+
+    neighbors() {
+      if (this.game.state.phase !== 'action' || !this.isViewer) {
+        return []
+      }
+      return this.game.players.all()
+        .filter(p => p.name !== this.player.name)
+        .filter(p => this.game.areNeighbors(this.player.name, p.name))
+        .map(p => ({ name: p.name, color: p.color || '#666' }))
     },
 
     factionName() {
@@ -839,6 +862,12 @@ export default {
   padding: .1em .25em;
   border-radius: .15em;
   background: #f8f9fa;
+}
+
+.neighbor-list { display: flex; flex-wrap: wrap; gap: .15em; }
+.neighbor-chip {
+  font-size: .7em; padding: .1em .3em; border-radius: .15em;
+  border-left: 3px solid #666; background: #f0f0f0; font-weight: 500;
 }
 
 .supply-green { color: #198754; }
