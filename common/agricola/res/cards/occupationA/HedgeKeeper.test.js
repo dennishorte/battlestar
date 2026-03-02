@@ -59,6 +59,41 @@ describe('Hedge Keeper', () => {
     })
   })
 
+  test('discount applies only once across multiple pastures in same action', () => {
+    const game = t.fixture({ cardSets: ['occupationA'] })
+    t.setBoard(game, {
+      actionSpaces: ['Fencing'],
+      dennis: {
+        occupations: ['hedge-keeper-a088'],
+        // First pasture at (0,4): 4 fences, 3 free → 1 wood
+        // Second pasture at (1,4): 3 new fences (shares top edge), 0 free → 3 wood
+        wood: 4,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Fencing')
+    t.action(game, 'build-pasture', { spaces: [{ row: 0, col: 4 }] })
+    t.choose(game, 'Build another pasture')
+    t.action(game, 'build-pasture', { spaces: [{ row: 1, col: 4 }] })
+
+    const dennis = game.players.byName('dennis')
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['hedge-keeper-a088'],
+        wood: 0, // 4 - 1 - 3 (3 free fences used on first pasture, none on second)
+        farmyard: {
+          pastures: [
+            { spaces: [{ row: 0, col: 4 }] },
+            { spaces: [{ row: 1, col: 4 }] },
+          ],
+          fences: 7, // 4 from first + 3 new from second
+        },
+        score: dennis.calculateScore(),
+      },
+    })
+  })
+
   test('without Hedge Keeper, same pasture costs more wood', () => {
     // Control test: verify the discount actually saves wood
     const game = t.fixture({ cardSets: ['occupationA'] })

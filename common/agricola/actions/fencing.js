@@ -5,6 +5,9 @@ AgricolaActionManager.prototype.buildFences = function(player) {
   let totalFencesBuilt = 0
   let continueBuilding = true
 
+  // Set up per-action fence cost counters (e.g. Hedge Keeper's 3 free fences per action)
+  this.game.callPlayerCardHook(player, 'onStartFenceAction')
+
   while (continueBuilding) {
     // Check if player can build any fences (accounting for free fences from cards)
     const hasFreeOverhaulFences = (player._overhaulFreeFences || 0) > 0
@@ -60,6 +63,9 @@ AgricolaActionManager.prototype.buildFences = function(player) {
       continueBuilding = false
     }
   }
+
+  // Clean up per-action fence cost counters
+  this.game.callPlayerCardHook(player, 'onEndFenceAction')
 
   if (totalFencesBuilt > 0) {
     this.game.callPlayerCardHook(player, 'onBuildFences', totalFencesBuilt)

@@ -708,6 +708,13 @@ AgricolaPlayer.prototype.buildPasture = function(spaces, options) {
     else {
       woodCost = this.applyFenceCostModifiers(validation.fencesNeeded, this._countEdgeFences(validation.fences))
     }
+    // Consume per-action fence cost modifiers (e.g. Hedge Keeper free fence counter)
+    const fencesForModifier = usesPalisades ? internalFences.length : validation.fencesNeeded
+    for (const card of this.getActiveCards()) {
+      if (card.hasHook('consumeFenceCost')) {
+        card.callHook('consumeFenceCost', this, fencesForModifier)
+      }
+    }
     // Overhaul free fence discount — decrement the counter
     if (this._overhaulFreeFences > 0) {
       const discount = Math.min(woodCost, this._overhaulFreeFences)
