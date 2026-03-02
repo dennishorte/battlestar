@@ -20,6 +20,7 @@
           <ProduceUnits v-if="activeActionType === 'produce-units'" :request="waitingRequest" />
           <TradeOffer v-if="activeActionType === 'trade-offer'" />
           <RedistributeTokens v-if="activeActionType === 'redistribute-tokens'" />
+          <AgendaVote v-if="activeActionType === 'agenda-vote'" :request="waitingRequest" />
 
           <div class="toolbar">
             <button class="btn btn-sm btn-outline-secondary" @click="openShipOverview">Units</button>
@@ -68,6 +69,7 @@ import PlayerPanel from './PlayerPanel.vue'
 
 // Action UIs
 import ActivateSystem from './actions/ActivateSystem.vue'
+import AgendaVote from './actions/AgendaVote.vue'
 import MoveShips from './actions/MoveShips.vue'
 import ProduceUnits from './actions/ProduceUnits.vue'
 import RedistributeTokens from './actions/RedistributeTokens.vue'
@@ -109,6 +111,7 @@ export default {
 
   components: {
     ActivateSystem,
+    AgendaVote,
     CardDetailModal,
     CombatDisplay,
     DebugModal,
@@ -203,6 +206,9 @@ export default {
       }
       if (title.includes('redistribute') || title.includes('command token')) {
         return 'redistribute-tokens'
+      }
+      if (title.includes('vote on') || title.includes('exhaust planets for votes') || title.includes('spend trade goods for extra votes')) {
+        return 'agenda-vote'
       }
 
       return null
