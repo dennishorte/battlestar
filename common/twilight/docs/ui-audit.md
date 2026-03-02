@@ -32,6 +32,11 @@ The following items have been implemented:
 - **Fleet pool limit warning** — SystemTile shows red "!" badge when non-fighter ships >= fleet pool
 - **Blockade indicator** — SystemTile shows "B" badge + SystemDetailModal shows "BLOCKADED" when space dock is blockaded
 - **Commander/hero unlock progress** — CardDetailModal shows "N/3 objectives scored" for locked heroes
+- **Combat step tracker** — Engine tracks `currentCombat.step` through afb/dice/hits/retreat (space) and dice/hits (ground); PhaseInfo shows red-tinted breadcrumb
+- **Invasion sub-step tracker** — Engine tracks `currentInvasion.step` through bombard/SCD/commit/ground/control; PhaseInfo shows orange-tinted breadcrumb with planet name
+- **Status phase step tracker** — Engine tracks `statusPhaseStep` through 8 steps; PhaseInfo shows yellow-tinted breadcrumb
+- **Neighbor indicators** — PlayerPanel shows "Neighbors" section with colored-border chips during action phase
+- **Capacity tracking enhancement** — MoveShips shows "Capacity: N/M" with colored progress bar (green/orange/red)
 
 ---
 
@@ -58,20 +63,14 @@ PlayerPanel shows "Captured Units" section with type×count chips (red-tinted) w
 #### ~~Tactical action step tracker~~ **DONE**
 Engine sets `currentTacticalAction.step` through activate/move/combat/invade/produce (null on early returns and completion). PhaseInfo shows green breadcrumb with completed/active/future styling.
 
-#### Missing: Combat step tracker
-**Rules**: 78.3-78.7 -- Space combat has sub-steps: Anti-Fighter Barrage (round 1 only), Announce Retreats, Roll Dice, Assign Hits, Retreat.
-**Current**: No combat step display. Combat is resolved entirely through generic WaitingChoice text selections.
-**Recommendation**: Add a combat step indicator when combat is active, showing the current sub-step.
+#### ~~Combat step tracker~~ **DONE**
+Engine sets `state.currentCombat = { systemId, type, step, round }` through afb/combat-round/assign-hits/retreat (space) and combat-round (ground). PhaseInfo shows red-tinted breadcrumb with type badge.
 
-#### Missing: Invasion sub-step tracker
-**Rules**: 49.1-49.5 -- Invasion has sub-steps: Bombardment, Commit Ground Forces, Space Cannon Defense, Ground Combat, Establish Control.
-**Current**: No invasion step display.
-**Recommendation**: Show invasion sub-step when relevant.
+#### ~~Invasion sub-step tracker~~ **DONE**
+Engine sets `state.currentInvasion = { systemId, planetId, step }` through bombardment/space-cannon-defense/commit-forces/ground-combat/establish-control. PhaseInfo shows orange-tinted breadcrumb with planet name badge.
 
-#### Missing: Status phase step tracker
-**Rules**: 81.1-81.8 -- Status phase has eight steps: Score Objectives, Reveal Objective, Draw Action Cards, Remove Tokens, Gain/Redistribute, Ready Cards, Repair, Return Strategy Cards.
-**Current**: PhaseInfo shows "Status Phase" but not the current step.
-**Recommendation**: Show a progress indicator for the status phase steps.
+#### ~~Status phase step tracker~~ **DONE**
+Engine sets `state.statusPhaseStep` through score-objectives/reveal-objective/draw-cards/remove-tokens/redistribute/ready-cards/repair/return-strategy. PhaseInfo shows yellow-tinted breadcrumb.
 
 ---
 
@@ -103,10 +102,8 @@ Five dedicated action UIs exist: ActivateSystem, MoveShips, ProduceUnits, TradeO
 
 ### 5. Information Display Enhancements
 
-#### Missing: Neighbor indicators for transactions
-**Rules**: 60.1, 94.2 -- Transactions can only occur with neighbors (players with units/planets in adjacent or wormhole-connected systems).
-**Current**: TradeOffer component exists but no display of which players are neighbors.
-**Recommendation**: When transacting, indicate which players are valid transaction partners.
+#### ~~Neighbor indicators for transactions~~ **DONE**
+PlayerPanel shows "Neighbors" section with colored-border chips during action phase, using `game.areNeighbors()` to identify valid transaction partners.
 
 #### ~~Fleet pool limit warning~~ **DONE**
 SystemTile shows red "!" badge (with player border color) when a player's non-fighter ships in a system >= their fleet pool count. Tooltip shows "Fleet limit: N/N".
@@ -114,10 +111,8 @@ SystemTile shows red "!" badge (with player border color) when a player's non-fi
 #### ~~Blockade indicator~~ **DONE**
 SystemTile shows red "B" badge when a space dock is blockaded (enemy ships in space, no friendly ships). SystemDetailModal shows "BLOCKADED" badge next to planet controller text.
 
-#### Missing: Capacity tracking in movement
-**Rules**: 16.1-16.3 -- Ships have capacity values that limit transported fighters/ground forces. Players need to see remaining capacity during movement.
-**Current**: MoveShips.vue tracks transport capacity but the display could be more prominent.
-**Recommendation**: Ensure capacity usage is clearly shown during movement (current/max), with warnings when exceeded.
+#### ~~Capacity tracking in movement~~ **DONE**
+MoveShips.vue shows "Capacity: N/M" with colored progress bar (green < 75%, orange 75-99%, red 100%). Always visible when totalCapacity > 0.
 
 #### ~~Commander/hero unlock progress~~ **DONE**
 CardDetailModal leaders view shows "N/3 objectives scored" progress badge for locked heroes. Commander unlock conditions continue showing text description (no numeric progress available from engine).
@@ -193,11 +188,11 @@ SystemTile checks `wormholeNexusActive` for tile 82. When inactive: only γ is a
 17. ~~Wormhole Nexus activation state display~~ **DONE**
 18. ~~Exhausted relic/tech indicators~~ **DONE**
 19. ~~Captured units display~~ **DONE**
-20. Combat/invasion/status step trackers
+20. ~~Combat/invasion/status step trackers~~ **DONE**
 21. ~~Gamma wormhole tokens on map~~ **DONE**
 22. ~~Ion storm token on map~~ **DONE**
 23. ~~Fleet pool warnings~~ **DONE**
 24. ~~Blockade indicators~~ **DONE**
-25. Neighbor indicators
+25. ~~Neighbor indicators~~ **DONE**
 26. ~~Commander/hero unlock progress~~ **DONE**
 27. ~~Log entry enhancements (colored names, clickable references)~~ **DONE**

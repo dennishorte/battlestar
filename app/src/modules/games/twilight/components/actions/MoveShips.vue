@@ -21,8 +21,11 @@
       Select origin systems from the map, or click Done if finished.
     </div>
 
-    <div v-if="preview.availableCapacity > 0 && preview.transportedUnits.length > 0" class="capacity-info">
-      Transport capacity: {{ preview.availableCapacity }} remaining
+    <div v-if="preview.totalCapacity > 0" class="capacity-info">
+      <span class="capacity-label">Capacity: {{ preview.usedCapacity }}/{{ preview.totalCapacity }}</span>
+      <div class="capacity-bar-track">
+        <div class="capacity-bar-fill" :class="capacityColorClass" :style="{ width: capacityPercent + '%' }"/>
+      </div>
     </div>
 
     <div v-if="totalSelected > 0 && !hasMovableShip" class="no-movable-warning">
@@ -94,6 +97,23 @@ export default {
 
     hasMovableShip() {
       return this.preview.shipMovements.length > 0
+    },
+
+    capacityPercent() {
+      if (!this.preview.totalCapacity) {
+        return 0
+      }
+      return Math.min(100, (this.preview.usedCapacity / this.preview.totalCapacity) * 100)
+    },
+
+    capacityColorClass() {
+      if (this.capacityPercent >= 100) {
+        return 'cap-red'
+      }
+      if (this.capacityPercent >= 75) {
+        return 'cap-orange'
+      }
+      return 'cap-green'
     },
   },
 
@@ -290,10 +310,36 @@ export default {
 }
 
 .capacity-info {
+  display: flex;
+  align-items: center;
+  gap: .35em;
   font-size: .75em;
   color: #666;
   margin-top: .25em;
 }
+
+.capacity-label {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.capacity-bar-track {
+  flex: 1;
+  height: .5em;
+  background: #e9ecef;
+  border-radius: .15em;
+  overflow: hidden;
+}
+
+.capacity-bar-fill {
+  height: 100%;
+  border-radius: .15em;
+  transition: width .2s;
+}
+
+.cap-green { background: #198754; }
+.cap-orange { background: #e67700; }
+.cap-red { background: #dc3545; }
 
 .no-movable-warning {
   font-size: .75em;

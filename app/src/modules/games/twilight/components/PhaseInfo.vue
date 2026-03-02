@@ -18,6 +18,47 @@
       </span>
     </div>
 
+    <!-- Combat step breadcrumb -->
+    <div class="combat-breadcrumb" v-if="combatInfo">
+      <span class="combat-type-badge" :class="combatInfo.type">{{ combatInfo.type === 'space' ? 'Space' : 'Ground' }}</span>
+      <span
+        v-for="(s, i) in combatSteps"
+        :key="s.id"
+        class="tac-step"
+        :class="s.status"
+      >
+        <span v-if="i > 0" class="tac-arrow">&rsaquo;</span>
+        {{ s.label }}
+      </span>
+    </div>
+
+    <!-- Invasion step breadcrumb -->
+    <div class="invasion-breadcrumb" v-if="invasionInfo">
+      <span class="invasion-planet-badge">{{ invasionPlanetName }}</span>
+      <span
+        v-for="(s, i) in invasionSteps"
+        :key="s.id"
+        class="tac-step"
+        :class="s.status"
+      >
+        <span v-if="i > 0" class="tac-arrow">&rsaquo;</span>
+        {{ s.label }}
+      </span>
+    </div>
+
+    <!-- Status phase step breadcrumb -->
+    <div class="status-breadcrumb" v-if="statusStep">
+      <span
+        v-for="(s, i) in statusSteps"
+        :key="s.id"
+        class="tac-step"
+        :class="s.status"
+      >
+        <span v-if="i > 0" class="tac-arrow">&rsaquo;</span>
+        {{ s.label }}
+      </span>
+    </div>
+
     <div class="phase-details">
       <div class="detail-row" v-if="speaker">
         <span class="detail-label">Speaker:</span>
@@ -150,6 +191,84 @@ export default {
         { id: 'produce', label: 'Produce' },
       ]
       const currentIdx = steps.findIndex(s => s.id === this.tacticalStep)
+      return steps.map((s, i) => ({
+        ...s,
+        status: i < currentIdx ? 'completed' : i === currentIdx ? 'active' : 'future',
+      }))
+    },
+
+    combatInfo() {
+      return this.game.state.currentCombat || null
+    },
+
+    combatSteps() {
+      const isSpace = this.combatInfo?.type === 'space'
+      const steps = isSpace
+        ? [
+          { id: 'afb', label: 'AFB' },
+          { id: 'combat-round', label: 'Dice' },
+          { id: 'assign-hits', label: 'Hits' },
+          { id: 'retreat', label: 'Retreat' },
+        ]
+        : [
+          { id: 'combat-round', label: 'Dice' },
+          { id: 'assign-hits', label: 'Hits' },
+        ]
+      const currentStep = this.combatInfo?.step
+      const currentIdx = steps.findIndex(s => s.id === currentStep)
+      return steps.map((s, i) => ({
+        ...s,
+        status: i < currentIdx ? 'completed' : i === currentIdx ? 'active' : 'future',
+      }))
+    },
+
+    invasionInfo() {
+      return this.game.state.currentInvasion || null
+    },
+
+    invasionPlanetName() {
+      if (!this.invasionInfo) {
+        return ''
+      }
+      const planet = res.getPlanet(this.invasionInfo.planetId)
+      return planet?.name || this.invasionInfo.planetId
+    },
+
+    invasionSteps() {
+      const steps = [
+        { id: 'bombardment', label: 'Bombard' },
+        { id: 'space-cannon-defense', label: 'SCD' },
+        { id: 'commit-forces', label: 'Commit' },
+        { id: 'ground-combat', label: 'Ground' },
+        { id: 'establish-control', label: 'Control' },
+      ]
+      const currentStep = this.invasionInfo?.step
+      const currentIdx = steps.findIndex(s => s.id === currentStep)
+      return steps.map((s, i) => ({
+        ...s,
+        status: i < currentIdx ? 'completed' : i === currentIdx ? 'active' : 'future',
+      }))
+    },
+
+    statusStep() {
+      if (this.phase !== 'status') {
+        return null
+      }
+      return this.game.state.statusPhaseStep || null
+    },
+
+    statusSteps() {
+      const steps = [
+        { id: 'score-objectives', label: 'Score' },
+        { id: 'reveal-objective', label: 'Reveal' },
+        { id: 'draw-cards', label: 'Draw' },
+        { id: 'remove-tokens', label: 'Remove' },
+        { id: 'redistribute', label: 'Tokens' },
+        { id: 'ready-cards', label: 'Ready' },
+        { id: 'repair', label: 'Repair' },
+        { id: 'return-strategy', label: 'Return' },
+      ]
+      const currentIdx = steps.findIndex(s => s.id === this.statusStep)
       return steps.map((s, i) => ({
         ...s,
         status: i < currentIdx ? 'completed' : i === currentIdx ? 'active' : 'future',
@@ -333,6 +452,61 @@ export default {
 .tac-arrow {
   color: #aaa;
   font-size: 1.1em;
+}
+
+.combat-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: .15em;
+  padding: .2em .5em;
+  background: #fce4ec;
+  border-radius: .2em;
+  margin-bottom: .25em;
+  font-size: .75em;
+}
+
+.combat-type-badge {
+  font-size: .85em;
+  font-weight: 700;
+  padding: .05em .35em;
+  border-radius: .15em;
+  color: white;
+  margin-right: .25em;
+}
+
+.combat-type-badge.space { background: #c62828; }
+.combat-type-badge.ground { background: #6d4c41; }
+
+.invasion-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: .15em;
+  padding: .2em .5em;
+  background: #fff3e0;
+  border-radius: .2em;
+  margin-bottom: .25em;
+  font-size: .75em;
+}
+
+.invasion-planet-badge {
+  font-size: .85em;
+  font-weight: 700;
+  padding: .05em .35em;
+  border-radius: .15em;
+  background: #e65100;
+  color: white;
+  margin-right: .25em;
+}
+
+.status-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: .15em;
+  padding: .2em .5em;
+  background: #fff8e1;
+  border-radius: .2em;
+  margin-bottom: .25em;
+  font-size: .75em;
 }
 
 .phase-details {
