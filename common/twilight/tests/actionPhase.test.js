@@ -72,7 +72,7 @@ describe('Action Phase', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       const choices = t.currentChoices(game)
-      expect(choices).toContain('Strategic Action')
+      expect(choices.some(c => c.startsWith('Strategic Action: '))).toBe(true)
     })
 
     test('player can take component action', () => {

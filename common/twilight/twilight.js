@@ -760,12 +760,15 @@ Twilight.prototype.actionPhase = function() {
       choices.push({ title: 'Component Action', subtitles: ['Use a faction ability or technology'] })
     }
     if (!player.hasUsedStrategyCard()) {
-      const unusedCards = player.strategyCards.filter(c => !c.used).map(c => c.id)
-      choices.push({
-        title: 'Strategic Action',
-        subtitles: ['Resolve your strategy card\'s primary ability'],
-        strategyCardIds: unusedCards,
-      })
+      const unusedCards = player.strategyCards.filter(c => !c.used)
+      for (const card of unusedCards) {
+        const cardDef = res.getStrategyCard(card.id)
+        choices.push({
+          title: 'Strategic Action: ' + card.id,
+          subtitles: [cardDef.primary[0]],
+          strategyCardIds: [card.id],
+        })
+      }
     }
     // Add action card option if player has action-timing cards
     const actionTimingCards = (player.actionCards || []).filter(c => c.timing === 'action')
@@ -786,9 +789,10 @@ Twilight.prototype.actionPhase = function() {
 
     const action = selection[0]
 
+    const logAction = action.startsWith('Strategic Action: ') ? 'Strategic Action' : action
     this.log.add({
       template: '{player}: {action}',
-      args: { player, action },
+      args: { player, action: logAction },
       event: 'player-turn',
     })
 
@@ -802,15 +806,17 @@ Twilight.prototype.actionPhase = function() {
       case 'Tactical Action':
         this._tacticalAction(player)
         break
-      case 'Strategic Action':
-        this._strategicAction(player)
-        break
       case 'Component Action':
         this._componentAction(player)
         this.factionAbilities.afterComponentAction(player)
         break
       case 'Play Action Card':
         this._playActionCard(player)
+        break
+      default:
+        if (action.startsWith('Strategic Action: ')) {
+          this._strategicAction(player, action.split(': ')[1])
+        }
         break
       case 'Pass':
         player.pass()
@@ -854,12 +860,15 @@ Twilight.prototype.actionPhase = function() {
         bonusChoices.push({ title: 'Component Action', subtitles: ['Use a faction ability or technology'] })
       }
       if (!player.hasUsedStrategyCard()) {
-        const unusedCards = player.strategyCards.filter(c => !c.used).map(c => c.id)
-        bonusChoices.push({
-          title: 'Strategic Action',
-          subtitles: ['Resolve your strategy card\'s primary ability'],
-          strategyCardIds: unusedCards,
-        })
+        const unusedCards = player.strategyCards.filter(c => !c.used)
+        for (const card of unusedCards) {
+          const cardDef = res.getStrategyCard(card.id)
+          bonusChoices.push({
+            title: 'Strategic Action: ' + card.id,
+            subtitles: [cardDef.primary[0]],
+            strategyCardIds: [card.id],
+          })
+        }
       }
       const bonusActionCards = (player.actionCards || []).filter(c => c.timing === 'action')
       if (bonusActionCards.length > 0) {
@@ -885,15 +894,17 @@ Twilight.prototype.actionPhase = function() {
           case 'Tactical Action':
             this._tacticalAction(player)
             break
-          case 'Strategic Action':
-            this._strategicAction(player)
-            break
           case 'Component Action':
             this._componentAction(player)
             this.factionAbilities.afterComponentAction(player)
             break
           case 'Play Action Card':
             this._playActionCard(player)
+            break
+          default:
+            if (bonusAction.startsWith('Strategic Action: ')) {
+              this._strategicAction(player, bonusAction.split(': ')[1])
+            }
             break
         }
 
