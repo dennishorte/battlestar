@@ -21,6 +21,7 @@
           <TradeOffer v-if="activeActionType === 'trade-offer'" />
           <RedistributeTokens v-if="activeActionType === 'redistribute-tokens'" />
           <AgendaVote v-if="activeActionType === 'agenda-vote'" :request="waitingRequest" />
+          <ResearchTech v-if="activeActionType === 'research-tech'" :request="waitingRequest" />
 
           <div class="toolbar">
             <button class="btn btn-sm btn-outline-secondary" @click="openShipOverview">Units</button>
@@ -73,6 +74,7 @@ import AgendaVote from './actions/AgendaVote.vue'
 import MoveShips from './actions/MoveShips.vue'
 import ProduceUnits from './actions/ProduceUnits.vue'
 import RedistributeTokens from './actions/RedistributeTokens.vue'
+import ResearchTech from './actions/ResearchTech.vue'
 import TradeOffer from './actions/TradeOffer.vue'
 
 // Modals
@@ -123,6 +125,7 @@ export default {
     PlayerPanel,
     ProduceUnits,
     RedistributeTokens,
+    ResearchTech,
     ShipOverviewModal,
     SystemDetailModal,
     TradeOffer,
@@ -209,6 +212,9 @@ export default {
       }
       if (title.includes('vote on') || title.includes('exhaust planets for votes') || title.includes('spend trade goods for extra votes')) {
         return 'agenda-vote'
+      }
+      if (title === 'research technology' || title.includes('research technology')) {
+        return 'research-tech'
       }
 
       return null
