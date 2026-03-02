@@ -161,7 +161,7 @@ const systemTiles = {
   'empyrean-home': {
     id: 'empyrean-home', tileNumber: 56,
     planets: ['the-dark'],
-    anomaly: null, wormholes: [], type: 'home',
+    anomaly: 'nebula', wormholes: [], type: 'home',
     faction: 'empyrean',
   },
   'naazrokha-home': {
