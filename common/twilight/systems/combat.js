@@ -126,6 +126,9 @@ module.exports = function(Twilight) {
       const defenderRoll = this._rollCombatDice(defenderShips, defenderContext)
       delete this.state._combatOpponent
 
+      // War Funding (Barony of Letnev PN): reroll opponent's dice and/or own dice
+      this._offerWarFunding(attacker, defender, attackerRoll, defenderRoll)
+
       // Crown of Thalnos: reroll missed dice (+1), destroy units that still miss
       let attackerHits = attackerRoll.hits + this._offerCrownOfThalnos(attacker, attackerRoll, combatContext)
       let defenderHits = defenderRoll.hits + this._offerCrownOfThalnos(defender, defenderRoll, combatContext)
@@ -453,6 +456,80 @@ module.exports = function(Twilight) {
       rolls.push({ ship, effectiveCombat, diceResults })
     }
     return { hits, rolls }
+  }
+
+  // War Funding (Barony of Letnev PN - Omega):
+  // "After you and your opponent roll dice during space combat: You may reroll
+  //  all of your opponent's dice. You may reroll any number of your dice.
+  //  Then, return this card to the Letnev player."
+  Twilight.prototype._offerWarFunding = function(attackerName, defenderName, attackerRoll, defenderRoll) {
+    const participants = [
+      { holderName: attackerName, opponentRoll: defenderRoll, ownRoll: attackerRoll },
+      { holderName: defenderName, opponentRoll: attackerRoll, ownRoll: defenderRoll },
+    ]
+
+    for (const { holderName, opponentRoll, ownRoll } of participants) {
+      const holder = this.players.byName(holderName)
+      if (!holder) {
+        continue
+      }
+      const pn = holder.getPromissoryNotes().find(n => n.id === 'war-funding' && n.owner !== holder.name)
+      if (!pn) {
+        continue
+      }
+
+      const choice = this.actions.choose(holder, ['Play War Funding', 'Pass'], {
+        title: 'War Funding: Reroll opponent\'s dice and optionally your own?',
+      })
+      if (choice[0] !== 'Play War Funding') {
+        continue
+      }
+
+      // Reroll ALL opponent's dice
+      let opponentHits = 0
+      for (const entry of opponentRoll.rolls) {
+        for (let i = 0; i < entry.diceResults.length; i++) {
+          const roll = Math.floor(this.random() * 10) + 1
+          const hit = roll >= entry.effectiveCombat
+          entry.diceResults[i] = { roll, hit }
+          if (hit) {
+            opponentHits++
+          }
+        }
+      }
+      opponentRoll.hits = opponentHits
+
+      // Offer to reroll own dice
+      const rerollChoice = this.actions.choose(holder, ['Reroll my dice', 'Keep my dice'], {
+        title: 'War Funding: Reroll your own dice too?',
+      })
+      if (rerollChoice[0] === 'Reroll my dice') {
+        let ownHits = 0
+        for (const entry of ownRoll.rolls) {
+          for (let i = 0; i < entry.diceResults.length; i++) {
+            const roll = Math.floor(this.random() * 10) + 1
+            const hit = roll >= entry.effectiveCombat
+            entry.diceResults[i] = { roll, hit }
+            if (hit) {
+              ownHits++
+            }
+          }
+        }
+        ownRoll.hits = ownHits
+      }
+
+      // Return PN to Letnev
+      const letnevPlayer = this.players.byName(pn.owner)
+      holder.removePromissoryNote('war-funding', pn.owner)
+      if (letnevPlayer) {
+        letnevPlayer.addPromissoryNote('war-funding', pn.owner)
+      }
+
+      this.log.add({
+        template: 'War Funding: {player} rerolls dice. Card returned to {owner}.',
+        args: { player: holderName, owner: pn.owner },
+      })
+    }
   }
 
   Twilight.prototype._offerCrownOfThalnos = function(ownerName, rollResult, context) {

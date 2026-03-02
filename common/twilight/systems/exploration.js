@@ -484,6 +484,7 @@ module.exports = function(Twilight) {
             template: '{player} replenishes commodities',
             args: { player: ownerName },
           })
+          this.factionAbilities.onCommoditiesReplenished(player)
         }
         else {
           const toConvert = player.commodities

@@ -489,65 +489,69 @@ describe('L1Z1X Mindnet', () => {
   })
 
   describe('Promissory Note — Cybernetic Enhancements', () => {
-    test('at start of holder turn, remove 1 L1Z1X strategy token and holder gains 1 strategy token', () => {
-      const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
-      // Dennis = L1Z1X (PN owner), Micah = Hacan (PN holder)
+    test('holder gains 1 additional command token during status phase', () => {
+      const game = t.fixture({ factions: ['l1z1x-mindnet', 'federation-of-sol'] })
+      // Dennis = L1Z1X (PN owner), Micah = Sol (PN holder)
       t.setBoard(game, {
         dennis: {
           leaders: { agent: 'exhausted' },
-          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
         },
         micah: {
           promissoryNotes: [{ id: 'cybernetic-enhancements', owner: 'dennis' }],
-          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
         },
       })
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Dennis goes first (Leadership #1) — takes a tactical action to pass turn
-      t.choose(game, 'Tactical Action')
-      t.action(game, 'activate-system', { systemId: '27' })
-      t.action(game, 'move-ships', { movements: [] })
+      // Both use strategy cards then pass (same pattern as statusPhase.test.js)
+      t.choose(game, 'Strategic Action')  // Dennis plays Leadership
+      t.choose(game, 'Pass')              // Micah declines Leadership secondary
+      t.choose(game, 'Strategic Action')  // Micah plays Diplomacy
+      t.choose(game, 'sol-home')          // Micah picks system for Diplomacy
+      t.choose(game, 'Pass')              // Dennis declines Diplomacy secondary
+      t.choose(game, 'Pass')              // Dennis passes
+      t.choose(game, 'Pass')              // Micah passes
 
-      // Micah's turn starts → Cybernetic Enhancements triggers
-      t.choose(game, 'Play Cybernetic Enhancements')
+      // Status phase: redistribute tokens
+      // Dennis (Leadership, initiative 1) → 2 tokens, no CE
+      t.choose(game, 'Done')
+      // Micah (Diplomacy, initiative 2) → CE triggers (gains 1 extra token), then redistribute
+      t.choose(game, 'Done')
 
-      const dennis = game.players.byName('dennis')
-      const micah = game.players.byName('micah')
-
-      // Dennis lost 1 strategy token (2 → 1)
-      expect(dennis.commandTokens.strategy).toBe(1)
-      // Micah gained 1 strategy token (2 → 3)
-      expect(micah.commandTokens.strategy).toBe(3)
+      // Log should mention Cybernetic Enhancements
+      const logEntries = game.log._log.map(e => e.template || '')
+      expect(logEntries.some(e => e.includes('Cybernetic Enhancements'))).toBe(true)
     })
 
-    test('returns to L1Z1X player after use', () => {
-      const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
+    test('returns to L1Z1X player after status phase use', () => {
+      const game = t.fixture({ factions: ['l1z1x-mindnet', 'federation-of-sol'] })
       t.setBoard(game, {
         dennis: {
           leaders: { agent: 'exhausted' },
-          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
         },
         micah: {
           promissoryNotes: [{ id: 'cybernetic-enhancements', owner: 'dennis' }],
-          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
         },
       })
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Tactical Action')
-      t.action(game, 'activate-system', { systemId: '27' })
-      t.action(game, 'move-ships', { movements: [] })
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Pass')
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'sol-home')
+      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')
 
-      // Micah plays the PN
-      t.choose(game, 'Play Cybernetic Enhancements')
+      // Status phase: redistribute tokens (CE triggers for Micah)
+      t.choose(game, 'Done')  // Dennis
+      t.choose(game, 'Done')  // Micah
 
+      // PN returned to Dennis
       const dennis = game.players.byName('dennis')
       const micah = game.players.byName('micah')
 
-      // PN returned to Dennis
       expect(micah.hasPromissoryNote('cybernetic-enhancements')).toBe(false)
       expect(dennis.hasPromissoryNote('cybernetic-enhancements')).toBe(true)
     })

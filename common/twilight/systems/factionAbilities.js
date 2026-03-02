@@ -948,52 +948,6 @@ class FactionAbilities {
       })
     }
 
-    // War Funding (Barony of Letnev PN)
-    // "At the start of a round of space combat: The Letnev player loses 2 trade goods.
-    //  During this combat round, re-roll any number of your dice.
-    //  Then, return this card to the Letnev player."
-    for (const [holderName] of [[attackerName, defenderName], [defenderName, attackerName]]) {
-      const holder = this.players.byName(holderName)
-      if (!holder) {
-        continue
-      }
-      const warFundingPn = holder.getPromissoryNotes().find(n => n.id === 'war-funding' && n.owner !== holder.name)
-      if (!warFundingPn) {
-        continue
-      }
-
-      // Check that Letnev has 2 TG
-      const letnevPlayer = this.players.byName(warFundingPn.owner)
-      if (!letnevPlayer || letnevPlayer.tradeGoods < 2) {
-        continue
-      }
-
-      const choice = this.actions.choose(holder, ['Play War Funding', 'Pass'], {
-        title: 'War Funding: Letnev loses 2 TG for you to reroll dice?',
-      })
-      if (choice[0] !== 'Play War Funding') {
-        continue
-      }
-
-      // Letnev loses 2 TG
-      letnevPlayer.spendTradeGoods(2)
-
-      // Mark holder for reroll this combat (similar to Munitions Reserves)
-      if (!this.state._warFundingActive) {
-        this.state._warFundingActive = {}
-      }
-      this.state._warFundingActive[holderName] = true
-
-      // Return PN to Letnev
-      holder.removePromissoryNote('war-funding', warFundingPn.owner)
-      letnevPlayer.addPromissoryNote('war-funding', warFundingPn.owner)
-
-      this.log.add({
-        template: 'War Funding: {owner} loses 2 trade goods, {player} may reroll dice. Card returned.',
-        args: { player: holderName, owner: warFundingPn.owner },
-      })
-    }
-
     // The Cavalry (Nomad PN)
     // "At the start of a space combat against a player other than the Nomad:
     //  During this combat, treat 1 of your non-fighter ships as if it has the
@@ -2184,36 +2138,6 @@ class FactionAbilities {
   }
 
   _offerTurnStartPromissoryNotes(activePlayer) {
-    // Cybernetic Enhancements (L1Z1X PN)
-    // "At the start of your turn: Remove 1 token from the L1Z1X player's strategy pool,
-    //  if able. Then, place 1 command token in your strategy pool.
-    //  Then, return this card to the L1Z1X player."
-    if (activePlayer.hasPromissoryNote('cybernetic-enhancements')) {
-      const pn = activePlayer.getPromissoryNotes().find(n => n.id === 'cybernetic-enhancements')
-      if (pn && pn.owner !== activePlayer.name) {
-        const choice = this.actions.choose(activePlayer, ['Play Cybernetic Enhancements', 'Pass'], {
-          title: 'Cybernetic Enhancements: Return for strategy token swap?',
-        })
-        if (choice[0] === 'Play Cybernetic Enhancements') {
-          const ownerPlayer = this.players.byName(pn.owner)
-          if (ownerPlayer && ownerPlayer.commandTokens.strategy > 0) {
-            ownerPlayer.commandTokens.strategy--
-          }
-          activePlayer.commandTokens.strategy++
-
-          activePlayer.removePromissoryNote('cybernetic-enhancements', pn.owner)
-          if (ownerPlayer) {
-            ownerPlayer.addPromissoryNote('cybernetic-enhancements', pn.owner)
-          }
-
-          this.log.add({
-            template: 'Cybernetic Enhancements: {player} gains 1 strategy token, removes 1 from {owner}',
-            args: { player: activePlayer.name, owner: pn.owner },
-          })
-        }
-      }
-    }
-
     // Military Support (Sol PN)
     // "At the start of the Sol player's turn: Remove 1 token from the Sol player's strategy pool,
     //  if able. Then, holder places 2 infantry on any planet they control.
@@ -2526,6 +2450,9 @@ class FactionAbilities {
   // ---------------------------------------------------------------------------
 
   onCommoditiesReplenished(replenishingPlayer) {
+    // Trade Agreement: owner gives all commodities to holder on replenish
+    this.game._checkTradeAgreementOnReplenish(replenishingPlayer)
+
     for (const player of this.players.all()) {
       const handler = this._getPlayerHandler(player)
       handler?.onCommoditiesReplenished?.(player, this, { replenishingPlayer })

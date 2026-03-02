@@ -635,7 +635,7 @@ describe('Barony of Letnev', () => {
   })
 
   describe('Promissory Note — War Funding', () => {
-    test('Letnev loses 2 TG and holder rerolls dice during space combat round', () => {
+    test('after dice roll, holder can reroll opponent dice and own dice', () => {
       // Dennis = Hacan (holder), Micah = Letnev (owner)
       const game = t.fixture({ factions: ['emirates-of-hacan', 'barony-of-letnev'] })
       t.setBoard(game, {
@@ -671,12 +671,16 @@ describe('Barony of Letnev', () => {
         movements: [{ unitType: 'cruiser', from: 'hacan-home', count: 5 }],
       })
 
-      // War Funding prompt at combat start
+      // Munitions Reserves prompt for Micah (Letnev) at combat round start
+      t.choose(game, 'Pass')
+      // War Funding prompt after dice roll
       t.choose(game, 'Play War Funding')
+      // Choose to reroll own dice too
+      t.choose(game, 'Reroll my dice')
 
-      // Letnev should have lost 2 TG
+      // Micah still has 5 TG (no TG cost in Omega version, passed on Munitions Reserves)
       const micah = game.players.byName('micah')
-      expect(micah.tradeGoods).toBe(3) // 5 - 2
+      expect(micah.tradeGoods).toBe(5)
 
       // War Funding log should appear
       const logEntries = game.log._log.map(e => e.template || '')
@@ -719,7 +723,10 @@ describe('Barony of Letnev', () => {
         movements: [{ unitType: 'cruiser', from: 'hacan-home', count: 5 }],
       })
 
+      // Munitions Reserves prompt for Micah (Letnev)
+      t.choose(game, 'Pass')
       t.choose(game, 'Play War Funding')
+      t.choose(game, 'Keep my dice')
 
       // PN returned to Letnev
       const micah = game.players.byName('micah')
