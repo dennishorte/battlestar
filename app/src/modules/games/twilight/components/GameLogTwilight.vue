@@ -14,9 +14,8 @@ import TiCardToken from './log/TiCardToken.vue'
 import TiTechToken from './log/TiTechToken.vue'
 import TiObjectiveToken from './log/TiObjectiveToken.vue'
 import TiRelicToken from './log/TiRelicToken.vue'
-import { twilight } from 'battlestar-common'
+import TiPlanetToken from './log/TiPlanetToken.vue'
 
-const res = twilight.res
 const game = inject('game')
 
 function chatColors() {
@@ -109,8 +108,7 @@ function convertArg(arg, value) {
     return `tiobj(${value.value})`
   }
   if (arg === 'planet') {
-    const planet = res.getPlanet(value.value)
-    return planet?.name || value.value
+    return `tiplanet(${value.value})`
   }
   if (arg === 'relic') {
     return `tirelic(${value.value})`
@@ -129,6 +127,7 @@ useGameLogProvider({
     { pattern: /titech\(([^()]+)\)/, type: 'titech', props: m => ({ name: m[1] }) },
     { pattern: /tiobj\(([^()]+)\)/, type: 'tiobj', props: m => ({ name: m[1] }) },
     { pattern: /tirelic\(([^()]+)\)/, type: 'tirelic', props: m => ({ name: m[1] }) },
+    { pattern: /tiplanet\(([^()]+)\)/, type: 'tiplanet', props: m => ({ name: m[1] }) },
   ],
   tokenComponents: {
     card: CardName,
@@ -138,6 +137,7 @@ useGameLogProvider({
     titech: TiTechToken,
     tiobj: TiObjectiveToken,
     tirelic: TiRelicToken,
+    tiplanet: TiPlanetToken,
   },
 })
 </script>

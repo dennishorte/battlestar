@@ -27,6 +27,11 @@ The following items have been implemented:
 - **Wormhole Nexus activation state** — SystemTile shows only active γ when nexus inactive, grayed-out α β when inactive, NEXUS badge with green/gray state
 - **Off-map system rendering** — GalaxyMap filters off-map systems (q≥50 or r≥50) from hex grid, renders in separate panel below; fixes Creuss home viewport distortion
 - **Tactical action step tracker** — Engine tracks `currentTacticalAction.step` through activate/move/combat/invade/produce; PhaseInfo shows breadcrumb
+- **Captured units display** — PlayerPanel shows "Captured Units" type×count chips (red) and "Units Captured by Others" section
+- **Planet tokens in log** — TiPlanetToken.vue renders planet names as clickable trait-colored chips; clicking opens planet detail modal
+- **Fleet pool limit warning** — SystemTile shows red "!" badge when non-fighter ships >= fleet pool
+- **Blockade indicator** — SystemTile shows "B" badge + SystemDetailModal shows "BLOCKADED" when space dock is blockaded
+- **Commander/hero unlock progress** — CardDetailModal shows "N/3 objectives scored" for locked heroes
 
 ---
 
@@ -43,10 +48,8 @@ The following items have been implemented:
 #### ~~Reinforcements / unit supply display~~ **DONE**
 Collapsible "Supply" section in PlayerPanel shows remaining/limit for 9 limited unit types (WS, FS, DN, CV, CR, DD, MH, PDS, SD), color-coded green/orange/red.
 
-#### Missing: Captured units display
-**Rules**: 17.1, 17.3 -- Captured ships/mechs are placed on the capturing player's faction sheet. Captured fighters/infantry are represented by tokens.
-**Current**: No display of captured units anywhere in the UI.
-**Recommendation**: If any units are captured, show a "Captured Units" section on the relevant PlayerPanel.
+#### ~~Captured units display~~ **DONE**
+PlayerPanel shows "Captured Units" section with type×count chips (red-tinted) when `game.state.capturedUnits[player]` is non-empty. Also shows "Units Captured by Others" section scanning all holders for units where `originalOwner === player`.
 
 ---
 
@@ -105,25 +108,19 @@ Five dedicated action UIs exist: ActivateSystem, MoveShips, ProduceUnits, TradeO
 **Current**: TradeOffer component exists but no display of which players are neighbors.
 **Recommendation**: When transacting, indicate which players are valid transaction partners.
 
-#### Missing: Fleet pool limit warning
-**Rules**: 37.1-37.3 -- Non-fighter ships in a system cannot exceed a player's fleet pool count. Excess ships must be removed.
-**Current**: Fleet pool token count is shown (F:N) in PlayerPanel but no warning is shown when a system exceeds the limit.
-**Recommendation**: Show a warning icon on systems where a player's non-fighter ship count approaches or exceeds their fleet pool.
+#### ~~Fleet pool limit warning~~ **DONE**
+SystemTile shows red "!" badge (with player border color) when a player's non-fighter ships in a system >= their fleet pool count. Tooltip shows "Fleet limit: N/N".
 
-#### Missing: Blockade indicator
-**Rules**: 14.1 -- A space dock is blockaded when its system contains enemy ships but no friendly ships. Blockaded docks cannot produce ships.
-**Current**: No visual indicator of blockaded space docks on the map or in modals.
-**Recommendation**: Show a blockade icon on affected systems/planets in SystemDetailModal.
+#### ~~Blockade indicator~~ **DONE**
+SystemTile shows red "B" badge when a space dock is blockaded (enemy ships in space, no friendly ships). SystemDetailModal shows "BLOCKADED" badge next to planet controller text.
 
 #### Missing: Capacity tracking in movement
 **Rules**: 16.1-16.3 -- Ships have capacity values that limit transported fighters/ground forces. Players need to see remaining capacity during movement.
 **Current**: MoveShips.vue tracks transport capacity but the display could be more prominent.
 **Recommendation**: Ensure capacity usage is clearly shown during movement (current/max), with warnings when exceeded.
 
-#### Missing: Commander/hero unlock progress
-**Rules**: 51.6, 51.10 -- Commanders have unique unlock conditions; heroes unlock at 3 scored objectives.
-**Current**: Leaders show locked/unlocked status badges (A/C/H circles) but no progress indicator toward unlocking.
-**Recommendation**: Show unlock progress in CardDetailModal leader view (e.g., hero: "2/3 objectives scored").
+#### ~~Commander/hero unlock progress~~ **DONE**
+CardDetailModal leaders view shows "N/3 objectives scored" progress badge for locked heroes. Commander unlock conditions continue showing text description (no numeric progress available from engine).
 
 ---
 
@@ -134,9 +131,8 @@ Existing log tokens: TiCardToken, TiTechToken, TiObjectiveToken, TiRelicToken
 #### ~~Player name tokens in log~~ **DONE**
 TiPlayerToken.vue renders player names as colored chips with backgroundColor + contrast text color. Wired into GameLogTwilight.vue replacing generic PlayerName component.
 
-#### Missing: Planet/system tokens in log
-**Current**: Planet and system references in log entries are plain text.
-**Recommendation**: Make planet/system names clickable to open SystemDetailModal or CardDetailModal.
+#### ~~Planet tokens in log~~ **DONE**
+TiPlanetToken.vue renders planet names as clickable chips with trait-colored left border (cultural=#1565c0, hazardous=#c62828, industrial=#2e7d32). Clicking opens planet detail modal. Wired into GameLogTwilight via `tiplanet()` token pattern.
 
 ---
 
@@ -196,12 +192,12 @@ SystemTile checks `wormholeNexusActive` for tile 82. When inactive: only γ is a
 ### Lower Priority (polish)
 17. ~~Wormhole Nexus activation state display~~ **DONE**
 18. ~~Exhausted relic/tech indicators~~ **DONE**
-19. Captured units display
+19. ~~Captured units display~~ **DONE**
 20. Combat/invasion/status step trackers
 21. ~~Gamma wormhole tokens on map~~ **DONE**
 22. ~~Ion storm token on map~~ **DONE**
-23. Fleet pool warnings
-24. Blockade indicators
+23. ~~Fleet pool warnings~~ **DONE**
+24. ~~Blockade indicators~~ **DONE**
 25. Neighbor indicators
-26. Commander/hero unlock progress
-27. ~~Log entry enhancements (colored names, clickable references)~~ **DONE** (player names; planet/system tokens still pending)
+26. ~~Commander/hero unlock progress~~ **DONE**
+27. ~~Log entry enhancements (colored names, clickable references)~~ **DONE**

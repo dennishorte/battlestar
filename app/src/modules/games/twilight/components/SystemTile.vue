@@ -104,7 +104,24 @@
             <span v-if="entry.count > 1" class="unit-count">{{ entry.count }}</span>
             <span v-if="entry.damagedCount > 0" class="damage-pip">*</span>
           </span>
+          <!-- Fleet pool limit warning -->
+          <span
+            v-if="fleetWarningFor(stack.owner)"
+            class="fleet-warning"
+            :style="{ borderColor: stack.color }"
+            :title="`Fleet limit: ${fleetWarningFor(stack.owner).count}/${fleetWarningFor(stack.owner).limit}`"
+          >!</span>
         </div>
+      </div>
+
+      <!-- Blockade indicator -->
+      <div v-if="blockadedDocks.length > 0" class="blockade-badges">
+        <span
+          v-for="bd in blockadedDocks"
+          :key="bd.planetId"
+          class="blockade-badge"
+          :title="`${bd.owner}'s space dock is blockaded`"
+        >B</span>
       </div>
     </div>
   </div>
@@ -364,6 +381,53 @@ export default {
     commandTokens() {
       return this.system.commandTokens || []
     },
+
+    fleetWarnings() {
+      const NON_FIGHTER_TYPES = ['war-sun', 'flagship', 'dreadnought', 'carrier', 'cruiser', 'destroyer']
+      const warnings = {}
+      for (const stack of this.unitStacks) {
+        let count = 0
+        for (const entry of stack.units) {
+          if (NON_FIGHTER_TYPES.includes(entry.type)) {
+            count += entry.count
+          }
+        }
+        const player = this.game.players.byName(stack.owner)
+        const limit = player?.commandTokens?.fleet || 0
+        if (count >= limit) {
+          warnings[stack.owner] = { count, limit }
+        }
+      }
+      return warnings
+    },
+
+    blockadedDocks() {
+      const results = []
+      const unitData = this.game.state.units[this.systemId]
+      if (!unitData) {
+        return results
+      }
+
+      const spaceOwners = new Set()
+      for (const u of (unitData.space || [])) {
+        spaceOwners.add(u.owner)
+      }
+
+      for (const [planetId, planetUnits] of Object.entries(unitData.planets || {})) {
+        for (const u of planetUnits) {
+          if (u.type === 'space-dock') {
+            const dockOwner = u.owner
+            const hasEnemyShips = [...spaceOwners].some(o => o !== dockOwner)
+            const hasFriendlyShips = spaceOwners.has(dockOwner)
+            if (hasEnemyShips && !hasFriendlyShips) {
+              results.push({ planetId, owner: dockOwner })
+            }
+            break
+          }
+        }
+      }
+      return results
+    },
   },
 
   methods: {
@@ -403,6 +467,10 @@ export default {
     tokenColor(playerName) {
       const player = this.game.players.byName(playerName)
       return player?.color || '#888'
+    },
+
+    fleetWarningFor(owner) {
+      return this.fleetWarnings[owner] || null
     },
 
     _getGroundStacks(planetId) {
@@ -680,5 +748,40 @@ export default {
   border-radius: 50%;
   border: 1.5px solid rgba(255,255,255,.6);
   box-shadow: 0 0 2px rgba(0,0,0,.5);
+}
+
+.fleet-warning {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: .9em;
+  height: .9em;
+  border-radius: 50%;
+  background: rgba(220, 53, 69, .85);
+  color: white;
+  font-size: .6em;
+  font-weight: 700;
+  border: 1.5px solid;
+  margin-left: 1px;
+  line-height: 1;
+}
+
+.blockade-badges {
+  display: flex;
+  gap: 2px;
+}
+
+.blockade-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: .9em;
+  height: .9em;
+  border-radius: .15em;
+  background: rgba(220, 53, 69, .85);
+  color: white;
+  font-size: .55em;
+  font-weight: 700;
+  line-height: 1;
 }
 </style>
