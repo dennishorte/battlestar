@@ -61,14 +61,14 @@ describe('Multi-Round Play', () => {
     // Round 1: dennis gets 3 (leadership primary) + 3 (status: 2+1 Versatile)
     playRound(game)
 
-    // 3 (start) + 3 (leadership) + 3 (status) = 9
-    expect(game.players.byName('dennis').commandTokens.tactics).toBe(9)
+    // 3 (start) + 3 (leadership) - 1 (diplomacy token) + 3 (status) = 8
+    expect(game.players.byName('dennis').commandTokens.tactics).toBe(8)
 
-    // Round 2: leadership primary +3, status +3
+    // Round 2: leadership primary +3, diplomacy -1, status +3
     playRound(game)
 
-    // Re-read after replay — 9 + 3 (leadership) + 3 (status) = 15
-    expect(game.players.byName('dennis').commandTokens.tactics).toBe(15)
+    // 8 + 3 (leadership) - 1 (diplomacy) + 3 (status) = 13
+    expect(game.players.byName('dennis').commandTokens.tactics).toBe(13)
   })
 
   test('planets ready each round', () => {

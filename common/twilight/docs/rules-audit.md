@@ -98,12 +98,12 @@ These sections are fully implemented and have adequate test coverage:
 - Implemented: Mecatol VP + secret draw logic
 - Implemented: Max 3 secret objectives hand limit (Rule 61.21)
 
-#### 52. Leadership (Strategy Card) — PARTIALLY IMPLEMENTED
-- **IMPL: Partial** — Secondary is now free; influence spending deferred
+#### 52. Leadership (Strategy Card) — IMPLEMENTED
+- **IMPL: Yes** — Primary: 3 tokens + influence spending; Secondary: free influence spending
 - **TEST: Yes** — Tests in `strategicAction.test.js`
-- Implemented: Secondary is free (no strategy token cost)
-- Implemented: Secondary gives 1 command token
-- TODO: Primary/secondary influence spending (1 token per 3 influence) — deferred due to replay engine limitations with optional prompts
+- Implemented: Primary gains 3 command tokens, then offers influence spending (1 token per 3 influence)
+- Implemented: Secondary is free (no strategy token cost), offers influence spending
+- `_offerInfluenceForTokens(player)` handles both primary and secondary flow
 
 #### 91. Technology (Strategy Card) — IMPLEMENTED
 - **IMPL: Yes** — 2nd tech and secondary cost added
@@ -177,12 +177,12 @@ These sections are fully implemented and have adequate test coverage:
 
 ### MEDIUM — Secondary Features Missing
 
-#### 32. Diplomacy (Strategy Card)
-- **IMPL: Mostly Complete**
-- **TEST: Partial**
+#### 32. Diplomacy (Strategy Card) — IMPLEMENTED
+- **IMPL: Yes** — Token deduction from command sheet, no-token edge case
+- **TEST: Yes** — Tests in `strategicAction.test.js`
 - Implemented: Cannot choose Mecatol Rex system in primary (Rule 32)
 - Implemented: Secondary lets player choose which 2 planets to ready
-- Missing: If player has no reinforcement tokens, they must place from command sheet
+- Implemented: Command token placed deducts from player's command sheet (tactics → strategy → fleet fallback); no token placed if player has 0 tokens
 
 #### 99. Warfare (Strategy Card) — IMPLEMENTED
 - **IMPL: Yes** — Token redistribution uses `redistribute-tokens` action (same as status phase)

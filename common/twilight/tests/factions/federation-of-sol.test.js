@@ -105,8 +105,8 @@ describe('Federation of Sol', () => {
       const dennis = game.players.byName('dennis')
       const micah = game.players.byName('micah')
 
-      // Dennis: 3 (start) + 3 (leadership) + 3 (status: 2+1 Versatile) = 9
-      expect(dennis.commandTokens.tactics).toBe(9)
+      // Dennis: 3 (start) + 3 (leadership) - 1 (diplomacy token) + 3 (status: 2+1 Versatile) = 8
+      expect(dennis.commandTokens.tactics).toBe(8)
       // Micah: 3 (start) + 2 (status) = 5
       expect(micah.commandTokens.tactics).toBe(5)
     })
