@@ -765,7 +765,7 @@ Twilight.prototype.actionPhase = function() {
     if (actionTimingCards.length > 0) {
       choices.push({ title: 'Play Action Card', subtitles: ['Play an action card from your hand'] })
     }
-    choices.push({ title: 'Pass', subtitles: ['End your turns for this round'] })
+    choices.push({ title: 'Pass', subtitles: ['End your turns for this round. Cannot be undone.'] })
 
     // Cannot pass until strategy card is used
     const availableChoices = player.hasUsedStrategyCard()
@@ -774,6 +774,7 @@ Twilight.prototype.actionPhase = function() {
 
     const selection = this.actions.choose(player, availableChoices, {
       title: 'Choose Action',
+      help: 'Select one action to perform this turn. You must use your strategy card before passing.',
     })
 
     const action = selection[0]
