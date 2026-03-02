@@ -46,6 +46,7 @@
           <div class="planet-control" v-if="planet.controller">
             Controlled by: <strong :style="playerStyle(planet.controller)">{{ planet.controller }}</strong>
             <span v-if="planet.exhausted" class="exhausted-badge">exhausted</span>
+            <span v-if="isBlockaded(planet.id)" class="blockaded-badge">BLOCKADED</span>
           </div>
           <div class="planet-attachments" v-if="planetAttachments(planet.id).length > 0">
             <span v-for="att in planetAttachments(planet.id)"
@@ -243,6 +244,34 @@ export default {
       return { fontWeight: 600 }
     },
 
+    isBlockaded(planetId) {
+      if (!this.systemId) {
+        return false
+      }
+      const unitData = this.game.state.units[this.systemId]
+      if (!unitData) {
+        return false
+      }
+
+      // Find space dock owner on this planet
+      const planetUnits = unitData.planets?.[planetId] || []
+      let dockOwner = null
+      for (const u of planetUnits) {
+        if (u.type === 'space-dock') {
+          dockOwner = u.owner
+          break
+        }
+      }
+      if (!dockOwner) {
+        return false
+      }
+
+      const spaceUnits = unitData.space || []
+      const hasEnemyShips = spaceUnits.some(u => u.owner !== dockOwner)
+      const hasFriendlyShips = spaceUnits.some(u => u.owner === dockOwner)
+      return hasEnemyShips && !hasFriendlyShips
+    },
+
     shipIcon(type) {
       return SHIP_ICONS[type] || null
     },
@@ -377,6 +406,12 @@ export default {
 }
 .frontier-explored {
   font-size: .85em; color: #999; font-style: italic;
+}
+
+.blockaded-badge {
+  font-size: .75em; font-weight: 700; color: #c62828;
+  background: #ffcdd2; padding: .1em .35em; border-radius: .15em;
+  margin-left: .35em;
 }
 
 .planet-attachments { display: flex; flex-wrap: wrap; gap: .2em; margin-top: .15em; }

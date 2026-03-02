@@ -74,6 +74,30 @@
       </div>
     </div>
 
+    <!-- Captured Units (Vuil'raith Cabal mechanic) -->
+    <div class="panel-section" v-if="capturedUnits.length > 0">
+      <div class="section-label">Captured Units ({{ capturedUnitsTotal }})</div>
+      <div class="captured-list">
+        <span v-for="entry in capturedUnits"
+              :key="entry.type"
+              class="captured-chip"
+              :title="`${entry.count} captured ${entry.type}`"
+        >{{ entry.type }} &times;{{ entry.count }}</span>
+      </div>
+    </div>
+
+    <!-- Units Captured by Others -->
+    <div class="panel-section" v-if="capturedByOthers.length > 0">
+      <div class="section-label">Units Captured by Others</div>
+      <div class="captured-list">
+        <span v-for="entry in capturedByOthers"
+              :key="entry.holder + entry.type"
+              class="captured-by-chip"
+              :title="`${entry.holder} holds ${entry.count} ${entry.type}`"
+        >{{ entry.holder }}: {{ entry.type }} &times;{{ entry.count }}</span>
+      </div>
+    </div>
+
     <!-- Strategy Cards -->
     <div class="panel-section" v-if="player.strategyCards.length > 0">
       <div class="section-label">Strategy</div>
@@ -365,7 +389,7 @@ export default {
       for (const [holder, units] of Object.entries(captured)) {
         if (holder !== playerName) {
           for (const u of units) {
-            if (u.owner === playerName) {
+            if (u.originalOwner === playerName) {
               onBoard[u.type] = (onBoard[u.type] || 0) + 1
             }
           }
@@ -449,6 +473,39 @@ export default {
 
     promissoryNotes() {
       return this.player.promissoryNotes || []
+    },
+
+    capturedUnits() {
+      const units = (this.game.state.capturedUnits || {})[this.player.name] || []
+      const counts = {}
+      for (const u of units) {
+        counts[u.type] = (counts[u.type] || 0) + 1
+      }
+      return Object.entries(counts).map(([type, count]) => ({ type, count }))
+    },
+
+    capturedUnitsTotal() {
+      return this.capturedUnits.reduce((sum, e) => sum + e.count, 0)
+    },
+
+    capturedByOthers() {
+      const captured = this.game.state.capturedUnits || {}
+      const results = []
+      for (const [holder, units] of Object.entries(captured)) {
+        if (holder === this.player.name) {
+          continue
+        }
+        const counts = {}
+        for (const u of units) {
+          if (u.originalOwner === this.player.name) {
+            counts[u.type] = (counts[u.type] || 0) + 1
+          }
+        }
+        for (const [type, count] of Object.entries(counts)) {
+          results.push({ holder, type, count })
+        }
+      }
+      return results
     },
   },
 
@@ -755,6 +812,18 @@ export default {
 
 .attachment-indicator {
   font-size: .7em; font-weight: 700; color: #e65100;
+}
+
+.captured-list { display: flex; flex-wrap: wrap; gap: .15em; }
+.captured-chip {
+  font-size: .7em; padding: .1em .3em; border-radius: .15em;
+  border-left: 2px solid #c62828; background: #ffebee; color: #b71c1c;
+  text-transform: capitalize;
+}
+.captured-by-chip {
+  font-size: .7em; padding: .1em .3em; border-radius: .15em;
+  border-left: 2px solid #e57373; background: #fce4ec; color: #c62828;
+  text-transform: capitalize;
 }
 
 .supply-grid {
