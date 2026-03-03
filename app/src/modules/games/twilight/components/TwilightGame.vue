@@ -89,6 +89,7 @@ import SystemDetailModal from './modals/SystemDetailModal.vue'
 import AgendaChip from './AgendaChip.vue'
 import ObjectiveChip from './ObjectiveChip.vue'
 import StrategyCardChip from './StrategyCardChip.vue'
+import TechChip from './TechChip.vue'
 
 import { h } from 'vue'
 import { twilight } from 'battlestar-common'
@@ -257,6 +258,15 @@ export default {
         return {
           component: StrategyCardChip,
           props: { cardId: name },
+        }
+      }
+
+      // Technology IDs (e.g., 'antimass-deflectors', 'carrier-2')
+      const tech = res.getTechnology(name)
+      if (tech) {
+        return {
+          component: TechChip,
+          props: { techId: name },
         }
       }
 
