@@ -726,6 +726,13 @@ export default {
 }
 </script>
 
+<style>
+/* Ensure card detail appears above other modals (e.g. tech tree) */
+#twilight-card-detail {
+  z-index: 1065;
+}
+</style>
+
 <style scoped>
 .card-detail {
   font-size: .9em;

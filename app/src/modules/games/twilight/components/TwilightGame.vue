@@ -25,6 +25,7 @@
 
           <div class="toolbar">
             <button class="btn btn-sm btn-outline-secondary" @click="openShipOverview">Units</button>
+            <button class="btn btn-sm btn-outline-secondary" @click="openTechTree">Tech</button>
             <button class="btn btn-sm btn-outline-secondary" @click="openRulesReference">Rules</button>
           </div>
 
@@ -52,6 +53,7 @@
     <CardDetailModal />
     <RulesReferenceModal />
     <ShipOverviewModal />
+    <TechTreeModal />
     <DebugModal />
   </div>
 </template>
@@ -84,6 +86,7 @@ import CardDetailModal from './modals/CardDetailModal.vue'
 import RulesReferenceModal from './modals/RulesReferenceModal.vue'
 import ShipOverviewModal from './modals/ShipOverviewModal.vue'
 import SystemDetailModal from './modals/SystemDetailModal.vue'
+import TechTreeModal from './modals/TechTreeModal.vue'
 
 // Selector option components
 import AgendaChip from './AgendaChip.vue'
@@ -132,6 +135,7 @@ export default {
     RulesReferenceModal,
     ShipOverviewModal,
     SystemDetailModal,
+    TechTreeModal,
     TradeOffer,
     WaitingPanel,
   },
@@ -332,6 +336,10 @@ export default {
 
     openShipOverview() {
       this.$modal('twilight-ship-overview').show()
+    },
+
+    openTechTree() {
+      this.$modal('twilight-tech-tree').show()
     },
 
     openRulesReference(filter) {
