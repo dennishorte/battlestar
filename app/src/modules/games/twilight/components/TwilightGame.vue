@@ -19,7 +19,7 @@
           <MoveShips v-if="activeActionType === 'move-ships'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
           <ProduceUnits v-if="activeActionType === 'produce-units'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
           <TradeOffer v-if="activeActionType === 'trade-offer'" :player-name="selectedPlayerName" />
-          <RedistributeTokens v-if="activeActionType === 'redistribute-tokens'" :player-name="selectedPlayerName" />
+          <RedistributeTokens v-if="activeActionType === 'redistribute-tokens'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
           <AgendaVote v-if="activeActionType === 'agenda-vote'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
           <ResearchTech v-if="activeActionType === 'research-tech'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
 

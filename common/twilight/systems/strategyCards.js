@@ -53,8 +53,6 @@ module.exports = function(Twilight) {
 
   Twilight.prototype._leadershipPrimary = function(player) {
   // Rule 52.2: Gain 3 command tokens, then may spend influence (1 token per 3 influence)
-    player.commandTokens.tactics += 3
-
     this.log.add({
       template: '{player} gains 3 command tokens',
       args: { player },
@@ -67,6 +65,9 @@ module.exports = function(Twilight) {
     })
     if (selection.action === 'redistribute-tokens') {
       player.setCommandTokens(selection)
+    }
+    else {
+      player.commandTokens.tactics += 3
     }
 
     this._offerInfluenceForTokens(player)
@@ -895,7 +896,6 @@ module.exports = function(Twilight) {
     if (selection[0] !== 'Skip') {
       const tokenCount = parseInt(selection[0])
       const influenceCost = tokenCount * 3
-      player.commandTokens.tactics += tokenCount
       this._payInfluence(player, influenceCost)
 
       this.log.add({
@@ -910,6 +910,9 @@ module.exports = function(Twilight) {
       })
       if (allocSelection.action === 'redistribute-tokens') {
         player.setCommandTokens(allocSelection)
+      }
+      else {
+        player.commandTokens.tactics += tokenCount
       }
     }
   }
