@@ -57,6 +57,10 @@
 export default {
   name: 'TradeOffer',
 
+  props: {
+    playerName: { type: String, default: null },
+  },
+
   inject: ['actor', 'game', 'bus'],
 
   data() {
@@ -70,7 +74,7 @@ export default {
 
   computed: {
     currentPlayer() {
-      return this.game.players.byName(this.actor.name)
+      return this.game.players.byName(this.playerName || this.actor.name)
     },
 
     maxOfferTg() {
@@ -89,7 +93,7 @@ export default {
   methods: {
     submit() {
       this.bus.emit('submit-action', {
-        actor: this.actor.name,
+        actor: this.playerName || this.actor.name,
         selection: {
           action: 'trade-offer',
           offering: { tradeGoods: this.offerTg, commodities: this.offerComm },
@@ -100,7 +104,7 @@ export default {
 
     cancel() {
       this.bus.emit('submit-action', {
-        actor: this.actor.name,
+        actor: this.playerName || this.actor.name,
         selection: ['Cancel'],
       })
     },

@@ -49,6 +49,7 @@ export default {
 
   props: {
     request: { type: Object, default: null },
+    playerName: { type: String, default: null },
   },
 
   data() {
@@ -58,6 +59,10 @@ export default {
   },
 
   computed: {
+    actorName() {
+      return this.playerName || this.actor.name
+    },
+
     targetSystemId() {
       return this.game.state.currentTacticalAction?.systemId
     },
@@ -82,7 +87,7 @@ export default {
       if (!this.targetSystemId) {
         return { shipMovements: [], transportedUnits: [], totalCapacity: 0, usedCapacity: 0, availableCapacity: 0, transportCounts: {} }
       }
-      return this.game.getMovementPreview(this.actor.name, this.targetSystemId, this.currentMovements)
+      return this.game.getMovementPreview(this.actorName, this.targetSystemId, this.currentMovements)
     },
 
     totalSelected() {
@@ -124,12 +129,12 @@ export default {
       }
 
       // Movable ships: limited only by available count
-      if (this.game.isMovableUnitType(this.actor.name, unit.type)) {
+      if (this.game.isMovableUnitType(this.actorName, unit.type)) {
         return unit.available
       }
 
       // Capacity-exempt transported units: limited only by available count
-      const player = this.game.players.byName(this.actor.name)
+      const player = this.game.players.byName(this.actorName)
       if (this.game.factionAbilities.isCapacityExempt(player, unit.type)) {
         return unit.available
       }
@@ -141,7 +146,7 @@ export default {
           if (u === unit || u.selected <= 0) {
             continue
           }
-          if (this.game.isMovableUnitType(this.actor.name, u.type)) {
+          if (this.game.isMovableUnitType(this.actorName, u.type)) {
             continue
           }
           if (this.game.factionAbilities.isCapacityExempt(player, u.type)) {
@@ -155,11 +160,11 @@ export default {
     },
 
     clampSelections() {
-      const player = this.game.players.byName(this.actor.name)
+      const player = this.game.players.byName(this.actorName)
       let used = 0
       for (const mov of this.movements) {
         for (const unit of mov.units) {
-          if (this.game.isMovableUnitType(this.actor.name, unit.type)) {
+          if (this.game.isMovableUnitType(this.actorName, unit.type)) {
             continue
           }
           if (this.game.factionAbilities.isCapacityExempt(player, unit.type)) {
@@ -192,14 +197,14 @@ export default {
 
     confirmMoves() {
       this.bus.emit('submit-action', {
-        actor: this.actor.name,
+        actor: this.actorName,
         selection: { action: 'move-ships', movements: this.currentMovements },
       })
     },
 
     done() {
       this.bus.emit('submit-action', {
-        actor: this.actor.name,
+        actor: this.actorName,
         selection: ['Done'],
       })
     },
@@ -211,7 +216,7 @@ export default {
       }
 
       const units = this.game.state.units[systemId]?.space || []
-      const playerUnits = units.filter(u => u.owner === this.actor.name)
+      const playerUnits = units.filter(u => u.owner === this.actorName)
 
       if (playerUnits.length === 0) {
         return

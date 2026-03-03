@@ -15,13 +15,13 @@
           <CombatDisplay />
 
           <!-- Custom action UIs -->
-          <ActivateSystem v-if="activeActionType === 'activate-system'" />
-          <MoveShips v-if="activeActionType === 'move-ships'" :request="waitingRequest" />
-          <ProduceUnits v-if="activeActionType === 'produce-units'" :request="waitingRequest" />
-          <TradeOffer v-if="activeActionType === 'trade-offer'" />
-          <RedistributeTokens v-if="activeActionType === 'redistribute-tokens'" />
-          <AgendaVote v-if="activeActionType === 'agenda-vote'" :request="waitingRequest" />
-          <ResearchTech v-if="activeActionType === 'research-tech'" :request="waitingRequest" />
+          <ActivateSystem v-if="activeActionType === 'activate-system'" :player-name="selectedPlayerName" />
+          <MoveShips v-if="activeActionType === 'move-ships'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
+          <ProduceUnits v-if="activeActionType === 'produce-units'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
+          <TradeOffer v-if="activeActionType === 'trade-offer'" :player-name="selectedPlayerName" />
+          <RedistributeTokens v-if="activeActionType === 'redistribute-tokens'" :player-name="selectedPlayerName" />
+          <AgendaVote v-if="activeActionType === 'agenda-vote'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
+          <ResearchTech v-if="activeActionType === 'research-tech'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
 
           <div class="toolbar">
             <button class="btn btn-sm btn-outline-secondary" @click="openShipOverview">Units</button>
@@ -145,6 +145,7 @@ export default {
 
   data() {
     return {
+      selectedPlayerName: null,
       mapWidth: 0,
       ui: {
         fn: {
@@ -201,11 +202,24 @@ export default {
       return this.game.getWaiting(player)
     },
 
-    activeActionType() {
-      if (!this.waitingRequest) {
+    selectedWaitingRequest() {
+      const name = this.selectedPlayerName || this.actor.name
+      const player = this.game.players.byName(name)
+      if (!player) {
         return null
       }
-      const title = this.waitingRequest.title?.toLowerCase() || ''
+      if (!this.game.checkPlayerHasActionWaiting(player)) {
+        return null
+      }
+      return this.game.getWaiting(player)
+    },
+
+    activeActionType() {
+      const request = this.selectedWaitingRequest
+      if (!request) {
+        return null
+      }
+      const title = request.title?.toLowerCase() || ''
 
       if (title.includes('activate') && title.includes('system')) {
         return 'activate-system'
@@ -219,7 +233,7 @@ export default {
       if (title.includes('trade') && title.includes('offer')) {
         return 'trade-offer'
       }
-      if (this.waitingRequest.allowsAction === 'redistribute-tokens') {
+      if (request.allowsAction === 'redistribute-tokens') {
         return 'redistribute-tokens'
       }
       if (title.includes('vote on') || title.includes('exhaust planets for votes') || title.includes('spend trade goods for extra votes')) {
@@ -238,11 +252,18 @@ export default {
       immediate: true,
       handler(request) {
         this.updateHighlightedSystems(request)
+        if (request) {
+          this.selectedPlayerName = this.actor.name
+        }
       },
     },
   },
 
   methods: {
+    onWaitingPlayerSelected(name) {
+      this.selectedPlayerName = name
+    },
+
     insertSelectorSubtitles() {},
 
     selectorOptionComponent(option) {
@@ -387,13 +408,15 @@ export default {
     },
 
     handleSubmitAction(payload) {
-      const waiting = this.waitingRequest
+      const actorName = payload.actor || this.selectedPlayerName || this.actor.name
+      const player = this.game.players.byName(actorName)
+      const waiting = player ? this.game.getWaiting(player) : null
       if (!waiting) {
         return
       }
 
       this.game.respondToInputRequest({
-        actor: payload.actor || this.actor.name,
+        actor: actorName,
         title: waiting.title,
         selection: payload.selection,
       })
@@ -405,11 +428,13 @@ export default {
     document.title = this.game.settings.name || 'Twilight Imperium'
     this.bus.on('system-click', this.handleSystemClick)
     this.bus.on('submit-action', this.handleSubmitAction)
+    this.bus.on('waiting-player-selected', this.onWaitingPlayerSelected)
   },
 
   beforeUnmount() {
     this.bus.off('system-click', this.handleSystemClick)
     this.bus.off('submit-action', this.handleSubmitAction)
+    this.bus.off('waiting-player-selected', this.onWaitingPlayerSelected)
   },
 }
 </script>

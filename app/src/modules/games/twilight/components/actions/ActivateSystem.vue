@@ -12,11 +12,15 @@
 export default {
   name: 'ActivateSystem',
 
+  props: {
+    playerName: { type: String, default: null },
+  },
+
   inject: ['actor', 'game', 'bus', 'ui'],
 
   computed: {
     currentPlayer() {
-      return this.game.players.byName(this.actor.name)
+      return this.game.players.byName(this.playerName || this.actor.name)
     },
 
     tacticTokens() {
@@ -27,7 +31,7 @@ export default {
   methods: {
     onSystemClick({ systemId }) {
       this.bus.emit('submit-action', {
-        actor: this.actor.name,
+        actor: this.playerName || this.actor.name,
         selection: { action: 'activate-system', systemId },
       })
     },
