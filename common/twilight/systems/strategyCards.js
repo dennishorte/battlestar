@@ -477,9 +477,16 @@ module.exports = function(Twilight) {
     for (const planetId of planets) {
       const planet = res.getPlanet(planetId)
       const systemTile = planet ? res.getSystemTile(planet.systemId) : null
-      const tileNumber = systemTile ? (systemTile.tileNumber || systemTile.id) : '?'
       const planetName = planet ? planet.name : planetId
-      const label = `${tileNumber}:${planetName}`
+      let systemLabel
+      if (systemTile?.type === 'home' && systemTile.faction) {
+        const faction = res.getFaction(systemTile.faction)
+        systemLabel = faction ? faction.name : (systemTile.tileNumber || systemTile.id)
+      }
+      else {
+        systemLabel = systemTile ? (systemTile.tileNumber || systemTile.id) : '?'
+      }
+      const label = `${systemLabel}:${planetName}`
       labelToPlanet[label] = planetId
       choices.push({
         title: label,
