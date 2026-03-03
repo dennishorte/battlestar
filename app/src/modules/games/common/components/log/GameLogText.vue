@@ -1,5 +1,5 @@
 <template>
-  <div style="display:inline-block">
+  <div style="display:inline">
     <template v-for="(token, i) in tokens" :key="i">
       <template v-if="token.type === 'text'">{{ token.value }}</template>
       <component v-else :is="componentMap[token.type]" v-bind="token.props" />
