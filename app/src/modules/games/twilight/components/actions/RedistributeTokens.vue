@@ -44,6 +44,10 @@
 export default {
   name: 'RedistributeTokens',
 
+  props: {
+    playerName: { type: String, default: null },
+  },
+
   inject: ['actor', 'game', 'bus'],
 
   data() {
@@ -56,7 +60,7 @@ export default {
 
   computed: {
     currentPlayer() {
-      return this.game.players.byName(this.actor.name)
+      return this.game.players.byName(this.playerName || this.actor.name)
     },
 
     totalTokens() {
@@ -79,7 +83,7 @@ export default {
   methods: {
     confirm() {
       this.bus.emit('submit-action', {
-        actor: this.actor.name,
+        actor: this.playerName || this.actor.name,
         selection: {
           action: 'redistribute-tokens',
           tactics: this.tactics,

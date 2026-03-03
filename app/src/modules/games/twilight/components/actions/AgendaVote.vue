@@ -84,6 +84,7 @@ export default {
       type: Object,
       default: null,
     },
+    playerName: { type: String, default: null },
   },
 
   inject: ['actor', 'game', 'bus'],
@@ -175,7 +176,7 @@ export default {
     // --- Outcome mode ---
     selectOutcome(choice) {
       this.bus.emit('submit-action', {
-        actor: this.actor.name,
+        actor: this.playerName || this.actor.name,
         selection: [choice],
       })
     },
@@ -198,7 +199,7 @@ export default {
 
     confirmExhaust(selected) {
       this.bus.emit('submit-action', {
-        actor: this.actor.name,
+        actor: this.playerName || this.actor.name,
         selection: selected,
       })
     },
@@ -208,7 +209,7 @@ export default {
       // Find the matching choice string
       const choice = this.choices[this.tgCount] || this.choices[0]
       this.bus.emit('submit-action', {
-        actor: this.actor.name,
+        actor: this.playerName || this.actor.name,
         selection: [choice],
       })
     },

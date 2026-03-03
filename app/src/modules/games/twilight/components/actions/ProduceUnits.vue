@@ -39,6 +39,7 @@ export default {
 
   props: {
     request: { type: Object, default: null },
+    playerName: { type: String, default: null },
   },
 
   data() {
@@ -49,7 +50,7 @@ export default {
 
   computed: {
     currentPlayer() {
-      return this.game.players.byName(this.actor.name)
+      return this.game.players.byName(this.playerName || this.actor.name)
     },
 
     availableUnits() {
@@ -124,14 +125,14 @@ export default {
       }
 
       this.bus.emit('submit-action', {
-        actor: this.actor.name,
+        actor: this.playerName || this.actor.name,
         selection: { action: 'produce-units', units },
       })
     },
 
     skip() {
       this.bus.emit('submit-action', {
-        actor: this.actor.name,
+        actor: this.playerName || this.actor.name,
         selection: ['Skip'],
       })
     },
