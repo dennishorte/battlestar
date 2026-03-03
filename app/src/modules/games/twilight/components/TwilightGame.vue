@@ -51,6 +51,7 @@
 
     <SystemDetailModal />
     <CardDetailModal />
+    <CommandTokensModal />
     <RulesReferenceModal />
     <ShipOverviewModal />
     <TechTreeModal />
@@ -86,6 +87,7 @@ import CardDetailModal from './modals/CardDetailModal.vue'
 import RulesReferenceModal from './modals/RulesReferenceModal.vue'
 import ShipOverviewModal from './modals/ShipOverviewModal.vue'
 import SystemDetailModal from './modals/SystemDetailModal.vue'
+import CommandTokensModal from './modals/CommandTokensModal.vue'
 import TechTreeModal from './modals/TechTreeModal.vue'
 
 // Selector option components
@@ -122,6 +124,7 @@ export default {
     AgendaVote,
     CardDetailModal,
     CombatDisplay,
+    CommandTokensModal,
     DebugModal,
     GalaxyMap,
     GameLogTwilight,
