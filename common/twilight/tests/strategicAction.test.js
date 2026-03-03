@@ -319,9 +319,9 @@ describe('Strategic Actions', () => {
       t.choose(game, 'Strategic Action')
 
       // First structure: place PDS on jord
-      t.choose(game, '1:Jord.pds')
+      t.choose(game, 'Federation of Sol:Jord.pds')
       // Second structure: place another PDS on jord
-      t.choose(game, '1:Jord.pds')
+      t.choose(game, 'Federation of Sol:Jord.pds')
       t.choose(game, 'Pass')  // micah declines construction secondary
 
       const jord = game.state.units['sol-home'].planets['jord']
@@ -337,9 +337,9 @@ describe('Strategic Actions', () => {
       t.choose(game, 'Strategic Action')
 
       // First structure: space dock on jord (already has one, but rules allow multiple in some cases)
-      t.choose(game, '1:Jord.space-dock')
+      t.choose(game, 'Federation of Sol:Jord.space-dock')
       // Second structure: PDS on jord
-      t.choose(game, '1:Jord.pds')
+      t.choose(game, 'Federation of Sol:Jord.pds')
       t.choose(game, 'Pass')  // micah declines construction secondary
 
       const jord = game.state.units['sol-home'].planets['jord']
@@ -533,8 +533,8 @@ describe('Strategic Actions', () => {
 
       // Dennis uses construction (primary)
       t.choose(game, 'Strategic Action')
-      t.choose(game, '1:Jord.pds')   // first structure
-      t.choose(game, '1:Jord.pds')   // second structure (PDS only)
+      t.choose(game, 'Federation of Sol:Jord.pds')   // first structure
+      t.choose(game, 'Federation of Sol:Jord.pds')   // second structure (PDS only)
       // Micah uses construction secondary (1 structure)
       t.choose(game, 'Use Secondary')
       // Micah places a PDS on one of their planets
@@ -899,8 +899,8 @@ describe('Strategic Actions', () => {
 
         // Dennis uses construction (primary)
         t.choose(game, 'Strategic Action')
-        t.choose(game, '1:Jord.pds')
-        t.choose(game, '1:Jord.pds')
+        t.choose(game, 'Federation of Sol:Jord.pds')
+        t.choose(game, 'Federation of Sol:Jord.pds')
         // Micah uses construction secondary
         t.choose(game, 'Use Secondary')
         // System selection auto-resolves to hacan-home (only system with controlled planets)
@@ -929,8 +929,8 @@ describe('Strategic Actions', () => {
         t.choose(game, 'Use Secondary')  // dennis: free leadership secondary
 
         t.choose(game, 'Strategic Action')  // dennis: construction
-        t.choose(game, '1:Jord.pds')
-        t.choose(game, '1:Jord.pds')
+        t.choose(game, 'Federation of Sol:Jord.pds')
+        t.choose(game, 'Federation of Sol:Jord.pds')
         // Micah uses construction secondary
         t.choose(game, 'Use Secondary')
         // Now Micah must choose a system: hacan-home or 27
@@ -939,7 +939,7 @@ describe('Strategic Actions', () => {
         const choices = t.currentChoices(game)
         for (const choice of choices) {
           // Should only have hacan-home planets, not new-albion (system 27)
-          expect(['16:Arretze', '16:Hercant', '16:Kamdorn']).toContain(choice)
+          expect(['Emirates of Hacan:Arretze', 'Emirates of Hacan:Hercant', 'Emirates of Hacan:Kamdorn']).toContain(choice)
         }
         t.choose(game, `${choices[0]}.pds`)
 
