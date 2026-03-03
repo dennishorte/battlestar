@@ -7,8 +7,11 @@
     </div>
 
     <!-- Command Tokens -->
-    <div class="panel-section">
-      <div class="section-label">Command Tokens</div>
+    <div class="panel-section clickable" @click="openCommandTokensHelp">
+      <div class="section-label">
+        Command Tokens
+        <span class="help-icon">?</span>
+      </div>
       <div class="token-pools">
         <span class="token-pool" title="Tactics">T:{{ player.commandTokens.tactics }}</span>
         <span class="token-pool" title="Strategy">S:{{ player.commandTokens.strategy }}</span>
@@ -558,6 +561,10 @@ export default {
       this.openCardDetail('promissory-note', note.id, { owner: note.owner, factionId })
     },
 
+    openCommandTokensHelp() {
+      this.$modal('twilight-command-tokens').show()
+    },
+
     openLeadersDetail() {
       const factionId = this.player.factionId
       const leaders = this.player.leaders || {}
@@ -880,6 +887,27 @@ export default {
 .supply-green { color: #198754; }
 .supply-orange { color: #e67700; }
 .supply-red { color: #dc3545; font-weight: 700; }
+
+.help-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1em;
+  height: 1.1em;
+  border: 1px solid #bbb;
+  border-radius: 50%;
+  font-size: .9em;
+  font-weight: 600;
+  color: #888;
+  vertical-align: middle;
+  margin-left: .25em;
+}
+
+.help-icon:hover {
+  color: #555;
+  border-color: #888;
+  background: rgba(0, 0, 0, .08);
+}
 
 .clickable {
   cursor: pointer;
