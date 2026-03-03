@@ -762,10 +762,8 @@ Twilight.prototype.actionPhase = function() {
     if (!player.hasUsedStrategyCard()) {
       const unusedCards = player.strategyCards.filter(c => !c.used)
       for (const card of unusedCards) {
-        const cardDef = res.getStrategyCard(card.id)
         choices.push({
           title: 'Strategic Action: ' + card.id,
-          subtitles: [cardDef.primary[0]],
           strategyCardIds: [card.id],
         })
       }
@@ -862,10 +860,8 @@ Twilight.prototype.actionPhase = function() {
       if (!player.hasUsedStrategyCard()) {
         const unusedCards = player.strategyCards.filter(c => !c.used)
         for (const card of unusedCards) {
-          const cardDef = res.getStrategyCard(card.id)
           bonusChoices.push({
             title: 'Strategic Action: ' + card.id,
-            subtitles: [cardDef.primary[0]],
             strategyCardIds: [card.id],
           })
         }
