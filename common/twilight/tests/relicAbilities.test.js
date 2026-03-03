@@ -907,8 +907,7 @@ describe('Relic Abilities', () => {
       t.choose(game, 'sarween-tools')
       t.choose(game, 'Draw 1 Action Card')
 
-      // Micah declines technology secondary
-      t.choose(game, 'Pass')
+      // Micah auto-skipped (insufficient resources for technology secondary)
 
       // Now Prophet's Tears should be exhausted
       expect(game.state.exhaustedRelics['dennis']).toContain('the-prophets-tears')
