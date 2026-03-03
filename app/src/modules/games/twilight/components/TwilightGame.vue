@@ -104,7 +104,6 @@ const ActionWithCards = {
   components: { StrategyCardChip },
   render() {
     return h('div', { style: { display: 'flex', alignItems: 'center', gap: '0.5em', flexWrap: 'wrap' } }, [
-      h('span', this.title),
       ...this.cardIds.map(id => h(StrategyCardChip, { cardId: id })),
     ])
   },
