@@ -15,7 +15,7 @@ module.exports = {
       args: { player , card: this},
     })
   },
-  onGainGrain(game, player) {
+  _obtainGrain(game, player) {
     if (player.hayloftBarnFood > 0) {
       player.hayloftBarnFood--
       player.addResource('food', 1)
@@ -27,5 +27,11 @@ module.exports = {
         game.actions.familyGrowthWithoutRoom(player, { fromCard: true })
       }
     }
+  },
+  onGainGrain(game, player) {
+    this._obtainGrain(game, player)
+  },
+  onHarvestGrain(game, player) {
+    this._obtainGrain(game, player)
   },
 }

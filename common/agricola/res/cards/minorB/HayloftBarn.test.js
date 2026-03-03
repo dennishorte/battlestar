@@ -108,6 +108,56 @@ describe('Hayloft Barn', () => {
     expect(dennis.hayloftBarnFood).toBe(0)
   })
 
+  test('gives 1 food when harvesting grain from fields', () => {
+    const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      round: 4, // first harvest
+      dennis: {
+        minorImprovements: ['hayloft-barn-b021'],
+        occupations: ['test-occupation-1'],
+        food: 8,
+        farmyard: {
+          fields: [
+            { row: 0, col: 2, crop: 'grain', cropCount: 3 },
+          ],
+        },
+      },
+      micah: { food: 8 },
+    })
+    game.testSetBreakpoint('initialization-complete', (game) => {
+      const dennis = game.players.byName('dennis')
+      dennis.hayloftBarnFood = 4
+    })
+    game.run()
+
+    // Play through all 4 actions
+    t.choose(game, 'Day Laborer')  // dennis
+    t.choose(game, 'Forest')       // micah
+    t.choose(game, 'Grain Seeds')  // dennis
+    t.choose(game, 'Clay Pit')     // micah
+
+    // Grain Seeds: +1 grain, triggers Hayloft Barn (food 8 → 9, barn food 4 → 3)
+    // Harvest: +1 grain from field, triggers Hayloft Barn (food 9 → 10, barn food 3 → 2)
+    // Day Laborer: +2 food → food 10 → 12
+    // Feeding: -4 food → food 12 → 8
+    t.testBoard(game, {
+      dennis: {
+        grain: 2, // 1 from Grain Seeds + 1 from harvest
+        food: 8, // 8 + 2 (Day Laborer) + 1 (Barn from Grain Seeds) + 1 (Barn from harvest) - 4 (feeding)
+        minorImprovements: ['hayloft-barn-b021'],
+        occupations: ['test-occupation-1'],
+        farmyard: {
+          fields: [
+            { row: 0, col: 2, crop: 'grain', cropCount: 2 },
+          ],
+        },
+      },
+    })
+    const dennis = game.players.byName('dennis')
+    expect(dennis.hayloftBarnFood).toBe(2) // 4 - 1 (Grain Seeds) - 1 (harvest)
+  })
+
   test('does not give food when counter is already 0', () => {
     const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
     t.setBoard(game, {
