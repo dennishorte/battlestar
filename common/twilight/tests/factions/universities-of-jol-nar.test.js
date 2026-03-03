@@ -173,8 +173,7 @@ describe('Universities of Jol-Nar', () => {
       // Jol has 2 influence, Nar has 3 influence — exhaust Jol (2 influence) to meet the 2 needed
       t.choose(game, 'jol (2)')
 
-      // Micah declines technology secondary
-      t.choose(game, 'Pass')
+      // Micah auto-skipped (insufficient resources for technology secondary)
 
       const dennis = game.players.byName('dennis')
       expect(dennis.actionCards.length).toBe(2)
@@ -195,8 +194,7 @@ describe('Universities of Jol-Nar', () => {
       // Decline the agent
       t.choose(game, 'Pass')
 
-      // Micah declines technology secondary
-      t.choose(game, 'Pass')
+      // Micah auto-skipped (insufficient resources for technology secondary)
 
       const dennis = game.players.byName('dennis')
       expect(dennis.isAgentReady()).toBe(true)

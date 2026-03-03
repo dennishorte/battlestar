@@ -846,15 +846,14 @@ describe('Strategic Actions', () => {
         expect(game.waiting.selectors[0].actor).toBe('micah')
       })
 
-      test('secondary: player with insufficient resources can pass', () => {
+      test('secondary: player with insufficient resources is auto-skipped', () => {
         const game = t.fixture()
         game.run()
         pickStrategyCards(game, 'technology', 'imperial')
 
         t.choose(game, 'Strategic Action')
         t.choose(game, 'sarween-tools')
-        // Micah has 3R (Hacan planets) < 4R — prompt still appears but player passes
-        t.choose(game, 'Pass')
+        // Micah has 3R (Hacan planets) < 4R — auto-skipped, no prompt
 
         // Should be at Micah's turn now
         expect(game.waiting.selectors[0].actor).toBe('micah')

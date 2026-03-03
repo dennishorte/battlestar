@@ -599,7 +599,24 @@ module.exports = function(Twilight) {
 
       // Skip if player has no strategy tokens to spend (unless free or has Scepter)
       if (!isFree && !hasScepter && player.commandTokens.strategy <= 0) {
+        this.log.add({
+          template: '{player} has no strategy tokens for {secondary}',
+          args: { player, secondary: secondaryAvailable },
+        })
         continue
+      }
+
+      // Skip technology secondary if player cannot afford 4 resources
+      if (cardId === 'technology') {
+        const tgVal = this.factionAbilities.getTradeGoodResourceValue(player)
+        const availRes = this._getAvailableResources(player) + player.tradeGoods * tgVal
+        if (availRes < 4) {
+          this.log.add({
+            template: '{player} cannot afford 4 resources for {secondary}',
+            args: { player, secondary: secondaryAvailable },
+          })
+          continue
+        }
       }
 
       const costLabel = isFree ? 'free'
@@ -661,22 +678,11 @@ module.exports = function(Twilight) {
       // Draw 2 action cards
         this._drawActionCards(player, 2)
         break
-      case 'technology': {
+      case 'technology':
       // Rule 91.3: Research 1 technology (costs strategy token + 4 resources)
-        const tgVal = this.factionAbilities.getTradeGoodResourceValue(player)
-        const availRes = this._getAvailableResources(player) + player.tradeGoods * tgVal
-        if (availRes >= 4) {
-          this._payResources(player, 4)
-          this._researchTech(player)
-        }
-        else {
-          this.log.add({
-            template: '{player} cannot afford 4 resources for Technology secondary',
-            args: { player },
-          })
-        }
+        this._payResources(player, 4)
+        this._researchTech(player)
         break
-      }
       case 'warfare':
       // Produce units in home system
         this._warfareSecondary(player)
