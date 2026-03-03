@@ -641,7 +641,7 @@ module.exports = function(Twilight) {
       case 'construction': return 'Place 1 structure'
       case 'trade': return 'Replenish commodities'
       case 'warfare': return 'Produce units in your home system'
-      case 'technology': return 'Research 1 technology (4 resources)'
+      case 'technology': return 'Research 1 technology'
       case 'imperial': return 'Draw 1 secret objective'
       default: return null
     }
