@@ -471,6 +471,24 @@ module.exports = function(Twilight) {
   ////////////////////////////////////////////////////////////////////////////////
   // Strategy Card — Construction (#4)
 
+  function _buildStructureChoices(planets, types) {
+    const choices = []
+    const labelToPlanet = {}
+    for (const planetId of planets) {
+      const planet = res.getPlanet(planetId)
+      const systemTile = planet ? res.getSystemTile(planet.systemId) : null
+      const tileNumber = systemTile ? (systemTile.tileNumber || systemTile.id) : '?'
+      const planetName = planet ? planet.name : planetId
+      const label = `${tileNumber}:${planetName}`
+      labelToPlanet[label] = planetId
+      choices.push({
+        title: label,
+        choices: [...types],
+      })
+    }
+    return { choices, labelToPlanet }
+  }
+
   Twilight.prototype._constructionPrimary = function(player) {
   // Place 1 PDS or 1 Space Dock on a planet you control
   // Then place 1 PDS on a planet you control
@@ -480,13 +498,13 @@ module.exports = function(Twilight) {
     }
 
     // First structure: PDS or Space Dock
-    const firstChoices = controlledPlanets.map(p => `pds:${p}`)
-      .concat(controlledPlanets.map(p => `space-dock:${p}`))
+    const { choices: firstChoices, labelToPlanet } = _buildStructureChoices(controlledPlanets, ['pds', 'space-dock'])
 
     const firstSelection = this.actions.choose(player, firstChoices, {
       title: 'Place Structure (Construction)',
     })
-    const [firstType, firstPlanet] = firstSelection[0].split(':')
+    const firstType = firstSelection[0].selection[0]
+    const firstPlanet = labelToPlanet[firstSelection[0].title]
     const firstSystemId = this._findSystemForPlanet(firstPlanet)
     if (firstSystemId) {
     // Saar Floating Factory: space docks are placed in the space area
@@ -499,13 +517,13 @@ module.exports = function(Twilight) {
     }
 
     // Second structure: PDS only
-    const secondChoices = controlledPlanets.map(p => `pds:${p}`)
+    const { choices: secondChoices, labelToPlanet: secondLabelToPlanet } = _buildStructureChoices(controlledPlanets, ['pds'])
     if (secondChoices.length > 0) {
       const secondSelection = this.actions.choose(player, secondChoices, {
         title: 'Place PDS (Construction)',
         noAutoRespond: true,
       })
-      const [, secondPlanet] = secondSelection[0].split(':')
+      const secondPlanet = secondLabelToPlanet[secondSelection[0].title]
       const secondSystemId = this._findSystemForPlanet(secondPlanet)
       if (secondSystemId) {
         this._addUnitToPlanet(secondSystemId, secondPlanet, 'pds', player.name)
@@ -800,13 +818,13 @@ module.exports = function(Twilight) {
     }
 
     // Place 1 structure (PDS or space dock) on a planet in that system
-    const choices = planetsInSystem.map(p => `pds:${p}`)
-      .concat(planetsInSystem.map(p => `space-dock:${p}`))
+    const { choices, labelToPlanet: structLabelToPlanet } = _buildStructureChoices(planetsInSystem, ['pds', 'space-dock'])
 
     const selection = this.actions.choose(player, choices, {
       title: 'Place Structure (Construction Secondary)',
     })
-    const [unitType, planetId] = selection[0].split(':')
+    const unitType = selection[0].selection[0]
+    const planetId = structLabelToPlanet[selection[0].title]
     this._addUnitToPlanet(chosenSystem, planetId, unitType, player.name)
 
     this.log.add({

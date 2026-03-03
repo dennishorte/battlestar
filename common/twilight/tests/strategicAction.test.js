@@ -319,9 +319,9 @@ describe('Strategic Actions', () => {
       t.choose(game, 'Strategic Action')
 
       // First structure: place PDS on jord
-      t.choose(game, 'pds:jord')
+      t.choose(game, '1:Jord.pds')
       // Second structure: place another PDS on jord
-      t.choose(game, 'pds:jord')
+      t.choose(game, '1:Jord.pds')
       t.choose(game, 'Pass')  // micah declines construction secondary
 
       const jord = game.state.units['sol-home'].planets['jord']
@@ -337,9 +337,9 @@ describe('Strategic Actions', () => {
       t.choose(game, 'Strategic Action')
 
       // First structure: space dock on jord (already has one, but rules allow multiple in some cases)
-      t.choose(game, 'space-dock:jord')
+      t.choose(game, '1:Jord.space-dock')
       // Second structure: PDS on jord
-      t.choose(game, 'pds:jord')
+      t.choose(game, '1:Jord.pds')
       t.choose(game, 'Pass')  // micah declines construction secondary
 
       const jord = game.state.units['sol-home'].planets['jord']
@@ -533,13 +533,13 @@ describe('Strategic Actions', () => {
 
       // Dennis uses construction (primary)
       t.choose(game, 'Strategic Action')
-      t.choose(game, 'pds:jord')   // first structure
-      t.choose(game, 'pds:jord')   // second structure (PDS only)
+      t.choose(game, '1:Jord.pds')   // first structure
+      t.choose(game, '1:Jord.pds')   // second structure (PDS only)
       // Micah uses construction secondary (1 structure)
       t.choose(game, 'Use Secondary')
       // Micah places a PDS on one of their planets
       const micahChoices = t.currentChoices(game)
-      t.choose(game, micahChoices[0])
+      t.choose(game, `${micahChoices[0]}.pds`)
 
       const micah = game.players.byName('micah')
       // Micah should have spent 1 strategy token
@@ -899,14 +899,14 @@ describe('Strategic Actions', () => {
 
         // Dennis uses construction (primary)
         t.choose(game, 'Strategic Action')
-        t.choose(game, 'pds:jord')
-        t.choose(game, 'pds:jord')
+        t.choose(game, '1:Jord.pds')
+        t.choose(game, '1:Jord.pds')
         // Micah uses construction secondary
         t.choose(game, 'Use Secondary')
         // System selection auto-resolves to hacan-home (only system with controlled planets)
         // Structure selection
         const choices = t.currentChoices(game)
-        t.choose(game, choices[0])
+        t.choose(game, `${choices[0]}.pds`)
 
         // Command token should be placed in hacan-home
         expect(game.state.systems['hacan-home'].commandTokens).toContain('micah')
@@ -929,21 +929,19 @@ describe('Strategic Actions', () => {
         t.choose(game, 'Use Secondary')  // dennis: free leadership secondary
 
         t.choose(game, 'Strategic Action')  // dennis: construction
-        t.choose(game, 'pds:jord')
-        t.choose(game, 'pds:jord')
+        t.choose(game, '1:Jord.pds')
+        t.choose(game, '1:Jord.pds')
         // Micah uses construction secondary
         t.choose(game, 'Use Secondary')
         // Now Micah must choose a system: hacan-home or 27
         t.choose(game, 'hacan-home')
         // Structure choices should only include planets in hacan-home
         const choices = t.currentChoices(game)
-        const planetChoices = choices.filter(c => c.includes(':'))
-        for (const choice of planetChoices) {
-          const planet = choice.split(':')[1]
+        for (const choice of choices) {
           // Should only have hacan-home planets, not new-albion (system 27)
-          expect(['arretze', 'hercant', 'kamdorn']).toContain(planet)
+          expect(['16:Arretze', '16:Hercant', '16:Kamdorn']).toContain(choice)
         }
-        t.choose(game, choices[0])
+        t.choose(game, `${choices[0]}.pds`)
 
         // Command token in hacan-home
         expect(game.state.systems['hacan-home'].commandTokens).toContain('micah')
