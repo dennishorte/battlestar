@@ -31,6 +31,7 @@ describe('Legendary Planets', () => {
 
       // Dennis uses Strategic Action (leadership)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // micah declines secondary
 
       // Legendary planet ability offered at end of turn
@@ -65,6 +66,7 @@ describe('Legendary Planets', () => {
       const cardsBefore = (dennis.actionCards || []).length
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')
 
       t.choose(game, 'Imperial Arms Vault')
@@ -99,6 +101,7 @@ describe('Legendary Planets', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Primor 1I = 3I)
       t.choose(game, 'Pass')
 
@@ -135,6 +138,7 @@ describe('Legendary Planets', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Mallice 3I = 5I)
       t.choose(game, 'Pass')
 
@@ -165,6 +169,7 @@ describe('Legendary Planets', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Mallice 3I = 5I)
       t.choose(game, 'Pass')
 
@@ -201,6 +206,7 @@ describe('Legendary Planets', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Mirage 2I = 4I)
       t.choose(game, 'Pass')
 
@@ -237,6 +243,7 @@ describe('Legendary Planets', () => {
 
       // Dennis uses Strategic Action (leadership) — turn 1
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Primor 1I = 3I)
       t.choose(game, 'Pass')  // micah declines secondary
 
@@ -281,6 +288,7 @@ describe('Legendary Planets', () => {
 
       // Dennis: leadership
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Mallice 3I = 5I)
       t.choose(game, 'Pass')
 

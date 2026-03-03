@@ -106,6 +106,7 @@ describe('Promissory Notes', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // micah declines secondary
 
       // Dennis offers 1 TG + support for the throne, requests 2 commodities
@@ -152,6 +153,7 @@ describe('Promissory Notes', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')
 
       // Dennis offers political-secret note to micah (won't auto-trigger like ceasefire)
@@ -327,6 +329,7 @@ describe('Promissory Notes', () => {
 
       // Dennis goes first — plays Leadership
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // Micah declines Leadership secondary
 
       // Micah's turn — plays Trade (primary replenishes commodities for all)

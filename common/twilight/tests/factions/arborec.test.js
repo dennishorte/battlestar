@@ -146,6 +146,7 @@ describe('Arborec', () => {
 
       // Play through action phase
       t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // micah declines secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
@@ -177,6 +178,7 @@ describe('Arborec', () => {
 
       // Play through action phase
       t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // micah declines secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
@@ -206,6 +208,7 @@ describe('Arborec', () => {
 
       // Play through action phase
       t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // micah declines secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
@@ -610,6 +613,7 @@ describe('Arborec', () => {
 
         // Dennis: Strategic Action (leadership)
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Done')  // allocate tokens
         t.choose(game, 'Pass')  // micah declines secondary
 
         // Micah: tactical action — invade abyz in system 38
@@ -656,6 +660,7 @@ describe('Arborec', () => {
 
         // Play through action phase
         t.choose(game, 'Strategic Action')  // dennis: leadership
+        t.choose(game, 'Done')  // allocate tokens
         t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Arborec, 3I)
         t.choose(game, 'Pass')  // micah declines secondary
         t.choose(game, 'Strategic Action')  // micah: diplomacy

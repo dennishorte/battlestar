@@ -15,9 +15,11 @@ const strategyCards = [
     primary: [
       'Gain 3 command tokens.',
       'Spend any amount of influence to gain 1 command token for every 3 influence spent.',
+      'Place each gained token in the pool of your choice.',
     ],
     secondary: [
       'Spend any amount of influence to gain 1 command token for every 3 influence spent.',
+      'Place each gained token in the pool of your choice.',
     ],
   },
   {

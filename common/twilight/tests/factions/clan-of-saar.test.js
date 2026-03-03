@@ -138,6 +138,7 @@ describe('Clan of Saar', () => {
 
       // Micah's turn first (initiative 1 — leadership)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass') // Dennis declines secondary
       // Dennis's turn — use Construction
       t.choose(game, 'Strategic Action')
@@ -224,6 +225,7 @@ describe('Clan of Saar', () => {
 
       // Micah uses strategic action (leadership) first
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass') // Dennis declines leadership secondary
 
       // Dennis uses strategic action (diplomacy)
@@ -436,6 +438,7 @@ describe('Clan of Saar', () => {
 
       // Micah uses strategic action (leadership)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass') // Dennis declines secondary
 
       // Dennis uses strategic action (diplomacy)
@@ -489,6 +492,7 @@ describe('Clan of Saar', () => {
       pickStrategyCards(game, 'diplomacy', 'leadership')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')
       t.choose(game, 'Strategic Action')
       t.choose(game, 'saar-home')
@@ -530,6 +534,7 @@ describe('Clan of Saar', () => {
       pickStrategyCards(game, 'diplomacy', 'leadership')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')
       t.choose(game, 'Strategic Action')
       t.choose(game, 'saar-home')
@@ -857,6 +862,7 @@ describe('Clan of Saar', () => {
         t.choose(game, 'Pass')             // Decline Chaos Mapping production
         // Dennis uses Strategic Action (leadership) to end his turn simply
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Done')  // allocate tokens
         // Micah declines leadership secondary
         t.choose(game, 'Pass')
 

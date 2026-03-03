@@ -47,6 +47,7 @@ describe('Xxcha Kingdom', () => {
 
       // Micah (leadership=1) goes first
       t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Done')  // micah: allocate 3 tokens
       t.choose(game, 'Pass')  // dennis declines secondary
 
       // Dennis (Xxcha, diplomacy=2) uses diplomacy
@@ -82,6 +83,7 @@ describe('Xxcha Kingdom', () => {
 
       // Play through action phase
       t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens
       t.choose(game, 'Pass')  // micah declines secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
@@ -134,6 +136,7 @@ describe('Xxcha Kingdom', () => {
 
       // Dennis: strategic action (leadership)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens
       t.choose(game, 'Pass')  // micah declines secondary
       // No transaction step for Xxcha (not Hacan)
@@ -207,6 +210,7 @@ describe('Xxcha Kingdom', () => {
 
       // Play through action phase quickly
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Pass')
 
       t.choose(game, 'Strategic Action')
@@ -440,6 +444,7 @@ describe('Xxcha Kingdom', () => {
 
       // Play through action phase quickly
       t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens
       t.choose(game, 'Pass')  // micah declines secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
@@ -512,6 +517,7 @@ describe('Xxcha Kingdom', () => {
 
       // Micah (leadership=1) goes first
       t.choose(game, 'Strategic Action')  // Micah uses leadership
+      t.choose(game, 'Done')  // micah: allocate 3 tokens
       t.choose(game, 'Skip')  // micah skips influence-for-tokens
       t.choose(game, 'Pass')              // Dennis declines secondary
       // Dennis (diplomacy=2) goes next
@@ -568,6 +574,7 @@ describe('Xxcha Kingdom', () => {
       pickStrategyCards(game, 'diplomacy', 'leadership')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // micah: allocate 3 tokens
       t.choose(game, 'Skip')  // micah skips influence-for-tokens (Xxcha, 3I)
       t.choose(game, 'Pass')
       t.choose(game, 'Strategic Action')
@@ -611,6 +618,7 @@ describe('Xxcha Kingdom', () => {
 
         // Dennis: strategic action (leadership=1 goes first)
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Done')  // dennis: allocate 3 tokens
         t.choose(game, 'Skip')  // dennis skips influence-for-tokens
         t.choose(game, 'Pass')  // micah declines secondary
 
@@ -661,6 +669,7 @@ describe('Xxcha Kingdom', () => {
 
         // Dennis: strategic action (leadership)
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Done')  // dennis: allocate 3 tokens
         t.choose(game, 'Skip')  // dennis skips influence-for-tokens
         t.choose(game, 'Pass')  // micah declines secondary
 

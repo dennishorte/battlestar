@@ -8,6 +8,7 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 // Play through action phase to reach status phase
 function playThroughActionPhase(game) {
   t.choose(game, 'Strategic Action')  // dennis: leadership
+  t.choose(game, 'Done')             // dennis: allocate 3 tokens
   // Skip influence-for-tokens prompt if it appears (when dennis has >= 3 influence)
   if (t.currentChoices(game).includes('Skip')) {
     t.choose(game, 'Skip')
@@ -89,6 +90,7 @@ describe('Relic Abilities', () => {
 
       // Micah goes first (Leadership, initiative 1)
       t.choose(game, 'Strategic Action')  // Micah uses Leadership
+      t.choose(game, 'Done')             // micah: allocate 3 tokens
       t.choose(game, 'Pass')  // Dennis declines free Leadership secondary
 
       // Dennis's turn — uses Imperial (draws secret, no Mecatol)
@@ -119,6 +121,7 @@ describe('Relic Abilities', () => {
 
       // Micah goes first (Leadership, initiative 1)
       t.choose(game, 'Strategic Action')  // Micah uses Leadership
+      t.choose(game, 'Done')             // micah: allocate 3 tokens
       t.choose(game, 'Pass')  // Dennis declines free Leadership secondary
 
       // Dennis's turn — uses Imperial
