@@ -43,7 +43,13 @@ export default {
     WaitingChoice,
   },
 
-  inject: ['actor', 'game'],
+  inject: ['actor', 'bus', 'game'],
+
+  data() {
+    return {
+      selectedPlayer: null,
+    }
+  },
 
   computed: {
     playersOrdered() {
@@ -65,6 +71,15 @@ export default {
       return player.name === this.actor.name ? ['active', 'show'] : ''
     },
 
+    onTabShown(event) {
+      const target = event.target.getAttribute('data-bs-target')
+      const name = target?.replace('#waiting-', '')
+      if (name) {
+        this.selectedPlayer = this.game.players.byName(name)
+        this.bus.emit('waiting-player-selected', name)
+      }
+    },
+
     titleForPlayer(player) {
       if (this.hasActionWaiting(player)) {
         return `${player.name}*`
@@ -73,6 +88,14 @@ export default {
         return player.name
       }
     },
+  },
+
+  mounted() {
+    this.$el.addEventListener('shown.bs.tab', this.onTabShown)
+  },
+
+  beforeUnmount() {
+    this.$el.removeEventListener('shown.bs.tab', this.onTabShown)
   },
 }
 </script>

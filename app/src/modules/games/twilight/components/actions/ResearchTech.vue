@@ -55,6 +55,7 @@ export default {
       type: Object,
       default: null,
     },
+    playerName: { type: String, default: null },
   },
 
   inject: ['actor', 'bus'],
@@ -117,7 +118,7 @@ export default {
   methods: {
     selectTech(techId) {
       this.bus.emit('submit-action', {
-        actor: this.actor.name,
+        actor: this.playerName || this.actor.name,
         selection: [techId],
       })
     },
