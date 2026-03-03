@@ -274,6 +274,7 @@ onMounted(() => {
   font-size: .8rem;
   overflow-x: hidden;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .bottom-space {
@@ -313,7 +314,9 @@ onMounted(() => {
   flex-direction: row;
   margin-top: 1px;
   padding-left: 1em;
-  width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
 }
 
 .indent-spacer::before {
