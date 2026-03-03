@@ -17,6 +17,7 @@ function findAdjacent(systemId) {
 // Both use strategy cards then pass. Handles diplomacy system choice + secondaries.
 function playThroughActionPhase(game) {
   t.choose(game, 'Strategic Action')  // dennis: leadership (auto)
+  t.choose(game, 'Done')             // dennis: allocate 3 tokens
   t.choose(game, 'Pass')             // micah declines leadership secondary
   t.choose(game, 'Strategic Action')  // micah: diplomacy (needs system choice)
   t.choose(game, 'hacan-home')        // micah picks system
@@ -58,6 +59,7 @@ describe('Status Phase', () => {
       t.choose(game, 'hacan-home')        // micah picks system
       t.choose(game, 'Pass')              // dennis declines diplomacy secondary
       t.choose(game, 'Strategic Action')  // dennis: leadership (auto)
+      t.choose(game, 'Done')              // dennis: allocate 3 tokens
       t.choose(game, 'Pass')              // micah declines leadership secondary
       t.choose(game, 'Pass')              // micah passes
       t.choose(game, 'Pass')              // dennis passes
@@ -138,6 +140,7 @@ describe('Status Phase', () => {
       t.choose(game, 'hacan-home')        // micah picks system
       t.choose(game, 'Pass')              // dennis declines diplomacy secondary
       t.choose(game, 'Strategic Action')  // dennis: leadership (auto)
+      t.choose(game, 'Done')              // dennis: allocate 3 tokens
       t.choose(game, 'Pass')              // micah declines leadership secondary
       t.choose(game, 'Pass')              // micah passes
       t.choose(game, 'Pass')              // dennis passes

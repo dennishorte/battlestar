@@ -170,6 +170,7 @@ describe('Naalu Collective', () => {
 
       // Dennis (Naalu, telepathic=0) goes first — use leadership
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')         // allocate tokens
       t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
       t.choose(game, 'Pass')         // micah declines leadership secondary
 
@@ -221,6 +222,7 @@ describe('Naalu Collective', () => {
 
       // Dennis (Naalu) goes first — use leadership
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')         // allocate tokens
       t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
       t.choose(game, 'Pass')         // micah declines leadership secondary
 
@@ -272,6 +274,7 @@ describe('Naalu Collective', () => {
 
       // Dennis (Naalu) goes first — use leadership
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')         // allocate tokens
       t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
       t.choose(game, 'Pass')         // micah declines leadership secondary
 
@@ -472,6 +475,7 @@ describe('Naalu Collective', () => {
       // Action phase: Dennis (initiative 0 from GoP) goes first
       // Players must use their strategy card before they can pass
       t.choose(game, 'Strategic Action')  // Dennis uses leadership (goes first!)
+      t.choose(game, 'Done')              // allocate tokens
       t.choose(game, 'Pass')              // Micah declines secondary
       t.choose(game, 'Strategic Action')  // Micah uses diplomacy (goes second)
       t.choose(game, 'naalu-home')        // Micah diplomacy target
@@ -509,6 +513,7 @@ describe('Naalu Collective', () => {
 
       // Play through action phase
       t.choose(game, 'Strategic Action')  // Dennis uses leadership
+      t.choose(game, 'Done')              // allocate tokens
       t.choose(game, 'Pass')              // Micah declines secondary
       t.choose(game, 'Strategic Action')  // Micah uses diplomacy
       t.choose(game, 'naalu-home')
@@ -561,6 +566,7 @@ describe('Naalu Collective', () => {
 
         // Dennis (Naalu, telepathic=0) goes first — use leadership
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Done')         // allocate tokens
         t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
         t.choose(game, 'Pass')         // micah declines leadership secondary
 
@@ -606,6 +612,7 @@ describe('Naalu Collective', () => {
 
         // Dennis (Naalu) goes first — use leadership
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Done')         // allocate tokens
         t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
         t.choose(game, 'Pass')         // micah declines leadership secondary
 

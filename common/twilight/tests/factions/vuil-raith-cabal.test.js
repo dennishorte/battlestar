@@ -501,8 +501,9 @@ describe("Vuil'raith Cabal", () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Dennis: Strategic Action
+      // Dennis: Strategic Action (leadership)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Pass')  // micah declines secondary
 
       // Micah: tactical action to invade abyz in system 38
@@ -858,8 +859,9 @@ describe("Vuil'raith Cabal", () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Dennis passes (strategic action)
+      // Dennis uses leadership (strategic action)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Pass')  // micah declines secondary
 
       // Micah moves ships to cabal-home, establishing blockade
@@ -904,6 +906,7 @@ describe("Vuil'raith Cabal", () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Pass')
 
       // Micah establishes blockade
@@ -952,6 +955,7 @@ describe("Vuil'raith Cabal", () => {
 
       // Dennis uses leadership, then transaction window
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Pass')  // micah declines secondary
 
       // Dennis proposes transaction: return captured cruiser for 1 trade good
@@ -1001,6 +1005,7 @@ describe("Vuil'raith Cabal", () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Pass')
 
       // Dennis proposes transaction: return captured infantry for 1 trade good

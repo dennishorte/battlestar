@@ -60,6 +60,15 @@ module.exports = function(Twilight) {
       args: { player },
     })
 
+    // Let player allocate the 3 new tokens across pools (Rule 52.4)
+    const selection = this.actions.choose(player, ['Done'], {
+      title: 'Allocate Command Tokens (+3)',
+      allowsAction: 'redistribute-tokens',
+    })
+    if (selection.action === 'redistribute-tokens') {
+      player.setCommandTokens(selection)
+    }
+
     this._offerInfluenceForTokens(player)
   }
 
@@ -893,6 +902,15 @@ module.exports = function(Twilight) {
         template: '{player} spends {influence} influence to gain {tokens} command token(s)',
         args: { player, influence: influenceCost, tokens: tokenCount },
       })
+
+      // Let player allocate the purchased tokens across pools (Rule 52.4)
+      const allocSelection = this.actions.choose(player, ['Done'], {
+        title: `Allocate Command Tokens (+${tokenCount})`,
+        allowsAction: 'redistribute-tokens',
+      })
+      if (allocSelection.action === 'redistribute-tokens') {
+        player.setCommandTokens(allocSelection)
+      }
     }
   }
 

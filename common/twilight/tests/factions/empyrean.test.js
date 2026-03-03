@@ -594,6 +594,7 @@ describe('Empyrean', () => {
 
       // Dennis: Strategic Action (Leadership) → Micah declines secondary
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Empyrean, 4I)
       t.choose(game, 'Pass')
 
@@ -659,6 +660,7 @@ describe('Empyrean', () => {
 
       // Micah: Strategic Action (Leadership)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // Dennis declines Leadership secondary
       // Hacan Guild Ships: transaction window (Dennis has TG from Trade)
       t.choose(game, 'Skip Transaction')
@@ -714,6 +716,7 @@ describe('Empyrean', () => {
 
       // Dennis: Strategic Action → Micah declines
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Empyrean, 4I)
       t.choose(game, 'Pass')
 
@@ -856,6 +859,7 @@ describe('Empyrean', () => {
 
         // Dennis does a strategic action first
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Done')  // allocate tokens
         t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Empyrean, 4I)
         t.choose(game, 'Pass')
 
@@ -1129,6 +1133,7 @@ describe('Empyrean', () => {
 
         // Micah takes leadership strategic action first
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Done')  // allocate tokens
         t.choose(game, 'Pass')  // Dennis declines secondary
 
         // Dennis takes diplomacy

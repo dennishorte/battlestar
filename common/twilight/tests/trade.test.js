@@ -182,6 +182,7 @@ describe('Trade System', () => {
 
       // Dennis takes leadership
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // micah declines secondary
 
       // Transaction window: dennis chooses micah
@@ -227,6 +228,7 @@ describe('Trade System', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // micah declines secondary
 
       // Dennis offers 2 commodities
@@ -266,6 +268,7 @@ describe('Trade System', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')
 
       t.choose(game, 'micah')
@@ -305,6 +308,7 @@ describe('Trade System', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')
 
       // First transaction with micah
@@ -344,6 +348,7 @@ describe('Trade System', () => {
 
       // Dennis takes leadership - no transaction prompt should appear
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // micah declines secondary
 
       // If transaction prompt appeared, this next choose would fail
@@ -378,6 +383,7 @@ describe('Trade System', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')
 
       // Skip transaction
