@@ -274,6 +274,7 @@ class AgricolaActionManager extends BaseActionManager {
         placements: result.placements,
         overflow: result.overflow,
         incoming: overflow,
+        removals: result.removals || [],
       })
 
       if (applyResult.success) {

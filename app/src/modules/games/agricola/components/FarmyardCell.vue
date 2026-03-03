@@ -78,6 +78,10 @@ export default {
       type: Object,
       required: true,
     },
+    animalOverrides: {
+      type: Object,
+      default: null,
+    },
   },
 
   computed: {
@@ -104,6 +108,20 @@ export default {
     // Check if sowing mode is active and this is the viewing player's board
     isSowingActive() {
       return this.ui.sowing?.active && this.player.name === this.actor.name
+    },
+
+    // Check if animal placement mode is active and this is the viewing player's board
+    isAnimalPlacementActive() {
+      return this.ui.animalPlacement?.active && this.player.name === this.actor.name
+    },
+
+    // Check if this cell is a valid animal placement target
+    isAnimalPlacementTarget() {
+      if (!this.isAnimalPlacementActive) {
+        return false
+      }
+      const validCells = this.ui.animalPlacement?.validCells || []
+      return validCells.some(s => s.row === this.row && s.col === this.col)
     },
 
     // Check if this cell is currently selected for fencing
@@ -235,13 +253,18 @@ export default {
         classes.push('sow-selectable')
       }
 
+      // Animal placement states
+      if (this.isAnimalPlacementTarget) {
+        classes.push('animal-placement-target')
+      }
+
       return classes
     },
 
     cellTooltip() {
       if (this.cell.type === 'room') {
         if (this.showPet) {
-          return `${this.cell.roomType} room (pet ${this.player.pet})`
+          return `${this.cell.roomType} room (pet ${this.effectivePet})`
         }
         return `${this.cell.roomType} room`
       }
@@ -256,14 +279,14 @@ export default {
         return 'Empty field'
       }
       if (this.isInPasture) {
-        if (this.pasture.animalType) {
-          return `Pasture with ${this.pasture.animalCount} ${this.pasture.animalType}`
+        if (this.effectivePastureAnimalType) {
+          return `Pasture with ${this.effectivePastureAnimalCount} ${this.effectivePastureAnimalType}`
         }
         return 'Empty pasture'
       }
       if (this.cell.hasStable) {
-        if (this.cell.animal) {
-          return `Unfenced stable with ${this.cell.animal}`
+        if (this.effectiveStableAnimal) {
+          return `Unfenced stable with ${this.effectiveStableAnimal}`
         }
         return 'Unfenced stable'
       }
@@ -302,8 +325,51 @@ export default {
       return ''
     },
 
+    // Effective pasture data — checks animalOverrides first, falls back to real data
+    effectivePastureAnimalType() {
+      if (this.animalOverrides && this.pasture) {
+        const key = `pasture-${this.pasture.id}`
+        const override = this.animalOverrides.pastures?.[key]
+        if (override) {
+          return override.animalType
+        }
+      }
+      return this.pasture?.animalType || null
+    },
+
+    effectivePastureAnimalCount() {
+      if (this.animalOverrides && this.pasture) {
+        const key = `pasture-${this.pasture.id}`
+        const override = this.animalOverrides.pastures?.[key]
+        if (override) {
+          return override.animalCount
+        }
+      }
+      return this.pasture?.animalCount || 0
+    },
+
+    // Effective pet — checks animalOverrides first
+    effectivePet() {
+      if (this.animalOverrides && 'pet' in this.animalOverrides) {
+        return this.animalOverrides.pet?.animalType || null
+      }
+      return this.player.pet
+    },
+
+    // Effective unfenced stable animal — checks animalOverrides first
+    effectiveStableAnimal() {
+      if (this.animalOverrides) {
+        const key = `stable-${this.row}-${this.col}`
+        const override = this.animalOverrides.stables?.[key]
+        if (override) {
+          return override.animalType
+        }
+      }
+      return this.cell.animal
+    },
+
     pastureAnimals() {
-      return this.pasture && this.pasture.animalType && this.pasture.animalCount > 0
+      return this.pasture && this.effectivePastureAnimalType && this.effectivePastureAnimalCount > 0
     },
 
     pastureAnimalCount() {
@@ -314,7 +380,7 @@ export default {
       // Show total on first cell of pasture only
       const firstSpace = this.pasture.spaces[0]
       if (firstSpace && firstSpace.row === this.row && firstSpace.col === this.col) {
-        return this.pasture.animalCount
+        return this.effectivePastureAnimalCount
       }
       return 0
     },
@@ -324,10 +390,11 @@ export default {
     },
 
     animalIcon() {
-      if (!this.pasture || !this.pasture.animalType) {
+      const type = this.effectivePastureAnimalType
+      if (!this.pasture || !type) {
         return ''
       }
-      switch (this.pasture.animalType) {
+      switch (type) {
         case 'sheep': return '🐑'
         case 'boar': return '🐗'
         case 'cattle': return '🐄'
@@ -340,11 +407,11 @@ export default {
       return this.cell.type === 'room' &&
              this.row === 0 &&
              this.col === 0 &&
-             this.player.pet
+             this.effectivePet
     },
 
     petIcon() {
-      switch (this.player.pet) {
+      switch (this.effectivePet) {
         case 'sheep': return '🐑'
         case 'boar': return '🐗'
         case 'cattle': return '🐄'
@@ -354,11 +421,11 @@ export default {
 
     // Check if this is an unfenced stable with an animal
     unfencedStableAnimal() {
-      return this.cell.hasStable && !this.isInPasture && this.cell.animal
+      return this.cell.hasStable && !this.isInPasture && this.effectiveStableAnimal
     },
 
     unfencedStableAnimalIcon() {
-      switch (this.cell.animal) {
+      switch (this.effectiveStableAnimal) {
         case 'sheep': return '🐑'
         case 'boar': return '🐗'
         case 'cattle': return '🐄'
@@ -381,6 +448,15 @@ export default {
     },
 
     handleClick() {
+      // Handle animal placement clicks
+      if (this.isAnimalPlacementTarget) {
+        this.bus.emit('farmyard-cell-click-animal-placement', {
+          row: this.row,
+          col: this.col,
+        })
+        return
+      }
+
       // Handle plowing clicks
       if (this.canPlow) {
         // Send a plow action directly to the game
@@ -657,5 +733,16 @@ export default {
 .farmyard-cell.sow-selectable:hover {
   filter: brightness(1.2);
   box-shadow: inset 0 0 0 3px #228b22;
+}
+
+/* Animal placement states */
+.farmyard-cell.animal-placement-target {
+  cursor: pointer;
+  box-shadow: inset 0 0 0 2px rgba(0, 123, 255, 0.7);
+}
+
+.farmyard-cell.animal-placement-target:hover {
+  filter: brightness(1.2);
+  box-shadow: inset 0 0 0 3px #007bff;
 }
 </style>

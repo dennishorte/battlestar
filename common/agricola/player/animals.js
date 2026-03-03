@@ -700,9 +700,45 @@ AgricolaPlayer.prototype.getAnimalHoldingCards = function() {
  * @returns {Object} { success: boolean, error?: string, cooked?: { food: n } }
  */
 AgricolaPlayer.prototype.applyAnimalPlacements = function(plan) {
-  const { placements, overflow, incoming } = plan
+  const { placements, overflow, incoming, removals } = plan
 
-  // Build a map of location id -> location data for validation
+  // Step 1: Apply removals first (if any)
+  if (removals && removals.length > 0) {
+    for (const r of removals) {
+      if (r.count <= 0) {
+        continue
+      }
+
+      if (r.locationId === 'house') {
+        this.pet = null
+      }
+      else if (r.locationId.startsWith('pasture-')) {
+        const pastureId = parseInt(r.locationId.replace('pasture-', ''))
+        const pasture = this.farmyard.pastures.find(pa => pa.id === pastureId)
+        if (pasture && pasture.animalType === r.animalType) {
+          pasture.animalCount -= r.count
+          if (pasture.animalCount <= 0) {
+            pasture.animalCount = 0
+            pasture.animalType = null
+          }
+        }
+      }
+      else if (r.locationId.startsWith('stable-')) {
+        const [, row, col] = r.locationId.split('-').map(Number)
+        const space = this.getSpace(row, col)
+        if (space && space.animal === r.animalType) {
+          space.animal = null
+          space.animalCount = 0
+        }
+      }
+      else if (r.locationId.startsWith('card-')) {
+        const cardId = r.locationId.replace('card-', '')
+        this.removeCardAnimal(cardId, r.animalType, r.count)
+      }
+    }
+  }
+
+  // Step 2: Re-fetch locations after removals
   const locations = this.getAnimalPlacementLocationsWithAvailability()
   const locationMap = {}
   for (const loc of locations) {
@@ -802,7 +838,14 @@ AgricolaPlayer.prototype.applyAnimalPlacements = function(plan) {
     }
   }
 
-  // Validate that all incoming animals are accounted for
+  // Validate accounting: removed + incoming = placed + cooked + released
+  const totalRemoved = { sheep: 0, boar: 0, cattle: 0 }
+  if (removals) {
+    for (const r of removals) {
+      totalRemoved[r.animalType] = (totalRemoved[r.animalType] || 0) + r.count
+    }
+  }
+
   const totalPlaced = { sheep: 0, boar: 0, cattle: 0 }
   for (const p of placements) {
     totalPlaced[p.animalType] = (totalPlaced[p.animalType] || 0) + p.count
@@ -813,14 +856,15 @@ AgricolaPlayer.prototype.applyAnimalPlacements = function(plan) {
 
   for (const animalType of res.animalTypes) {
     const incomingCount = incoming[animalType] || 0
+    const removed = totalRemoved[animalType] || 0
     const placed = totalPlaced[animalType] || 0
     const cooked = totalCooked[animalType] || 0
     const released = totalReleased[animalType] || 0
 
-    if (placed + cooked + released !== incomingCount) {
+    if (removed + incomingCount !== placed + cooked + released) {
       return {
         success: false,
-        error: `Must account for all ${incomingCount} ${animalType} (placed: ${placed}, cooked: ${cooked}, released: ${released})`,
+        error: `Must account for all ${animalType}: removed(${removed}) + incoming(${incomingCount}) != placed(${placed}) + cooked(${cooked}) + released(${released})`,
       }
     }
   }

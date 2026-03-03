@@ -179,6 +179,11 @@ export default {
           canSowGrain: false,
           canSowVeg: false,
         },
+        // Animal placement UI state
+        animalPlacement: {
+          active: false,
+          validCells: [],
+        },
       },
       // Crop picker state
       cropPicker: {

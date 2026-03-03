@@ -3,55 +3,48 @@
     <template #header>Place Animals</template>
 
     <div class="animal-placement-modal" v-if="isActive">
-      <!-- Incoming Animals -->
-      <div class="incoming-section">
-        <h5>Incoming Animals</h5>
-        <div class="incoming-animals">
-          <div
-            v-for="(count, animalType) in incoming"
-            :key="animalType"
-            class="incoming-group"
-          >
-            <span
-              v-for="i in count"
-              :key="i"
-              class="animal-icon"
-              :class="{ placed: i <= getPlacedCount(animalType) }"
+      <!-- Unplaced Pool -->
+      <div class="pool-section" :class="{ selecting: selectingLocation }">
+        <h5>
+          <template v-if="selectingLocation">
+            Select animal for {{ selectingLocation.name }}
+          </template>
+          <template v-else>
+            Animals to Place
+          </template>
+        </h5>
+        <div class="pool-animals">
+          <template v-for="type in animalTypes" :key="type">
+            <div
+              class="pool-group"
+              v-if="unplacedPool[type] > 0"
+              :class="{
+                selectable: selectingLocation && isValidTypeForSelection(type),
+                disabled: selectingLocation && !isValidTypeForSelection(type),
+              }"
+              @click="handlePoolClick(type)"
             >
-              {{ getAnimalEmoji(animalType) }}
-            </span>
-            <span class="animal-label">{{ count }} {{ animalType }}</span>
-          </div>
+              <span class="pool-icon">{{ getAnimalEmoji(type) }}</span>
+              <span class="pool-count">{{ unplacedPool[type] }}</span>
+            </div>
+          </template>
+          <button
+            v-if="selectingLocation"
+            class="pool-cancel"
+            @click="cancelSelection"
+          >
+            &times;
+          </button>
         </div>
-        <div class="remaining-info" v-if="totalRemaining > 0">
-          {{ totalRemaining }} animal{{ totalRemaining > 1 ? 's' : '' }} remaining to place
+        <div class="pool-empty" v-if="poolTotal === 0 && !selectingLocation">
+          All animals placed
         </div>
       </div>
 
       <!-- Farmyard Grid -->
       <div class="farmyard-section">
         <h5>Your Farmyard</h5>
-        <div class="farmyard-grid">
-          <div v-for="row in 3" :key="row" class="farmyard-row">
-            <div
-              v-for="col in 5"
-              :key="col"
-              class="farmyard-cell"
-              :class="getCellClass(row - 1, col - 1)"
-              @click="handleCellClick(row - 1, col - 1)"
-            >
-              <span class="cell-content">{{ getCellContent(row - 1, col - 1) }}</span>
-              <div class="cell-animals" v-if="getCellAnimals(row - 1, col - 1)">
-                {{ getCellAnimals(row - 1, col - 1) }}
-              </div>
-              <!-- Fence indicators -->
-              <div class="fence fence-top" v-if="hasFenceTop(row - 1, col - 1)" />
-              <div class="fence fence-right" v-if="hasFenceRight(row - 1, col - 1)" />
-              <div class="fence fence-bottom" v-if="hasFenceBottom(row - 1, col - 1)" />
-              <div class="fence fence-left" v-if="hasFenceLeft(row - 1, col - 1)" />
-            </div>
-          </div>
-        </div>
+        <FarmyardGrid :player="player" :animalOverrides="animalOverrides" />
       </div>
 
       <!-- Card Holdings -->
@@ -62,68 +55,55 @@
             v-for="loc in cardLocations"
             :key="loc.id"
             class="card-holding-box"
-            :class="{ full: loc.currentCount + getTotalPlacedAt(loc.id) >= loc.maxCapacity }"
+            :class="{ full: getLocTotal(loc.id) >= loc.maxCapacity }"
             @click="handleCardClick(loc)"
           >
             <div class="card-holding-name">{{ loc.name }}</div>
             <div class="card-holding-animals">
-              <span v-for="type in ['sheep', 'boar', 'cattle']" :key="type">
-                <span v-if="getCardCurrentCount(loc, type) > 0">
-                  {{ getCardCurrentCount(loc, type) }}{{ getAnimalEmoji(type) }}
-                </span>
-                <span v-if="getCardPlacedCount(loc, type) > 0" class="card-adding">
-                  +{{ getCardPlacedCount(loc, type) }}{{ getAnimalEmoji(type) }}
+              <span v-for="type in animalTypes" :key="type">
+                <span v-if="(animalState[loc.id]?.[type] || 0) > 0">
+                  {{ animalState[loc.id][type] }}{{ getAnimalEmoji(type) }}
                 </span>
               </span>
             </div>
             <div class="card-holding-capacity">
-              {{ loc.currentCount + getTotalPlacedAt(loc.id) }} / {{ loc.maxCapacity }}
+              {{ getLocTotal(loc.id) }} / {{ loc.maxCapacity }}
             </div>
           </div>
         </div>
       </div>
 
       <!-- Placement Summary -->
-      <div class="placement-section">
-        <h5>Placements</h5>
+      <div class="placement-section" v-if="locationsWithActivity.length > 0">
+        <h5>Placement Summary</h5>
         <table class="placement-table">
           <thead>
             <tr>
               <th>Location</th>
-              <th>Current</th>
-              <th>Adding</th>
+              <th>Animals</th>
+              <th>Changes</th>
               <th>Capacity</th>
-              <th>&nbsp;</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="loc in locationsWithPlacements" :key="loc.id">
+            <tr v-for="loc in locationsWithActivity" :key="loc.id">
               <td>{{ loc.name }}</td>
-              <td>{{ formatCurrent(loc) }}</td>
+              <td>{{ formatState(loc.id) }}</td>
               <td>
-                <span v-for="(count, type) in getPlacementsAt(loc.id)" :key="type">
-                  {{ count }} {{ type }}
+                <span v-if="hasChangesAt(loc.id)" class="changes">
+                  {{ formatChanges(loc.id) }}
                 </span>
-                <span v-if="!hasPlacementsAt(loc.id)">-</span>
+                <span v-else>-</span>
               </td>
               <td>{{ loc.maxCapacity }}</td>
-              <td>
-                <button
-                  class="btn btn-sm btn-outline-danger"
-                  v-if="hasPlacementsAt(loc.id)"
-                  @click="clearPlacementAt(loc.id)"
-                >
-                  Clear
-                </button>
-              </td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <!-- Overflow Section -->
-      <div class="overflow-section" v-if="hasOverflow">
-        <h5>Cannot Place ({{ overflowCount }} animals)</h5>
+      <div class="overflow-section" v-if="poolTotal > 0">
+        <h5>Cannot Place ({{ poolTotal }} animal{{ poolTotal > 1 ? 's' : '' }})</h5>
         <div v-if="cookingRates" class="cooking-options">
           <p>
             Cooking rates ({{ cookingRates.improvementName }}):
@@ -143,46 +123,26 @@
           </div>
         </div>
         <div v-else class="no-cooking">
-          <p>No cooking improvement - {{ overflowCount }} animals will be released.</p>
-        </div>
-      </div>
-
-      <!-- Animal Type Selector (when clicking a location) -->
-      <div class="type-selector" v-if="selectingLocation">
-        <h5>Select animal type for {{ selectingLocation.name }}</h5>
-        <div class="type-buttons">
-          <button
-            v-for="animalType in availableTypesForLocation"
-            :key="animalType"
-            class="btn btn-outline-primary"
-            @click="placeAnimal(animalType)"
-          >
-            {{ getAnimalEmoji(animalType) }} {{ animalType }}
-            ({{ getRemainingOfType(animalType) }} remaining)
-          </button>
-          <button class="btn btn-outline-secondary" @click="cancelTypeSelection">
-            Cancel
-          </button>
+          <p>No cooking improvement - {{ poolTotal }} animal{{ poolTotal > 1 ? 's' : '' }} will be released.</p>
         </div>
       </div>
 
       <!-- Summary -->
-      <div class="summary" :class="{ valid: isValid, invalid: !isValid }">
+      <div class="summary valid">
         <strong>Summary:</strong>
-        <span v-if="totalPlaced > 0">Place {{ totalPlaced }} animals</span>
+        <span v-if="totalAdded > 0"> Place {{ totalAdded }}</span>
+        <span v-if="totalMoved > 0">{{ totalAdded > 0 ? ',' : '' }} Move {{ totalMoved }}</span>
         <span v-if="cookCount > 0">, Cook {{ cookCount }} (+{{ estimatedFood }} food)</span>
         <span v-if="releaseCount > 0">, Release {{ releaseCount }}</span>
-        <span v-if="totalRemaining > 0" class="warning">
-          - {{ totalRemaining }} animals not accounted for!
-        </span>
+        <span v-if="totalAdded === 0 && totalMoved === 0 && poolTotal === 0"> No changes</span>
       </div>
     </div>
 
     <template #footer>
-      <button class="btn btn-secondary" @click="clearAllPlacements">
-        Clear All
+      <button class="btn btn-secondary" @click="resetAll">
+        Reset All
       </button>
-      <button class="btn btn-primary" :disabled="!isValid" @click="confirm">
+      <button class="btn btn-primary" @click="confirm">
         Confirm Placement
       </button>
     </template>
@@ -192,21 +152,26 @@
 
 <script>
 import ModalBase from '@/components/ModalBase.vue'
+import FarmyardGrid from './FarmyardGrid.vue'
 
 export default {
   name: 'AnimalPlacementModal',
 
   components: {
     ModalBase,
+    FarmyardGrid,
   },
 
   inject: ['game', 'ui', 'bus', 'actor'],
 
   data() {
     return {
-      placements: {},  // { locationId: { sheep: n, boar: n, cattle: n } }
+      animalState: {},      // { locationId: { sheep: n, boar: n, cattle: n } }
+      originalState: {},    // snapshot at modal open
+      unplacedPool: { sheep: 0, boar: 0, cattle: 0 },
       overflowChoice: 'cook',
       selectingLocation: null,
+      animalTypes: ['sheep', 'boar', 'cattle'],
     }
   },
 
@@ -239,42 +204,95 @@ export default {
       return this.game.players.byName(this.actor.name)
     },
 
-    totalIncoming() {
-      return Object.values(this.incoming).reduce((sum, n) => sum + n, 0)
+    locationMap() {
+      const map = {}
+      for (const loc of this.locations) {
+        map[loc.id] = loc
+      }
+      return map
     },
 
-    totalPlaced() {
-      let total = 0
-      for (const locPlacements of Object.values(this.placements)) {
-        for (const count of Object.values(locPlacements)) {
-          total += count
+    poolTotal() {
+      return this.unplacedPool.sheep + this.unplacedPool.boar + this.unplacedPool.cattle
+    },
+
+    // Compute overrides for FarmyardGrid to show modified animal state
+    animalOverrides() {
+      if (!this.isActive) {
+        return null
+      }
+
+      const overrides = { pastures: {}, pet: null, stables: {} }
+
+      for (const [locId, animals] of Object.entries(this.animalState)) {
+        const animalType = this.animalTypes.find(t => animals[t] > 0) || null
+        const totalCount = animals.sheep + animals.boar + animals.cattle
+
+        if (locId === 'house') {
+          overrides.pet = animalType ? { animalType } : null
+        }
+        else if (locId.startsWith('pasture-')) {
+          overrides.pastures[locId] = { animalType, animalCount: totalCount }
+        }
+        else if (locId.startsWith('stable-')) {
+          overrides.stables[locId] = { animalType }
         }
       }
-      return total
+
+      return overrides
     },
 
-    totalRemaining() {
-      return this.totalIncoming - this.totalPlaced
+    cardLocations() {
+      return this.locations.filter(loc => loc.type === 'card')
     },
 
-    hasOverflow() {
-      return this.totalRemaining > 0
+    locationsWithActivity() {
+      return this.locations.filter(loc => {
+        const total = this.getLocTotal(loc.id)
+        return total > 0 || this.hasChangesAt(loc.id)
+      })
     },
 
-    overflowCount() {
-      return this.totalRemaining
+    totalAdded() {
+      // Count animals added to locations beyond original state
+      let count = 0
+      for (const [locId, desired] of Object.entries(this.animalState)) {
+        const original = this.originalState[locId] || { sheep: 0, boar: 0, cattle: 0 }
+        for (const type of this.animalTypes) {
+          const diff = desired[type] - original[type]
+          if (diff > 0) {
+            count += diff
+          }
+        }
+      }
+      return count
+    },
+
+    totalMoved() {
+      // Count animals removed from locations (moved elsewhere or to pool)
+      let count = 0
+      for (const [locId, desired] of Object.entries(this.animalState)) {
+        const original = this.originalState[locId] || { sheep: 0, boar: 0, cattle: 0 }
+        for (const type of this.animalTypes) {
+          const diff = original[type] - desired[type]
+          if (diff > 0) {
+            count += diff
+          }
+        }
+      }
+      return count
     },
 
     cookCount() {
       if (!this.cookingRates || this.overflowChoice !== 'cook') {
         return 0
       }
-      return this.overflowCount
+      return this.poolTotal
     },
 
     releaseCount() {
       if (this.overflowChoice === 'release' || !this.cookingRates) {
-        return this.overflowCount
+        return this.poolTotal
       }
       return 0
     },
@@ -284,44 +302,12 @@ export default {
         return 0
       }
       let food = 0
-      // Calculate based on remaining animals of each type
-      for (const [type, count] of Object.entries(this.incoming)) {
-        const placed = this.getPlacedCount(type)
-        const remaining = count - placed
-        if (remaining > 0 && this.cookingRates.rates[type]) {
-          food += remaining * this.cookingRates.rates[type]
+      for (const [type, count] of Object.entries(this.unplacedPool)) {
+        if (count > 0 && this.cookingRates.rates[type]) {
+          food += count * this.cookingRates.rates[type]
         }
       }
       return food
-    },
-
-    isValid() {
-      // All animals must be accounted for (placed + overflow)
-      return this.totalRemaining >= 0
-    },
-
-    cardLocations() {
-      return this.locations.filter(loc => loc.type === 'card')
-    },
-
-    locationsWithPlacements() {
-      return this.locations.filter(loc => {
-        return loc.currentCount > 0 || this.hasPlacementsAt(loc.id)
-      })
-    },
-
-    availableTypesForLocation() {
-      if (!this.selectingLocation) {
-        return []
-      }
-      const types = []
-      for (const type of Object.keys(this.incoming)) {
-        const remaining = this.getRemainingOfType(type)
-        if (remaining > 0 && this.canPlaceTypeAt(this.selectingLocation, type)) {
-          types.push(type)
-        }
-      }
-      return types
     },
   },
 
@@ -336,7 +322,7 @@ export default {
           })
         }
         else if (wasActive) {
-          // Only hide if it was previously active (modal was shown)
+          this.deactivateAnimalPlacement()
           this.hideModal()
         }
       },
@@ -345,15 +331,19 @@ export default {
 
   mounted() {
     this.bus.on('open-animal-placement-modal', this.showModal)
+    this.bus.on('farmyard-cell-click-animal-placement', this.handleFarmyardCellClick)
   },
 
   beforeUnmount() {
     this.bus.off('open-animal-placement-modal', this.showModal)
+    this.bus.off('farmyard-cell-click-animal-placement', this.handleFarmyardCellClick)
+    this.deactivateAnimalPlacement()
   },
 
   methods: {
     showModal() {
       if (this.isActive) {
+        this.activateAnimalPlacement()
         this.$modal('agricola-animal-placement')?.show()
       }
     },
@@ -361,10 +351,79 @@ export default {
     hideModal() {
       this.$modal('agricola-animal-placement')?.hide()
     },
+
+    activateAnimalPlacement() {
+      this.ui.animalPlacement.active = true
+      this.ui.animalPlacement.validCells = this.computeValidCells()
+    },
+
+    deactivateAnimalPlacement() {
+      this.ui.animalPlacement.active = false
+      this.ui.animalPlacement.validCells = []
+    },
+
+    computeValidCells() {
+      const cells = []
+      if (!this.player) {
+        return cells
+      }
+
+      for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 5; col++) {
+          const cell = this.player.farmyard.grid[row]?.[col]
+          if (!cell) {
+            continue
+          }
+
+          if (cell.type === 'room') {
+            cells.push({ row, col })
+          }
+          else if (this.player.getPastureAtSpace(row, col)) {
+            cells.push({ row, col })
+          }
+          else if (cell.hasStable) {
+            cells.push({ row, col })
+          }
+        }
+      }
+
+      return cells
+    },
+
     reset() {
-      this.placements = {}
+      this.animalState = {}
+      this.originalState = {}
+
+      for (const loc of this.locations) {
+        const state = { sheep: 0, boar: 0, cattle: 0 }
+
+        if (loc.currentAnimals) {
+          for (const [type, count] of Object.entries(loc.currentAnimals)) {
+            if (Object.prototype.hasOwnProperty.call(state, type)) {
+              state[type] = count
+            }
+          }
+        }
+        else if (loc.currentAnimalType && loc.currentCount > 0) {
+          state[loc.currentAnimalType] = loc.currentCount
+        }
+
+        this.animalState[loc.id] = { ...state }
+        this.originalState[loc.id] = { ...state }
+      }
+
+      this.unplacedPool = {
+        sheep: this.incoming.sheep || 0,
+        boar: this.incoming.boar || 0,
+        cattle: this.incoming.cattle || 0,
+      }
+
       this.overflowChoice = 'cook'
       this.selectingLocation = null
+    },
+
+    resetAll() {
+      this.reset()
     },
 
     getAnimalEmoji(type) {
@@ -372,459 +431,304 @@ export default {
       return emojis[type] || '?'
     },
 
-    getPlacedCount(animalType) {
-      let count = 0
-      for (const locPlacements of Object.values(this.placements)) {
-        count += locPlacements[animalType] || 0
-      }
-      return count
-    },
-
-    getRemainingOfType(animalType) {
-      const total = this.incoming[animalType] || 0
-      return total - this.getPlacedCount(animalType)
-    },
-
-    getPlacementsAt(locationId) {
-      return this.placements[locationId] || {}
-    },
-
-    hasPlacementsAt(locationId) {
-      const p = this.placements[locationId]
-      if (!p) {
-        return false
-      }
-      return Object.values(p).some(n => n > 0)
-    },
-
-    clearPlacementAt(locationId) {
-      delete this.placements[locationId]
-    },
-
-    clearAllPlacements() {
-      this.placements = {}
-    },
-
-    formatCurrent(loc) {
-      if (loc.currentAnimals) {
-        const parts = []
-        for (const [type, count] of Object.entries(loc.currentAnimals)) {
-          if (count > 0) {
-            parts.push(`${count} ${type}`)
-          }
-        }
-        if (parts.length > 0) {
-          return parts.join(', ')
-        }
-      }
-      if (!loc.currentAnimalType) {
-        return '-'
-      }
-      return `${loc.currentCount} ${loc.currentAnimalType}`
-    },
-
-    getCell(row, col) {
-      if (!this.player) {
-        return { type: 'empty' }
-      }
-      return this.player.farmyard.grid[row]?.[col] || { type: 'empty' }
-    },
-
-    getCellClass(row, col) {
-      const cell = this.getCell(row, col)
-      const classes = []
-
-      if (cell.type === 'room') {
-        classes.push('cell-room')
-        // House can hold a pet
-        if (this.getLocationForCell(row, col)) {
-          classes.push('selectable')
-        }
-      }
-      else if (cell.type === 'field') {
-        classes.push('cell-field')
-      }
-      else if (this.isInPasture(row, col)) {
-        classes.push('cell-pasture')
-        classes.push('selectable')
-      }
-      else if (cell.hasStable) {
-        classes.push('cell-stable')
-        classes.push('selectable')
-      }
-      else {
-        classes.push('cell-empty')
-      }
-
-      return classes
-    },
-
-    getCellContent(row, col) {
-      const cell = this.getCell(row, col)
-      if (cell.type === 'room') {
-        return '🏠'
-      }
-      if (cell.type === 'field') {
-        return '▭'
-      }
-      if (cell.hasStable) {
-        return '⌂'
-      }
-      return ''
-    },
-
-    getCellAnimals(row, col) {
-      const loc = this.getLocationForCell(row, col)
-      if (!loc) {
-        return null
-      }
-
-      // For house locations, only show animals on specific room cells
-      // to avoid duplicating the display across all rooms
-      if (loc.type === 'house') {
-        const roomIndex = this.getRoomIndex(row, col)
-        if (roomIndex === -1) {
-          return null
-        }
-
-        // Get total animals for house (current + placed)
-        const placedCount = this.getTotalPlacedAt(loc.id)
-        const totalAnimals = loc.currentCount + placedCount
-
-        // If capacity is 1 per room (Animal Tamer style), distribute across rooms
-        // Otherwise, show all on first room only
-        if (loc.maxCapacity > 1 && loc.maxCapacity === this.getRoomCount()) {
-          // One animal per room - show on room if index < totalAnimals
-          if (roomIndex < totalAnimals) {
-            const animalType = loc.currentAnimalType || this.getPlacedAnimalType(loc.id)
-            if (animalType) {
-              const isPlaced = roomIndex >= loc.currentCount
-              return isPlaced ? `+1${this.getAnimalEmoji(animalType)}` : `1${this.getAnimalEmoji(animalType)}`
-            }
-          }
-          return null
-        }
-        else {
-          // Standard case - only show on first room
-          if (roomIndex !== 0) {
-            return null
-          }
-        }
-      }
-
-      const parts = []
-      // Current animals
-      if (loc.currentCount > 0) {
-        parts.push(`${loc.currentCount}${this.getAnimalEmoji(loc.currentAnimalType)}`)
-      }
-      // Placed animals
-      const placed = this.placements[loc.id]
-      if (placed) {
-        for (const [type, count] of Object.entries(placed)) {
-          if (count > 0) {
-            parts.push(`+${count}${this.getAnimalEmoji(type)}`)
-          }
-        }
-      }
-      return parts.join(' ') || null
-    },
-
-    getRoomIndex(row, col) {
-      // Get the index of this room among all rooms (for distributing animals)
-      if (!this.player) {
-        return -1
-      }
-      let index = 0
-      for (let r = 0; r < 3; r++) {
-        for (let c = 0; c < 5; c++) {
-          const cell = this.getCell(r, c)
-          if (cell.type === 'room') {
-            if (r === row && c === col) {
-              return index
-            }
-            index++
-          }
-        }
-      }
-      return -1
-    },
-
-    getRoomCount() {
-      if (!this.player) {
+    getLocTotal(locId) {
+      const state = this.animalState[locId]
+      if (!state) {
         return 0
       }
-      let count = 0
-      for (let r = 0; r < 3; r++) {
-        for (let c = 0; c < 5; c++) {
-          const cell = this.getCell(r, c)
-          if (cell.type === 'room') {
-            count++
-          }
-        }
-      }
-      return count
+      return state.sheep + state.boar + state.cattle
     },
 
-    getPlacedAnimalType(locationId) {
-      const placed = this.placements[locationId]
-      if (!placed) {
-        return null
-      }
-      for (const [type, count] of Object.entries(placed)) {
-        if (count > 0) {
-          return type
-        }
-      }
-      return null
-    },
-
-    isInPasture(row, col) {
-      if (!this.player) {
+    hasChangesAt(locId) {
+      const current = this.animalState[locId]
+      const original = this.originalState[locId]
+      if (!current || !original) {
         return false
       }
-      return this.player.getPastureAtSpace(row, col) !== null
+      return this.animalTypes.some(t => current[t] !== original[t])
+    },
+
+    formatState(locId) {
+      const state = this.animalState[locId]
+      if (!state) {
+        return '-'
+      }
+      const parts = []
+      for (const type of this.animalTypes) {
+        if (state[type] > 0) {
+          parts.push(`${state[type]} ${type}`)
+        }
+      }
+      return parts.length > 0 ? parts.join(', ') : '-'
+    },
+
+    formatChanges(locId) {
+      const current = this.animalState[locId]
+      const original = this.originalState[locId]
+      if (!current || !original) {
+        return ''
+      }
+      const parts = []
+      for (const type of this.animalTypes) {
+        const diff = current[type] - original[type]
+        if (diff > 0) {
+          parts.push(`+${diff} ${type}`)
+        }
+        else if (diff < 0) {
+          parts.push(`${diff} ${type}`)
+        }
+      }
+      return parts.join(', ')
     },
 
     getLocationForCell(row, col) {
-      const cell = this.getCell(row, col)
+      if (!this.player) {
+        return null
+      }
+
+      const cell = this.player.farmyard.grid[row]?.[col]
+      if (!cell) {
+        return null
+      }
 
       // Room cells = house location
       if (cell.type === 'room') {
-        return this.locations.find(l => l.type === 'house')
+        return this.locations.find(l => l.type === 'house') || null
       }
 
       // Pasture cells
-      const pasture = this.player?.getPastureAtSpace(row, col)
+      const pasture = this.player.getPastureAtSpace(row, col)
       if (pasture) {
-        return this.locations.find(l => l.id === `pasture-${pasture.id}`)
+        return this.locations.find(l => l.id === `pasture-${pasture.id}`) || null
       }
 
       // Unfenced stable
       if (cell.hasStable) {
-        return this.locations.find(l => l.id === `stable-${row}-${col}`)
+        return this.locations.find(l => l.id === `stable-${row}-${col}`) || null
       }
 
       return null
     },
 
-    handleCellClick(row, col) {
+    handleFarmyardCellClick({ row, col }) {
       const loc = this.getLocationForCell(row, col)
       if (!loc) {
         return
       }
 
-      // Check if there's any room at this location
-      const totalAtLoc = loc.currentCount + this.getTotalPlacedAt(loc.id)
-      if (totalAtLoc >= loc.maxCapacity) {
+      const state = this.animalState[loc.id]
+      if (!state) {
         return
       }
 
-      // Check what types can go here
-      const availableTypes = []
-      for (const type of Object.keys(this.incoming)) {
-        if (this.getRemainingOfType(type) > 0 && this.canPlaceTypeAt(loc, type)) {
-          availableTypes.push(type)
+      const locTotal = state.sheep + state.boar + state.cattle
+      const locAvailable = loc.maxCapacity - locTotal
+      const canDrop = this.poolTotal > 0 && locAvailable > 0
+      const canPickup = locTotal > 0
+
+      if (canDrop && !canPickup) {
+        this.dropAtLocation(loc)
+      }
+      else if (canPickup && !canDrop) {
+        this.pickupFromLocation(loc)
+      }
+      else if (canDrop && canPickup) {
+        // Prefer drop when pool has animals
+        this.dropAtLocation(loc)
+      }
+    },
+
+    dropAtLocation(loc) {
+      const droppableTypes = []
+      for (const type of this.animalTypes) {
+        if (this.unplacedPool[type] > 0 && this.canPlaceTypeAtState(loc, type)) {
+          droppableTypes.push(type)
         }
       }
 
-      if (availableTypes.length === 0) {
+      if (droppableTypes.length === 0) {
+        // Can't drop any type — try pickup instead
+        this.pickupFromLocation(loc)
         return
       }
-      else if (availableTypes.length === 1) {
-        // Only one option - place directly
-        this.addPlacement(loc.id, availableTypes[0])
+      if (droppableTypes.length === 1) {
+        const count = this.maxDropCount(loc, droppableTypes[0])
+        this.addToLocation(loc.id, droppableTypes[0], count)
       }
       else {
-        // Multiple options - show selector
         this.selectingLocation = loc
       }
     },
 
-    canPlaceTypeAt(loc, animalType) {
-      // Check allowedTypes restriction
-      if (loc.allowedTypes && !loc.allowedTypes.includes(animalType)) {
+    pickupFromLocation(loc) {
+      const state = this.animalState[loc.id]
+      if (!state) {
+        return
+      }
+
+      // Pick up ALL animals from this location at once
+      for (const type of this.animalTypes) {
+        if (state[type] > 0) {
+          this.removeFromLocation(loc.id, type, state[type])
+        }
+      }
+    },
+
+    maxDropCount(loc, type) {
+      const state = this.animalState[loc.id]
+      if (!state) {
+        return 0
+      }
+      const total = state.sheep + state.boar + state.cattle
+      let available = loc.maxCapacity - total
+
+      if (loc.perTypeLimits) {
+        const typeLimit = loc.perTypeLimits[type] || 0
+        available = Math.min(available, typeLimit - state[type])
+      }
+
+      return Math.min(Math.max(0, available), this.unplacedPool[type])
+    },
+
+    canPlaceTypeAtState(loc, type) {
+      const state = this.animalState[loc.id]
+      if (!state) {
+        return false
+      }
+      const total = state.sheep + state.boar + state.cattle
+
+      if (total >= loc.maxCapacity) {
         return false
       }
 
-      // Check per-type limits
-      if (loc.perTypeLimits) {
-        const limit = loc.perTypeLimits[animalType] || 0
-        const current = (loc.currentAnimals?.[animalType] || 0) + (this.placements[loc.id]?.[animalType] || 0)
-        return current < limit
+      if (loc.allowedTypes && !loc.allowedTypes.includes(type)) {
+        return false
       }
 
-      // Mixed-type holders can accept any allowed type
+      if (loc.perTypeLimits) {
+        return state[type] < (loc.perTypeLimits[type] || 0)
+      }
+
       if (loc.mixedTypes) {
         return true
       }
 
-      // sameTypeOnly: check existing type on card
       if (loc.sameTypeOnly) {
-        const placed = this.placements[loc.id]
-        const placedTypes = placed ? Object.keys(placed).filter(t => placed[t] > 0) : []
-        const existingType = loc.currentAnimalType || placedTypes[0] || null
-        if (existingType && existingType !== animalType) {
+        const existingType = this.animalTypes.find(t => state[t] > 0) || null
+        if (existingType && existingType !== type) {
           return false
         }
         return true
       }
 
-      // Check if location already has a different type
-      if (loc.currentAnimalType && loc.currentAnimalType !== animalType) {
+      // Default: single type per location
+      const existingType = this.animalTypes.find(t => state[t] > 0) || null
+      if (existingType && existingType !== type) {
         return false
-      }
-      // Check if we've already placed a different type there
-      const placed = this.placements[loc.id]
-      if (placed) {
-        const placedTypes = Object.keys(placed).filter(t => placed[t] > 0)
-        if (placedTypes.length > 0 && !placedTypes.includes(animalType)) {
-          return false
-        }
       }
       return true
     },
 
+    addToLocation(locId, type, count) {
+      this.animalState[locId][type] += count
+      this.unplacedPool[type] -= count
+      this.selectingLocation = null
+    },
+
+    removeFromLocation(locId, type, count) {
+      this.animalState[locId][type] -= count
+      this.unplacedPool[type] += count
+      this.selectingLocation = null
+    },
+
     handleCardClick(loc) {
-      const totalAtLoc = loc.currentCount + this.getTotalPlacedAt(loc.id)
-      if (totalAtLoc >= loc.maxCapacity) {
+      const state = this.animalState[loc.id]
+      if (!state) {
         return
       }
 
-      const availableTypes = []
-      for (const type of Object.keys(this.incoming)) {
-        if (this.getRemainingOfType(type) > 0 && this.canPlaceTypeAt(loc, type)) {
-          availableTypes.push(type)
-        }
-      }
+      const locTotal = state.sheep + state.boar + state.cattle
+      const locAvailable = loc.maxCapacity - locTotal
+      const canDrop = this.poolTotal > 0 && locAvailable > 0
+      const canPickup = locTotal > 0
 
-      // For perTypeLimits, all per-type limits might be hit even if total isn't full
-      if (availableTypes.length === 0) {
+      if (canDrop && !canPickup) {
+        this.dropAtLocation(loc)
+      }
+      else if (canPickup && !canDrop) {
+        this.pickupFromLocation(loc)
+      }
+      else if (canDrop && canPickup) {
+        this.dropAtLocation(loc)
+      }
+    },
+
+    isValidTypeForSelection(type) {
+      if (!this.selectingLocation) {
+        return false
+      }
+      return this.unplacedPool[type] > 0 && this.canPlaceTypeAtState(this.selectingLocation, type)
+    },
+
+    handlePoolClick(type) {
+      if (!this.selectingLocation) {
         return
       }
-      else if (availableTypes.length === 1) {
-        this.addPlacement(loc.id, availableTypes[0])
+      if (!this.isValidTypeForSelection(type)) {
+        return
       }
-      else {
-        this.selectingLocation = loc
+      const count = this.maxDropCount(this.selectingLocation, type)
+      if (count > 0) {
+        this.addToLocation(this.selectingLocation.id, type, count)
       }
     },
 
-    getCardCurrentCount(loc, type) {
-      return loc.currentAnimals?.[type] || 0
-    },
-
-    getCardPlacedCount(loc, type) {
-      return this.placements[loc.id]?.[type] || 0
-    },
-
-    getTotalPlacedAt(locationId) {
-      const placed = this.placements[locationId]
-      if (!placed) {
-        return 0
-      }
-      return Object.values(placed).reduce((sum, n) => sum + n, 0)
-    },
-
-    addPlacement(locationId, animalType) {
-      if (!this.placements[locationId]) {
-        this.placements[locationId] = {}
-      }
-      if (!this.placements[locationId][animalType]) {
-        this.placements[locationId][animalType] = 0
-      }
-      this.placements[locationId][animalType]++
+    cancelSelection() {
       this.selectingLocation = null
-    },
-
-    placeAnimal(animalType) {
-      if (this.selectingLocation) {
-        this.addPlacement(this.selectingLocation.id, animalType)
-      }
-    },
-
-    cancelTypeSelection() {
-      this.selectingLocation = null
-    },
-
-    hasFenceTop(row, col) {
-      if (!this.player) {
-        return false
-      }
-      if (row === 0) {
-        return this.isInPasture(row, col)
-      }
-      return this.player.hasFenceBetween(row, col, row - 1, col)
-    },
-
-    hasFenceBottom(row, col) {
-      if (!this.player) {
-        return false
-      }
-      if (row === 2) {
-        return this.isInPasture(row, col)
-      }
-      return this.player.hasFenceBetween(row, col, row + 1, col)
-    },
-
-    hasFenceLeft(row, col) {
-      if (!this.player) {
-        return false
-      }
-      if (col === 0) {
-        return this.isInPasture(row, col)
-      }
-      return this.player.hasFenceBetween(row, col, row, col - 1)
-    },
-
-    hasFenceRight(row, col) {
-      if (!this.player) {
-        return false
-      }
-      if (col === 4) {
-        return this.isInPasture(row, col)
-      }
-      return this.player.hasFenceBetween(row, col, row, col + 1)
     },
 
     confirm() {
-      if (!this.isValid) {
-        return
-      }
+      const placements = []
+      const removals = []
 
-      // Build the placement array
-      const placementArray = []
-      for (const [locationId, animals] of Object.entries(this.placements)) {
-        for (const [animalType, count] of Object.entries(animals)) {
-          if (count > 0) {
-            placementArray.push({ locationId, animalType, count })
+      for (const [locId, desired] of Object.entries(this.animalState)) {
+        const original = this.originalState[locId] || { sheep: 0, boar: 0, cattle: 0 }
+
+        for (const type of this.animalTypes) {
+          const diff = desired[type] - original[type]
+          if (diff > 0) {
+            placements.push({ locationId: locId, animalType: type, count: diff })
+          }
+          else if (diff < 0) {
+            removals.push({ locationId: locId, animalType: type, count: -diff })
           }
         }
       }
 
-      // Build overflow based on what's remaining
+      // Build overflow from unplaced pool
       const overflow = { cook: {}, release: {} }
-      for (const [type, total] of Object.entries(this.incoming)) {
-        const remaining = total - this.getPlacedCount(type)
-        if (remaining > 0) {
+      for (const [type, count] of Object.entries(this.unplacedPool)) {
+        if (count > 0) {
           if (this.overflowChoice === 'cook' && this.cookingRates) {
-            overflow.cook[type] = remaining
+            overflow.cook[type] = count
             overflow.release[type] = 0
           }
           else {
             overflow.cook[type] = 0
-            overflow.release[type] = remaining
+            overflow.release[type] = count
           }
         }
       }
 
-      // Submit the action
       this.bus.emit('submit-action', {
         actor: this.actor.name,
         action: 'animal-placement',
-        placements: placementArray,
+        placements,
+        removals,
         overflow,
       })
 
+      this.deactivateAnimalPlacement()
       this.reset()
       this.hideModal()
     },
@@ -838,144 +742,86 @@ export default {
   padding: 1rem;
 }
 
-.incoming-section {
+.pool-section {
   margin-bottom: 1rem;
   padding: 0.5rem;
   background: #f8f9fa;
   border-radius: 4px;
 }
 
-.incoming-animals {
+.pool-animals {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
 }
 
-.incoming-group {
+.pool-section.selecting {
+  background: #cce5ff;
+  border: 2px solid #0d6efd;
+}
+
+.pool-group {
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  transition: all 0.15s ease;
 }
 
-.animal-icon {
+.pool-group.selectable {
+  cursor: pointer;
+  border-color: #0d6efd;
+  background: rgba(13, 110, 253, 0.1);
+}
+
+.pool-group.selectable:hover {
+  background: rgba(13, 110, 253, 0.25);
+  transform: scale(1.05);
+}
+
+.pool-group.disabled {
+  opacity: 0.35;
+}
+
+.pool-icon {
   font-size: 1.5rem;
-  transition: opacity 0.2s;
 }
 
-.animal-icon.placed {
-  opacity: 0.3;
+.pool-count {
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
-.animal-label {
-  margin-left: 0.5rem;
-  font-weight: 500;
+.pool-cancel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #999;
+  border-radius: 50%;
+  background: #fff;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: #666;
+  cursor: pointer;
+  margin-left: 0.25rem;
 }
 
-.remaining-info {
-  margin-top: 0.5rem;
-  color: #856404;
+.pool-cancel:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.pool-empty {
+  color: #28a745;
   font-weight: 500;
 }
 
 .farmyard-section {
   margin-bottom: 1rem;
-}
-
-.farmyard-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  background: #8b4513;
-  padding: 4px;
-  border-radius: 4px;
-}
-
-.farmyard-row {
-  display: flex;
-  gap: 2px;
-}
-
-.farmyard-cell {
-  width: 60px;
-  height: 60px;
-  background: #90ee90;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  border-radius: 2px;
-  cursor: default;
-}
-
-.farmyard-cell.selectable {
-  cursor: pointer;
-}
-
-.farmyard-cell.selectable:hover {
-  background: #7cdb7c;
-}
-
-.farmyard-cell.cell-room {
-  background: #deb887;
-}
-
-.farmyard-cell.cell-field {
-  background: #daa520;
-}
-
-.farmyard-cell.cell-pasture {
-  background: #98fb98;
-}
-
-.farmyard-cell.cell-stable {
-  background: #c0c0c0;
-}
-
-.cell-content {
-  font-size: 1.2rem;
-}
-
-.cell-animals {
-  font-size: 0.7rem;
-  position: absolute;
-  bottom: 2px;
-  background: rgba(255,255,255,0.8);
-  padding: 0 2px;
-  border-radius: 2px;
-}
-
-.fence {
-  position: absolute;
-  background: #8b4513;
-}
-
-.fence-top {
-  top: -2px;
-  left: 0;
-  right: 0;
-  height: 4px;
-}
-
-.fence-bottom {
-  bottom: -2px;
-  left: 0;
-  right: 0;
-  height: 4px;
-}
-
-.fence-left {
-  left: -2px;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-}
-
-.fence-right {
-  right: -2px;
-  top: 0;
-  bottom: 0;
-  width: 4px;
 }
 
 .card-holdings-section {
@@ -996,6 +842,7 @@ export default {
   cursor: pointer;
   min-width: 120px;
   text-align: center;
+  position: relative;
 }
 
 .card-holding-box:hover {
@@ -1015,11 +862,6 @@ export default {
 .card-holding-animals {
   font-size: 0.9rem;
   min-height: 1.4em;
-}
-
-.card-adding {
-  color: #155724;
-  font-weight: 500;
 }
 
 .card-holding-capacity {
@@ -1047,6 +889,11 @@ export default {
 .placement-table th {
   font-weight: 600;
   background: #f8f9fa;
+}
+
+.changes {
+  font-weight: 500;
+  color: #0d6efd;
 }
 
 .overflow-section {
@@ -1078,20 +925,6 @@ export default {
   color: #856404;
 }
 
-.type-selector {
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  background: #cce5ff;
-  border-radius: 4px;
-}
-
-.type-buttons {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-  flex-wrap: wrap;
-}
-
 .summary {
   margin-bottom: 1rem;
   padding: 0.5rem;
@@ -1100,20 +933,5 @@ export default {
 
 .summary.valid {
   background: #d4edda;
-}
-
-.summary.invalid {
-  background: #f8d7da;
-}
-
-.summary .warning {
-  color: #721c24;
-  font-weight: 600;
-}
-
-.actions {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: flex-end;
 }
 </style>

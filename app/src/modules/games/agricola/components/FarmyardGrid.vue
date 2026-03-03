@@ -11,6 +11,7 @@
           :col="col - 1"
           :pasture="getPastureAt(row - 1, col - 1)"
           :player="player"
+          :animalOverrides="animalOverrides"
         />
       </div>
     </div>
@@ -73,6 +74,10 @@ export default {
     player: {
       type: Object,
       required: true,
+    },
+    animalOverrides: {
+      type: Object,
+      default: null,
     },
   },
 
