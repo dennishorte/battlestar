@@ -85,6 +85,7 @@ describe('Council Keleres', () => {
 
       // Dennis does strategic action
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Keleres/Xxcha, 5I)
       t.choose(game, 'Pass')  // micah declines secondary
 
@@ -193,6 +194,7 @@ describe('Council Keleres', () => {
 
       // Dennis: Strategic Action (leadership)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // micah declines secondary
 
       // Micah's turn starts — Keleres agent triggers
@@ -512,6 +514,7 @@ describe('Council Keleres', () => {
 
       // Dennis (leadership=1) goes first
       t.choose(game, 'Strategic Action')  // Dennis uses leadership
+      t.choose(game, 'Done')              // allocate tokens
       t.choose(game, 'Pass')              // Micah declines secondary
       // Micah (diplomacy=2) goes next
       t.choose(game, 'Strategic Action')  // Micah uses diplomacy
@@ -782,6 +785,7 @@ describe('Council Keleres', () => {
 
         // Dennis does Strategic Action (leadership)
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Done')  // allocate tokens
         t.choose(game, 'Pass')  // Micah declines secondary
 
         // After Dennis's action, transaction window appears

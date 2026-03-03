@@ -9,6 +9,7 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 // Play through action phase with leadership+diplomacy (both use + pass)
 function playThroughActionPhase(game) {
   t.choose(game, 'Strategic Action')  // dennis: leadership
+  t.choose(game, 'Done')             // dennis: allocate 3 tokens
   t.choose(game, 'Pass')             // micah declines secondary
   t.choose(game, 'Strategic Action')  // micah: diplomacy
   t.choose(game, 'hacan-home')
@@ -101,6 +102,7 @@ describe('Action Cards', () => {
 
       // Dennis (leadership=1) goes first, uses leadership
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')             // dennis: allocate 3 tokens
       t.choose(game, 'Pass')  // micah declines leadership secondary
 
       // Micah uses imperial
@@ -123,6 +125,7 @@ describe('Action Cards', () => {
 
       // Dennis (leadership=1) goes first, uses leadership
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')             // dennis: allocate 3 tokens
       t.choose(game, 'Pass')  // micah declines leadership secondary
 
       // Micah uses imperial

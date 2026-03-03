@@ -168,6 +168,7 @@ describe('L1Z1X Mindnet', () => {
 
       // Dennis: strategic action (leadership)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // micah declines secondary
 
       // Micah: tactical action — activates system 27 where L1Z1X has units
@@ -205,6 +206,7 @@ describe('L1Z1X Mindnet', () => {
 
       // Dennis: strategic action (leadership)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // micah declines secondary
 
       // Micah: tactical action — activates system 27
@@ -505,6 +507,7 @@ describe('L1Z1X Mindnet', () => {
 
       // Both use strategy cards then pass (same pattern as statusPhase.test.js)
       t.choose(game, 'Strategic Action')  // Dennis plays Leadership
+      t.choose(game, 'Done')              // allocate tokens
       t.choose(game, 'Pass')              // Micah declines Leadership secondary
       t.choose(game, 'Strategic Action')  // Micah plays Diplomacy
       t.choose(game, 'sol-home')          // Micah picks system for Diplomacy
@@ -537,6 +540,7 @@ describe('L1Z1X Mindnet', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')              // allocate tokens
       t.choose(game, 'Pass')
       t.choose(game, 'Strategic Action')
       t.choose(game, 'sol-home')

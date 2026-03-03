@@ -59,6 +59,7 @@ describe('Emirates of Hacan', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')
 
       const choices = t.currentChoices(game)
@@ -75,6 +76,7 @@ describe('Emirates of Hacan', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')
 
       expect(game.waiting.selectors[0].actor).toBe('micah')
@@ -139,6 +141,7 @@ describe('Emirates of Hacan', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')
 
       t.choose(game, 'micah')
@@ -244,6 +247,7 @@ describe('Emirates of Hacan', () => {
 
       // Dennis: strategic action (leadership) — gains 3 tokens
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // micah declines leadership secondary
       t.choose(game, 'Skip Transaction')  // dennis skips transaction after leadership
 
@@ -367,6 +371,7 @@ describe('Emirates of Hacan', () => {
 
       // Dennis takes leadership strategic action
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // micah declines secondary
 
       // Transaction window: Dennis offers planet arretze to micah

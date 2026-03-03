@@ -14,6 +14,7 @@ describe('Strategic Actions', () => {
 
       // Dennis has leadership, uses it
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate 3 tokens
       t.choose(game, 'Pass')  // micah declines leadership secondary
 
       const dennis = game.players.byName('dennis')
@@ -114,6 +115,7 @@ describe('Strategic Actions', () => {
 
       // Micah has leadership(1), goes first
       t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Done')  // micah: allocate 3 tokens
       t.choose(game, 'Pass')  // dennis declines leadership secondary
       // Dennis uses imperial
       t.choose(game, 'Strategic Action')
@@ -130,6 +132,7 @@ describe('Strategic Actions', () => {
 
       // Micah has leadership(1), goes first
       t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Done')  // micah: allocate 3 tokens
       t.choose(game, 'Pass')  // dennis declines leadership secondary
       // Dennis uses imperial
       t.choose(game, 'Strategic Action')
@@ -392,6 +395,7 @@ describe('Strategic Actions', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Pass')  // micah declines secondary
 
       expect(game.state.lastStrategyCard).toBe('leadership')
@@ -447,6 +451,7 @@ describe('Strategic Actions', () => {
 
       // Dennis has leadership(1), micah has diplomacy(2). Dennis goes first.
       t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Pass')  // micah declines leadership secondary
       // Micah uses diplomacy
       t.choose(game, 'Strategic Action')  // micah: diplomacy
@@ -472,6 +477,7 @@ describe('Strategic Actions', () => {
 
       // Micah has leadership(1), goes first
       t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Done')  // micah: allocate 3 tokens
       // Leadership secondary is free — Dennis is prompted
       t.choose(game, 'Use Secondary')
       // Dennis has 2 influence (Jord), maxTokens=0, so no influence prompt
@@ -501,7 +507,8 @@ describe('Strategic Actions', () => {
 
       // Micah has leadership(1), goes first
       t.choose(game, 'Strategic Action')  // micah: leadership
-      // Dennis uses leadership secondary
+      t.choose(game, 'Done')  // micah: allocate 3 tokens
+      // Dennis uses leadership secondary (Dennis has 2I, not enough for tokens)
       t.choose(game, 'Use Secondary')
 
       // Dennis uses politics (primary: choose speaker + draw 2 cards + agenda peek)
@@ -528,7 +535,8 @@ describe('Strategic Actions', () => {
 
       // Micah has leadership(1), goes first
       t.choose(game, 'Strategic Action')  // micah: leadership
-      // Dennis uses leadership secondary
+      t.choose(game, 'Done')  // micah: allocate 3 tokens
+      // Dennis uses leadership secondary (Dennis has 2I, not enough for tokens)
       t.choose(game, 'Use Secondary')
 
       // Dennis uses construction (primary)
@@ -553,7 +561,8 @@ describe('Strategic Actions', () => {
 
       // Micah has leadership(1), goes first
       t.choose(game, 'Strategic Action')  // micah: leadership
-      // Dennis uses leadership secondary
+      t.choose(game, 'Done')  // micah: allocate 3 tokens
+      // Dennis uses leadership secondary (Dennis has 2I, not enough for tokens)
       t.choose(game, 'Use Secondary')
 
       // Dennis uses warfare (primary: remove token + redistribute)
@@ -579,7 +588,8 @@ describe('Strategic Actions', () => {
 
       // Micah has leadership(1), goes first
       t.choose(game, 'Strategic Action')  // micah: leadership
-      // Dennis uses leadership secondary
+      t.choose(game, 'Done')  // micah: allocate 3 tokens
+      // Dennis uses leadership secondary (Dennis has 2I, not enough for tokens)
       t.choose(game, 'Use Secondary')
 
       // Dennis uses imperial (primary)
@@ -601,6 +611,7 @@ describe('Strategic Actions', () => {
 
       // Dennis uses leadership (gains 3 tactic tokens)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Pass')  // micah declines leadership secondary
       // Micah uses diplomacy — must choose a system
       t.choose(game, 'Strategic Action')
@@ -654,6 +665,7 @@ describe('Strategic Actions', () => {
 
         // Micah has leadership(1), goes first
         t.choose(game, 'Strategic Action')  // micah: leadership
+        t.choose(game, 'Done')  // micah: allocate 3 tokens
         t.choose(game, 'Pass')  // dennis declines leadership secondary (free)
 
         // Dennis uses imperial
@@ -679,6 +691,7 @@ describe('Strategic Actions', () => {
         pickStrategyCards(game, 'imperial', 'leadership')
 
         t.choose(game, 'Strategic Action')  // micah: leadership
+        t.choose(game, 'Done')  // micah: allocate 3 tokens
         t.choose(game, 'Pass')  // dennis declines secondary
 
         // Dennis uses imperial — no revealed objectives, skips to Mecatol check
@@ -696,6 +709,7 @@ describe('Strategic Actions', () => {
         pickStrategyCards(game, 'imperial', 'leadership')
 
         t.choose(game, 'Strategic Action')  // micah: leadership
+        t.choose(game, 'Done')  // micah: allocate 3 tokens
         t.choose(game, 'Pass')  // dennis declines secondary
 
         // Dennis uses imperial — no Mecatol Rex → draws secret objective
@@ -715,6 +729,7 @@ describe('Strategic Actions', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Done')  // dennis: allocate 3 tokens
         t.choose(game, 'Pass')  // micah declines secondary
 
         const dennis = game.players.byName('dennis')
@@ -728,8 +743,10 @@ describe('Strategic Actions', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Done')  // dennis: allocate 3 tokens
         // Xxcha has 4 influence — can buy 1 token (3 influence)
         t.choose(game, '1 token (3 influence)')
+        t.choose(game, 'Done')  // dennis: allocate purchased token
         t.choose(game, 'Pass')  // micah declines secondary
 
         const dennis = game.players.byName('dennis')
@@ -745,6 +762,7 @@ describe('Strategic Actions', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Done')  // dennis: allocate 3 tokens
         t.choose(game, 'Skip')  // decline influence spending
         t.choose(game, 'Pass')  // micah declines secondary
 
@@ -761,6 +779,7 @@ describe('Strategic Actions', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Done')  // dennis: allocate 3 tokens
         // Micah gets leadership secondary prompt (it's free)
         t.choose(game, 'Use Secondary')
 
@@ -777,11 +796,13 @@ describe('Strategic Actions', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Done')  // dennis: allocate 3 tokens
         // Dennis (Hacan, 2I) — no influence prompt
         // Micah (Xxcha, 4I) gets free secondary prompt
         t.choose(game, 'Use Secondary')
         // Xxcha has 4 influence — can buy 1 token
         t.choose(game, '1 token (3 influence)')
+        t.choose(game, 'Done')  // micah: allocate purchased token
 
         const micah = game.players.byName('micah')
         // Strategy NOT spent (leadership secondary is free)
@@ -869,6 +890,7 @@ describe('Strategic Actions', () => {
         pickStrategyCards(game, 'technology', 'leadership')
 
         t.choose(game, 'Strategic Action')  // micah: leadership
+        t.choose(game, 'Done')  // micah: allocate 3 tokens
         t.choose(game, 'Use Secondary')  // dennis: free leadership secondary
         t.choose(game, 'Skip Transaction')  // hacan transaction prompt (has TG)
 
@@ -895,6 +917,7 @@ describe('Strategic Actions', () => {
 
         // Micah uses leadership first
         t.choose(game, 'Strategic Action')  // micah: leadership
+        t.choose(game, 'Done')  // micah: allocate 3 tokens
         t.choose(game, 'Use Secondary')  // dennis: free leadership secondary
 
         // Dennis uses construction (primary)
@@ -925,6 +948,7 @@ describe('Strategic Actions', () => {
         pickStrategyCards(game, 'construction', 'leadership')
 
         t.choose(game, 'Strategic Action')  // micah: leadership
+        t.choose(game, 'Done')  // micah: allocate 3 tokens
         t.choose(game, 'Skip')  // micah: skip influence spending (3I with new-albion)
         t.choose(game, 'Use Secondary')  // dennis: free leadership secondary
 

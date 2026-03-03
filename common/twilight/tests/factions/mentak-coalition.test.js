@@ -176,6 +176,7 @@ describe('Mentak Coalition', () => {
 
       // Dennis (leadership=1) goes first
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // micah declines secondary
       t.choose(game, 'Pass')  // scott declines secondary
 
@@ -245,6 +246,7 @@ describe('Mentak Coalition', () => {
 
       // Dennis (leadership=1) goes first
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // micah declines secondary
       t.choose(game, 'Pass')  // scott declines secondary
 
@@ -314,6 +316,7 @@ describe('Mentak Coalition', () => {
 
       // Dennis (leadership=1) goes first
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // micah declines secondary
       t.choose(game, 'Pass')  // scott declines secondary
 
@@ -390,6 +393,7 @@ describe('Mentak Coalition', () => {
 
       // Dennis (leadership=1) goes first
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // micah declines secondary
       t.choose(game, 'Pass')  // scott declines secondary
 
@@ -727,6 +731,7 @@ describe('Mentak Coalition', () => {
 
       // Dennis (Leadership, initiative 1): Strategic Action → Leadership
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // Micah declines secondary
 
       // Micah (Diplomacy, initiative 2): Component Action → Promise of Protection

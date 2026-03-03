@@ -9,6 +9,7 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 function playToStatusPhase(game) {
   pickStrategyCards(game, 'leadership', 'diplomacy')
   t.choose(game, 'Strategic Action')  // dennis: leadership
+  t.choose(game, 'Done')             // dennis: allocate 3 tokens
   // Skip influence-for-tokens prompt if it appears (when dennis has >= 3 influence)
   if (t.currentChoices(game).includes('Skip')) {
     t.choose(game, 'Skip')
@@ -55,6 +56,7 @@ describe('Objectives', () => {
 
       // Micah (leadership=1) goes first
       t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Done')             // micah: allocate 3 tokens
       t.choose(game, 'Pass')  // dennis declines leadership secondary
       // Dennis uses imperial
       t.choose(game, 'Strategic Action')  // dennis: imperial
@@ -79,6 +81,7 @@ describe('Objectives', () => {
 
       // Micah (leadership=1) goes first
       t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Done')             // micah: allocate 3 tokens
       t.choose(game, 'Pass')  // dennis declines leadership secondary
       // Dennis uses imperial (+1 VP for Mecatol)
       t.choose(game, 'Strategic Action')  // dennis: imperial
@@ -106,6 +109,7 @@ describe('Objectives', () => {
 
       // Micah (leadership=1) goes first
       t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Done')             // micah: allocate 3 tokens
       t.choose(game, 'Pass')  // dennis declines leadership secondary
       // Dennis uses imperial → goes to 10 VP → game should end
       t.choose(game, 'Strategic Action')  // dennis (imperial → 10 VP)
@@ -129,6 +133,7 @@ describe('Objectives', () => {
       pickStrategyCards(game, 'imperial', 'leadership')
 
       t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Done')             // micah: allocate 3 tokens
       t.choose(game, 'Pass')  // dennis declines leadership secondary
       t.choose(game, 'Strategic Action')  // dennis: imperial → 10 VP
 
@@ -150,6 +155,7 @@ describe('Objectives', () => {
       pickStrategyCards(game, 'imperial', 'leadership')
 
       t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Done')             // micah: allocate 3 tokens
       t.choose(game, 'Pass')  // dennis declines leadership secondary
       t.choose(game, 'Strategic Action')  // dennis: imperial → 9 VP
       t.choose(game, 'Pass')  // micah declines imperial secondary
@@ -176,6 +182,7 @@ describe('Objectives', () => {
 
       // Play through action phase — both pass
       t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Done')             // dennis: allocate 3 tokens
       t.choose(game, 'Pass')  // micah declines leadership secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
@@ -199,6 +206,7 @@ describe('Objectives', () => {
 
       // Play through action phase
       t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Done')             // dennis: allocate 3 tokens
       t.choose(game, 'Pass')  // micah declines leadership secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
@@ -326,6 +334,7 @@ describe('Objectives', () => {
 
       // Play through action phase — both pass
       t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Done')             // dennis: allocate 3 tokens
       t.choose(game, 'Pass')  // micah declines
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
@@ -362,6 +371,7 @@ describe('Objectives', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')             // dennis: allocate 3 tokens
       t.choose(game, 'Pass')
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
@@ -397,6 +407,7 @@ describe('Objectives', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')             // dennis: allocate 3 tokens
       t.choose(game, 'Pass')
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')

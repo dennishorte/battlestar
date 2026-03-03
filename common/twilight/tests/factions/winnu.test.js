@@ -324,7 +324,8 @@ describe('Winnu', () => {
 
       // Dennis: Strategic Action (leadership)
       t.choose(game, 'Strategic Action')
-      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Winnu, 3I)
+      t.choose(game, 'Done')  // dennis: allocate 3 tokens
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Winnu, 4I)
       t.choose(game, 'Pass')  // micah declines secondary
 
       // Micah: tactical action — invade abyz in system 38
@@ -375,7 +376,8 @@ describe('Winnu', () => {
 
       // Dennis: Strategic Action (leadership)
       t.choose(game, 'Strategic Action')
-      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Winnu, 3I)
+      t.choose(game, 'Done')  // dennis: allocate 3 tokens
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Winnu, 4I)
       t.choose(game, 'Pass')  // micah declines secondary
 
       // Micah: tactical action — invade abyz in system 38
@@ -427,7 +429,8 @@ describe('Winnu', () => {
 
       // Dennis: Strategic Action (Leadership)
       t.choose(game, 'Strategic Action')
-      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Winnu, 3I)
+      t.choose(game, 'Done')  // dennis: allocate 3 tokens
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Winnu, 4I)
       // Micah: normally couldn't do secondary (0 strategy tokens)
       // But Acquiescence makes it free
       t.choose(game, 'Use Secondary')

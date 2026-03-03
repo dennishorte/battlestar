@@ -15,6 +15,7 @@ function playRound(game, opts = {}) {
 
   // Action phase: both use strategy cards then pass
   t.choose(game, 'Strategic Action')  // dennis: leadership
+  t.choose(game, 'Done')             // dennis: allocate 3 tokens
   t.choose(game, 'Pass')             // micah declines secondary
   t.choose(game, 'Strategic Action')  // micah: diplomacy
   t.choose(game, 'hacan-home')
@@ -133,6 +134,7 @@ describe('Multi-Round Play', () => {
 
     // Action phase
     t.choose(game, 'Strategic Action')
+    t.choose(game, 'Done')             // dennis: allocate 3 tokens
     t.choose(game, 'Pass')  // micah declines secondary
     t.choose(game, 'Strategic Action')
     t.choose(game, 'hacan-home')

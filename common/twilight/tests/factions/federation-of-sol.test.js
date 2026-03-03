@@ -91,6 +91,7 @@ describe('Federation of Sol', () => {
 
       // Play through action phase
       t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // micah declines secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
@@ -195,6 +196,7 @@ describe('Federation of Sol', () => {
 
       // Dennis passes
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')
 
       // Micah activates system 27 (already has units there)

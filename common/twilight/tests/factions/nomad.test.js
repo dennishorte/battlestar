@@ -117,6 +117,7 @@ describe('Nomad', () => {
 
       // Dennis uses leadership (strategic action)
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Nomad, 4I)
       t.choose(game, 'Pass')              // micah declines leadership secondary
 
@@ -688,6 +689,7 @@ describe('Nomad', () => {
 
         // Dennis does strategic action to pass turn
         t.choose(game, 'Strategic Action')
+        t.choose(game, 'Done')  // allocate tokens
         t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Nomad, 4I)
         t.choose(game, 'Pass')  // micah declines leadership secondary
 

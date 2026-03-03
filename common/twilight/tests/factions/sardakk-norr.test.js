@@ -195,6 +195,7 @@ describe("Sardakk N'orr", () => {
 
       // Dennis uses leadership
       t.choose(game, 'Strategic Action')
+      t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Pass') // micah declines secondary
 
       // Micah does tactical action in system 27 (where micah has ground forces)

@@ -9,7 +9,8 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 function playToAgenda(game, opts = {}) {
   pickStrategyCards(game, opts.dennisCard || 'leadership', opts.micahCard || 'diplomacy')
   // Both use strategy cards then pass
-  t.choose(game, 'Strategic Action')  // dennis: leadership (auto)
+  t.choose(game, 'Strategic Action')  // dennis: leadership
+  t.choose(game, 'Done')             // allocate tokens
   t.choose(game, 'Pass')             // micah declines leadership secondary
   t.choose(game, 'Strategic Action')  // micah: diplomacy (needs system choice)
   t.choose(game, 'hacan-home')        // micah picks system for diplomacy

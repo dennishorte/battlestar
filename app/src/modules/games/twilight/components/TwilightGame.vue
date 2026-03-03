@@ -219,7 +219,7 @@ export default {
       if (title.includes('trade') && title.includes('offer')) {
         return 'trade-offer'
       }
-      if (title.includes('redistribute') || title.includes('command token')) {
+      if (this.waitingRequest.allowsAction === 'redistribute-tokens') {
         return 'redistribute-tokens'
       }
       if (title.includes('vote on') || title.includes('exhaust planets for votes') || title.includes('spend trade goods for extra votes')) {
