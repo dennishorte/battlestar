@@ -10,7 +10,7 @@
 
       <div class="resource-info">
         <span class="wood-available">🪵 {{ player.wood }} wood available</span>
-        <span class="fences-remaining">┼ {{ maxFences - player.getFenceCount() }} fences remaining</span>
+        <span class="fences-remaining">┼ {{ player.getFencesInSupply() }} fences remaining</span>
       </div>
 
       <!-- Farmyard Grid for Selection -->
@@ -96,7 +96,6 @@ export default {
     return {
       selectedSpaces: [],
       pasturesBuilt: [],
-      maxFences: 15,
     }
   },
 

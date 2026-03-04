@@ -26,7 +26,6 @@ export default {
 
   computed: {
     resources() {
-      const maxFences = 15
       const maxStables = 4
 
       return [
@@ -37,7 +36,7 @@ export default {
         { type: 'reed', icon: '🌿', count: this.player.reed, label: 'Reed' },
         { type: 'grain', icon: '🌾', count: this.player.grain, label: 'Grain' },
         { type: 'vegetables', icon: '🥕', count: this.player.vegetables, label: 'Vegetables' },
-        { type: 'fences', icon: '┼', count: maxFences - this.player.getFenceCount(), label: 'Available Fences' },
+        { type: 'fences', icon: '┼', count: this.player.getFencesInSupply(), label: 'Available Fences' },
         { type: 'stables', icon: '⌂', count: maxStables - this.player.getStableCount(), label: 'Available Stables' },
       ]
     },
