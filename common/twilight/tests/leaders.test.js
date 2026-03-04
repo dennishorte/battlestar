@@ -39,7 +39,6 @@ describe('Leaders', () => {
       // Play through action phase
       t.choose(game, 'Strategic Action')  // dennis: leadership
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass')  // micah declines
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
       t.choose(game, 'Pass')  // dennis declines

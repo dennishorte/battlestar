@@ -87,7 +87,6 @@ describe('Council Keleres', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Keleres/Xxcha, 5I)
-      t.choose(game, 'Pass')  // micah declines secondary
 
       // Now micah's turn — law blanking should clear
       // Micah is not prompted for laws-order (not Keleres)
@@ -195,7 +194,6 @@ describe('Council Keleres', () => {
       // Dennis: Strategic Action (leadership)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass')  // micah declines secondary
 
       // Micah's turn starts — Keleres agent triggers
       // Dennis (Keleres) is prompted to exhaust Xander
@@ -515,7 +513,6 @@ describe('Council Keleres', () => {
       // Dennis (leadership=1) goes first
       t.choose(game, 'Strategic Action')  // Dennis uses leadership
       t.choose(game, 'Done')              // allocate tokens
-      t.choose(game, 'Pass')              // Micah declines secondary
       // Micah (diplomacy=2) goes next
       t.choose(game, 'Strategic Action')  // Micah uses diplomacy
       t.choose(game, 'sol-home')          // Micah diplomacy target
@@ -786,7 +783,6 @@ describe('Council Keleres', () => {
         // Dennis does Strategic Action (leadership)
         t.choose(game, 'Strategic Action')
         t.choose(game, 'Done')  // allocate tokens
-        t.choose(game, 'Pass')  // Micah declines secondary
 
         // After Dennis's action, transaction window appears
         // IIHQ Modernization makes Dennis neighbor of Micah (Micah has ships at Mecatol Rex)

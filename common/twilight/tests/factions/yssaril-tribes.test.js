@@ -115,10 +115,10 @@ describe('Yssaril Tribes', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Yssaril, 5I)
-      t.choose(game, 'Pass')
+      // micah: leadership secondary auto-passes (Hacan 2I)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
 
@@ -219,7 +219,6 @@ describe('Yssaril Tribes', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Yssaril, 5I)
-      t.choose(game, 'Pass')  // Micah declines leadership secondary
 
       // Micah does a tactical action — activates system 27 where Yssaril has infantry
       t.choose(game, 'Tactical Action')
@@ -546,7 +545,6 @@ describe('Yssaril Tribes', () => {
         t.choose(game, 'Strategic Action')
         t.choose(game, 'Done')  // dennis: allocate 3 tokens
         t.choose(game, 'Skip') // dennis skips influence-for-tokens (Yssaril, 5I)
-        t.choose(game, 'Pass') // Micah declines secondary
 
         // Micah's turn — use shared Stall Tactics via Deepgloom
         t.choose(game, 'Component Action')

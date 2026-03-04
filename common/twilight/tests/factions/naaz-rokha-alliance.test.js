@@ -287,8 +287,8 @@ describe('Naaz-Rokha Alliance', () => {
       // Dennis uses Leadership (strategic action) so he can pass later
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Naaz-Rokha, 4I)
-      t.choose(game, 'Pass') // micah declines leadership secondary
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Naaz-Rokha, 3I)
+      t.choose(game, 'Pass')  // micah declines leadership secondary (Hacan 2I + Vefut II 2I = 4I)
 
       // Micah activates system 20 (no space dock there, so no production prompt)
       t.choose(game, 'Tactical Action')
@@ -350,8 +350,8 @@ describe('Naaz-Rokha Alliance', () => {
       // Dennis uses strategy card first
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Naaz-Rokha, 4I)
-      t.choose(game, 'Pass') // micah declines
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Naaz-Rokha, 3I)
+      t.choose(game, 'Pass')  // micah declines leadership secondary (Hacan 2I + Vefut II 2I = 4I)
 
       // Micah activates system 20
       t.choose(game, 'Tactical Action')

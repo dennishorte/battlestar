@@ -139,7 +139,6 @@ describe('Clan of Saar', () => {
       // Micah's turn first (initiative 1 — leadership)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass') // Dennis declines secondary
       // Dennis's turn — use Construction
       t.choose(game, 'Strategic Action')
 
@@ -226,7 +225,6 @@ describe('Clan of Saar', () => {
       // Micah uses strategic action (leadership) first
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass') // Dennis declines leadership secondary
 
       // Dennis uses strategic action (diplomacy)
       t.choose(game, 'Strategic Action')
@@ -439,7 +437,6 @@ describe('Clan of Saar', () => {
       // Micah uses strategic action (leadership)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass') // Dennis declines secondary
 
       // Dennis uses strategic action (diplomacy)
       t.choose(game, 'Strategic Action')
@@ -493,10 +490,10 @@ describe('Clan of Saar', () => {
 
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass')
+      // dennis: leadership secondary auto-passes (Saar 1I)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'saar-home')
-      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')  // micah declines diplomacy secondary
 
       t.choose(game, 'Tactical Action')
       t.action(game, 'activate-system', { systemId: '38' })
@@ -535,10 +532,10 @@ describe('Clan of Saar', () => {
 
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass')
+      // dennis: leadership secondary auto-passes (Saar 1I)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'saar-home')
-      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')  // micah declines diplomacy secondary
 
       t.choose(game, 'Tactical Action')
       t.action(game, 'activate-system', { systemId: '38' })
@@ -863,8 +860,6 @@ describe('Clan of Saar', () => {
         // Dennis uses Strategic Action (leadership) to end his turn simply
         t.choose(game, 'Strategic Action')
         t.choose(game, 'Done')  // allocate tokens
-        // Micah declines leadership secondary
-        t.choose(game, 'Pass')
 
         // Micah's turn: tactical action to try activating system 44
         t.choose(game, 'Tactical Action')
