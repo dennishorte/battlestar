@@ -1,6 +1,33 @@
 const t = require('../../../testutil_v2.js')
 
 describe('Ash Trees', () => {
+  test('onPlay places up to 5 fences from supply onto card', () => {
+    const game = t.fixture({ cardSets: ['minorE', 'test'] })
+
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['ash-trees-e074'],
+        farmyard: {
+          fields: [
+            { row: 0, col: 2, crop: 'grain', cropCount: 1 },
+            { row: 0, col: 3, crop: 'grain', cropCount: 1 },
+          ],
+        },
+      },
+      actionSpaces: ['Major Improvement'],
+    })
+    game.run()
+
+    t.choose(game, 'Major Improvement')
+    t.choose(game, 'Minor Improvement.Ash Trees')
+
+    expect(game.cardState('ash-trees-e074').storedFences).toBe(5)
+    // Fences moved from supply to card
+    const dennis = game.players.byName('dennis')
+    expect(dennis.getFencesInSupply()).toBe(15 - 5)
+  })
+
   test('fences from card are free when building pasture', () => {
     const game = t.fixture({ cardSets: ['minorE', 'test'] })
 

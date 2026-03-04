@@ -8,13 +8,13 @@ module.exports = {
   prereqs: { plantedFields: 2 },
   text: "When you play this card, immediately place (up to) 5 fences from your supply on it. When you build fences, fences taken from this card cost you nothing.",
   onPlay(game, player) {
-    const fencesToPlace = Math.min(5, player.fencesRemaining || 0)
+    const fencesToPlace = Math.min(5, player.getFencesInSupply())
     game.cardState(this.id).storedFences = fencesToPlace
     if (fencesToPlace > 0) {
-      player.fencesRemaining -= fencesToPlace
+      player.useFenceFromSupply(fencesToPlace)
       game.log.add({
         template: '{player} places {amount} fences on {card}',
-        args: { player, amount: fencesToPlace , card: this},
+        args: { player, amount: fencesToPlace, card: this },
       })
     }
   },
