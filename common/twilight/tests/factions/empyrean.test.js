@@ -592,11 +592,10 @@ describe('Empyrean', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Dennis: Strategic Action (Leadership) → Micah declines secondary
+      // Dennis: Strategic Action (Leadership)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Empyrean, 4I)
-      t.choose(game, 'Pass')
 
       // Micah: Component Action → Dark Pact
       t.choose(game, 'Component Action')
@@ -661,7 +660,7 @@ describe('Empyrean', () => {
       // Micah: Strategic Action (Leadership)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass')  // Dennis declines Leadership secondary
+      t.choose(game, 'Pass')  // dennis declines leadership secondary (Empyrean, The Dark 4I)
       // Hacan Guild Ships: transaction window (Dennis has TG from Trade)
       t.choose(game, 'Skip Transaction')
 
@@ -718,7 +717,7 @@ describe('Empyrean', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Empyrean, 4I)
-      t.choose(game, 'Pass')
+      // micah: leadership secondary auto-passes (Hacan 2I)
 
       // Micah: Component Action → Blood Pact
       t.choose(game, 'Component Action')
@@ -861,7 +860,7 @@ describe('Empyrean', () => {
         t.choose(game, 'Strategic Action')
         t.choose(game, 'Done')  // allocate tokens
         t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Empyrean, 4I)
-        t.choose(game, 'Pass')
+        // micah: leadership secondary auto-passes (Hacan 2I)
 
         // Micah activates system 35 (adjacent to gravity rift 41)
         t.choose(game, 'Tactical Action')
@@ -1134,7 +1133,7 @@ describe('Empyrean', () => {
         // Micah takes leadership strategic action first
         t.choose(game, 'Strategic Action')
         t.choose(game, 'Done')  // allocate tokens
-        t.choose(game, 'Pass')  // Dennis declines secondary
+        t.choose(game, 'Pass')  // dennis declines leadership secondary (Empyrean, The Dark 4I)
 
         // Dennis takes diplomacy
         t.choose(game, 'Strategic Action')

@@ -60,7 +60,7 @@ describe('Emirates of Hacan', () => {
 
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass')
+      // micah: leadership secondary auto-passes (Sol 2I)
 
       const choices = t.currentChoices(game)
       expect(choices).toContain('micah')
@@ -77,7 +77,7 @@ describe('Emirates of Hacan', () => {
 
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass')
+      // micah: leadership secondary auto-passes (Hacan 2I)
 
       expect(game.waiting.selectors[0].actor).toBe('micah')
     })
@@ -142,7 +142,7 @@ describe('Emirates of Hacan', () => {
 
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass')
+      // micah: leadership secondary auto-passes (Sol 2I)
 
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
@@ -248,7 +248,6 @@ describe('Emirates of Hacan', () => {
       // Dennis: strategic action (leadership) — gains 3 tokens
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass')  // micah declines leadership secondary
       t.choose(game, 'Skip Transaction')  // dennis skips transaction after leadership
 
       // Micah: strategic action (diplomacy)
@@ -372,7 +371,6 @@ describe('Emirates of Hacan', () => {
       // Dennis takes leadership strategic action
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass')  // micah declines secondary
 
       // Transaction window: Dennis offers planet arretze to micah
       t.choose(game, 'micah')

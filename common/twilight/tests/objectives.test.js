@@ -14,7 +14,6 @@ function playToStatusPhase(game) {
   if (t.currentChoices(game).includes('Skip')) {
     t.choose(game, 'Skip')
   }
-  t.choose(game, 'Pass')  // micah declines leadership secondary
   t.choose(game, 'Strategic Action')  // micah: diplomacy
   t.choose(game, 'hacan-home')
   t.choose(game, 'Pass')  // dennis declines diplomacy secondary
@@ -57,7 +56,7 @@ describe('Objectives', () => {
       // Micah (leadership=1) goes first
       t.choose(game, 'Strategic Action')  // micah: leadership
       t.choose(game, 'Done')             // micah: allocate 3 tokens
-      t.choose(game, 'Pass')  // dennis declines leadership secondary
+      t.choose(game, 'Pass')  // dennis declines leadership secondary (has Mecatol Rex influence)
       // Dennis uses imperial
       t.choose(game, 'Strategic Action')  // dennis: imperial
       t.choose(game, 'Pass')  // micah declines imperial secondary
@@ -82,7 +81,7 @@ describe('Objectives', () => {
       // Micah (leadership=1) goes first
       t.choose(game, 'Strategic Action')  // micah: leadership
       t.choose(game, 'Done')             // micah: allocate 3 tokens
-      t.choose(game, 'Pass')  // dennis declines leadership secondary
+      t.choose(game, 'Pass')  // dennis declines leadership secondary (has Mecatol Rex, 8I)
       // Dennis uses imperial (+1 VP for Mecatol)
       t.choose(game, 'Strategic Action')  // dennis: imperial
       t.choose(game, 'Pass')  // micah declines imperial secondary
@@ -110,7 +109,7 @@ describe('Objectives', () => {
       // Micah (leadership=1) goes first
       t.choose(game, 'Strategic Action')  // micah: leadership
       t.choose(game, 'Done')             // micah: allocate 3 tokens
-      t.choose(game, 'Pass')  // dennis declines leadership secondary
+      t.choose(game, 'Pass')  // dennis declines leadership secondary (has Mecatol Rex, 8I)
       // Dennis uses imperial → goes to 10 VP → game should end
       t.choose(game, 'Strategic Action')  // dennis (imperial → 10 VP)
 
@@ -134,7 +133,7 @@ describe('Objectives', () => {
 
       t.choose(game, 'Strategic Action')  // micah: leadership
       t.choose(game, 'Done')             // micah: allocate 3 tokens
-      t.choose(game, 'Pass')  // dennis declines leadership secondary
+      t.choose(game, 'Pass')  // dennis declines leadership secondary (has Mecatol Rex, 8I)
       t.choose(game, 'Strategic Action')  // dennis: imperial → 10 VP
 
       expect(game.gameOverData).toBeTruthy()
@@ -156,7 +155,7 @@ describe('Objectives', () => {
 
       t.choose(game, 'Strategic Action')  // micah: leadership
       t.choose(game, 'Done')             // micah: allocate 3 tokens
-      t.choose(game, 'Pass')  // dennis declines leadership secondary
+      t.choose(game, 'Pass')  // dennis declines leadership secondary (has Mecatol Rex, 8I)
       t.choose(game, 'Strategic Action')  // dennis: imperial → 9 VP
       t.choose(game, 'Pass')  // micah declines imperial secondary
 
@@ -183,7 +182,6 @@ describe('Objectives', () => {
       // Play through action phase — both pass
       t.choose(game, 'Strategic Action')  // dennis: leadership
       t.choose(game, 'Done')             // dennis: allocate 3 tokens
-      t.choose(game, 'Pass')  // micah declines leadership secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
       t.choose(game, 'Pass')  // dennis declines diplomacy secondary
@@ -207,7 +205,6 @@ describe('Objectives', () => {
       // Play through action phase
       t.choose(game, 'Strategic Action')  // dennis: leadership
       t.choose(game, 'Done')             // dennis: allocate 3 tokens
-      t.choose(game, 'Pass')  // micah declines leadership secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
       t.choose(game, 'Pass')  // dennis declines diplomacy secondary
@@ -335,10 +332,10 @@ describe('Objectives', () => {
       // Play through action phase — both pass
       t.choose(game, 'Strategic Action')  // dennis: leadership
       t.choose(game, 'Done')             // dennis: allocate 3 tokens
-      t.choose(game, 'Pass')  // micah declines
+      // micah: leadership secondary auto-passes (Hacan 2I)
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // dennis declines
+      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
       t.choose(game, 'Pass')  // dennis passes
       t.choose(game, 'Pass')  // micah passes
 
@@ -372,12 +369,12 @@ describe('Objectives', () => {
 
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')             // dennis: allocate 3 tokens
-      t.choose(game, 'Pass')
+      // micah: leadership secondary auto-passes (Hacan 2I)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')
-      t.choose(game, 'Pass')
-      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
+      t.choose(game, 'Pass')  // dennis passes
+      t.choose(game, 'Pass')  // micah passes
 
       // Score secret objective → 10 VP → game over
       t.choose(game, 'cut-supply-lines: Cut Supply Lines')
@@ -408,12 +405,12 @@ describe('Objectives', () => {
 
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')             // dennis: allocate 3 tokens
-      t.choose(game, 'Pass')
+      // micah: leadership secondary auto-passes (Hacan 2I)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')
-      t.choose(game, 'Pass')
-      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
+      t.choose(game, 'Pass')  // dennis passes
+      t.choose(game, 'Pass')  // micah passes
 
       // Should not be prompted for secret objective (already scored)
       // Status phase continues to redistribution

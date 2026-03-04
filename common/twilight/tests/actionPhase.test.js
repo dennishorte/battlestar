@@ -44,7 +44,6 @@ describe('Action Phase', () => {
       // dennis: use strategy card (leadership — gains 3 tokens, allocate)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass')  // micah declines leadership secondary
       // micah: use strategy card (diplomacy — choose system)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')  // micah picks system for diplomacy
@@ -93,7 +92,6 @@ describe('Action Phase', () => {
       // dennis uses strategy card (leadership — gains 3 tokens, allocate)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass')  // micah declines leadership secondary
       // micah's turn (skip)
       t.choose(game, 'Tactical Action')
       t.choose(game, 'Done')
@@ -123,7 +121,6 @@ describe('Action Phase', () => {
       // Both use strategy cards
       t.choose(game, 'Strategic Action')  // dennis: leadership
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass')  // micah declines leadership secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')        // micah picks system
       t.choose(game, 'Pass')  // dennis declines diplomacy secondary
@@ -145,7 +142,6 @@ describe('Action Phase', () => {
       // Both use strategy cards then pass
       t.choose(game, 'Strategic Action')  // dennis: leadership
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass')  // micah declines leadership secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')        // micah picks system
       t.choose(game, 'Pass')  // dennis declines diplomacy secondary
@@ -164,7 +160,6 @@ describe('Action Phase', () => {
       // Both use strategy cards then pass (ends action phase)
       t.choose(game, 'Strategic Action')  // dennis: leadership
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass')  // micah declines leadership secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')        // micah picks system
       t.choose(game, 'Pass')  // dennis declines diplomacy secondary
@@ -190,7 +185,6 @@ describe('Action Phase', () => {
 
       t.choose(game, 'Strategic Action')  // dennis uses leadership
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass')  // micah declines secondary
 
       expect(game.players.byName('dennis').hasUsedStrategyCard()).toBe(true)
     })
@@ -203,7 +197,6 @@ describe('Action Phase', () => {
       // dennis uses strategy card (leadership)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass')  // micah declines leadership secondary
       // micah's turn (skip)
       t.choose(game, 'Tactical Action')
       t.choose(game, 'Done')

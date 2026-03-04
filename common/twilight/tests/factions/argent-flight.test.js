@@ -156,7 +156,6 @@ describe('Argent Flight', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Argent, 3I)
-      t.choose(game, 'Pass')  // micah declines leadership secondary
 
       // Now it's micah's turn. Micah activates system 27 (adjacent to argent-home)
       t.choose(game, 'Tactical Action')
@@ -242,7 +241,6 @@ describe('Argent Flight', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Argent, 3I)
-      t.choose(game, 'Pass')  // micah declines leadership secondary
 
       // Now it's micah's turn. Micah activates system 38 (far from argent)
       t.choose(game, 'Tactical Action')
@@ -698,7 +696,7 @@ describe('Argent Flight', () => {
         t.choose(game, 'Strategic Action')
         t.choose(game, 'Done')  // allocate tokens
         t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Argent, 3I)
-        t.choose(game, 'Pass')
+        // micah: leadership secondary auto-passes (Hacan 2I)
 
         // Micah activates Mecatol (system 18) and tries to move cruiser
         // from 27 through 26 to 18. But 26 has Argent structures and

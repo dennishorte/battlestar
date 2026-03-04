@@ -33,7 +33,10 @@ function playToStatusPhase(game) {
   if (t.currentChoices(game).includes('Skip')) {
     t.choose(game, 'Skip')
   }
-  t.choose(game, 'Pass')              // micah declines secondary
+  // Leadership secondary for micah — auto-passes if < 3 influence, otherwise decline
+  if (t.currentChoices(game).includes('Pass') && !t.currentChoices(game).includes('Strategic Action')) {
+    t.choose(game, 'Pass')
+  }
   t.choose(game, 'Strategic Action')  // micah: diplomacy
   t.choose(game, 'hacan-home')        // micah picks system
   t.choose(game, 'Pass')              // dennis declines secondary
@@ -526,7 +529,6 @@ describe('Secret Objectives — Status Phase', () => {
     t.choose(game, 'Strategic Action')
     t.choose(game, 'Done')              // dennis: allocate 3 tokens
     t.choose(game, 'Skip')              // dennis skips influence-for-tokens (Sol 2I + Primor 1I = 3I)
-    t.choose(game, 'Pass')              // micah declines secondary
     t.choose(game, 'Decline')           // dennis declines legendary planet ability
     t.choose(game, 'Strategic Action')  // micah: diplomacy
     t.choose(game, 'hacan-home')        // micah picks system
@@ -918,7 +920,6 @@ describe('Secret Objectives — Action Phase', () => {
     // Dennis (leadership=1) goes first
     t.choose(game, 'Strategic Action')  // dennis: leadership
     t.choose(game, 'Done')              // dennis: allocate 3 tokens
-    t.choose(game, 'Pass')              // micah declines secondary
     t.choose(game, 'Strategic Action')  // micah: diplomacy
     t.choose(game, 'hacan-home')        // micah picks system
     t.choose(game, 'Pass')              // dennis declines secondary
