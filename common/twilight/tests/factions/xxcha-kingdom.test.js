@@ -48,7 +48,7 @@ describe('Xxcha Kingdom', () => {
       // Micah (leadership=1) goes first
       t.choose(game, 'Strategic Action')  // micah: leadership
       t.choose(game, 'Done')  // micah: allocate 3 tokens
-      t.choose(game, 'Pass')  // dennis declines secondary
+      t.choose(game, 'Pass')  // dennis declines leadership secondary (Xxcha 4I)
 
       // Dennis (Xxcha, diplomacy=2) uses diplomacy
       t.choose(game, 'Strategic Action')
@@ -85,7 +85,6 @@ describe('Xxcha Kingdom', () => {
       t.choose(game, 'Strategic Action')  // dennis: leadership
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens
-      t.choose(game, 'Pass')  // micah declines secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
       t.choose(game, 'Pass')  // dennis declines secondary
@@ -138,7 +137,6 @@ describe('Xxcha Kingdom', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens
-      t.choose(game, 'Pass')  // micah declines secondary
       // No transaction step for Xxcha (not Hacan)
 
       // Micah: strategic action (diplomacy)
@@ -211,11 +209,11 @@ describe('Xxcha Kingdom', () => {
       // Play through action phase quickly
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
-      t.choose(game, 'Pass')
+      // micah: leadership secondary auto-passes (all planets exhausted, 0I)
 
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
 
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
@@ -446,7 +444,6 @@ describe('Xxcha Kingdom', () => {
       t.choose(game, 'Strategic Action')  // dennis: leadership
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens
-      t.choose(game, 'Pass')  // micah declines secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
       t.choose(game, 'Pass')  // dennis declines secondary
@@ -519,7 +516,6 @@ describe('Xxcha Kingdom', () => {
       t.choose(game, 'Strategic Action')  // Micah uses leadership
       t.choose(game, 'Done')  // micah: allocate 3 tokens
       t.choose(game, 'Skip')  // micah skips influence-for-tokens
-      t.choose(game, 'Pass')              // Dennis declines secondary
       // Dennis (diplomacy=2) goes next
       t.choose(game, 'Strategic Action')  // Dennis uses diplomacy
       t.choose(game, 'hacan-home')        // Dennis diplomacy target
@@ -576,10 +572,10 @@ describe('Xxcha Kingdom', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // micah: allocate 3 tokens
       t.choose(game, 'Skip')  // micah skips influence-for-tokens (Xxcha, 3I)
-      t.choose(game, 'Pass')
+      // dennis: leadership secondary auto-passes (Hacan, only arretze 0I)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')  // micah declines diplomacy secondary
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
 
@@ -620,7 +616,6 @@ describe('Xxcha Kingdom', () => {
         t.choose(game, 'Strategic Action')
         t.choose(game, 'Done')  // dennis: allocate 3 tokens
         t.choose(game, 'Skip')  // dennis skips influence-for-tokens
-        t.choose(game, 'Pass')  // micah declines secondary
 
         // Micah plays action card - Mining Initiative
         // (only 1 action card so card selection auto-resolves)
@@ -671,7 +666,6 @@ describe('Xxcha Kingdom', () => {
         t.choose(game, 'Strategic Action')
         t.choose(game, 'Done')  // dennis: allocate 3 tokens
         t.choose(game, 'Skip')  // dennis skips influence-for-tokens
-        t.choose(game, 'Pass')  // micah declines secondary
 
         // Micah: tactical action — activate system 26 (where Xxcha has a cruiser)
         t.choose(game, 'Tactical Action')

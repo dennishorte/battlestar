@@ -172,7 +172,6 @@ describe('Naalu Collective', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')         // allocate tokens
       t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
-      t.choose(game, 'Pass')         // micah declines leadership secondary
 
       // Micah (Hacan) takes tactical action — activates system 27
       t.choose(game, 'Tactical Action')
@@ -224,7 +223,6 @@ describe('Naalu Collective', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')         // allocate tokens
       t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
-      t.choose(game, 'Pass')         // micah declines leadership secondary
 
       // Micah activates system 27
       t.choose(game, 'Tactical Action')
@@ -276,7 +274,6 @@ describe('Naalu Collective', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')         // allocate tokens
       t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
-      t.choose(game, 'Pass')         // micah declines leadership secondary
 
       // Micah activates system 27 — no Z'eu prompt expected (agent exhausted)
       t.choose(game, 'Tactical Action')
@@ -476,7 +473,7 @@ describe('Naalu Collective', () => {
       // Players must use their strategy card before they can pass
       t.choose(game, 'Strategic Action')  // Dennis uses leadership (goes first!)
       t.choose(game, 'Done')              // allocate tokens
-      t.choose(game, 'Pass')              // Micah declines secondary
+      t.choose(game, 'Pass')              // Micah declines leadership secondary (Naalu 3I)
       t.choose(game, 'Strategic Action')  // Micah uses diplomacy (goes second)
       t.choose(game, 'naalu-home')        // Micah diplomacy target
       t.choose(game, 'Pass')              // Dennis declines secondary
@@ -514,7 +511,7 @@ describe('Naalu Collective', () => {
       // Play through action phase
       t.choose(game, 'Strategic Action')  // Dennis uses leadership
       t.choose(game, 'Done')              // allocate tokens
-      t.choose(game, 'Pass')              // Micah declines secondary
+      t.choose(game, 'Pass')              // Micah declines leadership secondary (Naalu 3I)
       t.choose(game, 'Strategic Action')  // Micah uses diplomacy
       t.choose(game, 'naalu-home')
       t.choose(game, 'Pass')              // Dennis declines secondary
@@ -568,7 +565,6 @@ describe('Naalu Collective', () => {
         t.choose(game, 'Strategic Action')
         t.choose(game, 'Done')         // allocate tokens
         t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
-        t.choose(game, 'Pass')         // micah declines leadership secondary
 
         // Micah activates system 27, which has Naalu's fighter
         t.choose(game, 'Tactical Action')
@@ -614,7 +610,6 @@ describe('Naalu Collective', () => {
         t.choose(game, 'Strategic Action')
         t.choose(game, 'Done')         // allocate tokens
         t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
-        t.choose(game, 'Pass')         // micah declines leadership secondary
 
         // Micah activates system 27, which has Naalu's fighter
         t.choose(game, 'Tactical Action')

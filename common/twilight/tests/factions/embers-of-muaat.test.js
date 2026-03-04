@@ -155,8 +155,6 @@ describe('Embers of Muaat', () => {
       // Dennis uses leadership (primary: gain 3 command tokens)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      // Micah is prompted for leadership secondary
-      t.choose(game, 'Use Secondary')
 
       // Micah spent 1 strategy token. But we care about Dennis (Muaat).
       // Micah goes next: micah uses diplomacy
@@ -194,8 +192,6 @@ describe('Embers of Muaat', () => {
       // Dennis uses leadership (primary)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      // Micah uses leadership secondary
-      t.choose(game, 'Use Secondary')
 
       // Micah uses diplomacy (primary)
       t.choose(game, 'Strategic Action')

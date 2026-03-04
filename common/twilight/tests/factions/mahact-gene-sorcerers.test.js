@@ -17,8 +17,6 @@ function playToAgenda(game) {
   if (t.currentChoices(game).includes('Skip')) {
     t.choose(game, 'Skip')
   }
-  // Micah declines leadership secondary
-  t.choose(game, 'Pass')
   // Micah uses diplomacy (strategic action, chooses system for primary)
   t.choose(game, 'Strategic Action')
   t.choose(game, 'hacan-home')
@@ -232,8 +230,6 @@ describe('Mahact Gene-Sorcerers', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Mahact, 3I)
-      // Micah uses leadership secondary (spends strategy token)
-      t.choose(game, 'Use Secondary')
 
       // Micah goes next: uses diplomacy (primary)
       t.choose(game, 'Strategic Action')
@@ -271,7 +267,6 @@ describe('Mahact Gene-Sorcerers', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Mahact, 3I)
-      t.choose(game, 'Use Secondary')  // micah uses leadership secondary
 
       // Micah uses diplomacy
       t.choose(game, 'Strategic Action')
@@ -307,7 +302,6 @@ describe('Mahact Gene-Sorcerers', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Mahact, 3I)
-      t.choose(game, 'Use Secondary')  // micah uses leadership secondary
 
       // Micah uses diplomacy
       t.choose(game, 'Strategic Action')
@@ -339,7 +333,6 @@ describe('Mahact Gene-Sorcerers', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Mahact, 3I)
-      t.choose(game, 'Use Secondary')  // micah uses leadership secondary
 
       // Micah uses diplomacy
       t.choose(game, 'Strategic Action')
@@ -502,8 +495,6 @@ describe('Mahact Gene-Sorcerers', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Mahact, 3I)
-      // Micah declines leadership secondary
-      t.choose(game, 'Pass')
 
       // Micah activates system 27 (where Mahact mech is on new-albion)
       t.choose(game, 'Tactical Action')
@@ -554,7 +545,7 @@ describe('Mahact Gene-Sorcerers', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Mahact, 3I)
-      t.choose(game, 'Pass')
+      // micah: leadership secondary auto-passes (Hacan 2I)
 
       // Micah activates system 27
       t.choose(game, 'Tactical Action')
@@ -756,7 +747,7 @@ describe('Mahact Gene-Sorcerers', () => {
         t.choose(game, 'Strategic Action')
         t.choose(game, 'Done')  // allocate tokens
         t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Mahact, 3I)
-        t.choose(game, 'Pass')  // micah declines
+        // micah: leadership secondary auto-passes (Hacan 2I)
 
         // Micah attacks system 27 where Dennis has infantry on new-albion
         t.choose(game, 'Tactical Action')

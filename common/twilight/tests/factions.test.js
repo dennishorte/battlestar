@@ -43,7 +43,6 @@ describe('Factions', () => {
       // Both use strategy cards then pass
       t.choose(game, 'Strategic Action')  // dennis: leadership
       t.choose(game, 'Done')             // allocate tokens
-      t.choose(game, 'Pass')             // micah declines leadership secondary
       t.choose(game, 'Strategic Action')  // micah: diplomacy (needs system choice)
       t.choose(game, 'hacan-home')        // micah picks system for diplomacy
       t.choose(game, 'Pass')             // dennis declines diplomacy secondary

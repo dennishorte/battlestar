@@ -13,7 +13,6 @@ function playThroughActionPhase(game) {
   if (t.currentChoices(game).includes('Skip')) {
     t.choose(game, 'Skip')
   }
-  t.choose(game, 'Pass')             // micah declines secondary
   t.choose(game, 'Strategic Action')  // micah: diplomacy
   t.choose(game, 'hacan-home')        // micah picks system
   t.choose(game, 'Pass')             // dennis declines secondary
@@ -91,7 +90,6 @@ describe('Relic Abilities', () => {
       // Micah goes first (Leadership, initiative 1)
       t.choose(game, 'Strategic Action')  // Micah uses Leadership
       t.choose(game, 'Done')             // micah: allocate 3 tokens
-      t.choose(game, 'Pass')  // Dennis declines free Leadership secondary
 
       // Dennis's turn — uses Imperial (draws secret, no Mecatol)
       t.choose(game, 'Strategic Action')
@@ -122,7 +120,6 @@ describe('Relic Abilities', () => {
       // Micah goes first (Leadership, initiative 1)
       t.choose(game, 'Strategic Action')  // Micah uses Leadership
       t.choose(game, 'Done')             // micah: allocate 3 tokens
-      t.choose(game, 'Pass')  // Dennis declines free Leadership secondary
 
       // Dennis's turn — uses Imperial
       t.choose(game, 'Strategic Action')

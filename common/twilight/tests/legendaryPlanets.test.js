@@ -32,7 +32,6 @@ describe('Legendary Planets', () => {
       // Dennis uses Strategic Action (leadership)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass')  // micah declines secondary
 
       // Legendary planet ability offered at end of turn
       t.choose(game, 'Imperial Arms Vault')
@@ -67,7 +66,7 @@ describe('Legendary Planets', () => {
 
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Pass')
+      // micah: leadership secondary auto-passes (Hacan 2I)
 
       t.choose(game, 'Imperial Arms Vault')
       t.choose(game, 'Draw 1 Action Card')
@@ -103,7 +102,7 @@ describe('Legendary Planets', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Primor 1I = 3I)
-      t.choose(game, 'Pass')
+      // micah: leadership secondary auto-passes (Hacan 2I)
 
       t.choose(game, 'The Atrament')
 
@@ -140,7 +139,7 @@ describe('Legendary Planets', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Mallice 3I = 5I)
-      t.choose(game, 'Pass')
+      // micah: leadership secondary auto-passes (Hacan 2I)
 
       t.choose(game, 'Exterrix Headquarters')
       t.choose(game, 'Gain 2 Trade Goods')
@@ -171,7 +170,7 @@ describe('Legendary Planets', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Mallice 3I = 5I)
-      t.choose(game, 'Pass')
+      // micah: leadership secondary auto-passes (Hacan 2I)
 
       t.choose(game, 'Exterrix Headquarters')
       t.choose(game, 'Convert Commodities')
@@ -208,7 +207,7 @@ describe('Legendary Planets', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Mirage 2I = 4I)
-      t.choose(game, 'Pass')
+      // micah: leadership secondary auto-passes (Hacan 2I)
 
       t.choose(game, 'Mirage Flight Academy')
 
@@ -245,7 +244,6 @@ describe('Legendary Planets', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Primor 1I = 3I)
-      t.choose(game, 'Pass')  // micah declines secondary
 
       // Use The Atrament
       t.choose(game, 'The Atrament')
@@ -290,7 +288,7 @@ describe('Legendary Planets', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Mallice 3I = 5I)
-      t.choose(game, 'Pass')
+      // micah: leadership secondary auto-passes (Hacan 2I)
 
       // Use Exterrix Headquarters
       t.choose(game, 'Exterrix Headquarters')

@@ -654,6 +654,61 @@ module.exports = function(Twilight) {
         }
       }
 
+      // Leadership: combine "Use Secondary / Pass" with influence spending into one prompt
+      if (cardId === 'leadership') {
+        const totalInfluence = player.getTotalInfluence()
+        const maxTokens = Math.floor(totalInfluence / 3)
+
+        // Auto-resolve when player has insufficient influence (< 3)
+        if (maxTokens === 0) {
+          this.log.add({
+            template: '{player} has insufficient influence for {secondary}',
+            args: { player, secondary: secondaryAvailable },
+          })
+          // Acquiescence: return PN to Winnu even when auto-resolving
+          this.factionAbilities.returnAcquiescence(player, activePlayer)
+          continue
+        }
+
+        const choices = ['Pass']
+        for (let i = 1; i <= maxTokens; i++) {
+          choices.push(`${i} token${i > 1 ? 's' : ''} (${i * 3} influence)`)
+        }
+        const selection = this.actions.choose(player, choices, {
+          title: 'Spend Influence for Command Tokens (free, 1 per 3 influence)',
+        })
+
+        if (selection[0] !== 'Pass') {
+          const tokenCount = parseInt(selection[0])
+          const influenceCost = tokenCount * 3
+          this._payInfluence(player, influenceCost)
+
+          this.log.add({
+            template: '{player} spends {influence} influence to gain {tokens} command token(s)',
+            args: { player, influence: influenceCost, tokens: tokenCount },
+          })
+
+          const allocSelection = this.actions.choose(player, ['Done'], {
+            title: `Allocate Command Tokens (+${tokenCount})`,
+            allowsAction: 'redistribute-tokens',
+          })
+          if (allocSelection.action === 'redistribute-tokens') {
+            player.setCommandTokens(allocSelection)
+          }
+          else {
+            player.commandTokens.tactics += tokenCount
+          }
+        }
+        else {
+          this.log.add({
+            template: '{player} declines {secondary}',
+            args: { player, secondary: secondaryAvailable },
+            classes: ['player-action'],
+          })
+        }
+        continue
+      }
+
       const costLabel = isFree ? 'free'
         : cardId === 'technology' ? 'costs 1 strategy token + 4 resources'
           : 'costs 1 strategy token'
@@ -703,6 +758,7 @@ module.exports = function(Twilight) {
     switch (cardId) {
       case 'leadership':
       // Rule 52.3: Spend influence for 1 token per 3 influence (free, no strategy token cost)
+      // (Combined into single prompt by secondary framework — see _resolveSecondaries)
         this._offerInfluenceForTokens(player)
         break
       case 'diplomacy':

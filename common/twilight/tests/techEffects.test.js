@@ -23,7 +23,6 @@ function getPlanets(systemId) {
 function playThroughActionPhase(game) {
   t.choose(game, 'Strategic Action')  // dennis: leadership
   t.choose(game, 'Done')             // dennis: allocate 3 tokens
-  t.choose(game, 'Pass')             // micah declines secondary
   t.choose(game, 'Strategic Action')  // micah: diplomacy
   t.choose(game, 'hacan-home')        // micah picks system
   t.choose(game, 'Pass')             // dennis declines secondary
@@ -123,7 +122,6 @@ describe('Sarween Tools', () => {
     // Dennis uses strategic action first (leadership = initiative 1)
     t.choose(game, 'Strategic Action')  // dennis: leadership
     t.choose(game, 'Done')              // dennis: allocate 3 tokens
-    t.choose(game, 'Pass')              // micah declines secondary
 
     // Micah takes tactical action
     t.choose(game, 'Tactical Action')
@@ -468,7 +466,6 @@ describe('Magen Defense Grid', () => {
     // Dennis uses leadership first (initiative 1)
     t.choose(game, 'Strategic Action')
     t.choose(game, 'Done')              // dennis: allocate 3 tokens
-    t.choose(game, 'Pass')  // micah declines secondary
 
     // Micah takes a tactical action, activating arborec-home (where dennis has structures)
     t.choose(game, 'Tactical Action')
