@@ -733,13 +733,14 @@ describe('Strategic Actions', () => {
         t.choose(game, 'Done')  // dennis: allocate 3 tokens
         // Xxcha has 4 influence — can buy 1 token (3 influence)
         t.choose(game, '1 token (3 influence)')
+        t.choose(game, 'archon-ren (3)')  // exhaust archon-ren (3I >= 3I needed)
         t.choose(game, 'Done')  // dennis: allocate purchased token
 
         const dennis = game.players.byName('dennis')
         // 3 (start) + 3 (leadership) + 1 (influence) = 7
         expect(dennis.commandTokens.tactics).toBe(7)
-        // Both planets exhausted to pay 3 influence (1I + 3I, cheapest first)
-        expect(dennis.getTotalInfluence()).toBe(0)
+        // Only archon-ren exhausted (3I), archon-tau (1I) still ready
+        expect(dennis.getTotalInfluence()).toBe(1)
       })
 
       test('primary: can skip influence spending', () => {
@@ -784,6 +785,7 @@ describe('Strategic Actions', () => {
         // Dennis (Hacan, 2I) — leadership secondary auto-passes (not enough for tokens)
         // Micah (Xxcha, 4I) — prompted for influence spending
         t.choose(game, '1 token (3 influence)')
+        t.choose(game, 'archon-ren (3)')  // micah: exhaust archon-ren (3I >= 3I needed)
         t.choose(game, 'Done')  // micah: allocate purchased token
 
         const micah = game.players.byName('micah')
@@ -791,8 +793,8 @@ describe('Strategic Actions', () => {
         expect(micah.commandTokens.strategy).toBe(2)
         // 3 (start) + 1 (influence) = 4
         expect(micah.commandTokens.tactics).toBe(4)
-        // Both planets exhausted to pay 3 influence (1I + 3I, cheapest first)
-        expect(micah.getTotalInfluence()).toBe(0)
+        // Only archon-ren exhausted (3I), archon-tau (1I) still ready
+        expect(micah.getTotalInfluence()).toBe(1)
       })
     })
 
