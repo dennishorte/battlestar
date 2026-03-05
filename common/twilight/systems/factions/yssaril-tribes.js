@@ -371,8 +371,10 @@ module.exports = {
       player.actionCards.push(bonus)
 
       ctx.log.add({
-        template: '{player} draws 1 extra card (Scheming)',
-        args: { player },
+        template: '{player} draws 1 extra card (Scheming): {card}',
+        args: { player, card: bonus.name },
+        visibility: [player.name],
+        redacted: '{player} draws 1 extra card (Scheming)',
       })
     }
 
@@ -387,7 +389,15 @@ module.exports = {
     })
 
     const cardId = selection[0]
+    const discarded = cards.find(c => c.id === cardId)
     player.actionCards = player.actionCards.filter(c => c.id !== cardId)
+
+    ctx.log.add({
+      template: '{player} discards {card} (Scheming)',
+      args: { player, card: discarded?.name || cardId },
+      visibility: [player.name],
+      redacted: '{player} discards 1 action card (Scheming)',
+    })
   },
 
   // Transparasteel Plating: During your turn of the action phase, players
