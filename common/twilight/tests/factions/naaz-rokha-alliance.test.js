@@ -285,7 +285,7 @@ describe('Naaz-Rokha Alliance', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses Leadership (strategic action) so he can pass later
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Naaz-Rokha, 3I)
       t.choose(game, 'Pass')  // micah declines leadership secondary (Hacan 2I + Vefut II 2I = 4I)
@@ -348,7 +348,7 @@ describe('Naaz-Rokha Alliance', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses strategy card first
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Naaz-Rokha, 3I)
       t.choose(game, 'Pass')  // micah declines leadership secondary (Hacan 2I + Vefut II 2I = 4I)

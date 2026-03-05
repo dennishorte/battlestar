@@ -36,18 +36,44 @@ describe('Trade System', () => {
       expect(micah.commodities).toBe(6)
     })
 
-    test('Trade strategy card replenishes all player commodities', () => {
+    test('Trade primary lets active player choose who gets free secondary', () => {
       const game = t.fixture()
       game.run()
       pickStrategyCards(game, 'trade', 'imperial')
 
       // Dennis (trade=5) goes first
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.trade')
+
+      // Dennis chooses micah for free secondary (only other player, loop auto-exits)
+      t.choose(game, 'micah')
+
+      // Micah accepts free secondary
+      t.choose(game, 'Use Secondary')
 
       const dennis = game.players.byName('dennis')
       const micah = game.players.byName('micah')
-      expect(dennis.commodities).toBe(4)  // Sol max
-      expect(micah.commodities).toBe(6)   // Hacan max
+      expect(dennis.commodities).toBe(4)  // Sol max (primary)
+      expect(micah.commodities).toBe(6)   // Hacan max (free secondary)
+      expect(micah.commandTokens.strategy).toBe(2)  // no token spent (free)
+    })
+
+    test('unchosen players must spend strategy token for Trade secondary', () => {
+      // Use two non-Hacan factions (Hacan always gets free Trade secondary)
+      const game = t.fixture({ factions: ['federation-of-sol', 'sardakk-norr'] })
+      game.run()
+      pickStrategyCards(game, 'trade', 'imperial')
+
+      t.choose(game, 'Strategic Action.trade')
+
+      // Dennis chooses nobody for free secondary
+      t.choose(game, 'Done')
+
+      // Micah uses secondary — costs strategy token
+      t.choose(game, 'Use Secondary')
+
+      const micah = game.players.byName('micah')
+      expect(micah.commodities).toBe(3)  // Sardakk N'orr max commodities
+      expect(micah.commandTokens.strategy).toBe(1)  // spent 1 of 2
     })
   })
 
@@ -57,7 +83,7 @@ describe('Trade System', () => {
       game.run()
       pickStrategyCards(game, 'trade', 'imperial')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.trade')
 
       const dennis = game.players.byName('dennis')
       expect(dennis.tradeGoods).toBe(3)
@@ -181,7 +207,7 @@ describe('Trade System', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis takes leadership
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
       // Transaction window: dennis chooses micah
@@ -226,7 +252,7 @@ describe('Trade System', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
       // Dennis offers 2 commodities
@@ -265,7 +291,7 @@ describe('Trade System', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       // micah: leadership secondary auto-passes (Hacan 2I)
 
@@ -305,7 +331,7 @@ describe('Trade System', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       // micah: leadership secondary auto-passes (Hacan 2I)
 
@@ -321,7 +347,7 @@ describe('Trade System', () => {
       // In 2p game, no more partners → loop auto-exits.
 
       // Micah: strategic action (new turn = fresh tracking)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'hacan-home')
       // dennis: diplomacy secondary auto-skipped (no exhausted planets)
 
@@ -345,11 +371,11 @@ describe('Trade System', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis takes leadership - no transaction prompt should appear
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
       // If transaction prompt appeared, this next choose would fail
-      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy
       t.choose(game, 'hacan-home')
       // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
@@ -379,7 +405,7 @@ describe('Trade System', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       // micah: leadership secondary auto-passes (Hacan 2I)
 

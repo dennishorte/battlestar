@@ -86,7 +86,7 @@ describe('Council Keleres', () => {
       t.choose(game, 'archon-tau (1)')  // exhaust 1 planet to pay 1 influence
 
       // Dennis does strategic action
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Keleres/Xxcha, 4I remaining)
 
@@ -194,7 +194,7 @@ describe('Council Keleres', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: Strategic Action (leadership)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
       // Micah's turn starts — Keleres agent triggers
@@ -285,7 +285,7 @@ describe('Council Keleres', () => {
 
       // Dennis plays an action card with ACTION timing
       // (only 1 action card, so card selection is auto-responded)
-      t.choose(game, 'Play Action Card')
+      t.choose(game, 'Action Card.Mining Initiative')
 
       // Choose planet for mining-initiative effect (2 planets, not auto-selected)
       t.choose(game, 'moll-primus')
@@ -315,7 +315,7 @@ describe('Council Keleres', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Play Action Card')
+      t.choose(game, 'Action Card.Mining Initiative')
       t.choose(game, 'moll-primus')
 
       // Decline the offer
@@ -513,10 +513,10 @@ describe('Council Keleres', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis (leadership=1) goes first
-      t.choose(game, 'Strategic Action')  // Dennis uses leadership
+      t.choose(game, 'Strategic Action.leadership')  // Dennis uses leadership
       t.choose(game, 'Done')              // allocate tokens
       // Micah (diplomacy=2) goes next
-      t.choose(game, 'Strategic Action')  // Micah uses diplomacy
+      t.choose(game, 'Strategic Action.diplomacy')  // Micah uses diplomacy
       t.choose(game, 'sol-home')          // Micah diplomacy target
       // Dennis: diplomacy secondary auto-skipped (no exhausted planets)
       // Both pass action phase
@@ -745,7 +745,7 @@ describe('Council Keleres', () => {
         pickStrategyCards(game, 'technology', 'imperial')
 
         // Dennis uses Technology primary: research iihq-modernization
-        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Strategic Action.technology')
         t.choose(game, 'iihq-modernization')
 
         // Verify Custodia Vigilia planet granted
@@ -783,7 +783,7 @@ describe('Council Keleres', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         // Dennis does Strategic Action (leadership)
-        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Strategic Action.leadership')
         t.choose(game, 'Done')  // allocate tokens
 
         // After Dennis's action, transaction window appears

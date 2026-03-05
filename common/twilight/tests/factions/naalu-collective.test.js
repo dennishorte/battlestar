@@ -112,7 +112,7 @@ describe('Naalu Collective', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Micah (Naalu, telepathic=0) goes first — use diplomacy
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'naalu-home')   // diplomacy: choose system
       // dennis: diplomacy secondary auto-skipped (no exhausted planets)
 
@@ -169,7 +169,7 @@ describe('Naalu Collective', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis (Naalu, telepathic=0) goes first — use leadership
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')         // allocate tokens
       t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
 
@@ -220,7 +220,7 @@ describe('Naalu Collective', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis (Naalu) goes first — use leadership
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')         // allocate tokens
       t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
 
@@ -271,7 +271,7 @@ describe('Naalu Collective', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis (Naalu) goes first — use leadership
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')         // allocate tokens
       t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
 
@@ -471,10 +471,10 @@ describe('Naalu Collective', () => {
 
       // Action phase: Dennis (initiative 0 from GoP) goes first
       // Players must use their strategy card before they can pass
-      t.choose(game, 'Strategic Action')  // Dennis uses leadership (goes first!)
+      t.choose(game, 'Strategic Action.leadership')  // Dennis uses leadership (goes first!)
       t.choose(game, 'Done')              // allocate tokens
       t.choose(game, 'Pass')              // Micah declines leadership secondary (Naalu 3I)
-      t.choose(game, 'Strategic Action')  // Micah uses diplomacy (goes second)
+      t.choose(game, 'Strategic Action.diplomacy')  // Micah uses diplomacy (goes second)
       t.choose(game, 'naalu-home')        // Micah diplomacy target
       // Dennis: diplomacy secondary auto-skipped (no exhausted planets)
       // Both pass
@@ -509,10 +509,10 @@ describe('Naalu Collective', () => {
       t.choose(game, 'Play Gift of Prescience')
 
       // Play through action phase
-      t.choose(game, 'Strategic Action')  // Dennis uses leadership
+      t.choose(game, 'Strategic Action.leadership')  // Dennis uses leadership
       t.choose(game, 'Done')              // allocate tokens
       t.choose(game, 'Pass')              // Micah declines leadership secondary (Naalu 3I)
-      t.choose(game, 'Strategic Action')  // Micah uses diplomacy
+      t.choose(game, 'Strategic Action.diplomacy')  // Micah uses diplomacy
       t.choose(game, 'naalu-home')
       // Dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
@@ -562,7 +562,7 @@ describe('Naalu Collective', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         // Dennis (Naalu, telepathic=0) goes first — use leadership
-        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Strategic Action.leadership')
         t.choose(game, 'Done')         // allocate tokens
         t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
 
@@ -607,7 +607,7 @@ describe('Naalu Collective', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         // Dennis (Naalu) goes first — use leadership
-        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Strategic Action.leadership')
         t.choose(game, 'Done')         // allocate tokens
         t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Naalu, 3I)
 

@@ -16,9 +16,9 @@ function findAdjacent(systemId) {
 // Helper: play through action phase with leadership+diplomacy
 // Both use strategy cards then pass. Handles diplomacy system choice + secondaries.
 function playThroughActionPhase(game) {
-  t.choose(game, 'Strategic Action')  // dennis: leadership (auto)
+  t.choose(game, 'Strategic Action.leadership')  // dennis: leadership (auto)
   t.choose(game, 'Done')             // dennis: allocate 3 tokens
-  t.choose(game, 'Strategic Action')  // micah: diplomacy (needs system choice)
+  t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy (needs system choice)
   t.choose(game, 'hacan-home')        // micah picks system
   // dennis: diplomacy secondary auto-skipped (no exhausted planets)
   t.choose(game, 'Pass')              // dennis passes
@@ -54,10 +54,10 @@ describe('Status Phase', () => {
       expect(game.state.systems[target].commandTokens).toContain('dennis')
 
       // Complete action phase
-      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy
       t.choose(game, 'hacan-home')        // micah picks system
       // dennis: diplomacy secondary auto-skipped (no exhausted planets)
-      t.choose(game, 'Strategic Action')  // dennis: leadership (auto)
+      t.choose(game, 'Strategic Action.leadership')  // dennis: leadership (auto)
       t.choose(game, 'Done')              // dennis: allocate 3 tokens
       t.choose(game, 'Pass')              // micah passes
       t.choose(game, 'Pass')              // dennis passes
@@ -92,9 +92,9 @@ describe('Status Phase', () => {
       expect(game.state.planets['jord'].exhausted).toBe(true)
 
       // Both use strategy cards then pass
-      t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Strategic Action.leadership')  // dennis: leadership
       t.choose(game, 'Done')             // dennis: allocate 3 tokens
-      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy
       t.choose(game, 'hacan-home')        // micah picks system
       // Dennis has exhausted jord — selects Pass to keep it exhausted for status phase test
       t.choose(game, 'Pass')
@@ -144,10 +144,10 @@ describe('Status Phase', () => {
       })
 
       // Complete action phase
-      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy
       t.choose(game, 'hacan-home')        // micah picks system
       // dennis: diplomacy secondary auto-skipped (no exhausted planets)
-      t.choose(game, 'Strategic Action')  // dennis: leadership (auto)
+      t.choose(game, 'Strategic Action.leadership')  // dennis: leadership (auto)
       t.choose(game, 'Done')              // dennis: allocate 3 tokens
       t.choose(game, 'Pass')              // micah passes
       t.choose(game, 'Pass')              // dennis passes

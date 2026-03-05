@@ -153,7 +153,7 @@ describe('Argent Flight', () => {
       t.choose(game, 'diplomacy')
 
       // Dennis uses strategic action (leadership), then it's micah's turn
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Argent, 3I)
 
@@ -238,7 +238,7 @@ describe('Argent Flight', () => {
       t.choose(game, 'diplomacy')
 
       // Dennis uses strategy card (leadership), then it's micah's turn
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Argent, 3I)
 
@@ -693,7 +693,7 @@ describe('Argent Flight', () => {
         t.choose(game, 'diplomacy')
 
         // Dennis does a strategic action
-        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Strategic Action.leadership')
         t.choose(game, 'Done')  // allocate tokens
         t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Argent, 3I)
         // micah: leadership secondary auto-passes (Hacan 2I)

@@ -58,7 +58,7 @@ describe('Emirates of Hacan', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       // micah: leadership secondary auto-passes (Sol 2I)
 
@@ -75,7 +75,7 @@ describe('Emirates of Hacan', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       // micah: leadership secondary auto-passes (Hacan 2I)
 
@@ -89,8 +89,10 @@ describe('Emirates of Hacan', () => {
       game.run()
       pickStrategyCards(game, 'trade', 'imperial')
 
-      t.choose(game, 'Strategic Action')
-
+      t.choose(game, 'Strategic Action.trade')
+      // Dennis doesn't choose anyone for free secondary
+      t.choose(game, 'Done')
+      // Hacan still gets free secondary via Masters of Trade
       t.choose(game, 'Use Secondary')
 
       const micah = game.players.byName('micah')
@@ -103,7 +105,9 @@ describe('Emirates of Hacan', () => {
       game.run()
       pickStrategyCards(game, 'trade', 'imperial')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.trade')
+      // Dennis (Hacan) doesn't choose anyone for free secondary
+      t.choose(game, 'Done')
 
       t.choose(game, 'Use Secondary')
 
@@ -140,7 +144,7 @@ describe('Emirates of Hacan', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       // micah: leadership secondary auto-passes (Sol 2I)
 
@@ -246,12 +250,12 @@ describe('Emirates of Hacan', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: strategic action (leadership) — gains 3 tokens
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip Transaction')  // dennis skips transaction after leadership
 
       // Micah: strategic action (diplomacy)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'sol-home')
       // Dennis has exhausted jord — Pass to decline diplomacy secondary
       t.choose(game, 'Pass')
@@ -317,7 +321,7 @@ describe('Emirates of Hacan', () => {
       expect(dennis.isHeroPurged()).toBe(true)
 
       // Micah: Strategic Action (must use strategy card before passing)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'sol-home')  // diplomacy: choose home system
       // Dennis has exhausted planets — Pass to keep them exhausted for hero production test
       t.choose(game, 'Pass')
@@ -371,7 +375,7 @@ describe('Emirates of Hacan', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis takes leadership strategic action
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
       // Transaction window: Dennis offers planet arretze to micah

@@ -784,7 +784,7 @@ describe('Yin Brotherhood', () => {
         pickStrategyCards(game, 'technology', 'imperial')
 
         // Dennis uses Technology primary: research Yin Ascendant (yellow + green prereqs)
-        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Strategic Action.technology')
         t.choose(game, 'yin-ascendant')
 
         // Yin Ascendant triggers: random alliance granted

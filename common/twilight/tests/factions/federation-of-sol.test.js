@@ -90,9 +90,9 @@ describe('Federation of Sol', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Play through action phase
-      t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Strategic Action.leadership')  // dennis: leadership
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy
       t.choose(game, 'hacan-home')
       // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
@@ -194,7 +194,7 @@ describe('Federation of Sol', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses leadership
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       // micah: leadership secondary auto-passes (Hacan 2I)
 
@@ -257,7 +257,7 @@ describe('Federation of Sol', () => {
       expect(game.state.systems['27'].commandTokens).toContain('dennis')
 
       // Micah takes a turn
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'hacan-home')
       // dennis: diplomacy secondary auto-skipped (no exhausted planets)
 

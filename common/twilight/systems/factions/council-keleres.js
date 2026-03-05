@@ -367,18 +367,29 @@ module.exports = {
 
     const choices = ['Tactical Action', 'Component Action']
     if (!player.hasUsedStrategyCard()) {
-      choices.push('Strategic Action')
+      const unusedCards = player.strategyCards.filter(c => !c.used)
+      choices.push({
+        title: 'Strategic Action',
+        choices: unusedCards.map(c => ({ title: c.id })),
+        min: 0,
+      })
     }
     const bonusActionCards = (player.actionCards || []).filter(c => c.timing === 'action')
     if (bonusActionCards.length > 0) {
-      choices.push('Play Action Card')
+      choices.push({
+        title: 'Action Card',
+        choices: bonusActionCards.map(c => ({ title: c.name })),
+        min: 0,
+      })
     }
     choices.push('Decline')
 
     const selection = ctx.actions.choose(player, choices, {
       title: 'Suffi An: Perform an additional action?',
     })
-    const bonusAction = selection[0]
+    const chosen = selection[0]
+    const bonusAction = typeof chosen === 'string' ? chosen : chosen.title
+    const bonusArg = typeof chosen === 'string' ? null : chosen.selection?.[0]
 
     if (bonusAction === 'Decline') {
       return
@@ -396,13 +407,13 @@ module.exports = {
         ctx.game._tacticalAction(player)
         break
       case 'Strategic Action':
-        ctx.game._strategicAction(player)
+        ctx.game._strategicAction(player, bonusArg)
         break
       case 'Component Action':
         ctx.game._componentAction(player)
         break
-      case 'Play Action Card':
-        ctx.game._playActionCard(player)
+      case 'Action Card':
+        ctx.game._playActionCard(player, bonusArg)
         break
     }
 

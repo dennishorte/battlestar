@@ -27,7 +27,7 @@ function playToStatusPhase(game) {
   pickStrategyCards(game, 'leadership', 'diplomacy')
 
   // Dennis (leadership=1) goes first
-  t.choose(game, 'Strategic Action')  // dennis: leadership
+  t.choose(game, 'Strategic Action.leadership')  // dennis: leadership
   t.choose(game, 'Done')             // dennis: allocate 3 tokens
   // Skip influence-for-tokens prompt if it appears (when dennis has >= 3 influence)
   if (t.currentChoices(game).includes('Skip')) {
@@ -37,7 +37,7 @@ function playToStatusPhase(game) {
   if (t.currentChoices(game).includes('Pass') && !t.currentChoices(game).includes('Strategic Action')) {
     t.choose(game, 'Pass')
   }
-  t.choose(game, 'Strategic Action')  // micah: diplomacy
+  t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy
   t.choose(game, 'hacan-home')        // micah picks system
   // Dennis: diplomacy secondary — Pass if prompted (has exhausted planets), else auto-skipped
   const postDip = t.currentChoices(game)
@@ -530,11 +530,11 @@ describe('Secret Objectives — Status Phase', () => {
     pickStrategyCards(game, 'leadership', 'diplomacy')
 
     // Dennis uses leadership
-    t.choose(game, 'Strategic Action')
+    t.choose(game, 'Strategic Action.leadership')
     t.choose(game, 'Done')              // dennis: allocate 3 tokens
     t.choose(game, 'Skip')              // dennis skips influence-for-tokens (Sol 2I + Primor 1I = 3I)
     t.choose(game, 'Decline')           // dennis declines legendary planet ability
-    t.choose(game, 'Strategic Action')  // micah: diplomacy
+    t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy
     t.choose(game, 'hacan-home')        // micah picks system
     // dennis: diplomacy secondary auto-skipped (no exhausted planets)
     t.choose(game, 'Pass')              // dennis passes
@@ -922,9 +922,9 @@ describe('Secret Objectives — Action Phase', () => {
     pickStrategyCards(game, 'leadership', 'diplomacy')
 
     // Dennis (leadership=1) goes first
-    t.choose(game, 'Strategic Action')  // dennis: leadership
+    t.choose(game, 'Strategic Action.leadership')  // dennis: leadership
     t.choose(game, 'Done')              // dennis: allocate 3 tokens
-    t.choose(game, 'Strategic Action')  // micah: diplomacy
+    t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy
     t.choose(game, 'hacan-home')        // micah picks system
     // dennis: diplomacy secondary auto-skipped (no exhausted planets)
     t.choose(game, 'Pass')              // dennis passes first

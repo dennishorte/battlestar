@@ -263,8 +263,12 @@ describe("Vuil'raith Cabal", () => {
       game.run()
       pickStrategyCards(game, 'trade', 'imperial')
 
-      // Dennis uses Trade primary → everyone replenishes commodities
-      t.choose(game, 'Strategic Action')
+      // Dennis uses Trade primary
+      t.choose(game, 'Strategic Action.trade')
+      // Dennis chooses micah for free secondary
+      t.choose(game, 'micah')
+      // Micah accepts free secondary → replenishes commodities
+      t.choose(game, 'Use Secondary')
 
       // Agent fires for Micah's commodity replenish
       t.choose(game, 'Exhaust Stillness of Stars')
@@ -502,7 +506,7 @@ describe("Vuil'raith Cabal", () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: Strategic Action (leadership)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
 
       // Micah: tactical action to invade abyz in system 38
@@ -733,7 +737,7 @@ describe("Vuil'raith Cabal", () => {
         pickStrategyCards(game, 'technology', 'imperial')
 
         // Dennis uses Technology primary: research alraith-ix-ianovar
-        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Strategic Action.technology')
         t.choose(game, 'alraith-ix-ianovar')
 
         // Ingress token placement: system 41 is the only gravity rift in the 2p map
@@ -859,7 +863,7 @@ describe("Vuil'raith Cabal", () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses leadership (strategic action)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
 
       // Micah moves ships to cabal-home, establishing blockade
@@ -903,7 +907,7 @@ describe("Vuil'raith Cabal", () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
       // micah: leadership secondary auto-passes (Hacan 2I)
 
@@ -952,7 +956,7 @@ describe("Vuil'raith Cabal", () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses leadership, then transaction window
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
 
       // Dennis proposes transaction: return captured cruiser for 1 trade good
@@ -1001,7 +1005,7 @@ describe("Vuil'raith Cabal", () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
       // micah: leadership secondary auto-passes (Hacan 2I)
 

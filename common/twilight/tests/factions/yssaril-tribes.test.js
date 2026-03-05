@@ -74,7 +74,7 @@ describe('Yssaril Tribes', () => {
       game.run()
       pickStrategyCards(game, 'politics', 'imperial')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.politics')
       // Speaker auto-resolves to micah (dennis is current speaker)
 
       const cardToDiscard = game.players.byName('dennis').actionCards[0].id
@@ -112,11 +112,11 @@ describe('Yssaril Tribes', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Skip')         // dennis skips influence-for-tokens (Yssaril, 5I)
       // micah: leadership secondary auto-passes (Hacan 2I)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'hacan-home')
       // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
@@ -216,7 +216,7 @@ describe('Yssaril Tribes', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses strategic action first (must use strategy card before passing)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Yssaril, 5I)
 
@@ -542,7 +542,7 @@ describe('Yssaril Tribes', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         // Dennis uses strategic action (leadership)
-        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Strategic Action.leadership')
         t.choose(game, 'Done')  // dennis: allocate 3 tokens
         t.choose(game, 'Skip') // dennis skips influence-for-tokens (Yssaril, 5I)
 
@@ -576,7 +576,7 @@ describe('Yssaril Tribes', () => {
         pickStrategyCards(game, 'politics', 'imperial')
 
         // Dennis uses politics: speaker auto-resolves to micah (dennis is current speaker)
-        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Strategic Action.politics')
 
         // Scheming for Dennis: discard 1 (Dennis drew 2 + 1 extra = 3, discard 1 = 2)
         const dennisCards = game.players.byName('dennis').actionCards

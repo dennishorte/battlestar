@@ -21,9 +21,9 @@ function getPlanets(systemId) {
 
 // Play both players through action phase (leadership + diplomacy)
 function playThroughActionPhase(game) {
-  t.choose(game, 'Strategic Action')  // dennis: leadership
+  t.choose(game, 'Strategic Action.leadership')  // dennis: leadership
   t.choose(game, 'Done')             // dennis: allocate 3 tokens
-  t.choose(game, 'Strategic Action')  // micah: diplomacy
+  t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy
   t.choose(game, 'hacan-home')        // micah picks system
   // dennis: diplomacy secondary auto-skipped (no exhausted planets)
   t.choose(game, 'Pass')              // dennis passes
@@ -120,7 +120,7 @@ describe('Sarween Tools', () => {
 
     // Dennis passes, micah acts (diplomacy has higher initiative number, so leadership goes first)
     // Dennis uses strategic action first (leadership = initiative 1)
-    t.choose(game, 'Strategic Action')  // dennis: leadership
+    t.choose(game, 'Strategic Action.leadership')  // dennis: leadership
     t.choose(game, 'Done')              // dennis: allocate 3 tokens
 
     // Micah takes tactical action
@@ -464,7 +464,7 @@ describe('Magen Defense Grid', () => {
     pickStrategyCards(game, 'leadership', 'diplomacy')
 
     // Dennis uses leadership first (initiative 1)
-    t.choose(game, 'Strategic Action')
+    t.choose(game, 'Strategic Action.leadership')
     t.choose(game, 'Done')              // dennis: allocate 3 tokens
 
     // Micah takes a tactical action, activating arborec-home (where dennis has structures)

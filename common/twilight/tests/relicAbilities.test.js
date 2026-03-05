@@ -7,13 +7,13 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 
 // Play through action phase to reach status phase
 function playThroughActionPhase(game) {
-  t.choose(game, 'Strategic Action')  // dennis: leadership
+  t.choose(game, 'Strategic Action.leadership')  // dennis: leadership
   t.choose(game, 'Done')             // dennis: allocate 3 tokens
   // Skip influence-for-tokens prompt if it appears (when dennis has >= 3 influence)
   if (t.currentChoices(game).includes('Skip')) {
     t.choose(game, 'Skip')
   }
-  t.choose(game, 'Strategic Action')  // micah: diplomacy
+  t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy
   t.choose(game, 'hacan-home')        // micah picks system
   // dennis: diplomacy secondary auto-skipped (no exhausted planets)
   t.choose(game, 'Pass')              // dennis passes
@@ -88,11 +88,11 @@ describe('Relic Abilities', () => {
       pickStrategyCards(game, 'imperial', 'leadership')
 
       // Micah goes first (Leadership, initiative 1)
-      t.choose(game, 'Strategic Action')  // Micah uses Leadership
+      t.choose(game, 'Strategic Action.leadership')  // Micah uses Leadership
       t.choose(game, 'Done')             // micah: allocate 3 tokens
 
       // Dennis's turn — uses Imperial (draws secret, no Mecatol)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.imperial')
       // Micah: use Imperial secondary (costs 1 strategy token)
       t.choose(game, 'Use Secondary')
 
@@ -118,11 +118,11 @@ describe('Relic Abilities', () => {
       pickStrategyCards(game, 'imperial', 'leadership')
 
       // Micah goes first (Leadership, initiative 1)
-      t.choose(game, 'Strategic Action')  // Micah uses Leadership
+      t.choose(game, 'Strategic Action.leadership')  // Micah uses Leadership
       t.choose(game, 'Done')             // micah: allocate 3 tokens
 
       // Dennis's turn — uses Imperial
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.imperial')
       // Micah: use Imperial secondary
       t.choose(game, 'Use Secondary')
 
@@ -147,7 +147,7 @@ describe('Relic Abilities', () => {
       pickStrategyCards(game, 'technology', 'imperial')
 
       // Dennis uses Technology primary
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.technology')
       t.choose(game, 'sarween-tools')
 
       // Prophet's Tears: draw 1 action card
@@ -171,7 +171,7 @@ describe('Relic Abilities', () => {
       game.run()
       pickStrategyCards(game, 'technology', 'imperial')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.technology')
       t.choose(game, 'sarween-tools')
 
       // Decline Prophet's Tears
@@ -249,7 +249,7 @@ describe('Relic Abilities', () => {
       pickStrategyCards(game, 'trade', 'imperial')
 
       // Dennis uses Trade primary — replenishes commodities
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.trade')
 
       const dennis = game.players.byName('dennis')
       // Sol has 4 max commodities + 2 from Dynamis Core = 6
@@ -903,7 +903,7 @@ describe('Relic Abilities', () => {
       pickStrategyCards(game, 'technology', 'imperial')
 
       // Dennis uses Technology primary, gets Prophet's Tears draw
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.technology')
       t.choose(game, 'sarween-tools')
       t.choose(game, 'Draw 1 Action Card')
 
@@ -913,7 +913,7 @@ describe('Relic Abilities', () => {
       expect(game.state.exhaustedRelics['dennis']).toContain('the-prophets-tears')
 
       // Micah: Strategic Action (Imperial)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.imperial')
       // Dennis declines Imperial secondary
       t.choose(game, 'Pass')
 

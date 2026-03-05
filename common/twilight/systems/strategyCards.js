@@ -84,22 +84,37 @@ module.exports = function(Twilight) {
     // Replenish commodities for active player
     player.replenishCommodities()
 
-    // Replenish commodities for all other players
-    const otherPlayers = this.players.all().filter(p => p.name !== player.name)
-    for (const other of otherPlayers) {
-      other.replenishCommodities()
-    }
-
     this.log.add({
       template: '{player} gains 3 trade goods and replenishes commodities',
       args: { player },
     })
 
-    // Notify faction abilities about each player's commodity replenish
     this.factionAbilities.onCommoditiesReplenished(player)
-    for (const other of otherPlayers) {
-      this.factionAbilities.onCommoditiesReplenished(other)
+
+    // Choose any number of other players to get free secondary (replenish commodities)
+    const otherPlayers = this.players.all().filter(p =>
+      p.name !== player.name && !this._isEliminated(p.name)
+    )
+    const chosen = []
+    const remaining = [...otherPlayers]
+
+    while (remaining.length > 0) {
+      const choices = ['Done', ...remaining.map(p => p.name)]
+      const selection = this.actions.choose(player, choices, {
+        title: 'Choose players for free Trade secondary (replenish commodities)',
+      })
+
+      if (selection[0] === 'Done') {
+        break
+      }
+
+      const selectedName = selection[0]
+      chosen.push(selectedName)
+      remaining.splice(remaining.indexOf(remaining.find(p => p.name === selectedName)), 1)
     }
+
+    // Store chosen players so _resolveSecondaries marks them as free
+    this.state._tradeFreeSecondary = chosen
   }
 
 
@@ -623,9 +638,11 @@ module.exports = function(Twilight) {
 
       // Leadership secondary has no strategy token cost (Rule 52.2)
       // Hacan Masters of Trade: free Trade secondary (no strategy token cost)
+      // Trade primary: chosen players get free secondary
       let isFree = cardId === 'leadership'
       || (cardId === 'trade'
-      && this.factionAbilities.canSkipTradeSecondaryCost(player))
+      && (this.factionAbilities.canSkipTradeSecondaryCost(player)
+      || (this.state._tradeFreeSecondary || []).includes(player.name)))
 
       // Acquiescence (Winnu PN): free secondary when Winnu uses strategic action
       if (!isFree && this.factionAbilities.hasAcquiescence(player, activePlayer)) {

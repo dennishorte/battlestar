@@ -83,7 +83,7 @@ describe('Elimination', () => {
     expect(game.waiting.selectors[0].actor).toBe('dennis')
 
     // Dennis uses leadership
-    t.choose(game, 'Strategic Action')
+    t.choose(game, 'Strategic Action.leadership')
     // No secondary prompt for micah (eliminated)
     // Dennis should be prompted for next action (or pass)
     expect(game.waiting.selectors[0].actor).toBe('dennis')
