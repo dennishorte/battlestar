@@ -184,6 +184,10 @@ function getActionCard(id) {
   return actionCards.find(c => c.id === id)
 }
 
+function getActionCardByName(name) {
+  return actionCards.find(c => c.name === name)
+}
+
 function getAllActionCards() {
   return [...actionCards]
 }
@@ -191,5 +195,6 @@ function getAllActionCards() {
 module.exports = {
   buildActionDeck,
   getActionCard,
+  getActionCardByName,
   getAllActionCards,
 }

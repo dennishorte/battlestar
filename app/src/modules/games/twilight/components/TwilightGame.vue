@@ -93,6 +93,7 @@ import CommandTokensModal from './modals/CommandTokensModal.vue'
 import TechTreeModal from './modals/TechTreeModal.vue'
 
 // Selector option components
+import ActionCardChip from './ActionCardChip.vue'
 import AgendaChip from './AgendaChip.vue'
 import ObjectiveChip from './ObjectiveChip.vue'
 import StrategyCardChip from './StrategyCardChip.vue'
@@ -292,6 +293,15 @@ export default {
         return {
           component: StrategyCardChip,
           props: { cardId: name },
+        }
+      }
+
+      // Action cards (by ID like 'sabotage' or by name like 'Sabotage')
+      const actionCard = res.getActionCard(name) || res.getActionCardByName(name)
+      if (actionCard) {
+        return {
+          component: ActionCardChip,
+          props: { cardId: actionCard.id },
         }
       }
 
