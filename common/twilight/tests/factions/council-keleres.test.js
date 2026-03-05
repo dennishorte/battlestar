@@ -63,6 +63,7 @@ describe('Council Keleres', () => {
       // Dennis (Keleres) has laws-order
       // At start of turn, prompted to blank laws
       t.choose(game, 'Blank Laws')
+      t.choose(game, 'archon-tau (1)')  // exhaust 1 planet to pay 1 influence
 
       // Laws should be blanked during this turn
       expect(game.state.lawsBlankedByPlayer).toBe('dennis')
@@ -82,11 +83,12 @@ describe('Council Keleres', () => {
 
       // Dennis blanks laws
       t.choose(game, 'Blank Laws')
+      t.choose(game, 'archon-tau (1)')  // exhaust 1 planet to pay 1 influence
 
       // Dennis does strategic action
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Keleres/Xxcha, 5I)
+      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Keleres/Xxcha, 4I remaining)
 
       // Now micah's turn — law blanking should clear
       // Micah is not prompted for laws-order (not Keleres)

@@ -22,6 +22,7 @@
           <RedistributeTokens v-if="activeActionType === 'redistribute-tokens'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
           <AgendaVote v-if="activeActionType === 'agenda-vote'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
           <ResearchTech v-if="activeActionType === 'research-tech'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
+          <ExhaustPlanets v-if="activeActionType === 'exhaust-planets'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
 
           <div class="toolbar">
             <button class="btn btn-sm btn-outline-secondary" @click="openShipOverview">Units</button>
@@ -79,6 +80,7 @@ import AgendaVote from './actions/AgendaVote.vue'
 import MoveShips from './actions/MoveShips.vue'
 import ProduceUnits from './actions/ProduceUnits.vue'
 import RedistributeTokens from './actions/RedistributeTokens.vue'
+import ExhaustPlanets from './actions/ExhaustPlanets.vue'
 import ResearchTech from './actions/ResearchTech.vue'
 import TradeOffer from './actions/TradeOffer.vue'
 
@@ -126,6 +128,7 @@ export default {
     CombatDisplay,
     CommandTokensModal,
     DebugModal,
+    ExhaustPlanets,
     GalaxyMap,
     GameLogTwilight,
     GameMenu,
@@ -235,6 +238,9 @@ export default {
       }
       if (request.allowsAction === 'redistribute-tokens') {
         return 'redistribute-tokens'
+      }
+      if (title.includes('exhaust planets for') && !title.includes('votes')) {
+        return 'exhaust-planets'
       }
       if (title.includes('vote on') || title.includes('exhaust planets for votes') || title.includes('spend trade goods for extra votes')) {
         return 'agenda-vote'

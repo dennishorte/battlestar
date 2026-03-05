@@ -974,60 +974,119 @@ module.exports = function(Twilight) {
   }
 
   Twilight.prototype._payResources = function(player, cost) {
-  // Auto-exhaust planets to pay resource cost (cheapest first to conserve value)
-    let remaining = cost
+    if (cost <= 0) {
+      return
+    }
+
     const canSpendFlexibly = this.factionAbilities.canSpendFlexibly(player)
     const tgResourceValue = this.factionAbilities.getTradeGoodResourceValue(player)
     const readyPlanets = player.getReadyPlanets()
-      .map(pId => {
-        const planet = res.getPlanet(pId)
-        let resources = planet?.resources || 0
-        if (canSpendFlexibly) {
-          resources += (planet?.influence || 0)
-        }
-        return { id: pId, resources }
-      })
-      .sort((a, b) => a.resources - b.resources)
 
-    for (const planet of readyPlanets) {
-      if (remaining <= 0) {
-        break
+    const planetChoices = readyPlanets.map(pId => {
+      const planet = res.getPlanet(pId)
+      let resources = planet?.resources || 0
+      if (this.state.planets[pId]?.terraform) {
+        resources += 1
       }
-      this.state.planets[planet.id].exhausted = true
-      remaining -= planet.resources
+      const bonuses = this._getPlanetAttachmentBonuses(pId)
+      resources += bonuses.resources
+      if (canSpendFlexibly) {
+        resources += (planet?.influence || 0) + bonuses.influence
+      }
+      return `${pId} (${resources})`
+    })
+
+    const totalPlanetResources = planetChoices.reduce((sum, c) => sum + parseInt(c.match(/\((\d+)\)/)[1]), 0)
+
+    // Auto-resolve: 0-1 planets or must use all
+    if (readyPlanets.length <= 1 && totalPlanetResources >= cost) {
+      for (const pId of readyPlanets) {
+        this.state.planets[pId].exhausted = true
+      }
+      return
+    }
+    if (totalPlanetResources <= cost) {
+      for (const pId of readyPlanets) {
+        this.state.planets[pId].exhausted = true
+      }
+      const remaining = cost - totalPlanetResources
+      if (remaining > 0) {
+        const tgNeeded = Math.ceil(remaining / tgResourceValue)
+        player.spendTradeGoods(Math.min(tgNeeded, player.tradeGoods))
+      }
+      return
     }
 
-    // Spend trade goods for remainder
+    // Player selects which planets to exhaust
+    const selection = this.actions.choose(player, planetChoices, {
+      title: `Exhaust planets for ${cost} resources`,
+      min: 1,
+      max: readyPlanets.length,
+    })
+
+    let totalSelected = 0
+    for (const choice of selection) {
+      const planetId = choice.split(' (')[0]
+      this.state.planets[planetId].exhausted = true
+      totalSelected += parseInt(choice.match(/\((\d+)\)/)[1])
+    }
+
+    // Trade goods for remainder
+    const remaining = cost - totalSelected
     if (remaining > 0) {
       const tgNeeded = Math.ceil(remaining / tgResourceValue)
-      if (player.tradeGoods >= tgNeeded) {
-        player.spendTradeGoods(tgNeeded)
-      }
+      player.spendTradeGoods(Math.min(tgNeeded, player.tradeGoods))
     }
   }
 
   Twilight.prototype._payInfluence = function(player, cost) {
-  // Auto-exhaust planets to pay influence cost (cheapest first to conserve value)
-    let remaining = cost
+    if (cost <= 0) {
+      return
+    }
+
     const canSpendFlexibly = this.factionAbilities.canSpendFlexibly(player)
     const readyPlanets = player.getReadyPlanets()
-      .map(pId => {
-        const planet = res.getPlanet(pId)
-        let influence = planet?.influence || 0
-        // Archon's Gift: resources count as influence too
-        if (canSpendFlexibly) {
-          influence += (planet?.resources || 0)
-        }
-        return { id: pId, influence }
-      })
-      .sort((a, b) => a.influence - b.influence)
 
-    for (const planet of readyPlanets) {
-      if (remaining <= 0) {
-        break
+    const planetChoices = readyPlanets.map(pId => {
+      const planet = res.getPlanet(pId)
+      let inf = planet?.influence || 0
+      if (this.state.planets[pId]?.terraform) {
+        inf += 1
       }
-      this.state.planets[planet.id].exhausted = true
-      remaining -= planet.influence
+      const bonuses = this._getPlanetAttachmentBonuses(pId)
+      inf += bonuses.influence
+      if (canSpendFlexibly) {
+        inf += (planet?.resources || 0) + bonuses.resources
+      }
+      return `${pId} (${inf})`
+    })
+
+    const totalAvailable = planetChoices.reduce((sum, c) => sum + parseInt(c.match(/\((\d+)\)/)[1]), 0)
+
+    // Auto-resolve: 0-1 planets or must use all
+    if (readyPlanets.length <= 1) {
+      for (const pId of readyPlanets) {
+        this.state.planets[pId].exhausted = true
+      }
+      return
+    }
+    if (totalAvailable <= cost) {
+      for (const pId of readyPlanets) {
+        this.state.planets[pId].exhausted = true
+      }
+      return
+    }
+
+    // Player selects which planets to exhaust
+    const selection = this.actions.choose(player, planetChoices, {
+      title: `Exhaust planets for ${cost} influence`,
+      min: 1,
+      max: readyPlanets.length,
+    })
+
+    for (const choice of selection) {
+      const planetId = choice.split(' (')[0]
+      this.state.planets[planetId].exhausted = true
     }
   }
 
