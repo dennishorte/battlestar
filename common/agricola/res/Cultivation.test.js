@@ -35,13 +35,13 @@ describe('Cultivation action space', () => {
     })
   })
 
-  test('allows sowing on a field that already has crops (replant)', () => {
-    const game = t.fixture({ cardSets: ['test'] })
+  test('does not allow sowing on a field that already has crops', () => {
+    const game = t.fixture({ cardSets: ['test'], version: 7 })
     t.setBoard(game, {
       firstPlayer: 'dennis',
       actionSpaces: ['Grain Utilization'],
       dennis: {
-        vegetables: 1,
+        grain: 1,
         occupations: ['test-occupation-1', 'test-occupation-2'],
         farmyard: {
           fields: [{ row: 0, col: 2, crop: 'grain', cropCount: 2 }],
@@ -52,48 +52,15 @@ describe('Cultivation action space', () => {
 
     t.choose(game, 'Grain Utilization')
 
-    // Should be able to sow on the field that already has grain, replacing it with vegetables
-    t.action(game, 'sow-field', { row: 0, col: 2, cropType: 'vegetables' })
-
+    // Only field is already planted, so sowing is skipped entirely
+    // Player goes straight to baking (no grain left to bake, turn ends)
     t.testBoard(game, {
       currentPlayer: 'micah',
-      dennis: {
-        vegetables: 0,
-        occupations: ['test-occupation-1', 'test-occupation-2'],
-        farmyard: {
-          fields: [{ row: 0, col: 2, crop: 'vegetables', cropCount: 2 }],
-        },
-      },
-    })
-  })
-
-  test('allows sowing on a field that already has the same crop type', () => {
-    const game = t.fixture({ cardSets: ['test'] })
-    t.setBoard(game, {
-      firstPlayer: 'dennis',
-      actionSpaces: ['Grain Utilization'],
       dennis: {
         grain: 1,
         occupations: ['test-occupation-1', 'test-occupation-2'],
         farmyard: {
-          fields: [{ row: 0, col: 2, crop: 'grain', cropCount: 1 }],
-        },
-      },
-    })
-    game.run()
-
-    t.choose(game, 'Grain Utilization')
-
-    // Should be able to re-sow grain on a field that already has grain
-    t.action(game, 'sow-field', { row: 0, col: 2, cropType: 'grain' })
-
-    t.testBoard(game, {
-      currentPlayer: 'micah',
-      dennis: {
-        grain: 0,
-        occupations: ['test-occupation-1', 'test-occupation-2'],
-        farmyard: {
-          fields: [{ row: 0, col: 2, crop: 'grain', cropCount: 3 }],
+          fields: [{ row: 0, col: 2, crop: 'grain', cropCount: 2 }],
         },
       },
     })

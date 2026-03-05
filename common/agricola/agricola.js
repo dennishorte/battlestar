@@ -67,7 +67,7 @@ function factoryFromLobby(lobby) {
     numPlayers: lobby.users.length,
     useDrafting: lobby.options?.useDrafting || false,
     cardSets: lobby.options?.cardSets || res.getCardSetIds(),
-    version: 6,
+    version: 7,
   })
 }
 

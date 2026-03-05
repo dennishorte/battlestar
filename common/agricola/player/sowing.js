@@ -55,6 +55,10 @@ AgricolaPlayer.prototype.getEmptyFields = function() {
 }
 
 AgricolaPlayer.prototype.getSowableFields = function() {
+  // v7+: only empty fields can be sown (no replanting)
+  if (this.game.settings.version >= 7) {
+    return this.getEmptyFields()
+  }
   const fields = this.getFieldSpaces()
   // Include empty virtual fields (virtual fields don't support replanting)
   for (const vf of this.getEmptyVirtualFields()) {
@@ -172,9 +176,18 @@ AgricolaPlayer.prototype.canSow = function(cropType) {
     return false
   }
 
-  // Check regular fields (any field can be sown, including those with existing crops)
-  if (this.getFieldSpaces().length > 0) {
-    return true
+  // v7+: only empty fields can be sown
+  if (this.game.settings.version >= 7) {
+    const emptyRegularFields = this.getFieldSpaces().filter(f => !f.crop || f.cropCount === 0)
+    if (emptyRegularFields.length > 0) {
+      return true
+    }
+  }
+  else {
+    // v6 and below: any field can be sown, including those with existing crops
+    if (this.getFieldSpaces().length > 0) {
+      return true
+    }
   }
 
   // Check virtual fields that accept this crop type
@@ -201,6 +214,10 @@ AgricolaPlayer.prototype.isFieldAdjacentToPasture = function({ row, col }) {
 AgricolaPlayer.prototype.sowField = function(row, col, cropType) {
   const space = this.getSpace(row, col)
   if (!space || space.type !== 'field') {
+    return false
+  }
+  // v7+: cannot sow on a field that already has crops
+  if (this.game.settings.version >= 7 && space.crop && space.cropCount > 0) {
     return false
   }
 

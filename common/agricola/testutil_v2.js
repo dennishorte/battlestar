@@ -496,6 +496,13 @@ TestUtil.setBoard = function(game, state) {
     if (errors.length > 0) {
       throw new Error('setBoard validation failed:\n  ' + errors.join('\n  '))
     }
+
+    // Assign default colors for v2+ so the color picker doesn't fire during tests
+    for (const p of game.players.all()) {
+      if (!p.color) {
+        p.color = '#aaa'
+      }
+    }
   })
 
   // Apply accumulated overrides after replenish on the target round.
