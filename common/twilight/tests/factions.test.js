@@ -45,7 +45,7 @@ describe('Factions', () => {
       t.choose(game, 'Done')             // allocate tokens
       t.choose(game, 'Strategic Action')  // micah: diplomacy (needs system choice)
       t.choose(game, 'hacan-home')        // micah picks system for diplomacy
-      t.choose(game, 'Pass')             // dennis declines diplomacy secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
 

@@ -436,7 +436,7 @@ describe('Barony of Letnev', () => {
       // Micah takes a turn (Strategic Action — diplomacy)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass') // dennis declines secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
 
       // Now dennis's turn — do tactical action with no fleet limit
       t.choose(game, 'Tactical Action')

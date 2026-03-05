@@ -253,7 +253,8 @@ describe('Emirates of Hacan', () => {
       // Micah: strategic action (diplomacy)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'sol-home')
-      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
+      // Dennis has exhausted jord — Pass to decline diplomacy secondary
+      t.choose(game, 'Pass')
 
       // Pass actions
       t.choose(game, 'Pass')  // dennis passes
@@ -318,7 +319,8 @@ describe('Emirates of Hacan', () => {
       // Micah: Strategic Action (must use strategy card before passing)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'sol-home')  // diplomacy: choose home system
-      t.choose(game, 'Pass')  // dennis declines secondary
+      // Dennis has exhausted planets — Pass to keep them exhausted for hero production test
+      t.choose(game, 'Pass')
 
       // Dennis: Tactical Action -> Produce units with cost 0
       // (planets are exhausted, 0 trade goods, but hero makes everything free)

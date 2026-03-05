@@ -1138,7 +1138,7 @@ describe('Empyrean', () => {
         // Dennis takes diplomacy
         t.choose(game, 'Strategic Action')
         t.choose(game, 'empyrean-home')
-        t.choose(game, 'Pass')  // Micah declines secondary
+        // Micah: diplomacy secondary auto-skipped (no exhausted planets)
 
         // Micah tries to move cruiser from system 26 to system 27
         // System 26 and 27 are normally adjacent, but void tether blocks it for Micah

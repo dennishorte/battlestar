@@ -94,7 +94,7 @@ describe('Federation of Sol', () => {
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // dennis declines secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
 
@@ -259,7 +259,7 @@ describe('Federation of Sol', () => {
       // Micah takes a turn
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // dennis declines secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
 
       // Dennis uses Helio Command Array hero
       t.choose(game, 'Component Action')

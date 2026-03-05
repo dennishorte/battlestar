@@ -383,6 +383,9 @@ module.exports = function(Twilight) {
       args: { player, system: chosenSystem },
     })
 
+    // Then, ready up to 2 exhausted planets you control
+    this._diplomacyReadyPlanets(player)
+
     // Faction abilities after diplomacy (e.g., Xxcha Peace Accords)
     this.factionAbilities.afterDiplomacyResolved(player)
   }
@@ -709,6 +712,62 @@ module.exports = function(Twilight) {
         continue
       }
 
+      // Diplomacy: combine into planet selection prompt (like Leadership above)
+      if (cardId === 'diplomacy') {
+        const exhaustedPlanets = player.getControlledPlanets()
+          .filter(pId => this.state.planets[pId].exhausted)
+
+        // Auto-skip when player has no exhausted planets
+        if (exhaustedPlanets.length === 0) {
+          this.log.add({
+            template: '{player} has no exhausted planets for {secondary}',
+            args: { player, secondary: secondaryAvailable },
+          })
+          this.factionAbilities.returnAcquiescence(player, activePlayer)
+          continue
+        }
+
+        const costLabel = isFree ? 'free' : 'costs 1 strategy token'
+        const choices = ['Pass', ...exhaustedPlanets]
+        const first = this.actions.choose(player, choices, {
+          title: `Ready up to 2 exhausted planets (${costLabel})`,
+        })
+
+        if (first[0] !== 'Pass') {
+          // Spend strategy token (or Scepter)
+          if (!isFree) {
+            const scepterUsed = this._offerScepterOfEmelpar(player)
+            if (!scepterUsed) {
+              player.spendStrategyToken()
+              this.factionAbilities.onStrategyTokenSpent(player, activePlayer.name)
+            }
+          }
+
+          this.state.planets[first[0]].exhausted = false
+          const remaining = exhaustedPlanets.filter(p => p !== first[0])
+          if (remaining.length > 0) {
+            const secondChoices = ['Done', ...remaining]
+            const second = this.actions.choose(player, secondChoices, {
+              title: 'Ready another planet? (Diplomacy)',
+            })
+            if (second[0] !== 'Done') {
+              this.state.planets[second[0]].exhausted = false
+            }
+          }
+
+          this.factionAbilities.afterDiplomacyResolved(player)
+          this.factionAbilities.returnAcquiescence(player, activePlayer)
+        }
+        else {
+          this.log.add({
+            template: '{player} declines {secondary}',
+            args: { player, secondary: secondaryAvailable },
+            classes: ['player-action'],
+          })
+        }
+        continue
+      }
+
       const costLabel = isFree ? 'free'
         : cardId === 'technology' ? 'costs 1 strategy token + 4 resources'
           : 'costs 1 strategy token'
@@ -800,8 +859,8 @@ module.exports = function(Twilight) {
     }
   }
 
-  Twilight.prototype._diplomacySecondary = function(player) {
-  // Ready up to 2 exhausted planets
+  Twilight.prototype._diplomacyReadyPlanets = function(player) {
+  // Ready up to 2 exhausted planets you control
     const exhaustedPlanets = player.getControlledPlanets()
       .filter(pId => this.state.planets[pId].exhausted)
 
@@ -809,35 +868,29 @@ module.exports = function(Twilight) {
       return
     }
 
-    const toReady = []
     if (exhaustedPlanets.length <= 2) {
       // Auto-select all if 2 or fewer
-      toReady.push(...exhaustedPlanets)
+      for (const planetId of exhaustedPlanets) {
+        this.state.planets[planetId].exhausted = false
+      }
     }
     else {
       // Let player choose which 2 planets to ready
       const first = this.actions.choose(player, exhaustedPlanets, {
-        title: 'Ready planet 1 of 2 (Diplomacy secondary)',
+        title: 'Ready planet 1 of 2 (Diplomacy)',
       })
-      toReady.push(first[0])
+      this.state.planets[first[0]].exhausted = false
 
       const remaining = exhaustedPlanets.filter(p => p !== first[0])
-      if (remaining.length > 0) {
-        const second = this.actions.choose(player, remaining, {
-          title: 'Ready planet 2 of 2 (Diplomacy secondary)',
-        })
-        toReady.push(second[0])
-      }
+      const second = this.actions.choose(player, remaining, {
+        title: 'Ready planet 2 of 2 (Diplomacy)',
+      })
+      this.state.planets[second[0]].exhausted = false
     }
+  }
 
-    for (const planetId of toReady) {
-      this.state.planets[planetId].exhausted = false
-    }
-
-    this.log.add({
-      template: '{player} readies {count} planet(s) (Diplomacy secondary)',
-      args: { player, count: toReady.length },
-    })
+  Twilight.prototype._diplomacySecondary = function(player) {
+    this._diplomacyReadyPlanets(player)
 
     // Faction abilities after diplomacy (e.g., Xxcha Peace Accords)
     this.factionAbilities.afterDiplomacyResolved(player)

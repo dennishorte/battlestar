@@ -143,25 +143,21 @@ describe('Embers of Muaat', () => {
           tradeGoods: 0,
           commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
           leaders: { agent: 'exhausted', commander: 'unlocked', hero: 'locked' },
+          planets: { 'muaat': { exhausted: true } },
         },
       })
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Micah (Hacan) has diplomacy(2), goes first due to lower number
-      // Wait — leadership is 1, diplomacy is 2. Dennis picked leadership, micah picked diplomacy.
-      // Leadership(1) is lower, so dennis goes first.
-
       // Dennis uses leadership (primary: gain 3 command tokens)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
 
-      // Micah spent 1 strategy token. But we care about Dennis (Muaat).
       // Micah goes next: micah uses diplomacy
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')  // micah: diplomacy primary, protect hacan-home
-      // Dennis is prompted for diplomacy secondary
-      t.choose(game, 'Use Secondary')
+      // Dennis selects exhausted planet (diplomacy secondary)
+      t.choose(game, 'muaat')
 
       // Dennis spent 1 strategy token for the secondary → commander triggers → +1 TG
       const dennis = game.players.byName('dennis')
@@ -177,6 +173,7 @@ describe('Embers of Muaat', () => {
           tradeGoods: 0,
           commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
           leaders: { agent: 'exhausted', commander: 'locked', hero: 'locked' },
+          planets: { 'muaat': { exhausted: true } },
           // Remove the war sun so commander does not auto-unlock
           units: {
             'muaat-home': {
@@ -196,8 +193,8 @@ describe('Embers of Muaat', () => {
       // Micah uses diplomacy (primary)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
-      // Dennis uses diplomacy secondary (spends strategy token)
-      t.choose(game, 'Use Secondary')
+      // Dennis selects exhausted planet (diplomacy secondary)
+      t.choose(game, 'muaat')
 
       // Commander is locked — no TG gain
       const dennis = game.players.byName('dennis')

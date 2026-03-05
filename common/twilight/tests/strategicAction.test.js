@@ -153,7 +153,7 @@ describe('Strategic Actions', () => {
       // Dennis must choose a system with a planet he controls
       // Sol controls 'jord' in 'sol-home'
       t.choose(game, 'sol-home')
-      t.choose(game, 'Pass')  // micah declines diplomacy secondary
+      // Micah has no exhausted planets — diplomacy secondary auto-skipped
 
       // Micah should now have a command token in sol-home
       expect(game.state.systems['sol-home'].commandTokens).toContain('micah')
@@ -169,7 +169,7 @@ describe('Strategic Actions', () => {
 
       t.choose(game, 'Strategic Action')
       t.choose(game, 'sol-home')
-      t.choose(game, 'Pass')  // micah declines diplomacy secondary
+      // Micah has no exhausted planets — diplomacy secondary auto-skipped
 
       const micah = game.players.byName('micah')
       // Token placed in sol-home AND deducted from micah's tactics pool
@@ -188,10 +188,29 @@ describe('Strategic Actions', () => {
       t.choose(game, 'Strategic Action')
       t.choose(game, 'sol-home')
       // Micah has no tokens — cannot place, no secondary prompt either
-      // (Micah can't use Trade secondary without strategy tokens)
 
       // No token placed for micah
       expect(game.state.systems['sol-home'].commandTokens).not.toContain('micah')
+    })
+
+    test('primary: readies up to 2 exhausted planets', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          planets: {
+            'jord': { exhausted: true },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'diplomacy', 'trade')
+
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'sol-home')
+      // Micah has no exhausted planets — diplomacy secondary auto-skipped
+
+      // Dennis's exhausted planet should be readied by primary
+      expect(game.state.planets['jord'].exhausted).toBe(false)
     })
   })
 
@@ -400,18 +419,26 @@ describe('Strategic Actions', () => {
 
     test('other players can resolve secondary', () => {
       const game = t.fixture()
+      t.setBoard(game, {
+        micah: {
+          planets: {
+            'arretze': { exhausted: true },
+          },
+        },
+      })
       game.run()
       pickStrategyCards(game, 'diplomacy', 'construction')
 
       // Dennis has diplomacy(2), micah has construction(4). Dennis goes first.
       t.choose(game, 'Strategic Action')
       t.choose(game, 'sol-home')  // diplomacy: choose system
-      // Micah uses the diplomacy secondary (costs 1 strategy token, readies 2 planets)
-      t.choose(game, 'Use Secondary')
+      // Micah selects exhausted planet to ready (costs 1 strategy token)
+      t.choose(game, 'arretze')
 
       const micah = game.players.byName('micah')
       // Strategy: 2 - 1 (spent) = 1
       expect(micah.commandTokens.strategy).toBe(1)
+      expect(game.state.planets['arretze'].exhausted).toBe(false)
     })
 
     test('secondary costs strategy command token', () => {
@@ -434,6 +461,21 @@ describe('Strategic Actions', () => {
       expect(game.waiting.selectors[0].title).toBe('Choose Action')
     })
 
+    test('secondary: skips when no exhausted planets', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'diplomacy', 'construction')
+
+      // Dennis has diplomacy(2), micah has construction(4). Dennis goes first.
+      t.choose(game, 'Strategic Action')
+      t.choose(game, 'sol-home')  // diplomacy: choose system
+      // Micah has no exhausted planets — auto-skipped, no prompt
+
+      // Should go straight to micah's turn
+      expect(game.waiting.selectors[0].actor).toBe('micah')
+      expect(game.waiting.selectors[0].title).toBe('Choose Action')
+    })
+
     test('diplomacy secondary: ready 2 exhausted planets', () => {
       const game = t.fixture()
       t.setBoard(game, {
@@ -452,8 +494,8 @@ describe('Strategic Actions', () => {
       // Micah uses diplomacy
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')  // micah protects hacan-home
-      // Dennis uses diplomacy secondary — ready exhausted planet
-      t.choose(game, 'Use Secondary')
+      // Dennis uses diplomacy secondary — select exhausted planet
+      t.choose(game, 'jord')
 
       const dennis = game.players.byName('dennis')
       expect(game.state.planets['jord'].exhausted).toBe(false)
@@ -605,7 +647,7 @@ describe('Strategic Actions', () => {
       // Micah uses diplomacy — must choose a system
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')  // micah picks their home system
-      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
+      // Dennis has no exhausted planets — diplomacy secondary auto-skipped
       // Both pass
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
