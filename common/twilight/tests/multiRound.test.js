@@ -14,9 +14,9 @@ function playRound(game, opts = {}) {
   pickStrategyCards(game, dennisCard, micahCard)
 
   // Action phase: both use strategy cards then pass
-  t.choose(game, 'Strategic Action')  // dennis: leadership
+  t.choose(game, 'Strategic Action.leadership')  // dennis: leadership
   t.choose(game, 'Done')             // dennis: allocate 3 tokens
-  t.choose(game, 'Strategic Action')  // micah: diplomacy
+  t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy
   t.choose(game, 'hacan-home')
   // Dennis: diplomacy secondary — Pass if prompted (has exhausted planets), else auto-skipped
   const postDip = t.currentChoices(game)
@@ -137,9 +137,9 @@ describe('Multi-Round Play', () => {
     pickStrategyCards(game, 'leadership', 'diplomacy')
 
     // Action phase
-    t.choose(game, 'Strategic Action')
+    t.choose(game, 'Strategic Action.leadership')
     t.choose(game, 'Done')             // dennis: allocate 3 tokens
-    t.choose(game, 'Strategic Action')
+    t.choose(game, 'Strategic Action.diplomacy')
     t.choose(game, 'hacan-home')
     // dennis: diplomacy secondary auto-skipped (no exhausted planets)
     t.choose(game, 'Pass')

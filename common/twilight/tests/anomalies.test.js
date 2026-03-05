@@ -280,8 +280,12 @@ describe('Anomalies', () => {
       game.run()
       pickStrategyCards(game, 'imperial', 'diplomacy')
 
+      // micah (diplomacy=2) goes first
+      t.choose(game, 'Strategic Action.diplomacy')
+      t.choose(game, 'hacan-home')
+
       // dennis uses Imperial primary — should NOT draw a 4th secret
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.imperial')
 
       const dennis = game.players.byName('dennis')
       expect(dennis.secretObjectives.length).toBe(3)
@@ -306,8 +310,12 @@ describe('Anomalies', () => {
       game.run()
       pickStrategyCards(game, 'diplomacy', 'leadership')
 
+      // micah (leadership=1) goes first
+      t.choose(game, 'Strategic Action.leadership')
+      t.choose(game, 'Done')
+
       // dennis uses Diplomacy primary
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
 
       // The system choices should NOT include system 18 (Mecatol Rex)
       const choices = t.currentChoices(game)

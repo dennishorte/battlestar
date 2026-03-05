@@ -137,10 +137,10 @@ describe('Clan of Saar', () => {
       pickStrategyCards(game, 'construction', 'leadership')
 
       // Micah's turn first (initiative 1 — leadership)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       // Dennis's turn — use Construction
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.construction')
 
       // Place space dock — choose a planet, but Saar places in space
       t.choose(game, 'The Clan of Saar:Lisis II.space-dock')
@@ -223,11 +223,11 @@ describe('Clan of Saar', () => {
       pickStrategyCards(game, 'diplomacy', 'leadership')
 
       // Micah uses strategic action (leadership) first
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
       // Dennis uses strategic action (diplomacy)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       // Diplomacy primary: choose a system
       t.choose(game, 'saar-home')
       // Micah: diplomacy secondary auto-skipped (no exhausted planets)
@@ -435,11 +435,11 @@ describe('Clan of Saar', () => {
       pickStrategyCards(game, 'diplomacy', 'leadership')
 
       // Micah uses strategic action (leadership)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
       // Dennis uses strategic action (diplomacy)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'saar-home')
       // Micah: diplomacy secondary auto-skipped (no exhausted planets)
 
@@ -488,10 +488,10 @@ describe('Clan of Saar', () => {
       game.run()
       pickStrategyCards(game, 'diplomacy', 'leadership')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       // dennis: leadership secondary auto-passes (Saar 1I)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'saar-home')
       // micah: diplomacy secondary auto-skipped (no exhausted planets)
 
@@ -530,10 +530,10 @@ describe('Clan of Saar', () => {
       game.run()
       pickStrategyCards(game, 'diplomacy', 'leadership')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       // dennis: leadership secondary auto-passes (Saar 1I)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'saar-home')
       // micah: diplomacy secondary auto-skipped (no exhausted planets)
 
@@ -858,7 +858,7 @@ describe('Clan of Saar', () => {
         // Dennis's turn: Chaos Mapping prompt (has dock on planet)
         t.choose(game, 'Pass')             // Decline Chaos Mapping production
         // Dennis uses Strategic Action (leadership) to end his turn simply
-        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Strategic Action.leadership')
         t.choose(game, 'Done')  // allocate tokens
 
         // Micah's turn: tactical action to try activating system 44

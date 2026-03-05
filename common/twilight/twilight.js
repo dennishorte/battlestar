@@ -761,17 +761,20 @@ Twilight.prototype.actionPhase = function() {
     }
     if (!player.hasUsedStrategyCard()) {
       const unusedCards = player.strategyCards.filter(c => !c.used)
-      for (const card of unusedCards) {
-        choices.push({
-          title: 'Strategic Action: ' + card.id,
-          strategyCardIds: [card.id],
-        })
-      }
+      choices.push({
+        title: 'Strategic Action',
+        choices: unusedCards.map(c => ({ title: c.id, strategyCardIds: [c.id] })),
+        min: 0,
+      })
     }
     // Add action card option if player has action-timing cards
     const actionTimingCards = (player.actionCards || []).filter(c => c.timing === 'action')
     if (actionTimingCards.length > 0) {
-      choices.push({ title: 'Play Action Card', subtitles: ['Play an action card from your hand'] })
+      choices.push({
+        title: 'Action Card',
+        choices: actionTimingCards.map(c => ({ title: c.name })),
+        min: 0,
+      })
     }
     choices.push({ title: 'Pass', subtitles: ['End your turns for this round. Cannot be undone.'] })
 
@@ -785,12 +788,13 @@ Twilight.prototype.actionPhase = function() {
       help: 'Select one action to perform this turn. You must use your strategy card before passing.',
     })
 
-    const action = selection[0]
+    const chosen = selection[0]
+    const action = typeof chosen === 'string' ? chosen : chosen.title
+    const actionArg = typeof chosen === 'string' ? null : chosen.selection?.[0]
 
-    const logAction = action.startsWith('Strategic Action: ') ? 'Strategic Action' : action
     this.log.add({
       template: '{player}: {action}',
-      args: { player, action: logAction },
+      args: { player, action },
       event: 'player-turn',
     })
 
@@ -808,13 +812,11 @@ Twilight.prototype.actionPhase = function() {
         this._componentAction(player)
         this.factionAbilities.afterComponentAction(player)
         break
-      case 'Play Action Card':
-        this._playActionCard(player)
+      case 'Action Card':
+        this._playActionCard(player, actionArg)
         break
-      default:
-        if (action.startsWith('Strategic Action: ')) {
-          this._strategicAction(player, action.split(': ')[1])
-        }
+      case 'Strategic Action':
+        this._strategicAction(player, actionArg)
         break
       case 'Pass':
         player.pass()
@@ -859,23 +861,28 @@ Twilight.prototype.actionPhase = function() {
       }
       if (!player.hasUsedStrategyCard()) {
         const unusedCards = player.strategyCards.filter(c => !c.used)
-        for (const card of unusedCards) {
-          bonusChoices.push({
-            title: 'Strategic Action: ' + card.id,
-            strategyCardIds: [card.id],
-          })
-        }
+        bonusChoices.push({
+          title: 'Strategic Action',
+          choices: unusedCards.map(c => ({ title: c.id, strategyCardIds: [c.id] })),
+          min: 0,
+        })
       }
       const bonusActionCards = (player.actionCards || []).filter(c => c.timing === 'action')
       if (bonusActionCards.length > 0) {
-        bonusChoices.push({ title: 'Play Action Card', subtitles: ['Play an action card from your hand'] })
+        bonusChoices.push({
+          title: 'Action Card',
+          choices: bonusActionCards.map(c => ({ title: c.name })),
+          min: 0,
+        })
       }
       bonusChoices.push({ title: 'Decline' })
 
       const bonusSelection = this.actions.choose(player, bonusChoices, {
         title: 'Fleet Logistics: Choose additional action',
       })
-      const bonusAction = bonusSelection[0]
+      const bonusChosen = bonusSelection[0]
+      const bonusAction = typeof bonusChosen === 'string' ? bonusChosen : bonusChosen.title
+      const bonusArg = typeof bonusChosen === 'string' ? null : bonusChosen.selection?.[0]
 
       if (bonusAction !== 'Decline') {
         this.log.add({
@@ -894,13 +901,11 @@ Twilight.prototype.actionPhase = function() {
             this._componentAction(player)
             this.factionAbilities.afterComponentAction(player)
             break
-          case 'Play Action Card':
-            this._playActionCard(player)
+          case 'Action Card':
+            this._playActionCard(player, bonusArg)
             break
-          default:
-            if (bonusAction.startsWith('Strategic Action: ')) {
-              this._strategicAction(player, bonusAction.split(': ')[1])
-            }
+          case 'Strategic Action':
+            this._strategicAction(player, bonusArg)
             break
         }
 

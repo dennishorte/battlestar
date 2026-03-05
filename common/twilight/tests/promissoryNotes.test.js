@@ -105,7 +105,7 @@ describe('Promissory Notes', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
       // Dennis offers 1 TG + support for the throne, requests 2 commodities
@@ -151,7 +151,7 @@ describe('Promissory Notes', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       // micah: leadership secondary auto-passes (Hacan 2I)
 
@@ -327,13 +327,15 @@ describe('Promissory Notes', () => {
       pickStrategyCards(game, 'leadership', 'trade')
 
       // Dennis goes first — plays Leadership
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
-      // Micah's turn — plays Trade (primary replenishes commodities for all)
-      t.choose(game, 'Strategic Action')
-      // Trade primary fires: replenishes all → onCommoditiesReplenished → Trade Agreement triggers
-      // Then Trade secondary offered to Dennis
+      // Micah's turn — plays Trade
+      t.choose(game, 'Strategic Action.trade')
+      // Trade primary: Micah replenishes → onCommoditiesReplenished → Trade Agreement triggers
+      // Micah chooses nobody for free secondary
+      t.choose(game, 'Done')
+      // Dennis offered Trade secondary
       t.choose(game, 'Pass')  // Dennis declines Trade secondary
 
       const dennis = game.players.byName('dennis')

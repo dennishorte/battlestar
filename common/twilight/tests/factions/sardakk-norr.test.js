@@ -194,7 +194,7 @@ describe("Sardakk N'orr", () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses leadership
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
 
       // Micah does tactical action in system 27 (where micah has ground forces)

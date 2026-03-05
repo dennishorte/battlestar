@@ -46,12 +46,12 @@ describe('Xxcha Kingdom', () => {
       pickStrategyCards(game, 'diplomacy', 'leadership')
 
       // Micah (leadership=1) goes first
-      t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Strategic Action.leadership')  // micah: leadership
       t.choose(game, 'Done')  // micah: allocate 3 tokens
       t.choose(game, 'Pass')  // dennis declines leadership secondary (Xxcha 4I)
 
       // Dennis (Xxcha, diplomacy=2) uses diplomacy
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'xxcha-home')  // Choose home system for Diplomacy
 
       // Peace Accords: Xxcha can gain unoccupied planet adjacent to controlled planets
@@ -81,10 +81,10 @@ describe('Xxcha Kingdom', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Play through action phase
-      t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Strategic Action.leadership')  // dennis: leadership
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens
-      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy
       t.choose(game, 'hacan-home')
       // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
@@ -133,13 +133,13 @@ describe('Xxcha Kingdom', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: strategic action (leadership)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens
       // No transaction step for Xxcha (not Hacan)
 
       // Micah: strategic action (diplomacy)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'hacan-home')
       // Micah (diplomacy primary) readies 2 of 3 exhausted planets
       t.choose(game, 'arretze')
@@ -209,11 +209,11 @@ describe('Xxcha Kingdom', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Play through action phase quickly
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
       // micah: leadership secondary auto-passes (all planets exhausted, 0I)
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'hacan-home')
       // Micah (diplomacy primary) readies 2 of 3 exhausted planets
       t.choose(game, 'arretze')
@@ -447,10 +447,10 @@ describe('Xxcha Kingdom', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Play through action phase quickly
-      t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Strategic Action.leadership')  // dennis: leadership
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens
-      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy
       t.choose(game, 'hacan-home')
       // Micah (diplomacy primary) readies 2 of 3 exhausted planets
       t.choose(game, 'arretze')
@@ -522,11 +522,11 @@ describe('Xxcha Kingdom', () => {
       pickStrategyCards(game, 'diplomacy', 'leadership')
 
       // Micah (leadership=1) goes first
-      t.choose(game, 'Strategic Action')  // Micah uses leadership
+      t.choose(game, 'Strategic Action.leadership')  // Micah uses leadership
       t.choose(game, 'Done')  // micah: allocate 3 tokens
       t.choose(game, 'Skip')  // micah skips influence-for-tokens
       // Dennis (diplomacy=2) goes next
-      t.choose(game, 'Strategic Action')  // Dennis uses diplomacy
+      t.choose(game, 'Strategic Action.diplomacy')  // Dennis uses diplomacy
       t.choose(game, 'hacan-home')        // Dennis diplomacy target
       // Micah: diplomacy secondary auto-skipped (no exhausted planets)
       // Both pass action phase
@@ -578,11 +578,11 @@ describe('Xxcha Kingdom', () => {
       game.run()
       pickStrategyCards(game, 'diplomacy', 'leadership')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // micah: allocate 3 tokens
       t.choose(game, 'Skip')  // micah skips influence-for-tokens (Xxcha, 3I)
       // dennis: leadership secondary auto-passes (Hacan, only arretze 0I)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'hacan-home')
       // micah: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
@@ -622,13 +622,13 @@ describe('Xxcha Kingdom', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         // Dennis: strategic action (leadership=1 goes first)
-        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Strategic Action.leadership')
         t.choose(game, 'Done')  // dennis: allocate 3 tokens
         t.choose(game, 'Skip')  // dennis skips influence-for-tokens
 
         // Micah plays action card - Mining Initiative
         // (only 1 action card so card selection auto-resolves)
-        t.choose(game, 'Play Action Card')
+        t.choose(game, 'Action Card.Mining Initiative')
 
         // Xxcha (dennis) gets prompt to cancel via Instinct Training
         t.choose(game, 'Cancel')
@@ -672,7 +672,7 @@ describe('Xxcha Kingdom', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         // Dennis: strategic action (leadership)
-        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Strategic Action.leadership')
         t.choose(game, 'Done')  // dennis: allocate 3 tokens
         t.choose(game, 'Skip')  // dennis skips influence-for-tokens
 
