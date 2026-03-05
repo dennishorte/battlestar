@@ -486,9 +486,18 @@ export default {
         return
       }
 
+      // Calculate free fences from active cards (e.g. Ash Trees)
+      let freeFences = 0
+      for (const card of player.getActiveCards()) {
+        if (card.hasHook('getFreeFences')) {
+          freeFences += card.callHook('getFreeFences', this.game)
+        }
+      }
+
       // Get validation params from player
       const params = {
         wood: player.wood,
+        freeFences,
         currentFenceCount: player.getFenceCount(),
         maxFences: agricola.res.constants.maxFences,
         existingFences: player.farmyard?.fences || [],

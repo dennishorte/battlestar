@@ -200,6 +200,7 @@ function countFencesNeeded(spaces, existingFences = [], options = {}) {
 function validatePastureSelection(spaces, params = {}) {
   const {
     wood = Infinity,
+    freeFences = 0,
     currentFenceCount = 0,
     maxFences = res.constants.maxFences || 15,
     existingFences = [],
@@ -226,11 +227,12 @@ function validatePastureSelection(spaces, params = {}) {
   const fenceEdges = calculateFenceEdges(spaces, existingFences)
   const fencesNeeded = countFencesNeeded(spaces, existingFences)
 
-  // Check wood
-  if (fencesNeeded > wood) {
+  // Check wood (free fences from cards like Ash Trees reduce cost)
+  const woodCost = Math.max(0, fencesNeeded - freeFences)
+  if (woodCost > wood) {
     return {
       valid: false,
-      error: `Need ${fencesNeeded} wood (have ${wood})`,
+      error: `Need ${woodCost} wood (have ${wood})`,
       fencesNeeded,
       fenceEdges,
     }
