@@ -399,8 +399,7 @@ AgricolaPlayer.prototype.isPastureFullyEnclosed = function(spaces) {
       if (!neighborInPasture) {
         // This is an internal border - must have fence
         const neighborSpace = this.getSpace(n.row, n.col)
-        if (neighborSpace && neighborSpace.type !== 'room' && neighborSpace.type !== 'field') {
-          // Neighbor is empty/pasture outside our group - need fence
+        if (neighborSpace) {
           if (!this.hasFenceBetween(coord.row, coord.col, n.row, n.col)) {
             return false
           }
