@@ -47,7 +47,7 @@ describe('Action Phase', () => {
       // micah: use strategy card (diplomacy — choose system)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')  // micah picks system for diplomacy
-      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       // dennis: pass
       t.choose(game, 'Pass')
 
@@ -123,7 +123,7 @@ describe('Action Phase', () => {
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')        // micah picks system
-      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       // dennis passes
       t.choose(game, 'Pass')
 
@@ -144,7 +144,7 @@ describe('Action Phase', () => {
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')        // micah picks system
-      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')              // dennis
       t.choose(game, 'Pass')              // micah
 
@@ -162,7 +162,7 @@ describe('Action Phase', () => {
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')        // micah picks system
-      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
 

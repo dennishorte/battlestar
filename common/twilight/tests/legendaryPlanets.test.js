@@ -254,7 +254,7 @@ describe('Legendary Planets', () => {
       // Micah picks a system for diplomacy
       const choices = t.currentChoices(game)
       t.choose(game, choices[0])
-      t.choose(game, 'Pass')  // Dennis declines secondary
+      // Dennis: diplomacy secondary auto-skipped (no exhausted planets)
 
       // Dennis's second turn — do a tactical action
       t.choose(game, 'Tactical Action')
@@ -301,7 +301,7 @@ describe('Legendary Planets', () => {
       t.choose(game, 'Strategic Action')
       const dipChoices = t.currentChoices(game)
       t.choose(game, dipChoices[0])
-      t.choose(game, 'Pass')  // Dennis declines secondary
+      // Dennis: diplomacy secondary auto-skipped (no exhausted planets)
 
       // Skip transaction if offered
       const afterMicah = t.currentChoices(game)
@@ -474,7 +474,7 @@ describe('Legendary Planets', () => {
       t.choose(game, 'Strategic Action')
       const dipChoices = t.currentChoices(game)
       t.choose(game, dipChoices[0])  // pick a system for diplomacy
-      t.choose(game, 'Pass')  // micah declines secondary
+      // micah: diplomacy secondary auto-skipped (no exhausted planets)
 
       // Handle transaction window if it appears (IIHQ makes dennis neighbor of micah)
       const postDipChoices = t.currentChoices(game)

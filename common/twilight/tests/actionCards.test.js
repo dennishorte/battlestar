@@ -12,7 +12,7 @@ function playThroughActionPhase(game) {
   t.choose(game, 'Done')             // dennis: allocate 3 tokens
   t.choose(game, 'Strategic Action')  // micah: diplomacy
   t.choose(game, 'hacan-home')
-  t.choose(game, 'Pass')             // dennis declines secondary
+  // dennis: diplomacy secondary auto-skipped (no exhausted planets)
   t.choose(game, 'Pass')
   t.choose(game, 'Pass')
 }

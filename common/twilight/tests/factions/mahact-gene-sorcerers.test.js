@@ -20,8 +20,7 @@ function playToAgenda(game) {
   // Micah uses diplomacy (strategic action, chooses system for primary)
   t.choose(game, 'Strategic Action')
   t.choose(game, 'hacan-home')
-  // Dennis declines diplomacy secondary
-  t.choose(game, 'Pass')
+  // dennis: diplomacy secondary auto-skipped (no exhausted planets)
   // Both pass action phase
   t.choose(game, 'Pass')
   t.choose(game, 'Pass')
@@ -229,14 +228,16 @@ describe('Mahact Gene-Sorcerers', () => {
       // Dennis goes first (leadership = 1), uses strategic action
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Mahact, 3I)
+      // Spend influence to exhaust ixth (needed for diplomacy secondary later)
+      t.choose(game, '1 token (3 influence)')
+      t.choose(game, 'Done')  // allocate purchased token
 
       // Micah goes next: uses diplomacy (primary)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')  // diplomacy primary: protect hacan-home
 
-      // Dennis is offered diplomacy secondary
-      t.choose(game, 'Use Secondary')
+      // Dennis selects exhausted planet (diplomacy secondary)
+      t.choose(game, 'ixth')
 
       // Dennis spent strategy token, agent triggers
       // Exhaust Jae Mir Kan to use micah's command token instead
@@ -266,14 +267,16 @@ describe('Mahact Gene-Sorcerers', () => {
       // Dennis uses leadership
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Mahact, 3I)
+      // Spend influence to exhaust ixth (needed for diplomacy secondary later)
+      t.choose(game, '1 token (3 influence)')
+      t.choose(game, 'Done')  // allocate purchased token
 
       // Micah uses diplomacy
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
 
-      // Dennis uses diplomacy secondary
-      t.choose(game, 'Use Secondary')
+      // Dennis selects exhausted planet (diplomacy secondary)
+      t.choose(game, 'ixth')
 
       // Dennis declines the agent
       t.choose(game, 'Pass')
@@ -301,14 +304,16 @@ describe('Mahact Gene-Sorcerers', () => {
       // Dennis uses leadership
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Mahact, 3I)
+      // Spend influence to exhaust ixth (needed for diplomacy secondary later)
+      t.choose(game, '1 token (3 influence)')
+      t.choose(game, 'Done')  // allocate purchased token
 
       // Micah uses diplomacy
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
 
-      // Dennis uses diplomacy secondary — no agent prompt since micah has no tokens
-      t.choose(game, 'Use Secondary')
+      // Dennis selects exhausted planet (diplomacy secondary — no agent: micah has no tokens)
+      t.choose(game, 'ixth')
 
       const dennis = game.players.byName('dennis')
       // Strategy token spent normally: started 2, spent 1 = 1
@@ -332,14 +337,16 @@ describe('Mahact Gene-Sorcerers', () => {
       // Dennis uses leadership
       t.choose(game, 'Strategic Action')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Mahact, 3I)
+      // Spend influence to exhaust ixth (needed for diplomacy secondary later)
+      t.choose(game, '1 token (3 influence)')
+      t.choose(game, 'Done')  // allocate purchased token
 
       // Micah uses diplomacy
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
 
-      // Dennis uses diplomacy secondary — no agent prompt since agent is exhausted
-      t.choose(game, 'Use Secondary')
+      // Dennis selects exhausted planet (diplomacy secondary — no agent: agent exhausted)
+      t.choose(game, 'ixth')
 
       const dennis = game.players.byName('dennis')
       // Strategy token spent normally

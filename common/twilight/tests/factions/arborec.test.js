@@ -149,7 +149,7 @@ describe('Arborec', () => {
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // dennis declines secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
 
@@ -180,7 +180,7 @@ describe('Arborec', () => {
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // dennis declines secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
 
@@ -209,7 +209,7 @@ describe('Arborec', () => {
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // dennis declines secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
 
@@ -660,7 +660,7 @@ describe('Arborec', () => {
         t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Arborec, 3I)
         t.choose(game, 'Strategic Action')  // micah: diplomacy
         t.choose(game, 'hacan-home')
-        t.choose(game, 'Pass')  // dennis declines secondary
+        // dennis: diplomacy secondary auto-skipped (no exhausted planets)
         t.choose(game, 'Pass')  // dennis passes
         t.choose(game, 'Pass')  // micah passes
 

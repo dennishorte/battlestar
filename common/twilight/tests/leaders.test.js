@@ -41,7 +41,7 @@ describe('Leaders', () => {
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // dennis declines
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')  // dennis passes
       t.choose(game, 'Pass')  // micah passes
 

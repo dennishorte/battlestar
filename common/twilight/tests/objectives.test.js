@@ -16,7 +16,7 @@ function playToStatusPhase(game) {
   }
   t.choose(game, 'Strategic Action')  // micah: diplomacy
   t.choose(game, 'hacan-home')
-  t.choose(game, 'Pass')  // dennis declines diplomacy secondary
+  // dennis: diplomacy secondary auto-skipped (no exhausted planets)
   t.choose(game, 'Pass')  // dennis passes
   t.choose(game, 'Pass')  // micah passes
 }
@@ -184,7 +184,7 @@ describe('Objectives', () => {
       t.choose(game, 'Done')             // dennis: allocate 3 tokens
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')  // dennis passes
       t.choose(game, 'Pass')  // micah passes
 
@@ -207,7 +207,7 @@ describe('Objectives', () => {
       t.choose(game, 'Done')             // dennis: allocate 3 tokens
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
 
@@ -335,7 +335,7 @@ describe('Objectives', () => {
       // micah: leadership secondary auto-passes (Hacan 2I)
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')  // dennis passes
       t.choose(game, 'Pass')  // micah passes
 
@@ -372,7 +372,7 @@ describe('Objectives', () => {
       // micah: leadership secondary auto-passes (Hacan 2I)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')  // dennis passes
       t.choose(game, 'Pass')  // micah passes
 
@@ -408,7 +408,7 @@ describe('Objectives', () => {
       // micah: leadership secondary auto-passes (Hacan 2I)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')  // dennis passes
       t.choose(game, 'Pass')  // micah passes
 

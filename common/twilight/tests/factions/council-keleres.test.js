@@ -518,7 +518,7 @@ describe('Council Keleres', () => {
       // Micah (diplomacy=2) goes next
       t.choose(game, 'Strategic Action')  // Micah uses diplomacy
       t.choose(game, 'sol-home')          // Micah diplomacy target
-      t.choose(game, 'Pass')              // Dennis declines secondary
+      // Dennis: diplomacy secondary auto-skipped (no exhausted planets)
       // Both pass action phase
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')

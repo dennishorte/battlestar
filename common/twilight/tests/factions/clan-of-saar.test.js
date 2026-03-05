@@ -230,7 +230,7 @@ describe('Clan of Saar', () => {
       t.choose(game, 'Strategic Action')
       // Diplomacy primary: choose a system
       t.choose(game, 'saar-home')
-      t.choose(game, 'Pass') // Micah declines diplomacy secondary
+      // Micah: diplomacy secondary auto-skipped (no exhausted planets)
 
       // Micah activates system 27 and moves cruiser in from adjacent system 26
       t.choose(game, 'Tactical Action')
@@ -441,7 +441,7 @@ describe('Clan of Saar', () => {
       // Dennis uses strategic action (diplomacy)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'saar-home')
-      t.choose(game, 'Pass') // Micah declines secondary
+      // Micah: diplomacy secondary auto-skipped (no exhausted planets)
 
       // Micah activates system 38 (adjacent to hacan-home)
       t.choose(game, 'Tactical Action')
@@ -493,7 +493,7 @@ describe('Clan of Saar', () => {
       // dennis: leadership secondary auto-passes (Saar 1I)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'saar-home')
-      t.choose(game, 'Pass')  // micah declines diplomacy secondary
+      // micah: diplomacy secondary auto-skipped (no exhausted planets)
 
       t.choose(game, 'Tactical Action')
       t.action(game, 'activate-system', { systemId: '38' })
@@ -535,7 +535,7 @@ describe('Clan of Saar', () => {
       // dennis: leadership secondary auto-passes (Saar 1I)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'saar-home')
-      t.choose(game, 'Pass')  // micah declines diplomacy secondary
+      // micah: diplomacy secondary auto-skipped (no exhausted planets)
 
       t.choose(game, 'Tactical Action')
       t.action(game, 'activate-system', { systemId: '38' })

@@ -39,7 +39,11 @@ function playToStatusPhase(game) {
   }
   t.choose(game, 'Strategic Action')  // micah: diplomacy
   t.choose(game, 'hacan-home')        // micah picks system
-  t.choose(game, 'Pass')              // dennis declines secondary
+  // Dennis: diplomacy secondary — Pass if prompted (has exhausted planets), else auto-skipped
+  const postDip = t.currentChoices(game)
+  if (postDip.includes('Pass') && !postDip.includes('Tactical Action')) {
+    t.choose(game, 'Pass')
+  }
   t.choose(game, 'Pass')              // dennis passes
   t.choose(game, 'Pass')              // micah passes
 }
@@ -532,7 +536,7 @@ describe('Secret Objectives — Status Phase', () => {
     t.choose(game, 'Decline')           // dennis declines legendary planet ability
     t.choose(game, 'Strategic Action')  // micah: diplomacy
     t.choose(game, 'hacan-home')        // micah picks system
-    t.choose(game, 'Pass')              // dennis declines secondary
+    // dennis: diplomacy secondary auto-skipped (no exhausted planets)
     t.choose(game, 'Pass')              // dennis passes
     t.choose(game, 'Pass')              // micah passes
 
@@ -922,7 +926,7 @@ describe('Secret Objectives — Action Phase', () => {
     t.choose(game, 'Done')              // dennis: allocate 3 tokens
     t.choose(game, 'Strategic Action')  // micah: diplomacy
     t.choose(game, 'hacan-home')        // micah picks system
-    t.choose(game, 'Pass')              // dennis declines secondary
+    // dennis: diplomacy secondary auto-skipped (no exhausted planets)
     t.choose(game, 'Pass')              // dennis passes first
     t.choose(game, 'Pass')              // micah passes last — triggers prove-endurance
 

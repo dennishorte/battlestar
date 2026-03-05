@@ -114,7 +114,7 @@ describe('Naalu Collective', () => {
       // Micah (Naalu, telepathic=0) goes first — use diplomacy
       t.choose(game, 'Strategic Action')
       t.choose(game, 'naalu-home')   // diplomacy: choose system
-      t.choose(game, 'Pass')         // dennis declines diplomacy secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
 
       // Dennis (Hacan) takes tactical action
       t.choose(game, 'Tactical Action')
@@ -476,7 +476,7 @@ describe('Naalu Collective', () => {
       t.choose(game, 'Pass')              // Micah declines leadership secondary (Naalu 3I)
       t.choose(game, 'Strategic Action')  // Micah uses diplomacy (goes second)
       t.choose(game, 'naalu-home')        // Micah diplomacy target
-      t.choose(game, 'Pass')              // Dennis declines secondary
+      // Dennis: diplomacy secondary auto-skipped (no exhausted planets)
       // Both pass
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
@@ -514,7 +514,7 @@ describe('Naalu Collective', () => {
       t.choose(game, 'Pass')              // Micah declines leadership secondary (Naalu 3I)
       t.choose(game, 'Strategic Action')  // Micah uses diplomacy
       t.choose(game, 'naalu-home')
-      t.choose(game, 'Pass')              // Dennis declines secondary
+      // Dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
 
