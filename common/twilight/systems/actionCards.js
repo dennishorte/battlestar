@@ -53,18 +53,7 @@ module.exports = function(Twilight) {
   ////////////////////////////////////////////////////////////////////////////////
   // Playing Action Cards
 
-  Twilight.prototype._playActionCard = function(player) {
-    const actionCards = (player.actionCards || []).filter(c => c.timing === 'action')
-    if (actionCards.length === 0) {
-      return
-    }
-
-    const cardNames = actionCards.map(c => c.name)
-    const selection = this.actions.choose(player, cardNames, {
-      title: 'Play Action Card',
-    })
-
-    const cardName = selection[0]
+  Twilight.prototype._playActionCard = function(player, cardName) {
     const cardIndex = player.actionCards.findIndex(c => c.name === cardName && c.timing === 'action')
     if (cardIndex === -1) {
       return

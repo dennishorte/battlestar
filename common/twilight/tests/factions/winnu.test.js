@@ -323,7 +323,7 @@ describe('Winnu', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: Strategic Action (leadership)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Winnu, 4I)
 
@@ -374,7 +374,7 @@ describe('Winnu', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: Strategic Action (leadership)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Winnu, 4I)
 
@@ -426,7 +426,7 @@ describe('Winnu', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: Strategic Action (Leadership)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Winnu, 4I)
       // Leadership secondary auto-resolves (Micah has < 3 influence)

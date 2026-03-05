@@ -175,7 +175,7 @@ describe('Mentak Coalition', () => {
       t.choose(game, 'warfare')       // dennis (2nd pick)
 
       // Dennis (leadership=1) goes first
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
       // Dennis should get transaction window (adjacent to micah via solAdj)
@@ -243,7 +243,7 @@ describe('Mentak Coalition', () => {
       t.choose(game, 'warfare')       // dennis (2nd pick)
 
       // Dennis (leadership=1) goes first
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
       // Dennis trades 1 TG to micah — micah now has 2 TG (below 3 threshold)
@@ -311,7 +311,7 @@ describe('Mentak Coalition', () => {
       t.choose(game, 'warfare')       // dennis (2nd pick)
 
       // Dennis (leadership=1) goes first
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
       // Dennis trades 1 TG to micah — micah now has 6 TG (>= 3 threshold)
@@ -386,7 +386,7 @@ describe('Mentak Coalition', () => {
       t.choose(game, 'warfare')       // dennis (2nd pick)
 
       // Dennis (leadership=1) goes first
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
       // Dennis trades 1 TG to micah
@@ -671,8 +671,9 @@ describe('Mentak Coalition', () => {
       t.choose(game, 'Skip Transaction')
 
       // Dennis (initiative 5): Strategic Action (Trade)
-      // Trade primary: Dennis gains 3 TG, all commodities replenished
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.trade')
+      // Dennis doesn't choose anyone for free secondary
+      t.choose(game, 'Done')
       // Micah is offered Trade secondary (free for Hacan)
       t.choose(game, 'Pass')
 
@@ -722,7 +723,7 @@ describe('Mentak Coalition', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis (Leadership, initiative 1): Strategic Action → Leadership
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
       // Micah (Diplomacy, initiative 2): Component Action → Promise of Protection

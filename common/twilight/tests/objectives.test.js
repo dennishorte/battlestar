@@ -8,13 +8,13 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 
 function playToStatusPhase(game) {
   pickStrategyCards(game, 'leadership', 'diplomacy')
-  t.choose(game, 'Strategic Action')  // dennis: leadership
+  t.choose(game, 'Strategic Action.leadership')  // dennis: leadership
   t.choose(game, 'Done')             // dennis: allocate 3 tokens
   // Skip influence-for-tokens prompt if it appears (when dennis has >= 3 influence)
   if (t.currentChoices(game).includes('Skip')) {
     t.choose(game, 'Skip')
   }
-  t.choose(game, 'Strategic Action')  // micah: diplomacy
+  t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy
   t.choose(game, 'hacan-home')
   // dennis: diplomacy secondary auto-skipped (no exhausted planets)
   t.choose(game, 'Pass')  // dennis passes
@@ -54,11 +54,11 @@ describe('Objectives', () => {
       pickStrategyCards(game, 'imperial', 'leadership')
 
       // Micah (leadership=1) goes first
-      t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Strategic Action.leadership')  // micah: leadership
       t.choose(game, 'Done')             // micah: allocate 3 tokens
       t.choose(game, 'Pass')  // dennis declines leadership secondary (has Mecatol Rex influence)
       // Dennis uses imperial
-      t.choose(game, 'Strategic Action')  // dennis: imperial
+      t.choose(game, 'Strategic Action.imperial')  // dennis: imperial
       t.choose(game, 'Pass')  // micah declines imperial secondary
 
       const dennis = game.players.byName('dennis')
@@ -79,11 +79,11 @@ describe('Objectives', () => {
       pickStrategyCards(game, 'imperial', 'leadership')
 
       // Micah (leadership=1) goes first
-      t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Strategic Action.leadership')  // micah: leadership
       t.choose(game, 'Done')             // micah: allocate 3 tokens
       t.choose(game, 'Pass')  // dennis declines leadership secondary (has Mecatol Rex, 8I)
       // Dennis uses imperial (+1 VP for Mecatol)
-      t.choose(game, 'Strategic Action')  // dennis: imperial
+      t.choose(game, 'Strategic Action.imperial')  // dennis: imperial
       t.choose(game, 'Pass')  // micah declines imperial secondary
 
       const dennis = game.players.byName('dennis')
@@ -107,11 +107,11 @@ describe('Objectives', () => {
       pickStrategyCards(game, 'imperial', 'leadership')
 
       // Micah (leadership=1) goes first
-      t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Strategic Action.leadership')  // micah: leadership
       t.choose(game, 'Done')             // micah: allocate 3 tokens
       t.choose(game, 'Pass')  // dennis declines leadership secondary (has Mecatol Rex, 8I)
       // Dennis uses imperial → goes to 10 VP → game should end
-      t.choose(game, 'Strategic Action')  // dennis (imperial → 10 VP)
+      t.choose(game, 'Strategic Action.imperial')  // dennis (imperial → 10 VP)
 
       expect(game.gameOver).toBe(true)
       const dennis = game.players.byName('dennis')
@@ -131,10 +131,10 @@ describe('Objectives', () => {
       game.run()
       pickStrategyCards(game, 'imperial', 'leadership')
 
-      t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Strategic Action.leadership')  // micah: leadership
       t.choose(game, 'Done')             // micah: allocate 3 tokens
       t.choose(game, 'Pass')  // dennis declines leadership secondary (has Mecatol Rex, 8I)
-      t.choose(game, 'Strategic Action')  // dennis: imperial → 10 VP
+      t.choose(game, 'Strategic Action.imperial')  // dennis: imperial → 10 VP
 
       expect(game.gameOverData).toBeTruthy()
       expect(game.gameOverData.player).toBe('dennis')
@@ -153,10 +153,10 @@ describe('Objectives', () => {
       game.run()
       pickStrategyCards(game, 'imperial', 'leadership')
 
-      t.choose(game, 'Strategic Action')  // micah: leadership
+      t.choose(game, 'Strategic Action.leadership')  // micah: leadership
       t.choose(game, 'Done')             // micah: allocate 3 tokens
       t.choose(game, 'Pass')  // dennis declines leadership secondary (has Mecatol Rex, 8I)
-      t.choose(game, 'Strategic Action')  // dennis: imperial → 9 VP
+      t.choose(game, 'Strategic Action.imperial')  // dennis: imperial → 9 VP
       t.choose(game, 'Pass')  // micah declines imperial secondary
 
       expect(game.gameOver).toBe(false)
@@ -180,9 +180,9 @@ describe('Objectives', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Play through action phase — both pass
-      t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Strategic Action.leadership')  // dennis: leadership
       t.choose(game, 'Done')             // dennis: allocate 3 tokens
-      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy
       t.choose(game, 'hacan-home')
       // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')  // dennis passes
@@ -203,9 +203,9 @@ describe('Objectives', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Play through action phase
-      t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Strategic Action.leadership')  // dennis: leadership
       t.choose(game, 'Done')             // dennis: allocate 3 tokens
-      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy
       t.choose(game, 'hacan-home')
       // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
@@ -330,10 +330,10 @@ describe('Objectives', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Play through action phase — both pass
-      t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Strategic Action.leadership')  // dennis: leadership
       t.choose(game, 'Done')             // dennis: allocate 3 tokens
       // micah: leadership secondary auto-passes (Hacan 2I)
-      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy
       t.choose(game, 'hacan-home')
       // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')  // dennis passes
@@ -367,10 +367,10 @@ describe('Objectives', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')             // dennis: allocate 3 tokens
       // micah: leadership secondary auto-passes (Hacan 2I)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'hacan-home')
       // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')  // dennis passes
@@ -403,10 +403,10 @@ describe('Objectives', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')             // dennis: allocate 3 tokens
       // micah: leadership secondary auto-passes (Hacan 2I)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'hacan-home')
       // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')  // dennis passes

@@ -150,11 +150,11 @@ describe('Embers of Muaat', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses leadership (primary: gain 3 command tokens)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
       // Micah goes next: micah uses diplomacy
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'hacan-home')  // micah: diplomacy primary, protect hacan-home
       // Dennis selects exhausted planet (diplomacy secondary)
       t.choose(game, 'muaat')
@@ -187,11 +187,11 @@ describe('Embers of Muaat', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses leadership (primary)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
       // Micah uses diplomacy (primary)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'hacan-home')
       // Dennis selects exhausted planet (diplomacy secondary)
       t.choose(game, 'muaat')
@@ -554,7 +554,7 @@ describe('Embers of Muaat', () => {
       pickStrategyCards(game, 'technology', 'imperial')
 
       // Dennis uses Technology primary: research Stellar Genesis
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.technology')
       t.choose(game, 'stellar-genesis')
 
       // Choose system to place Avernus

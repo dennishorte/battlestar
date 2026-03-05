@@ -542,10 +542,12 @@ describe('Empyrean', () => {
       t.choose(game, 'dark-pact')
       // Transaction window auto-exits (no resources)
 
-      // Dennis: Strategic Action (Trade) — gains 3 TG, replenishes all commodities
-      t.choose(game, 'Strategic Action')
-      // Micah: Trade secondary (Hacan gets it free)
-      t.choose(game, 'Pass')
+      // Dennis: Strategic Action (Trade) — gains 3 TG, replenishes commodities
+      t.choose(game, 'Strategic Action.trade')
+      // Dennis chooses micah for free secondary
+      t.choose(game, 'micah')
+      // Micah accepts free secondary (Hacan gets it free regardless)
+      t.choose(game, 'Use Secondary')
 
       // Dennis's transaction window: request 6 commodities from Micah
       t.choose(game, 'micah')
@@ -593,7 +595,7 @@ describe('Empyrean', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: Strategic Action (Leadership)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Empyrean, 4I)
 
@@ -654,11 +656,13 @@ describe('Empyrean', () => {
       t.choose(game, 'blood-pact')
 
       // Dennis: Strategic Action (Trade)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.trade')
+      // Dennis doesn't choose anyone for free secondary
+      t.choose(game, 'Done')
       t.choose(game, 'Pass')  // Micah declines Trade secondary
 
       // Micah: Strategic Action (Leadership)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // dennis declines leadership secondary (Empyrean, The Dark 4I)
       // Hacan Guild Ships: transaction window (Dennis has TG from Trade)
@@ -714,7 +718,7 @@ describe('Empyrean', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: Strategic Action → Micah declines
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Empyrean, 4I)
       // micah: leadership secondary auto-passes (Hacan 2I)
@@ -857,7 +861,7 @@ describe('Empyrean', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         // Dennis does a strategic action first
-        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Strategic Action.leadership')
         t.choose(game, 'Done')  // allocate tokens
         t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Empyrean, 4I)
         // micah: leadership secondary auto-passes (Hacan 2I)
@@ -1131,12 +1135,12 @@ describe('Empyrean', () => {
         pickStrategyCards(game, 'diplomacy', 'leadership')
 
         // Micah takes leadership strategic action first
-        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Strategic Action.leadership')
         t.choose(game, 'Done')  // allocate tokens
         t.choose(game, 'Pass')  // dennis declines leadership secondary (Empyrean, The Dark 4I)
 
         // Dennis takes diplomacy
-        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Strategic Action.diplomacy')
         t.choose(game, 'empyrean-home')
         // Micah: diplomacy secondary auto-skipped (no exhausted planets)
 

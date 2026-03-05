@@ -8,9 +8,9 @@ function pickStrategyCards(game, dennisCard, micahCard) {
 
 // Play through action phase with leadership+diplomacy (both use + pass)
 function playThroughActionPhase(game) {
-  t.choose(game, 'Strategic Action')  // dennis: leadership
+  t.choose(game, 'Strategic Action.leadership')  // dennis: leadership
   t.choose(game, 'Done')             // dennis: allocate 3 tokens
-  t.choose(game, 'Strategic Action')  // micah: diplomacy
+  t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy
   t.choose(game, 'hacan-home')
   // dennis: diplomacy secondary auto-skipped (no exhausted planets)
   t.choose(game, 'Pass')
@@ -62,7 +62,7 @@ describe('Action Cards', () => {
       pickStrategyCards(game, 'politics', 'trade')
 
       // Dennis uses politics
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.politics')
       // Speaker choice auto-resolves to micah (dennis is current speaker)
       // Agenda deck peek
       t.choose(game, t.currentChoices(game)[0])
@@ -100,11 +100,11 @@ describe('Action Cards', () => {
       pickStrategyCards(game, 'leadership', 'imperial')
 
       // Dennis (leadership=1) goes first, uses leadership
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')             // dennis: allocate 3 tokens
 
       // Micah uses imperial
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.imperial')
       // Dennis uses imperial secondary → draws secret objective
       t.choose(game, 'Use Secondary')
 
@@ -122,11 +122,11 @@ describe('Action Cards', () => {
       pickStrategyCards(game, 'leadership', 'imperial')
 
       // Dennis (leadership=1) goes first, uses leadership
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')             // dennis: allocate 3 tokens
 
       // Micah uses imperial
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.imperial')
       // Dennis uses imperial secondary → draws secret objective → inits deck
       t.choose(game, 'Use Secondary')
 

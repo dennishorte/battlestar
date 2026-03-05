@@ -30,7 +30,7 @@ describe('Legendary Planets', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses Strategic Action (leadership)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
       // Legendary planet ability offered at end of turn
@@ -64,7 +64,7 @@ describe('Legendary Planets', () => {
       const dennis = game.players.byName('dennis')
       const cardsBefore = (dennis.actionCards || []).length
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       // micah: leadership secondary auto-passes (Hacan 2I)
 
@@ -99,7 +99,7 @@ describe('Legendary Planets', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Primor 1I = 3I)
       // micah: leadership secondary auto-passes (Hacan 2I)
@@ -136,7 +136,7 @@ describe('Legendary Planets', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Mallice 3I = 5I)
       // micah: leadership secondary auto-passes (Hacan 2I)
@@ -167,7 +167,7 @@ describe('Legendary Planets', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Mallice 3I = 5I)
       // micah: leadership secondary auto-passes (Hacan 2I)
@@ -204,7 +204,7 @@ describe('Legendary Planets', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Mirage 2I = 4I)
       // micah: leadership secondary auto-passes (Hacan 2I)
@@ -241,7 +241,7 @@ describe('Legendary Planets', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses Strategic Action (leadership) — turn 1
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Primor 1I = 3I)
 
@@ -249,7 +249,7 @@ describe('Legendary Planets', () => {
       t.choose(game, 'The Atrament')
 
       // Micah's turn: strategic action (diplomacy)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
 
       // Micah picks a system for diplomacy
       const choices = t.currentChoices(game)
@@ -285,7 +285,7 @@ describe('Legendary Planets', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: leadership
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Sol 2I + Mallice 3I = 5I)
       // micah: leadership secondary auto-passes (Hacan 2I)
@@ -298,7 +298,7 @@ describe('Legendary Planets', () => {
       expect(game.state.exhaustedLegendaryAbilities?.dennis).toContain('mallice')
 
       // Micah: diplomacy
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       const dipChoices = t.currentChoices(game)
       t.choose(game, dipChoices[0])
       // Dennis: diplomacy secondary auto-skipped (no exhausted planets)
@@ -471,7 +471,7 @@ describe('Legendary Planets', () => {
       pickStrategyCards(game, 'diplomacy', 'imperial')
 
       // Dennis goes first (diplomacy, init 2)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       const dipChoices = t.currentChoices(game)
       t.choose(game, dipChoices[0])  // pick a system for diplomacy
       // micah: diplomacy secondary auto-skipped (no exhausted planets)
@@ -483,7 +483,7 @@ describe('Legendary Planets', () => {
       }
 
       // Micah uses Imperial — controls Mecatol Rex → scores 1 VP
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.imperial')
 
       // Custodia Vigilia reactive: Dennis (Keleres) gains 1 command token
       // Dennis chooses which pool

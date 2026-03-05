@@ -434,7 +434,7 @@ describe('Barony of Letnev', () => {
       expect(dennis.isHeroPurged()).toBe(true)
 
       // Micah takes a turn (Strategic Action — diplomacy)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'hacan-home')
       // dennis: diplomacy secondary auto-skipped (no exhausted planets)
 

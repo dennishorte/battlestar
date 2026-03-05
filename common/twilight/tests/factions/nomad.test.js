@@ -116,12 +116,12 @@ describe('Nomad', () => {
       t.choose(game, 'diplomacy')
 
       // Dennis uses leadership (strategic action)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Nomad, 4I)
 
       // Micah uses diplomacy (strategic action)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'sol-home')           // micah picks system to protect
       // dennis: diplomacy secondary auto-skipped (no exhausted planets)
 
@@ -147,7 +147,7 @@ describe('Nomad', () => {
       t.choose(game, 'imperial')
 
       // Dennis goes first (trade=5), uses strategic action
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.trade')
       // Trade primary replenishes all commodities — Artuno fires
       t.choose(game, 'Exhaust Artuno')
 
@@ -520,7 +520,7 @@ describe('Nomad', () => {
         t.choose(game, 'imperial')
 
         // Dennis uses Trade — primary replenishes commodities, Artuno triggers
-        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Strategic Action.trade')
         t.choose(game, 'Exhaust Artuno')
 
         // Temporal Command Suite triggers after Artuno exhaustion
@@ -545,7 +545,7 @@ describe('Nomad', () => {
         t.choose(game, 'trade')
         t.choose(game, 'imperial')
 
-        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Strategic Action.trade')
         t.choose(game, 'Exhaust Artuno')
 
         // Decline Temporal Command Suite
@@ -687,7 +687,7 @@ describe('Nomad', () => {
         t.choose(game, 'Pass')  // decline Thunder's Paradox
 
         // Dennis does strategic action to pass turn
-        t.choose(game, 'Strategic Action')
+        t.choose(game, 'Strategic Action.leadership')
         t.choose(game, 'Done')  // allocate tokens
         t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Nomad, 4I)
 

@@ -18,7 +18,7 @@ describe('Action Card Play', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       const choices = t.currentChoices(game)
-      expect(choices).toContain('Play Action Card')
+      expect(choices).toContain('Action Card')
     })
 
     test('Play Action Card does not appear without action-timing cards', () => {
@@ -32,7 +32,7 @@ describe('Action Card Play', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       const choices = t.currentChoices(game)
-      expect(choices).not.toContain('Play Action Card')
+      expect(choices).not.toContain('Action Card')
     })
 
     test('playing action card removes it from hand', () => {
@@ -45,9 +45,8 @@ describe('Action Card Play', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Play Action Card (1 card auto-selects mining-initiative,
-      // 1 planet auto-selects jord)
-      t.choose(game, 'Play Action Card')
+      // Play Mining Initiative (1 planet auto-selects jord)
+      t.choose(game, 'Action Card.Mining Initiative')
 
       const dennis = game.players.byName('dennis')
       expect(dennis.actionCards.length).toBe(0)
@@ -66,8 +65,8 @@ describe('Action Card Play', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Play Action Card → auto-selects Focused Research (only card)
-      t.choose(game, 'Play Action Card')
+      // Play Focused Research
+      t.choose(game, 'Action Card.Focused Research')
       // Choose a tech to research (Sol starts with neural-motivator + antimass-deflectors)
       t.choose(game, 'plasma-scoring')
 
@@ -88,8 +87,8 @@ describe('Action Card Play', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Play → auto-selects Mining Initiative → auto-selects Jord (only planet)
-      t.choose(game, 'Play Action Card')
+      // Play Mining Initiative → auto-selects Jord (only planet)
+      t.choose(game, 'Action Card.Mining Initiative')
 
       const dennis = game.players.byName('dennis')
       expect(dennis.tradeGoods).toBe(4)  // Jord has 4 resources
@@ -108,8 +107,8 @@ describe('Action Card Play', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis controls Jord (no industrial trait)
-      // Play → auto-selects Industrial Initiative → 0 industrial planets
-      t.choose(game, 'Play Action Card')
+      // Play Industrial Initiative → 0 industrial planets
+      t.choose(game, 'Action Card.Industrial Initiative')
 
       const dennis = game.players.byName('dennis')
       expect(dennis.tradeGoods).toBe(0)
@@ -132,8 +131,8 @@ describe('Action Card Play', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Play → auto-selects Uprising → auto-selects mecatol-rex (only non-home enemy planet)
-      t.choose(game, 'Play Action Card')
+      // Play Uprising → auto-selects mecatol-rex (only non-home enemy planet)
+      t.choose(game, 'Action Card.Uprising')
 
       // Mecatol Rex should be exhausted
       expect(game.state.planets['mecatol-rex'].exhausted).toBe(true)
@@ -156,14 +155,14 @@ describe('Action Card Play', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Play Action Card')
-      // Should see both cards as options
-      const choices = t.currentChoices(game)
-      expect(choices).toContain('Focused Research')
-      expect(choices).toContain('Mining Initiative')
+      // Check sub-choices are visible under Action Card
+      const choices = game.waiting.selectors[0].choices
+      const actionCardChoice = choices.find(c => c.title === 'Action Card')
+      expect(actionCardChoice.choices.map(c => c.title)).toContain('Focused Research')
+      expect(actionCardChoice.choices.map(c => c.title)).toContain('Mining Initiative')
 
       // Play mining initiative → auto-selects jord (only planet)
-      t.choose(game, 'Mining Initiative')
+      t.choose(game, 'Action Card.Mining Initiative')
 
       const dennis = game.players.byName('dennis')
       expect(dennis.tradeGoods).toBe(9)  // 5 + 4 (Jord resources)

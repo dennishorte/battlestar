@@ -56,7 +56,7 @@ describe('Universities of Jol-Nar', () => {
       game.run()
       pickStrategyCards(game, 'technology', 'imperial')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.technology')
 
       const choices = t.currentChoices(game)
       expect(choices).toContain('fleet-logistics')
@@ -160,7 +160,7 @@ describe('Universities of Jol-Nar', () => {
       game.run()
       pickStrategyCards(game, 'technology', 'imperial')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.technology')
 
       // Choose a tech to research (sarween-tools has no prereqs but Jol-Nar already has it)
       // Jol-Nar has 4 techs (1 each color), can research fleet-logistics (2 blue, skip 1 via Analytical)
@@ -188,7 +188,7 @@ describe('Universities of Jol-Nar', () => {
       game.run()
       pickStrategyCards(game, 'technology', 'imperial')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.technology')
       t.choose(game, 'fleet-logistics')
 
       // Decline the agent
@@ -208,12 +208,12 @@ describe('Universities of Jol-Nar', () => {
       pickStrategyCards(game, 'leadership', 'technology')
 
       // Dennis goes first — use leadership
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // dennis: allocate 3 tokens
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Jol-Nar, 5I)
 
       // Micah's turn — use technology
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.technology')
 
       // Micah chooses a tech to research — Hacan starts with antimass-deflectors(blue) + sarween-tools(yellow)
       const micahChoices = t.currentChoices(game)
@@ -248,7 +248,7 @@ describe('Universities of Jol-Nar', () => {
       game.run()
       pickStrategyCards(game, 'technology', 'imperial')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.technology')
       t.choose(game, 'fleet-logistics')
 
       // No agent prompt — should go straight to secondary offer
@@ -460,7 +460,7 @@ describe('Universities of Jol-Nar', () => {
       t.choose(game, 'research-agreement')
 
       // Micah: Strategic Action → Technology
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.technology')
       // Micah researches a non-faction tech (e.g., gravity-drive)
       t.choose(game, 'gravity-drive')
       // Dennis declines Technology secondary

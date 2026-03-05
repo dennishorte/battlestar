@@ -167,7 +167,7 @@ describe('L1Z1X Mindnet', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: strategic action (leadership)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
       // Micah: tactical action — activates system 27 where L1Z1X has units
@@ -204,7 +204,7 @@ describe('L1Z1X Mindnet', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: strategic action (leadership)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
       // Micah: tactical action — activates system 27
@@ -504,9 +504,9 @@ describe('L1Z1X Mindnet', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Both use strategy cards then pass (same pattern as statusPhase.test.js)
-      t.choose(game, 'Strategic Action')  // Dennis plays Leadership
+      t.choose(game, 'Strategic Action.leadership')  // Dennis plays Leadership
       t.choose(game, 'Done')              // allocate tokens
-      t.choose(game, 'Strategic Action')  // Micah plays Diplomacy
+      t.choose(game, 'Strategic Action.diplomacy')  // Micah plays Diplomacy
       t.choose(game, 'sol-home')          // Micah picks system for Diplomacy
       // Dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')              // Dennis passes
@@ -536,10 +536,10 @@ describe('L1Z1X Mindnet', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')              // allocate tokens
       // micah: leadership secondary auto-passes (Sol 2I)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'sol-home')
       // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')

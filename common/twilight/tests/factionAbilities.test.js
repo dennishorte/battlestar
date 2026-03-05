@@ -18,7 +18,7 @@ describe('Cross-Faction Tests', () => {
       pickStrategyCards(game, 'technology', 'imperial')
 
       // Dennis has 2 green prereqs — can research Spec Ops II (needs 2 green)
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.technology')
 
       const choices = t.currentChoices(game)
       expect(choices).toContain('spec-ops-ii')
@@ -261,7 +261,7 @@ describe('Cross-Faction Tests', () => {
       t.choose(game, 'imperial')
 
       // Dennis uses trade primary
-      t.choose(game, 'Strategic Action')
+      t.choose(game, 'Strategic Action.trade')
 
       // Dennis offers Alliance note to Mahact (micah) — should be silently rejected
       t.action(game, 'trade-offer', {
