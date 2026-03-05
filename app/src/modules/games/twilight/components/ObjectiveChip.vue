@@ -77,17 +77,17 @@ export default {
 }
 
 .chip-stage-1 {
-  background: #fffde7;
+  background: #fff9c4;
   border-color: #f57f17;
 }
 
 .chip-stage-2 {
-  background: #e3f2fd;
+  background: #bbdefb;
   border-color: #0d6efd;
 }
 
 .chip-secret {
-  background: #f3e5f5;
+  background: #e1bee7;
   border-color: #7b1fa2;
 }
 

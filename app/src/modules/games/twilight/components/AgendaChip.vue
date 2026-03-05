@@ -60,12 +60,12 @@ export default {
 }
 
 .chip-law {
-  background: #e8eaf6;
+  background: #c5cae9;
   border-color: #3f51b5;
 }
 
 .chip-directive {
-  background: #fff3e0;
+  background: #ffcc80;
   border-color: #e65100;
 }
 
