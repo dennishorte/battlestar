@@ -67,13 +67,13 @@ export default {
   padding: .2em .5em;
   border-radius: .2em;
   border-left: 4px solid;
-  background: #f0f2f5;
+  background: #dee2e6;
   font-size: .9em;
   cursor: pointer;
 }
 
 .tech-chip:hover {
-  background: #e3e6ea;
+  background: #ced4da;
 }
 
 .tech-name {
