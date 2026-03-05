@@ -20,7 +20,7 @@ function playThroughActionPhase(game) {
   t.choose(game, 'Done')             // dennis: allocate 3 tokens
   t.choose(game, 'Strategic Action')  // micah: diplomacy (needs system choice)
   t.choose(game, 'hacan-home')        // micah picks system
-  t.choose(game, 'Pass')             // dennis declines diplomacy secondary
+  // dennis: diplomacy secondary auto-skipped (no exhausted planets)
   t.choose(game, 'Pass')              // dennis passes
   t.choose(game, 'Pass')              // micah passes
 }
@@ -56,7 +56,7 @@ describe('Status Phase', () => {
       // Complete action phase
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')        // micah picks system
-      t.choose(game, 'Pass')              // dennis declines diplomacy secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Strategic Action')  // dennis: leadership (auto)
       t.choose(game, 'Done')              // dennis: allocate 3 tokens
       t.choose(game, 'Pass')              // micah passes
@@ -92,13 +92,23 @@ describe('Status Phase', () => {
       expect(game.state.planets['jord'].exhausted).toBe(true)
 
       // Both use strategy cards then pass
-      playThroughActionPhase(game)
+      t.choose(game, 'Strategic Action')  // dennis: leadership
+      t.choose(game, 'Done')             // dennis: allocate 3 tokens
+      t.choose(game, 'Strategic Action')  // micah: diplomacy
+      t.choose(game, 'hacan-home')        // micah picks system
+      // Dennis has exhausted jord — selects Pass to keep it exhausted for status phase test
+      t.choose(game, 'Pass')
+      t.choose(game, 'Pass')              // dennis passes
+      t.choose(game, 'Pass')              // micah passes
+
+      // Verify jord is still exhausted going into status phase
+      expect(game.state.planets['jord'].exhausted).toBe(true)
 
       // Status phase
       t.choose(game, 'Done')
       t.choose(game, 'Done')
 
-      // Planets should be readied
+      // Planets should be readied by status phase
       expect(game.state.planets['jord'].exhausted).toBe(false)
     })
 
@@ -136,7 +146,7 @@ describe('Status Phase', () => {
       // Complete action phase
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')        // micah picks system
-      t.choose(game, 'Pass')              // dennis declines diplomacy secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Strategic Action')  // dennis: leadership (auto)
       t.choose(game, 'Done')              // dennis: allocate 3 tokens
       t.choose(game, 'Pass')              // micah passes

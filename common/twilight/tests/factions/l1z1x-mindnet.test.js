@@ -508,7 +508,7 @@ describe('L1Z1X Mindnet', () => {
       t.choose(game, 'Done')              // allocate tokens
       t.choose(game, 'Strategic Action')  // Micah plays Diplomacy
       t.choose(game, 'sol-home')          // Micah picks system for Diplomacy
-      t.choose(game, 'Pass')              // Dennis declines Diplomacy secondary
+      // Dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')              // Dennis passes
       t.choose(game, 'Pass')              // Micah passes
 
@@ -541,7 +541,7 @@ describe('L1Z1X Mindnet', () => {
       // micah: leadership secondary auto-passes (Sol 2I)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'sol-home')
-      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
 

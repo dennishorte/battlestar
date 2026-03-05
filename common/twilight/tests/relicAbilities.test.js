@@ -15,7 +15,7 @@ function playThroughActionPhase(game) {
   }
   t.choose(game, 'Strategic Action')  // micah: diplomacy
   t.choose(game, 'hacan-home')        // micah picks system
-  t.choose(game, 'Pass')             // dennis declines secondary
+  // dennis: diplomacy secondary auto-skipped (no exhausted planets)
   t.choose(game, 'Pass')              // dennis passes
   t.choose(game, 'Pass')              // micah passes
 }

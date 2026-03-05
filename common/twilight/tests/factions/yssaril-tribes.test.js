@@ -118,7 +118,7 @@ describe('Yssaril Tribes', () => {
       // micah: leadership secondary auto-passes (Hacan 2I)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
 

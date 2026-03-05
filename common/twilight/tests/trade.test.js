@@ -323,7 +323,7 @@ describe('Trade System', () => {
       // Micah: strategic action (new turn = fresh tracking)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
 
       // Micah can propose to dennis (fresh turn)
       t.choose(game, 'dennis')
@@ -351,7 +351,7 @@ describe('Trade System', () => {
       // If transaction prompt appeared, this next choose would fail
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // dennis declines
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
 

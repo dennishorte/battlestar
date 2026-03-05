@@ -123,7 +123,7 @@ describe('Nomad', () => {
       // Micah uses diplomacy (strategic action)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'sol-home')           // micah picks system to protect
-      t.choose(game, 'Pass')              // dennis declines diplomacy secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
 
       // Both pass
       t.choose(game, 'Pass')

@@ -63,8 +63,7 @@ describe('Xxcha Kingdom', () => {
       const planetChoice = choices.find(c => c !== 'Pass')
       t.choose(game, planetChoice)
 
-      // Micah gets diplomacy secondary prompt
-      t.choose(game, 'Pass')
+      // Micah: diplomacy secondary auto-skipped (no exhausted planets)
 
       // The chosen planet should now be controlled by dennis
       expect(game.state.planets[planetChoice].controller).toBe('dennis')
@@ -87,7 +86,7 @@ describe('Xxcha Kingdom', () => {
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // dennis declines secondary
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
 
@@ -142,7 +141,10 @@ describe('Xxcha Kingdom', () => {
       // Micah: strategic action (diplomacy)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // dennis declines secondary
+      // Micah (diplomacy primary) readies 2 of 3 exhausted planets
+      t.choose(game, 'arretze')
+      t.choose(game, 'hercant')
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
 
       // Pass actions
       t.choose(game, 'Pass')  // dennis
@@ -213,7 +215,11 @@ describe('Xxcha Kingdom', () => {
 
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // dennis declines diplomacy secondary
+      // Micah (diplomacy primary) readies 2 of 3 exhausted planets
+      t.choose(game, 'arretze')
+      t.choose(game, 'hercant')
+      // Dennis has exhausted planets — Pass to keep them exhausted for agent test
+      t.choose(game, 'Pass')
 
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
@@ -446,7 +452,10 @@ describe('Xxcha Kingdom', () => {
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens
       t.choose(game, 'Strategic Action')  // micah: diplomacy
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // dennis declines secondary
+      // Micah (diplomacy primary) readies 2 of 3 exhausted planets
+      t.choose(game, 'arretze')
+      t.choose(game, 'hercant')
+      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')  // dennis passes
       t.choose(game, 'Pass')  // micah passes
 
@@ -519,7 +528,7 @@ describe('Xxcha Kingdom', () => {
       // Dennis (diplomacy=2) goes next
       t.choose(game, 'Strategic Action')  // Dennis uses diplomacy
       t.choose(game, 'hacan-home')        // Dennis diplomacy target
-      t.choose(game, 'Pass')              // Micah declines secondary
+      // Micah: diplomacy secondary auto-skipped (no exhausted planets)
       // Both pass action phase
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
@@ -575,7 +584,7 @@ describe('Xxcha Kingdom', () => {
       // dennis: leadership secondary auto-passes (Hacan, only arretze 0I)
       t.choose(game, 'Strategic Action')
       t.choose(game, 'hacan-home')
-      t.choose(game, 'Pass')  // micah declines diplomacy secondary
+      // micah: diplomacy secondary auto-skipped (no exhausted planets)
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
 
