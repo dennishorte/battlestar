@@ -91,7 +91,7 @@ describe('Emirates of Hacan', () => {
 
       t.choose(game, 'Strategic Action.trade')
       // Dennis doesn't choose anyone for free secondary
-      t.choose(game, 'Done')
+      t.choose(game)
       // Hacan still gets free secondary via Masters of Trade
       t.choose(game, 'Use Secondary')
 
@@ -107,7 +107,7 @@ describe('Emirates of Hacan', () => {
 
       t.choose(game, 'Strategic Action.trade')
       // Dennis (Hacan) doesn't choose anyone for free secondary
-      t.choose(game, 'Done')
+      t.choose(game)
 
       t.choose(game, 'Use Secondary')
 

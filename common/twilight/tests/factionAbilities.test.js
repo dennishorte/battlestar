@@ -262,6 +262,8 @@ describe('Cross-Faction Tests', () => {
 
       // Dennis uses trade primary
       t.choose(game, 'Strategic Action.trade')
+      // Choose nobody for free secondary
+      t.choose(game)
 
       // Dennis offers Alliance note to Mahact (micah) — should be silently rejected
       t.action(game, 'trade-offer', {

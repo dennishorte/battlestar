@@ -673,7 +673,7 @@ describe('Mentak Coalition', () => {
       // Dennis (initiative 5): Strategic Action (Trade)
       t.choose(game, 'Strategic Action.trade')
       // Dennis doesn't choose anyone for free secondary
-      t.choose(game, 'Done')
+      t.choose(game)
       // Micah is offered Trade secondary (free for Hacan)
       t.choose(game, 'Pass')
 
