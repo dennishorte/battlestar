@@ -98,6 +98,7 @@ import AgendaChip from './AgendaChip.vue'
 import ObjectiveChip from './ObjectiveChip.vue'
 import StrategyCardChip from './StrategyCardChip.vue'
 import TechChip from './TechChip.vue'
+import ComponentActionChip from './ComponentActionChip.vue'
 
 import { h } from 'vue'
 import { twilight } from 'battlestar-common'
@@ -314,6 +315,15 @@ export default {
         }
       }
 
+      // Relics (e.g., 'dynamis-core', 'the-codex')
+      const relic = res.getRelic(name)
+      if (relic) {
+        return {
+          component: ComponentActionChip,
+          props: { name: relic.name, relicId: name },
+        }
+      }
+
       // Detect "id: Name" pattern used for objectives and agenda cards
       const colonIdx = name.indexOf(': ')
       if (colonIdx > 0) {
@@ -331,6 +341,14 @@ export default {
             component: AgendaChip,
             props: { agendaId: id },
           }
+        }
+      }
+
+      // Component actions with name metadata (faction abilities, promissory notes, etc.)
+      if (option.name) {
+        return {
+          component: ComponentActionChip,
+          props: { name: option.name, factionId: option.factionId || null },
         }
       }
 
