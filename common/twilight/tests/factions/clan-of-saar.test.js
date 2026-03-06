@@ -691,8 +691,7 @@ describe('Clan of Saar', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses component action (hero)
-      t.choose(game, 'Component Action')
-      t.choose(game, 'armageddon-relay')
+      t.choose(game, 'Component Action.armageddon-relay')
 
       // System 26 is adjacent to system 27 (where dock is)
       // Only one valid target system with enemy infantry/fighters
@@ -1040,8 +1039,7 @@ describe('Clan of Saar', () => {
         t.choose(game, 'diplomacy')
 
         // Dennis uses Component Action → Deorbit Barrage
-        t.choose(game, 'Component Action')
-        t.choose(game, 'deorbit-barrage')
+        t.choose(game, 'Component Action.deorbit-barrage')
 
         // Target planet auto-selects (bereg is the only valid target)
         // Choose how many resources to spend

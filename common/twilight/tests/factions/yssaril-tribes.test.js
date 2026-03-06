@@ -44,8 +44,7 @@ describe('Yssaril Tribes', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'stall-tactics')
+      t.choose(game, 'Component Action.stall-tactics')
       t.choose(game, 'focused-research')
 
       const dennis = game.players.byName('dennis')
@@ -252,8 +251,7 @@ describe('Yssaril Tribes', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'yssaril-hero')
+      t.choose(game, 'Component Action.yssaril-hero')
 
       // Micah shows 1 card (opponent chooses)
       t.choose(game, 'mining-initiative')
@@ -285,8 +283,7 @@ describe('Yssaril Tribes', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'yssaril-hero')
+      t.choose(game, 'Component Action.yssaril-hero')
 
       // Micah shows 1 card
       t.choose(game, 'mining-initiative')
@@ -325,8 +322,7 @@ describe('Yssaril Tribes', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'stall-tactics')
+      t.choose(game, 'Component Action.stall-tactics')
       t.choose(game, 'focused-research')
 
       // Blackshade Infiltrator DEPLOY: choose to deploy mech
@@ -361,8 +357,7 @@ describe('Yssaril Tribes', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'stall-tactics')
+      t.choose(game, 'Component Action.stall-tactics')
       t.choose(game, 'focused-research')
 
       // Pass on mech deploy
@@ -441,8 +436,7 @@ describe('Yssaril Tribes', () => {
         game.run()
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
-        t.choose(game, 'Component Action')
-        t.choose(game, 'mageon-implants')
+        t.choose(game, 'Component Action.mageon-implants')
 
         // Opponent auto-selects (only 1 opponent in 2p game)
         // Choose card to steal
@@ -477,8 +471,7 @@ describe('Yssaril Tribes', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         // First use — steals a card
-        t.choose(game, 'Component Action')
-        t.choose(game, 'mageon-implants')
+        t.choose(game, 'Component Action.mageon-implants')
         // Opponent auto-selects (1 opponent in 2p)
         // Choose which card to take
         t.choose(game, 'mining-initiative')
@@ -547,8 +540,7 @@ describe('Yssaril Tribes', () => {
         t.choose(game, 'Skip') // dennis skips influence-for-tokens (Yssaril, 5I)
 
         // Micah's turn — use shared Stall Tactics via Deepgloom
-        t.choose(game, 'Component Action')
-        t.choose(game, 'stall-tactics-deepgloom')
+        t.choose(game, 'Component Action.stall-tactics-deepgloom')
 
         // Yssaril (Dennis) approves
         t.choose(game, 'Allow')

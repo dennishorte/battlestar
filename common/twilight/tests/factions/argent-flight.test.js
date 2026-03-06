@@ -380,8 +380,7 @@ describe('Argent Flight', () => {
       t.choose(game, 'diplomacy')
 
       // Dennis uses Component Action -> Helix Protocol
-      t.choose(game, 'Component Action')
-      t.choose(game, 'helix-protocol')
+      t.choose(game, 'Component Action.helix-protocol')
 
       // Choose to move 1 destroyer from argent-home
       // (choices: Skip this system, Move 1 carrier from argent-home, Move 1 destroyer from argent-home, etc.)
@@ -424,8 +423,7 @@ describe('Argent Flight', () => {
       t.choose(game, 'diplomacy')
 
       // Dennis uses Component Action -> Helix Protocol
-      t.choose(game, 'Component Action')
-      t.choose(game, 'helix-protocol')
+      t.choose(game, 'Component Action.helix-protocol')
 
       // No valid target systems, so hero is purged immediately
       const dennis = game.players.byName('dennis')

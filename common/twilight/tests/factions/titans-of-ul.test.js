@@ -422,8 +422,7 @@ describe('Titans of Ul', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses component action: hero
-      t.choose(game, 'Component Action')
-      t.choose(game, 'geoform')
+      t.choose(game, 'Component Action.geoform')
 
       // Verify: hero is NOT purged (Rule 51 — attached to Elysium instead)
       const dennis = game.players.byName('dennis')
@@ -458,8 +457,7 @@ describe('Titans of Ul', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Use hero
-      t.choose(game, 'Component Action')
-      t.choose(game, 'geoform')
+      t.choose(game, 'Component Action.geoform')
 
       // The hero attachment should grant space cannon 5x3 to Elysium
       const attachment = game.state.heroAttachments?.['elysium']
@@ -569,8 +567,7 @@ describe('Titans of Ul', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: Component Action → Terraform
-      t.choose(game, 'Component Action')
-      t.choose(game, 'terraform')
+      t.choose(game, 'Component Action.terraform')
       // Only 1 eligible planet (new-albion), auto-selected
 
       // Terraform attached — resource and influence each +1
@@ -613,8 +610,7 @@ describe('Titans of Ul', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'terraform')
+      t.choose(game, 'Component Action.terraform')
 
       // Terraform stores all traits flag
       expect(game.state.planets['new-albion'].terraform).toBe(true)
@@ -891,8 +887,7 @@ describe('Titans of Ul', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         // Dennis uses component action: Request Sleeper Placement
-        t.choose(game, 'Component Action')
-        t.choose(game, 'slumberstate-sleeper')
+        t.choose(game, 'Component Action.slumberstate-sleeper')
 
         // Micah is auto-selected (only opponent), Micah allows it
         t.choose(game, 'Allow Sleeper')

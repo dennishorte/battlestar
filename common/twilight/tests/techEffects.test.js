@@ -709,11 +709,8 @@ describe('Self Assembly Routines', () => {
     game.run()
     pickStrategyCards(game, 'leadership', 'diplomacy')
 
-    // Dennis takes component action
-    t.choose(game, 'Component Action')
-
-    // self-assembly-routines should be available
-    const choices = t.currentChoices(game)
+    // self-assembly-routines should be available as component action
+    const choices = t.currentSubChoices(game, 'Component Action')
     expect(choices).toContain('self-assembly-routines')
   })
 })

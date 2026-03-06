@@ -41,8 +41,7 @@ describe('Relic Abilities', () => {
       const choices = t.currentChoices(game)
       expect(choices).toContain('Component Action')
 
-      t.choose(game, 'Component Action')
-      const componentChoices = t.currentChoices(game)
+      const componentChoices = t.currentSubChoices(game, 'Component Action')
       expect(componentChoices).toContain('dynamis-core')
     })
 
@@ -64,8 +63,7 @@ describe('Relic Abilities', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Sol has Orbital Drop available, so Component Action is offered
-      t.choose(game, 'Component Action')
-      const componentChoices = t.currentChoices(game)
+      const componentChoices = t.currentSubChoices(game, 'Component Action')
       expect(componentChoices).not.toContain('jr-xs455-o')
     })
   })
@@ -268,8 +266,7 @@ describe('Relic Abilities', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Component Action: Dynamis Core
-      t.choose(game, 'Component Action')
-      t.choose(game, 'dynamis-core')
+      t.choose(game, 'Component Action.dynamis-core')
 
       const dennis = game.players.byName('dennis')
       // Sol 4 + Dynamis Core 2 = 6 trade goods
@@ -305,8 +302,7 @@ describe('Relic Abilities', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'the-codex')
+      t.choose(game, 'Component Action.the-codex')
 
       // Take 1 card
       t.choose(game, 'Sabotage')
@@ -337,8 +333,7 @@ describe('Relic Abilities', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'jr-xs455-o')
+      t.choose(game, 'Component Action.jr-xs455-o')
 
       // Choose micah as target
       t.choose(game, 'micah')
@@ -374,8 +369,7 @@ describe('Relic Abilities', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'nano-forge')
+      t.choose(game, 'Component Action.nano-forge')
 
       // Choose new-albion (non-legendary, non-home) — 2 targets so no auto-respond
       t.choose(game, 'new-albion')
@@ -571,8 +565,7 @@ describe('Relic Abilities', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'circlet-of-the-void')
+      t.choose(game, 'Component Action.circlet-of-the-void')
 
       // Only one frontier target — auto-selected or choose
       if (t.currentChoices(game).includes('48')) {
@@ -611,8 +604,7 @@ describe('Relic Abilities', () => {
 
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'book-of-latvinia')
+      t.choose(game, 'Component Action.book-of-latvinia')
 
       expect(game.state.relicsGained['dennis']).not.toContain('book-of-latvinia')
       // Should either have VP or be speaker — hard to guarantee 4 specialties
@@ -631,8 +623,7 @@ describe('Relic Abilities', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'book-of-latvinia')
+      t.choose(game, 'Component Action.book-of-latvinia')
 
       expect(game.state.relicsGained['dennis']).not.toContain('book-of-latvinia')
       expect(game.state.speaker).toBe('dennis')

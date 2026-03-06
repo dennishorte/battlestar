@@ -445,8 +445,7 @@ describe('Mahact Gene-Sorcerers', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses Component Action to trigger Benediction
-      t.choose(game, 'Component Action')
-      t.choose(game, 'airo-shir-aur-hero')
+      t.choose(game, 'Component Action.airo-shir-aur-hero')
 
       // Choose source system (Dennis's cruisers in 27)
       // Use * prefix to prevent digit-to-number conversion
@@ -819,12 +818,9 @@ describe('Mahact Gene-Sorcerers', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         // Dennis uses Component Action to activate Vaults of the Heir
-        t.choose(game, 'Component Action')
-
-        // Verify vaults-of-the-heir is among available choices
-        const availableChoices = t.currentChoices(game)
+        const availableChoices = t.currentSubChoices(game, 'Component Action')
         expect(availableChoices).toContain('vaults-of-the-heir')
-        t.choose(game, 'vaults-of-the-heir')
+        t.choose(game, 'Component Action.vaults-of-the-heir')
 
         // Choose technology to purge
         // 3 choices available (bio-stims, predictive-intelligence, sarween-tools)

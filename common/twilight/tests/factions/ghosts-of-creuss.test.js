@@ -314,8 +314,7 @@ describe('Ghosts of Creuss', () => {
 
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'creuss-hero')
+      t.choose(game, 'Component Action.creuss-hero')
 
       // System 26 has alpha wormhole, system 27 has dennis' cruiser
       // Use * prefix to prevent digit-to-number conversion
@@ -618,8 +617,7 @@ describe('Ghosts of Creuss', () => {
         t.choose(game, 'diplomacy')
 
         // Dennis uses Component Action -> Wormhole Generator
-        t.choose(game, 'Component Action')
-        t.choose(game, 'wormhole-generator')
+        t.choose(game, 'Component Action.wormhole-generator')
 
         // System 27 is the only valid system (has ships + controlled planet), auto-selected
 
@@ -649,8 +647,7 @@ describe('Ghosts of Creuss', () => {
         t.choose(game, 'diplomacy')
 
         // Use it once (auto-selects system 27)
-        t.choose(game, 'Component Action')
-        t.choose(game, 'wormhole-generator')
+        t.choose(game, 'Component Action.wormhole-generator')
 
         // Fleet Logistics bonus — wormhole-generator is exhausted, no other component actions
         const choices = t.currentChoices(game)

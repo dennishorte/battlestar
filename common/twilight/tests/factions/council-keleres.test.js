@@ -240,8 +240,7 @@ describe('Council Keleres', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis performs a component action (bio-stims)
-      t.choose(game, 'Component Action')
-      t.choose(game, 'bio-stims')
+      t.choose(game, 'Component Action.bio-stims')
       // Bio-stims: only 1 exhausted planet (moll-primus), auto-responded
 
       // Suffi An triggers: additional action offered
@@ -340,8 +339,7 @@ describe('Council Keleres', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'keleres-hero')
+      t.choose(game, 'Component Action.keleres-hero')
 
       // System auto-selected (only argent-home has controlled planets)
       // Place 2 ships
@@ -376,8 +374,7 @@ describe('Council Keleres', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'keleres-hero')
+      t.choose(game, 'Component Action.keleres-hero')
 
       // Choose extra votes
       t.choose(game, '6 votes')
@@ -409,8 +406,7 @@ describe('Council Keleres', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'keleres-hero')
+      t.choose(game, 'Component Action.keleres-hero')
 
       const dennis = game.players.byName('dennis')
       expect(dennis.isHeroPurged()).toBe(true)
@@ -593,8 +589,7 @@ describe('Council Keleres', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         // Dennis: Component Action → executive-order
-        t.choose(game, 'Component Action')
-        t.choose(game, 'executive-order')
+        t.choose(game, 'Component Action.executive-order')
 
         // Choose to draw from Top of agenda deck
         t.choose(game, 'Top')
@@ -641,8 +636,7 @@ describe('Council Keleres', () => {
         game.run()
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
-        t.choose(game, 'Component Action')
-        t.choose(game, 'executive-order')
+        t.choose(game, 'Component Action.executive-order')
         t.choose(game, 'Top')
 
         // Micah abstains

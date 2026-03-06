@@ -367,8 +367,7 @@ describe('Rules Audit — LOW Priority', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'geoform')
+      t.choose(game, 'Component Action.geoform')
 
       const dennis = game.players.byName('dennis')
       // Rule 51 exception: Titans hero attaches to Elysium, NOT purged
@@ -395,8 +394,7 @@ describe('Rules Audit — LOW Priority', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Use geoform first time
-      t.choose(game, 'Component Action')
-      t.choose(game, 'geoform')
+      t.choose(game, 'Component Action.geoform')
 
       // Try to use component action again — geoform should NOT appear
       const choices = t.currentChoices(game)
@@ -432,8 +430,7 @@ describe('Rules Audit — LOW Priority', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses hero — attaches space cannon 5x3 to Elysium
-      t.choose(game, 'Component Action')
-      t.choose(game, 'geoform')
+      t.choose(game, 'Component Action.geoform')
 
       // Micah activates Titans home system, moves ships in
       t.choose(game, 'Tactical Action')

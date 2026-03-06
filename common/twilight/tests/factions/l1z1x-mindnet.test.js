@@ -380,8 +380,7 @@ describe('L1Z1X Mindnet', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'l1z1x-hero')
+      t.choose(game, 'Component Action.l1z1x-hero')
 
       // Choose target system (one without opponent ships)
       // Use * prefix to prevent digit-to-number conversion
@@ -424,8 +423,7 @@ describe('L1Z1X Mindnet', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'l1z1x-hero')
+      t.choose(game, 'Component Action.l1z1x-hero')
 
       // System 27 has micah's ships — should not be in choices
       const choices = t.currentChoices(game)
@@ -575,8 +573,7 @@ describe('L1Z1X Mindnet', () => {
 
         // Dennis has 4 non-unit-upgrade techs (neural-motivator, plasma-scoring, sarween-tools, inheritance-systems)
         // So can gain any tech with <= 4 prerequisites
-        t.choose(game, 'Component Action')
-        t.choose(game, 'inheritance-systems')
+        t.choose(game, 'Component Action.inheritance-systems')
 
         // Choose a tech — gravity-drive has 1 prerequisite (blue), should be available
         t.choose(game, 'gravity-drive')
@@ -602,8 +599,7 @@ describe('L1Z1X Mindnet', () => {
 
         // 3 non-unit-upgrade techs → can gain any tech with <= 3 prerequisites
         // graviton-laser-system has 1 yellow prereq — player has no yellow but should still work
-        t.choose(game, 'Component Action')
-        t.choose(game, 'inheritance-systems')
+        t.choose(game, 'Component Action.inheritance-systems')
 
         // Choose graviton-laser-system (requires 1 yellow)
         const choices = t.currentChoices(game)
@@ -626,8 +622,7 @@ describe('L1Z1X Mindnet', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         // Use it once
-        t.choose(game, 'Component Action')
-        t.choose(game, 'inheritance-systems')
+        t.choose(game, 'Component Action.inheritance-systems')
         t.choose(game, 'gravity-drive')
 
         const dennis = game.players.byName('dennis')
@@ -646,8 +641,7 @@ describe('L1Z1X Mindnet', () => {
         game.run()
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
-        t.choose(game, 'Component Action')
-        t.choose(game, 'inheritance-systems')
+        t.choose(game, 'Component Action.inheritance-systems')
 
         // Should see techs with 0, 1, or 2 prerequisites
         const choices = t.currentChoices(game)

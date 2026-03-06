@@ -394,8 +394,7 @@ describe('Yin Brotherhood', () => {
       t.choose(game, 'diplomacy')
 
       // Dennis uses Component Action -> Yin Hero
-      t.choose(game, 'Component Action')
-      t.choose(game, 'yin-hero')
+      t.choose(game, 'Component Action.yin-hero')
 
       // Choose new-albion (non-home, enemy-controlled)
       // Only 1 eligible planet, so loop exits after this pick
@@ -442,8 +441,7 @@ describe('Yin Brotherhood', () => {
       t.choose(game, 'diplomacy')
 
       // Dennis uses Component Action -> Yin Hero
-      t.choose(game, 'Component Action')
-      t.choose(game, 'yin-hero')
+      t.choose(game, 'Component Action.yin-hero')
 
       // No eligible non-home planets — hero should still be purged
       const dennis = game.players.byName('dennis')

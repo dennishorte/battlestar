@@ -320,6 +320,18 @@ TestUtil.currentChoices = function(game) {
   return choices.map(c => typeof c === 'object' ? c.title : c)
 }
 
+/**
+ * Return the sub-choices for a nested selector (e.g. 'Component Action' or 'Strategic Action').
+ */
+TestUtil.currentSubChoices = function(game, parentTitle) {
+  const choices = game.waiting.selectors[0].choices
+  const parent = choices.find(c => typeof c === 'object' && c.title === parentTitle)
+  if (!parent || !parent.choices) {
+    return []
+  }
+  return parent.choices.map(c => typeof c === 'object' ? c.title : c)
+}
+
 
 /**
  * Respond to an action-type input request (e.g. activate-system, move-ships).

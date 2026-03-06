@@ -304,8 +304,7 @@ describe("Sardakk N'orr", () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses Component Action — Tekklar Conditioning
-      t.choose(game, 'Component Action')
-      t.choose(game, 'tekklar-conditioning')
+      t.choose(game, 'Component Action.tekklar-conditioning')
 
       // System 27 auto-selected (only valid target)
       // Commit 5 infantry to new-albion

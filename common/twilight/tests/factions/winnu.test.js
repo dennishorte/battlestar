@@ -281,8 +281,7 @@ describe('Winnu', () => {
       const dennisBefore = game.players.byName('dennis')
       const vpBefore = dennisBefore.victoryPoints
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'winnu-hero')
+      t.choose(game, 'Component Action.winnu-hero')
       // With only 1 scorable objective, it auto-selects
 
       const dennis = game.players.byName('dennis')
@@ -499,8 +498,7 @@ describe('Winnu', () => {
         const beforeUnits = game.state.units['18'].planets['mecatol-rex']
           .filter(u => u.owner === 'dennis' && u.type === 'infantry').length
 
-        t.choose(game, 'Component Action')
-        t.choose(game, 'lazax-gate-folding')
+        t.choose(game, 'Component Action.lazax-gate-folding')
 
         const afterUnits = game.state.units['18'].planets['mecatol-rex']
           .filter(u => u.owner === 'dennis' && u.type === 'infantry').length
@@ -531,8 +529,7 @@ describe('Winnu', () => {
         game.run()
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
-        t.choose(game, 'Component Action')
-        t.choose(game, 'hegemonic-trade-policy')
+        t.choose(game, 'Component Action.hegemonic-trade-policy')
 
         // Choose a planet to swap
         const choices = t.currentChoices(game)

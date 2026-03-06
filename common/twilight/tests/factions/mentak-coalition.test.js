@@ -664,8 +664,7 @@ describe('Mentak Coalition', () => {
       pickStrategyCards(game, 'trade', 'leadership')
 
       // Micah (initiative 1): Component Action → Promise of Protection
-      t.choose(game, 'Component Action')
-      t.choose(game, 'promise-of-protection')
+      t.choose(game, 'Component Action.promise-of-protection')
 
       // Micah's transaction window: skip (Micah has 2 TG, Dennis has 0)
       t.choose(game, 'Skip Transaction')
@@ -727,8 +726,7 @@ describe('Mentak Coalition', () => {
       t.choose(game, 'Done')  // allocate tokens
 
       // Micah (Diplomacy, initiative 2): Component Action → Promise of Protection
-      t.choose(game, 'Component Action')
-      t.choose(game, 'promise-of-protection')
+      t.choose(game, 'Component Action.promise-of-protection')
 
       // Dennis: pass (already used strategy card)
       t.choose(game, 'Pass')
