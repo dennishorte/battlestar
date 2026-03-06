@@ -16,7 +16,7 @@ module.exports = {
     {
       id: 'stall-tactics',
       name: 'Stall Tactics',
-      description: 'ACTION: Discard 1 action card from your hand.',
+      description: 'ACTION: Discard 1 action card from your hand. Triggers Blackshade Infiltrator mech DEPLOY.',
     },
     {
       id: 'scheming',
