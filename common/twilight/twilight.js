@@ -772,7 +772,13 @@ Twilight.prototype.actionPhase = function() {
     if (actionTimingCards.length > 0) {
       choices.push({
         title: 'Action Card',
-        choices: actionTimingCards.map(c => ({ title: c.name })),
+        choices: actionTimingCards.map(c => {
+          const choice = { title: c.name }
+          if (c.id === 'focused-research') {
+            choice.subtitles = [`You have ${player.tradeGoods}/4 trade goods`]
+          }
+          return choice
+        }),
         min: 0,
       })
     }
