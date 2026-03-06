@@ -95,26 +95,13 @@ module.exports = function(Twilight) {
     const otherPlayers = this.players.all().filter(p =>
       p.name !== player.name && !this._isEliminated(p.name)
     )
-    const chosen = []
-    const remaining = [...otherPlayers]
-
-    while (remaining.length > 0) {
-      const choices = ['Done', ...remaining.map(p => p.name)]
-      const selection = this.actions.choose(player, choices, {
-        title: 'Choose players for free Trade secondary (replenish commodities)',
-      })
-
-      if (selection[0] === 'Done') {
-        break
-      }
-
-      const selectedName = selection[0]
-      chosen.push(selectedName)
-      remaining.splice(remaining.indexOf(remaining.find(p => p.name === selectedName)), 1)
-    }
+    const selection = this.actions.choose(player, otherPlayers.map(p => p.name), {
+      title: 'Choose players for free Trade secondary (replenish commodities)',
+      min: 0,
+    })
 
     // Store chosen players so _resolveSecondaries marks them as free
-    this.state._tradeFreeSecondary = chosen
+    this.state._tradeFreeSecondary = selection
   }
 
 

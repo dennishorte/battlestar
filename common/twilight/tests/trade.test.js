@@ -66,7 +66,7 @@ describe('Trade System', () => {
       t.choose(game, 'Strategic Action.trade')
 
       // Dennis chooses nobody for free secondary
-      t.choose(game, 'Done')
+      t.choose(game)
 
       // Micah uses secondary — costs strategy token
       t.choose(game, 'Use Secondary')

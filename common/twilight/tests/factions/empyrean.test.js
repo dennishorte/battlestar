@@ -658,7 +658,7 @@ describe('Empyrean', () => {
       // Dennis: Strategic Action (Trade)
       t.choose(game, 'Strategic Action.trade')
       // Dennis doesn't choose anyone for free secondary
-      t.choose(game, 'Done')
+      t.choose(game)
       t.choose(game, 'Pass')  // Micah declines Trade secondary
 
       // Micah: Strategic Action (Leadership)

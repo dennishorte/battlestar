@@ -334,7 +334,7 @@ describe('Promissory Notes', () => {
       t.choose(game, 'Strategic Action.trade')
       // Trade primary: Micah replenishes → onCommoditiesReplenished → Trade Agreement triggers
       // Micah chooses nobody for free secondary
-      t.choose(game, 'Done')
+      t.choose(game)
       // Dennis offered Trade secondary
       t.choose(game, 'Pass')  // Dennis declines Trade secondary
 
