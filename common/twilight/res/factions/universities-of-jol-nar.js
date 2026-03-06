@@ -1,6 +1,7 @@
 module.exports = {
   id: 'universities-of-jol-nar',
   name: 'The Universities of Jol-Nar',
+  lore: 'Education is so paramount to the amphibious Hylar that they consider their entire civilization and twin worlds to be one vast university. Research and technological advancement are pursued with an obsessive fervor that often dismisses moral considerations entirely. Their scientific achievements are unmatched, but their willingness to experiment without ethical boundaries has earned them as many enemies as admirers.',
   homeSystem: 'jolnar-home',
   startingTechnologies: ['neural-motivator', 'antimass-deflectors', 'sarween-tools', 'plasma-scoring'],
   startingUnits: {

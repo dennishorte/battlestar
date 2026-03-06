@@ -1,6 +1,7 @@
 module.exports = {
   id: 'barony-of-letnev',
   name: 'Barony of Letnev',
+  lore: 'Beneath the sunless surface of Arc Prime, the Barony of Letnev has forged a mighty industrial civilization in the planet\'s geothermally heated caverns. Renowned for tactical brilliance and feared for the Cimm Fenn — their ruthless intelligence operatives — the Letnev maintain one of the most powerful military forces in the galaxy, driven by an ambition to dominate all who stand in their path.',
   homeSystem: 'letnev-home',
   startingTechnologies: ['antimass-deflectors', 'plasma-scoring'],
   startingUnits: {

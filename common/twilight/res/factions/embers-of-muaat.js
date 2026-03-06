@@ -1,6 +1,7 @@
 module.exports = {
   id: 'embers-of-muaat',
   name: 'The Embers of Muaat',
+  lore: 'During the twilight of the Lazax Empire, the Universities of Jol-Nar secretly enslaved the Gashlai — fire-based organisms dwelling in the volcanic world of Muaat — to develop the devastating War Suns. When the Gashlai won their independence, they became the only faction able to construct these asteroid-sized weapons of war, and they guard that terrible knowledge fiercely.',
   homeSystem: 'muaat-home',
   startingTechnologies: ['plasma-scoring'],
   startingUnits: {

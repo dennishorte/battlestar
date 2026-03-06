@@ -1,6 +1,7 @@
 module.exports = {
   id: 'yssaril-tribes',
   name: 'The Yssaril Tribes',
+  lore: 'After driving off colonial invaders, the small, chameleon-like Yssaril became renowned throughout the galaxy as peerless spies, assassins, scouts, and guerrilla fighters. Now they seek recognition beyond these shadowy roles, leveraging the intelligence networks they have woven through every civilization to claim a place of power — armed with the secrets and vulnerabilities of every faction they have studied.',
   homeSystem: 'yssaril-home',
   startingTechnologies: ['neural-motivator'],
   startingUnits: {

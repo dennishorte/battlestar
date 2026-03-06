@@ -1,6 +1,7 @@
 module.exports = {
   id: 'council-keleres',
   name: 'The Council Keleres',
+  lore: 'Formed by the Galactic Council to manage its affairs, the Keleres are a ragtag force of bureaucrats, soldiers, and spies. The Great Powers send a mix of political opponents, incompetents, and secretly competent operatives to further their own designs. Three elected Tribunii lead the Keleres as they travel the galaxy brokering peace, intervening in conflicts, and tackling threats to galactic stability.',
   homeSystem: null,
   startingTechnologies: [],
   startingUnits: {

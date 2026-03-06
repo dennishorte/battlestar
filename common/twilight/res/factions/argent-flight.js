@@ -1,6 +1,7 @@
 module.exports = {
   id: 'argent-flight',
   name: 'The Argent Flight',
+  lore: 'Millennia ago, the Lazax freed the Argent Flight from Mahact servitude and charged them with preventing the gene-sorcerers\' return. When the Mahact resurfaced despite their vigilance, the Argent Flight revealed themselves to the galaxy and launched a righteous crusade, determined to fulfill their ancient mandate and destroy the threat they were created to contain.',
   homeSystem: 'argent-home',
   startingTechnologies: [],
   startingUnits: {

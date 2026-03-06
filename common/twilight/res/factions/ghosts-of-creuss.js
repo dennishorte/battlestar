@@ -1,6 +1,7 @@
 module.exports = {
   id: 'ghosts-of-creuss',
   name: 'The Ghosts of Creuss',
+  lore: 'Hailing from somewhere beyond the wormhole-ridden Shaleri Passage, these energy beings don environmental suits to interact with the physical world. Their mastery of interdimensional travel and wormhole technology is unrivaled, yet their true origins and ultimate goals remain shrouded in mystery — as inscrutable as the shimmering dimension from which they emerged.',
   homeSystem: 'creuss-home',
   startingTechnologies: ['gravity-drive'],
   startingUnits: {

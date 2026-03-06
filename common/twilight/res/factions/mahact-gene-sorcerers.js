@@ -1,6 +1,7 @@
 module.exports = {
   id: 'mahact-gene-sorcerers',
   name: 'The Mahact Gene-Sorcerers',
+  lore: 'The ancient rulers of the galaxy have returned. Once the undisputed masters of all civilized space, the Mahact were overthrown and imprisoned by the Lazax for their horrifying genetic experiments on subject races. Now free, they have arrived not to negotiate but to reclaim dominion, wielding their infamous power to manipulate the bodies and minds of lesser species.',
   homeSystem: 'mahact-home',
   startingTechnologies: ['bio-stims', 'predictive-intelligence'],
   startingUnits: {

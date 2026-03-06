@@ -1,6 +1,7 @@
 module.exports = {
   id: 'naaz-rokha-alliance',
   name: 'The Naaz-Rokha Alliance',
+  lore: 'After enduring decades of colonial exploitation, the diminutive but resourceful Naaz hired Rokha mercenaries to win their freedom. When the fighting ended, the Naaz offered the fierce Rokha an equal place in their society, forging a unique cultural symbiosis. Their bonded pairs — one Naaz, one Rokha — are legendary across the galaxy for their complementary talents.',
   homeSystem: 'naazrokha-home',
   startingTechnologies: ['psychoarchaeology', 'ai-development-algorithm'],
   startingUnits: {

@@ -1,6 +1,7 @@
 module.exports = {
   id: 'xxcha-kingdom',
   name: 'The Xxcha Kingdom',
+  lore: 'Once dismissed as weak pacifists, the Xxcha learned a painful lesson when their homeworld was devastated in the Twilight Wars. They emerged with a new understanding: true peace requires the strength to defend it. Now renowned across the galaxy for their diplomatic skill and philosophical wisdom, the Xxcha back their words with a formidable military presence.',
   homeSystem: 'xxcha-home',
   startingTechnologies: ['graviton-laser-system'],
   startingUnits: {

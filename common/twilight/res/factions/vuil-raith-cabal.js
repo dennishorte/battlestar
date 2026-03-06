@@ -1,6 +1,7 @@
 module.exports = {
   id: 'vuil-raith-cabal',
   name: "The Vuil'raith Cabal",
+  lore: 'Emerging from another dimension through the Acheron gravity rift, these beings — ranging in size from housecat to battleship — appear almost demonic to the terrified civilizations that encounter them. The Vuil\'Raith establish insidious cults among susceptible populations, working toward long-term goals that no other species has yet been able to comprehend or prevent.',
   homeSystem: 'cabal-home',
   startingTechnologies: ['self-assembly-routines'],
   startingUnits: {

@@ -301,103 +301,127 @@
       <!-- Faction Detail -->
       <div v-if="type === 'faction' && factionData">
 
-        <!-- Faction Abilities -->
-        <div v-if="factionData.abilities?.length > 0" class="faction-section">
-          <div class="faction-section-label">Abilities</div>
-          <div v-for="ability in factionData.abilities" :key="ability.id" class="faction-ability-item">
-            <div class="faction-ability-name">{{ ability.name }}</div>
-            <div class="description-text">{{ ability.description }}</div>
-          </div>
+        <!-- Tabs -->
+        <div class="faction-tabs">
+          <button
+            class="faction-tab"
+            :class="{ active: factionTab === 'abilities' }"
+            @click="factionTab = 'abilities'"
+          >Abilities</button>
+          <button
+            v-if="factionData.lore"
+            class="faction-tab"
+            :class="{ active: factionTab === 'lore' }"
+            @click="factionTab = 'lore'"
+          >Lore</button>
         </div>
 
-        <!-- Flagship -->
-        <div v-if="factionData.flagship" class="faction-section">
-          <div class="faction-section-label">Flagship</div>
-          <div class="faction-unit-header">{{ factionData.flagship.name }}</div>
-          <div class="detail-row">
-            <span class="stat-entry">Cost: {{ factionData.flagship.cost }}</span>
-            <span class="stat-entry">Combat: {{ factionData.flagship.combat }}</span>
-            <span class="stat-entry">Move: {{ factionData.flagship.move }}</span>
-            <span class="stat-entry">Capacity: {{ factionData.flagship.capacity }}</span>
-          </div>
-          <div class="description-text" v-if="factionData.flagship.description">
-            {{ factionData.flagship.description }}
-          </div>
+        <!-- Lore Tab -->
+        <div v-if="factionTab === 'lore' && factionData.lore" class="faction-lore">
+          {{ factionData.lore }}
         </div>
 
-        <!-- Mech -->
-        <div v-if="factionData.mech" class="faction-section">
-          <div class="faction-section-label">Mech</div>
-          <div class="faction-unit-header">{{ factionData.mech.name }}</div>
-          <div class="detail-row">
-            <span class="stat-entry">Cost: {{ factionData.mech.cost }}</span>
-            <span class="stat-entry">Combat: {{ factionData.mech.combat }}</span>
-          </div>
-          <div class="description-text" v-if="factionData.mech.description">
-            {{ factionData.mech.description }}
-          </div>
-        </div>
+        <!-- Abilities Tab -->
+        <div v-if="factionTab === 'abilities'">
 
-        <!-- Leaders -->
-        <div v-if="factionData.leaders" class="faction-section">
-          <div class="faction-section-label">Leaders</div>
-          <div v-for="role in ['agent', 'commander', 'hero']" :key="role">
-            <div v-if="factionData.leaders[role]" class="faction-leader-item">
+          <!-- Faction Abilities -->
+          <div v-if="factionData.abilities?.length > 0" class="faction-section">
+            <div class="faction-section-label">Abilities</div>
+            <div v-for="ability in factionData.abilities" :key="ability.id" class="faction-ability-item">
+              <div class="faction-ability-name">{{ ability.name }}</div>
+              <div class="description-text">{{ ability.description }}</div>
+            </div>
+          </div>
+
+          <!-- Flagship -->
+          <div v-if="factionData.flagship" class="faction-section">
+            <div class="faction-section-label">Flagship</div>
+            <div class="faction-unit-header">{{ factionData.flagship.name }}</div>
+            <div class="detail-row">
+              <span class="stat-entry">Cost: {{ factionData.flagship.cost }}</span>
+              <span class="stat-entry">Combat: {{ factionData.flagship.combat }}</span>
+              <span class="stat-entry">Move: {{ factionData.flagship.move }}</span>
+              <span class="stat-entry">Capacity: {{ factionData.flagship.capacity }}</span>
+            </div>
+            <div class="description-text" v-if="factionData.flagship.description">
+              {{ factionData.flagship.description }}
+            </div>
+          </div>
+
+          <!-- Mech -->
+          <div v-if="factionData.mech" class="faction-section">
+            <div class="faction-section-label">Mech</div>
+            <div class="faction-unit-header">{{ factionData.mech.name }}</div>
+            <div class="detail-row">
+              <span class="stat-entry">Cost: {{ factionData.mech.cost }}</span>
+              <span class="stat-entry">Combat: {{ factionData.mech.combat }}</span>
+            </div>
+            <div class="description-text" v-if="factionData.mech.description">
+              {{ factionData.mech.description }}
+            </div>
+          </div>
+
+          <!-- Leaders -->
+          <div v-if="factionData.leaders" class="faction-section">
+            <div class="faction-section-label">Leaders</div>
+            <div v-for="role in ['agent', 'commander', 'hero']" :key="role">
+              <div v-if="factionData.leaders[role]" class="faction-leader-item">
+                <div class="detail-row">
+                  <span class="leader-role-badge" :class="`role-${role}`">{{ role }}</span>
+                  <span class="faction-leader-name">{{ factionData.leaders[role].name }}</span>
+                </div>
+                <div class="description-text">{{ factionData.leaders[role].description }}</div>
+                <div class="detail-row" v-if="factionData.leaders[role].unlockCondition">
+                  <span class="info-key">Unlock:</span>
+                  <span>{{ factionData.leaders[role].unlockCondition }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Promissory Note -->
+          <div v-if="factionData.promissoryNote" class="faction-section">
+            <div class="faction-section-label">Promissory Note</div>
+            <div class="faction-ability-name">{{ factionData.promissoryNote.name }}</div>
+            <div class="description-text">{{ factionData.promissoryNote.description }}</div>
+          </div>
+
+          <!-- Faction Technologies -->
+          <div v-if="factionData.factionTechnologies?.length > 0" class="faction-section">
+            <div class="faction-section-label">Faction Technologies</div>
+            <div v-for="tech in factionData.factionTechnologies" :key="tech.id" class="faction-tech-item">
               <div class="detail-row">
-                <span class="leader-role-badge" :class="`role-${role}`">{{ role }}</span>
-                <span class="faction-leader-name">{{ factionData.leaders[role].name }}</span>
+                <span class="faction-ability-name">{{ tech.name }}</span>
+                <span v-if="tech.color" class="color-badge" :class="`badge-${tech.color}`">{{ tech.color }}</span>
               </div>
-              <div class="description-text">{{ factionData.leaders[role].description }}</div>
-              <div class="detail-row" v-if="factionData.leaders[role].unlockCondition">
-                <span class="info-key">Unlock:</span>
-                <span>{{ factionData.leaders[role].unlockCondition }}</span>
+              <div class="detail-row" v-if="tech.prerequisites?.length > 0">
+                <span class="info-key">Prerequisites:</span>
+                <span class="prereq-list">
+                  <span v-for="(pre, i) in tech.prerequisites"
+                        :key="i"
+                        class="prereq-pip"
+                        :class="`pip-${pre}`"/>
+                </span>
+              </div>
+              <div class="description-text" v-if="tech.description">{{ tech.description }}</div>
+            </div>
+          </div>
+
+          <!-- Unit Overrides -->
+          <div v-if="factionData.unitOverrides && Object.keys(factionData.unitOverrides).length > 0" class="faction-section">
+            <div class="faction-section-label">Unique Units</div>
+            <div v-for="(unit, unitType) in factionData.unitOverrides" :key="unitType" class="faction-unit-item">
+              <div class="detail-row">
+                <span class="faction-ability-name">{{ unit.name }}</span>
+                <span class="info-key">({{ unitType }})</span>
+              </div>
+              <div class="detail-row" v-if="unit.combat">
+                <span class="stat-entry">Combat: {{ unit.combat }}</span>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Promissory Note -->
-        <div v-if="factionData.promissoryNote" class="faction-section">
-          <div class="faction-section-label">Promissory Note</div>
-          <div class="faction-ability-name">{{ factionData.promissoryNote.name }}</div>
-          <div class="description-text">{{ factionData.promissoryNote.description }}</div>
         </div>
-
-        <!-- Faction Technologies -->
-        <div v-if="factionData.factionTechnologies?.length > 0" class="faction-section">
-          <div class="faction-section-label">Faction Technologies</div>
-          <div v-for="tech in factionData.factionTechnologies" :key="tech.id" class="faction-tech-item">
-            <div class="detail-row">
-              <span class="faction-ability-name">{{ tech.name }}</span>
-              <span v-if="tech.color" class="color-badge" :class="`badge-${tech.color}`">{{ tech.color }}</span>
-            </div>
-            <div class="detail-row" v-if="tech.prerequisites?.length > 0">
-              <span class="info-key">Prerequisites:</span>
-              <span class="prereq-list">
-                <span v-for="(pre, i) in tech.prerequisites"
-                      :key="i"
-                      class="prereq-pip"
-                      :class="`pip-${pre}`"/>
-              </span>
-            </div>
-            <div class="description-text" v-if="tech.description">{{ tech.description }}</div>
-          </div>
-        </div>
-
-        <!-- Unit Overrides -->
-        <div v-if="factionData.unitOverrides && Object.keys(factionData.unitOverrides).length > 0" class="faction-section">
-          <div class="faction-section-label">Unique Units</div>
-          <div v-for="(unit, unitType) in factionData.unitOverrides" :key="unitType" class="faction-unit-item">
-            <div class="detail-row">
-              <span class="faction-ability-name">{{ unit.name }}</span>
-              <span class="info-key">({{ unitType }})</span>
-            </div>
-            <div class="detail-row" v-if="unit.combat">
-              <span class="stat-entry">Combat: {{ unit.combat }}</span>
-            </div>
-          </div>
-        </div>
-
       </div>
 
     </div>
@@ -419,6 +443,18 @@ export default {
   components: { ModalBase },
 
   inject: ['game', 'ui'],
+
+  data() {
+    return {
+      factionTab: 'abilities',
+    }
+  },
+
+  watch: {
+    id() {
+      this.factionTab = 'abilities'
+    },
+  },
 
   computed: {
     modalData() {
@@ -1094,5 +1130,42 @@ export default {
   color: #999;
   font-style: italic;
   padding: .5em 0;
+}
+
+.faction-tabs {
+  display: flex;
+  gap: .25em;
+  margin-bottom: .75em;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.faction-tab {
+  padding: .35em .75em;
+  border: none;
+  background: none;
+  font-size: .85em;
+  font-weight: 600;
+  color: #888;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+
+.faction-tab:hover {
+  color: #555;
+}
+
+.faction-tab.active {
+  color: #0d6efd;
+  border-bottom-color: #0d6efd;
+}
+
+.faction-lore {
+  line-height: 1.6;
+  font-size: .9em;
+  color: #444;
+  padding: .5em;
+  background: #f8f9fa;
+  border-radius: .25em;
 }
 </style>

@@ -1,6 +1,7 @@
 module.exports = {
   id: 'l1z1x-mindnet',
   name: 'The L1Z1X Mindnet',
+  lore: 'The return of Lazax refugees as hive-mind cyborgs sent shockwaves through the galaxy. Claiming to be the rightful heirs to the imperial throne, the L1Z1X have shed all pretense of the Lazax\'s former diplomacy, replacing it with cold, networked aggression. Whether they are truly the descendants of the last emperor or something far more sinister is a matter of fierce debate.',
   homeSystem: 'l1z1x-home',
   startingTechnologies: ['neural-motivator', 'plasma-scoring'],
   startingUnits: {

@@ -1,6 +1,7 @@
 module.exports = {
   id: 'yin-brotherhood',
   name: 'The Yin Brotherhood',
+  lore: 'What began as one man\'s desperate attempt to save his wife from the Greyfire disease through illegal cloning experiments gradually spiraled into something unprecedented — a world populated entirely by her clones, all male, all tragically infected with the disease they were meant to cure. The Brotherhood that emerged from this tragedy is zealous, unified, and utterly unlike any other civilization in the galaxy.',
   homeSystem: 'yin-home',
   startingTechnologies: ['sarween-tools'],
   startingUnits: {

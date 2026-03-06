@@ -1,6 +1,7 @@
 module.exports = {
   id: 'naalu-collective',
   name: 'The Naalu Collective',
+  lore: 'The serpentine Naalu rule their worlds through the powerful telepathic abilities of the Druaa caste. With assistance from Yssaril operatives, their homeworlds are nearly impenetrable to foreign intelligence, while many suspect that every Druaa encountered abroad is secretly a Naalu spy. On the planet Maaluuk, they maintain dominion over the subjugated Miashan people.',
   homeSystem: 'naalu-home',
   startingTechnologies: ['neural-motivator', 'sarween-tools'],
   startingUnits: {
