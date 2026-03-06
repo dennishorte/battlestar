@@ -39,9 +39,16 @@ module.exports = {
     name: 'Eidolon',
     cost: 2,
     combat: 6,
+    combatDice: 2,
     hits: 2,
     abilities: ['sustain-damage'],
-    description: 'If this unit is in the space area of the active system at the start of a space combat, flip this card. Z-GRAV EIDOLON: If this unit is in the space area of the active system, it is also a ship. At the end of a space battle in the active system, flip this card.',
+    description: 'If this unit is in the space area of the active system at the start of a space combat, flip this card. (This card begins the game with this side face up)',
+    zGrav: {
+      name: 'Z-Grav Eidolon',
+      combat: 8,
+      combatDice: 2,
+      description: 'If this unit is in the space area of the active system, it is also a ship. At the end of a space battle in the active system, flip this card. (This card begins the game with this side face down)',
+    },
   },
   leaders: {
     agent: {
