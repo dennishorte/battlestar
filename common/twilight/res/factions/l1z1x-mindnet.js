@@ -50,7 +50,7 @@ module.exports = {
     combat: 6,
     hits: 2,
     abilities: ['sustain-damage', 'bombardment-8x1'],
-    description: 'While not participating in ground combat, this unit can use its BOMBARDMENT ability on the active planet.',
+    description: 'While not participating in ground combat, this unit can use its BOMBARDMENT ability on planets in its system as if it were a ship.',
   },
   leaders: {
     agent: {
