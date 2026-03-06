@@ -1,6 +1,7 @@
 module.exports = {
   id: 'clan-of-saar',
   name: 'The Clan of Saar',
+  lore: 'After their homeworld Lisis II was destroyed and a colony wiped out by the Sardakk N\'orr, the Saar became a people without a home. Following the visions of a prophet, they settled the Jorun Asteroid Field, but their true nature is that of wanderers — spread throughout the stars, never bound to any single world, carrying their civilization with them wherever they drift.',
   homeSystem: 'saar-home',
   startingTechnologies: ['antimass-deflectors'],
   startingUnits: {

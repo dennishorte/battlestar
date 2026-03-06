@@ -1,6 +1,7 @@
 module.exports = {
   id: 'mentak-coalition',
   name: 'The Mentak Coalition',
+  lore: 'During the Twilight Wars, the revolutionary Erwin Mentak led a revolt on the corrupt prison planet Moll Primus. Rather than fleeing to freedom, he remained and established a government founded on individual liberties. The Coalition now maintains both an official navy and licensed privateer fleets, walking the line between legitimate governance and the piratical traditions of its founding.',
   homeSystem: 'mentak-home',
   startingTechnologies: ['sarween-tools', 'plasma-scoring'],
   startingUnits: {

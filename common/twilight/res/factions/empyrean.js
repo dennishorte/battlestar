@@ -1,6 +1,7 @@
 module.exports = {
   id: 'empyrean',
   name: 'The Empyrean',
+  lore: 'This ancient species has been quietly observing the rest of the galaxy for millennia from the hidden depths of the Aetherstrand nebula. They have recently revealed themselves, claiming they wish to prevent another devastating war for the imperial throne — though their true motivations and the full extent of their knowledge remain subjects of deep suspicion among the other civilizations.',
   homeSystem: 'empyrean-home',
   startingTechnologies: ['dark-energy-tap'],
   startingUnits: {

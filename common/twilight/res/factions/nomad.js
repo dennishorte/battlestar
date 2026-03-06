@@ -1,6 +1,7 @@
 module.exports = {
   id: 'nomad',
   name: 'The Nomad',
+  lore: 'Uniquely among the galactic powers, the Nomad is not a civilization but a single, enigmatic individual of unknown origin. Operating from the mobile Space Station Sumerian, the Nomad wields immense wealth and secret knowledge to maintain a seat on the Galactic Council — despite widespread distrust of their inscrutable motives and mysterious past.',
   homeSystem: 'nomad-home',
   startingTechnologies: ['sling-relay'],
   startingUnits: {

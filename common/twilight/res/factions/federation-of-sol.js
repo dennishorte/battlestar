@@ -1,6 +1,7 @@
 module.exports = {
   id: 'federation-of-sol',
   name: 'Federation of Sol',
+  lore: 'The youngest of the Great Races, the humans of Sol are known as an aggressive and expansionist culture. Last to be admitted to the galactic council, they were first to declare war on the failing Lazax Empire — and it was a massive Sol fleet that appeared without warning above Mecatol Rex to deliver the final, devastating bombardment that ended the age of emperors forever.',
   homeSystem: 'sol-home',
   startingTechnologies: ['neural-motivator', 'antimass-deflectors'],
   startingUnits: {

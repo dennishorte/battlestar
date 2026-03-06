@@ -1,6 +1,7 @@
 module.exports = {
   id: 'arborec',
   name: 'The Arborec',
+  lore: 'The Arborec is not a race but an intelligent ecosystem of vegetative and fungal organisms centered on the tropical planet Nestphar. Its most complex members, the massive Letani, serve as ambassadors beyond the reach of the prime Symphony. To communicate with other species, the Arborec created the controversial Dirzuga — symbiotic fungi merged with deceased host bodies — whose existence nearly prevented their admission to the galactic council.',
   homeSystem: 'arborec-home',
   startingTechnologies: ['magen-defense-grid'],
   startingUnits: {

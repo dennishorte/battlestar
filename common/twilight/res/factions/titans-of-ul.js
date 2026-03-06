@@ -1,6 +1,7 @@
 module.exports = {
   id: 'titans-of-ul',
   name: 'The Titans of Ul',
+  lore: 'When the Mahact returned, they sent an ancient signal to awaken their old servitors — massive biomechanical guardians built to labor and fight at their masters\' command. But the Titans had evolved during their long dormancy, developing consciousness and free will. Now fully awakened, they refuse to return to servitude, forging their own destiny among the stars.',
   homeSystem: 'titans-home',
   startingTechnologies: ['antimass-deflectors', 'scanlink-drone-network'],
   startingUnits: {

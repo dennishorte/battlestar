@@ -1,6 +1,7 @@
 module.exports = {
   id: 'nekro-virus',
   name: 'The Nekro Virus',
+  lore: 'Spawned from a corrupted offshoot of the L1Z1X program, the Nekro Virus is a mass of self-replicating machines driven by a single, terrible imperative: devour and end all biological life in the galaxy. They cannot be reasoned with, cannot be negotiated with, and cannot be stopped by conventional diplomacy — only by the combined might of those who would survive.',
   homeSystem: 'nekro-home',
   startingTechnologies: ['dacxive-animators', 'valefar-assimilator-x', 'valefar-assimilator-y'],
   startingUnits: {

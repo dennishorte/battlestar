@@ -1,6 +1,7 @@
 module.exports = {
   id: 'winnu',
   name: 'The Winnu',
+  lore: 'After the Twilight Wars, some Winnaran Custodians remained on Mecatol Rex as faithful stewards, but those who returned to their homeworld grew bitter. Having served the Lazax loyally for generations, the Winnu expected to be recognized as the rightful heirs to the imperial throne — a claim the rest of the galaxy has stubbornly refused to acknowledge.',
   homeSystem: 'winnu-home',
   startingTechnologies: [],
   startingUnits: {

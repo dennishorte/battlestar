@@ -1,6 +1,7 @@
 module.exports = {
   id: 'emirates-of-hacan',
   name: 'Emirates of Hacan',
+  lore: 'Under the punishing rays of the star Kenara, the united Emirates of the Hacan have grown a mighty civilization of warriors, nomads, farmers, and above all, merchants. Their mastery of trade in exotic goods — star-flower textiles, Spehat aphrodisiacs, rare medicines — has made them indispensable to the galactic economy, and their wealth funds a military that none dare underestimate.',
   homeSystem: 'hacan-home',
   startingTechnologies: ['antimass-deflectors', 'sarween-tools'],
   startingUnits: {

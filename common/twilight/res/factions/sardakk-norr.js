@@ -1,6 +1,7 @@
 module.exports = {
   id: 'sardakk-norr',
   name: "Sardakk N'orr",
+  lore: 'A rare insectoid species evolved under the harshest conditions imaginable, the Sardakk N\'orr are among the most formidable warriors in the galaxy. Their soldiers are resilient enough to survive being launched at a planet\'s surface in drop pods from orbit. They value martial prowess above all else and view the coming struggle for the throne as the ultimate proving ground.',
   homeSystem: 'norr-home',
   startingTechnologies: [],
   startingUnits: {
