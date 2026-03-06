@@ -121,8 +121,7 @@ describe('Nekro Virus', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses Component Action > Nekro Malleon
-      t.choose(game, 'Component Action')
-      t.choose(game, 'nekro-malleon')
+      t.choose(game, 'Component Action.nekro-malleon')
 
       // Choose target player (only micah)
       // micah decides to spend a command token
@@ -149,8 +148,7 @@ describe('Nekro Virus', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'nekro-malleon')
+      t.choose(game, 'Component Action.nekro-malleon')
 
       // micah chooses to discard an action card
       t.choose(game, 'Discard Action Card')
@@ -172,8 +170,7 @@ describe('Nekro Virus', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'nekro-malleon')
+      t.choose(game, 'Component Action.nekro-malleon')
 
       // micah declines
       t.choose(game, 'Decline')
@@ -323,8 +320,7 @@ describe('Nekro Virus', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses Hero via Component Action
-      t.choose(game, 'Component Action')
-      t.choose(game, 'polymorphic-algorithm')
+      t.choose(game, 'Component Action.polymorphic-algorithm')
 
       // Choose planet: new-albion (green tech specialty, only valid option in system 27)
       // Auto-selected since it's the only planet with tech specialty in a system with Nekro units

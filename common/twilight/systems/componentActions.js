@@ -3,27 +3,18 @@ const { BaseCard } = require('../../lib/game/index.js')
 
 module.exports = function(Twilight) {
 
-  Twilight.prototype._hasAvailableComponentActions = function(player) {
-    const factionActions = this.factionAbilities.getAvailableComponentActions(player)
-    if (factionActions.length > 0) {
-      return true
+  Twilight.prototype._getAvailableComponentActions = function(player) {
+    const actions = this.factionAbilities.getAvailableComponentActions(player)
+    actions.push(...this._getTechComponentActions(player))
+    actions.push(...this._getRelicComponentActions(player))
+    actions.push(...this._getPersistentCardComponentActions(player))
+    if (this._canPurgeRelicFragments(player)) {
+      actions.push({ id: 'purge-relic-fragments', name: 'Purge Relic Fragments' })
     }
-    const techActions = this._getTechComponentActions(player)
-    if (techActions.length > 0) {
-      return true
-    }
-    const relicActions = this._getRelicComponentActions(player)
-    if (relicActions.length > 0) {
-      return true
-    }
-    const persistentActions = this._getPersistentCardComponentActions(player)
-    if (persistentActions.length > 0) {
-      return true
-    }
-    return this._canPurgeRelicFragments(player)
+    return actions
   }
 
-  Twilight.prototype._componentAction = function(player) {
+  Twilight.prototype._componentAction = function(player, selectedActionId) {
     this.log.indent()
 
     // Gather available component actions (faction abilities + technology)
@@ -58,13 +49,18 @@ module.exports = function(Twilight) {
       return
     }
 
-    const choices = actions.map(a => a.id)
-    const selection = this.actions.choose(player, choices, {
-      title: 'Choose Component Action',
-      noAutoRespond: true,
-    })
-
-    const actionId = selection[0]
+    let actionId
+    if (selectedActionId) {
+      actionId = selectedActionId
+    }
+    else {
+      const choices = actions.map(a => a.id)
+      const selection = this.actions.choose(player, choices, {
+        title: 'Choose Component Action',
+        noAutoRespond: true,
+      })
+      actionId = selection[0]
+    }
 
     // Check if it's a tech component action
     const techAction = techActions.find(a => a.id === actionId)

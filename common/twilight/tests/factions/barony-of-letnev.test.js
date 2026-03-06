@@ -426,8 +426,7 @@ describe('Barony of Letnev', () => {
 
       // Fleet pool is 1 + Armada 2 = 3 normally
       // Use hero to remove fleet limit
-      t.choose(game, 'Component Action')
-      t.choose(game, 'dark-matter-affinity')
+      t.choose(game, 'Component Action.dark-matter-affinity')
 
       // Hero should be purged
       const dennis = game.players.byName('dennis')
@@ -464,15 +463,13 @@ describe('Barony of Letnev', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Use hero
-      t.choose(game, 'Component Action')
-      t.choose(game, 'dark-matter-affinity')
+      t.choose(game, 'Component Action.dark-matter-affinity')
 
       const dennis = game.players.byName('dennis')
       expect(dennis.isHeroPurged()).toBe(true)
 
       // Hero should no longer be available as component action
-      t.choose(game, 'Component Action')
-      const choices = t.currentChoices(game)
+      const choices = t.currentSubChoices(game, 'Component Action')
       expect(choices).not.toContain('dark-matter-affinity')
     })
   })

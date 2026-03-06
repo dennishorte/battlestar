@@ -47,8 +47,7 @@ describe('Federation of Sol', () => {
 
       // Dennis uses Component Action → Orbital Drop
       // Only 1 controlled planet (jord) so planet choice auto-resolves
-      t.choose(game, 'Component Action')
-      t.choose(game, 'orbital-drop')
+      t.choose(game, 'Component Action.orbital-drop')
 
       // Re-read state after action (deterministic replay rebuilds state)
       const jord = game.state.units['sol-home'].planets['jord']
@@ -63,8 +62,7 @@ describe('Federation of Sol', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Only 1 controlled planet so auto-resolves
-      t.choose(game, 'Component Action')
-      t.choose(game, 'orbital-drop')
+      t.choose(game, 'Component Action.orbital-drop')
 
       // Started with 2 strategy, spent 1 = 1
       const dennis = game.players.byName('dennis')
@@ -77,8 +75,7 @@ describe('Federation of Sol', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis is Hacan here — should not have Orbital Drop as a component action
-      t.choose(game, 'Component Action')
-      const choices = t.currentChoices(game)
+      const choices = t.currentSubChoices(game, 'Component Action')
       expect(choices).not.toContain('orbital-drop')
     })
   })
@@ -262,8 +259,7 @@ describe('Federation of Sol', () => {
       // dennis: diplomacy secondary auto-skipped (no exhausted planets)
 
       // Dennis uses Helio Command Array hero
-      t.choose(game, 'Component Action')
-      t.choose(game, 'helio-command-array')
+      t.choose(game, 'Component Action.helio-command-array')
 
       // Command token should be removed from board
       expect(game.state.systems['27'].commandTokens).not.toContain('dennis')
@@ -288,8 +284,7 @@ describe('Federation of Sol', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      const choices = t.currentChoices(game)
+      const choices = t.currentSubChoices(game, 'Component Action')
       expect(choices).not.toContain('helio-command-array')
     })
 
@@ -303,8 +298,7 @@ describe('Federation of Sol', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      const choices = t.currentChoices(game)
+      const choices = t.currentSubChoices(game, 'Component Action')
       expect(choices).not.toContain('helio-command-array')
     })
   })
@@ -331,8 +325,7 @@ describe('Federation of Sol', () => {
 
       // Dennis uses Component Action → Orbital Drop
       // Only 1 controlled planet (jord) so planet choice auto-resolves
-      t.choose(game, 'Component Action')
-      t.choose(game, 'orbital-drop')
+      t.choose(game, 'Component Action.orbital-drop')
 
       // Mech DEPLOY prompt: spend 3 resources to place mech
       t.choose(game, 'Deploy Mech')
@@ -366,8 +359,7 @@ describe('Federation of Sol', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses Component Action → Orbital Drop
-      t.choose(game, 'Component Action')
-      t.choose(game, 'orbital-drop')
+      t.choose(game, 'Component Action.orbital-drop')
 
       // No mech DEPLOY prompt because jord is exhausted (0 available resources)
       // Infantry should still be placed from Orbital Drop

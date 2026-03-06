@@ -204,8 +204,7 @@ describe("Vuil'raith Cabal", () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses Component Action > Amalgamation
-      t.choose(game, 'Component Action')
-      t.choose(game, 'amalgamation')
+      t.choose(game, 'Component Action.amalgamation')
 
       // Choose captured unit to return (only 1, auto-selected)
       // Choose system (auto: cabal-home, only system with ships)
@@ -232,8 +231,7 @@ describe("Vuil'raith Cabal", () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses Component Action > Riftmeld
-      t.choose(game, 'Component Action')
-      t.choose(game, 'riftmeld')
+      t.choose(game, 'Component Action.riftmeld')
 
       // Captured unit choice auto-responds (only 1), then choose unit upgrade tech
       t.choose(game, 'infantry-ii')
@@ -447,8 +445,7 @@ describe("Vuil'raith Cabal", () => {
       const capturedBefore = (game.state.capturedUnits['dennis'] || []).length
 
       // Dennis uses Component Action > Dimensional Anchor (hero)
-      t.choose(game, 'Component Action')
-      t.choose(game, 'dimensional-anchor')
+      t.choose(game, 'Component Action.dimensional-anchor')
 
       // Hero rolls for each non-fighter ship (3 ships), captures on 1-3
       // Results depend on RNG seed, but we can verify the mechanics
@@ -563,8 +560,7 @@ describe("Vuil'raith Cabal", () => {
       t.choose(game, 'Done')
 
       // Micah activates Crucible
-      t.choose(game, 'Component Action')
-      t.choose(game, 'crucible')
+      t.choose(game, 'Component Action.crucible')
 
       // Crucible flag set for Micah
       expect(game.state._crucibleActive).toBe('micah')
@@ -602,8 +598,7 @@ describe("Vuil'raith Cabal", () => {
       t.choose(game, 'Done')
 
       // Micah plays Crucible
-      t.choose(game, 'Component Action')
-      t.choose(game, 'crucible')
+      t.choose(game, 'Component Action.crucible')
 
       // Crucible returned to Dennis (Vuil'raith)
       const dennis = game.players.byName('dennis')
@@ -643,8 +638,7 @@ describe("Vuil'raith Cabal", () => {
         const capturedBefore = (game.state.capturedUnits['dennis'] || []).length
 
         // Dennis uses Component Action > Vortex
-        t.choose(game, 'Component Action')
-        t.choose(game, 'vortex')
+        t.choose(game, 'Component Action.vortex')
 
         // Only one unique target (cruiser from micah), so choice is auto-selected.
         // Assertions run after auto-selection completes.

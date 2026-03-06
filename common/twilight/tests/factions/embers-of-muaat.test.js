@@ -50,8 +50,7 @@ describe('Embers of Muaat', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses Component Action > Star Forge
-      t.choose(game, 'Component Action')
-      t.choose(game, 'star-forge')
+      t.choose(game, 'Component Action.star-forge')
 
       // Choose 2 Fighters
       t.choose(game, '2 Fighters')
@@ -74,8 +73,7 @@ describe('Embers of Muaat', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'star-forge')
+      t.choose(game, 'Component Action.star-forge')
       t.choose(game, '1 Destroyer')
 
       const spaceUnits = game.state.units['muaat-home'].space
@@ -114,8 +112,7 @@ describe('Embers of Muaat', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'umbat-agent')
+      t.choose(game, 'Component Action.umbat-agent')
 
       // Choose self as target
       t.choose(game, 'dennis')
@@ -230,8 +227,7 @@ describe('Embers of Muaat', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'nova-seed')
+      t.choose(game, 'Component Action.nova-seed')
 
       // System 27 is auto-selected (only war sun system)
       // Verify opponent units destroyed
@@ -275,8 +271,7 @@ describe('Embers of Muaat', () => {
       const infantryBefore = (game.state.units['muaat-home'].planets?.['muaat'] || [])
         .filter(u => u.owner === 'dennis' && u.type === 'infantry').length
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'star-forge')
+      t.choose(game, 'Component Action.star-forge')
       t.choose(game, '2 Fighters')
 
       // Ember Colossus DEPLOY should trigger: 1 mech on muaat => 1 infantry placed
@@ -308,8 +303,7 @@ describe('Embers of Muaat', () => {
       const infantryBefore = (game.state.units['muaat-home'].planets?.['muaat'] || [])
         .filter(u => u.owner === 'dennis' && u.type === 'infantry').length
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'star-forge')
+      t.choose(game, 'Component Action.star-forge')
       t.choose(game, '2 Fighters')
 
       // No mech => no Ember Colossus DEPLOY
@@ -350,8 +344,7 @@ describe('Embers of Muaat', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: Component Action → Fires of the Gashlai
-      t.choose(game, 'Component Action')
-      t.choose(game, 'fires-of-the-gashlai')
+      t.choose(game, 'Component Action.fires-of-the-gashlai')
       // No transaction window (no TG/commodities to trade)
 
       const dennis = game.players.byName('dennis')
@@ -390,8 +383,7 @@ describe('Embers of Muaat', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: Component Action → Fires of the Gashlai
-      t.choose(game, 'Component Action')
-      t.choose(game, 'fires-of-the-gashlai')
+      t.choose(game, 'Component Action.fires-of-the-gashlai')
 
       const micah = game.players.byName('micah')
       const dennis = game.players.byName('dennis')

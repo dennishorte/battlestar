@@ -345,8 +345,7 @@ describe('Xxcha Kingdom', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: Component Action -> Xxekir Grom Hero
-      t.choose(game, 'Component Action')
-      t.choose(game, 'xxekir-grom-hero')
+      t.choose(game, 'Component Action.xxekir-grom-hero')
 
       // Place 2 PDS on archon-ren and 1 mech on archon-tau
       t.choose(game, 'pds:archon-ren')

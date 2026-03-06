@@ -443,8 +443,7 @@ describe('Arborec', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: Component Action -> Letani Miasmiala Hero
-      t.choose(game, 'Component Action')
-      t.choose(game, 'letani-miasmiala-hero')
+      t.choose(game, 'Component Action.letani-miasmiala-hero')
 
       // Produce in arborec-home system (has ground forces on nestphar)
       t.action(game, 'produce-units', {
@@ -721,8 +720,7 @@ describe('Arborec', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         // Dennis: Component Action -> Psychospore
-        t.choose(game, 'Component Action')
-        t.choose(game, 'psychospore')
+        t.choose(game, 'Component Action.psychospore')
 
         // Choose system 26 (has command token and infantry)
         // Auto-selects since only one valid system

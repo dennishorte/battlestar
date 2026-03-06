@@ -166,8 +166,7 @@ describe('Naaz-Rokha Alliance', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses Component Action -> Fabrication
-      t.choose(game, 'Component Action')
-      t.choose(game, 'fabrication')
+      t.choose(game, 'Component Action.fabrication')
 
       // "Purge 1 fragment for command token" auto-responds (only option since no pair)
       // Then choose which fragment type to purge
@@ -190,8 +189,7 @@ describe('Naaz-Rokha Alliance', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses Component Action -> Fabrication
-      t.choose(game, 'Component Action')
-      t.choose(game, 'fabrication')
+      t.choose(game, 'Component Action.fabrication')
 
       // Has a pair of cultural fragments, so "Purge 2 fragments for relic" is available
       t.choose(game, 'Purge 2 fragments for relic')
@@ -211,8 +209,7 @@ describe('Naaz-Rokha Alliance', () => {
 
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'fabrication')
+      t.choose(game, 'Component Action.fabrication')
 
       // Both options available since there is a pair
       const choices = t.currentChoices(game)
@@ -571,8 +568,7 @@ describe('Naaz-Rokha Alliance', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses Component Action -> Perfect Synthesis
-      t.choose(game, 'Component Action')
-      t.choose(game, 'perfect-synthesis')
+      t.choose(game, 'Component Action.perfect-synthesis')
 
       // Hero gains 1 relic automatically
       expect(game.state.relicsGained?.dennis?.length).toBe(1)
@@ -611,8 +607,7 @@ describe('Naaz-Rokha Alliance', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses Component Action -> Perfect Synthesis
-      t.choose(game, 'Component Action')
-      t.choose(game, 'perfect-synthesis')
+      t.choose(game, 'Component Action.perfect-synthesis')
 
       // Skip secondaries
       t.choose(game, 'Done')
@@ -646,8 +641,7 @@ describe('Naaz-Rokha Alliance', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses Component Action -> Perfect Synthesis
-      t.choose(game, 'Component Action')
-      t.choose(game, 'perfect-synthesis')
+      t.choose(game, 'Component Action.perfect-synthesis')
 
       // Choose first secondary: leadership (with exhausted planets, no influence to spend)
       t.choose(game, 'leadership')
@@ -681,8 +675,7 @@ describe('Naaz-Rokha Alliance', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses Component Action -> Fabrication
-      t.choose(game, 'Component Action')
-      t.choose(game, 'fabrication')
+      t.choose(game, 'Component Action.fabrication')
 
       // Purge 1 fragment for command token (auto-responds since no pair)
       t.choose(game, 'cultural')
@@ -927,8 +920,7 @@ describe('Naaz-Rokha Alliance', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: Component Action → Black Market Forgery
-      t.choose(game, 'Component Action')
-      t.choose(game, 'black-market-forgery')
+      t.choose(game, 'Component Action.black-market-forgery')
 
       const dennis = game.players.byName('dennis')
       // 2 cultural fragments purged (only 1 pair type available)
@@ -963,8 +955,7 @@ describe('Naaz-Rokha Alliance', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'black-market-forgery')
+      t.choose(game, 'Component Action.black-market-forgery')
 
       const micah = game.players.byName('micah')
       const dennis = game.players.byName('dennis')

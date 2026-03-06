@@ -187,8 +187,7 @@ describe('Emirates of Hacan', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: component action -> Carth of Golden Sands
-      t.choose(game, 'Component Action')
-      t.choose(game, 'carth-agent')
+      t.choose(game, 'Component Action.carth-agent')
       t.choose(game, 'Gain 2 Commodities')
 
       const dennis = game.players.byName('dennis')
@@ -210,8 +209,7 @@ describe('Emirates of Hacan', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: component action -> Carth of Golden Sands
-      t.choose(game, 'Component Action')
-      t.choose(game, 'carth-agent')
+      t.choose(game, 'Component Action.carth-agent')
       t.choose(game, 'Replenish micah')
 
       const micah = game.players.byName('micah')
@@ -314,8 +312,7 @@ describe('Emirates of Hacan', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: Component Action -> Hero (sets production cost to 0)
-      t.choose(game, 'Component Action')
-      t.choose(game, 'harrugh-gefhara-hero')
+      t.choose(game, 'Component Action.harrugh-gefhara-hero')
 
       const dennis = game.players.byName('dennis')
       expect(dennis.isHeroPurged()).toBe(true)
@@ -438,8 +435,7 @@ describe('Emirates of Hacan', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis: Component Action → Trade Convoys
-      t.choose(game, 'Component Action')
-      t.choose(game, 'trade-convoys')
+      t.choose(game, 'Component Action.trade-convoys')
 
       // After component action, transaction window opens.
       // Dennis should see Micah as a trade partner (non-neighbor, but Trade Convoys active).
@@ -466,8 +462,7 @@ describe('Emirates of Hacan', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         // Dennis uses Component Action -> Production Biomes
-        t.choose(game, 'Component Action')
-        t.choose(game, 'production-biomes')
+        t.choose(game, 'Component Action.production-biomes')
 
         // In a 2-player game, micah is auto-selected
         const dennis = game.players.byName('dennis')
@@ -489,8 +484,7 @@ describe('Emirates of Hacan', () => {
         game.run()
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
-        t.choose(game, 'Component Action')
-        const choices = t.currentChoices(game)
+        const choices = t.currentSubChoices(game, 'Component Action')
         expect(choices).not.toContain('production-biomes')
       })
 
@@ -507,8 +501,7 @@ describe('Emirates of Hacan', () => {
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
         // Use it once
-        t.choose(game, 'Component Action')
-        t.choose(game, 'production-biomes')
+        t.choose(game, 'Component Action.production-biomes')
 
         // Verify tech is exhausted
         const dennis = game.players.byName('dennis')

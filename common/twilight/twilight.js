@@ -756,14 +756,19 @@ Twilight.prototype.actionPhase = function() {
     const choices = [
       { title: 'Tactical Action', subtitles: ['Activate a system, move ships, invade planets'] },
     ]
-    if (this._hasAvailableComponentActions(player)) {
-      choices.push({ title: 'Component Action', subtitles: ['Use a faction ability or technology'] })
-    }
     if (!player.hasUsedStrategyCard()) {
       const unusedCards = player.strategyCards.filter(c => !c.used)
       choices.push({
         title: 'Strategic Action',
         choices: unusedCards.map(c => ({ title: c.id, strategyCardIds: [c.id] })),
+        min: 0,
+      })
+    }
+    const componentActions = this._getAvailableComponentActions(player)
+    if (componentActions.length > 0) {
+      choices.push({
+        title: 'Component Action',
+        choices: componentActions.map(a => ({ title: a.id })),
         min: 0,
       })
     }
@@ -815,7 +820,7 @@ Twilight.prototype.actionPhase = function() {
         this._tacticalAction(player)
         break
       case 'Component Action':
-        this._componentAction(player)
+        this._componentAction(player, actionArg)
         this.factionAbilities.afterComponentAction(player)
         break
       case 'Action Card':
@@ -862,14 +867,19 @@ Twilight.prototype.actionPhase = function() {
       const bonusChoices = [
         { title: 'Tactical Action', subtitles: ['Activate a system, move ships, invade planets'] },
       ]
-      if (this._hasAvailableComponentActions(player)) {
-        bonusChoices.push({ title: 'Component Action', subtitles: ['Use a faction ability or technology'] })
-      }
       if (!player.hasUsedStrategyCard()) {
         const unusedCards = player.strategyCards.filter(c => !c.used)
         bonusChoices.push({
           title: 'Strategic Action',
           choices: unusedCards.map(c => ({ title: c.id, strategyCardIds: [c.id] })),
+          min: 0,
+        })
+      }
+      const bonusComponentActions = this._getAvailableComponentActions(player)
+      if (bonusComponentActions.length > 0) {
+        bonusChoices.push({
+          title: 'Component Action',
+          choices: bonusComponentActions.map(a => ({ title: a.id })),
           min: 0,
         })
       }
@@ -904,7 +914,7 @@ Twilight.prototype.actionPhase = function() {
             this._tacticalAction(player)
             break
           case 'Component Action':
-            this._componentAction(player)
+            this._componentAction(player, bonusArg)
             this.factionAbilities.afterComponentAction(player)
             break
           case 'Action Card':

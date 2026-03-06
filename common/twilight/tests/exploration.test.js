@@ -1608,13 +1608,10 @@ describe('Exploration', () => {
         game.run()
         pickStrategyCards(game, 'leadership', 'diplomacy')
 
-        // Component Action should be available
-        t.choose(game, 'Component Action')
-
-        // The persistent card action should appear
-        const choices = t.currentChoices(game)
+        // Component Action should be available with persistent card action
+        const choices = t.currentSubChoices(game, 'Component Action')
         expect(choices).toContain('persistent:enigmatic-device-1')
-        t.choose(game, 'persistent:enigmatic-device-1')
+        t.choose(game, 'Component Action.persistent:enigmatic-device-1')
 
         // Choose a tech to research (skip prereqs)
         t.choose(game, 'plasma-scoring')
@@ -1842,8 +1839,7 @@ describe('Exploration', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'purge-relic-fragments')
+      t.choose(game, 'Component Action.purge-relic-fragments')
 
       const dennis = game.players.byName('dennis')
       expect(dennis.relicFragments.length).toBe(0)
@@ -1862,8 +1858,7 @@ describe('Exploration', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'purge-relic-fragments')
+      t.choose(game, 'Component Action.purge-relic-fragments')
 
       const dennis = game.players.byName('dennis')
       expect(dennis.relicFragments.length).toBe(0)
@@ -1918,8 +1913,7 @@ describe('Exploration', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'purge-relic-fragments')
+      t.choose(game, 'Component Action.purge-relic-fragments')
 
       const dennis = game.players.byName('dennis')
       expect(game.state.relicsGained['dennis']).toContain('shard-of-the-throne')
@@ -1938,8 +1932,7 @@ describe('Exploration', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'purge-relic-fragments')
+      t.choose(game, 'Component Action.purge-relic-fragments')
 
       const dennis = game.players.byName('dennis')
       expect(game.state.relicsGained['dennis']).toContain('the-obsidian')

@@ -332,8 +332,7 @@ describe('Naalu Collective', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis (Naalu, Telepathic) goes first — use M'aban peek
-      t.choose(game, 'Component Action')
-      t.choose(game, 'maban-peek')
+      t.choose(game, 'Component Action.maban-peek')
       // Neighbor auto-resolves to micah (only option in 2p)
 
       // Choose to peek at top of agenda deck
@@ -383,8 +382,7 @@ describe('Naalu Collective', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses component action: hero
-      t.choose(game, 'Component Action')
-      t.choose(game, 'c-radium-geometry')
+      t.choose(game, 'Component Action.c-radium-geometry')
 
       // Micah gives the promissory note
       t.choose(game, 'ceasefire:micah')
@@ -419,8 +417,7 @@ describe('Naalu Collective', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses hero — Micah has no promissory notes, gives 1 TG
-      t.choose(game, 'Component Action')
-      t.choose(game, 'c-radium-geometry')
+      t.choose(game, 'Component Action.c-radium-geometry')
 
       const dennis = game.players.byName('dennis')
       expect(dennis.tradeGoods).toBe(1)

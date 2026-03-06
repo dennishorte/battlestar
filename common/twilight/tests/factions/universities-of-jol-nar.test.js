@@ -357,8 +357,7 @@ describe('Universities of Jol-Nar', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Component Action')
-      t.choose(game, 'jolnar-hero')
+      t.choose(game, 'Component Action.jolnar-hero')
 
       // For each tech, choose to keep or replace
       // neural-motivator (green) — replace with hyper-metabolism
@@ -456,8 +455,7 @@ describe('Universities of Jol-Nar', () => {
       pickStrategyCards(game, 'leadership', 'technology')
 
       // Dennis: Component Action → Research Agreement (place face-up)
-      t.choose(game, 'Component Action')
-      t.choose(game, 'research-agreement')
+      t.choose(game, 'Component Action.research-agreement')
 
       // Micah: Strategic Action → Technology
       t.choose(game, 'Strategic Action.technology')

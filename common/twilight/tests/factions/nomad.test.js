@@ -403,8 +403,7 @@ describe('Nomad', () => {
       t.choose(game, 'diplomacy')
 
       // Dennis uses component action (hero)
-      t.choose(game, 'Component Action')
-      t.choose(game, 'probability-matrix')
+      t.choose(game, 'Component Action.probability-matrix')
 
       // Probability Matrix state should be set
       expect(game.state.probabilityMatrix).toBeDefined()

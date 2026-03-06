@@ -480,8 +480,7 @@ describe('Empyrean', () => {
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
       // Dennis uses component action (hero)
-      t.choose(game, 'Component Action')
-      t.choose(game, 'multiverse-shift')
+      t.choose(game, 'Component Action.multiverse-shift')
 
       // Hero should be purged
       const dennis = game.players.byName('dennis')
@@ -538,8 +537,7 @@ describe('Empyrean', () => {
       pickStrategyCards(game, 'trade', 'leadership')
 
       // Micah: Component Action → Dark Pact
-      t.choose(game, 'Component Action')
-      t.choose(game, 'dark-pact')
+      t.choose(game, 'Component Action.dark-pact')
       // Transaction window auto-exits (no resources)
 
       // Dennis: Strategic Action (Trade) — gains 3 TG, replenishes commodities
@@ -600,8 +598,7 @@ describe('Empyrean', () => {
       t.choose(game, 'Skip')  // dennis skips influence-for-tokens (Empyrean, 4I)
 
       // Micah: Component Action → Dark Pact
-      t.choose(game, 'Component Action')
-      t.choose(game, 'dark-pact')
+      t.choose(game, 'Component Action.dark-pact')
 
       // Dennis: pass
       t.choose(game, 'Pass')
@@ -652,8 +649,7 @@ describe('Empyrean', () => {
       pickStrategyCards(game, 'trade', 'leadership')
 
       // Micah: Component Action → Blood Pact
-      t.choose(game, 'Component Action')
-      t.choose(game, 'blood-pact')
+      t.choose(game, 'Component Action.blood-pact')
 
       // Dennis: Strategic Action (Trade)
       t.choose(game, 'Strategic Action.trade')
@@ -724,8 +720,7 @@ describe('Empyrean', () => {
       // micah: leadership secondary auto-passes (Hacan 2I)
 
       // Micah: Component Action → Blood Pact
-      t.choose(game, 'Component Action')
-      t.choose(game, 'blood-pact')
+      t.choose(game, 'Component Action.blood-pact')
 
       // Dennis: pass
       t.choose(game, 'Pass')
