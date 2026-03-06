@@ -666,7 +666,7 @@ export default {
   height: calc(100vh - 60px);
   min-width: 220px;
   max-width: 300px;
-  overflow-x: wrap;
+  overflow-x: hidden;
   overflow-y: auto;
   padding-bottom: 3em;
 }

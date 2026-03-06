@@ -261,6 +261,7 @@ onMounted(() => {
 .gamelog {
   --log-indent-unit: 1em;
   font-size: .8rem;
+  overflow-x: hidden;
   overflow-y: auto;
 }
 
