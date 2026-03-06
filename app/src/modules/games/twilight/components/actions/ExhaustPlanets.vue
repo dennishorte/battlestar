@@ -3,7 +3,7 @@
     <div class="action-header">{{ headerText }}</div>
 
     <div class="planet-list">
-      <label
+      <div
         v-for="planet in planets"
         :key="planet.raw"
         class="planet-row"
@@ -13,7 +13,7 @@
         <input type="checkbox" :checked="planet.selected" />
         <span class="planet-name">{{ planet.name }}</span>
         <span class="planet-value">{{ planet.value }}</span>
-      </label>
+      </div>
     </div>
 
     <div class="exhaust-footer">
