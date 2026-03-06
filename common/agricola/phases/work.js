@@ -12,6 +12,28 @@ Agricola.prototype.workPhase = function() {
   this._resetActionSpaces()
   this.callCardHook('onWorkPhaseStart')
 
+  // Offer free play from hand for cards like Elder
+  for (const player of this.players.all()) {
+    for (const cardId of [...player.hand]) {
+      const card = this.cards.byId(cardId)
+      if (!card) {
+        continue
+      }
+      if (card.definition.freePlayAtWorkPhaseStart !== this.state.round) {
+        continue
+      }
+
+      const selection = this.actions.choose(player, ['Yes', 'No'], {
+        title: `Play ${card.definition.name} for free?`,
+        min: 1,
+        max: 1,
+      })
+      if (selection[0] === 'Yes') {
+        this.actions._completeOccupationPlay(player, cardId)
+      }
+    }
+  }
+
   for (const player of this.players.all()) {
     player.resetRoundState()
   }
