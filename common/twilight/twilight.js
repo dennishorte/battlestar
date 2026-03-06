@@ -768,7 +768,13 @@ Twilight.prototype.actionPhase = function() {
     if (componentActions.length > 0) {
       choices.push({
         title: 'Component Action',
-        choices: componentActions.map(a => ({ title: a.id })),
+        choices: componentActions.map(a => {
+          const choice = { title: a.id, name: a.name }
+          if (a.factionId) {
+            choice.factionId = a.factionId
+          }
+          return choice
+        }),
         min: 0,
       })
     }

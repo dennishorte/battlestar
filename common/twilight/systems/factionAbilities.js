@@ -496,7 +496,7 @@ class FactionAbilities {
       actions.push(
         ...handler.componentActions
           .filter(h => this._hasAbility(player, h.abilityId) && h.isAvailable.call({ _game: this.game }, player))
-          .map(h => ({ id: h.id, name: h.name }))
+          .map(h => ({ id: h.id, name: h.name, factionId: player.factionId }))
       )
     }
 
