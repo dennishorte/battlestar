@@ -173,7 +173,7 @@ class UltimateAgeCard extends UltimateBaseCard {
   }
 
   isTopCardStrict() {
-    return this.game.cards.top(this.owner, this.color)?.id === this.id
+    return this.owner != null && this.game.cards.top(this.owner, this.color)?.id === this.id
   }
 
   checkSharesBiscuit(other) {
