@@ -16,10 +16,11 @@ module.exports = {
     {
       trigger: 'meld',
       kind: 'would-instead',
-      matches: (game, player) => {
+      matches: (game, player, { card, self }) => {
+        const ageCondition = card.getAge() === game.getEffectAge(self, 10)
         const topValues = game.cards.tops(player).map(card => card.getAge())
         const uniqueValues = util.array.distinct(topValues)
-        return uniqueValues.length === 5
+        return ageCondition && uniqueValues.length === 5
       },
       func: (game, player, { self }) => {
         game.youWin(player, self.name)

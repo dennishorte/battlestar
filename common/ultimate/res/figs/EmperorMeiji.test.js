@@ -36,6 +36,37 @@ describe('Emperor Meiji', () => {
     })
   })
 
+  test('karma: meld non-age-10 card with five different top card values, normal meld', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Emperor Meiji'],  // Age 7
+        red: ['Archery'],            // Age 1
+        yellow: ['Fermenting'],      // Age 2
+        green: ['Paper'],            // Age 3
+        blue: ['Printing Press'],    // Age 4
+        hand: ['Bicycle'],           // Age 7, green, not age 10
+      },
+    })
+    // Top cards have ages: 1, 2, 3, 4, 7 = 5 different values
+    // But Bicycle is age 7, not age 10, so karma should NOT trigger
+
+    let request
+    request = game.run()
+    request = t.choose(game, 'Meld.Bicycle')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Emperor Meiji'],
+        red: ['Archery'],
+        yellow: ['Fermenting'],
+        green: ['Bicycle', 'Paper'], // Normal meld - Bicycle is green, age 7
+        blue: ['Printing Press'],
+      },
+    })
+  })
+
   test('karma: meld age 10 without five different top card values, normal meld', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
     t.setBoard(game, {
