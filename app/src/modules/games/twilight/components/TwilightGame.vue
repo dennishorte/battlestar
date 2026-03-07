@@ -104,6 +104,17 @@ import { h } from 'vue'
 import { twilight } from 'battlestar-common'
 const res = twilight.res
 
+// Inline component for displaying planet names instead of IDs
+const PlanetName = {
+  props: {
+    name: String,
+    suffix: { type: String, default: '' },
+  },
+  render() {
+    return h('span', {}, this.name + this.suffix)
+  },
+}
+
 // Inline component for action options that include strategy card chips
 const ActionWithCards = {
   props: {
@@ -272,7 +283,19 @@ export default {
       this.selectedPlayerName = name
     },
 
-    insertSelectorSubtitles() {},
+    insertSelectorSubtitles(selector) {
+      if (!selector.choices || selector.choices.length === 0) {
+        return
+      }
+      const systems = this.game.state.systems
+      const isSystemSelector = selector.choices.every(c => {
+        const id = typeof c === 'string' ? c : c.title
+        return systems[id] || systems[String(id)]
+      })
+      if (isSystemSelector) {
+        selector.help = 'You can click on the map to select a system.'
+      }
+    },
 
     selectorOptionComponent(option) {
       const name = option.title || option
@@ -349,6 +372,20 @@ export default {
         return {
           component: ComponentActionChip,
           props: { name: option.name, factionId: option.factionId || null },
+        }
+      }
+
+      // Planets: raw IDs like 'mecatol-rex' or formatted like 'mecatol-rex (6)'
+      {
+        const parenIdx = name.indexOf(' (')
+        const planetId = parenIdx > 0 ? name.substring(0, parenIdx) : name
+        const suffix = parenIdx > 0 ? name.substring(parenIdx) : ''
+        const planet = res.getPlanet(planetId)
+        if (planet) {
+          return {
+            component: PlanetName,
+            props: { name: planet.name, suffix },
+          }
         }
       }
 
