@@ -328,6 +328,7 @@ AgricolaActionManager.prototype.houseBuilding = function(player) {
   const roomType = player.roomType
 
   // Build rooms loop
+  player._preActionRoomCount = player.getRoomCount()
   let roomsBuilt = 0
   while (true) {
     const currentValidSpaces = player.getValidRoomBuildSpaces()
@@ -399,6 +400,9 @@ AgricolaActionManager.prototype.houseBuilding = function(player) {
       }
     }
   }
+
+  delete player._preActionRoomCount
+  delete player._familyFriendlyHomeTriggered
 
   return roomsBuilt > 0
 }

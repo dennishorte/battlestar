@@ -16,6 +16,7 @@ AgricolaActionManager.prototype.buildRoomAndOrStable = function(player) {
 
   let builtAnything = false
   player._farmExpansionWoodPaid = 0
+  player._preActionRoomCount = player.getRoomCount()
   let builtRoomType = null
   let builtStable = false
 
@@ -99,6 +100,8 @@ AgricolaActionManager.prototype.buildRoomAndOrStable = function(player) {
 
   const totalWoodPaid = player._farmExpansionWoodPaid
   delete player._farmExpansionWoodPaid
+  delete player._preActionRoomCount
+  delete player._familyFriendlyHomeTriggered
   if (totalWoodPaid > 0) {
     this.game.callPlayerCardHook(player, 'onFarmExpansion', totalWoodPaid)
   }
