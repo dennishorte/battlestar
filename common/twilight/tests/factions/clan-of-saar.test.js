@@ -142,9 +142,12 @@ describe('Clan of Saar', () => {
       // Dennis's turn — use Construction
       t.choose(game, 'Strategic Action.construction')
 
-      // Place space dock — choose a planet, but Saar places in space
+      // Step 1: place space dock — choose a planet, but Saar places in space
+      // (no space dock yet, so no production option — goes straight to structure choice)
       t.choose(game, 'The Clan of Saar:Lisis II.space-dock')
+      // Step 2: place PDS on Ragh
       t.choose(game, 'The Clan of Saar:Ragh')
+      t.choose(game, 'pds')
 
       // Space dock should be in space area, not on the planet
       const spaceUnits = game.state.units['saar-home'].space
