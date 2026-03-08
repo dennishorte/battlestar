@@ -214,7 +214,7 @@ describe('Action Phase', () => {
       // Dennis uses construction
       t.choose(game, 'Strategic Action.construction')
       t.choose(game, 'Federation of Sol:Jord.pds')
-      t.choose(game, 'Federation of Sol:Jord.pds')
+      t.choose(game, 'Federation of Sol:Jord')
       // Micah uses construction secondary (costs 1 strategy token)
       t.choose(game, 'Use Secondary')
 
@@ -235,7 +235,7 @@ describe('Action Phase', () => {
       // Dennis uses construction
       t.choose(game, 'Strategic Action.construction')
       t.choose(game, 'Federation of Sol:Jord.pds')
-      t.choose(game, 'Federation of Sol:Jord.pds')
+      t.choose(game, 'Federation of Sol:Jord')
       // Micah has 0 strategy tokens — should NOT be prompted for secondary
 
       // Should go straight to micah's turn without secondary prompt
