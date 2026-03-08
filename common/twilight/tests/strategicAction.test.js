@@ -343,10 +343,12 @@ describe('Strategic Actions', () => {
       // Dennis has construction(4), micah has trade(5). Dennis goes first.
       t.choose(game, 'Strategic Action.construction')
 
-      // First structure: place PDS on jord
+      // Step 1: choose mode, then place PDS on jord
+      t.choose(game, 'Place Structure')
       t.choose(game, 'Federation of Sol:Jord.pds')
-      // Second structure: place another PDS on jord
+      // Step 2: place another PDS on jord
       t.choose(game, 'Federation of Sol:Jord')
+      t.choose(game, 'pds')
       t.choose(game, 'Pass')  // micah declines construction secondary
 
       const jord = game.state.units['sol-home'].planets['jord']
@@ -361,10 +363,12 @@ describe('Strategic Actions', () => {
 
       t.choose(game, 'Strategic Action.construction')
 
-      // First structure: space dock on jord (already has one, but rules allow multiple in some cases)
+      // Step 1: space dock on jord
+      t.choose(game, 'Place Structure')
       t.choose(game, 'Federation of Sol:Jord.space-dock')
-      // Second structure: PDS on jord
+      // Step 2: PDS on jord
       t.choose(game, 'Federation of Sol:Jord')
+      t.choose(game, 'pds')
       t.choose(game, 'Pass')  // micah declines construction secondary
 
       const jord = game.state.units['sol-home'].planets['jord']
@@ -372,6 +376,55 @@ describe('Strategic Actions', () => {
       const pdsCount = jord.filter(u => u.owner === 'dennis' && u.type === 'pds').length
       // Started with 1 space dock, built another
       expect(spaceDockCount).toBe(2)
+      expect(pdsCount).toBe(1)
+    })
+
+    test('primary: use production instead of placing structure', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'construction', 'trade')
+
+      const fightersBefore = game.state.units['sol-home'].space
+        .filter(u => u.owner === 'dennis' && u.type === 'fighter').length
+
+      // Dennis has construction(4), micah has trade(5). Dennis goes first.
+      t.choose(game, 'Strategic Action.construction')
+
+      // Step 1: use production ability of space dock on jord
+      // (sol-home auto-resolves as only system with docks)
+      t.choose(game, 'Use Production')
+      // Produce 1 fighter (cheapest unit)
+      t.action(game, 'produce-units', { units: [{ type: 'fighter', count: 1 }] })
+      // Step 2: place PDS on jord
+      t.choose(game, 'Federation of Sol:Jord')
+      t.choose(game, 'pds')
+      t.choose(game, 'Pass')  // micah declines construction secondary
+
+      const fightersAfter = game.state.units['sol-home'].space
+        .filter(u => u.owner === 'dennis' && u.type === 'fighter').length
+      expect(fightersAfter).toBe(fightersBefore + 1)
+
+      const jord = game.state.units['sol-home'].planets['jord']
+      const pdsCount = jord.filter(u => u.owner === 'dennis' && u.type === 'pds').length
+      expect(pdsCount).toBe(1)
+    })
+
+    test('primary: skip step 2 with Done', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'construction', 'trade')
+
+      t.choose(game, 'Strategic Action.construction')
+
+      // Step 1: place PDS on jord
+      t.choose(game, 'Place Structure')
+      t.choose(game, 'Federation of Sol:Jord.pds')
+      // Step 2: skip
+      t.choose(game, 'Done')
+      t.choose(game, 'Pass')  // micah declines construction secondary
+
+      const jord = game.state.units['sol-home'].planets['jord']
+      const pdsCount = jord.filter(u => u.owner === 'dennis' && u.type === 'pds').length
       expect(pdsCount).toBe(1)
     })
   })
@@ -580,8 +633,10 @@ describe('Strategic Actions', () => {
 
       // Dennis uses construction (primary)
       t.choose(game, 'Strategic Action.construction')
-      t.choose(game, 'Federation of Sol:Jord.pds')   // first structure
-      t.choose(game, 'Federation of Sol:Jord')   // second structure (PDS only)
+      t.choose(game, 'Place Structure')
+      t.choose(game, 'Federation of Sol:Jord.pds')   // step 1
+      t.choose(game, 'Federation of Sol:Jord')   // step 2: planet
+      t.choose(game, 'pds')                      // step 2: type
       // Micah uses construction secondary (1 structure)
       t.choose(game, 'Use Secondary')
       // Micah places a PDS on one of their planets
@@ -956,8 +1011,10 @@ describe('Strategic Actions', () => {
 
         // Dennis uses construction (primary)
         t.choose(game, 'Strategic Action.construction')
+        t.choose(game, 'Place Structure')
         t.choose(game, 'Federation of Sol:Jord.pds')
         t.choose(game, 'Federation of Sol:Jord')
+        t.choose(game, 'pds')
         // Micah uses construction secondary
         t.choose(game, 'Use Secondary')
         // System selection auto-resolves to hacan-home (only system with controlled planets)
@@ -987,8 +1044,10 @@ describe('Strategic Actions', () => {
         // Dennis: leadership secondary auto-passes (2I, not enough for tokens)
 
         t.choose(game, 'Strategic Action.construction')  // dennis: construction
+        t.choose(game, 'Place Structure')
         t.choose(game, 'Federation of Sol:Jord.pds')
         t.choose(game, 'Federation of Sol:Jord')
+        t.choose(game, 'pds')
         // Micah uses construction secondary
         t.choose(game, 'Use Secondary')
         // Now Micah must choose a system: hacan-home or 27

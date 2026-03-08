@@ -512,45 +512,87 @@ module.exports = function(Twilight) {
   }
 
   Twilight.prototype._constructionPrimary = function(player) {
-  // Place 1 PDS or 1 Space Dock on a planet you control
-  // Then place 1 PDS on a planet you control
+  // Step 1: Either place 1 structure on a planet you control
+  //         OR use the PRODUCTION ability of 1 of your space docks
+  // Step 2: Place 1 structure on a planet you control
     const controlledPlanets = player.getControlledPlanets()
-    if (controlledPlanets.length === 0) {
+
+    // Find systems where the player has space docks (for production option)
+    const systemsWithDocks = this._findSystemsWithSpaceDocks(player)
+
+    if (controlledPlanets.length === 0 && systemsWithDocks.length === 0) {
       return
     }
 
-    // First structure: PDS or Space Dock
-    const { choices: firstChoices, labelToPlanet } = _buildStructureChoices(controlledPlanets, ['pds', 'space-dock'])
+    // Step 1: Place structure OR use production
+    const canPlaceStructure = controlledPlanets.length > 0
+    const canUseProduction = systemsWithDocks.length > 0
 
-    const firstSelection = this.actions.choose(player, firstChoices, {
-      title: 'Place Structure (Construction)',
-    })
-    const firstType = firstSelection[0].selection[0]
-    const firstPlanet = labelToPlanet[firstSelection[0].title]
-    const firstSystemId = this._findSystemForPlanet(firstPlanet)
-    if (firstSystemId) {
-    // Saar Floating Factory: space docks are placed in the space area
-      if (firstType === 'space-dock' && player.faction?.unitOverrides?.['space-dock']?.move > 0) {
-        this._addUnit(firstSystemId, 'space', 'space-dock', player.name)
+    if (canPlaceStructure || canUseProduction) {
+      // Determine mode: if both available, ask; otherwise pick the only option
+      let mode
+      if (canPlaceStructure && canUseProduction) {
+        const modeSelection = this.actions.choose(player, ['Place Structure', 'Use Production'], {
+          title: 'Construction',
+        })
+        mode = modeSelection[0]
       }
       else {
-        this._addUnitToPlanet(firstSystemId, firstPlanet, firstType, player.name)
+        mode = canPlaceStructure ? 'Place Structure' : 'Use Production'
+      }
+
+      if (mode === 'Place Structure') {
+        const { choices: structureChoices, labelToPlanet } = _buildStructureChoices(controlledPlanets, ['pds', 'space-dock'])
+        const sel = this.actions.choose(player, structureChoices, {
+          title: 'Place Structure (Construction)',
+        })
+        const firstType = sel[0].selection[0]
+        const firstPlanet = labelToPlanet[sel[0].title]
+        const firstSystemId = this._findSystemForPlanet(firstPlanet)
+        if (firstSystemId) {
+          // Saar Floating Factory: space docks are placed in the space area
+          if (firstType === 'space-dock' && player.faction?.unitOverrides?.['space-dock']?.move > 0) {
+            this._addUnit(firstSystemId, 'space', 'space-dock', player.name)
+          }
+          else {
+            this._addUnitToPlanet(firstSystemId, firstPlanet, firstType, player.name)
+          }
+        }
+      }
+      else {
+        // Use production: choose which system's space dock to use
+        const systemSelection = this.actions.choose(player, systemsWithDocks, {
+          title: 'Use Production (Construction)',
+        })
+        this._productionStep(player, systemSelection[0])
       }
     }
 
-    // Second structure: PDS only (flat list since type is always PDS)
-    const { choices: secondChoices, labelToPlanet: secondLabelToPlanet } = _buildStructureChoices(controlledPlanets, ['pds'])
-    if (secondChoices.length > 0) {
-      const flatChoices = ['Done', ...secondChoices.map(c => c.title)]
-      const secondSelection = this.actions.choose(player, flatChoices, {
-        title: 'Place 2nd PDS (Construction)',
-        noAutoRespond: true,
-      })
-      if (secondSelection[0] !== 'Done') {
-        const secondPlanet = secondLabelToPlanet[secondSelection[0]]
-        const secondSystemId = this._findSystemForPlanet(secondPlanet)
-        if (secondSystemId) {
-          this._addUnitToPlanet(secondSystemId, secondPlanet, 'pds', player.name)
+    // Step 2: Place 1 structure on a planet you control
+    if (controlledPlanets.length > 0) {
+      const { choices: secondChoices, labelToPlanet: secondLabelToPlanet } = _buildStructureChoices(controlledPlanets, ['pds', 'space-dock'])
+      if (secondChoices.length > 0) {
+        const planetLabels = secondChoices.map(c => c.title)
+        const planetSelection = this.actions.choose(player, ['Done', ...planetLabels], {
+          title: 'Place Structure (Construction)',
+          noAutoRespond: true,
+        })
+        if (planetSelection[0] !== 'Done') {
+          const secondPlanet = secondLabelToPlanet[planetSelection[0]]
+          // Ask which structure type
+          const typeSelection = this.actions.choose(player, ['pds', 'space-dock'], {
+            title: 'Choose Structure Type',
+          })
+          const secondType = typeSelection[0]
+          const secondSystemId = this._findSystemForPlanet(secondPlanet)
+          if (secondSystemId) {
+            if (secondType === 'space-dock' && player.faction?.unitOverrides?.['space-dock']?.move > 0) {
+              this._addUnit(secondSystemId, 'space', 'space-dock', player.name)
+            }
+            else {
+              this._addUnitToPlanet(secondSystemId, secondPlanet, secondType, player.name)
+            }
+          }
         }
       }
     }
@@ -559,6 +601,27 @@ module.exports = function(Twilight) {
       template: '{player} uses Construction',
       args: { player },
     })
+  }
+
+  Twilight.prototype._findSystemsWithSpaceDocks = function(player) {
+    const systems = []
+    for (const [systemId, systemUnits] of Object.entries(this.state.units)) {
+      // Check planets for space docks
+      for (const [, planetUnits] of Object.entries(systemUnits.planets || {})) {
+        if (planetUnits.some(u => u.owner === player.name && u.type === 'space-dock')) {
+          systems.push(systemId)
+          break
+        }
+      }
+      if (systems.includes(systemId)) {
+        continue
+      }
+      // Check space area for floating factories (Saar)
+      if (systemUnits.space?.some(u => u.owner === player.name && u.type === 'space-dock')) {
+        systems.push(systemId)
+      }
+    }
+    return systems
   }
 
 
