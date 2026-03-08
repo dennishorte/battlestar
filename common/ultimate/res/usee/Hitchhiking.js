@@ -18,10 +18,7 @@ module.exports = {
 
         if (cardInHand) {
           game.actions.transfer(otherPlayer, cardInHand, game.zones.byPlayer(player, cardInHand.color))
-          game.log.add({
-            template: 'Having the other player make the decisions is not implemented yet.'
-          })
-          game.actions.selfExecute(self, player, cardInHand)
+          game.actions.selfExecute(self, player, cardInHand, { decisionMaker: otherPlayer })
         }
       }
     },

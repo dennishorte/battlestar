@@ -39,6 +39,19 @@ class UltimateZone extends BaseZone {
     return super.cardlist()
   }
 
+  _updateCardVisibility(card) {
+    super._updateCardVisibility(card)
+
+    const dogmaInfo = this.game.state?.dogmaInfo
+    if (dogmaInfo?.decisionMaker && dogmaInfo?.decisionMakerFor
+        && this._kind === 'private') {
+      const zoneOwner = this.owner()
+      if (zoneOwner && zoneOwner.name === dogmaInfo.decisionMakerFor.name) {
+        card.show(dogmaInfo.decisionMaker)
+      }
+    }
+  }
+
   isPlayerAchievementsZone() {
     return Boolean(this.owner) && this.id.endsWith('.achievements')
   }

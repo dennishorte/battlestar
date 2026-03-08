@@ -734,6 +734,12 @@ Innovation.prototype.mAdjustCardVisibility = function(card) {
 
   else if (kind === 'private') {
     util.array.pushUnique(card.visibility, zone.owner.name)
+
+    const dogmaInfo = this.state.dogmaInfo
+    if (dogmaInfo?.decisionMaker && dogmaInfo?.decisionMakerFor
+        && zone.owner.name === dogmaInfo.decisionMakerFor.name) {
+      util.array.pushUnique(card.visibility, dogmaInfo.decisionMaker.name)
+    }
   }
 
   else if (kind === 'hidden') {

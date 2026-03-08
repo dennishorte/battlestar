@@ -170,6 +170,11 @@ class UltimateActionManager extends BaseActionManager {
       opts.min = Math.max(1, opts.min || 1)
     }
 
+    const { decisionMaker, decisionMakerFor } = this.state.dogmaInfo
+    if (decisionMaker && decisionMakerFor && player.name === decisionMakerFor.name) {
+      return super.choose(decisionMaker, choices, opts)
+    }
+
     return super.choose(player, choices, opts)
   }
 
@@ -1011,6 +1016,15 @@ class UltimateActionManager extends BaseActionManager {
     // after the self-execute to fail the sharing check.
     const savedActing = this.game.state.dogmaInfo.acting
 
+    const savedDecisionMaker = this.game.state.dogmaInfo.decisionMaker
+    const savedDecisionMakerFor = this.game.state.dogmaInfo.decisionMakerFor
+
+    if (opts.decisionMaker) {
+      this.game.state.dogmaInfo.decisionMaker = opts.decisionMaker
+      this.game.state.dogmaInfo.decisionMakerFor = player
+      this._grantDecisionMakerVisibility(player, opts.decisionMaker)
+    }
+
     // Do all visible echo effects in this color.
     if (isTopCard) {
       const cards = this
@@ -1037,6 +1051,12 @@ class UltimateActionManager extends BaseActionManager {
     }
     this.game.executeAllEffects(player, card, 'dogma', opts)
 
+    if (opts.decisionMaker) {
+      this._revokeDecisionMakerVisibility(player, opts.decisionMaker)
+    }
+    this.game.state.dogmaInfo.decisionMaker = savedDecisionMaker
+    this.game.state.dogmaInfo.decisionMakerFor = savedDecisionMakerFor
+
     // Restore the outer acting player.
     this.game.state.dogmaInfo.acting = savedActing
 
@@ -1045,6 +1065,24 @@ class UltimateActionManager extends BaseActionManager {
 
   superExecute(executingCard, player, card) {
     this.selfExecute(executingCard, player, card, { superExecute: true })
+  }
+
+  _grantDecisionMakerVisibility(player, decisionMaker) {
+    for (const zoneName of ['hand', 'score', 'forecast']) {
+      const zone = this.zones.byPlayer(player, zoneName)
+      for (const card of zone.cardlist()) {
+        card.show(decisionMaker)
+      }
+    }
+  }
+
+  _revokeDecisionMakerVisibility(player, decisionMaker) {
+    for (const zoneName of ['hand', 'score', 'forecast']) {
+      const zone = this.zones.byPlayer(player, zoneName)
+      for (const card of zone.cardlist()) {
+        util.array.remove(card.visibility, decisionMaker)
+      }
+    }
   }
 
   foreshadowMany = UltimateActionManager.createManyMethod('foreshadow', 2)
