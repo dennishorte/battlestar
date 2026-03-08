@@ -99,21 +99,11 @@ import ObjectiveChip from './ObjectiveChip.vue'
 import StrategyCardChip from './StrategyCardChip.vue'
 import TechChip from './TechChip.vue'
 import ComponentActionChip from './ComponentActionChip.vue'
+import PlanetChip from './PlanetChip.vue'
 
 import { h } from 'vue'
 import { twilight } from 'battlestar-common'
 const res = twilight.res
-
-// Inline component for displaying planet names instead of IDs
-const PlanetName = {
-  props: {
-    name: String,
-    suffix: { type: String, default: '' },
-  },
-  render() {
-    return h('span', {}, this.name + this.suffix)
-  },
-}
 
 // Inline component for action options that include strategy card chips
 const ActionWithCards = {
@@ -379,12 +369,11 @@ export default {
       {
         const parenIdx = name.indexOf(' (')
         const planetId = parenIdx > 0 ? name.substring(0, parenIdx) : name
-        const suffix = parenIdx > 0 ? name.substring(parenIdx) : ''
         const planet = res.getPlanet(planetId)
         if (planet) {
           return {
-            component: PlanetName,
-            props: { name: planet.name, suffix },
+            component: PlanetChip,
+            props: { planetId },
           }
         }
       }
