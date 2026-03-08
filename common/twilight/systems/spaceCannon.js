@@ -41,6 +41,7 @@ module.exports = function(Twilight) {
     const firingOwners = new Set()  // Track all owners who fired (for onUnitDestroyed hooks)
     // Antimass Deflectors: +1 combat value when firing at target with this tech
     const antimassDefense = activePlayer.hasTechnology('antimass-deflectors') ? 1 : 0
+    const rollInfo = { rolls: [], combatValues: new Set() }
 
     // 1. PDS in the active system (on planets) belonging to non-active players
     const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
@@ -72,7 +73,7 @@ module.exports = function(Twilight) {
             missesByOwner[unit.owner] = []
           }
           firingOwners.add(unit.owner)
-          totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense, missesByOwner[unit.owner])
+          totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense, missesByOwner[unit.owner], rollInfo)
         }
       }
     }
@@ -102,8 +103,10 @@ module.exports = function(Twilight) {
           }
         }
         firingOwners.add(controller)
+        rollInfo.combatValues.add(combatValue)
         for (let i = 0; i < diceCount + extraDice; i++) {
           const roll = Math.floor(this.random() * 10) + 1
+          rollInfo.rolls.push(roll)
           if (roll >= combatValue) {
             totalHits++
           }
@@ -140,8 +143,10 @@ module.exports = function(Twilight) {
             // Space Cannon 5, 1 die
             const combatValue = Math.min(10, 5 + antimassDefense)
             const diceCount = 1 + extraDice
+            rollInfo.combatValues.add(combatValue)
             for (let i = 0; i < diceCount; i++) {
               const roll = Math.floor(this.random() * 10) + 1
+              rollInfo.rolls.push(roll)
               if (roll >= combatValue) {
                 totalHits++
               }
@@ -206,7 +211,7 @@ module.exports = function(Twilight) {
               missesByOwner[unit.owner] = []
             }
             firingOwners.add(unit.owner)
-            totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense, missesByOwner[unit.owner])
+            totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense, missesByOwner[unit.owner], rollInfo)
           }
         }
       }
@@ -240,6 +245,22 @@ module.exports = function(Twilight) {
         template: 'Space Cannon Offense scores {hits} hit(s) against {player}',
         args: { hits: totalHits, player: activePlayer },
       })
+      if (rollInfo.rolls.length > 0) {
+        this.log.indent()
+        const scoThresholds = [...rollInfo.combatValues].sort((a, b) => a - b).map(t => `${t}+`).join('/')
+        let scoDetail = `Rolls: ${rollInfo.rolls.join(', ')} (need ${scoThresholds})`
+        if (Object.keys(plasmaUsedByOwner).length > 0) {
+          scoDetail += ', Plasma Scoring: +1 die'
+        }
+        if (Object.keys(commanderBonusUsedByOwner).length > 0) {
+          scoDetail += ', Commander: +1 die'
+        }
+        if (antimassDefense > 0) {
+          scoDetail += ', Antimass Deflectors: +1 to combat value'
+        }
+        this.log.add({ template: scoDetail, args: {} })
+        this.log.outdent()
+      }
 
       // Check if active player had non-fighter ships before SCO (for turn-their-fleets-to-dust)
       const hadNonFighters = activeShips.some(u => u.type !== 'fighter')
@@ -314,6 +335,7 @@ module.exports = function(Twilight) {
     let defenderCommanderBonusUsed = false
     // Antimass Deflectors: +1 combat value when firing at target with this tech
     const antimassDefense = attackerPlayer && attackerPlayer.hasTechnology('antimass-deflectors') ? 1 : 0
+    const defRollInfo = { rolls: [], combatValues: new Set() }
 
     for (const unit of planetUnits) {
       if (unit.owner !== defenderName) {
@@ -342,7 +364,7 @@ module.exports = function(Twilight) {
             defenderCommanderBonusUsed = true
           }
         }
-        totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense, defMisses)
+        totalHits += this._fireSpaceCannon(unit.owner, unit.type, extraDice, antimassDefense, defMisses, defRollInfo)
       }
     }
 
@@ -368,8 +390,10 @@ module.exports = function(Twilight) {
         // Space Cannon 5, 1 die
         const combatValue = Math.min(10, 5 + antimassDefense)
         const diceCount = 1 + extraDice
+        defRollInfo.combatValues.add(combatValue)
         for (let i = 0; i < diceCount; i++) {
           const roll = Math.floor(this.random() * 10) + 1
+          defRollInfo.rolls.push(roll)
           if (roll >= combatValue) {
             totalHits++
           }
@@ -388,6 +412,22 @@ module.exports = function(Twilight) {
         template: 'Space Cannon Defense scores {hits} hit(s) against {attacker} on {planet}',
         args: { hits: totalHits, attacker: attackerName, planet: planetId },
       })
+      if (defRollInfo.rolls.length > 0) {
+        this.log.indent()
+        const scdThresholds = [...defRollInfo.combatValues].sort((a, b) => a - b).map(t => `${t}+`).join('/')
+        let scdDetail = `Rolls: ${defRollInfo.rolls.join(', ')} (need ${scdThresholds})`
+        if (defenderPlasmaUsed) {
+          scdDetail += ', Plasma Scoring: +1 die'
+        }
+        if (defenderCommanderBonusUsed) {
+          scdDetail += ', Commander: +1 die'
+        }
+        if (antimassDefense > 0) {
+          scdDetail += ', Antimass Deflectors: +1 to combat value'
+        }
+        this.log.add({ template: scdDetail, args: {} })
+        this.log.outdent()
+      }
 
       // Hits are assigned to ground forces in space (before they commit)
       // Auto-assign to cheapest ground forces
@@ -399,7 +439,7 @@ module.exports = function(Twilight) {
  * Roll space cannon dice for a single unit.
  * Returns number of hits scored.
  */
-  Twilight.prototype._fireSpaceCannon = function(ownerName, unitType, extraDice, combatPenalty, misses) {
+  Twilight.prototype._fireSpaceCannon = function(ownerName, unitType, extraDice, combatPenalty, misses, rollInfo) {
     const unitStats = this._getUnitStats(ownerName, unitType)
     if (!unitStats) {
       return 0
@@ -419,12 +459,18 @@ module.exports = function(Twilight) {
     let hits = 0
     for (let i = 0; i < diceCount; i++) {
       const roll = Math.floor(this.random() * 10) + 1
+      if (rollInfo) {
+        rollInfo.rolls.push(roll)
+      }
       if (roll >= combatValue) {
         hits++
       }
       else if (misses) {
         misses.push(combatValue)
       }
+    }
+    if (rollInfo) {
+      rollInfo.combatValues.add(combatValue)
     }
     return hits
   }

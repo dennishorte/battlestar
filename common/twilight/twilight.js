@@ -164,8 +164,12 @@ Twilight.prototype._offerUnitAbilityReroll = function(shooterName, missCombatVal
   }
 
   let additionalHits = 0
+  const rerolls = []
+  const rerollCombatValues = new Set()
   for (const combatValue of missCombatValues) {
     const roll = Math.floor(this.random() * 10) + 1
+    rerolls.push(roll)
+    rerollCombatValues.add(combatValue)
     if (roll >= combatValue) {
       additionalHits++
     }
@@ -176,6 +180,13 @@ Twilight.prototype._offerUnitAbilityReroll = function(shooterName, missCombatVal
       template: 'Agnlan Oln: {player} rerolls — {hits} additional hits',
       args: { player: shooterName, hits: additionalHits },
     })
+    this.log.indent()
+    const rerollThresholds = [...rerollCombatValues].sort((a, b) => a - b).map(t => `${t}+`).join('/')
+    this.log.add({
+      template: `Rerolls: ${rerolls.join(', ')} (need ${rerollThresholds})`,
+      args: {},
+    })
+    this.log.outdent()
   }
 
   return additionalHits

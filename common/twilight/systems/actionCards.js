@@ -283,9 +283,11 @@ module.exports = function(Twilight) {
     const planetUnits = this.state.units[systemId].planets[planetId]
     const infantry = planetUnits.filter(u => u.type === 'infantry')
     let destroyed = 0
+    const rolls = []
 
     for (const unit of infantry) {
       const roll = Math.floor(this.random() * 10) + 1
+      rolls.push(roll)
       if (roll >= 6) {
         const idx = planetUnits.findIndex(u => u.id === unit.id)
         if (idx !== -1) {
@@ -299,6 +301,12 @@ module.exports = function(Twilight) {
       template: 'Plague destroys {count} infantry on {planet}',
       args: { count: destroyed, planet: planetId },
     })
+    this.log.indent()
+    this.log.add({
+      template: 'Rolls: {rolls} (need 6+)',
+      args: { rolls: rolls.join(', ') },
+    })
+    this.log.outdent()
   }
 
   // Uprising: Exhaust 1 non-home planet controlled by another player, gain TG equal to resources
