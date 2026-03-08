@@ -1,7 +1,7 @@
 const t = require('../../../testutil_v2.js')
 
 describe('Family Friendly Home', () => {
-  test('gives food and family growth when player has more rooms than all other players before action', () => {
+  test('gives food and family growth when player has more rooms than people before action', () => {
     const game = t.fixture()
     t.setBoard(game, {
       firstPlayer: 'dennis',
@@ -10,7 +10,7 @@ describe('Family Friendly Home', () => {
         occupations: ['test-occupation-1'],
         wood: 5, reed: 2, // cost of 1 room
         farmyard: {
-          rooms: [{ row: 2, col: 0 }], // 3 rooms total (default 2 + this), other player has 2
+          rooms: [{ row: 2, col: 0 }], // 3 rooms total (default 2 + this), 2 people
         },
       },
     })
@@ -34,7 +34,7 @@ describe('Family Friendly Home', () => {
     })
   })
 
-  test('does not trigger when player has same number of rooms as other players before action', () => {
+  test('does not trigger when player has same number of rooms as people before action', () => {
     const game = t.fixture()
     t.setBoard(game, {
       firstPlayer: 'dennis',
@@ -42,7 +42,7 @@ describe('Family Friendly Home', () => {
         minorImprovements: ['family-friendly-home-a021'],
         occupations: ['test-occupation-1'],
         wood: 5, reed: 2, // cost of 1 room
-        // 2 rooms (default), same as other player's 2 rooms
+        // 2 rooms (default), 2 people — rooms not greater than people
       },
     })
     game.run()
