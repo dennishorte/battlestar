@@ -58,17 +58,9 @@ module.exports = function(Twilight) {
       args: { player },
     })
 
-    // Let player allocate the 3 new tokens across pools (Rule 52.4)
-    const selection = this.actions.choose(player, ['Done'], {
-      title: 'Allocate Command Tokens (+3)',
-      allowsAction: 'redistribute-tokens',
-    })
-    if (selection.action === 'redistribute-tokens') {
-      player.setCommandTokens(selection)
-    }
-    else {
-      player.commandTokens.tactics += 3
-    }
+    // Add 3 tokens to tactics, then let the player redistribute (Rule 52.4)
+    player.commandTokens.tactics += 3
+    this._redistributeTokens(player)
 
     this._offerInfluenceForTokens(player)
   }
@@ -761,16 +753,8 @@ module.exports = function(Twilight) {
             args: { player, influence: influenceCost, tokens: tokenCount },
           })
 
-          const allocSelection = this.actions.choose(player, ['Done'], {
-            title: `Allocate Command Tokens (+${tokenCount})`,
-            allowsAction: 'redistribute-tokens',
-          })
-          if (allocSelection.action === 'redistribute-tokens') {
-            player.setCommandTokens(allocSelection)
-          }
-          else {
-            player.commandTokens.tactics += tokenCount
-          }
+          player.commandTokens.tactics += tokenCount
+          this._redistributeTokens(player)
         }
         else {
           this.log.add({
@@ -1082,17 +1066,9 @@ module.exports = function(Twilight) {
         args: { player, influence: influenceCost, tokens: tokenCount },
       })
 
-      // Let player allocate the purchased tokens across pools (Rule 52.4)
-      const allocSelection = this.actions.choose(player, ['Done'], {
-        title: `Allocate Command Tokens (+${tokenCount})`,
-        allowsAction: 'redistribute-tokens',
-      })
-      if (allocSelection.action === 'redistribute-tokens') {
-        player.setCommandTokens(allocSelection)
-      }
-      else {
-        player.commandTokens.tactics += tokenCount
-      }
+      // Add purchased tokens to tactics, then let the player redistribute (Rule 52.4)
+      player.commandTokens.tactics += tokenCount
+      this._redistributeTokens(player)
     }
   }
 

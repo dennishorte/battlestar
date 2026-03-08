@@ -1043,19 +1043,9 @@ Twilight.prototype.statusPhase = function() {
       })
     }
 
-    // For now, add to tactics pool. Later: let player distribute.
-    const selection = this.actions.choose(player, ['Done'], {
-      title: `Redistribute Command Tokens (+${newTokens})`,
-      allowsAction: 'redistribute-tokens',
-    })
-
-    if (selection.action === 'redistribute-tokens') {
-      player.setCommandTokens(selection)
-    }
-    else {
-      // Default: add all to tactics
-      player.commandTokens.tactics += newTokens
-    }
+    // Add new tokens to tactics, then let the player redistribute
+    player.commandTokens.tactics += newTokens
+    this._redistributeTokens(player)
   }
 
   // Step 6: Ready cards
