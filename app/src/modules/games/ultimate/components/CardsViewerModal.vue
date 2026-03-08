@@ -11,6 +11,7 @@
       >
         <div class="splay-label">{{ row.splay }}</div>
         <div class="splay-biscuits">
+          <div v-if="game.state.useAgeZero" class="splay-biscuit color-biscuit-meat">{{ row.biscuits.r }}</div>
           <div class="splay-biscuit color-biscuit-castle">{{ row.biscuits.k }}</div>
           <div class="splay-biscuit color-biscuit-coin">{{ row.biscuits.c }}</div>
           <div class="splay-biscuit color-biscuit-lightbulb">{{ row.biscuits.s }}</div>
@@ -45,6 +46,8 @@ export default {
     CardFull,
     ModalBase,
   },
+
+  inject: ['game'],
 
   props: {
     title: {

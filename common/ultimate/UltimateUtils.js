@@ -7,19 +7,17 @@ class UltimateUtils {
   }
 
   biscuitNames() {
-    return [
-      'castle',
-      'clock',
-      'coin',
-      'factory',
-      'leaf',
-      'lightbulb',
-      'person',
-    ]
+    const names = []
+    if (this.game.state.useAgeZero) {
+      names.push('meat')
+    }
+    names.push('castle', 'clock', 'coin', 'factory', 'leaf', 'lightbulb', 'person')
+    return names
   }
 
   biscuitNameToIcon(name) {
     switch (name) {
+      case 'meat': return 'r'
       case 'castle': return 'k'
       case 'clock': return 'i'
       case 'coin': return 'c'
@@ -34,6 +32,7 @@ class UltimateUtils {
 
   biscuitIconToName(icon) {
     switch (icon) {
+      case 'r': return 'meat'
       case 'k': return 'castle'
       case 'i': return 'clock'
       case 'c': return 'coin'
@@ -78,15 +77,18 @@ class UltimateUtils {
   }
 
   emptyBiscuits() {
-    return {
-      c: 0,
-      f: 0,
-      i: 0,
-      k: 0,
-      l: 0,
-      s: 0,
-      p: 0,
+    const biscuits = {}
+    if (this.game.state.useAgeZero) {
+      biscuits.r = 0
     }
+    biscuits.c = 0
+    biscuits.f = 0
+    biscuits.i = 0
+    biscuits.k = 0
+    biscuits.l = 0
+    biscuits.s = 0
+    biscuits.p = 0
+    return biscuits
   }
 
   highestCards(cards) {

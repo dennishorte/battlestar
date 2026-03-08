@@ -193,6 +193,10 @@ export default {
 .bg-arti { background-color: #9532a8; }
 .bg-usee { background-color: #777777; }
 
+.color-biscuit-meat {
+  background-color: #8B2500;
+}
+
 .color-biscuit-castle {
   /* color: #b6bcc6;  */
   background-color: #494e51;

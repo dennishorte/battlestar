@@ -4,7 +4,7 @@
     <div class="biscuits-row">
       <div class="biscuits-box-name"/>
       <div
-        v-for="biscuit in ['k', 'c', 's', 'l', 'f', 'i', 'p']"
+        v-for="biscuit in biscuitIcons"
         :key="biscuit"
         class="biscuits-box">
         <CardBiscuit :biscuit="biscuit" />
@@ -16,7 +16,7 @@
     <div v-for="player in players" :key="player.name" class="biscuits-row">
       <div class="biscuits-box-name">{{ player.name }}</div>
       <div
-        v-for="biscuit in ['k', 'c', 's', 'l', 'f', 'i', 'p']"
+        v-for="biscuit in biscuitIcons"
         :key="biscuit"
         class="biscuits-box">
         {{ biscuits[player.name][biscuit] }}
@@ -55,6 +55,14 @@ export default {
       const scores = {}
       this.players.forEach(p => scores[p.name] = p.score())
       return scores
+    },
+
+    biscuitIcons() {
+      const icons = ['k', 'c', 's', 'l', 'f', 'i', 'p']
+      if (this.game.state.useAgeZero) {
+        icons.unshift('r')
+      }
+      return icons
     },
 
     players() {

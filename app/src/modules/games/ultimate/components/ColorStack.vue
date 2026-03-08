@@ -16,6 +16,9 @@
       </div>
 
       <div class="biscuit-counts">
+        <div v-if="game.state.useAgeZero" class="biscuit-count-square color-biscuit-meat">
+          {{ biscuits.r }}
+        </div>
         <div class="biscuit-count-square color-biscuit-castle">
           {{ biscuits.k }}
         </div>
