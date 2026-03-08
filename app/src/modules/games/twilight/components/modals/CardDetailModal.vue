@@ -117,6 +117,31 @@
         </div>
       </div>
 
+      <!-- Unit -->
+      <div v-if="type === 'unit' && unitData">
+        <div class="detail-row">
+          <span class="info-key">Category:</span>
+          <span class="structure-badge">{{ unitData.category }}</span>
+        </div>
+        <div class="detail-row" v-if="unitData.abilities?.length">
+          <span class="info-key">Abilities:</span>
+          <span>{{ formatAbilities(unitData.abilities) }}</span>
+        </div>
+        <div class="detail-row" v-if="unitData.capacity">
+          <span class="stat-entry">Capacity: {{ unitData.capacity }}</span>
+        </div>
+        <div class="detail-row" v-if="unitData.productionValue !== undefined">
+          <span class="stat-entry">Production: planet resources + {{ unitData.productionValue }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="info-key">Limit:</span>
+          <span>{{ unitData.limit }} per player</span>
+        </div>
+        <div class="description-text" v-if="unitData.description">
+          {{ unitData.description }}
+        </div>
+      </div>
+
       <!-- Single Leader (for log links etc.) -->
       <div v-if="type === 'leader' && leaderData">
         <div class="detail-row">
@@ -492,6 +517,9 @@ export default {
       if (this.type === 'relic' && this.relicData) {
         return this.relicData.name
       }
+      if (this.type === 'unit' && this.unitData) {
+        return this.unitData.name
+      }
       if (this.type === 'leader' && this.leaderData) {
         return this.leaderData.name
       }
@@ -552,6 +580,13 @@ export default {
         return null
       }
       return res.getRelic(this.id)
+    },
+
+    unitData() {
+      if (this.type !== 'unit' || !this.id) {
+        return null
+      }
+      return res.getUnit(this.id)
     },
 
     planetAttachments() {
@@ -744,6 +779,19 @@ export default {
       this.ui.modals.cardDetail.type = type
       this.ui.modals.cardDetail.id = item.id
       this.ui.modals.cardDetail.context = context
+    },
+
+    formatAbilities(abilities) {
+      if (!abilities || abilities.length === 0) {
+        return ''
+      }
+      return abilities.map(a => {
+        return a
+          .replace(/-(\d)/g, ' $1')
+          .replace(/x(\d)/g, '\u00D7$1')
+          .replace(/-/g, ' ')
+          .replace(/\b\w/g, c => c.toUpperCase())
+      }).join(', ')
     },
 
     leaderStatusClassFor(status) {
@@ -1075,6 +1123,16 @@ export default {
 .agenda-effect {
   padding: .3em 0;
   line-height: 1.4;
+}
+
+.structure-badge {
+  font-size: .85em;
+  padding: .1em .4em;
+  border-radius: .2em;
+  text-transform: capitalize;
+  font-weight: 500;
+  background: #e9ecef;
+  color: #6c757d;
 }
 
 .relic-type-badge {

@@ -152,6 +152,7 @@ const units = {
     abilities: ['space-cannon-6x1', 'planetary-shield'],
     limit: 6,
     produced: 'ground',
+    description: 'Space Cannon fires at ships moving into the system. Planetary Shield prevents bombardment. PDS II can fire from adjacent systems.',
   },
   'space-dock': {
     type: 'space-dock',
@@ -166,6 +167,7 @@ const units = {
     limit: 3,
     produced: 'ground',
     productionValue: 2,  // PRODUCTION value = resource value of planet + 2
+    description: 'Produces units during a tactical action. Production capacity equals the resource value of the planet + 2. Can hold fighters and infantry beyond fleet capacity.',
   },
 }
 

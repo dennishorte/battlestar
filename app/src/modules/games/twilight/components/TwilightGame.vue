@@ -100,6 +100,7 @@ import StrategyCardChip from './StrategyCardChip.vue'
 import TechChip from './TechChip.vue'
 import ComponentActionChip from './ComponentActionChip.vue'
 import PlanetChip from './PlanetChip.vue'
+import UnitChip from './UnitChip.vue'
 
 import { h } from 'vue'
 import { twilight } from 'battlestar-common'
@@ -334,6 +335,15 @@ export default {
         return {
           component: ComponentActionChip,
           props: { name: relic.name, relicId: name },
+        }
+      }
+
+      // Structure units (pds, space-dock)
+      const unit = res.getUnit(name)
+      if (unit && unit.category === 'structure') {
+        return {
+          component: UnitChip,
+          props: { unitType: name },
         }
       }
 
