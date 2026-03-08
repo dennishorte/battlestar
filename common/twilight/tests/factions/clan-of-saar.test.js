@@ -144,7 +144,7 @@ describe('Clan of Saar', () => {
 
       // Place space dock — choose a planet, but Saar places in space
       t.choose(game, 'The Clan of Saar:Lisis II.space-dock')
-      t.choose(game, 'The Clan of Saar:Ragh.pds')
+      t.choose(game, 'The Clan of Saar:Ragh')
 
       // Space dock should be in space area, not on the planet
       const spaceUnits = game.state.units['saar-home'].space

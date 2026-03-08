@@ -538,17 +538,20 @@ module.exports = function(Twilight) {
       }
     }
 
-    // Second structure: PDS only
+    // Second structure: PDS only (flat list since type is always PDS)
     const { choices: secondChoices, labelToPlanet: secondLabelToPlanet } = _buildStructureChoices(controlledPlanets, ['pds'])
     if (secondChoices.length > 0) {
-      const secondSelection = this.actions.choose(player, secondChoices, {
-        title: 'Place PDS (Construction)',
+      const flatChoices = ['Done', ...secondChoices.map(c => c.title)]
+      const secondSelection = this.actions.choose(player, flatChoices, {
+        title: 'Place 2nd PDS (Construction)',
         noAutoRespond: true,
       })
-      const secondPlanet = secondLabelToPlanet[secondSelection[0].title]
-      const secondSystemId = this._findSystemForPlanet(secondPlanet)
-      if (secondSystemId) {
-        this._addUnitToPlanet(secondSystemId, secondPlanet, 'pds', player.name)
+      if (secondSelection[0] !== 'Done') {
+        const secondPlanet = secondLabelToPlanet[secondSelection[0]]
+        const secondSystemId = this._findSystemForPlanet(secondPlanet)
+        if (secondSystemId) {
+          this._addUnitToPlanet(secondSystemId, secondPlanet, 'pds', player.name)
+        }
       }
     }
 
