@@ -3,7 +3,11 @@
     class="ti-planet-token"
     :style="borderStyle"
     @click.stop="showDetails"
-  >{{ displayName }}</span>
+  >
+    <span v-if="ownerColor" class="owner-dot" :style="{ backgroundColor: ownerColor }" />
+    {{ displayName }}
+    <span class="planet-values">{{ planet?.resources || 0 }}R/{{ planet?.influence || 0 }}I</span>
+  </span>
 </template>
 
 <script setup>
@@ -17,6 +21,7 @@ const props = defineProps({
   name: { type: String, default: '' },
 })
 
+const game = inject('game')
 const ui = inject('ui')
 
 const planet = computed(() => {
@@ -38,19 +43,29 @@ const borderStyle = computed(() => {
   return { 'border-left-color': color }
 })
 
+const ownerColor = computed(() => {
+  const planetState = game.value?.state?.planets?.[props.name]
+  if (!planetState?.controller) {
+    return null
+  }
+  const player = game.value?.players?.byName(planetState.controller)
+  return player?.color || null
+})
+
 function showDetails() {
-  if (planet.value) {
-    ui.modals.cardDetail.type = 'planet'
-    ui.modals.cardDetail.id = props.name
-    ui.modals.cardDetail.context = null
-    modal.getModal('twilight-card-detail')?.show()
+  const systemId = planet.value?.systemId
+  if (systemId != null) {
+    ui.modals.systemDetail.systemId = systemId
+    modal.getModal('twilight-system-detail')?.show()
   }
 }
 </script>
 
 <style scoped>
 .ti-planet-token {
-  display: inline;
+  display: inline-flex;
+  align-items: center;
+  gap: .2em;
   font-weight: 600;
   padding: .1em .35em;
   border-radius: .2em;
@@ -61,5 +76,18 @@ function showDetails() {
 }
 .ti-planet-token:hover {
   filter: brightness(0.93);
+}
+
+.planet-values {
+  font-size: .85em;
+  font-weight: 400;
+  opacity: .7;
+}
+
+.owner-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 </style>
