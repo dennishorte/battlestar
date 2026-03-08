@@ -267,6 +267,9 @@ module.exports = function(Twilight) {
 
       // Commander bonus: +N dice to the first unit that fires (e.g., Argent Commander)
       let commanderBonusDice = this.factionAbilities.getUnitAbilityBonusDice(shooter)
+      const allRolls = []
+      const combatValuesUsed = new Set()
+      let hadCommanderBonus = false
 
       for (const ship of ships) {
         const unitDef = this._getUnitStats(ship.owner, ship.type)
@@ -293,10 +296,13 @@ module.exports = function(Twilight) {
         if (commanderBonusDice > 0) {
           diceCount += commanderBonusDice
           commanderBonusDice = 0
+          hadCommanderBonus = true
         }
 
+        combatValuesUsed.add(combatValue)
         for (let i = 0; i < diceCount; i++) {
           const roll = Math.floor(this.random() * 10) + 1
+          allRolls.push(roll)
           if (roll >= combatValue) {
             totalAFBHits++
             // Strike Wing Alpha II: results of 9 or 10 also destroy infantry
@@ -319,6 +325,14 @@ module.exports = function(Twilight) {
           template: '{shooter} scores {hits} anti-fighter barrage hits',
           args: { shooter, hits: totalAFBHits },
         })
+        this.log.indent()
+        const afbThresholds = [...combatValuesUsed].sort((a, b) => a - b).map(t => `${t}+`).join('/')
+        let afbDetail = `Rolls: ${allRolls.join(', ')} (need ${afbThresholds})`
+        if (hadCommanderBonus) {
+          afbDetail += ', Commander: +1 die'
+        }
+        this.log.add({ template: afbDetail, args: {} })
+        this.log.outdent()
 
         let fightersDestroyed = 0
         for (let i = 0; i < totalAFBHits; i++) {
@@ -856,6 +870,10 @@ module.exports = function(Twilight) {
 
     // Commander bonus: +N dice to the first unit that fires (e.g., Argent Commander)
     let commanderBonusDice = this.factionAbilities.getUnitAbilityBonusDice(attackerName)
+    const allBombardRolls = []
+    const bombardCombatValues = new Set()
+    let hadPlasmaScoring = false
+    let hadCommanderBonusBombard = false
 
     for (const ship of attackerShips) {
       const unitDef = this._getUnitStats(ship.owner, ship.type)
@@ -883,17 +901,21 @@ module.exports = function(Twilight) {
       if (!plasmaUsed && attackerPlayer.hasTechnology('plasma-scoring')) {
         diceCount++
         plasmaUsed = true
+        hadPlasmaScoring = true
       }
 
       // Commander bonus dice to the first unit that fires
       if (commanderBonusDice > 0) {
         diceCount += commanderBonusDice
         commanderBonusDice = 0
+        hadCommanderBonusBombard = true
       }
 
       bombardmentUsed = true
+      bombardCombatValues.add(combatValue)
       for (let i = 0; i < diceCount; i++) {
         const roll = Math.floor(this.random() * 10) + 1
+        allBombardRolls.push(roll)
         if (roll >= combatValue) {
           totalHits++
         }
@@ -907,6 +929,7 @@ module.exports = function(Twilight) {
     totalHits += this._offerUnitAbilityReroll(attackerName, bombardMissCombatValues)
 
     // X-89 Bacterial Weapon ΩΩ: double bombardment hits
+    const preDoubleHits = totalHits
     if (attackerPlayer.hasTechnology('x89-bacterial-weapon')) {
       totalHits *= 2
     }
@@ -924,6 +947,23 @@ module.exports = function(Twilight) {
         template: '{attacker} bombardment scores {hits} hits on {planet}',
         args: { attacker: attackerName, hits: totalHits, planet: planetId },
       })
+      this.log.indent()
+      const bombThresholds = [...bombardCombatValues].sort((a, b) => a - b).map(t => `${t}+`).join('/')
+      let bombDetail = `Rolls: ${allBombardRolls.join(', ')} (need ${bombThresholds})`
+      if (hadPlasmaScoring) {
+        bombDetail += ', Plasma Scoring: +1 die'
+      }
+      if (hadCommanderBonusBombard) {
+        bombDetail += ', Commander: +1 die'
+      }
+      this.log.add({ template: bombDetail, args: {} })
+      if (totalHits !== preDoubleHits) {
+        this.log.add({
+          template: `X-89 Bacterial Weapon: hits doubled (${preDoubleHits} → ${totalHits})`,
+          args: {},
+        })
+      }
+      this.log.outdent()
 
       // Auto-assign bombardment hits to defender's ground forces (cheapest first)
       this._assignGroundHits(systemId, planetId, defenderName, totalHits, null, 'bombardment')
