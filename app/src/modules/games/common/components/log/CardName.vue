@@ -25,7 +25,14 @@ const props = defineProps({
 const game = inject('game')
 const funcs = useGameLog()
 
-const card = computed(() => game.value?.cards?.byId(props.name))
+const card = computed(() => {
+  try {
+    return game.value?.cards?.byId(props.name)
+  }
+  catch {
+    return null
+  }
+})
 
 const classes = computed(() => {
   return funcs.cardClasses ? funcs.cardClasses(card.value) : []

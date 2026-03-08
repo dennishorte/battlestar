@@ -220,7 +220,7 @@ class BaseLogManager {
 
     // Handler for keys starting with 'card'
     this.registerHandler('card*', (card) => ({
-      value: card.id,
+      value: typeof card === 'string' ? card : card.id,
       classes: ['card-id'],
     }))
 

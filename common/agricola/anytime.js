@@ -355,6 +355,7 @@ Agricola.prototype.getAnytimeActions = function(player) {
     if (hasSource && hasTarget) {
       options.push({
         type: 'crop-move',
+        cardId: cardId,
         cardName: card.name,
         description: `${card.name}: Move 1 crop to empty field`,
       })
@@ -532,6 +533,13 @@ Agricola.prototype.getUnusedOncePerRoundActions = function(player) {
 }
 
 Agricola.prototype.executeAnytimeCropMove = function(player, action) {
+  // Resolve the card object. Prefer cardId (new games), fall back to finding by name (old saved games).
+  const card = action.cardId
+    ? this.cards.byId(action.cardId)
+    : player.playedMinorImprovements
+      .map(id => this.cards.byId(id))
+      .find(c => c && c.name === action.cardName)
+
   const fieldSpaces = player.getFieldSpaces()
 
   // Build source choices: grid fields + virtual fields with cropCount >= 2
@@ -639,6 +647,6 @@ Agricola.prototype.executeAnytimeCropMove = function(player, action) {
 
   this.log.add({
     template: '{player} uses {card} to move 1 {crop} from {source} to {target}',
-    args: { player, card: action.cardName, crop: cropType, source: sourceLabel, target: targetLabel },
+    args: { player, card: card, crop: cropType, source: sourceLabel, target: targetLabel },
   })
 }

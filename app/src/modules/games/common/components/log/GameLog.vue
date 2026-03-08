@@ -121,14 +121,15 @@ const rematchButtonVisible = computed(() => {
 function convertLogMessage(entry) {
   let msg = entry.template
   for (const [arg, value] of Object.entries(entry.args)) {
-    let replacement = value.value
+    let replacement = value.value ?? 'UNDEFINED'
 
     if (arg === 'card') {
       if (value.classes?.includes('card-hidden')) {
-        replacement = value.value
+        replacement = value.value ?? 'UNDEFINED'
       }
-      else if (!value.value.startsWith('*')) {
-        replacement = `card(${value.cardId || value.value})`
+      else if (value.value == null || !value.value.startsWith('*')) {
+        const cardRef = value.cardId ?? value.value
+        replacement = cardRef != null ? `card(${cardRef})` : 'UNDEFINED'
       }
     }
 
