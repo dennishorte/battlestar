@@ -94,8 +94,9 @@
         <div
           v-for="obj in publicObjectives"
           :key="obj.id"
-          class="pub-obj-entry"
+          class="pub-obj-entry clickable"
           :class="obj.stageClass"
+          @click="openPublicObjectives"
         >
           <span class="obj-points">{{ obj.points }}</span>
           <span class="obj-name">{{ obj.name }}</span>
@@ -403,6 +404,21 @@ export default {
         this.ui.modals.rulesReference.filter = ruleFilter
       }
       this.$modal('twilight-rules-reference').show()
+    },
+
+    openPublicObjectives() {
+      if (this.ui?.modals?.cardDetail) {
+        const items = this.publicObjectives.map(obj => ({
+          id: obj.id,
+          stage: obj.stage,
+          points: obj.points,
+          scorers: obj.scorers,
+        }))
+        this.ui.modals.cardDetail.type = 'card-zone'
+        this.ui.modals.cardDetail.id = null
+        this.ui.modals.cardDetail.context = { zoneType: 'public-objective', items }
+        this.$modal('twilight-card-detail').show()
+      }
     },
 
     openLawDetail(lawId) {

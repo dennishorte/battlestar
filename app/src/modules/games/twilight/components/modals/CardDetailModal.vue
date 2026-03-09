@@ -298,6 +298,23 @@
             <div class="condition-text" v-if="item.condition">{{ item.condition }}</div>
           </template>
 
+          <!-- Public Objective items -->
+          <template v-if="context.zoneType === 'public-objective'">
+            <div class="detail-row">
+              <span class="stage-badge" :class="`stage-${item.stage}`">{{ item.stage === 2 ? 'II' : 'I' }}</span>
+              <span class="points-badge">{{ item.points }} VP</span>
+              <span class="zone-item-name">{{ item.name }}</span>
+            </div>
+            <div class="condition-text" v-if="item.condition">{{ item.condition }}</div>
+            <div class="detail-row scorer-row" v-if="item.scorers && item.scorers.length > 0">
+              <span class="info-key">Scored by:</span>
+              <span v-for="scorer in item.scorers"
+                    :key="scorer.player"
+                    class="scorer-name"
+                    :style="{ color: scorer.color }">{{ scorer.player }}</span>
+            </div>
+          </template>
+
           <!-- Planet items -->
           <template v-if="context.zoneType === 'planet'">
             <div class="detail-row">
@@ -542,6 +559,7 @@ export default {
           'action-card': 'Action Cards',
           relic: 'Relics',
           'promissory-note': 'Promissory Notes',
+          'public-objective': 'Public Objectives',
           'scored-objective': 'Scored Objectives',
           'secret-objective': 'Secret Objectives',
           planet: 'Planets',
@@ -731,7 +749,7 @@ export default {
       }
       const { zoneType, items } = this.context
       return items.map(item => {
-        if (zoneType === 'scored-objective' || zoneType === 'secret-objective') {
+        if (zoneType === 'public-objective' || zoneType === 'scored-objective' || zoneType === 'secret-objective') {
           const obj = res.getObjective(item.id)
           return { ...item, ...(obj || {}) }
         }
@@ -767,6 +785,7 @@ export default {
   methods: {
     drillToCard(zoneType, item) {
       const typeMap = {
+        'public-objective': 'objective',
         'scored-objective': 'objective',
         'secret-objective': 'objective',
       }
@@ -968,6 +987,14 @@ export default {
   border-radius: .25em;
   line-height: 1.4;
   font-size: .9em;
+}
+
+.scorer-row {
+  margin-top: .25em;
+  gap: .5em;
+}
+.scorer-name {
+  font-weight: 600;
 }
 
 .sc-ability-section {
