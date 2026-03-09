@@ -18,10 +18,11 @@ module.exports = {
           return zone.cardlist().length > 1 && zone.splay !== 'right'
         })
 
-      const color = game.actions.choose(player, choices, {
+      const selected = game.actions.choose(player, choices, {
         title: 'Choose a color to splay right',
         count: 1,
       })
+      const color = selected[0]
 
       if (color) {
         game.actions.splay(player, color, 'right')
