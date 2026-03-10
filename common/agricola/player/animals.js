@@ -932,6 +932,13 @@ AgricolaPlayer.prototype.applyAnimalPlacements = function(plan) {
 AgricolaPlayer.prototype.breedAnimals = function() {
   const bred = { sheep: 0, boar: 0, cattle: 0 }
 
+  // Consolidate fragmented animals before breeding.
+  // Auto-placement during earlier actions may have placed animals in suboptimal
+  // locations (e.g., sheep in a pasture intended for boar). This consolidation
+  // merges same-type animals into shared pastures, freeing up pastures for
+  // other types that need them.
+  this._consolidateAnimals()
+
   for (const type of res.animalTypes) {
     const count = this.getTotalAnimals(type)
     const required = this._getBreedingRequirement(type)
@@ -945,6 +952,67 @@ AgricolaPlayer.prototype.breedAnimals = function() {
   }
 
   return bred
+}
+
+/**
+ * Consolidate fragmented animals to maximize available capacity.
+ * Merges same-type animals from multiple pastures into fewer pastures,
+ * and moves animals from unfenced stables into same-type pastures with room.
+ * This frees up pastures for other types.
+ */
+AgricolaPlayer.prototype._consolidateAnimals = function() {
+  // 1. Merge same-type pastures: move animals from one pasture to another of
+  //    the same type that has room
+  for (const pasture of this.farmyard.pastures) {
+    if (!pasture.animalType || pasture.animalCount === 0) {
+      continue
+    }
+
+    for (const other of this.farmyard.pastures) {
+      if (other === pasture) {
+        continue
+      }
+      if (other.animalType !== pasture.animalType) {
+        continue
+      }
+
+      const otherCap = this.getPastureCapacity(other)
+      const canMove = Math.min(pasture.animalCount, otherCap - other.animalCount)
+      if (canMove > 0) {
+        other.animalCount += canMove
+        pasture.animalCount -= canMove
+        if (pasture.animalCount === 0) {
+          pasture.animalType = null
+        }
+      }
+    }
+  }
+
+  // 2. Move unfenced stable animals into same-type pastures with room
+  for (const stable of this.getStableSpaces()) {
+    if (this.getPastureAtSpace(stable.row, stable.col)) {
+      continue
+    }
+    const space = this.getSpace(stable.row, stable.col)
+    if (!space.animal) {
+      continue
+    }
+
+    const type = space.animal
+    for (const pasture of this.farmyard.pastures) {
+      if (pasture.animalType !== type) {
+        continue
+      }
+
+      const cap = this.getPastureCapacity(pasture)
+      if (pasture.animalCount < cap) {
+        pasture.animalCount++
+        space.animal = null
+        space.animalCount = 0
+        break
+      }
+    }
+  }
 }
 
 AgricolaPlayer.prototype._getBreedingRequirement = function(type) {

@@ -159,4 +159,84 @@ describe('animals', () => {
     // Boar should still be in pet slot
     expect(dennis.pet).toBe('boar')
   })
+
+  test('breedAnimals breeds boar despite fragmented distribution', () => {
+    const game = t.fixture()
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+
+    // Sheep pasture (2 spaces, capacity 4, has 2 sheep, room for more)
+    t.addPasture(dennis, [{ row: 0, col: 2 }, { row: 0, col: 3 }], 'sheep', 2)
+
+    // "Wrong" pasture - has 1 sheep from a previous auto-placement
+    // This is the pasture meant for boar (1 space + stable, capacity 4)
+    dennis.buildStable(2, 3)
+    t.addPasture(dennis, [{ row: 2, col: 3 }], 'sheep', 1)
+
+    // 2 boar in unfenced stables (the "weird distribution")
+    dennis.buildStable(2, 1)
+    dennis.buildStable(2, 2)
+    const s1 = dennis.getSpace(2, 1)
+    s1.animal = 'boar'
+    s1.animalCount = 1
+    const s2 = dennis.getSpace(2, 2)
+    s2.animal = 'boar'
+    s2.animalCount = 1
+
+    // Pet occupied
+    dennis.pet = 'cattle'
+
+    // Verify initial state: 3 sheep (2 in pasture + 1 in "wrong" pasture), 2 boar
+    expect(dennis.getTotalAnimals('sheep')).toBe(3)
+    expect(dennis.getTotalAnimals('boar')).toBe(2)
+
+    // Bug: boar can't breed because all pastures are typed as sheep
+    // No pasture is empty or typed as boar
+    // Capacity for boar = 0 (pastures) + 2 (stables at cap) + 0 (pet) = 2
+    // 2 + 1 > 2 → can't breed!
+    // Fix: consolidate sheep into the main sheep pasture first, freeing the "wrong" pasture
+    const bred = dennis.breedAnimals()
+
+    expect(bred.sheep).toBe(1)
+    expect(bred.boar).toBe(1)
+    expect(dennis.getTotalAnimals('sheep')).toBe(4) // 3 + 1 baby
+    expect(dennis.getTotalAnimals('boar')).toBe(3) // 2 + 1 baby
+  })
+
+  test('breedAnimals breeds boar when boar is in unfenced stables and empty pasture exists', () => {
+    const game = t.fixture()
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+
+    // Sheep pasture with room (2 spaces, capacity 4, has 2 sheep)
+    t.addPasture(dennis, [{ row: 0, col: 2 }, { row: 0, col: 3 }], 'sheep', 2)
+
+    // Empty pasture with stable (1 space + stable, capacity 4)
+    dennis.buildStable(2, 3)
+    t.addPasture(dennis, [{ row: 2, col: 3 }])
+
+    // 2 boar in unfenced stables
+    dennis.buildStable(2, 1)
+    dennis.buildStable(2, 2)
+    const s1 = dennis.getSpace(2, 1)
+    s1.animal = 'boar'
+    s1.animalCount = 1
+    const s2 = dennis.getSpace(2, 2)
+    s2.animal = 'boar'
+    s2.animalCount = 1
+
+    // Verify initial counts
+    expect(dennis.getTotalAnimals('sheep')).toBe(2)
+    expect(dennis.getTotalAnimals('boar')).toBe(2)
+
+    const bred = dennis.breedAnimals()
+
+    // Both should breed
+    expect(bred.sheep).toBe(1)
+    expect(bred.boar).toBe(1)
+    expect(dennis.getTotalAnimals('sheep')).toBe(3)
+    expect(dennis.getTotalAnimals('boar')).toBe(3)
+  })
 })
