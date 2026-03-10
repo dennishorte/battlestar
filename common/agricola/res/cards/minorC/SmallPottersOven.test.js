@@ -20,7 +20,8 @@ describe("Small Potter's Oven", () => {
     // No fields → skip sow → bakeBread
     // onBeforeBake → Small Potter's Oven: buy Clay Oven
     t.choose(game, 'Clay Oven (clay-oven)')
-    // Clay Oven onBuy → bakeBread (recursive): bake with Clay Oven
+    // Clay Oven onBuy → bakeBread (recursive): now has Clay Oven + Fireplace
+    t.choose(game, 'Clay Oven')
     t.choose(game, 'Bake 1 grain')   // 1 grain → 5 food
 
     t.testBoard(game, {

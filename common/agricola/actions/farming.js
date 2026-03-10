@@ -444,38 +444,77 @@ AgricolaActionManager.prototype.bakeBread = function(player) {
     return false
   }
 
-  const imp = player.getBakingImprovement()
+  const allImprovements = player.getAllBakingImprovements()
+  const usedImprovements = new Set()
+  let totalBaked = 0
 
-  // Ask how much to bake (function wrapper: grain count may change via anytime conversion)
-  const selection = this.choose(player, () => {
-    const maxBake = imp.bakingConversion.limit || player.grain
-    const choices = []
-    for (let i = 1; i <= Math.min(maxBake, player.grain); i++) {
-      choices.push(`Bake ${i} grain`)
+  while (player.grain >= 1) {
+    const available = allImprovements.filter(imp => !usedImprovements.has(imp.id))
+    if (available.length === 0) {
+      break
     }
-    choices.push('Do not bake')
-    return choices
-  }, {
-    title: 'How much grain to bake?',
-    min: 1,
-    max: 1,
-  })
 
-  if (selection[0] === 'Do not bake') {
-    this.log.addDoNothing(player, 'bake bread')
-    return true
+    let imp
+    if (available.length === 1 && totalBaked === 0) {
+      // Single improvement on first round: use directly (backward compatible)
+      imp = available[0]
+    }
+    else {
+      // Multiple improvements or continuation: let player choose
+      const choices = available.map(i => i.name)
+      choices.push('Done baking')
+      const selection = this.choose(player, choices, {
+        title: 'Which baking improvement to use?',
+        min: 1,
+        max: 1,
+      })
+      if (selection[0] === 'Done baking') {
+        break
+      }
+      imp = available.find(i => i.name === selection[0])
+    }
+
+    usedImprovements.add(imp.id)
+
+    // Ask how much to bake (function wrapper: grain count may change via anytime conversion)
+    const selection = this.choose(player, () => {
+      const maxBake = imp.bakingConversion.limit || player.grain
+      const choices = []
+      for (let i = 1; i <= Math.min(maxBake, player.grain); i++) {
+        choices.push(`Bake ${i} grain`)
+      }
+      choices.push('Do not bake')
+      return choices
+    }, {
+      title: 'How much grain to bake?',
+      min: 1,
+      max: 1,
+    })
+
+    if (selection[0] === 'Do not bake') {
+      if (totalBaked === 0 && available.length <= 1) {
+        break
+      }
+      continue
+    }
+
+    const amount = parseInt(selection[0].split(' ')[1])
+    const food = player.bakeGrain(amount, imp)
+    totalBaked += amount
+
+    this.log.add({
+      template: '{player} bakes {grain} grain into {food} food',
+      args: { player, grain: amount, food },
+    })
   }
 
-  const amount = parseInt(selection[0].split(' ')[1])
-  const food = player.bakeGrain(amount)
-
-  this.log.add({
-    template: '{player} bakes {grain} grain into {food} food',
-    args: { player, grain: amount, food },
-  })
-
-  // Call onBake hooks (Dutch Windmill gives bonus food after harvest)
-  this.game.callPlayerCardHook(player, 'onBake', amount)
+  if (totalBaked === 0) {
+    this.log.addDoNothing(player, 'bake bread')
+  }
+  else {
+    // Call onBake hooks (Dutch Windmill gives bonus food after harvest)
+    this.game.callPlayerCardHook(player, 'onBake', totalBaked)
+  }
 
   return true
 }

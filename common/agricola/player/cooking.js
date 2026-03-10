@@ -73,6 +73,18 @@ AgricolaPlayer.prototype.getBakingImprovement = function() {
   return best
 }
 
+AgricolaPlayer.prototype.getAllBakingImprovements = function() {
+  const improvements = []
+  const allIds = [...this.majorImprovements, ...this.playedMinorImprovements]
+  for (const id of allIds) {
+    const card = this.cards.byId(id)
+    if (card && card.bakingConversion) {
+      improvements.push(card)
+    }
+  }
+  return improvements
+}
+
 AgricolaPlayer.prototype.cookAnimal = function(animalType, count = 1) {
   const imp = this.getCookingImprovement()
   if (!imp) {
@@ -107,8 +119,10 @@ AgricolaPlayer.prototype.cookVegetable = function(count = 1) {
   return 0
 }
 
-AgricolaPlayer.prototype.bakeGrain = function(count = 1) {
-  const imp = this.getBakingImprovement()
+AgricolaPlayer.prototype.bakeGrain = function(count = 1, imp = null) {
+  if (!imp) {
+    imp = this.getBakingImprovement()
+  }
   if (!imp) {
     return 0
   }

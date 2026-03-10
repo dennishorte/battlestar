@@ -50,7 +50,8 @@ describe('Oven Site', () => {
     t.choose(game, 'Minor Improvement.Oven Site')
     // Build Clay Oven at discount
     t.choose(game, 'Build Clay Oven')
-    // onBuy should fire: Clay Oven offers bread baking
+    // onBuy should fire: Clay Oven offers bread baking (has Clay Oven + Fireplace)
+    t.choose(game, 'Clay Oven')
     t.choose(game, 'Bake 1 grain')
 
     t.testBoard(game, {
