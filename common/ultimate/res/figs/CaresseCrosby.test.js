@@ -135,6 +135,50 @@ describe('Caresse Crosby', () => {
       })
     })
 
+    test('karma: opponent dogmas a color owner already has splayed left, no trigger', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'], numPlayers: 2 })
+      t.setBoard(game, {
+        dennis: {
+          blue: ['Writing', 'Tools'], // Dennis has blue but NOT splayed left
+        },
+        micah: {
+          yellow: ['Caresse Crosby'],
+          blue: {
+            cards: ['Mathematics', 'Calendar'],
+            splay: 'left', // Micah (owner) already has blue splayed left
+          },
+        },
+        decks: {
+          base: {
+            2: ['Fermenting', 'Canal Building'],
+          },
+        },
+      })
+
+      let request
+      request = game.run()
+      request = t.choose(game, 'Dogma.Writing')
+      // Dennis dogmas Writing (blue)
+      // Micah owns Caresse Crosby but already has blue splayed left
+      // Karma should NOT trigger
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          blue: ['Writing', 'Tools'], // No splay change
+          hand: ['Canal Building', 'Gilgamesh'],
+        },
+        micah: {
+          yellow: ['Caresse Crosby'],
+          blue: {
+            cards: ['Mathematics', 'Calendar'],
+            splay: 'left', // Unchanged
+          },
+          hand: ['Fermenting'],
+        },
+      })
+    })
+
     test('karma: splay on opponent board, no win even if owner has four colors left', () => {
       const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'], numPlayers: 2 })
       t.setBoard(game, {

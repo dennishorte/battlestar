@@ -14,7 +14,7 @@ module.exports = {
       trigger: 'dogma',
       triggerAll: true,
       kind: 'would-first',
-      matches: (game, player, { card }) => game.zones.byPlayer(player, card.color).splay !== 'left',
+      matches: (game, player, { card, owner }) => game.zones.byPlayer(owner, card.color).splay !== 'left',
       func(game, player, { card, owner, self }) {
         const choices = game
           .players
