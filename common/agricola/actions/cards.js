@@ -226,15 +226,16 @@ AgricolaActionManager.prototype._completeOccupationPlay = function(player, cardI
   // Pay card cost (e.g. prereq costs defined on the card itself)
   player.payCardCost(cardId)
 
+  this.game.registerCardActionSpace(player, card)
+
+  // Call onPlayOccupation hooks on all active cards (before onPlay so that
+  // triggered effects like Scales resolve before the card's own effect)
+  this.game.callPlayerCardHook(player, 'onPlayOccupation', card)
+
   // Execute onPlay effect if present
   if (card.hasHook('onPlay')) {
     card.callHook('onPlay', this.game, player)
   }
-
-  this.game.registerCardActionSpace(player, card)
-
-  // Call onPlayOccupation hooks on all active cards
-  this.game.callPlayerCardHook(player, 'onPlayOccupation', card)
 
   return true
 }

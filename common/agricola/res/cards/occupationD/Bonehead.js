@@ -6,13 +6,19 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "When you play this card, immediately place 6 wood on it. Immediately after each time you play a card from your hand, including this one, you get 1 wood from this card.",
-  onPlay(game, player) {
+  _ensureWood(game) {
     const s = game.cardState(this.id)
-    s.wood = 6
+    if (s.wood === undefined) {
+      s.wood = 6
+    }
+  },
+  onPlay(game, player) {
+    this._ensureWood(game)
     // Give 1 wood for playing this card itself
     this._giveWood(game, player)
   },
   onPlayOccupation(game, player) {
+    this._ensureWood(game)
     this._giveWood(game, player)
   },
   onBuildImprovement(game, player) {
