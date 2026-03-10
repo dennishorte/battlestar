@@ -14,7 +14,14 @@ Agricola.prototype.breedingPhase = function() {
 
     this.callPlayerCardHook(player, 'onBreedingPhaseStart')
 
-    const bred = player.breedAnimals()
+    const result = player.breedAnimals()
+    let bred
+    if (result.needsModal) {
+      bred = this.actions.handleBreedingPlacement(player, result.pendingBabies)
+    }
+    else {
+      bred = result.bred
+    }
 
     const newbornTypes = (bred.sheep > 0 ? 1 : 0) + (bred.boar > 0 ? 1 : 0) + (bred.cattle > 0 ? 1 : 0)
     newbornTypesMap.set(player.name, newbornTypes)

@@ -66,9 +66,10 @@ describe('animals', () => {
     const dennis = game.players.byName('dennis')
     t.addPasture(dennis, [{ row: 1, col: 0 }, { row: 1, col: 1 }], 'sheep', 2)
 
-    const bred = dennis.breedAnimals()
+    const result = dennis.breedAnimals()
 
-    expect(bred.sheep).toBe(1)
+    expect(result.bred.sheep).toBe(1)
+    expect(result.needsModal).toBe(false)
     expect(dennis.getTotalAnimals('sheep')).toBe(3)
   })
 
@@ -79,9 +80,10 @@ describe('animals', () => {
     const dennis = game.players.byName('dennis')
     t.addPasture(dennis, [{ row: 1, col: 0 }], 'sheep', 1)
 
-    const bred = dennis.breedAnimals()
+    const result = dennis.breedAnimals()
 
-    expect(bred.sheep).toBe(0)
+    expect(result.bred.sheep).toBe(0)
+    expect(result.needsModal).toBe(false)
   })
 
   test('canPlaceAnimals returns false when pet slot is occupied by different type', () => {
@@ -196,10 +198,10 @@ describe('animals', () => {
     // Capacity for boar = 0 (pastures) + 2 (stables at cap) + 0 (pet) = 2
     // 2 + 1 > 2 → can't breed!
     // Fix: consolidate sheep into the main sheep pasture first, freeing the "wrong" pasture
-    const bred = dennis.breedAnimals()
+    const result = dennis.breedAnimals()
 
-    expect(bred.sheep).toBe(1)
-    expect(bred.boar).toBe(1)
+    expect(result.bred.sheep).toBe(1)
+    expect(result.bred.boar).toBe(1)
     expect(dennis.getTotalAnimals('sheep')).toBe(4) // 3 + 1 baby
     expect(dennis.getTotalAnimals('boar')).toBe(3) // 2 + 1 baby
   })
@@ -231,12 +233,111 @@ describe('animals', () => {
     expect(dennis.getTotalAnimals('sheep')).toBe(2)
     expect(dennis.getTotalAnimals('boar')).toBe(2)
 
-    const bred = dennis.breedAnimals()
+    const result = dennis.breedAnimals()
 
     // Both should breed
-    expect(bred.sheep).toBe(1)
-    expect(bred.boar).toBe(1)
+    expect(result.bred.sheep).toBe(1)
+    expect(result.bred.boar).toBe(1)
     expect(dennis.getTotalAnimals('sheep')).toBe(3)
     expect(dennis.getTotalAnimals('boar')).toBe(3)
+  })
+
+  test('snapshot and restore reverts animal state', () => {
+    const game = t.fixture()
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    t.addPasture(dennis, [{ row: 1, col: 0 }, { row: 1, col: 1 }], 'sheep', 2)
+    dennis.pet = 'boar'
+
+    const snapshot = dennis._snapshotAnimalState()
+
+    // Modify state
+    dennis.placeAnimals('sheep', 1)
+    dennis.pet = 'cattle'
+    expect(dennis.getTotalAnimals('sheep')).toBe(3)
+    expect(dennis.pet).toBe('cattle')
+
+    // Restore
+    dennis._restoreAnimalState(snapshot)
+    expect(dennis.getTotalAnimals('sheep')).toBe(2)
+    expect(dennis.pet).toBe('boar')
+  })
+
+  test('breedAnimals returns needsModal when babies do not fit', () => {
+    const game = t.fixture()
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+
+    // Small pasture at capacity with 2 sheep - can breed but baby won't fit
+    t.addPasture(dennis, [{ row: 1, col: 0 }], 'sheep', 2)
+    // Pet occupied by boar
+    dennis.pet = 'boar'
+
+    const result = dennis.breedAnimals()
+
+    expect(result.needsModal).toBe(true)
+    expect(result.pendingBabies).toEqual({ sheep: 1 })
+    // State should be rolled back - still 2 sheep
+    expect(dennis.getTotalAnimals('sheep')).toBe(2)
+    expect(dennis.pet).toBe('boar')
+  })
+
+  test('applyAnimalPlacements validates breeding constraints - no cooking babies', () => {
+    const game = t.fixture()
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    t.addPasture(dennis, [{ row: 1, col: 0 }, { row: 1, col: 1 }], 'sheep', 2)
+
+    // Remove 2 existing sheep, cook 2 (1 existing + 1 baby), place 1 baby
+    // Accounting: removed(2) + incoming(1) = 3 = placed(1) + cooked(2) + released(0) ✓
+    // But cooked(2) > removed(2) is fine...
+    // To trigger: remove 1, incoming 1 baby, cook 2 (more than removed), place 0
+    // Accounting: removed(1) + incoming(1) = 2 = placed(0) + cooked(2) + released(0) ✓
+    // Breeding: cooked(2) > removed(1) → cannot cook babies
+    const result = dennis.applyAnimalPlacements({
+      placements: [],
+      overflow: { cook: { sheep: 2 } },
+      incoming: { sheep: 1 },
+      removals: [
+        { locationId: 'pasture-0', animalType: 'sheep', count: 1 },
+      ],
+      breedingConstraints: {
+        requirements: { sheep: 2 },
+        acceptedBabies: { sheep: 0 },
+      },
+    })
+
+    expect(result.success).toBe(false)
+    expect(result.error).toMatch(/Cannot cook babies/)
+  })
+
+  test('applyAnimalPlacements validates breeding constraints - parents must remain', () => {
+    const game = t.fixture()
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    t.addPasture(dennis, [{ row: 1, col: 0 }, { row: 1, col: 1 }], 'sheep', 3)
+
+    // Accept 1 baby but only place 2 sheep (need 2 parents + 1 baby = 3 placed)
+    const result = dennis.applyAnimalPlacements({
+      placements: [
+        { locationId: 'pasture-0', animalType: 'sheep', count: 2 },
+      ],
+      overflow: { release: { sheep: 2 } },
+      incoming: { sheep: 1 },
+      removals: [
+        { locationId: 'pasture-0', animalType: 'sheep', count: 3 },
+      ],
+      breedingConstraints: {
+        requirements: { sheep: 2 },
+        acceptedBabies: { sheep: 1 },
+      },
+    })
+
+    expect(result.success).toBe(false)
+    expect(result.error).toMatch(/Not enough sheep parents/)
   })
 })

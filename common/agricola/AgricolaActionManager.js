@@ -383,6 +383,81 @@ class AgricolaActionManager extends BaseActionManager {
     }
   }
 
+  /**
+   * Handle breeding placement when babies don't all fit automatically.
+   * Shows the animal placement modal with breeding constraints.
+   * @param {Object} player - The player breeding animals
+   * @param {Object} pendingBabies - { sheep: 1, boar: 1, cattle: 1 } babies to place
+   * @returns {Object} The bred result { sheep: n, boar: n, cattle: n }
+   */
+  handleBreedingPlacement(player, pendingBabies) {
+    // Compute breeding requirements for each type
+    const breedingRequirements = {}
+    for (const type of res.animalTypes) {
+      if (pendingBabies[type]) {
+        breedingRequirements[type] = player._getBreedingRequirement(type)
+      }
+    }
+
+    const locations = player.getAnimalPlacementLocationsWithAvailability()
+    const cookingRates = this.getCookingRates(player)
+
+    const choices = ['Place Animals']
+    if (player.hasCookingAbility()) {
+      choices.push('Cook', 'Release')
+    }
+    else {
+      choices.push('Release')
+    }
+
+    const result = this.choose(player, choices, {
+      type: 'animal-placement',
+      breeding: true,
+      incoming: pendingBabies,
+      breedingRequirements,
+      locations,
+      cookingRates,
+    })
+
+    // New modal response
+    if (result && result.action === 'animal-placement' && result.placements) {
+      const acceptedBabies = result.acceptedBabies || pendingBabies
+
+      const applyResult = player.applyAnimalPlacements({
+        placements: result.placements,
+        overflow: result.overflow,
+        incoming: pendingBabies,
+        removals: result.removals || [],
+        breedingConstraints: {
+          requirements: breedingRequirements,
+          acceptedBabies,
+        },
+      })
+
+      if (applyResult.success) {
+        this.logAnimalPlacements(player, result, applyResult)
+        return acceptedBabies
+      }
+      else {
+        this.log.add({
+          template: 'Error placing animals: {error}',
+          args: { error: applyResult.error },
+        })
+        // Fall through to auto-breed fallback
+      }
+    }
+
+    // Fallback: auto-breed what fits (current behavior for old clients / simple response)
+    const bred = { sheep: 0, boar: 0, cattle: 0 }
+    for (const [type, count] of Object.entries(pendingBabies)) {
+      if (player.canPlaceAnimals(type, count)) {
+        player.placeAnimals(type, count)
+        bred[type] = count
+      }
+    }
+    return bred
+  }
+
   // Entry point for animal overflow - redirects to unified handler
   handleAnimalOverflow(player, animalType, count) {
     this.handleAnimalPlacement(player, { [animalType]: count })

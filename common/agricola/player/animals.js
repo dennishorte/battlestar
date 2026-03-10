@@ -700,7 +700,7 @@ AgricolaPlayer.prototype.getAnimalHoldingCards = function() {
  * @returns {Object} { success: boolean, error?: string, cooked?: { food: n } }
  */
 AgricolaPlayer.prototype.applyAnimalPlacements = function(plan) {
-  const { placements, overflow, incoming, removals } = plan
+  const { placements, overflow, incoming, removals, breedingConstraints } = plan
 
   // Step 1: Apply removals first (if any)
   if (removals && removals.length > 0) {
@@ -869,6 +869,37 @@ AgricolaPlayer.prototype.applyAnimalPlacements = function(plan) {
     }
   }
 
+  // Breeding constraint validation
+  if (breedingConstraints) {
+    const { requirements, acceptedBabies } = breedingConstraints
+
+    for (const type of res.animalTypes) {
+      const accepted = acceptedBabies[type] || 0
+      const cooked = totalCooked[type] || 0
+      const removed = totalRemoved[type] || 0
+
+      // Babies can't be cooked — only existing animals can be cooked
+      if (cooked > removed) {
+        return {
+          success: false,
+          error: `Cannot cook babies: ${type} cooked(${cooked}) exceeds removed(${removed})`,
+        }
+      }
+
+      // Parents must remain for each accepted baby
+      if (accepted > 0) {
+        const placed = totalPlaced[type] || 0
+        const required = requirements[type] || 2
+        if (placed < required + accepted) {
+          return {
+            success: false,
+            error: `Not enough ${type} parents: placed(${placed}) < requirement(${required}) + babies(${accepted})`,
+          }
+        }
+      }
+    }
+  }
+
   // All validation passed - apply the placements
   for (const p of placements) {
     if (p.count <= 0) {
@@ -929,29 +960,97 @@ AgricolaPlayer.prototype.applyAnimalPlacements = function(plan) {
   }
 }
 
-AgricolaPlayer.prototype.breedAnimals = function() {
-  const bred = { sheep: 0, boar: 0, cattle: 0 }
+AgricolaPlayer.prototype._snapshotAnimalState = function() {
+  return {
+    pet: this.pet,
+    pastures: this.farmyard.pastures.map(p => ({
+      id: p.id,
+      animalType: p.animalType,
+      animalCount: p.animalCount,
+    })),
+    unfencedStables: this.getStableSpaces()
+      .filter(s => !this.getPastureAtSpace(s.row, s.col))
+      .map(s => {
+        const space = this.getSpace(s.row, s.col)
+        return {
+          row: s.row,
+          col: s.col,
+          animal: space.animal,
+          animalCount: space.animalCount || 0,
+        }
+      }),
+    cardAnimals: JSON.parse(JSON.stringify(this.cardAnimals)),
+  }
+}
 
+AgricolaPlayer.prototype._restoreAnimalState = function(snapshot) {
+  this.pet = snapshot.pet
+
+  for (const ps of snapshot.pastures) {
+    const pasture = this.farmyard.pastures.find(p => p.id === ps.id)
+    if (pasture) {
+      pasture.animalType = ps.animalType
+      pasture.animalCount = ps.animalCount
+    }
+  }
+
+  for (const ss of snapshot.unfencedStables) {
+    const space = this.getSpace(ss.row, ss.col)
+    if (space) {
+      space.animal = ss.animal
+      space.animalCount = ss.animalCount
+    }
+  }
+
+  this.cardAnimals = JSON.parse(JSON.stringify(snapshot.cardAnimals))
+}
+
+AgricolaPlayer.prototype.breedAnimals = function() {
   // Consolidate fragmented animals before breeding.
-  // Auto-placement during earlier actions may have placed animals in suboptimal
-  // locations (e.g., sheep in a pasture intended for boar). This consolidation
-  // merges same-type animals into shared pastures, freeing up pastures for
-  // other types that need them.
   this._consolidateAnimals()
 
+  // Determine which types can breed
+  const pendingBabies = {}
   for (const type of res.animalTypes) {
     const count = this.getTotalAnimals(type)
     const required = this._getBreedingRequirement(type)
     if (count >= required) {
-      // Can breed - but only if we can house the baby
-      if (this.canPlaceAnimals(type, 1)) {
-        this.placeAnimals(type, 1)
-        bred[type] = 1
-      }
+      pendingBabies[type] = 1
     }
   }
 
-  return bred
+  // No breeding possible at all
+  if (Object.keys(pendingBabies).length === 0) {
+    return { bred: { sheep: 0, boar: 0, cattle: 0 }, pendingBabies: null, needsModal: false }
+  }
+
+  // Try auto-placing all babies with snapshot/rollback
+  const snapshot = this._snapshotAnimalState()
+  const bred = { sheep: 0, boar: 0, cattle: 0 }
+  let allPlaced = true
+
+  for (const [type, count] of Object.entries(pendingBabies)) {
+    if (this.canPlaceAnimals(type, count)) {
+      this.placeAnimals(type, count)
+      bred[type] = count
+    }
+    else {
+      allPlaced = false
+      break
+    }
+  }
+
+  if (allPlaced) {
+    return { bred, pendingBabies: null, needsModal: false }
+  }
+
+  // Not all babies fit - rollback and signal modal needed
+  this._restoreAnimalState(snapshot)
+  return {
+    bred: { sheep: 0, boar: 0, cattle: 0 },
+    pendingBabies,
+    needsModal: true,
+  }
 }
 
 /**
