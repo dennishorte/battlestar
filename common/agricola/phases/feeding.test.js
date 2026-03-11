@@ -417,6 +417,130 @@ describe('anytime actions system', () => {
   })
 })
 
+describe('craft conversion limit', () => {
+
+  test('Joinery craft conversion limited to 1 per harvest', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        majorImprovements: ['joinery'],
+        wood: 5,
+        food: 0,
+      },
+    })
+    game.run()
+
+    const dennis = t.player(game)
+    let callCount = 0
+
+    // Try to use Joinery twice - second time should not be offered
+    game.actions.choose = () => {
+      callCount++
+      if (callCount === 1) {
+        return ['Use Joinery: convert wood to 2 food']
+      }
+      // Second call should only have 'Done converting' (no Joinery option)
+      return ['Done converting']
+    }
+
+    game.allowFoodConversion(dennis, 4)
+
+    // Should have only converted 1 wood (limit: 1)
+    expect(dennis.wood).toBe(4)
+    expect(dennis.food).toBe(2)
+  })
+
+  test('Pottery craft conversion limited to 1 per harvest', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        majorImprovements: ['pottery'],
+        clay: 5,
+        food: 0,
+      },
+    })
+    game.run()
+
+    const dennis = t.player(game)
+    let callCount = 0
+
+    game.actions.choose = () => {
+      callCount++
+      if (callCount === 1) {
+        return ['Use Pottery: convert clay to 2 food']
+      }
+      return ['Done converting']
+    }
+
+    game.allowFoodConversion(dennis, 4)
+
+    expect(dennis.clay).toBe(4)
+    expect(dennis.food).toBe(2)
+  })
+
+  test("Basketmaker's Workshop craft conversion limited to 1 per harvest", () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        majorImprovements: ['basketmakers-workshop'],
+        reed: 5,
+        food: 0,
+      },
+    })
+    game.run()
+
+    const dennis = t.player(game)
+    let callCount = 0
+
+    game.actions.choose = () => {
+      callCount++
+      if (callCount === 1) {
+        return ["Use Basketmaker's Workshop: convert reed to 3 food"]
+      }
+      return ['Done converting']
+    }
+
+    game.allowFoodConversion(dennis, 4)
+
+    expect(dennis.reed).toBe(4)
+    expect(dennis.food).toBe(3)
+  })
+
+  test('multiple craft improvements each limited independently', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        majorImprovements: ['joinery', 'pottery'],
+        wood: 5,
+        clay: 5,
+        food: 0,
+      },
+    })
+    game.run()
+
+    const dennis = t.player(game)
+    let callCount = 0
+
+    game.actions.choose = () => {
+      callCount++
+      if (callCount === 1) {
+        return ['Use Joinery: convert wood to 2 food']
+      }
+      if (callCount === 2) {
+        return ['Use Pottery: convert clay to 2 food']
+      }
+      return ['Feed family']
+    }
+
+    game.allowFoodConversion(dennis, 4)
+
+    // Each used once
+    expect(dennis.wood).toBe(4)
+    expect(dennis.clay).toBe(4)
+    expect(dennis.food).toBe(4)
+  })
+})
+
 describe('v6 continued food conversion after enough food', () => {
 
   test('v6: player with enough food and cooking improvement can still convert', () => {

@@ -63,6 +63,7 @@ Agricola.prototype.feedingPhase = function() {
 
 Agricola.prototype.allowFoodConversion = function(player, required) {
   const canContinueAfterEnoughFood = this.settings.version >= 6
+  const craftUsage = {}  // Track how many times each craft improvement has been used
 
   while (canContinueAfterEnoughFood || player.food < required) {
     // Use function wrapper so options are recalculated after anytime actions
@@ -74,10 +75,12 @@ Agricola.prototype.allowFoodConversion = function(player, required) {
         const imp = this.cards.byId(impId)
         if (imp && imp.harvestConversion) {
           const conv = imp.harvestConversion
-          if (player[conv.resource] > 0) {
+          const used = craftUsage[impId] || 0
+          if (player[conv.resource] > 0 && used < conv.limit) {
             options.push({
               type: 'craft',
               improvement: imp.name,
+              improvementId: impId,
               resource: conv.resource,
               count: 1,
               food: conv.food,
@@ -138,6 +141,9 @@ Agricola.prototype.allowFoodConversion = function(player, required) {
     const selectedOption = currentOptions.find(opt => opt.description === choice)
     if (selectedOption) {
       this.executeAnytimeFoodConversion(player, selectedOption)
+      if (selectedOption.type === 'craft') {
+        craftUsage[selectedOption.improvementId] = (craftUsage[selectedOption.improvementId] || 0) + 1
+      }
     }
   }
 }
