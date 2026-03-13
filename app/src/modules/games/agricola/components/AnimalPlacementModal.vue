@@ -222,14 +222,14 @@ export default {
         return null
       }
 
-      const overrides = { pastures: {}, pet: null, stables: {} }
+      const overrides = { pastures: {}, housePets: { sheep: 0, boar: 0, cattle: 0 }, stables: {} }
 
       for (const [locId, animals] of Object.entries(this.animalState)) {
         const animalType = this.animalTypes.find(t => animals[t] > 0) || null
         const totalCount = animals.sheep + animals.boar + animals.cattle
 
         if (locId === 'house') {
-          overrides.pet = animalType ? { animalType } : null
+          overrides.housePets = { ...animals }
         }
         else if (locId.startsWith('pasture-')) {
           overrides.pastures[locId] = { animalType, animalCount: totalCount }

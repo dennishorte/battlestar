@@ -158,9 +158,16 @@ TestUtil.setPlayerState = function(game, playerName, state) {
     this.setFarmyard(player, state.farmyard)
   }
 
-  // Set animals
+  // Set pet / housePets
   if (state.pet !== undefined) {
-    player.pet = state.pet
+    if (typeof state.pet === 'string') {
+      player.housePets[state.pet] = 1
+    }
+    else if (typeof state.pet === 'object' && state.pet !== null) {
+      for (const [type, count] of Object.entries(state.pet)) {
+        player.housePets[type] = count
+      }
+    }
   }
 
   // Add animals to pastures
@@ -571,9 +578,16 @@ TestUtil.setPlayerBoard = function(game, playerName, playerState) {
     }
   }
 
-  // Set pet
+  // Set pet / housePets
   if (playerState.pet !== undefined) {
-    player.pet = playerState.pet
+    if (typeof playerState.pet === 'string') {
+      player.housePets[playerState.pet] = 1
+    }
+    else if (typeof playerState.pet === 'object' && playerState.pet !== null) {
+      for (const [type, count] of Object.entries(playerState.pet)) {
+        player.housePets[type] = count
+      }
+    }
   }
 }
 

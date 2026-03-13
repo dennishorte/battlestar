@@ -70,7 +70,7 @@ const FarmyardMixin = {
       stables: player.getStableCount(),
       fences: player.getFenceCount(),
       unusedSpaces: player.getUnusedSpaceCount(),
-      pet: player.pet,
+      housePets: { ...player.housePets },
       animals: player.getAllAnimals(),
     }
   },

@@ -8,7 +8,7 @@ describe('animals', () => {
     const dennis = game.players.byName('dennis')
     expect(dennis.placeAnimals('sheep', 1)).toBe(true)
 
-    expect(dennis.pet).toBe('sheep')
+    expect(dennis.housePets.sheep).toBe(1)
     expect(dennis.getTotalAnimals('sheep')).toBe(1)
   })
 
@@ -53,7 +53,7 @@ describe('animals', () => {
 
     const dennis = game.players.byName('dennis')
     t.addPasture(dennis, [{ row: 1, col: 0 }], 'sheep', 3)
-    dennis.pet = 'sheep'
+    dennis.housePets.sheep = 1
 
     expect(dennis.removeAnimals('sheep', 2)).toBe(true)
     expect(dennis.getTotalAnimals('sheep')).toBe(2)
@@ -91,7 +91,7 @@ describe('animals', () => {
     game.run()
 
     const dennis = game.players.byName('dennis')
-    dennis.pet = 'boar'
+    dennis.housePets.boar = 1
 
     // No pastures, no unfenced stables, pet occupied by boar.
     // Should not be able to place sheep anywhere.
@@ -103,7 +103,7 @@ describe('animals', () => {
     game.run()
 
     const dennis = game.players.byName('dennis')
-    dennis.pet = 'boar'
+    dennis.housePets.boar = 1
     dennis.buildStable(2, 0)
 
     // Place a boar in the unfenced stable
@@ -121,7 +121,7 @@ describe('animals', () => {
     game.run()
 
     const dennis = game.players.byName('dennis')
-    dennis.pet = 'boar'
+    dennis.housePets.boar = 1
 
     // Capacity for sheep should be 0 (pet has boar, no pastures, no stables)
     expect(dennis.getTotalAnimalCapacity('sheep')).toBe(0)
@@ -134,7 +134,6 @@ describe('animals', () => {
     game.run()
 
     const dennis = game.players.byName('dennis')
-    dennis.pet = null
     dennis.buildStable(2, 0)
 
     // Place a boar in the unfenced stable
@@ -153,13 +152,13 @@ describe('animals', () => {
     game.run()
 
     const dennis = game.players.byName('dennis')
-    dennis.pet = 'boar'
+    dennis.housePets.boar = 1
 
     // Try to add sheep - should fail since there's nowhere to put them
     expect(dennis.placeAnimals('sheep', 1)).toBe(false)
     expect(dennis.getTotalAnimals('sheep')).toBe(0)
-    // Boar should still be in pet slot
-    expect(dennis.pet).toBe('boar')
+    // Boar should still be in house
+    expect(dennis.housePets.boar).toBe(1)
   })
 
   test('breedAnimals breeds boar despite fragmented distribution', () => {
@@ -186,8 +185,8 @@ describe('animals', () => {
     s2.animal = 'boar'
     s2.animalCount = 1
 
-    // Pet occupied
-    dennis.pet = 'cattle'
+    // House occupied
+    dennis.housePets.cattle = 1
 
     // Verify initial state: 3 sheep (2 in pasture + 1 in "wrong" pasture), 2 boar
     expect(dennis.getTotalAnimals('sheep')).toBe(3)
@@ -248,20 +247,21 @@ describe('animals', () => {
 
     const dennis = game.players.byName('dennis')
     t.addPasture(dennis, [{ row: 1, col: 0 }, { row: 1, col: 1 }], 'sheep', 2)
-    dennis.pet = 'boar'
+    dennis.housePets.boar = 1
 
     const snapshot = dennis._snapshotAnimalState()
 
     // Modify state
     dennis.placeAnimals('sheep', 1)
-    dennis.pet = 'cattle'
+    dennis.housePets.cattle = 1
     expect(dennis.getTotalAnimals('sheep')).toBe(3)
-    expect(dennis.pet).toBe('cattle')
+    expect(dennis.housePets.cattle).toBe(1)
 
     // Restore
     dennis._restoreAnimalState(snapshot)
     expect(dennis.getTotalAnimals('sheep')).toBe(2)
-    expect(dennis.pet).toBe('boar')
+    expect(dennis.housePets.boar).toBe(1)
+    expect(dennis.housePets.cattle).toBe(0)
   })
 
   test('breedAnimals returns needsModal when babies do not fit', () => {
@@ -272,8 +272,8 @@ describe('animals', () => {
 
     // Small pasture at capacity with 2 sheep - can breed but baby won't fit
     t.addPasture(dennis, [{ row: 1, col: 0 }], 'sheep', 2)
-    // Pet occupied by boar
-    dennis.pet = 'boar'
+    // House occupied by boar
+    dennis.housePets.boar = 1
 
     const result = dennis.breedAnimals()
 
@@ -281,7 +281,7 @@ describe('animals', () => {
     expect(result.pendingBabies).toEqual({ sheep: 1 })
     // State should be rolled back - still 2 sheep
     expect(dennis.getTotalAnimals('sheep')).toBe(2)
-    expect(dennis.pet).toBe('boar')
+    expect(dennis.housePets.boar).toBe(1)
   })
 
   test('applyAnimalPlacements validates breeding constraints - no cooking babies', () => {

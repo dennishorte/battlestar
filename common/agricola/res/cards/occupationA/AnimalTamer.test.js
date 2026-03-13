@@ -70,4 +70,53 @@ describe('Animal Tamer', () => {
     // Since no pastures/stables, should be exactly 3
     expect(capacity).toBeGreaterThanOrEqual(3)
   })
+
+  test('can hold 2 cattle in a 2-room house', () => {
+    const game = t.fixture({ cardSets: ['occupationA'] })
+    t.setBoard(game, {
+      dennis: {
+        occupations: ['animal-tamer-a086'],
+      },
+    })
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    // 2 rooms → capacity 2
+    expect(dennis.placeAnimals('cattle', 2)).toBe(true)
+    expect(dennis.housePets.cattle).toBe(2)
+    expect(dennis.getTotalAnimals('cattle')).toBe(2)
+  })
+
+  test('can hold mixed types (1 sheep + 1 cattle) in a 2-room house', () => {
+    const game = t.fixture({ cardSets: ['occupationA'] })
+    t.setBoard(game, {
+      dennis: {
+        occupations: ['animal-tamer-a086'],
+      },
+    })
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    // Place 1 sheep, then 1 cattle
+    expect(dennis.placeAnimals('sheep', 1)).toBe(true)
+    expect(dennis.placeAnimals('cattle', 1)).toBe(true)
+    expect(dennis.housePets.sheep).toBe(1)
+    expect(dennis.housePets.cattle).toBe(1)
+    expect(dennis.getTotalAnimals('sheep')).toBe(1)
+    expect(dennis.getTotalAnimals('cattle')).toBe(1)
+  })
+
+  test('cannot exceed room count in house', () => {
+    const game = t.fixture({ cardSets: ['occupationA'] })
+    t.setBoard(game, {
+      dennis: {
+        occupations: ['animal-tamer-a086'],
+      },
+    })
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    // 2 rooms → capacity 2; try to place 3
+    expect(dennis.placeAnimals('sheep', 3)).toBe(false)
+  })
 })

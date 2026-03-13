@@ -222,8 +222,8 @@ class AgricolaPlayer extends BasePlayer {
     this.farmyard.grid[0][0] = { type: 'room', roomType: 'wood' }
     this.farmyard.grid[1][0] = { type: 'room', roomType: 'wood' }
 
-    // Pet animal (one animal can live in the house)
-    this.pet = null
+    // House animals (Animal Tamer allows 1 per room)
+    this.housePets = { sheep: 0, boar: 0, cattle: 0 }
 
     // Virtual fields from cards (Beanfield, Lettuce Patch, etc.)
     // Each entry: { id, cardId, label, cropRestriction, crop, cropCount }
@@ -1258,8 +1258,9 @@ class AgricolaPlayer extends BasePlayer {
 
     // Summary line
     const parts = []
-    if (this.pet) {
-      parts.push('Pet: ' + this.pet)
+    const petParts = Object.entries(this.housePets).filter(([, n]) => n > 0).map(([t, n]) => `${n} ${t}`)
+    if (petParts.length > 0) {
+      parts.push('House: ' + petParts.join(', '))
     }
     parts.push('Fences: ' + this.getFenceCount() + '/' + res.constants.maxFences)
     parts.push('Unused: ' + this.getUnusedSpaceCount())

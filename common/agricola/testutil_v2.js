@@ -616,9 +616,16 @@ TestUtil.setPlayerBoard = function(game, playerName, playerState) {
     }
   }
 
-  // Set pet
+  // Set pet / housePets
   if (playerState.pet !== undefined) {
-    player.pet = playerState.pet
+    if (typeof playerState.pet === 'string') {
+      player.housePets[playerState.pet] = 1
+    }
+    else if (typeof playerState.pet === 'object' && playerState.pet !== null) {
+      for (const [type, count] of Object.entries(playerState.pet)) {
+        player.housePets[type] = count
+      }
+    }
   }
 
   // Set scheduled deliveries
@@ -859,10 +866,34 @@ TestUtil.testPlayerBoard = function(game, playerName, expected) {
     errors.push(`majorImprovements: expected [${majorExp}], got [${majorActual}]`)
   }
 
-  // Pet
-  const petExp = expected.pet !== undefined ? expected.pet : PLAYER_DEFAULTS.pet
-  if (player.pet !== petExp) {
-    errors.push(`pet: expected ${petExp}, got ${player.pet}`)
+  // Pet / housePets
+  if (expected.pet !== undefined) {
+    if (typeof expected.pet === 'string') {
+      // Shorthand: pet: 'sheep' means housePets.sheep === 1, others 0
+      for (const type of ['sheep', 'boar', 'cattle']) {
+        const exp = type === expected.pet ? 1 : 0
+        if ((player.housePets[type] || 0) !== exp) {
+          errors.push(`housePets.${type}: expected ${exp}, got ${player.housePets[type] || 0}`)
+        }
+      }
+    }
+    else if (typeof expected.pet === 'object' && expected.pet !== null) {
+      // Object form: pet: { sheep: 1, cattle: 1 }
+      for (const type of ['sheep', 'boar', 'cattle']) {
+        const exp = expected.pet[type] || 0
+        if ((player.housePets[type] || 0) !== exp) {
+          errors.push(`housePets.${type}: expected ${exp}, got ${player.housePets[type] || 0}`)
+        }
+      }
+    }
+    else if (expected.pet === null) {
+      // pet: null means all housePets should be 0
+      for (const type of ['sheep', 'boar', 'cattle']) {
+        if ((player.housePets[type] || 0) !== 0) {
+          errors.push(`housePets.${type}: expected 0, got ${player.housePets[type] || 0}`)
+        }
+      }
+    }
   }
 
   // Animals — always check all types

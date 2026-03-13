@@ -5,10 +5,8 @@ const res = require('../res/index.js')
 AgricolaPlayer.prototype.getTotalAnimals = function(type) {
   let count = 0
 
-  // Count pet
-  if (this.pet === type) {
-    count++
-  }
+  // Count house animals
+  count += this.housePets[type] || 0
 
   // Count in pastures
   for (const pasture of this.farmyard.pastures) {
@@ -42,7 +40,7 @@ AgricolaPlayer.prototype.getAllAnimals = function() {
 }
 
 AgricolaPlayer.prototype.getAnimalsInHouse = function() {
-  return this.pet ? 1 : 0
+  return (this.housePets.sheep || 0) + (this.housePets.boar || 0) + (this.housePets.cattle || 0)
 }
 
 AgricolaPlayer.prototype.hasAllAnimalTypes = function() {
@@ -199,11 +197,12 @@ AgricolaPlayer.prototype.hasEmptyUnfencedStable = function() {
 }
 
 AgricolaPlayer.prototype.getTotalAnimalCapacity = function(animalType) {
-  // Pet in house - only count if empty or same type
+  // House animals - capacity minus animals of other types
   let capacity = 0
-  if (!this.pet || this.pet === animalType) {
-    capacity += this.applyHouseAnimalCapacityModifiers(1)
-  }
+  const houseCapacity = this.applyHouseAnimalCapacityModifiers(1)
+  const totalInHouse = this.getAnimalsInHouse()
+  const otherTypesInHouse = totalInHouse - (this.housePets[animalType] || 0)
+  capacity += Math.max(0, houseCapacity - otherTypesInHouse)
 
   // Pastures that are empty or already have this type
   for (const pasture of this.farmyard.pastures) {
@@ -270,16 +269,25 @@ AgricolaPlayer.prototype.getTotalAnimalCapacity = function(animalType) {
 AgricolaPlayer.prototype.getAnimalPlacementLocations = function() {
   const locations = []
 
-  // House (pet slot)
+  // House (animal slots)
   const houseCapacity = this.applyHouseAnimalCapacityModifiers(1)
-  locations.push({
+  const houseLoc = {
     id: 'house',
     type: 'house',
     name: 'House',
-    currentAnimalType: this.pet,
-    currentCount: this.pet ? 1 : 0,
+    currentCount: this.getAnimalsInHouse(),
     maxCapacity: houseCapacity,
-  })
+    currentAnimals: { ...this.housePets },
+  }
+  if (houseCapacity > 1) {
+    houseLoc.mixedTypes = true
+  }
+  else {
+    // Single capacity: behave like single-type slot
+    const existingType = Object.entries(this.housePets).find(([, n]) => n > 0)?.[0] || null
+    houseLoc.currentAnimalType = existingType
+  }
+  locations.push(houseLoc)
 
   // Pastures
   for (const pasture of this.farmyard.pastures) {
@@ -469,10 +477,15 @@ AgricolaPlayer.prototype.placeAnimals = function(animalType, count) {
     }
   }
 
-  // Finally try pet
-  if (remaining > 0 && !this.pet) {
-    this.pet = animalType
-    remaining--
+  // Finally try house
+  if (remaining > 0) {
+    const houseCapacity = this.applyHouseAnimalCapacityModifiers(1)
+    const totalInHouse = this.getAnimalsInHouse()
+    const canAddToHouse = Math.min(remaining, houseCapacity - totalInHouse)
+    if (canAddToHouse > 0) {
+      this.housePets[animalType] += canAddToHouse
+      remaining -= canAddToHouse
+    }
   }
 
   // Then try card-based holders
@@ -559,10 +572,11 @@ AgricolaPlayer.prototype.removeAnimals = function(animalType, count) {
     }
   }
 
-  // Remove pet
-  if (remaining > 0 && this.pet === animalType) {
-    this.pet = null
-    remaining--
+  // Remove from house
+  if (remaining > 0 && this.housePets[animalType] > 0) {
+    const toRemove = Math.min(remaining, this.housePets[animalType])
+    this.housePets[animalType] -= toRemove
+    remaining -= toRemove
   }
 
   return remaining === 0
@@ -710,7 +724,7 @@ AgricolaPlayer.prototype.applyAnimalPlacements = function(plan) {
       }
 
       if (r.locationId === 'house') {
-        this.pet = null
+        this.housePets[r.animalType] = Math.max(0, (this.housePets[r.animalType] || 0) - r.count)
       }
       else if (r.locationId.startsWith('pasture-')) {
         const pastureId = parseInt(r.locationId.replace('pasture-', ''))
@@ -909,8 +923,7 @@ AgricolaPlayer.prototype.applyAnimalPlacements = function(plan) {
     const loc = locationMap[p.locationId]
 
     if (loc.type === 'house') {
-      // Pet placement
-      this.pet = p.animalType
+      this.housePets[p.animalType] = (this.housePets[p.animalType] || 0) + p.count
     }
     else if (loc.type === 'pasture') {
       // Find the pasture and add animals
@@ -962,7 +975,7 @@ AgricolaPlayer.prototype.applyAnimalPlacements = function(plan) {
 
 AgricolaPlayer.prototype._snapshotAnimalState = function() {
   return {
-    pet: this.pet,
+    housePets: { ...this.housePets },
     pastures: this.farmyard.pastures.map(p => ({
       id: p.id,
       animalType: p.animalType,
@@ -984,7 +997,7 @@ AgricolaPlayer.prototype._snapshotAnimalState = function() {
 }
 
 AgricolaPlayer.prototype._restoreAnimalState = function(snapshot) {
-  this.pet = snapshot.pet
+  this.housePets = { ...snapshot.housePets }
 
   for (const ps of snapshot.pastures) {
     const pasture = this.farmyard.pastures.find(p => p.id === ps.id)

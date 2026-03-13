@@ -264,7 +264,7 @@ export default {
     cellTooltip() {
       if (this.cell.type === 'room') {
         if (this.showPet) {
-          return `${this.cell.roomType} room (pet ${this.effectivePet})`
+          return `${this.cell.roomType} room (${this.petIcon})`
         }
         return `${this.cell.roomType} room`
       }
@@ -348,12 +348,12 @@ export default {
       return this.pasture?.animalCount || 0
     },
 
-    // Effective pet — checks animalOverrides first
-    effectivePet() {
-      if (this.animalOverrides && 'pet' in this.animalOverrides) {
-        return this.animalOverrides.pet?.animalType || null
+    // Effective house pets — checks animalOverrides first, returns { sheep: n, boar: n, cattle: n }
+    effectiveHousePets() {
+      if (this.animalOverrides && 'housePets' in this.animalOverrides) {
+        return this.animalOverrides.housePets || { sheep: 0, boar: 0, cattle: 0 }
       }
-      return this.player.pet
+      return this.player.housePets || { sheep: 0, boar: 0, cattle: 0 }
     },
 
     // Effective unfenced stable animal — checks animalOverrides first
@@ -402,21 +402,25 @@ export default {
       }
     },
 
-    // Show pet in the first room cell (0,0)
+    // Show house pets in the first room cell (0,0)
     showPet() {
-      return this.cell.type === 'room' &&
-             this.row === 0 &&
-             this.col === 0 &&
-             this.effectivePet
+      if (this.cell.type !== 'room' || this.row !== 0 || this.col !== 0) {
+        return false
+      }
+      const pets = this.effectiveHousePets
+      return (pets.sheep || 0) + (pets.boar || 0) + (pets.cattle || 0) > 0
     },
 
     petIcon() {
-      switch (this.effectivePet) {
-        case 'sheep': return '🐑'
-        case 'boar': return '🐗'
-        case 'cattle': return '🐄'
-        default: return ''
+      const pets = this.effectiveHousePets
+      const icons = []
+      const emojiMap = { sheep: '🐑', boar: '🐗', cattle: '🐄' }
+      for (const [type, emoji] of Object.entries(emojiMap)) {
+        for (let i = 0; i < (pets[type] || 0); i++) {
+          icons.push(emoji)
+        }
       }
+      return icons.join('')
     },
 
     // Check if this is an unfenced stable with an animal
