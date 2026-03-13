@@ -197,13 +197,12 @@ AgricolaPlayer.prototype.hasEmptyUnfencedStable = function() {
 }
 
 AgricolaPlayer.prototype.getTotalAnimalCapacity = function(animalType) {
-  // House animals - same type only (skip if a different type is already present)
+  // House animals - capacity minus animals of other types
   let capacity = 0
   const houseCapacity = this.applyHouseAnimalCapacityModifiers(1)
-  const existingHouseType = Object.entries(this.housePets).find(([, n]) => n > 0)?.[0]
-  if (!existingHouseType || existingHouseType === animalType) {
-    capacity += houseCapacity
-  }
+  const totalInHouse = this.getAnimalsInHouse()
+  const otherTypesInHouse = totalInHouse - (this.housePets[animalType] || 0)
+  capacity += Math.max(0, houseCapacity - otherTypesInHouse)
 
   // Pastures that are empty or already have this type
   for (const pasture of this.farmyard.pastures) {
@@ -281,10 +280,13 @@ AgricolaPlayer.prototype.getAnimalPlacementLocations = function() {
     currentAnimals: { ...this.housePets },
   }
   if (houseCapacity > 1) {
-    houseLoc.sameTypeOnly = true
+    houseLoc.mixedTypes = true
   }
-  const existingType = Object.entries(this.housePets).find(([, n]) => n > 0)?.[0] || null
-  houseLoc.currentAnimalType = existingType
+  else {
+    // Single capacity: behave like single-type slot
+    const existingType = Object.entries(this.housePets).find(([, n]) => n > 0)?.[0] || null
+    houseLoc.currentAnimalType = existingType
+  }
   locations.push(houseLoc)
 
   // Pastures
@@ -475,17 +477,14 @@ AgricolaPlayer.prototype.placeAnimals = function(animalType, count) {
     }
   }
 
-  // Finally try house (same type only)
+  // Finally try house
   if (remaining > 0) {
     const houseCapacity = this.applyHouseAnimalCapacityModifiers(1)
-    const existingHouseType = Object.entries(this.housePets).find(([, n]) => n > 0)?.[0]
-    if (!existingHouseType || existingHouseType === animalType) {
-      const totalInHouse = this.getAnimalsInHouse()
-      const canAddToHouse = Math.min(remaining, houseCapacity - totalInHouse)
-      if (canAddToHouse > 0) {
-        this.housePets[animalType] += canAddToHouse
-        remaining -= canAddToHouse
-      }
+    const totalInHouse = this.getAnimalsInHouse()
+    const canAddToHouse = Math.min(remaining, houseCapacity - totalInHouse)
+    if (canAddToHouse > 0) {
+      this.housePets[animalType] += canAddToHouse
+      remaining -= canAddToHouse
     }
   }
 

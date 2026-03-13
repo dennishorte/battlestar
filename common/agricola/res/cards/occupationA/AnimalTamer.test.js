@@ -87,7 +87,7 @@ describe('Animal Tamer', () => {
     expect(dennis.getTotalAnimals('cattle')).toBe(2)
   })
 
-  test('cannot hold mixed types in house', () => {
+  test('can hold mixed types (1 sheep + 1 cattle) in a 2-room house', () => {
     const game = t.fixture({ cardSets: ['occupationA'] })
     t.setBoard(game, {
       dennis: {
@@ -97,11 +97,13 @@ describe('Animal Tamer', () => {
     game.run()
 
     const dennis = game.players.byName('dennis')
-    // Place 1 sheep, then try 1 cattle — should fail (same type only)
+    // Place 1 sheep, then 1 cattle
     expect(dennis.placeAnimals('sheep', 1)).toBe(true)
-    expect(dennis.placeAnimals('cattle', 1)).toBe(false)
+    expect(dennis.placeAnimals('cattle', 1)).toBe(true)
     expect(dennis.housePets.sheep).toBe(1)
-    expect(dennis.housePets.cattle).toBe(0)
+    expect(dennis.housePets.cattle).toBe(1)
+    expect(dennis.getTotalAnimals('sheep')).toBe(1)
+    expect(dennis.getTotalAnimals('cattle')).toBe(1)
   })
 
   test('cannot exceed room count in house', () => {
