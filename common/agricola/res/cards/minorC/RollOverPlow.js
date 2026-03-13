@@ -10,6 +10,9 @@ module.exports = {
   allowsAnytimeAction: true,
 
   getAnytimeActions(game, player) {
+    if (game.cardState(this.id).activating) {
+      return []
+    }
     const sownFields = player.getFieldSpaces().filter(f => f.crop && f.cropCount > 0)
     if (sownFields.length < 3) {
       return []
@@ -28,6 +31,8 @@ module.exports = {
   },
 
   activate(game, player) {
+    game.cardState(this.id).activating = true
+
     const sownFields = player.getFieldSpaces().filter(f => f.crop && f.cropCount > 0)
 
     // Choose field to clear
@@ -73,5 +78,7 @@ module.exports = {
       template: '{player} plows a field at ({row},{col})',
       args: { player, row: plowRow, col: plowCol },
     })
+
+    game.cardState(this.id).activating = false
   },
 }
