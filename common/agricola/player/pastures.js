@@ -738,6 +738,9 @@ AgricolaPlayer.prototype.buildPasture = function(spaces, options) {
         if (used > 0) {
           woodCost -= used
           card.callHook('useFreeFences', this.game, used)
+          // These fences were counted in usedFences when placed on the card;
+          // now that they're on the board (counted by getFenceCount), release them.
+          this.usedFences = Math.max(0, (this.usedFences || 0) - used)
         }
       }
     }

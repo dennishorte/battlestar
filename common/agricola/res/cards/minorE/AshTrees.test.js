@@ -110,4 +110,52 @@ describe('Ash Trees', () => {
     })
     expect(game.cardState('ash-trees-e074').storedFences).toBe(0)
   })
+
+  test('fence supply is correct after using fences from card', () => {
+    const game = t.fixture({ cardSets: ['minorE', 'test'] })
+
+    game.testSetBreakpoint('initialization-complete', () => {
+      game.cardState('ash-trees-e074').storedFences = 5
+      game.players.byName('dennis').usedFences = 5
+    })
+
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['ash-trees-e074'],
+        wood: 0,
+        farmyard: {
+          fields: [
+            { row: 0, col: 2, crop: 'grain', cropCount: 1 },
+            { row: 0, col: 3, crop: 'grain', cropCount: 1 },
+          ],
+        },
+      },
+      actionSpaces: ['Fencing'],
+    })
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.usedFences).toBe(5)
+    expect(dennis.getFencesInSupply()).toBe(10)
+
+    t.choose(game, 'Fencing')
+    t.action(game, 'build-pasture', { spaces: [{ row: 2, col: 0 }] })
+
+    t.testBoard(game, {
+      dennis: {
+        minorImprovements: ['ash-trees-e074'],
+        farmyard: {
+          fields: [
+            { row: 0, col: 2, crop: 'grain', cropCount: 1 },
+            { row: 0, col: 3, crop: 'grain', cropCount: 1 },
+          ],
+          pastures: [{ spaces: [{ row: 2, col: 0 }] }],
+        },
+      },
+    })
+    expect(game.cardState('ash-trees-e074').storedFences).toBe(1)
+    // Fences moved from card to board — supply stays the same
+    expect(dennis.getFencesInSupply()).toBe(10)
+  })
 })
