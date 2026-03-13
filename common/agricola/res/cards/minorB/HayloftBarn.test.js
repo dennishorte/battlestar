@@ -12,10 +12,9 @@ describe('Hayloft Barn', () => {
       },
       actionSpaces: ['Grain Seeds'],
     })
-    // Set hayloftBarnFood since setBoard skips onPlay
+    // Set stored food since setBoard skips onPlay
     game.testSetBreakpoint('initialization-complete', (game) => {
-      const dennis = game.players.byName('dennis')
-      dennis.hayloftBarnFood = 4
+      game.cardState('hayloft-barn-b021').stored = 4
     })
     game.run()
 
@@ -29,9 +28,7 @@ describe('Hayloft Barn', () => {
         occupations: ['test-occupation-1'],
       },
     })
-    // Custom card state: hayloftBarnFood has no testBoard equivalent
-    const dennis = game.players.byName('dennis')
-    expect(dennis.hayloftBarnFood).toBe(3) // 4 - 1
+    expect(game.cardState('hayloft-barn-b021').stored).toBe(3) // 4 - 1
   })
 
   test('decrements food counter each time grain is gained', () => {
@@ -47,8 +44,7 @@ describe('Hayloft Barn', () => {
       micah: { food: 20 },
     })
     game.testSetBreakpoint('initialization-complete', (game) => {
-      const dennis = game.players.byName('dennis')
-      dennis.hayloftBarnFood = 2
+      game.cardState('hayloft-barn-b021').stored = 2
     })
     game.run()
 
@@ -70,9 +66,7 @@ describe('Hayloft Barn', () => {
         occupations: ['test-occupation-1'],
       },
     })
-    // Custom card state: hayloftBarnFood has no testBoard equivalent
-    const dennis = game.players.byName('dennis')
-    expect(dennis.hayloftBarnFood).toBe(1) // 2 - 1
+    expect(game.cardState('hayloft-barn-b021').stored).toBe(1) // 2 - 1
   })
 
   test('triggers family growth when food counter reaches 0', () => {
@@ -87,8 +81,7 @@ describe('Hayloft Barn', () => {
       actionSpaces: ['Grain Seeds'],
     })
     game.testSetBreakpoint('initialization-complete', (game) => {
-      const dennis = game.players.byName('dennis')
-      dennis.hayloftBarnFood = 1
+      game.cardState('hayloft-barn-b021').stored = 1
     })
     game.run()
 
@@ -103,9 +96,7 @@ describe('Hayloft Barn', () => {
         occupations: ['test-occupation-1'],
       },
     })
-    // Custom card state: hayloftBarnFood has no testBoard equivalent
-    const dennis = game.players.byName('dennis')
-    expect(dennis.hayloftBarnFood).toBe(0)
+    expect(game.cardState('hayloft-barn-b021').stored).toBe(0)
   })
 
   test('gives 1 food when harvesting grain from fields', () => {
@@ -126,8 +117,7 @@ describe('Hayloft Barn', () => {
       micah: { food: 8 },
     })
     game.testSetBreakpoint('initialization-complete', (game) => {
-      const dennis = game.players.byName('dennis')
-      dennis.hayloftBarnFood = 4
+      game.cardState('hayloft-barn-b021').stored = 4
     })
     game.run()
 
@@ -154,8 +144,7 @@ describe('Hayloft Barn', () => {
         },
       },
     })
-    const dennis = game.players.byName('dennis')
-    expect(dennis.hayloftBarnFood).toBe(2) // 4 - 1 (Grain Seeds) - 1 (harvest)
+    expect(game.cardState('hayloft-barn-b021').stored).toBe(2) // 4 - 1 (Grain Seeds) - 1 (harvest)
   })
 
   test('does not give food when counter is already 0', () => {
@@ -170,8 +159,7 @@ describe('Hayloft Barn', () => {
       actionSpaces: ['Grain Seeds'],
     })
     game.testSetBreakpoint('initialization-complete', (game) => {
-      const dennis = game.players.byName('dennis')
-      dennis.hayloftBarnFood = 0
+      game.cardState('hayloft-barn-b021').stored = 0
     })
     game.run()
 
