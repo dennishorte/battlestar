@@ -900,14 +900,17 @@ AgricolaPlayer.prototype.applyAnimalPlacements = function(plan) {
         }
       }
 
-      // Parents must remain for each accepted baby
+      // Parents must remain for each accepted baby.
+      // Use total animals in final state (after removals already applied in step 1).
       if (accepted > 0) {
         const placed = totalPlaced[type] || 0
+        const currentAfterRemovals = this.getTotalAnimals(type)
+        const finalTotal = currentAfterRemovals + placed
         const required = requirements[type] || 2
-        if (placed < required + accepted) {
+        if (finalTotal < required + accepted) {
           return {
             success: false,
-            error: `Not enough ${type} parents: placed(${placed}) < requirement(${required}) + babies(${accepted})`,
+            error: `Not enough ${type} parents: final total(${finalTotal}) < requirement(${required}) + babies(${accepted})`,
           }
         }
       }

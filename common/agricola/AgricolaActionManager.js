@@ -421,7 +421,32 @@ class AgricolaActionManager extends BaseActionManager {
 
     // New modal response
     if (result && result.action === 'animal-placement' && result.placements) {
-      const acceptedBabies = result.acceptedBabies || pendingBabies
+      // Compute accepted babies from the final animal totals.
+      // A baby is accepted if the final state has enough animals (parents + baby).
+      const acceptedBabies = {}
+      const deltPlaced = {}
+      const deltRemoved = {}
+      for (const type of res.animalTypes) {
+        deltPlaced[type] = 0
+        deltRemoved[type] = 0
+      }
+      for (const p of (result.placements || [])) {
+        deltPlaced[p.animalType] = (deltPlaced[p.animalType] || 0) + p.count
+      }
+      for (const r of (result.removals || [])) {
+        deltRemoved[r.animalType] = (deltRemoved[r.animalType] || 0) + r.count
+      }
+      for (const type of res.animalTypes) {
+        const baby = pendingBabies[type] || 0
+        if (baby === 0) {
+          acceptedBabies[type] = 0
+          continue
+        }
+        const currentTotal = player.getTotalAnimals(type)
+        const finalTotal = currentTotal - deltRemoved[type] + deltPlaced[type]
+        const required = breedingRequirements[type] || 2
+        acceptedBabies[type] = finalTotal >= required + baby ? baby : 0
+      }
 
       const applyResult = player.applyAnimalPlacements({
         placements: result.placements,
