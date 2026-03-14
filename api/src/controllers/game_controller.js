@@ -62,10 +62,47 @@ export const fetch = async (req, res, next) => {
     return res.json({
       status: 'success',
       game: req.game.serialize(),
+      paused: req.game.paused || false,
     })
   }
   catch (err) {
     logger.error(`Error fetching game: ${err.message}`)
+    next(err)
+  }
+}
+
+export const pause = async (req, res, next) => {
+  try {
+    if (!req.game) {
+      return next(new NotFoundError('Game not found'))
+    }
+
+    await gameService.pause(req.game)
+
+    res.json({
+      status: 'success',
+    })
+  }
+  catch (err) {
+    logger.error(`Error pausing game: ${err.message}`)
+    next(err)
+  }
+}
+
+export const unpause = async (req, res, next) => {
+  try {
+    if (!req.game) {
+      return next(new NotFoundError('Game not found'))
+    }
+
+    await gameService.unpause(req.game)
+
+    res.json({
+      status: 'success',
+    })
+  }
+  catch (err) {
+    logger.error(`Error unpausing game: ${err.message}`)
     next(err)
   }
 }

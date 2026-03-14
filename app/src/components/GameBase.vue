@@ -18,6 +18,10 @@
       </details>
     </div>
 
+    <BAlert :model-value="game && game.paused" variant="danger">
+      This game is paused.
+    </BAlert>
+
     <AgricolaGame v-if="gameType === 'Agricola'" />
     <CubeDraft v-else-if="gameType === 'Cube Draft' || gameType === 'Set Draft'" />
     <MtgGame v-else-if="gameType === 'Magic'" />

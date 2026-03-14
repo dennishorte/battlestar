@@ -151,6 +151,60 @@ router.post('/kill', gameController.kill)
 
 /**
  * @swagger
+ * /game/pause:
+ *   post:
+ *     summary: Pause a game
+ *     tags: [Games]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - gameId
+ *             properties:
+ *               gameId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Game paused successfully
+ *       404:
+ *         description: Game not found
+ */
+router.post('/pause', gameController.pause)
+
+/**
+ * @swagger
+ * /game/unpause:
+ *   post:
+ *     summary: Unpause a game
+ *     tags: [Games]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - gameId
+ *             properties:
+ *               gameId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Game unpaused successfully
+ *       404:
+ *         description: Game not found
+ */
+router.post('/unpause', gameController.unpause)
+
+/**
+ * @swagger
  * /game/rematch:
  *   post:
  *     summary: Create a rematch from an existing game

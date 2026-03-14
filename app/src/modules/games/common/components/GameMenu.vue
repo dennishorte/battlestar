@@ -7,6 +7,7 @@
       <DropdownButton @click="next" :disabled="disabled.includes('next')">next</DropdownButton>
       <DropdownDivider />
       <DropdownButton @click="debug" :disabled="disabled.includes('debug')">debug</DropdownButton>
+      <DropdownButton @click="togglePause">{{ game.paused ? 'unpause' : 'pause' }}</DropdownButton>
 
       <slot/>
     </DropdownMenu>
@@ -65,6 +66,12 @@ export default {
       else {
         this.$router.push('/')
       }
+    },
+
+    async togglePause() {
+      const endpoint = this.game.paused ? '/api/game/unpause' : '/api/game/pause'
+      await this.$post(endpoint, { gameId: this.game._id })
+      this.$router.go()
     },
 
     undo() {

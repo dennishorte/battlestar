@@ -131,7 +131,8 @@ describe('Game Controller', () => {
       expect(req.game.serialize).toHaveBeenCalled()
       expect(res.json).toHaveBeenCalledWith({
         status: 'success',
-        game: { id: 'game-id', serialized: true }
+        game: { id: 'game-id', serialized: true },
+        paused: false,
       })
     })
 

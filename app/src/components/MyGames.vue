@@ -32,9 +32,10 @@
               </div>
             </td>
             <td>{{ gameAge(game) }}</td>
-            <td>{{ waitingForViewer(game) ? '\u231B' : '' }}</td>
+            <td>{{ game.paused ? '\u23F8' : (waitingForViewer(game) ? '\u231B' : '') }}</td>
             <td>
               <DropdownMenu :notitle="true">
+                <DropdownItem @click="togglePause(game)">{{ game.paused ? 'unpause' : 'pause' }}</DropdownItem>
                 <DropdownItem @click="kill(game._id)">kill</DropdownItem>
               </DropdownMenu>
             </td>
@@ -129,6 +130,12 @@ export default {
 
     async kill(gameId) {
       await this.$post('/api/game/kill', { gameId })
+      this.$router.go()
+    },
+
+    async togglePause(game) {
+      const endpoint = game.paused ? '/api/game/unpause' : '/api/game/pause'
+      await this.$post(endpoint, { gameId: game._id })
       this.$router.go()
     },
 

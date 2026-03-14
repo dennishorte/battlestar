@@ -108,6 +108,14 @@ Game.kill = async function(game) {
   await db.game.gameOver(game, true)
 }
 
+Game.pause = async function(game) {
+  await db.game.pause(game._id)
+}
+
+Game.unpause = async function(game) {
+  await db.game.unpause(game._id)
+}
+
 Game.rematch = async function(game) {
   const lobbyId = await db.lobby.create()
   const lobby = await db.lobby.findById(lobbyId)
@@ -162,6 +170,10 @@ Game.saveFull = async function(game, { branchId, overwrite, chat, responses, wai
     throw new GameKilledError('game_killed')
   }
 
+  if (game.paused) {
+    throw new Error('This game is paused')
+  }
+
   if (chat !== undefined) {
     game.log.setChat(chat)
   }
@@ -188,6 +200,10 @@ Game.saveFull = async function(game, { branchId, overwrite, chat, responses, wai
 Game.saveResponse = async function(game, response) {
   if (game.killed) {
     throw new Error('This game was killed')
+  }
+
+  if (game.paused) {
+    throw new Error('This game is paused')
   }
 
   // Capture waiting state before processing response

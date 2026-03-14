@@ -162,6 +162,20 @@ Game.saveSettings = async function(game, settings) {
   )
 }
 
+Game.pause = async function(gameId) {
+  await gameCollection.updateOne(
+    { _id: gameId },
+    { $set: { paused: true } },
+  )
+}
+
+Game.unpause = async function(gameId) {
+  await gameCollection.updateOne(
+    { _id: gameId },
+    { $set: { paused: false } },
+  )
+}
+
 Game.saveStats = async function(gameData) {
   return await gameCollection.updateOne(
     { _id: gameData._id },

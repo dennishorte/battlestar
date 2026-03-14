@@ -14,7 +14,9 @@ async function _loadGame(gameId) {
     return new NotFoundError(`Game not found. ID: ${gameId}`)
   }
   else {
-    return fromData(gameData)
+    const game = fromData(gameData)
+    game.paused = gameData.paused || false
+    return game
   }
 }
 

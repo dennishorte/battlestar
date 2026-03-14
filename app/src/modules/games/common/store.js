@@ -39,6 +39,7 @@ export default {
 
       const response = await this.$post('/api/game/fetch', { gameId })
       const game = fromData(response.game, actor.name)
+      game.paused = response.paused || false
 
       try {
         game.run()
