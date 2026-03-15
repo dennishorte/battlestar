@@ -21,7 +21,6 @@ describe("Novel", () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Novel')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'purple')
 
     t.testIsSecondPlayer(game)

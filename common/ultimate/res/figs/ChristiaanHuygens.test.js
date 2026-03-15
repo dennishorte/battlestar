@@ -122,7 +122,6 @@ describe('Christiaan Huygens', () => {
       // Karma triggers: junk age 6 deck, then choose to draw
       request = t.choose(game, 'draw two 8') // Choose to draw two age 8
       // Rocketry (3 {i}) + Skyscrapers (0 {i}) = 3 {i} total, dennis has 0, so return both
-      request = t.choose(game, 'auto')
 
       t.testIsSecondPlayer(game)
       t.testDeckIsJunked(game, 6) // Age 6 deck was junked

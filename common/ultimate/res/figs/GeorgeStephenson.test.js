@@ -101,7 +101,6 @@ describe('George Stephenson', () => {
       let request
       request = game.run()
       request = t.choose(game, 'Achieve.*base-1*') // Claim age 1 achievement (Sailing)
-      request = t.choose(game, 'auto')
 
 
       t.testIsSecondPlayer(game)

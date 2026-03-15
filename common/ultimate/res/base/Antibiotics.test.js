@@ -66,7 +66,6 @@ describe('Antibiotics', () => {
     game.run()
     t.choose(game, 'Dogma.Antibiotics')
     t.choose(game, 'Archery', 'Calendar', 'Mathematics')  // 2 distinct ages -> draw 4
-    t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

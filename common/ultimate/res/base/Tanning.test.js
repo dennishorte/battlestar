@@ -22,7 +22,6 @@ describe('Tanning', () => {
     // First effect: score two cards from hand
     // chooseAndScore with count: 2 requires selecting 2 cards at once
     request = t.choose(game, 'Fire', 'Curing') // Choose two cards to score
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'Archery')
 
     t.testIsSecondPlayer(game)

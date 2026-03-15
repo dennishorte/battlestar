@@ -142,7 +142,6 @@ describe('Magic 8-Ball', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Magic 8-Ball')
     request = t.choose(game, 'Safeguard two available standard achievements')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

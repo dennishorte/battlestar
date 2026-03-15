@@ -25,7 +25,6 @@ describe('Quantum Theory', () => {
     t.testChoices(request, ['Tools', 'Calendar', 'Domestication'], 0, 2)
 
     request = t.choose(game, 'Tools', 'Calendar')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -19,7 +19,6 @@ describe("Hudson's Bay Company Archives", () => {
     let request
     request = game.run()
     request = t.choose(game, 'dogma')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'Gunpowder')
 
     t.testIsFirstAction(request)

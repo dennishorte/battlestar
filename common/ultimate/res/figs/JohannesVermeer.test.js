@@ -204,7 +204,6 @@ describe('Johannes Vermeer', () => {
       request = t.choose(game, 'Meld.Tools')
       // Karma triggers: choose a color and score all cards of that color
       request = t.choose(game, 'green') // Choose green color
-      request = t.choose(game, 'auto')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
@@ -234,7 +233,6 @@ describe('Johannes Vermeer', () => {
       request = t.choose(game, 'Meld.Tools')
       // Karma triggers: choose a color and score all cards of that color
       request = t.choose(game, 'red') // Choose red color
-      request = t.choose(game, 'auto')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

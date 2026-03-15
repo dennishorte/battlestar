@@ -24,7 +24,6 @@ describe('Tools', () => {
     request = t.choose(game, 'Dogma.Tools')
     request = t.choose(game, 'yes')
     request = t.choose(game, 'Fermenting', 'Machinery', 'Sailing')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'Engineering')
 
     t.testIsSecondPlayer(game)

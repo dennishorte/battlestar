@@ -1693,7 +1693,6 @@ describe('Innovation', () => {
 
             let request = game.run()
             request = t.choose(game, 'skip')
-            request = t.choose(game, 'auto')
 
             t.testIsFirstAction(request)
             t.testBoard(game, {

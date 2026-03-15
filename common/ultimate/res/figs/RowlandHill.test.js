@@ -25,7 +25,6 @@ describe('Rowland Hill', () => {
     request = game.run()
     request = t.choose(game, 'Achieve.*base-2*')
     request = t.choose(game, 'Fermenting', 'Canal Building', 'Vaccination')
-    request = t.choose(game, 'auto')
 
     t.testBoard(game, {
       dennis: {

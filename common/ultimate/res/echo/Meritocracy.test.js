@@ -30,7 +30,6 @@ describe("Meritocracy", () => {
     t.testChoices(request, ['factory', 'leaf'])
 
     request = t.choose(game, 'leaf')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -75,7 +74,6 @@ describe("Meritocracy", () => {
     t.testChoices(request, ['factory', 'leaf'])
 
     request = t.choose(game, 'leaf')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

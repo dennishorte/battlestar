@@ -21,7 +21,6 @@ describe("Galleon Nuestra Senora De Atocha", () => {
     request = game.run()
     request = t.choose(game, 'dogma')
     request = t.choose(game, 2)
-    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

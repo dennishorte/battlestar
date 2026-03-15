@@ -23,7 +23,6 @@ describe('Secretum Secretorum', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Secretum Secretorum')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'Reformation')
 
     t.testIsSecondPlayer(game)

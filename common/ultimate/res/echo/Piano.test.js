@@ -87,7 +87,6 @@ describe("Piano", () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Piano')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

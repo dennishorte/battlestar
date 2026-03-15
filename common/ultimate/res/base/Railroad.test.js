@@ -29,7 +29,6 @@ describe('Railroad', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Railroad')
-    request = t.choose(game, 'auto')
 
     t.testChoices(request, ['green'])
 

@@ -26,7 +26,6 @@ describe("Fertilizer", () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Fertilizer')
     request = t.choose(game, 'Construction')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

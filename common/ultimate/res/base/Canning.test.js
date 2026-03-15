@@ -22,7 +22,6 @@ describe('Canning', () => {
     game.run()
     t.choose(game, 'Dogma.Canning')
     t.choose(game, 'yes')
-    t.choose(game, 'auto')
     t.choose(game, 'yellow')
 
     t.testIsSecondPlayer(game)

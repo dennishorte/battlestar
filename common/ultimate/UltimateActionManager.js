@@ -1116,6 +1116,135 @@ class UltimateActionManager extends BaseActionManager {
 
 
   ////////////////////////////////////////////////////////////////////////////////
+  // Order detection for *Many methods
+
+  _orderMatters(player, verb, cards, target) {
+    // 1. Same-color check (meld/tuck/transfer-to-board): if 2+ cards share a color,
+    //    order determines which ends up on top (affecting dogma, visible biscuits, karma).
+    if (verb === 'meld' || verb === 'tuck' || (verb === 'transfer' && target?.toBoard)) {
+      const colors = cards.map(c => c.color)
+      if (colors.length !== new Set(colors).size) {
+        return true
+      }
+    }
+
+    // 2. Zone-limit check: if more cards than available slots, order determines
+    //    which cards make it in vs which are dropped.
+    if (this._zoneLimitExceeded(player, verb, cards, target)) {
+      return true
+    }
+
+    // 3. Direct karma check: if any karma triggers on this verb, order could matter.
+    //    findKarmasByTrigger returns [] when karmaDepth > 0, so actions inside karma
+    //    effects auto-order for free.
+    if (this.game.findKarmasByTrigger(player, verb).length > 0) {
+      return true
+    }
+
+    // 4. Indirect achievement chain: if the verb can trigger claimAchievement as a
+    //    side effect, and any 'achieve' karma exists, order matters.
+    if (this._couldTriggerAchievement(verb, cards)) {
+      if (this.game.findKarmasByTrigger(player, 'achieve').length > 0) {
+        return true
+      }
+    }
+
+    // 5. Uncovering a figure: if removing a card from a color zone would reveal a
+    //    figure with karma triggers matching the verb or 'achieve', order matters.
+    const relevantTriggers = [verb]
+    if (this._couldTriggerAchievement(verb, cards)) {
+      relevantTriggers.push('achieve')
+    }
+    if (this._couldRevealRelevantFigure(cards, relevantTriggers)) {
+      return true
+    }
+
+    return false
+  }
+
+  _couldTriggerAchievement(verb, cards) {
+    if (verb === 'junk') {
+      return cards.some(c => c.checkHasBiscuit(';') || c.checkHasBiscuit(':'))
+    }
+    if (verb === 'meld') {
+      return cards.some(c => c.checkHasBiscuit('<') || c.checkHasBiscuit('>') || c.checkHasBiscuit('^'))
+    }
+    return false
+  }
+
+  _couldRevealRelevantFigure(cards, relevantTriggers) {
+    // Group cards by their color zone (only cards currently on a color zone)
+    const cardsByZone = new Map()
+    for (const card of cards) {
+      const zone = card.zone
+      if (zone.isColorZone()) {
+        if (!cardsByZone.has(zone)) {
+          cardsByZone.set(zone, new Set())
+        }
+        cardsByZone.get(zone).add(card)
+      }
+    }
+
+    // For each zone with cards being removed, check if any card that could be
+    // temporarily on top during intermediate removal steps is a relevant figure.
+    // Walk from top: all removal-set cards in the prefix could be briefly exposed
+    // as top (once cards above them are removed first), plus the first non-removal
+    // card which is the final top after all removals.
+    for (const [zone, removalSet] of cardsByZone) {
+      const cardlist = zone.cardlist()
+      for (const card of cardlist) {
+        if (card.checkIsFigure()) {
+          for (const trigger of relevantTriggers) {
+            if (card.getKarmaInfo(trigger).length > 0) {
+              return true
+            }
+          }
+        }
+        // Stop at the first card not being removed — it can't be passed through
+        if (!removalSet.has(card)) {
+          break
+        }
+      }
+    }
+
+    return false
+  }
+
+  _zoneLimitExceeded(player, verb, cards, target) {
+    // Determine the target zone for zone-limited verbs
+    let zone, limitFn
+    if (verb === 'foreshadow') {
+      zone = this.game.zones.byPlayer(player, 'forecast')
+      limitFn = () => player.forecastLimit()
+    }
+    else if (verb === 'safeguard') {
+      zone = this.game.zones.byPlayer(player, 'safe')
+      limitFn = () => player.safeLimit()
+    }
+    else if (verb === 'transfer' && target?.id) {
+      // Transfer to a specific zone — check if it's forecast or safe
+      const targetPlayer = target.player?.()
+      if (targetPlayer && target.id.endsWith('.forecast')) {
+        zone = target
+        limitFn = () => targetPlayer.forecastLimit()
+      }
+      else if (targetPlayer && target.id.endsWith('.safe')) {
+        zone = target
+        limitFn = () => targetPlayer.safeLimit()
+      }
+    }
+
+    if (zone && limitFn) {
+      const available = limitFn() - zone.cardlist().length
+      if (cards.length > available) {
+        return true
+      }
+    }
+    return false
+  }
+
+
+  ////////////////////////////////////////////////////////////////////////////////
   // Helper methods for creating common classes of action
 
   static createManyMethod(verb, numArgs) {
@@ -1128,6 +1257,10 @@ class UltimateActionManager extends BaseActionManager {
       let auto = opts.ordered || false
       let remaining = [...cards]
       const startZones = Object.fromEntries(remaining.map(c => [c.id, c.zone]))
+
+      if (!auto && remaining.length > 1) {
+        auto = !this._orderMatters(player, verb, remaining, args[2])
+      }
 
       while (remaining.length > 0) {
         // Check if any cards in 'remaining' have been acted on by some other force (karma effect).

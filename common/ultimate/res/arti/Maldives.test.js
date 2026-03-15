@@ -22,10 +22,8 @@ describe("Maldives", () => {
     request = game.run()
     request = t.choose(game, 'dogma')
     request = t.choose(game, 'Sailing', 'Tools')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'Calendar')
     request = t.choose(game, 'The Wheel', 'Masonry')
-    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

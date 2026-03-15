@@ -27,7 +27,6 @@ describe("Petition of Right", () => {
     request = game.run()
     request = t.choose(game, 'dogma')
     request = t.choose(game, 'Tools', 'Sailing')
-    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

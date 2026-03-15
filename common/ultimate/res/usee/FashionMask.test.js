@@ -16,9 +16,7 @@ describe('Fashion Mask', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Fashion Mask')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'Electricity')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

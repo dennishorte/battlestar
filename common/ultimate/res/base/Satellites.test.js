@@ -22,7 +22,6 @@ describe('Satellites', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Satellites')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'purple')
     request = t.choose(game, 'Corporations')
 

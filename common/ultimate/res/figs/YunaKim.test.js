@@ -89,7 +89,6 @@ describe('Yuna Kim', () => {
     // From dennis: Tools, Mathematics, Writing (top 3)
     // From micah: Software, Computers (both, less than 3)
     // returnMany will ask owner (dennis) to choose order of returning cards
-    request = t.choose(game, 'auto') // Auto-order for returning cards
     // Then tuck Experimentation instead of melding it
 
     t.testIsSecondPlayer(game)
@@ -133,7 +132,6 @@ describe('Yuna Kim', () => {
     // From dennis: Tools, Mathematics (both, less than 3)
     // From micah: Writing, Printing Press, Experimentation (top 3)
     // returnMany will ask owner (dennis) to choose order of returning cards
-    request = t.choose(game, 'auto') // Auto-order for returning cards
     // Then tuck Software instead of melding it
 
     t.testBoard(game, {

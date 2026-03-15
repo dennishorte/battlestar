@@ -57,7 +57,6 @@ describe('Erwin Rommel', () => {
       request = t.choose(game, 'Dogma.Philosophy')
       request = t.choose(game, 'Tools') // Score Tools (blue, age 1, non-figure)
       // Karma triggers: instead of scoring Tools, score top blue cards from all boards
-      request = t.choose(game, 'auto') // Auto-order/score all top blue cards
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

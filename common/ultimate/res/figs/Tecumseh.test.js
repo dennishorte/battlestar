@@ -22,7 +22,6 @@ describe('Tecumseh', () => {
     request = t.choose(game, 'Meld.Tools')
     request = t.choose(game, 5) // Choose age 5
     request = t.choose(game, 'dennis.Banking', 'micah.Coal')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -90,7 +89,6 @@ describe('Tecumseh', () => {
     request = t.choose(game, 'Meld.Tools')
     request = t.choose(game, 5) // Choose age 5
     request = t.choose(game, 'dennis.Banking', 'micah.Coal')
-    request = t.choose(game, 'auto')
     // No achievement to junk, so no additional request
 
     t.testIsSecondPlayer(game)
@@ -164,7 +162,6 @@ describe('Tecumseh', () => {
     request = t.choose(game, 'Meld.Tools')
     request = t.choose(game, 5) // Choose age 5
     request = t.choose(game, 'dennis.Banking', 'micah.Coal', 'scott.Physics')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -24,8 +24,6 @@ describe("Laser", () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Laser')
     request = t.choose(game, 'Tools', 'Sailing', 'Construction', 'Machinery')
-    request = t.choose(game, 'auto')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

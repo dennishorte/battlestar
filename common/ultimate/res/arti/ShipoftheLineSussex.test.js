@@ -38,7 +38,6 @@ describe("Ship of the Line Sussex", () => {
     request = game.run()
     request = t.choose(game, 'dogma')
     request = t.choose(game, 'blue')
-    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

@@ -101,7 +101,6 @@ describe('Yi Sun-Sin', () => {
         request = t.choose(game, 'Dogma.Canal Building')
         request = t.choose(game, 'Exchange highest cards between hand and score pile')
         // TuckMany asks to choose which cards to tuck (or use 'auto' to tuck all)
-        request = t.choose(game, 'auto')
         // Choose which top card with {k} to score (Masonry on micah's board)
         request = t.choose(game, 'Masonry')
 
@@ -144,7 +143,6 @@ describe('Yi Sun-Sin', () => {
         request = t.choose(game, 'Dogma.Canal Building')
         request = t.choose(game, 'Exchange highest cards between hand and score pile')
         // TuckMany asks to choose which cards to tuck (or use 'auto' to tuck all)
-        request = t.choose(game, 'auto')
         // Choose which top card with {k} to score (Masonry on dennis's board)
         request = t.choose(game, 'Masonry')
 

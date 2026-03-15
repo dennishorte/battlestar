@@ -23,8 +23,6 @@ describe("Calculator", () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Calculator')
-    request = t.choose(game, 'auto')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'blue')
 
     t.testIsSecondPlayer(game)
@@ -54,7 +52,6 @@ describe("Calculator", () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Calculator')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

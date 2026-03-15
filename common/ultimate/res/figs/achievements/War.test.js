@@ -13,7 +13,6 @@ test('War', () => {
   game.run()
   t.choose(game, 'Decree.War')
   t.choose(game, 3) // Choose age 3 - returns Machinery (micah's yellow) and Optics (scott's red)
-  t.choose(game, 'auto')
 
   t.testIsSecondPlayer(game)
   t.testBoard(game, {

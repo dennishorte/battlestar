@@ -25,7 +25,6 @@ describe('Vaccination', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Vaccination')
     request = t.choose(game, 1)
-    request = t.choose(game, 'auto')
 
     t.testBoard(game, {
       dennis: {

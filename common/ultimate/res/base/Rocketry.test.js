@@ -21,7 +21,6 @@ describe('Rocketry', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Rocketry')
     request = t.choose(game, '**base-9* (micah)', '**base-6* (micah)')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

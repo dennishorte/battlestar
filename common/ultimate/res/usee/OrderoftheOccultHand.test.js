@@ -61,9 +61,7 @@ describe('Order of the Occult Hand', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Order of the Occult Hand')
     request = t.choose(game, 'Software', 'Mapmaking')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'Optics', 'Atomic Theory', 'Flight', 'Coal')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -25,7 +25,6 @@ describe('Fishing', () => {
     request = t.choose(game, 'Dogma.Fishing')
     // Draws and melds Fire (age 0, red)
     // Reveals all hands: dennis has Archery (red), micah has Stone Knives (red), Curing (blue)
-    request = t.choose(game, 'auto')
     // Transfers all red cards to dennis's hand: Archery, Stone Knives
     // Action completes, turn passes to micah
 
@@ -143,7 +142,6 @@ describe('Fishing', () => {
     request = t.choose(game, 'Dogma.Fishing')
     // Draws and melds Stone Knives (age 0, red)
     // Reveals all hands: dennis has Archery (red), Gunpowder (red), micah has Fire (red)
-    request = t.choose(game, 'auto')
     // Transfers all red cards to dennis's hand: Archery, Gunpowder, Fire
     // Hand now has: Archery, Gunpowder, Fire (3 red cards) - triggers age 2 draw
 
@@ -185,7 +183,6 @@ describe('Fishing', () => {
     // Draws and melds Fresh Water (age 0, yellow)
     // Reveals all hands: dennis has Agriculture (yellow), Fermenting (yellow), micah has Fresh Water (yellow)
     // Transfers all yellow cards to dennis's hand: Agriculture, Fermenting, Fresh Water
-    request = t.choose(game, 'auto')
     // Fresh Water was drawn, so draws age 1 (Tools)
     // Hand now has: Agriculture, Fermenting, Fresh Water (3 yellow cards) - triggers age 2 draw (Mathematics)
 

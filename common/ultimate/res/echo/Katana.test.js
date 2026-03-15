@@ -29,7 +29,6 @@ describe("Katana", () => {
     t.testChoices(request, ['Archery', 'Fermenting', 'Mysticism'])
 
     request = t.choose(game, 'Fermenting', 'Mysticism')
-    request = t.choose(game, 'auto')
 
 
     t.testIsSecondPlayer(game)

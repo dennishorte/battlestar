@@ -53,7 +53,6 @@ describe('Alchemy', () => {
     })
     game.run()
     t.choose(game, 'Dogma.Alchemy')
-    t.choose(game, 'auto')  // No cards to meld/score after return
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

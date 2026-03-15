@@ -45,7 +45,6 @@ describe('Stem Cells', () => {
     game.run()
     t.choose(game, 'Dogma.Stem Cells')
     t.choose(game, 'yes')
-    t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

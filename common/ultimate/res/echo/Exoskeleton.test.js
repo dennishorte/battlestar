@@ -18,7 +18,6 @@ describe("Exoskeleton", () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Exoskeleton')
-    request = t.choose(game, 'auto')
     request = t.choose(game, '**base-1* (micah)')
 
     t.testIsSecondPlayer(game)
@@ -49,7 +48,6 @@ describe("Exoskeleton", () => {
     let request
     request = game.run()
     request = t.choose(game, 'Meld.Robocar')
-    request = t.choose(game, 'auto')
     request = t.choose(game, '**base-1* (micah)')
 
     t.testIsSecondPlayer(game)

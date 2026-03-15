@@ -96,7 +96,6 @@ describe('Edward Jenner', () => {
       request = game.run()
       request = t.choose(game, 'Dogma.Pottery')
       request = t.choose(game, 'Tools', 'Writing', 'Sailing') // Return 3 cards, will score age 3
-      request = t.choose(game, 'auto') // Auto-order returned cards
       // Karma triggers: junk achievement of age 3 first (Machinery)
       // Achievement auto-selects when only one option
       // Pottery's second dogma effect: Draw a {1}
@@ -207,7 +206,6 @@ describe('Edward Jenner', () => {
       request = game.run()
       request = t.choose(game, 'Dogma.Pottery')
       request = t.choose(game, 'Tools', 'Writing', 'Sailing') // Return 3 cards, will score age 3
-      request = t.choose(game, 'auto') // Auto-order returned cards
       // Karma triggers: choose which age 3 achievement to junk (only Machinery is age 3)
       // Actually, only Machinery is age 3, Navigation is age 4, so it auto-selects
 

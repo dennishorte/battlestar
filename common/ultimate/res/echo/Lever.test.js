@@ -23,7 +23,6 @@ describe("Lever", () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Lever')
     request = t.choose(game, 'Tools', 'Sailing', 'Domestication', 'Machinery', 'Novel', 'Scissors')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 2)
 
     t.testIsSecondPlayer(game)

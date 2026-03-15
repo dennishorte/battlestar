@@ -48,7 +48,6 @@ describe('Dolly the Sheep', () => {
     request = t.choose(game, 'dogma')
     request = t.choose(game, 'no')
     request = t.choose(game, 'yes')
-    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

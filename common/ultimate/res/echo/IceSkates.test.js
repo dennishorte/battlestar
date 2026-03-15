@@ -23,7 +23,6 @@ describe("Ice Skates", () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Ice Skates')
     request = t.choose(game, 'Tools', 'Sailing')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'draw and meld a {2}')
     request = t.choose(game, 'draw and foreshadow a {3}')
 

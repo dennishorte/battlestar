@@ -28,7 +28,6 @@ describe("X-Ray", () => {
     request = t.choose(game, 'Dogma.X-Ray')
     request = t.choose(game, 8)
     request = t.choose(game, 'Corporations')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'yellow')
 
     t.testIsSecondPlayer(game)

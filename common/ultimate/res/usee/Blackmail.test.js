@@ -24,7 +24,6 @@ describe('Blackmail', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Blackmail')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'Mathematics')
     request = t.choose(game, 'Agriculture')
 

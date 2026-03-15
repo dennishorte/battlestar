@@ -88,7 +88,6 @@ describe('Boyan Slat', () => {
     request = t.choose(game, 'Draw.draw a card')
     // Karma triggers: choose a value and return all cards of that value from all score piles
     request = t.choose(game, 1) // Choose age 1
-    request = t.choose(game, 'auto')
     // The Wheel and Tools (both age 1) are returned from score
     // More than one card returned, so no achievement
 
@@ -127,7 +126,6 @@ describe('Boyan Slat', () => {
     request = t.choose(game, 1) // Choose age 1
     // The Wheel (from dennis) and Mathematics (from micah) are returned from score
     // returnMany processes cards one at a time, asking which card to return next
-    request = t.choose(game, 'auto')
     // More than one card returned, so no achievement
 
     t.testIsSecondPlayer(game)

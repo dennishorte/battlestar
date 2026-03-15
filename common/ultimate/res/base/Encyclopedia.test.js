@@ -17,7 +17,6 @@ describe('Encyclopedia', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Encyclopedia')
     request = t.choose(game, 3)
-    request = t.choose(game, 'auto')
     request = t.choose(game)
 
     t.testIsSecondPlayer(game)

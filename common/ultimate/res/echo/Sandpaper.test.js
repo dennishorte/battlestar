@@ -22,7 +22,6 @@ describe("Sandpaper", () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Sandpaper')
     request = t.choose(game, 'Tools', 'Sailing')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'Almanac')
 
     t.testIsSecondPlayer(game)
@@ -53,9 +52,7 @@ describe("Sandpaper", () => {
     request = game.run()
     request = t.choose(game, 'Meld.Machinery')
     request = t.choose(game, 'Tools', 'Sailing')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'Almanac')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

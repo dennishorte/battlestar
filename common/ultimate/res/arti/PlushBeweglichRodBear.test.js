@@ -25,7 +25,6 @@ describe("Plush Beweglich Rod Bear", () => {
     request = game.run()
     request = t.choose(game, 'dogma')
     request = t.choose(game, 9)
-    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

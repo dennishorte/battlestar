@@ -17,7 +17,6 @@ describe('Enigma Machine', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Enigma Machine')
     request = t.choose(game, 'Safeguard all available standard achievements')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -44,7 +43,6 @@ describe('Enigma Machine', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Enigma Machine')
     request = t.choose(game, 'Transfer all your secrets to your hand')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -70,7 +68,6 @@ describe('Enigma Machine', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Enigma Machine')
     request = t.choose(game, 'Transfer all cards in your hand to the available achievements')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

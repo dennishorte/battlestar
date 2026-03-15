@@ -21,7 +21,6 @@ describe("Luna 3", () => {
     let request
     request = game.run()
     request = t.choose(game, 'dogma')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 5)
 
     t.testIsFirstAction(request)

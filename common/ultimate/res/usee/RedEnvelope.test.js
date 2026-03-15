@@ -15,10 +15,8 @@ describe('Red Envelope', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Red Envelope')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'yes')
     request = t.choose(game, 'Masonry', 'Sailing')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -46,7 +44,6 @@ describe('Red Envelope', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Red Envelope')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

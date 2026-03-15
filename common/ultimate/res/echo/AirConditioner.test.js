@@ -25,7 +25,6 @@ describe("Air Conditioner", () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Air Conditioner')
     request = t.choose(game, 'Mathematics')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

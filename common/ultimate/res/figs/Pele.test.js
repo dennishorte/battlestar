@@ -30,7 +30,6 @@ describe('Pele', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Pottery')
     request = t.choose(game, 'Tools', 'Writing') // Return two cards
-    request = t.choose(game, 'auto') // Confirm selection
 
     t.testGameOver(request, 'dennis', 'Pele')
     t.testBoard(game, {
@@ -67,7 +66,6 @@ describe('Pele', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Pottery')
     request = t.choose(game, 'Tools', 'Writing') // Return two cards
-    request = t.choose(game, 'auto') // Confirm selection
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -105,7 +103,6 @@ describe('Pele', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Pottery')
     request = t.choose(game, 'Tools', 'Writing') // Return two cards
-    request = t.choose(game, 'auto') // Confirm selection
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -144,7 +141,6 @@ describe('Pele', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Pottery')
     request = t.choose(game, 'Tools', 'Writing') // Return two cards
-    request = t.choose(game, 'auto') // Confirm selection
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

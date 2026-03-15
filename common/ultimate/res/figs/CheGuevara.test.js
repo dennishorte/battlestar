@@ -63,8 +63,6 @@ describe('Che Guevara', () => {
       // Since Suburbia is yellow, junk all cards in all score piles and all available standard achievements
       // junkMany requires selections when there are multiple cards
       // Use 'auto' to auto-select all cards (order doesn't matter)
-      request = t.choose(game, 'auto')
-      request = t.choose(game, 'auto')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

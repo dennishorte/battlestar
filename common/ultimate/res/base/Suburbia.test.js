@@ -23,7 +23,6 @@ describe('Suburbia', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Suburbia')
     request = t.choose(game, 'Agriculture', 'Mapmaking')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'yes')
 
     t.testIsSecondPlayer(game)

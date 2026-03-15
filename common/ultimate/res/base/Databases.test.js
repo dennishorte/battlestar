@@ -20,7 +20,6 @@ describe('Databases', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Databases')
     request = t.choose(game, 'Tools', 'Reformation')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -47,7 +47,6 @@ describe('Perspective', () => {
     t.testChoices(request, ['Calendar', 'Mathematics', 'The Wheel'], 2)
 
     request = t.choose(game, 'Mathematics', 'The Wheel')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

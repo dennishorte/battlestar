@@ -16,7 +16,6 @@ describe("Marcha Real", () => {
     let request
     request = game.run()
     request = t.choose(game, 'dogma')
-    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
@@ -39,7 +38,6 @@ describe("Marcha Real", () => {
     let request
     request = game.run()
     request = t.choose(game, 'dogma')
-    request = t.choose(game, 'auto')
     request = t.choose(game, '**base-10*')
 
     t.testIsFirstAction(request)
@@ -68,7 +66,6 @@ describe("Marcha Real", () => {
     let request
     request = game.run()
     request = t.choose(game, 'dogma')
-    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

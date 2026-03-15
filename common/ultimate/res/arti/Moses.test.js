@@ -26,7 +26,6 @@ describe("Moses", () => {
     let request
     request = game.run()
     request = t.choose(game, 'dogma')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'The Pirate Code')
 
     t.testIsFirstAction(request)

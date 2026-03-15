@@ -24,7 +24,6 @@ describe('Hunt-Lennox Globe', () => {
     let request
     request = game.run()
     request = t.choose(game, 'dogma')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'Coal')
 
     t.testIsFirstAction(request)

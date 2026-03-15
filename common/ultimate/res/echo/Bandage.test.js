@@ -85,7 +85,6 @@ describe("Bandage", () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Bandage')
     request = t.choose(game, '**base-2*', 'Monument')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

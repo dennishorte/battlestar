@@ -21,7 +21,6 @@ describe("Machine Gun", () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Machine Gun')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -59,9 +58,7 @@ describe("Machine Gun", () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Machine Gun')
-    request = t.choose(game, 'auto')
     request = t.choose(game, '**base-3*', 'Monument', 'Wonder', 'Empire')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -103,7 +100,6 @@ describe("Machine Gun", () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Machine Gun')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

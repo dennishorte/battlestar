@@ -52,7 +52,6 @@ describe("Radio Telescope", () => {
     request = game.run()
     request = t.choose(game, 'Meld.Software')
     request = t.choose(game, 'MP3')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

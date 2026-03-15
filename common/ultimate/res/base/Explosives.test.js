@@ -51,7 +51,6 @@ describe('Explosives', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Explosives')
     request = t.choose(game, 'The Wheel')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

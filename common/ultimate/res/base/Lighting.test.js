@@ -25,7 +25,6 @@ describe('Lighting', () => {
     t.testChoices(request, ['Tools', 'The Wheel', 'Fermenting', 'Engineering'], 0, 3)
 
     request = t.choose(game, 'Tools', 'The Wheel', 'Fermenting')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

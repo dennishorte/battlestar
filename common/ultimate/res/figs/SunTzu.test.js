@@ -38,7 +38,6 @@ describe('Sun Tzu', () => {
     t.testChoices(request, ['Fermenting', 'Archery'])
 
     request = t.choose(game, 'Fermenting', 'Archery')
-    request = t.choose(game, 'Archery')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

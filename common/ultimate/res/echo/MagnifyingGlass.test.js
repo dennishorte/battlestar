@@ -24,7 +24,6 @@ describe("Magnifying Glass", () => {
     request = t.choose(game, 'Dogma.Magnifying Glass')
     request = t.choose(game, 'Sailing')
     request = t.choose(game, 4)
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'yellow')
 
     t.testIsSecondPlayer(game)

@@ -91,7 +91,6 @@ describe('Imhotep', () => {
     request = t.choose(game, 'Meld.Fermenting')
     request = t.choose(game, 'Meld.The Wheel')
     request = t.choose(game, 'Dogma.The Wheel')
-    request = t.choose(game, 'auto')
 
 
     t.testBoard(game, {

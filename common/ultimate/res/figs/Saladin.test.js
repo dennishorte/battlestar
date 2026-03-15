@@ -26,7 +26,6 @@ describe('Saladin', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Mapmaking')
-    request = t.choose(game, 'auto')
 
     t.testBoard(game, {
       dennis: {

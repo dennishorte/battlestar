@@ -50,7 +50,6 @@ describe('Padlock', () => {
     request = t.choose(game, 'Dogma.Padlock')
     request = t.choose(game, 'Tools', 'Myth')  // Choose invalid items on purpose.
     request = t.choose(game, 'Tools', 'Construction', 'Optics')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

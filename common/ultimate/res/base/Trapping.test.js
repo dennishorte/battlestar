@@ -53,7 +53,6 @@ describe('Trapping', () => {
     // Demand effect: Micah reveals hand and dennis's score pile
     // Transfer all cards matching colors: Archery (red matches Fire), Tools (blue matches Curing)
     // Fishing (green) doesn't match, so not transferred
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

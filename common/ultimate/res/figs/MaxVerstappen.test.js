@@ -97,7 +97,6 @@ describe('Max Verstappen', () => {
     // Karma triggers: return cards from hand (2 cards returned)
     // chooseAndReturn allows selecting multiple cards at once
     request = t.choose(game, 'Tools', 'Mathematics') // Return both cards
-    request = t.choose(game, 'auto')
     // Sailing's dogma effect executes 3 times (1 normal + 2 repeats):
     // First: draw and meld Agriculture
     // Second (repeated): draw and meld Pottery

@@ -17,7 +17,6 @@ describe('Black Market', () => {
     request = t.choose(game, 'Dogma.Black Market')
     request = t.choose(game, 'Optics')
     request = t.choose(game, '**base-7*', '**base-11*')
-    request = t.choose(game, 'Lighting')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

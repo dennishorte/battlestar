@@ -23,7 +23,6 @@ describe('International Prototype Metre Bar', () => {
     request = game.run()
     request = t.choose(game, 'dogma')
     request = t.choose(game, 5)
-    request = t.choose(game, 'auto')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

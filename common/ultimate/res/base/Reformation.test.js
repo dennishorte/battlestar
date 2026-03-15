@@ -69,7 +69,6 @@ describe("Reformation", () => {
     request = t.choose(game, 'Dogma.Reformation')
     request = t.choose(game, 'yes') // Choose to tuck
     request = t.choose(game, 'Agriculture', 'Metalworking') // Tuck two cards
-    request = t.choose(game, 'auto')
 
     t.testBoard(game, {
       dennis: {

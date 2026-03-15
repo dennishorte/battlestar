@@ -28,7 +28,6 @@ describe("Toilet", () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Toilet')
     request = t.choose(game, 'Masonry')
-    request = t.choose(game, 'auto')
     request = t.choose(game, 'Machinery')
 
     t.testIsSecondPlayer(game)

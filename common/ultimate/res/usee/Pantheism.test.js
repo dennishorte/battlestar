@@ -24,7 +24,6 @@ describe('Pantheism', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Pantheism')
     request = t.choose(game, 'purple')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -70,7 +70,6 @@ describe('Emma Watson', () => {
       request = t.choose(game, 'Meld.Computers')
       // Karma triggers: return top 6 blue cards (Tools, Mathematics, Experimentation, Printing Press, Writing, Software)
       // All 6 cards are returned, so no scoring happens
-      request = t.choose(game, 'auto') // Auto-order for returning cards
 
       t.testBoard(game, {
         dennis: {
@@ -106,8 +105,6 @@ describe('Emma Watson', () => {
       // Fewer than 6 cards were returned, so score all blue cards from all boards
       // dennis: Tools, Mathematics, Experimentation (meld target)
       // micah: Printing Press, Writing
-      request = t.choose(game, 'auto') // Auto-order for returning cards
-      request = t.choose(game, 'auto') // Auto-order for scoring cards
 
       t.testBoard(game, {
         dennis: {
@@ -141,7 +138,6 @@ describe('Emma Watson', () => {
       request = t.choose(game, 'Meld.Computers') // micah melds Computers
       // Karma triggers (triggerAll: true): return top 6 blue cards from micah's board
       // Owner (dennis) chooses which cards to return
-      request = t.choose(game, 'auto') // Auto-order for returning cards
 
       t.testBoard(game, {
         dennis: {
@@ -181,7 +177,6 @@ describe('Emma Watson', () => {
       // Fewer than 6 cards were returned, so score all blue cards from all boards
       // dennis: Tools, Mathematics
       // micah: Experimentation, Printing Press (meld target)
-      request = t.choose(game, 'auto') // Auto-order for returning cards
 
       t.testBoard(game, {
         dennis: {

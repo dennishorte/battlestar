@@ -60,7 +60,6 @@ describe("Coke", () => {
     let request
     request = game.run()
     request = t.choose(game, 'Meld.Thermometer')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

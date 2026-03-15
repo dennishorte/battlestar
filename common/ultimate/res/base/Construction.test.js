@@ -40,7 +40,6 @@ describe('Construction', () => {
       request = game.run()
       request = t.choose(game, 'Dogma.Construction')
       request = t.choose(game, 'Experimentation', 'Statistics')
-      request = t.choose(game, 'auto')
 
       const micah = game.players.byName('micah')
       const micahHandAges = game.zones.byPlayer(micah, 'hand').cardlist().map(c => c.age).sort()

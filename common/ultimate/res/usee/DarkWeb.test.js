@@ -26,7 +26,6 @@ describe('Dark Web', () => {
     request = t.choose(game, 'micah.green')
     request = t.choose(game, 'Safeguard achievements')
     request = t.choose(game, '**base-1*', '**base-1*')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -25,7 +25,6 @@ describe("MP3", () => {
     request = game.run()
     request = t.choose(game, 'Dogma.MP3')
     request = t.choose(game, 'Sailing', 'Tools')
-    request = t.choose(game, 'auto')
     request = t.choose(game, '**base-1*')
     request = t.choose(game, '**base-1*')
     request = t.choose(game, '**base-2*')

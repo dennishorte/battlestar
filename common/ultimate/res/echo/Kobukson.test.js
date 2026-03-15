@@ -32,7 +32,6 @@ describe("Kobukson", () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Kobukson')
     request = t.choose(game, 'dennis red')
-    request = t.choose(game, 'auto')
 
 
     t.testIsSecondPlayer(game)
@@ -86,7 +85,6 @@ describe("Kobukson", () => {
     request = game.run()
     request = t.choose(game, 'Meld.Atomic Theory')
     request = t.choose(game, 'dennis red')
-    request = t.choose(game, 'auto')
 
 
     t.testIsSecondPlayer(game)

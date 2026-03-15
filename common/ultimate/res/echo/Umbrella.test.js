@@ -18,7 +18,6 @@ describe("Umbrella", () => {
     request = t.choose(game, 'Dogma.Umbrella')
     request = t.choose(game, 'Tools')
     request = t.choose(game, 'Sailing')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

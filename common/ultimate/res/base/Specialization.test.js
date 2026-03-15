@@ -22,7 +22,6 @@ describe('Specialization', () => {
 
       game.run()
       t.choose(game, 'Dogma.Specialization')
-      t.choose(game, 'auto')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

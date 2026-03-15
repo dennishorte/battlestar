@@ -22,7 +22,6 @@ describe('Probability', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Probability')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -54,7 +53,6 @@ describe('Probability', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Probability')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -86,7 +84,6 @@ describe('Probability', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Probability')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -24,7 +24,6 @@ describe('Buried Treasure', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Buried Treasure')
     request = t.choose(game, 5)
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
@@ -61,9 +60,7 @@ describe('Buried Treasure', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Buried Treasure')
     request = t.choose(game, 5)
-    request = t.choose(game, 'auto')
     request = t.choose(game, '**base-6*', '**base-10*', '**base-1*')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

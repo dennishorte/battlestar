@@ -69,7 +69,6 @@ describe('Democracy', () => {
     request = t.choose(game, 'Sailing')
     request = t.choose(game, 'Coal')
     request = t.choose(game, 'The Wheel', 'Masonry')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

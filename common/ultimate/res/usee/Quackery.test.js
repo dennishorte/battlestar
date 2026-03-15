@@ -46,7 +46,6 @@ describe('Quackery', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Quackery')
     request = t.choose(game, 'Draw a 4')
-    request = t.choose(game, 'auto')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
