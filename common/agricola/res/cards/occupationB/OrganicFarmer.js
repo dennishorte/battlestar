@@ -6,6 +6,7 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "During scoring, you get 1 bonus point for each pasture containing at least 1 animal while having unused capacity for at least three more animals.",
+  requiresAnimalArrangement: true,
   getEndGamePoints(player) {
     let count = 0
     for (const pasture of player.farmyard.pastures) {

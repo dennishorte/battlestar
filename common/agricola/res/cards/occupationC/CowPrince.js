@@ -6,6 +6,7 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "During scoring, you get 1 bonus point for each space in your farmyard (including rooms) holding at least 1 cattle.",
+  requiresAnimalArrangement: true,
   getEndGamePoints(player) {
     let count = 0
     for (let row = 0; row < 3; row++) {

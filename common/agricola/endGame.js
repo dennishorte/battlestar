@@ -26,6 +26,17 @@ Agricola.prototype.endGame = function() {
     player._endGameAllPlayersBonusApplied = true
   }
 
+  // Prompt animal reorganization for players with cards that score based on arrangement
+  for (const player of this.players.all()) {
+    const cards = this.getPlayerActiveCards(player)
+    const needsReorg = cards.some(c =>
+      c.definition.requiresAnimalArrangement && c.hasHook('getEndGamePoints')
+    )
+    if (needsReorg) {
+      this.actions.promptAnimalReorganization(player)
+    }
+  }
+
   // Collect scores and remaining resources for all players
   const playerResults = []
 

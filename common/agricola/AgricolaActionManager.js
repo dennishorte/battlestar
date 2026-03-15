@@ -483,6 +483,14 @@ class AgricolaActionManager extends BaseActionManager {
     return bred
   }
 
+  promptAnimalReorganization(player) {
+    const total = player.getTotalAnimals('sheep') + player.getTotalAnimals('boar') + player.getTotalAnimals('cattle')
+    if (total === 0) {
+      return
+    }
+    this.handleAnimalPlacement(player, {}, { forceModal: true })
+  }
+
   // Entry point for animal overflow - redirects to unified handler
   handleAnimalOverflow(player, animalType, count) {
     this.handleAnimalPlacement(player, { [animalType]: count })

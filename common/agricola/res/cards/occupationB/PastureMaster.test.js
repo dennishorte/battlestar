@@ -29,6 +29,7 @@ describe('Pasture Master', () => {
 
     // Renovate wood → clay
     t.choose(game, 'House Redevelopment')
+    t.choose(game, 'Place Animals')  // reorganize animals before Pasture Master effect
     t.choose(game, 'Do not play an improvement')
 
     t.testBoard(game, {
@@ -71,6 +72,7 @@ describe('Pasture Master', () => {
     game.run()
 
     t.choose(game, 'House Redevelopment')
+    t.choose(game, 'Place Animals')  // reorganize animals before Pasture Master effect
     t.choose(game, 'Do not play an improvement')
 
     t.testBoard(game, {

@@ -7,6 +7,7 @@ module.exports = {
   players: "4+",
   text: "Each time you renovate, you get 1 additional animal of the respective type in each of your pastures with stable.",
   onRenovate(game, player) {
+    game.actions.promptAnimalReorganization(player)
     for (const pasture of player.farmyard.pastures) {
       // Check if this pasture has a stable
       let hasStable = false

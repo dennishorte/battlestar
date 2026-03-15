@@ -6,6 +6,7 @@ module.exports = {
   type: "occupation",
   players: "3+",
   text: "When you play this card, you immediately get 1 wood and 1 clay. During scoring, you get 1 bonus point for each pasture you have holding the maximum number of animals.",
+  requiresAnimalArrangement: true,
   onPlay(game, player) {
     player.addResource('wood', 1)
     player.addResource('clay', 1)
