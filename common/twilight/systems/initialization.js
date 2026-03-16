@@ -226,6 +226,10 @@ module.exports = function(Twilight) {
   }
 
   Twilight.prototype._initializeGalaxy = function() {
+    if (this.settings.mapGenerator) {
+      return this._initializeGalaxyFromGenerator()
+    }
+
     const playerCount = this.players.all().length
     const layoutKey = this.settings?.mapLayout || playerCount
     const layout = res.getLayout(layoutKey)
@@ -331,6 +335,35 @@ module.exports = function(Twilight) {
       }
     }
 
+    this._initializeSystemUnits()
+  }
+
+  Twilight.prototype._initializeGalaxyFromGenerator = function() {
+    const MapGenerator = require('../map-generator/MapGenerator')
+    const players = this.players.all()
+    const factionIds = players.map(p => p.factionId)
+
+    // Build generator settings from game settings
+    const genSettings = {
+      numPlayers: players.length,
+      races: factionIds,
+      usePok: true,
+      seed: this.settings.seed || this.settings.name,
+      ...(typeof this.settings.mapGenerator === 'object' ? this.settings.mapGenerator : {}),
+    }
+
+    const result = MapGenerator.generate(genSettings)
+    const systems = MapGenerator.toGameSystems(result)
+
+    // Copy systems into game state
+    for (const [id, system] of Object.entries(systems)) {
+      this.state.systems[id] = system
+    }
+
+    this._initializeSystemUnits()
+  }
+
+  Twilight.prototype._initializeSystemUnits = function() {
     // Initialize unit tracking for all systems
     for (const systemId of Object.keys(this.state.systems)) {
       this.state.units[systemId] = {
