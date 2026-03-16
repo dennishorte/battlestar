@@ -14,7 +14,9 @@ module.exports = {
       trigger: 'draw',
       kind: 'would-first',
       matches: (game, player, { age, self }) => {
-        return game.state.actionNumber === 1 && age === game.getEffectAge(self, 1)
+        return game.players.current().id === player.id
+          && game.state.actionNumber === 1
+          && age === game.getEffectAge(self, 1)
       },
       func(game, player, { self }) {
         const effectAge = game.getEffectAge(self, 1)
