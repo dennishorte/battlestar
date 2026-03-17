@@ -19,7 +19,7 @@ const ActionChoicesMixin = {
     choices.push(this._generateActionChoicesDogma())
     choices.push(this._generateActionChoicesEndorse())
     choices.push(this._generateActionChoicesAuspice())
-    choices.push(this._generateActionChoicesMeld())
+    choices.push(...this._generateActionChoicesMeld())
     return choices
   },
 
@@ -219,23 +219,33 @@ const ActionChoicesMixin = {
 
   _generateActionChoicesMeld() {
     const player = this.players.current()
-    const cards = this
+    const handCards = this
       .zones
       .byPlayer(player, 'hand')
       .cardlist()
 
-    this
+    const museumCards = this
       .cards
       .byPlayer(player, 'museum')
       .filter(card => !card.isMuseum)
-      .forEach(card => cards.push(card))
 
-    return {
+    const result = [{
       title: 'Meld',
-      choices: cards.map(c => c.id),
+      choices: handCards.map(c => c.id),
       min: 0,
       max: 1,
+    }]
+
+    if (museumCards.length > 0) {
+      result.push({
+        title: 'Meld from Museum',
+        choices: museumCards.map(c => c.id),
+        min: 0,
+        max: 1,
+      })
     }
+
+    return result
   },
 
 }

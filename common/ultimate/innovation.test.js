@@ -1669,12 +1669,109 @@ describe('Innovation', () => {
           })
 
           let request = game.run()
-          request = t.choose(game, 'Meld.Holmegaard Bows')
+          request = t.choose(game, 'Meld from Museum.Holmegaard Bows')
 
           t.testBoard(game, {
             dennis: {
               red: ['Holmegaard Bows'],
             },
+          })
+        })
+
+        describe('meld action separates hand and museum choices', () => {
+          test('hand cards appear under Meld', () => {
+            const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+            t.setBoard(game, {
+              dennis: {
+                hand: ['Tools', 'Writing'],
+                museum: ['Museum 1', 'Holmegaard Bows'],
+              },
+            })
+
+            const request = game.run()
+            const meld = request.selectors[0].choices.find(x => x.title === 'Meld')
+            expect(meld.choices).toStrictEqual(['Tools', 'Writing'])
+          })
+
+          test('museum artifacts appear under Meld from Museum', () => {
+            const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+            t.setBoard(game, {
+              dennis: {
+                hand: ['Tools', 'Writing'],
+                museum: ['Museum 1', 'Holmegaard Bows'],
+              },
+            })
+
+            const request = game.run()
+            const meldFromMuseum = request.selectors[0].choices.find(x => x.title === 'Meld from Museum')
+            expect(meldFromMuseum.choices).toStrictEqual(['Holmegaard Bows'])
+          })
+
+          test('Meld from Museum is absent when museum is empty', () => {
+            const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+            t.setBoard(game, {
+              dennis: {
+                hand: ['Tools'],
+              },
+            })
+
+            const request = game.run()
+            const choices = request.selectors[0].choices
+            const meldFromMuseum = choices.find(x => x.title === 'Meld from Museum')
+            expect(meldFromMuseum).toBeUndefined()
+          })
+
+          test('melding from hand still uses Meld selector', () => {
+            const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+            t.setBoard(game, {
+              dennis: {
+                hand: ['Tools'],
+                museum: ['Museum 1', 'Holmegaard Bows'],
+              },
+            })
+
+            let request = game.run()
+            request = t.choose(game, 'Meld.Tools')
+
+            t.testBoard(game, {
+              dennis: {
+                blue: ['Tools'],
+                museum: ['Museum 1', 'Holmegaard Bows'],
+              },
+            })
+          })
+
+          test('melding from museum uses Meld from Museum selector', () => {
+            const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+            t.setBoard(game, {
+              dennis: {
+                hand: ['Tools'],
+                museum: ['Museum 1', 'Holmegaard Bows'],
+              },
+            })
+
+            let request = game.run()
+            request = t.choose(game, 'Meld from Museum.Holmegaard Bows')
+
+            t.testBoard(game, {
+              dennis: {
+                hand: ['Tools'],
+                red: ['Holmegaard Bows'],
+              },
+            })
+          })
+
+          test('museum cards themselves are excluded from meld choices', () => {
+            const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+            t.setBoard(game, {
+              dennis: {
+                museum: ['Museum 1', 'Holmegaard Bows', 'Museum 2', 'Dancing Girl'],
+              },
+            })
+
+            const request = game.run()
+            const meldFromMuseum = request.selectors[0].choices.find(x => x.title === 'Meld from Museum')
+            expect(meldFromMuseum.choices).toStrictEqual(['Holmegaard Bows', 'Dancing Girl'])
           })
         })
 

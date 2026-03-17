@@ -465,7 +465,7 @@ Innovation.prototype.action = function(count) {
   else if (name === 'Endorse') {
     this.actions.endorse(player, arg)
   }
-  else if (name === 'Meld') {
+  else if (name === 'Meld' || name === 'Meld from Museum') {
     const card = this.cards.byId(arg)
     this.actions.meld(player, card, { asAction: true })
   }
