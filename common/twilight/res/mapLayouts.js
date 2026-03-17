@@ -284,12 +284,94 @@ function getHexNeighbors(pos) {
   return HEX_DIRECTIONS.map(d => ({ q: pos.q + d.q, r: pos.r + d.r }))
 }
 
+// Expose map generator board styles so the lobby UI can list them without
+// importing the full generator module (which pulls in heavy data files).
+function getGeneratorBoardStyles(playerCount) {
+  try {
+    const boardData = require('../map-generator/data/boardData')
+    const styleGroup = boardData.styles[String(playerCount)]
+    if (!styleGroup) {
+      return {}
+    }
+    const result = {}
+    for (const [key, style] of Object.entries(styleGroup)) {
+      result[key] = { description: style.description || key }
+    }
+    return result
+  }
+  catch {
+    return {}
+  }
+}
+
+// Convert a generator board style (position-index-based) into a layout object
+// compatible with MapLayoutPreview ({ mecatol, homePositions, ring1, ring2, outerPositions }).
+function getGeneratorPreviewLayout(playerCount, boardStyle) {
+  try {
+    const boardData = require('../map-generator/data/boardData')
+    const styleGroup = boardData.styles[String(playerCount)]
+    if (!styleGroup || !styleGroup[boardStyle]) {
+      return null
+    }
+    const style = styleGroup[boardStyle]
+
+    // Build position-index-to-hex mapping (same as MapGenerator.js)
+    const center = { q: 0, r: 0 }
+    const posToHex = [center]
+    for (let ring = 1; ring <= 4; ring++) {
+      posToHex.push(...hexRing(center, ring))
+    }
+
+    const toHex = (idx) => posToHex[idx] || { q: 0, r: 0 }
+
+    const homePositions = style.home_worlds.map(toHex)
+    const interiorIndices = [
+      ...(style.primary_tiles || []),
+      ...(style.secondary_tiles || []),
+      ...(style.tertiary_tiles || []),
+    ]
+    const hyperlaneIndices = style.hyperlane_tiles || []
+
+    // Split interior positions into ring1/ring2/outer based on hex distance from center
+    const ring1 = []
+    const ring2 = []
+    const outerPositions = []
+    for (const idx of interiorIndices) {
+      const hex = toHex(idx)
+      const dist = getHexDistance(center, hex)
+      if (dist <= 1) {
+        ring1.push(hex)
+      }
+      else if (dist <= 2) {
+        ring2.push(hex)
+      }
+      else {
+        outerPositions.push(hex)
+      }
+    }
+
+    return {
+      mecatol: { q: 0, r: 0, tileId: 18 },
+      homePositions,
+      ring1,
+      ring2,
+      outerPositions,
+      hyperlanePositions: hyperlaneIndices.map(toHex),
+    }
+  }
+  catch {
+    return null
+  }
+}
+
 module.exports = {
   HEX_DIRECTIONS,
   hexRing,
   layouts,
   getLayout,
   getLayoutsForPlayerCount,
+  getGeneratorBoardStyles,
+  getGeneratorPreviewLayout,
   getHexDistance,
   getHexNeighbors,
 }
