@@ -46,6 +46,9 @@ function TwilightFactory(settings, viewerName) {
   if (settings.mapLayout) {
     data.settings.mapLayout = settings.mapLayout
   }
+  if (settings.mapGenerator) {
+    data.settings.mapGenerator = settings.mapGenerator
+  }
   return new Twilight(data, viewerName)
 }
 
@@ -60,6 +63,7 @@ function factoryFromLobby(lobby) {
     factions: lobby.options?.factions || [],
     randomFactions: lobby.options?.randomFactions !== false,
     mapLayout: lobby.options?.mapLayout || undefined,
+    mapGenerator: lobby.options?.mapGenerator || undefined,
   })
 }
 

@@ -17,22 +17,63 @@
       </span>
     </div>
 
-    <div v-if="layoutOptions.length > 1" class="setting-group">
-      <label class="select-label">Map Layout</label>
-      <select v-model="selectedLayout" @change="save" class="layout-select">
-        <option v-for="opt in layoutOptions" :key="opt.key" :value="opt.key">
-          {{ opt.name }}
-        </option>
-      </select>
+    <div class="setting-group">
+      <label class="checkbox-label">
+        <input type="checkbox" v-model="useMapGenerator" @change="onGeneratorToggle" />
+        <span>Use Map Generator</span>
+      </label>
+      <span class="option-description">
+        {{ useMapGenerator
+          ? 'Balanced tile placement using the map generator algorithm'
+          : 'Tiles are shuffled randomly into a fixed layout' }}
+      </span>
     </div>
 
-    <div v-if="currentLayout" class="layout-preview">
-      <div class="layout-label">Board Layout</div>
-      <MapLayoutPreview :layout="currentLayout" />
-    </div>
-    <div v-else class="layout-warning">
-      No board layout available for {{ playerCount }} players.
-    </div>
+    <template v-if="useMapGenerator">
+      <div v-if="Object.keys(boardStyleOptions).length > 1" class="setting-group">
+        <label class="select-label">Board Style</label>
+        <select v-model="selectedBoardStyle" @change="saveGenerator" class="layout-select">
+          <option v-for="(info, key) in boardStyleOptions" :key="key" :value="key">
+            {{ key }}
+          </option>
+        </select>
+        <span class="option-description">{{ boardStyleOptions[selectedBoardStyle]?.description }}</span>
+      </div>
+
+      <div class="setting-group">
+        <label class="select-label">Tile Selection</label>
+        <select v-model="selectedPickStyle" @change="saveGenerator" class="layout-select">
+          <option value="balanced">Balanced</option>
+          <option value="random">Random</option>
+          <option value="resource">Resource-heavy</option>
+          <option value="influence">Influence-heavy</option>
+        </select>
+      </div>
+
+      <div v-if="generatorPreviewLayout" class="layout-preview">
+        <div class="layout-label">Board Layout</div>
+        <MapLayoutPreview :layout="generatorPreviewLayout" />
+      </div>
+    </template>
+
+    <template v-else>
+      <div v-if="layoutOptions.length > 1" class="setting-group">
+        <label class="select-label">Map Layout</label>
+        <select v-model="selectedLayout" @change="save" class="layout-select">
+          <option v-for="opt in layoutOptions" :key="opt.key" :value="opt.key">
+            {{ opt.name }}
+          </option>
+        </select>
+      </div>
+
+      <div v-if="currentLayout" class="layout-preview">
+        <div class="layout-label">Board Layout</div>
+        <MapLayoutPreview :layout="currentLayout" />
+      </div>
+      <div v-else class="layout-warning">
+        No board layout available for {{ playerCount }} players.
+      </div>
+    </template>
   </div>
 </template>
 
@@ -42,6 +83,8 @@ import MapLayoutPreview from './MapLayoutPreview.vue'
 
 const layouts = twilight.res.layouts
 const getLayoutsForPlayerCount = twilight.res.getLayoutsForPlayerCount
+const getGeneratorBoardStyles = twilight.res.getGeneratorBoardStyles
+const getGeneratorPreviewLayout = twilight.res.getGeneratorPreviewLayout
 
 export default {
   name: 'SettingsTwilight',
@@ -81,6 +124,45 @@ export default {
         this.lobby.options.randomFactions = value
       },
     },
+    useMapGenerator: {
+      get() {
+        return !!this.lobby.options?.mapGenerator
+      },
+      set(value) {
+        if (value) {
+          this.lobby.options.mapGenerator = { boardStyle: 'normal', pickStyle: 'balanced' }
+        }
+        else {
+          delete this.lobby.options.mapGenerator
+        }
+      },
+    },
+    boardStyleOptions() {
+      return getGeneratorBoardStyles(this.playerCount)
+    },
+    selectedBoardStyle: {
+      get() {
+        return this.lobby.options?.mapGenerator?.boardStyle || 'normal'
+      },
+      set(value) {
+        if (this.lobby.options?.mapGenerator) {
+          this.lobby.options.mapGenerator.boardStyle = value
+        }
+      },
+    },
+    selectedPickStyle: {
+      get() {
+        return this.lobby.options?.mapGenerator?.pickStyle || 'balanced'
+      },
+      set(value) {
+        if (this.lobby.options?.mapGenerator) {
+          this.lobby.options.mapGenerator.pickStyle = value
+        }
+      },
+    },
+    generatorPreviewLayout() {
+      return getGeneratorPreviewLayout(this.playerCount, this.selectedBoardStyle)
+    },
   },
 
   watch: {
@@ -99,12 +181,30 @@ export default {
           this.save()
         }
       }
+      // Reset generator board style if not available for new player count
+      if (this.lobby.options?.mapGenerator) {
+        const styles = getGeneratorBoardStyles(this.playerCount)
+        if (!styles[this.lobby.options.mapGenerator.boardStyle]) {
+          this.lobby.options.mapGenerator.boardStyle = 'normal'
+          this.save()
+        }
+      }
     },
   },
 
   methods: {
     updateValid() {
       this.lobby.valid = this.playerCount >= 3 && this.playerCount in layouts
+    },
+    onGeneratorToggle() {
+      // Clear fixed layout when switching to generator
+      if (this.useMapGenerator) {
+        delete this.lobby.options.mapLayout
+      }
+      this.save()
+    },
+    saveGenerator() {
+      this.save()
     },
   },
 
