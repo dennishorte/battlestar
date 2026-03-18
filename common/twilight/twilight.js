@@ -49,6 +49,9 @@ function TwilightFactory(settings, viewerName) {
   if (settings.mapGenerator) {
     data.settings.mapGenerator = settings.mapGenerator
   }
+  if (settings.miltyDraft) {
+    data.settings.miltyDraft = settings.miltyDraft
+  }
   return new Twilight(data, viewerName)
 }
 
@@ -64,6 +67,7 @@ function factoryFromLobby(lobby) {
     randomFactions: lobby.options?.randomFactions !== false,
     mapLayout: lobby.options?.mapLayout || undefined,
     mapGenerator: lobby.options?.mapGenerator || undefined,
+    miltyDraft: lobby.options?.miltyDraft || undefined,
   })
 }
 

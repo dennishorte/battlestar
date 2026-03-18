@@ -1,5 +1,6 @@
 const res = require('../res/index.js')
 const { BaseCard } = require('../../lib/game/index.js')
+const miltyDraft = require('../milty-draft/index.js')
 
 module.exports = function(Twilight) {
 
@@ -12,6 +13,11 @@ module.exports = function(Twilight) {
 
     this._initializeState()
     this._initializeZones()
+
+    if (this.settings.miltyDraft) {
+      this._miltyDraftPhase()
+    }
+
     this._initializeFactions()
     this._setupPhase()
     this._initializeGalaxy()
@@ -226,6 +232,10 @@ module.exports = function(Twilight) {
   }
 
   Twilight.prototype._initializeGalaxy = function() {
+    if (this.state.miltyDraftSlices) {
+      return this._initializeGalaxyFromMiltyDraft()
+    }
+
     if (this.settings.mapGenerator) {
       return this._initializeGalaxyFromGenerator()
     }
@@ -415,7 +425,10 @@ module.exports = function(Twilight) {
       }
 
       // Apply bonus trade goods from map layout (e.g. 5-player asymmetric positions)
-      const bonus = layout.homePositions[i].bonusTradeGoods
+      const homeIdx = this.state.miltyDraftPositions
+        ? this.state.miltyDraftPositions[player.name] - 1
+        : i
+      const bonus = layout.homePositions[homeIdx].bonusTradeGoods
       if (bonus) {
         player.addTradeGoods(bonus)
       }
@@ -435,6 +448,228 @@ module.exports = function(Twilight) {
         }
       }
     }
+  }
+
+  Twilight.prototype._miltyDraftPhase = function() {
+    const opts = this.settings.miltyDraft
+    const players = this.players.all()
+    const numSlices = opts.numSlices || players.length + 1
+    const numFactions = opts.numFactions || players.length + 2
+
+    // Generate slices
+    const slices = miltyDraft.generateSlices(this._shuffle.bind(this), numSlices)
+
+    // Generate faction pool
+    const allFactions = [...res.getAllFactionIds()]
+    this._shuffle(allFactions)
+    const factionPool = allFactions.slice(0, numFactions)
+
+    // Build draft state
+    const playerNames = players.map(p => p.name)
+    const draftState = miltyDraft.createDraftState({ slices, factionPool, playerNames })
+    this.state.miltyDraft = draftState
+
+    // Run draft loop
+    while (!miltyDraft.isDraftComplete(draftState)) {
+      const currentName = miltyDraft.getCurrentPlayer(draftState)
+      const player = this.players.byName(currentName)
+      const categories = miltyDraft.getAvailableCategories(draftState, currentName)
+
+      // Build choices: "category: option" for each available combo
+      const choices = []
+      const choiceMap = []
+      for (const category of categories) {
+        const options = miltyDraft.getAvailableOptions(draftState, category)
+        for (const option of options) {
+          let label
+          if (category === 'slice') {
+            const slice = slices[option]
+            const tileNames = slice.tiles.map(id => {
+              const tile = res.getSystemTile(id)
+              if (!tile || tile.planets.length === 0) {
+                return `Tile ${id}`
+              }
+              return tile.planets.map(pid => {
+                const planet = res.getPlanet(pid)
+                return planet ? planet.name : pid
+              }).join('/')
+            }).join(', ')
+            label = `Slice ${option + 1}: ${tileNames} (${slice.stats.optimalTotal} optimal)`
+          }
+          else if (category === 'faction') {
+            const faction = res.getFaction(option)
+            label = `Faction: ${faction ? faction.name : option}`
+          }
+          else {
+            label = `Speaker Position: ${option}`
+          }
+          choices.push(label)
+          choiceMap.push({ category, value: option })
+        }
+      }
+
+      const selection = this.actions.choose(player, choices, {
+        title: 'Milty Draft',
+        noAutoRespond: true,
+      })
+      const chosenLabel = selection[0]
+      const chosenIndex = choices.indexOf(chosenLabel)
+      const { category, value } = choiceMap[chosenIndex]
+
+      miltyDraft.applyPick(draftState, currentName, category, value)
+
+      this.log.add({
+        template: '{player} drafts {pick}',
+        args: { player, pick: chosenLabel },
+      })
+    }
+
+    // Apply draft results
+    // Assign factions in current player order
+    const factionAssignments = players.map(p => draftState.playerState[p.name].faction)
+    this.settings.factions = factionAssignments
+
+    // Set speaker to the player who drafted position 1
+    for (const [name, ps] of Object.entries(draftState.playerState)) {
+      if (ps.position === 1) {
+        this.state.speaker = name
+        break
+      }
+    }
+
+    // Store slice assignments and position-to-home mapping for galaxy init
+    const sliceAssignments = {}
+    const positionAssignments = {}
+    for (const player of players) {
+      const ps = draftState.playerState[player.name]
+      sliceAssignments[player.name] = slices[ps.slice]
+      positionAssignments[player.name] = ps.position // 1-indexed speaker position
+    }
+    this.state.miltyDraftSlices = sliceAssignments
+    this.state.miltyDraftPositions = positionAssignments
+  }
+
+  Twilight.prototype._initializeGalaxyFromMiltyDraft = function() {
+    const players = this.players.all()
+    const playerCount = players.length
+    const layoutKey = this.settings?.mapLayout || playerCount
+    const layout = res.getLayout(layoutKey)
+
+    // Place Mecatol Rex
+    this.state.systems[18] = {
+      tileId: 18,
+      position: layout.mecatol,
+      commandTokens: [],
+    }
+
+    // Place home systems using drafted speaker positions
+    // Position 1 → homePositions[0], Position 2 → homePositions[1], etc.
+    const positions = this.state.miltyDraftPositions
+    const playerHomeIndex = {} // playerName → index into homePositions
+
+    for (let i = 0; i < players.length; i++) {
+      const player = players[i]
+      const draftedPos = positions[player.name] // 1-indexed
+      const homeIdx = draftedPos - 1
+      playerHomeIndex[player.name] = homeIdx
+
+      const faction = player.faction
+      const homeSystemId = faction.homeSystem
+      const position = layout.homePositions[homeIdx]
+
+      if (this.factionAbilities._hasAbility(player, 'creuss-gate')) {
+        this.state.systems['creuss-gate'] = {
+          tileId: 'creuss-gate',
+          position,
+          commandTokens: [],
+        }
+        this.state.systems['creuss-home'] = {
+          tileId: 'creuss-home',
+          position: { q: 99, r: 99 },
+          commandTokens: [],
+        }
+      }
+      else {
+        this.state.systems[homeSystemId] = {
+          tileId: homeSystemId,
+          position,
+          commandTokens: [],
+        }
+      }
+    }
+
+    // Compute slice positions for each player
+    // Each home gets 5 closest non-home, non-mecatol positions (greedy assignment)
+    const homeSet = new Set(layout.homePositions.map(h => `${h.q},${h.r}`))
+    const allPositions = [
+      ...layout.ring1,
+      ...layout.ring2,
+      ...(layout.outerPositions || []),
+    ].filter(p => !homeSet.has(`${p.q},${p.r}`) && !(p.q === 0 && p.r === 0))
+
+    const assigned = new Set()
+    const slicePositions = [] // per-player: array of 5 positions
+
+    for (let i = 0; i < players.length; i++) {
+      const home = layout.homePositions[playerHomeIndex[players[i].name]]
+      const available = allPositions
+        .filter(p => !assigned.has(`${p.q},${p.r}`))
+        .map(p => ({
+          ...p,
+          dist: res.getHexDistance(p, home),
+          ring: res.getHexDistance(p, layout.mecatol),
+        }))
+        .sort((a, b) => a.dist - b.dist || a.ring - b.ring)
+
+      const positions = available.slice(0, 5)
+      for (const p of positions) {
+        assigned.add(`${p.q},${p.r}`)
+      }
+      slicePositions.push(positions)
+    }
+
+    // Place slice tiles at computed positions
+    for (let i = 0; i < players.length; i++) {
+      const player = players[i]
+      const sliceData = this.state.miltyDraftSlices[player.name]
+      if (!sliceData) {
+        continue
+      }
+
+      const positions = slicePositions[i]
+      for (let j = 0; j < Math.min(sliceData.tiles.length, positions.length); j++) {
+        const tileId = sliceData.tiles[j]
+        this.state.systems[tileId] = {
+          tileId,
+          position: { q: positions[j].q, r: positions[j].r },
+          commandTokens: [],
+        }
+      }
+    }
+
+    // Fill remaining empty positions with leftover blue/red tiles
+    const usedTiles = new Set(Object.keys(this.state.systems).map(k => isNaN(k) ? k : Number(k)))
+    const remainingPositions = allPositions.filter(p => !assigned.has(`${p.q},${p.r}`))
+
+    if (remainingPositions.length > 0) {
+      const blueTiles = res.getBlueTiles().map(t => t.id).filter(id => !usedTiles.has(id))
+      const redTiles = res.getRedTiles().map(t => t.id).filter(id => !usedTiles.has(id))
+      this._shuffle(blueTiles)
+      this._shuffle(redTiles)
+
+      const fillerTiles = [...blueTiles, ...redTiles]
+      for (let i = 0; i < Math.min(remainingPositions.length, fillerTiles.length); i++) {
+        const tileId = fillerTiles[i]
+        const pos = remainingPositions[i]
+        this.state.systems[tileId] = {
+          tileId,
+          position: pos,
+          commandTokens: [],
+        }
+      }
+    }
+
+    this._initializeSystemUnits()
   }
 
 } // module.exports
