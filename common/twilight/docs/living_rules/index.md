@@ -1,0 +1,981 @@
+# Index
+
+This index refers to paragraph numbers instead of page numbers. The number listed after each entry corresponds to a paragraph number in the glossary. The relevant information for that entry can be found in the paragraph sharing that number or in a bullet point following that paragraph.
+
+## A
+
+- abilities, 1.0
+  - action card, 2.6
+  - "action" effects, 1.5
+  - "after" effects, 1.14
+  - agenda card, 1.24
+  - "cannot" effects, 1.6
+  - commander sharing, 51.8
+  - complete resolution, 1.9, 1.10
+  - component action, 1.5
+  - cost, 1.11, 1.12
+  - deploy, 30.0
+  - "end of turn" effects, 40.3
+  - faction abilities, 1.25
+  - hyperlanes, 44.2
+  - legendary planets, 53.3
+  - mandatory, 1.8
+  - movement, 58.8, 58.9
+  - objectives, 61.10
+  - opponent, 62.1
+  - partial resolution, 1.9
+  - promissory notes, 69.1–69.3
+  - purge, 70.0
+  - relic fragments, 73.1
+  - relics, 73.3
+  - rules precedence, 1.1, 1.2
+  - "this system or planet" effects, 1.27
+  - timing, 1.13
+  - unit abilities, 1.10
+    - anti-fighter barrage, 10.0
+    - bombardment, 15.0
+    - planetary shield, 65.0
+    - space cannon, 77.0
+    - sustain damage, 87.0
+  - unlocking
+    - commanders, 51.6
+    - heroes, 51.10
+  - "when" effects, 1.15, 1.16
+- action cards, 2.0
+  - canceling, 2.8
+  - component action, 22.1
+  - drawing, 2.1–2.3
+  - hand size, 2.4
+  - hidden, 2.5
+  - multiple at same time, 1.19, 1.20
+  - playing, 2.7
+- "action" effects
+  - component action, 22.1
+- action phase, 3.0
+  - active player, 4.1
+  - component action, 22.0
+  - initiative order, 48.0
+  - movement, 58.0
+  - passing, 3.2–3.5
+  - player turns, 3.0
+  - strategic action, 82.0
+  - tactical action, 89.0
+  - turn order, 3.0
+- actions
+  - component action, 22.0
+  - strategic action, 82.0
+  - tactical action, 89.0
+- activation, 89.1
+- active player, 4.0
+- active system, 5.0
+  - activation, 5.1–5.3
+  - duration, 5.4
+- adjacency, 6.0
+  - hyperlanes, 6.4
+  - neighbors, 60.0
+  - system adjacency, 6.0
+  - unit and planet adjacency, 6.2
+  - wormhole, 6.1
+- agenda cards, 7.0
+  - agenda phase, 8.0
+  - directives, 7.7, 7.8
+    - resolving, 7.8
+  - laws, 7.2–7.6
+    - attach, 12.0
+    - ownership, 7.4
+    - resolving "Against" outcomes, 7.6
+    - resolving "For" outcomes, 7.3
+  - outcomes, 8.17
+  - resolving, 8.2
+  - types, 7.1
+  - voting, 8.5
+- agenda phase, 8.0
+  - added to game round, 27.4
+  - first agenda, 8.2
+  - ready planets, 8.4
+  - resolving, 8.2–8.4
+  - revealing agenda, 8.2
+  - second agenda, 8.3
+  - skipped during early game, 8.1
+  - voting, 8.5–8.16
+- agents, 51.3
+  - resolving, 51.4
+- "Alliance" promissory note, 51.8
+- anomalies, 9.0
+  - asteroid field, 11.0
+  - becoming, 9.4
+  - gravity rift, 41.0
+    - multiple, 41.4
+  - multiple in a system, 9.5
+  - nebula, 59.0
+  - supernova, 86.0
+  - types, 9.2, 9.3
+  - with planets, 9.2
+- anti-fighter barrage, 10.0
+  - anti-fighter barrage roll, 10.1
+  - assigning hits, 10.2
+  - rerolls, 10.1
+  - resolving, 10.1, 10.2
+  - values, 10.1
+- Arborec
+  - space docks, 68.1
+- asteroid field, 11.0
+  - ship movement, 11.1
+- attach, 12.0
+  - attaching a card, 12.1
+  - changing control, 12.2
+  - exploration, 35.8
+  - tokens, 12.3
+- attacker, 13.0
+- attribute
+  - capacity, 16.0
+  - combat, 18.0
+  - cost, 26.0
+  - move, 57.0
+
+## B
+
+- blockade
+  - capture, 14.2
+- blockaded, 14.0
+- bombardment, 15.0
+  - assigning hits, 15.2
+  - bombardment roll, 15.1
+  - "Harrow" ability, 15.1
+  - multiple planets, 15.1
+  - planetary shield, 65.0
+  - rerolls, 15.1
+  - resolving, 15.1, 15.2
+  - values, 15.1
+
+## C
+
+- cancel
+  - action cards, 2.8
+- capacity, 16.0
+  - excess units, 16.3
+  - limitations, 16.2
+  - transport, 16.1
+- capture, 17.0
+  - blockade, 14.2
+  - fighter or infantry, 17.3, 17.4
+  - mechs and non-fighter, 17.1, 17.2
+  - return, 17.1, 17.2
+- cards
+  - action cards, 2.0
+  - agenda card, 7.0
+  - exploration cards, 35.2
+    - resolving, 35.7
+  - leader cards, 51.0
+  - objective cards, 61.0
+  - planet cards, 64.6
+  - promissory notes, 69.0
+  - relic cards, 73.2
+  - strategy cards, 83.0
+    - construction, 24.0
+    - diplomacy, 32.0
+    - leadership, 52.0
+    - technology cards, 90.0
+- casting votes, 8.6–8.17
+- combat
+  - attacker, 13.0
+  - attribute, 18.0
+    - burst icons, 18.2
+  - defender, 29.0
+  - ground combat, 42.0
+  - opponent, 62.0
+  - space combat, 78.0
+- commanders, 51.5
+  - "Alliance", 51.8
+  - leaders
+    - "Alliance", 51.8
+    - sharing abilities, 51.8
+  - unlocking, 51.6
+- command sheet, 19.0
+  - command tokens, 19.1
+  - fleet pool, 37.0
+  - placement, 19.3
+  - trade goods, 19.2
+- command tokens, 20.0
+  - command sheet, 19.0
+  - gaining, 20.2, 20.3
+  - limitation, 20.3
+  - placement, 20.1
+  - redistributing, 81.5
+  - removing command tokens, 81.4
+  - strategic action, 20.5
+  - system activation, 5.1
+  - tactical action, 20.4
+  - transporting, 95.3
+- commodities, 21.0
+  - converting, 21.5, 21.6
+  - faction sheet, 21.2
+  - replenishing, 21.3, 21.4
+  - spending, 21.7
+  - tokens, 21.1
+  - "Trade" strategy card, 92.3
+  - transaction, 21.5
+- component action, 22.0
+  - complete resolution, 22.3
+  - resolving, 22.2, 22.3
+- component limitations, 23.0
+  - cards, 23.5
+  - dice, 23.1
+  - tokens, 23.2
+  - units, 23.4
+- "Construction" strategy card, 24.0
+  - primary ability, 24.1, 24.2
+    - resolving, 24.2
+  - secondary ability, 24.3
+    - resolving, 24.3
+  - structure placement, 24.4
+- control
+  - legendary planets, 53.2
+  - planets, 25.0
+    - exploration, 35.1
+    - gaining control, 25.1, 25.2
+    - indicating control, 25.3
+    - losing control, 25.5–25.7
+    - player structures, 49.5
+- control tokens
+  - planets without units, 25.4
+  - public objectives, 61.12
+  - secret objective, 61.18
+  - victory point track, 98.3
+- cost
+  - abilities, 1.11
+    - exhausting, 34.4
+    - objectives, 61.10
+  - attribute, 26.0
+  - fighters, 67.2
+  - ground forces, 67.2
+  - producing units, 67.1
+  - purge, 70.0
+  - structures, 26.3
+- cultural planet, 64.3
+- custodians token, 27.0
+  - invasion, 27.2
+  - movement, 27.1
+  - placement, 54.1
+  - removing, 27.2, 27.3
+  - victory point, 27.3
+
+## D
+
+- damaged units, 87.0–87.2
+- "Dark Energy Tap", 35.4
+- deals, 28.0
+  - binding, 28.3
+  - including transactions, 28.1
+  - non-binding, 28.4
+  - timing, 28.1
+- decks
+  - depleted, 23.5
+  - exploration, 35.2
+  - relics, 73.2
+- defender, 29.0
+- deploy, 30.0
+  - timing, 30.3
+- destroyed, 31.0
+  - assigning hits, 31.1
+  - fleet pool limitation, 37.3
+  - gravity rift, 41.2
+  - ground combat, 42.2
+  - objectives, 61.9
+  - PDS, 63.4
+  - planet control
+    - space cannon defense, 77.8
+    - space cannon offense, 77.5
+  - space dock, 79.4
+  - structures
+    - planet control, 49.5
+  - sustain damage, 87.5
+  - vs. removed, 31.2
+- dice
+  - anti-fighter barrage roll, 10.1
+  - bombardment roll, 15.1
+  - combat roll
+    - ground combat, 42.1
+  - component limitations, 23.1
+  - rerolls, 74.0
+    - multiple rerolls, 74.2
+    - reroll results, 74.1
+    - reroll timing, 74.3
+  - space cannon roll
+    - space cannon defense, 77.7
+    - space cannon offense, 77.3
+- "Diplomacy" strategy card, 32.0
+  - primary ability, 32.1, 32.2
+    - resolving, 32.2
+  - secondary ability
+    - resolving, 32.3
+- directives, 7.7, 7.8
+  - resolving, 7.8
+
+## E
+
+- edge, 39.2
+  - wormhole nexus, 100.1
+- elimination, 33.0
+  - conditions for elimination, 33.1
+  - faction components, 33.10
+  - player's components, 33.2–33.7
+  - reducing player count, 33.9
+  - speaker, 33.8
+  - Valefar Assimilator, 90.18
+- ending the game
+  - cannot reveal objective, 61.15
+  - end of game, 98.7, 98.8
+- exhausted, 34.0
+  - exhausting cards, 34.1
+  - planet cards, 64.7
+  - readying cards, 34.2
+  - spending influence, 34.3
+  - spending resources, 34.3
+  - strategy cards, 34.5
+- exploration, 35.0
+  - attach, 35.8
+  - drawing cards, 35.2
+  - frontier tokens, 35.4–35.6
+  - multiple times, 35.3
+  - relic fragments, 35.9
+  - relics, 73.1
+  - resolving cards, 35.7–35.9
+- exploration cards
+  - resolving, 35.7
+
+## F
+
+- faction components, 33.10
+- leader sheets, 50.0
+- faction sheets
+  - capacity, 16.0
+  - combat, 18.0
+  - commodities, 21.2
+  - component action, 22.1
+  - cost, 26.0
+  - move, 57.0
+  - white arrows, 97.3
+- fighters
+  - capture, 17.3, 17.4
+  - fighter tokens, 36.0
+- fighter tokens, 36.0
+- fleet pool, 37.0
+  - command sheet, 19.0
+  - command token placement, 37.2
+  - non-fighter ship limitation, 37.1
+  - removing ships, 37.3
+  - spending command tokens, 37.4
+- four-player game
+  - choosing strategy cards, 84.1
+  - initiative order, 48.3
+  - passing, 3.4
+- frontier tokens, 38.0
+  - exploration, 35.4
+  - placement, 38.1
+
+## G
+
+- game board, 39.0
+  - Ghosts of Creuss, 39.1
+  - Mecatol Rex, 54.0
+- game end, 61.15
+- game round, 40.0
+  - action phase, 3.0
+  - agenda phase, 8.0
+  - strategy phase, 84.0
+- golden rules, 1.1, 1.2
+- gravity rift, 41.0
+  - multiple, 41.4
+  - removing ships, 41.2
+  - ship movement, 41.1
+  - transported units, 41.2
+- ground combat, 42.0
+  - assign hits, 42.2
+  - attacker, 13.0
+  - combat roll, 42.1
+  - defender, 29.0
+  - destroying units, 42.2
+  - ending, 42.4
+    - control, 49.5
+  - opponent, 62.0
+  - resolving, 42.1, 42.2
+  - roll dice, 42.1
+  - units remaining
+    - both players, 42.3
+    - neither player, 42.4
+    - one player, 42.4
+- ground forces, 43.0
+  - committing ground forces, 49.2
+  - infantry, 46.0
+    - capture, 17.3
+  - limitations, 43.3
+  - mechs, 55.0
+    - capture, 17.1
+    - producing, 55.2
+    - setup, 50.2
+  - placement, 43.1, 43.2
+
+## H
+
+- hazardous planet, 64.3
+- heroes
+  - purge, 51.12
+  - unlocking, 51.10
+- hyperlanes, 44.0
+  - adjacency, 44.1
+  - game effects, 44.2
+  - system tiles, 44.2
+
+## I
+
+- "Imperial" strategy card, 45.0
+  - resolving, 45.2
+  - secondary ability, 45.3
+  - secret objective limitation, 45.4
+- industrial planet, 64.3
+- infantry, 43.0
+  - capture, 17.3
+  - infantry tokens, 46.0
+- infantry tokens, 46.0
+- influence, 47.0
+  - spending influence, 47.2
+    - custodians token, 27.2
+    - objectives, 61.10
+    - voting, 8.6
+  - spending trade goods, 47.3
+  - value, 47.1
+- initiative order, 48.0
+  - Naalu, 48.1
+- invasion, 49.0
+  - bombardment, 15.0
+  - resolving, 49.1, 49.2
+    - commit ground forces, 49.2
+    - establish control, 49.5
+  - ground combat, 42.0
+    - resolving, 42.1
+  - resolving, 49.1–49.5
+  - space cannon defense, 77.6
+    - resolving, 77.7, 77.8
+
+## L
+
+- laws, 7.2–7.6
+  - attach, 12.0
+  - effects after discarding, 7.5
+  - ownership, 7.4
+  - resolving "Against" outcomes, 7.6
+  - resolving elections, 7.3
+  - resolving "For" outcomes, 7.3
+- leaders, 51.0
+  - agents, 51.3
+    - resolving, 51.4
+  - commanders, 51.5
+    - sharing abilities, 51.8
+    - unlocking, 51.6
+  - heroes
+    - purge, 51.12
+    - unlocking, 51.10
+  - setup, 50.1
+- leader sheets, 50.0
+- "Leadership" strategy card, 52.0
+  - command token placement, 52.4
+  - primary ability, 52.1, 52.2
+    - resolving, 52.2
+  - secondary ability, 52.3
+- legendary planets, 53.0
+  - abilities, 53.3
+  - control, 53.2
+  - purge, 53.4
+- locked abilities
+  - unlocking
+    - commanders, 51.6
+    - heroes, 51.10
+
+## M
+
+- "may" effects, 1.7
+- Mecatol Rex, 54.0
+- mechs, 55.0
+  - capture, 17.1, 17.2
+  - deploy, 55.3
+  - producing, 55.2
+  - setup, 50.2
+- modifiers, 56.0
+  - movement
+    - gravity rift, 41.1
+    - nebula, 59.0
+  - notation, 56.1, 56.2
+  - space combat
+    - nebula, 59.3
+- movement, 58.0
+  - ability movement, 58.8, 58.9
+  - tactical action movement, 58.2
+    - restrictions, 58.4
+  - transport, 95.1
+
+## N
+
+- Naalu
+  - initiative order, 48.1
+- nebula, 59.0
+  - defender, 29.0
+  - ship movement, 59.1, 59.2
+- neighbors, 60.0
+  - Ghosts of Creuss, 60.3
+  - wormholes, 60.2
+- Nekro Virus
+  - Valefar Assimilator, 90.16
+
+## O
+
+- objective cards, 61.0
+  - public objectives, 61.11
+    - cannot reveal, 61.15
+    - home system control, 61.16
+    - organization, 61.13–61.15
+    - revealing, 61.14
+    - scoring, 61.12
+  - requirements, 61.4
+  - scoring
+    - general, 61.5–61.8
+    - limitations, 61.6–61.8
+    - public objectives, 61.12
+    - secret objectives, 61.18, 61.19
+  - secret objectives, 61.17
+    - gaining, 61.20, 61.21
+    - limitation, 45.4
+  - timing, 61.3
+  - types, 61.1
+  - victory points, 61.2
+- opponent, 62.0
+- outcomes, 8.17
+  - predictions, 8.22
+  - resolving, 8.18
+  - ties, 8.19
+
+## P
+
+- passing
+  - action phase, 3.2–3.5
+- PDS, 63.0
+  - acquiring, 63.2
+  - "Construction" strategy card, 63.2
+  - number per planet, 85.5
+  - placement, 63.3
+  - wormholes, 101.2
+- phases
+  - action phase, 3.0
+  - agenda phase, 8.0
+  - status phase, 81.0
+  - strategy phase, 84.0
+- placing units
+  - deploy, 30.0–30.2
+  - producing, 67.3
+- planetary shield, 65.0
+  - "Harrow" ability, 65.2
+  - war suns, 65.3
+  - X-89 Bacterial Weapon, 65.1
+- planet card, 64.6
+  - attach, 12.1, 12.2
+  - control, 64.6
+  - exhausted, 64.7
+  - readied, 64.7
+- planets, 64.0
+  - in anomalies, 9.2
+  - influence, 64.2
+    - spending, 64.8
+  - legendary planets, 53.0
+    - abilities, 53.3
+    - control, 53.2
+    - purge, 53.4
+  - resource, 64.1
+  - resources, 75.0
+    - spending, 64.9
+  - technology specialty, 64.4
+  - traits, 64.3
+- player turns, 3.0
+  - initiative order, 48.0
+- "Politics" strategy card, 66.0
+  - primary ability, 66.1, 66.2
+    - resolving, 66.2
+  - secondary ability, 66.3
+    - resolving, 66.3
+- predictions, 8.22
+- prerequisites, 90.8
+- primary ability, 45.1, 45.2
+- producing units, 67.0
+  - blockaded space docks, 67.6
+  - capture, 17.5
+  - cost, 67.1
+    - fighters, 67.2
+    - ground forces, 67.2
+  - mechs, 55.2
+  - placement, 67.3, 67.4
+  - reinforcement limitations, 67.5
+- production, 68.0
+  - Arborec, 68.1
+  - blockaded, 14.1
+  - unit placement, 68.2–68.4
+  - value, 68.1
+- promissory notes, 69.0
+  - "Alliance", 51.8
+  - player elimination, 69.7
+  - resolving, 69.1–69.3
+  - sharing commanders, 51.8
+  - transactions, 69.4–69.6
+- public objectives, 61.11
+  - cannot reveal, 61.15
+  - home system control, 61.16
+  - organization, 61.13
+  - revealing, 61.14
+  - scoring, 61.12
+- purge, 70.0
+  - heroes, 51.12
+  - legendary planets, 53.4
+
+## R
+
+- readied, 71.0
+  - agents, 51.4
+  - legendary planets, 53.2
+  - readying cards, 71.5
+- readying cards
+- reinforcements, 72.0
+  - command tokens, 20.0
+    - component limitation, 20.3
+  - deploy, 30.2
+  - units, 96.3
+- relic fragment
+  - abilities, 73.1
+- relic fragments
+  - transactions, 73.1
+- relics, 73.0
+  - abilities, 73.3
+  - exploration, 35.9
+  - fragment abilities, 73.1
+  - gaining, 73.2
+  - transactions, 73.4
+- removed vs. destroyed, 31.2
+- repair, 81.7
+- replenish commodities, 21.3, 21.4
+- reroll
+  - multiple rerolls, 74.2
+  - timing, 74.3
+- rerolls, 74.0
+  - results, 74.1
+- researching technology, 90.9–90.12
+  - technology specialties, 90.10–90.12
+- resources, 75.0
+  - spending resources
+    - objectives, 61.10
+    - spending trade goods, 75.3
+- retreat, 78.7
+- return
+  - captured units, 17.1, 17.2
+- returned
+  - captured units, 17.4
+- rolls
+  - anti-fighter barrage roll, 10.1
+  - bombardment rolls, 15.1
+  - combat roll
+    - ground combat, 42.1
+    - space combat, 77.7
+  - space cannon roll
+    - space cannon offense, 77.3
+  - space cannon rolls
+    - space cannon defense, 77.7
+- round, 40.0
+
+## S
+
+- secondary ability, 83.7
+- secret objectives, 61.17
+  - gaining, 61.20
+  - limitation, 45.4
+  - scoring, 61.18, 61.19
+- setup
+  - mechs, 50.2
+  - placing frontier tokens, 38.1
+  - placing leaders, 50.1
+  - wormhole nexus, 100.1
+- ships, 76.0
+  - attributes, 76.3
+  - capture, 17.1, 17.2
+  - number per system, 76.2
+  - placement, 76.1
+- space cannon, 77.0
+  - PDS, 63.1
+  - space cannon defense, 77.6
+    - assigning hits, 77.8
+    - resolving, 77.7
+    - value, 77.7
+  - space cannon offense, 77.2
+    - assigning hits, 77.5
+    - resolving, 77.3, 77.4
+    - space cannon roll, 77.3
+    - value, 77.3
+  - space cannon defense
+    - space cannon roll, 77.7
+- space combat, 78.0
+  - announce retreats, 78.4
+  - anti-fighter barrage, 77.8
+  - assigning hits, 78.6
+  - attacker, 13.0
+  - defender, 29.0
+  - opponent, 62.0
+  - resolving, 78.3–78.7
+  - retreat, 78.7
+  - roll dice, 78.5
+- space dock, 79.0
+  - acquiring, 79.2
+  - number per planet, 85.4
+  - placement, 79.3
+  - "Production" ability, 79.1
+- speaker, 80.0
+  - elimination, 33.8
+  - public objective
+    - cannot reveal, 61.16
+    - organization, 61.13
+    - revealing, 61.14
+  - ties during a vote, 8.19
+- status phase
+  - draw action cards, 81.3
+  - gaining command tokens, 81.5
+  - ready cards, 81.6
+  - redistributing command tokens, 81.5
+  - remove command tokens, 81.4
+  - repair units, 81.7
+  - resolving, 81.1–81.8
+  - return strategy cards, 81.8
+  - reveal public objective, 81.2
+  - score objective, 81.1
+- strategic action, 82.0
+  - primary ability, 82.0
+  - resolving strategy card, 82.3, 82.4
+  - secondary ability, 82.1
+- strategy cards, 83.0
+  - choosing, 33.9
+  - "Construction" card, 24.0
+  - "Diplomacy" card, 32.0
+  - exhausted, 83.2
+  - "Imperial" card, 45.0
+  - initiative numbers, 83.5, 83.6
+  - "Leadership" card, 52.0
+  - placement, 83.8
+  - "Politics" card, 66.0
+  - primary abilities, 83.7
+  - readied, 83.2
+  - secondary abilities, 83.7
+  - "Technology" card, 91.0
+  - "Trade" card, 92.0
+  - "Warfare" card, 99.0
+- strategy phase, 84.0
+  - choosing strategy cards, 33.9
+  - placing trade goods, 84.2
+  - resolving, 84.1, 84.2
+- strategy pool
+  - command sheet, 19.0
+- structures, 85.0
+  - movement, 85.3
+  - PDS, 63.0
+    - acquiring, 63.4
+    - number per planet, 85.5
+    - placement, 63.4
+    - wormholes, 101.2
+  - placement, 85.1
+  - placement limits, 85.6
+  - space dock, 79.0
+    - acquiring, 79.2
+    - number per planet, 85.4
+    - placement, 79.3
+- supernova, 86.0
+  - ship movement, 86.1
+- sustain damage, 87.0
+  - cancelling hits, 87.1
+  - damaged unit, 87.1–87.3
+  - destroyed, 87.5
+  - resolving, 87.1
+  - timing, 87.4
+- system tiles, 88.0
+  - activation, 89.1
+  - anomalies, 9.0
+    - asteroid fields, 9.0
+    - gravity rifts, 9.0
+    - nebula, 9.0
+    - supernova, 9.0
+  - edge, 39.2
+  - game board, 39.0
+  - hyperlanes, 44.2
+  - identifying, 88.1–88.4
+  - planets, 64.0
+  - wormhole nexus, 100.0
+
+## T
+
+- tactical action, 89.0
+  - invasion, 49.0
+  - movement, 58.2
+  - production, 68.0
+  - resolving, 89.1–89.6
+  - space cannon offense, 77.2
+  - space combat, 78.0
+- tactic pool
+  - command sheet, 19.0
+- technology cards, 90.0
+  - capacity, 16.0
+  - colors, 90.7
+  - combat, 18.0
+  - component action, 22.1
+  - cost, 26.0
+  - gaining cards, 90.3–90.5
+  - mechs (not), 55.4
+  - move, 57.0
+  - owning cards, 90.1, 90.2
+  - prerequisites, 90.8
+  - researching technology, 90.9–90.12
+    - technology specialties, 90.10–90.12
+  - unit upgrades, 90.6
+  - Valefar Assimilator, 90.16–90.22
+- "Technology" strategy card, 91.0
+  - primary ability, 91.1, 91.2
+    - resolving, 91.2
+  - secondary ability, 91.3
+    - resolving, 91.3
+- three-player game
+  - choosing strategy cards, 84.1
+  - initiative order, 48.3
+  - passing, 3.4
+- tokens
+  - command tokens, 20.0
+  - commodity tokens, 21.0
+  - control tokens
+    - planets without units, 25.4
+    - public objectives, 61.12
+    - secret objective, 61.18
+    - victory point track, 98.3
+  - custodians token, 27.0
+  - fighter tokens, 36.0
+  - infantry tokens, 46.0
+  - spending
+    - objectives, 61.10
+  - trade good tokens, 93.0
+- trade goods, 93.0
+  - command sheet, 19.0
+  - converting, 21.5, 21.6
+  - gaining, 93.2
+  - spending, 93.3, 93.4
+  - strategy phase, 84.2
+  - tokens, 93.1
+  - transaction, 93.5
+- "Trade" strategy card, 92.0
+  - gaining trade goods, 92.2
+  - primary ability, 92.1
+    - resolving, 92.2–92.4
+  - replenishing commodities, 92.3
+  - secondary ability, 92.5
+    - resolving, 92.5
+- traits, 64.3
+- transactions, 94.0
+  - after passing, 3.3
+  - deals, 28.0
+  - neighbors, 94.2
+  - resolving, 94.2–94.5
+  - timing, 94.1
+- transport, 95.0
+  - capacity, 16.1
+  - command tokens, 95.3
+  - gravity rift, 41.2
+  - invasion, 95.4
+  - mechs, 55.1
+  - movement, 95.1
+  - resolving, 95.1, 95.2
+- turns, 3.0
+  - initiative order, 48.0
+
+## U
+
+- unit abilities
+  - anti-fighter barrage, 10.0
+  - bombardment, 15.0
+  - planetary shield, 65.0
+  - space cannon, 77.0
+  - sustain damage, 87.0
+- units, 96.0
+  - damaged, 87.0–87.2
+  - ground forces, 43.0
+  - mechs, 55.0
+  - PDS, 63.0
+    - acquiring, 63.4
+    - number per planet, 85.5
+    - placement, 63.4
+    - wormholes, 101.2
+  - producing, 67.0
+  - repairing, 81.7
+  - ships, 76.0
+    - number per system, 76.2
+    - placement, 76.1
+  - space dock, 79.0
+    - acquiring, 79.2
+    - number per planet, 85.4
+    - placement, 79.3
+  - types, 96.1
+- unit upgrades, 97.0
+  - capacity, 16.0
+  - combat, 18.0
+  - cost, 26.0
+  - effects, 97.4
+  - move, 57.0
+  - Nekro Virus, 97.1
+  - placement, 97.2
+  - white arrows, 97.3
+- unlocking
+  - commanders, 51.6
+  - heroes, 51.10
+
+## V
+
+- Valefar Assimilator, 90.16–90.22
+- victory points, 98.0
+  - custodians token, 27.3
+  - fewest, 98.5
+  - gaining victory points, 98.4
+  - laws, 98.6
+  - most, 98.5
+  - objective cards, 61.2
+  - victory point track, 98.2
+- voting, 8.5
+  - abstaining, 8.14
+  - casting additional votes, 8.15
+  - declaring outcome, 8.12
+  - exhausting planets, 8.6
+  - prevented from voting, 8.16
+  - ties, 8.19
+  - trade goods, 8.13
+  - voting for elections, 8.9–8.11
+  - voting for outcomes, 8.7, 8.8
+
+## W
+
+- "Warfare" strategy card, 99.0
+  - command tokens, 99.1
+  - primary ability, 99.1
+    - resolving, 99.1, 99.2
+  - redistributing command tokens, 99.2
+  - secondary ability, 99.3
+    - resolving, 99.3
+- "when" effects, 1.15, 1.16
+- white arrows, 97.3
+- winning the game, 98.7, 98.8
+  - cannot reveal objective, 61.15
+- wormhole nexus, 100.0
+  - activating, 100.2
+  - active vs. inactive, 100.1
+- wormholes, 101.0
+  - Ghosts of Creuss
+    - neighbors, 60.3
+  - neighbors, 60.2
+  - PDS, 101.2
+  - types, 101.1
+    - advanced, 101.4
+  - wormhole nexus, 100.0

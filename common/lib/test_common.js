@@ -27,6 +27,7 @@ TestCommon.dennis = function(game) {
 TestCommon.choose = function(game, ...selections) {
   const request = game.waiting
   const selector = request.selectors[0]
+  const choices = selector.choices || []
   selections = selections.map(string => {
     if (typeof string === 'string' && string.startsWith('*')) {
       return string.slice(1)
@@ -43,7 +44,15 @@ TestCommon.choose = function(game, ...selections) {
       })
 
     if (tokens.length === 1) {
-      return tokens[0]
+      // Resolve prefix matches: 'Strategic Action' matches 'Strategic Action: leadership'
+      const val = tokens[0]
+      if (typeof val === 'string' && !choices.some(c => (c.title || c) === val)) {
+        const prefixMatch = choices.find(c => (c.title || c).startsWith(val + ': '))
+        if (prefixMatch) {
+          return prefixMatch.title || prefixMatch
+        }
+      }
+      return val
     }
     else if (tokens.length === 2) {
       return {

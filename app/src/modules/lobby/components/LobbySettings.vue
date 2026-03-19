@@ -13,6 +13,7 @@
     <div class="game-options mt-2">
       <SettingsAgricola v-if="lobby.game === 'Agricola'" />
       <SettingsUltimate v-if="lobby.game === 'Innovation: Ultimate'" />
+      <SettingsTwilight v-if="lobby.game === 'Twilight Imperium'" />
       <SettingsTyrants v-if="lobby.game === 'Tyrants of the Underdark'" />
 
       <SettingsMagic v-if="lobby.game === 'Magic'" />
@@ -28,6 +29,7 @@ import SettingsAgricola from './SettingsAgricola.vue'
 import SettingsCubeDraft from './SettingsCubeDraft.vue'
 import SettingsMagic from './SettingsMagic.vue'
 import SettingsSetDraft from './SettingsSetDraft.vue'
+import SettingsTwilight from './SettingsTwilight.vue'
 import SettingsTyrants from './SettingsTyrants.vue'
 import SettingsUltimate from './SettingsUltimate.vue'
 
@@ -40,6 +42,7 @@ export default {
     SettingsCubeDraft,
     SettingsMagic,
     SettingsSetDraft,
+    SettingsTwilight,
     SettingsTyrants,
     SettingsUltimate,
   },
@@ -52,6 +55,7 @@ export default {
         '',
         'Agricola',
         'Innovation: Ultimate',
+        'Twilight Imperium',
         'Tyrants of the Underdark',
 
         'Magic',

@@ -1,0 +1,31 @@
+const actionCards = require('./actionCards.js')
+const agendaCards = require('./agendaCards.js')
+const explorationCards = require('./explorationCards.js')
+const factions = require('./factions/index.js')
+const mapLayouts = require('./mapLayouts.js')
+const objectives = require('./objectives.js')
+const planets = require('./planets.js')
+const relics = require('./relics.js')
+const promissoryNotes = require('./promissoryNotes.js')
+const strategyCards = require('./strategyCards.js')
+const systemTiles = require('./systemTiles.js')
+const technologies = require('./technologies.js')
+const livingRules = require('./livingRules.js')
+const units = require('./units.js')
+
+module.exports = {
+  ...actionCards,
+  ...agendaCards,
+  ...explorationCards,
+  ...factions,
+  ...livingRules,
+  ...mapLayouts,
+  ...objectives,
+  ...planets,
+  ...relics,
+  ...promissoryNotes,
+  ...strategyCards,
+  ...systemTiles,
+  ...technologies,
+  ...units,
+}
