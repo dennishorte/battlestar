@@ -12,9 +12,14 @@
           <span class="info-key">Type:</span>
           <span>{{ tileData.type }}</span>
         </div>
-        <div class="info-row" v-if="tileData.anomaly">
-          <span class="info-key">Anomaly:</span>
-          <span>{{ tileData.anomaly }}</span>
+        <div v-if="tileData.anomaly" class="anomaly-block">
+          <div class="info-row">
+            <span class="info-key">Anomaly:</span>
+            <span>{{ anomalyLabel }}</span>
+          </div>
+          <div class="anomaly-effects">
+            <div v-for="(effect, i) in anomalyEffects" :key="i" class="anomaly-effect">{{ effect }}</div>
+          </div>
         </div>
         <div class="info-row" v-if="tileData.wormholes?.length > 0">
           <span class="info-key">Wormhole:</span>
@@ -196,6 +201,37 @@ export default {
           }))
         return { owner: stack.owner, units }
       })
+    },
+
+    anomalyLabel() {
+      const labels = {
+        'asteroid-field': 'Asteroid Field',
+        'nebula': 'Nebula',
+        'supernova': 'Supernova',
+        'gravity-rift': 'Gravity Rift',
+      }
+      return labels[this.tileData.anomaly] || this.tileData.anomaly
+    },
+
+    anomalyEffects() {
+      const effects = {
+        'asteroid-field': [
+          'Ships cannot move through or into this system.',
+        ],
+        'supernova': [
+          'Ships cannot move through or into this system.',
+        ],
+        'nebula': [
+          'Ships can only move here if it is the active system (no moving through).',
+          'Ships starting here have their move value treated as 1.',
+          'Defender gets +1 to each combat roll in space combat.',
+        ],
+        'gravity-rift': [
+          'Ships moving out of or through this system get +1 move value.',
+          'Each ship exiting rolls a die: on 1–3, that ship is destroyed.',
+        ],
+      }
+      return effects[this.tileData.anomaly] || ['No special effects.']
     },
 
     isFrontierSystem() {
@@ -423,6 +459,22 @@ export default {
 .token-entry {
   font-size: .85em;
   padding: .05em 0;
+}
+
+.anomaly-block {
+  margin-bottom: .25em;
+}
+
+.anomaly-effects {
+  margin-top: .2em;
+  padding-left: .5em;
+  border-left: 2px solid #dc3545;
+}
+
+.anomaly-effect {
+  font-size: .8em;
+  color: #666;
+  padding: .1em 0;
 }
 
 .frontier-tag {
