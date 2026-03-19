@@ -76,6 +76,10 @@
             {{ entry.count }}x {{ entry.type }}
             <span v-if="entry.damaged > 0" class="damaged-badge">({{ entry.damaged }} damaged)</span>
           </div>
+          <div v-if="fleetWarning(stack.owner)" class="fleet-warning-row">
+            <span class="fleet-warning-icon">!</span>
+            Fleet limit reached: {{ fleetWarning(stack.owner).count }}/{{ fleetWarning(stack.owner).limit }} non-fighter ships
+          </div>
         </div>
       </div>
 
@@ -110,6 +114,7 @@ const SHIP_ICONS = {
 }
 
 const UNIT_ORDER = ['war-sun', 'flagship', 'dreadnought', 'carrier', 'cruiser', 'destroyer', 'fighter']
+const NON_FIGHTER_TYPES = ['war-sun', 'flagship', 'dreadnought', 'carrier', 'cruiser', 'destroyer']
 
 export default {
   name: 'SystemDetailModal',
@@ -275,6 +280,25 @@ export default {
     shipIcon(type) {
       return SHIP_ICONS[type] || null
     },
+
+    fleetWarning(owner) {
+      const stack = this.spaceUnitStacks.find(s => s.owner === owner)
+      if (!stack) {
+        return null
+      }
+      let count = 0
+      for (const entry of stack.units) {
+        if (NON_FIGHTER_TYPES.includes(entry.type)) {
+          count += entry.count
+        }
+      }
+      const player = this.game.players.byName(owner)
+      const limit = player?.commandTokens?.fleet || 0
+      if (count >= limit) {
+        return { count, limit }
+      }
+      return null
+    },
   },
 }
 </script>
@@ -418,5 +442,29 @@ export default {
 .attachment-tag {
   font-size: .75em; padding: .1em .3em; border-radius: .15em;
   background: #fff3e0; color: #e65100; font-weight: 500;
+}
+
+.fleet-warning-row {
+  display: flex;
+  align-items: center;
+  gap: .35em;
+  font-size: .8em;
+  color: #dc3545;
+  font-weight: 600;
+  margin-top: .25em;
+}
+
+.fleet-warning-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1em;
+  height: 1.1em;
+  border-radius: 50%;
+  background: rgba(220, 53, 69, .85);
+  color: white;
+  font-size: .75em;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 </style>
