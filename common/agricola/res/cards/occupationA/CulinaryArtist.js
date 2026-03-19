@@ -7,7 +7,7 @@ module.exports = {
   players: "4+",
   text: "Each time another player uses the \"Traveling Players\" accumulation space, you can exchange your choice of 1 grain/sheep/vegetable for 4/5/7 food.",
   onAnyAction(game, actingPlayer, actionId, cardOwner) {
-    if (actionId !== 'traveling-players' || actingPlayer.name === cardOwner.name) {
+    if ((actionId !== 'traveling-players' && actionId !== 'traveling-players-5') || actingPlayer.name === cardOwner.name) {
       return
     }
     const options = []

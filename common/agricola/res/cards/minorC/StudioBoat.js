@@ -12,7 +12,7 @@ module.exports = {
   actionSpaceId: "studio-boat",
   actionSpaceForPlayerCount: [1, 2, 3],
   onAction(game, player, actionId) {
-    if (actionId === 'traveling-players') {
+    if (actionId === 'traveling-players' || actionId === 'traveling-players-5') {
       player.addBonusPoints(1)
       game.log.add({
         template: '{player} gets 1 bonus point from {card}',

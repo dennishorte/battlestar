@@ -7,7 +7,7 @@ module.exports = {
   players: "4+",
   text: "Each time another player uses the \"Traveling Players\" accumulation space, you get 1 food and 1 wood. Immediately after, you can buy exactly 1 vegetable for 2 food.",
   onAnyAction(game, actingPlayer, actionId, cardOwner) {
-    if (actionId !== 'traveling-players' || actingPlayer.name === cardOwner.name) {
+    if ((actionId !== 'traveling-players' && actionId !== 'traveling-players-5') || actingPlayer.name === cardOwner.name) {
       return
     }
     cardOwner.addResource('food', 1)

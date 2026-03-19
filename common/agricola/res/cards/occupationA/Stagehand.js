@@ -7,7 +7,7 @@ module.exports = {
   players: "3+",
   text: "Each time another player uses the \"Traveling Players\" accumulation space, you can take your choice of a \"Build Fences\", \"Build Stables\", or \"Build Rooms\" action.",
   onAnyAction(game, actingPlayer, actionId, cardOwner) {
-    if (actionId !== 'traveling-players' || actingPlayer.name === cardOwner.name) {
+    if ((actionId !== 'traveling-players' && actionId !== 'traveling-players-5') || actingPlayer.name === cardOwner.name) {
       return
     }
     const choices = ['Build Fences', 'Build Stables', 'Build Rooms', 'Skip']

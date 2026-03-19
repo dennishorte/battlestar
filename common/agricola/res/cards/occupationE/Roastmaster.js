@@ -7,10 +7,11 @@ module.exports = {
   players: "1+",
   text: "Each time you use the \"Traveling Players\" or \"Fishing\" accumulation spaces, you can move exactly 1 food from that space to the other to get 1 cattle.",
   onAction(game, player, actionId) {
-    if (actionId === 'traveling-players' || actionId === 'fishing') {
+    if (actionId === 'traveling-players' || actionId === 'traveling-players-5' || actionId === 'fishing') {
       if (player.food >= 1 && player.canPlaceAnimals('cattle', 1)) {
-        const otherName = actionId === 'traveling-players' ? 'Fishing' : 'Traveling Players'
-        const otherId = actionId === 'traveling-players' ? 'fishing' : 'traveling-players'
+        const isTraveling = actionId === 'traveling-players' || actionId === 'traveling-players-5'
+        const otherName = isTraveling ? 'Fishing' : 'Traveling Players'
+        const otherId = isTraveling ? 'fishing' : 'traveling-players'
         const selection = game.actions.choose(player, [`Move 1 food to ${otherName}, get cattle`, 'Skip'], {
           title: 'Roastmaster: Move food for cattle?',
           min: 1,

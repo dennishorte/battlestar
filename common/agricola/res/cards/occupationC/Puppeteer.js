@@ -7,7 +7,7 @@ module.exports = {
   players: "3+",
   text: "Each time another player uses the \"Traveling Players\" accumulation space, you can pay them 1 food to immediately play an occupation without paying an occupation cost.",
   onAnyAction(game, actingPlayer, actionId, cardOwner) {
-    if (actionId === 'traveling-players' && actingPlayer.name !== cardOwner.name && cardOwner.food >= 1) {
+    if ((actionId === 'traveling-players' || actionId === 'traveling-players-5') && actingPlayer.name !== cardOwner.name && cardOwner.food >= 1) {
       const selection = game.actions.choose(cardOwner, () => [
         'Pay 1 food to play an occupation (free)',
         'Skip',

@@ -7,7 +7,7 @@ module.exports = {
   players: "4+",
   text: "Each time you use the \"Traveling Players\" accumulation space, you get an additional 1 wood and 1 grain.",
   onAction(game, player, actionId) {
-    if (actionId === 'traveling-players') {
+    if (actionId === 'traveling-players' || actionId === 'traveling-players-5') {
       player.addResource('wood', 1)
       player.addResource('grain', 1)
       game.log.add({

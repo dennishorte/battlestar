@@ -13,6 +13,9 @@ module.exports = {
       if (game.state.actionSpaces['traveling-players'] && !game.isActionOccupied('traveling-players')) {
         options.push('traveling-players')
       }
+      if (game.state.actionSpaces['traveling-players-5'] && !game.isActionOccupied('traveling-players-5')) {
+        options.push('traveling-players-5')
+      }
       for (const lid of lessonsIds) {
         if (game.state.actionSpaces[lid] && !game.isActionOccupied(lid)) {
           options.push(lid)

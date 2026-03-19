@@ -7,7 +7,7 @@ module.exports = {
   players: "1+",
   text: "Immediately after each time you use the \"Traveling Players\" accumulation space, you can place another person on an action space of your choice, regardless whether or not the action space is occupied.",
   onAction(game, player, actionId) {
-    if (actionId !== 'traveling-players') {
+    if (actionId !== 'traveling-players' && actionId !== 'traveling-players-5') {
       return
     }
     if (player.getAvailableWorkers() <= 0) {
