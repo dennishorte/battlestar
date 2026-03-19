@@ -1,6 +1,6 @@
 const t = require('../../../testutil_v2.js')
 
-test('gets 3 food + 1 grain when taking 1 sheep', () => {
+test('gets 3 food + 1 grain when taking 1 sheep, space retains animal', () => {
   const game = t.fixture({ cardSets: ['occupationD', 'test'] })
   t.setBoard(game, {
     actionSpaces: [{ ref: 'Sheep Market', accumulated: 1 }],
@@ -10,11 +10,14 @@ test('gets 3 food + 1 grain when taking 1 sheep', () => {
   })
   game.run()
   t.choose(game, 'Sheep Market')
-  // 1 sheep auto-places as pet. onAction fires — PetLover sees 1 sheep
-  t.choose(game, 'Get bonus: 3 food + 1 grain (Pet Lover)')
+  t.choose(game, 'Leave sheep on space: get 1 sheep + 3 food + 1 grain')
   t.choose(game, 'Day Laborer')  // micah
   t.choose(game, 'Forest')       // dennis
   t.choose(game, 'Clay Pit')     // micah
+  // Space should retain the sheep (restored by Pet Lover)
+  // Normal: space resets to 0 after take, then +1 from round 2 accumulation = 1
+  // With Pet Lover: +1 restored to space, then +1 from round 2 = 2
+  expect(game.state.actionSpaces['take-sheep'].accumulated).toBe(2)
   t.testBoard(game, {
     dennis: {
       occupations: ['pet-lover-d138'],

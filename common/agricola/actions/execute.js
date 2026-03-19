@@ -156,8 +156,10 @@ AgricolaActionManager.prototype.executeAction = function(player, actionId) {
           resources[resource] = amountBefore
         }
       }
-      // Call hooks even for accumulating actions (pass resources so cards can check amounts, e.g. Cordmaker, MaterialDeliveryman)
-      this.game.callPlayerCardHook(player, 'onAction', actionId, resources)
+      // onActionReplace fires first — lets cards undo/replace the normal distribution
+      this.game.callPlayerCardHookOrdered(player, 'onActionReplace', actionId, resources)
+      // onAction fires after — observes final state (e.g. Cordmaker, MaterialDeliveryman)
+      this.game.callPlayerCardHookOrdered(player, 'onAction', actionId, resources)
       this.callOnAnyActionHooks(player, actionId, resources)
     }
 
@@ -278,8 +280,10 @@ AgricolaActionManager.prototype.executeAction = function(player, actionId) {
     this.improvementSix(player)
   }
 
-  // Call onAction hooks for this player's cards
-  this.game.callPlayerCardHook(player, 'onAction', actionId, action.gives || {})
+  // onActionReplace fires first — lets cards undo/replace the normal distribution
+  this.game.callPlayerCardHookOrdered(player, 'onActionReplace', actionId, action.gives || {})
+  // onAction fires after
+  this.game.callPlayerCardHookOrdered(player, 'onAction', actionId, action.gives || {})
 
   // Call onAnyAction hooks for ALL players' cards
   this.callOnAnyActionHooks(player, actionId)
@@ -311,7 +315,8 @@ AgricolaActionManager.prototype.executeCardActionSpace = function(player, action
     card.callHook('onActionSpaceUsed', this.game, player, owner)
   }
 
-  this.game.callPlayerCardHook(player, 'onAction', actionId, {})
+  this.game.callPlayerCardHookOrdered(player, 'onActionReplace', actionId, {})
+  this.game.callPlayerCardHookOrdered(player, 'onAction', actionId, {})
   this.callOnAnyActionHooks(player, actionId)
   return true
 }

@@ -170,6 +170,43 @@ Agricola.prototype.callPlayerCardHook = function(player, hookName, ...args) {
   return results
 }
 
+/**
+ * Call a hook on all of a player's active cards, with player-chosen ordering when 2+ cards apply.
+ * Returns array of { card, result } from cards that returned something.
+ */
+Agricola.prototype.callPlayerCardHookOrdered = function(player, hookName, ...args) {
+  const cards = this.getPlayerActiveCards(player)
+    .filter(c => c.hasHook(hookName))
+
+  if (cards.length === 0) {
+    return []
+  }
+
+  if (cards.length === 1) {
+    const result = cards[0].callHook(hookName, this, player, ...args)
+    return result !== undefined ? [{ card: cards[0], result }] : []
+  }
+
+  // Multiple cards — let player choose execution order
+  const cardNames = cards.map(c => c.definition.name)
+  const ordered = this.actions.choose(player, cardNames, {
+    title: `Choose order for ${hookName} effects`,
+    min: cards.length,
+    max: cards.length,
+    noAutoRespond: true,
+  })
+
+  const results = []
+  for (const name of ordered) {
+    const card = cards.find(c => c.definition.name === name)
+    const result = card.callHook(hookName, this, player, ...args)
+    if (result !== undefined) {
+      results.push({ card, result })
+    }
+  }
+  return results
+}
+
 Agricola.prototype.callCardHook = function(hookName, ...args) {
   for (const player of this.players.all()) {
     this.callPlayerCardHook(player, hookName, ...args)

@@ -120,7 +120,7 @@ class AgricolaActionManager extends BaseActionManager {
       const result = super.choose(player, choices, {
         ...opts,
         anytimeActions: hasAnytime ? anytimeActions : undefined,
-        noAutoRespond: hasAnytime || undefined,
+        noAutoRespond: opts.noAutoRespond || hasAnytime || undefined,
       })
 
       if (result && result.action === 'anytime-action') {

@@ -25,13 +25,13 @@ describe('Animal Catcher', () => {
     })
     game.run()
 
-    // Round 2: 6 harvests remaining. Pay 6 food for 3 animals.
+    // Round 2: 6 harvests remaining. Day Laborer gives 2 food, then undo 2 + pay 6.
     t.choose(game, 'Day Laborer')
     t.choose(game, 'Pay 6 food for 1 sheep, 1 boar, 1 cattle')
 
     t.testBoard(game, {
       dennis: {
-        food: 6,  // 10 + 2 day laborer - 6 for animals
+        food: 4,  // 10 + 2 day laborer - 2 undo - 6 for animals
         occupations: ['animal-catcher-c168'],
         pet: 'cattle',
         animals: { sheep: 1, boar: 1, cattle: 1 },
