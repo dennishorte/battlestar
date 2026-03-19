@@ -554,7 +554,7 @@ class AgricolaPlayer extends BasePlayer {
 
   getRoomCostOptions() {
     const baseCost = this.getRoomCost()
-    const { allowWoodSubstitution, ...rawCost } = baseCost
+    const { allowWoodSubstitution, allowGrainSubstitution, ...rawCost } = baseCost
     const primaryCost = this._cleanCost(rawCost)
     const options = [{ cost: primaryCost, label: 'standard' }]
 
@@ -571,6 +571,10 @@ class AgricolaPlayer extends BasePlayer {
           options.push({ cost: altCost, label: `substitute-${resource}` })
         }
       }
+    }
+
+    if (allowGrainSubstitution) {
+      options.push(...this._generateGrainSubstitutionOptions(primaryCost, allowGrainSubstitution))
     }
 
     return options
@@ -672,7 +676,7 @@ class AgricolaPlayer extends BasePlayer {
       return []
     }
 
-    const { allowWoodSubstitution, ...rawCost } = baseCost
+    const { allowWoodSubstitution, allowGrainSubstitution, ...rawCost } = baseCost
     const primaryCost = this._cleanCost(rawCost)
     const options = [{ cost: primaryCost, label: 'standard' }]
 
@@ -689,6 +693,10 @@ class AgricolaPlayer extends BasePlayer {
           options.push({ cost: altCost, label: `substitute-${resource}` })
         }
       }
+    }
+
+    if (allowGrainSubstitution) {
+      options.push(...this._generateGrainSubstitutionOptions(primaryCost, allowGrainSubstitution))
     }
 
     return options
@@ -1029,6 +1037,62 @@ class AgricolaPlayer extends BasePlayer {
       }
     }
     return modifiedCost
+  }
+
+  /**
+   * Get the maximum number of grain substitutions allowed by active cards (Millwright).
+   */
+  _getGrainSubstitutionLimit() {
+    for (const card of this.getActiveCards()) {
+      if (card.hasHook('modifyBuildCost')) {
+        // Check if this card adds grain substitution by testing with a dummy cost
+        const testResult = card.callHook('modifyBuildCost', this, {}, 'build-room')
+        if (testResult && testResult.allowGrainSubstitution) {
+          return testResult.allowGrainSubstitution
+        }
+      }
+    }
+    return 0
+  }
+
+  /**
+   * Generate alternative cost options where building resources are replaced with grain.
+   * @param {Object} baseCost - The base cost (cleaned, no metadata keys)
+   * @param {number} maxSubstitutions - Maximum number of resources to replace with grain
+   * @returns {Array<{cost: Object, label: string}>}
+   */
+  _generateGrainSubstitutionOptions(baseCost, maxSubstitutions) {
+    const buildingResources = ['wood', 'clay', 'stone', 'reed'].filter(r => (baseCost[r] || 0) > 0)
+    if (buildingResources.length === 0) {
+      return []
+    }
+
+    const options = []
+    const generate = (idx, remaining, subs) => {
+      if (idx === buildingResources.length) {
+        const totalSub = Object.values(subs).reduce((a, b) => a + b, 0)
+        if (totalSub > 0) {
+          const altCost = { ...baseCost }
+          for (const [r, n] of Object.entries(subs)) {
+            altCost[r] -= n
+            if (altCost[r] === 0) {
+              delete altCost[r]
+            }
+          }
+          altCost.grain = (altCost.grain || 0) + totalSub
+          options.push({ cost: altCost, label: `grain-sub-${totalSub}` })
+        }
+        return
+      }
+      const res = buildingResources[idx]
+      const maxForThis = Math.min(baseCost[res], remaining)
+      for (let n = 0; n <= maxForThis; n++) {
+        const newSubs = n > 0 ? { ...subs, [res]: n } : { ...subs }
+        generate(idx + 1, remaining - n, newSubs)
+      }
+    }
+    generate(0, maxSubstitutions, {})
+    return options
   }
 
   /**

@@ -92,8 +92,26 @@ AgricolaPlayer.prototype.getStableCost = function(baseCost) {
   return cost
 }
 
+AgricolaPlayer.prototype.getStableCostOptions = function(baseCost = res.buildingCosts.stable) {
+  const cost = this.getStableCost(baseCost)
+  // Apply build cost modifiers to get grain substitution flag
+  const modifiedCost = this.applyBuildCostModifiers(cost, 'build-stable')
+  const { allowGrainSubstitution, ...rawCost } = modifiedCost
+  const cleanCost = this._cleanCost(rawCost)
+  const options = [{ cost: cleanCost, label: 'standard' }]
+
+  if (allowGrainSubstitution) {
+    options.push(...this._generateGrainSubstitutionOptions(cleanCost, allowGrainSubstitution))
+  }
+  return options
+}
+
+AgricolaPlayer.prototype.getAffordableStableCostOptions = function(baseCost = res.buildingCosts.stable) {
+  return this.getStableCostOptions(baseCost).filter(opt => this.canAffordCost(opt.cost))
+}
+
 AgricolaPlayer.prototype.canAffordStable = function(baseCost = res.buildingCosts.stable) {
-  return this.canAffordCost(this.getStableCost(baseCost))
+  return this.getAffordableStableCostOptions(baseCost).length > 0
 }
 
 // ---------------------------------------------------------------------------
@@ -632,7 +650,10 @@ AgricolaPlayer.prototype.validatePastureSelection = function(spaces, options) {
         woodCost = Math.max(0, woodCost - freeFences)
       }
     }
-    if (woodCost > this.wood) {
+    // Check if player can afford the wood cost, accounting for grain substitution (Millwright)
+    const grainSubLimit = this._getGrainSubstitutionLimit()
+    const maxGrainSub = grainSubLimit > 0 ? Math.min(grainSubLimit, this.grain || 0) : 0
+    if (woodCost > this.wood + maxGrainSub) {
       return {
         valid: false,
         error: `Need ${woodCost} wood, have ${this.wood}`,
@@ -744,7 +765,24 @@ AgricolaPlayer.prototype.buildPasture = function(spaces, options) {
         }
       }
     }
-    this.payCost({ wood: woodCost })
+    // Check for grain substitution (Millwright)
+    const grainSubLimit = this._getGrainSubstitutionLimit()
+    if (grainSubLimit > 0 && woodCost > 0) {
+      const fenceCost = { wood: woodCost }
+      const grainOptions = this._generateGrainSubstitutionOptions(fenceCost, grainSubLimit)
+      if (grainOptions.length > 0) {
+        // Don't pay yet — return unpaid cost for the action manager to handle
+        this._pendingFenceCost = {
+          options: [{ cost: fenceCost, label: 'standard' }, ...grainOptions],
+        }
+      }
+      else {
+        this.payCost({ wood: woodCost })
+      }
+    }
+    else {
+      this.payCost({ wood: woodCost })
+    }
   }
 
   // Add fences — edge fences to palisades if WoodPalisades active

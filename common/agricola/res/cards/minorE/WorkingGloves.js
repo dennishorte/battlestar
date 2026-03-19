@@ -13,7 +13,7 @@ module.exports = {
       args: { player , card: this},
     })
   },
-  modifyOccupationCost(game, player, cost) {
+  modifyOccupationCost(player, cost) {
     // Allows substitution of 1 building resource for up to 2 food
     return { ...cost, allowResourceSubstitution: { resource: 'building', replaces: 2 } }
   },

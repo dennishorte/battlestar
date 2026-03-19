@@ -66,7 +66,20 @@ AgricolaActionManager.prototype._completeMajorPurchase = function(player, improv
     impCost = {}
   }
   else {
-    impCost = player.getMajorImprovementCost(improvementId)
+    const affordableOptions = player.getAffordableMajorImprovementCostOptions(improvementId)
+    if (affordableOptions.length > 1) {
+      const costChoices = affordableOptions.map(opt => this._formatCostLabel(opt.cost))
+      const selection = this.choose(player, costChoices, {
+        title: `Choose payment for ${imp.name}`,
+        min: 1,
+        max: 1,
+      })
+      const selectedIdx = costChoices.indexOf(selection[0])
+      impCost = affordableOptions[selectedIdx].cost
+    }
+    else {
+      impCost = affordableOptions[0].cost
+    }
     if ((player._houseRedevelopmentDiscount || 0) > 0) {
       impCost = this._applyBuildingResourceDiscount(player, impCost, player._houseRedevelopmentDiscount)
     }
@@ -295,26 +308,48 @@ AgricolaActionManager.prototype.playOccupation = function(player, options = {}) 
   const cost = baseFoodCost // Keep for display/gating
   const hasWoodOrFood = costObj.woodOrFood > 0
 
+  // Working Gloves: can pay 1 building resource in place of up to 2 food
+  const hasResourceSub = costObj.allowResourceSubstitution
+  const buildingResources = ['wood', 'clay', 'stone', 'reed']
+  const hasBuildingResource = hasResourceSub && buildingResources.some(r => player[r] >= 1)
+
   if (cost > 0 && !hasWoodOrFood && player.food < cost) {
-    // Art Teacher: check if Traveling Players has food to supplement
-    let tpFood = 0
-    if (player.getActiveCards().some(c => c.definition.canUseTravelingPlayersFood)) {
-      for (const tpId of ['traveling-players', 'traveling-players-5']) {
-        const tpState = this.game.state.actionSpaces[tpId]
-        if (tpState) {
-          tpFood += tpState.accumulated || 0
+    // Working Gloves: if player can substitute a building resource, reduce effective food needed
+    if (hasBuildingResource) {
+      const foodReduction = Math.min(cost, hasResourceSub.replaces)
+      const effectiveFoodNeeded = cost - foodReduction
+      if (player.food < effectiveFoodNeeded) {
+        const canConvert = this.game.getAnytimeFoodConversionOptions(player).length > 0
+        if (!canConvert) {
+          this.log.add({
+            template: '{player} cannot afford to play an occupation (needs {cost} food)',
+            args: { player, cost },
+          })
+          return false
         }
       }
     }
-    if (player.food + tpFood < cost) {
-      // Relax gate: allow entry if anytime conversions can produce food
-      const canConvert = this.game.getAnytimeFoodConversionOptions(player).length > 0
-      if (!canConvert) {
-        this.log.add({
-          template: '{player} cannot afford to play an occupation (needs {cost} food)',
-          args: { player, cost },
-        })
-        return false
+    else {
+      // Art Teacher: check if Traveling Players has food to supplement
+      let tpFood = 0
+      if (player.getActiveCards().some(c => c.definition.canUseTravelingPlayersFood)) {
+        for (const tpId of ['traveling-players', 'traveling-players-5']) {
+          const tpState = this.game.state.actionSpaces[tpId]
+          if (tpState) {
+            tpFood += tpState.accumulated || 0
+          }
+        }
+      }
+      if (player.food + tpFood < cost) {
+        // Relax gate: allow entry if anytime conversions can produce food
+        const canConvert = this.game.getAnytimeFoodConversionOptions(player).length > 0
+        if (!canConvert) {
+          this.log.add({
+            template: '{player} cannot afford to play an occupation (needs {cost} food)',
+            args: { player, cost },
+          })
+          return false
+        }
       }
     }
   }
@@ -416,6 +451,68 @@ AgricolaActionManager.prototype.playOccupation = function(player, options = {}) 
       }
       else {
         player.payCost({ food: amount })
+      }
+    }
+    else if (hasResourceSub) {
+      // Working Gloves: can pay 1 building resource in place of up to 2 food
+      const foodReduction = Math.min(cost, hasResourceSub.replaces)
+      const remainingFood = cost - foodReduction
+      const affordableResources = buildingResources.filter(r => player[r] >= 1)
+
+      if (affordableResources.length > 0 && (player.food < cost || affordableResources.length > 0)) {
+        const payChoices = []
+        // Standard food payment (if affordable)
+        if (player.food >= cost) {
+          payChoices.push(`Pay ${cost} food`)
+        }
+        // Building resource substitution options
+        for (const res of affordableResources) {
+          if (remainingFood > 0) {
+            payChoices.push(`Pay 1 ${res} + ${remainingFood} food`)
+          }
+          else {
+            payChoices.push(`Pay 1 ${res}`)
+          }
+        }
+
+        if (payChoices.length === 1) {
+          // Auto-select if only one option
+          const choice = payChoices[0]
+          if (choice === `Pay ${cost} food`) {
+            player.payCost({ food: cost })
+          }
+          else {
+            const res = affordableResources.find(r => choice.includes(r))
+            player.payCost({ [res]: 1, ...(remainingFood > 0 ? { food: remainingFood } : {}) })
+            this.log.add({
+              template: '{player} pays 1 {resource} in place of {amount} food via {card}',
+              args: { player, resource: res, amount: foodReduction, card: 'Working Gloves' },
+            })
+          }
+        }
+        else {
+          const paySelection = this.choose(player, payChoices, {
+            title: 'Choose payment for occupation',
+            min: 1,
+            max: 1,
+          })
+          const selected = paySelection[0]
+          if (selected === `Pay ${cost} food`) {
+            player.payCost({ food: cost })
+          }
+          else {
+            const res = affordableResources.find(r => selected.includes(r))
+            player.payCost({ [res]: 1, ...(remainingFood > 0 ? { food: remainingFood } : {}) })
+            this.log.add({
+              template: '{player} pays 1 {resource} in place of {amount} food via {card}',
+              args: { player, resource: res, amount: foodReduction, card: 'Working Gloves' },
+            })
+          }
+        }
+      }
+      else {
+        // No building resources available, pay normally
+        player.payCost({ food: cost })
       }
     }
     else {

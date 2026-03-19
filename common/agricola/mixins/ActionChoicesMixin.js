@@ -54,7 +54,7 @@ const ActionChoicesMixin = {
       choice.canSow = action.allowsSowing && player.getSowableFields().length > 0 && (player.grain > 0 || player.vegetables > 0)
       choice.canBake = action.allowsBaking && player.hasBakingAbility() && player.grain > 0
       choice.canRenovate = action.allowsRenovation && player.canRenovate()
-      choice.canFence = action.allowsFencing && player.wood > 0 && player.getFenceCount() < res.constants.maxFences
+      choice.canFence = action.allowsFencing && (player.wood > 0 || (player.grain > 0 && player._getGrainSubstitutionLimit() > 0)) && player.getFenceCount() < res.constants.maxFences
       choice.canGrowFamily = action.allowsFamilyGrowth && player.canGrowFamily(action.requiresRoom !== false)
 
       choices.push(choice)

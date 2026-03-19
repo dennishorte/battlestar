@@ -89,9 +89,23 @@ AgricolaActionManager.prototype.buildRoomAndOrStable = function(player) {
     }
 
     if (choice === 'Build Stable') {
-      const stableCost = player.getStableCost(res.buildingCosts.stable)
-      player.payCost(stableCost)
-      player._farmExpansionWoodPaid = (player._farmExpansionWoodPaid || 0) + (stableCost.wood || 0)
+      const affordableStableOptions = player.getAffordableStableCostOptions()
+      let chosenStableCost
+      if (affordableStableOptions.length > 1) {
+        const costChoices = affordableStableOptions.map(opt => this._formatCostLabel(opt.cost))
+        const costSelection = this.choose(player, costChoices, {
+          title: 'Choose payment for stable',
+          min: 1,
+          max: 1,
+        })
+        const selectedIdx = costChoices.indexOf(costSelection[0])
+        chosenStableCost = affordableStableOptions[selectedIdx].cost
+      }
+      else {
+        chosenStableCost = affordableStableOptions[0].cost
+      }
+      player.payCost(chosenStableCost)
+      player._farmExpansionWoodPaid = (player._farmExpansionWoodPaid || 0) + (chosenStableCost.wood || 0)
       this.buildStable(player)
       builtAnything = true
       builtStable = true

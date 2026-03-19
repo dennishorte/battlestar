@@ -6,8 +6,12 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "You immediately get 1 grain. Each time you build fences, stables, and rooms, or renovate your house, you can replace up to 2 building resources of any type with 1 grain each.",
-  allowsGrainSubstitution: true,
-  maxSubstitutions: 2,
+  modifyBuildCost(player, cost, action) {
+    if (action === 'build-room' || action === 'renovate' || action === 'build-stable' || action === 'build-fences') {
+      return { ...cost, allowGrainSubstitution: 2 }
+    }
+    return cost
+  },
   onPlay(game, player) {
     player.addResource('grain', 1)
     game.log.add({

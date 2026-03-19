@@ -14,7 +14,8 @@ AgricolaActionManager.prototype.buildFences = function(player) {
     const hasFieldFenceDiscount = !!player._fieldFencesActive
     const hasFarmRedevFreeFences = (player._farmRedevelopmentFreeFences || 0) > 0
     const hasCardFreeFences = player.getActiveCards().some(c => c.hasHook('getFreeFences') && c.callHook('getFreeFences', this.game) > 0)
-    if (player.wood < 1 && player.getFreeFenceCount() === 0 && !hasFreeOverhaulFences && !hasFieldFenceDiscount && !hasFarmRedevFreeFences && !hasCardFreeFences) {
+    const hasGrainSubstitution = player.grain > 0 && player._getGrainSubstitutionLimit() > 0
+    if (player.wood < 1 && player.getFreeFenceCount() === 0 && !hasFreeOverhaulFences && !hasFieldFenceDiscount && !hasFarmRedevFreeFences && !hasCardFreeFences && !hasGrainSubstitution) {
       if (totalFencesBuilt === 0) {
         this.log.add({
           template: '{player} has no wood for fences',
@@ -51,6 +52,7 @@ AgricolaActionManager.prototype.buildFences = function(player) {
     const canAffordMore = player.wood >= 1 || player.getFreeFenceCount() > 0
       || (player._overhaulFreeFences || 0) > 0 || !!player._fieldFencesActive
       || (player._farmRedevelopmentFreeFences || 0) > 0
+      || (player.grain > 0 && player._getGrainSubstitutionLimit() > 0)
     if (canAffordMore && remainingFences - result.fencesBuilt > 0) {
       const continueChoice = this.choose(player, ['Build another pasture', 'Done building fences'], {
         title: 'Continue fencing?',
@@ -117,6 +119,26 @@ AgricolaActionManager.prototype.selectPastureSpaces = function(player) {
     // Build the pasture
     const result = player.buildPasture(selectedSpaces)
     if (result.success) {
+      // Handle pending fence cost choice (Millwright grain substitution)
+      if (player._pendingFenceCost) {
+        const pending = player._pendingFenceCost
+        delete player._pendingFenceCost
+        const affordable = pending.options.filter(opt => player.canAffordCost(opt.cost))
+        if (affordable.length > 1) {
+          const costChoices = affordable.map(opt => this._formatCostLabel(opt.cost))
+          const costSelection = this.choose(player, costChoices, {
+            title: 'Choose payment for fences',
+            min: 1,
+            max: 1,
+          })
+          const selectedIdx = costChoices.indexOf(costSelection[0])
+          player.payCost(affordable[selectedIdx].cost)
+        }
+        else {
+          player.payCost(affordable[0].cost)
+        }
+      }
+
       this.log.add({
         template: '{player} builds a pasture with {spaces} spaces using {fences} fences',
         args: { player, spaces: selectedSpaces.length, fences: result.fencesBuilt },

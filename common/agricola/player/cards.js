@@ -52,13 +52,8 @@ AgricolaPlayer.prototype.canBuyMajorImprovement = function(improvementId) {
     }
   }
 
-  // Normal purchase
-  const cost = this.getMajorImprovementCost(improvementId)
-  // Apply House Redevelopment discount for affordability check
-  if ((this._houseRedevelopmentDiscount || 0) > 0) {
-    return this._canAffordWithBuildingResourceDiscount(cost, this._houseRedevelopmentDiscount)
-  }
-  return this.canAffordCost(cost)
+  // Normal purchase — check all cost options (includes food-for-wood substitution)
+  return this.getAffordableMajorImprovementCostOptions(improvementId).length > 0
 }
 
 AgricolaPlayer.prototype.buyMajorImprovement = function(improvementId) {
@@ -619,30 +614,130 @@ AgricolaPlayer.prototype.getCardCostOptions = function(card) {
   const options = []
 
   // Primary cost
-  const primaryCost = this.getCardCost(card)
+  const rawPrimaryCost = this.getCardCost(card)
+  const { allowFoodForWoodSubstitution: primarySub, ...primaryClean } = rawPrimaryCost
+  const primaryCost = this._cleanCost(primaryClean)
   options.push({ cost: primaryCost, label: 'primary' })
 
   // costAlternative — skip special keys like cookBoar
   const alt = card.definition.costAlternative
+  let altSub = 0
   if (alt && !alt.cookBoar) {
     let cost = { ...alt }
     if (card.type === 'minor') {
       cost = this.applyCostModifiers(cost, { type: 'minor-improvement' })
     }
-    options.push({ cost, label: 'alternative' })
+    const { allowFoodForWoodSubstitution: altSubVal, ...altClean } = cost
+    altSub = altSubVal || 0
+    options.push({ cost: this._cleanCost(altClean), label: 'alternative' })
   }
 
   // costAlternative2
   const alt2 = card.definition.costAlternative2
+  let alt2Sub = 0
   if (alt2) {
     let cost = { ...alt2 }
     if (card.type === 'minor') {
       cost = this.applyCostModifiers(cost, { type: 'minor-improvement' })
     }
-    options.push({ cost, label: 'alternative2' })
+    const { allowFoodForWoodSubstitution: alt2SubVal, ...alt2Clean } = cost
+    alt2Sub = alt2SubVal || 0
+    options.push({ cost: this._cleanCost(alt2Clean), label: 'alternative2' })
+  }
+
+  // Generate food-for-wood substitution options from Wood Expert
+  if (primarySub > 0) {
+    options.push(...this._generateFoodForWoodSubstitutionOptions(primaryCost, primarySub))
+  }
+  if (altSub > 0) {
+    const altCost = options.find(o => o.label === 'alternative').cost
+    options.push(...this._generateFoodForWoodSubstitutionOptions(altCost, altSub))
+  }
+  if (alt2Sub > 0) {
+    const alt2Cost = options.find(o => o.label === 'alternative2').cost
+    options.push(...this._generateFoodForWoodSubstitutionOptions(alt2Cost, alt2Sub))
   }
 
   return options
+}
+
+AgricolaPlayer.prototype._generateFoodForWoodSubstitutionOptions = function(baseCost, maxSubstitution) {
+  const woodAmount = baseCost.wood || 0
+  if (woodAmount <= 0) {
+    return []
+  }
+
+  const options = []
+  const maxSub = Math.min(woodAmount, maxSubstitution)
+  for (let n = 1; n <= maxSub; n++) {
+    const altCost = { ...baseCost }
+    altCost.wood -= n
+    if (altCost.wood === 0) {
+      delete altCost.wood
+    }
+    altCost.food = (altCost.food || 0) + n
+    options.push({ cost: altCost, label: `food-for-wood-${n}` })
+  }
+  return options
+}
+
+AgricolaPlayer.prototype.getMajorImprovementCostOptions = function(improvementId) {
+  const rawCost = this.getMajorImprovementCost(improvementId)
+  const { allowFoodForWoodSubstitution, ...cleanRaw } = rawCost
+  const primaryCost = this._cleanCost(cleanRaw)
+  const options = [{ cost: primaryCost, label: 'primary' }]
+
+  if (allowFoodForWoodSubstitution > 0) {
+    options.push(...this._generateFoodForWoodSubstitutionOptions(primaryCost, allowFoodForWoodSubstitution))
+  }
+
+  if (this._siteManagerFoodSubstitution) {
+    options.push(...this._generateFoodForBuildingResourceOptions(primaryCost, 1))
+  }
+
+  return options
+}
+
+AgricolaPlayer.prototype._generateFoodForBuildingResourceOptions = function(baseCost, maxPerType) {
+  const buildingResources = ['wood', 'clay', 'stone', 'reed'].filter(r => (baseCost[r] || 0) > 0)
+  if (buildingResources.length === 0) {
+    return []
+  }
+
+  const options = []
+  const generate = (idx, currentCost, totalSubs) => {
+    if (idx === buildingResources.length) {
+      if (totalSubs > 0) {
+        options.push({ cost: { ...currentCost }, label: `site-manager-${totalSubs}` })
+      }
+      return
+    }
+    const resource = buildingResources[idx]
+    // Option: don't substitute this resource
+    generate(idx + 1, currentCost, totalSubs)
+    // Option: substitute up to maxPerType of this resource with food
+    const amount = currentCost[resource] || 0
+    if (amount >= 1) {
+      const sub = Math.min(amount, maxPerType)
+      const altCost = { ...currentCost }
+      altCost[resource] -= sub
+      if (altCost[resource] === 0) {
+        delete altCost[resource]
+      }
+      altCost.food = (altCost.food || 0) + sub
+      generate(idx + 1, altCost, totalSubs + sub)
+    }
+  }
+  generate(0, baseCost, 0)
+  return options
+}
+
+AgricolaPlayer.prototype.getAffordableMajorImprovementCostOptions = function(improvementId) {
+  const options = this.getMajorImprovementCostOptions(improvementId)
+  if ((this._houseRedevelopmentDiscount || 0) > 0) {
+    return options.filter(opt => this._canAffordWithBuildingResourceDiscount(opt.cost, this._houseRedevelopmentDiscount))
+  }
+  return options.filter(opt => this.canAffordSingleCost(opt.cost))
 }
 
 AgricolaPlayer.prototype.playCard = function(cardId) {
