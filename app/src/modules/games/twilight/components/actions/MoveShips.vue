@@ -42,6 +42,9 @@
 </template>
 
 <script>
+import { twilight } from 'battlestar-common'
+const res = twilight.res
+
 export default {
   name: 'MoveShips',
 
@@ -215,17 +218,35 @@ export default {
         return
       }
 
-      const units = this.game.state.units[systemId]?.space || []
-      const playerUnits = units.filter(u => u.owner === this.actorName)
-
-      if (playerUnits.length === 0) {
+      const systemUnits = this.game.state.units[systemId]
+      if (!systemUnits) {
         return
       }
 
-      // Group by type
+      // Collect units from space area (ships, fighters)
       const byType = {}
-      for (const unit of playerUnits) {
-        byType[unit.type] = (byType[unit.type] || 0) + 1
+      const spaceUnits = systemUnits.space || []
+      for (const unit of spaceUnits) {
+        if (unit.owner === this.actorName) {
+          byType[unit.type] = (byType[unit.type] || 0) + 1
+        }
+      }
+
+      // Collect ground forces from planets (infantry, mechs)
+      const planets = systemUnits.planets || {}
+      for (const planetId of Object.keys(planets)) {
+        for (const unit of planets[planetId]) {
+          if (unit.owner === this.actorName) {
+            const unitDef = res.getUnit(unit.type)
+            if (unitDef?.category === 'ground') {
+              byType[unit.type] = (byType[unit.type] || 0) + 1
+            }
+          }
+        }
+      }
+
+      if (Object.keys(byType).length === 0) {
+        return
       }
 
       this.movements.push({
