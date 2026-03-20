@@ -46,6 +46,10 @@ describe('Invasion', () => {
         ],
       })
 
+      // System 27 has 2 planets — commit ground forces to first planet
+      const planets = getPlanets(targetSystem)
+      t.action(game, 'commit-ground-forces', { assignments: { [planets[0]]: { infantry: 2 } } })
+
       // Infantry should be on the planet after the tactical action completes
       const targetUnits = game.state.units[targetSystem]
       const allGroundForces = Object.values(targetUnits.planets)

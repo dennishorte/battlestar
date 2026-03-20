@@ -69,6 +69,8 @@ describe('Titans of Ul', () => {
         { unitType: 'infantry', from: 'titans-home', count: 2 },
       ],
     })
+    // System 27 has 2 planets — commit ground forces to new-albion
+    t.action(game, 'commit-ground-forces', { assignments: { 'new-albion': { infantry: 2 } } })
 
     // After gaining planet and exploring, Titans get terragenesis prompt
     t.choose(game, 'Place sleeper')

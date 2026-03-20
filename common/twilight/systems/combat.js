@@ -810,7 +810,7 @@ module.exports = function(Twilight) {
       // All non-DMZ planets are valid targets for ground force commitment
       const availablePlanets = systemPlanets.filter(pId => !this._isDemilitarizedZone?.(pId))
       this.state.currentInvasion = { systemId, step: 'commit-forces' }
-      this._commitGroundForcesChoice(systemId, player, availablePlanets, enemyPlanets)
+      this._distributeGroundForces(systemId, player, availablePlanets, enemyPlanets)
 
       // Step 3: Space Cannon Defense on planets where forces were committed (Rule 49.3)
       for (const targetPlanet of planetsToInvade) {

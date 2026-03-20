@@ -69,6 +69,8 @@ describe('Clan of Saar', () => {
       t.action(game, 'move-ships', {
         movements: [{ unitType: 'carrier', from: '27', count: 1 }, { unitType: 'infantry', from: '27', count: 1 }],
       })
+      // System 37 has 2 planets — commit ground forces to arinam
+      t.action(game, 'commit-ground-forces', { assignments: { 'arinam': { infantry: 1 } } })
 
       // Infantry placed on planet -> planet gained -> scavenge triggers
       const dennis = game.players.byName('dennis')
@@ -296,6 +298,8 @@ describe('Clan of Saar', () => {
       t.action(game, 'move-ships', {
         movements: [{ unitType: 'carrier', from: '27', count: 1 }, { unitType: 'infantry', from: '27', count: 1 }],
       })
+      // System 37 has 2 planets — commit ground forces to arinam
+      t.action(game, 'commit-ground-forces', { assignments: { 'arinam': { infantry: 1 } } })
 
       // Scavenge fires (gains 1 TG) → Mech DEPLOY prompt
       // After scavenge, dennis has 3 TG. Deploy mech costs 1 TG.

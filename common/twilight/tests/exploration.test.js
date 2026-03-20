@@ -479,6 +479,8 @@ describe('Exploration', () => {
           { unitType: 'infantry', from: 'sol-home', count: 1 },
         ],
       })
+      // System 27 has 2 planets — commit ground forces to new-albion
+      t.action(game, 'commit-ground-forces', { assignments: { 'new-albion': { infantry: 1 } } })
     }
 
     // Helper: set up Dennis to invade a hazardous planet (Vefut II, system 20)
@@ -1773,6 +1775,8 @@ describe('Exploration', () => {
           { unitType: 'infantry', from: 'sol-home', count: 1 },
         ],
       })
+      // System 27 has 2 planets — commit ground forces to new-albion
+      t.action(game, 'commit-ground-forces', { assignments: { 'new-albion': { infantry: 1 } } })
 
       // new-albion is industrial → draws biotic-research-facility
       const dennis = game.players.byName('dennis')
@@ -1815,6 +1819,8 @@ describe('Exploration', () => {
           { unitType: 'infantry', from: 'sol-home', count: 1 },
         ],
       })
+      // System 27 has 2 planets — commit ground forces to new-albion
+      t.action(game, 'commit-ground-forces', { assignments: { 'new-albion': { infantry: 1 } } })
 
       // Attachment present — fallback gives +1/+1 instead of tech specialty
       expect(game.state.planets['new-albion'].attachments).toContain('biotic-research-facility')

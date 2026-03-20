@@ -104,6 +104,9 @@ describe('Invasion Step Tracker', () => {
       ],
     })
 
+    // System 27 has 2 planets — commit ground forces to the invaded planet
+    t.action(game, 'commit-ground-forces', { assignments: { [planetId]: { infantry: 3 } } })
+
     // Dennis should control the planet after invasion
     expect(game.state.planets[planetId].controller).toBe('dennis')
   })

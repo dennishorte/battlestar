@@ -21,7 +21,7 @@
     </div>
 
     <div class="action-buttons">
-      <button class="btn btn-sm btn-primary" @click="confirm" :disabled="totalRemaining > 0">
+      <button class="btn btn-sm btn-primary" @click="confirm">
         Confirm
       </button>
       <button class="btn btn-sm btn-secondary" @click="skip">Skip</button>

@@ -559,9 +559,9 @@ module.exports = function(Twilight) {
   }
 
 
-  // Commit ground forces with player choice when multiple enemy planets available.
-  // Used during invasion (Rule 49.2): player distributes forces across planets.
-  Twilight.prototype._commitGroundForcesChoice = function(systemId, player, availablePlanets, enemyPlanets) {
+  // Prompt the player to distribute ground forces across planets.
+  // Only presents a choice when 2+ enemy planets exist; otherwise auto-commits.
+  Twilight.prototype._distributeGroundForces = function(systemId, player, availablePlanets, enemyPlanets) {
     const systemUnits = this.state.units[systemId]
 
     const groundForces = systemUnits.space
@@ -570,14 +570,14 @@ module.exports = function(Twilight) {
       return
     }
 
-    // If only 1 enemy planet (or fewer), auto-commit all to it
+    // Single enemy planet (or fewer): auto-commit all to the enemy planet
     if (enemyPlanets.length <= 1) {
       const targetPlanet = enemyPlanets[0] || availablePlanets[0]
       this._moveGroundForcesToPlanet(systemId, targetPlanet, player.name)
       return
     }
 
-    // Multiple enemy planets: player chooses distribution
+    // Multiple enemy planets: player chooses distribution across all available planets
     const selection = this.actions.choose(player, ['Done'], {
       title: 'Commit Ground Forces',
       allowsAction: 'commit-ground-forces',
@@ -597,9 +597,89 @@ module.exports = function(Twilight) {
   }
 
   // Place ground forces on friendly/empty planets (non-invasion).
-  // Delegates to _autoPlaceGroundForces which places on first available planet.
+  // If multiple landable planets, lets the player choose distribution.
   Twilight.prototype._placeGroundForces = function(systemId, player, tile, systemPlanets) {
-    this._autoPlaceGroundForces(systemId, player.name, tile, systemPlanets)
+    const planets = systemPlanets || (tile ? tile.planets : [])
+    const systemUnits = this.state.units[systemId]
+
+    const groundForces = systemUnits.space
+      .filter(u => u.owner === player.name && res.getUnit(u.type)?.category === 'ground')
+    if (groundForces.length === 0) {
+      return
+    }
+
+    // Filter to non-DMZ planets the player can land on (friendly or uncontrolled)
+    const landablePlanets = planets.filter(pId => {
+      if (this._isDemilitarizedZone?.(pId)) {
+        return false
+      }
+      const controller = this.state.planets[pId]?.controller
+      return !controller || controller === player.name
+    })
+
+    if (landablePlanets.length === 0) {
+      return
+    }
+
+    if (landablePlanets.length === 1) {
+      this._autoPlaceGroundForces(systemId, player.name, tile, landablePlanets)
+      return
+    }
+
+    // Multiple planets: player chooses distribution
+    const selection = this.actions.choose(player, ['Done'], {
+      title: 'Commit Ground Forces',
+      allowsAction: 'commit-ground-forces',
+      planets: landablePlanets,
+    })
+
+    if (selection.action === 'commit-ground-forces' && selection.assignments) {
+      for (const [planetId, unitCounts] of Object.entries(selection.assignments)) {
+        if (!landablePlanets.includes(planetId)) {
+          continue
+        }
+        for (const [unitType, count] of Object.entries(unitCounts)) {
+          this._moveGroundForcesToPlanet(systemId, planetId, player.name, unitType, count)
+        }
+      }
+
+      // Take control of newly occupied uncontrolled planets
+      for (const planetId of landablePlanets) {
+        const hasForces = (systemUnits.planets[planetId] || []).some(
+          u => u.owner === player.name && res.getUnit(u.type)?.category === 'ground'
+        )
+        if (hasForces && !this.state.planets[planetId]?.controller) {
+          this.state.planets[planetId] = this.state.planets[planetId] || {}
+          this.state.planets[planetId].controller = player.name
+          this.state.planets[planetId].exhausted = true
+          this._explorePlanet(planetId, player.name)
+
+          if (planetId === 'mecatol-rex' && !this.state.custodiansRemoved) {
+            const cost = this.factionAbilities.getCustodiansCost(player)
+            if (cost > 0 && player.getTotalInfluence() < cost) {
+            // Cannot afford custodians — skip
+            }
+            else {
+              if (cost > 0) {
+                this._payInfluence(player, cost)
+              }
+              this.state.custodiansRemoved = true
+              player.addVictoryPoints(1)
+              this.log.add({
+                template: '{player} removes the Custodians Token and gains 1 VP!',
+                args: { player: player.name },
+              })
+            }
+          }
+
+          this.factionAbilities.onPlanetGained(player.name, planetId, systemId, {})
+        }
+      }
+    }
+    else {
+      // Player chose Done / skipped — auto-place on first planet
+      this._autoPlaceGroundForces(systemId, player.name, tile, landablePlanets)
+    }
   }
 
   // Move a specific number of ground forces of a given type from space to a planet.

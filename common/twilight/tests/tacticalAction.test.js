@@ -1,5 +1,11 @@
 const t = require('../testutil.js')
 const { Galaxy } = require('../model/Galaxy.js')
+const res = require('../res/index.js')
+
+function getPlanets(systemId) {
+  const tile = res.getSystemTile(systemId) || res.getSystemTile(Number(systemId))
+  return tile ? tile.planets : []
+}
 
 // Helper: play through strategy phase
 function pickStrategyCards(game, dennisCard, micahCard) {
@@ -215,6 +221,10 @@ describe('Tactical Action', () => {
         ],
       })
 
+      // System 27 has 2 planets — commit ground forces to first planet
+      const planets = getPlanets(target)
+      t.action(game, 'commit-ground-forces', { assignments: { [planets[0]]: { infantry: 2 } } })
+
       // Carrier should be in space, infantry on the planet
       const targetUnits = game.state.units[target]
       const carrierInSpace = targetUnits.space
@@ -287,6 +297,10 @@ describe('Tactical Action', () => {
         ],
       })
 
+      // System 27 has 2 planets — commit ground forces to first planet
+      const planets = getPlanets(target)
+      t.action(game, 'commit-ground-forces', { assignments: { [planets[0]]: { infantry: 6 } } })
+
       // Only 6 infantry should move (capacity limit)
       const targetPlanetUnits = Object.values(game.state.units[target].planets)
         .flat()
@@ -319,6 +333,10 @@ describe('Tactical Action', () => {
           { unitType: 'infantry', from: 'sol-home', count: 2 },
         ],
       })
+
+      // System 27 has 2 planets — commit ground forces to first planet
+      const planets = getPlanets(target)
+      t.action(game, 'commit-ground-forces', { assignments: { [planets[0]]: { infantry: 1 } } })
 
       // Only 1 infantry should travel (dreadnought capacity 1)
       const targetPlanetUnits = Object.values(game.state.units[target].planets)
