@@ -22,6 +22,7 @@
           <RedistributeTokens v-if="activeActionType === 'redistribute-tokens'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
           <AgendaVote v-if="activeActionType === 'agenda-vote'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
           <ResearchTech v-if="activeActionType === 'research-tech'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
+          <CommitGroundForces v-if="activeActionType === 'commit-ground-forces'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
           <ExhaustPlanets v-if="activeActionType === 'exhaust-planets'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
 
           <div class="toolbar">
@@ -82,6 +83,7 @@ import ProduceUnits from './actions/ProduceUnits.vue'
 import RedistributeTokens from './actions/RedistributeTokens.vue'
 import ExhaustPlanets from './actions/ExhaustPlanets.vue'
 import ResearchTech from './actions/ResearchTech.vue'
+import CommitGroundForces from './actions/CommitGroundForces.vue'
 import TradeOffer from './actions/TradeOffer.vue'
 
 // Modals
@@ -129,6 +131,7 @@ export default {
     ActivateSystem,
     AgendaVote,
     CardDetailModal,
+    CommitGroundForces,
     CombatDisplay,
     CommandTokensModal,
     DebugModal,
@@ -239,6 +242,9 @@ export default {
       }
       if (title.includes('trade') && title.includes('offer')) {
         return 'trade-offer'
+      }
+      if (request.allowsAction === 'commit-ground-forces') {
+        return 'commit-ground-forces'
       }
       if (request.allowsAction === 'redistribute-tokens') {
         return 'redistribute-tokens'

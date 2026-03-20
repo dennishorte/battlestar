@@ -781,64 +781,72 @@ module.exports = function(Twilight) {
         }
       }
 
+      // Snapshot defender structures before combat (for L1Z1X Assimilate)
+      const preInvasionStructures = {}
       for (const targetPlanet of planetsToInvade) {
-        // Check if there are still ground forces in space to commit
-        const remainingForces = systemUnits.space
-          .filter(u => u.owner === player.name && res.getUnit(u.type)?.category === 'ground')
-
-        // Skip if no ground forces and not a coalescence planet
-        if (remainingForces.length === 0 && !coalescencePlanets.includes(targetPlanet)) {
-          continue
-        }
-
-        // Snapshot defender structures before combat (for L1Z1X Assimilate)
         const defenderName = this.state.planets[targetPlanet]?.controller
-        const preInvasionStructures = {}
         if (defenderName) {
+          preInvasionStructures[targetPlanet] = {}
           const planetUnits = systemUnits.planets[targetPlanet] || []
           for (const unit of planetUnits) {
             if (unit.owner === defenderName) {
               const def = res.getUnit(unit.type)
               if (def?.category === 'structure') {
-                preInvasionStructures[unit.type] = (preInvasionStructures[unit.type] || 0) + 1
+                preInvasionStructures[targetPlanet][unit.type] =
+                  (preInvasionStructures[targetPlanet][unit.type] || 0) + 1
               }
             }
           }
         }
+      }
 
-        // Step 1: Bombardment
+      // Step 1: Bombardment on all enemy planets (Rule 49.1)
+      for (const targetPlanet of planetsToInvade) {
         this.state.currentInvasion = { systemId, planetId: targetPlanet, step: 'bombardment' }
         this._bombardment(systemId, targetPlanet, player.name)
+      }
 
-        // Step 2: Space Cannon Defense (PDS fire at landing ground forces)
-        this.state.currentInvasion.step = 'space-cannon-defense'
-        this._spaceCannonDefense(systemId, targetPlanet, player.name)
+      // Step 2: Commit ground forces (Rule 49.2)
+      // All non-DMZ planets are valid targets for ground force commitment
+      const availablePlanets = systemPlanets.filter(pId => !this._isDemilitarizedZone?.(pId))
+      this.state.currentInvasion = { systemId, step: 'commit-forces' }
+      this._commitGroundForcesChoice(systemId, player, availablePlanets, enemyPlanets)
 
-        // Step 3: Commit ground forces from space to the planet
-        this.state.currentInvasion.step = 'commit-forces'
-        this._commitGroundForces(systemId, targetPlanet, player.name)
+      // Step 3: Space Cannon Defense on planets where forces were committed (Rule 49.3)
+      for (const targetPlanet of planetsToInvade) {
+        const hasCommitted = (systemUnits.planets[targetPlanet] || []).some(
+          u => u.owner === player.name && res.getUnit(u.type)?.category === 'ground'
+        )
+        if (hasCommitted) {
+          this.state.currentInvasion = { systemId, planetId: targetPlanet, step: 'space-cannon-defense' }
+          this._spaceCannonDefense(systemId, targetPlanet, player.name)
+        }
+      }
 
-        // Step 4: Ground combat
-        this.state.currentInvasion.step = 'ground-combat'
+      // Step 4: Ground combat on planets with opposing forces (Rule 49.4)
+      for (const targetPlanet of planetsToInvade) {
+        this.state.currentInvasion = { systemId, planetId: targetPlanet, step: 'ground-combat' }
         this._groundCombat(systemId, targetPlanet, player.name)
+      }
 
-        // Step 5: Establish control (pass pre-invasion structure counts)
-        this.state.currentInvasion.step = 'establish-control'
-        this._establishControl(systemId, targetPlanet, player.name, preInvasionStructures)
+      // Step 5: Establish control (Rule 49.5)
+      for (const targetPlanet of planetsToInvade) {
+        this.state.currentInvasion = { systemId, planetId: targetPlanet, step: 'establish-control' }
+        this._establishControl(systemId, targetPlanet, player.name, preInvasionStructures[targetPlanet] || {})
       }
 
       delete this.state.currentInvasion
 
-      // After all invasions, auto-place any remaining ground forces on friendly/empty planets
+      // After all invasions, place any remaining ground forces on friendly/empty planets
       const remainingGround = systemUnits.space
         .filter(u => u.owner === player.name && res.getUnit(u.type)?.category === 'ground')
       if (remainingGround.length > 0) {
-        this._autoPlaceGroundForces(systemId, player.name, tile, systemPlanets)
+        this._placeGroundForces(systemId, player, tile, systemPlanets)
       }
     }
     else {
-    // No enemy planets — auto-place ground forces on the first friendly/empty planet
-      this._autoPlaceGroundForces(systemId, player.name, tile, systemPlanets)
+    // No enemy planets — place ground forces on friendly/empty planets
+      this._placeGroundForces(systemId, player, tile, systemPlanets)
     }
   }
 

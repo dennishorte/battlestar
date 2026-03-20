@@ -581,13 +581,20 @@ describe('Rules Audit — LOW Priority', () => {
         ],
       })
 
-      // Letnev agent prompt — decline mech deployment
+      // Commit all ground forces to new-albion (first enemy planet)
+      t.action(game, 'commit-ground-forces', {
+        assignments: {
+          'new-albion': { infantry: 6 },
+        },
+      })
+
+      // Letnev agent prompts — decline mech deployment (one per planet with combat)
       t.choose(game, 'Pass')
 
-      // Dennis should take new-albion (first enemy planet)
+      // Dennis should take new-albion (6 infantry vs 1)
       expect(game.state.planets['new-albion'].controller).toBe('dennis')
 
-      // Starpoint stays under Micah's control (no ground forces available for second planet)
+      // Starpoint stays under Micah's control (no ground forces committed there)
       expect(game.state.planets['starpoint'].controller).toBe('micah')
     })
   })

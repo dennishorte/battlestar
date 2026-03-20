@@ -559,27 +559,75 @@ module.exports = function(Twilight) {
   }
 
 
-  Twilight.prototype._commitGroundForces = function(systemId, planetId, ownerName) {
+  // Commit ground forces with player choice when multiple enemy planets available.
+  // Used during invasion (Rule 49.2): player distributes forces across planets.
+  Twilight.prototype._commitGroundForcesChoice = function(systemId, player, availablePlanets, enemyPlanets) {
     const systemUnits = this.state.units[systemId]
 
-    // Move all ground forces from space to the planet
-    const toCommit = []
-    for (let i = systemUnits.space.length - 1; i >= 0; i--) {
-      const unit = systemUnits.space[i]
-      if (unit.owner === ownerName) {
-        const unitDef = res.getUnit(unit.type)
-        if (unitDef?.category === 'ground') {
-          toCommit.push(systemUnits.space.splice(i, 1)[0])
+    const groundForces = systemUnits.space
+      .filter(u => u.owner === player.name && res.getUnit(u.type)?.category === 'ground')
+    if (groundForces.length === 0) {
+      return
+    }
+
+    // If only 1 enemy planet (or fewer), auto-commit all to it
+    if (enemyPlanets.length <= 1) {
+      const targetPlanet = enemyPlanets[0] || availablePlanets[0]
+      this._moveGroundForcesToPlanet(systemId, targetPlanet, player.name)
+      return
+    }
+
+    // Multiple enemy planets: player chooses distribution
+    const selection = this.actions.choose(player, ['Done'], {
+      title: 'Commit Ground Forces',
+      allowsAction: 'commit-ground-forces',
+      planets: availablePlanets,
+    })
+
+    if (selection.action === 'commit-ground-forces' && selection.assignments) {
+      for (const [planetId, unitCounts] of Object.entries(selection.assignments)) {
+        if (!availablePlanets.includes(planetId)) {
+          continue
+        }
+        for (const [unitType, count] of Object.entries(unitCounts)) {
+          this._moveGroundForcesToPlanet(systemId, planetId, player.name, unitType, count)
         }
       }
     }
+  }
 
+  // Place ground forces on friendly/empty planets (non-invasion).
+  // Delegates to _autoPlaceGroundForces which places on first available planet.
+  Twilight.prototype._placeGroundForces = function(systemId, player, tile, systemPlanets) {
+    this._autoPlaceGroundForces(systemId, player.name, tile, systemPlanets)
+  }
+
+  // Move a specific number of ground forces of a given type from space to a planet.
+  // If unitType/count not specified, moves all ground forces.
+  Twilight.prototype._moveGroundForcesToPlanet = function(systemId, planetId, ownerName, unitType, count) {
+    const systemUnits = this.state.units[systemId]
     if (!systemUnits.planets[planetId]) {
       systemUnits.planets[planetId] = []
     }
 
-    for (const unit of toCommit) {
-      systemUnits.planets[planetId].push(unit)
+    let moved = 0
+    for (let i = systemUnits.space.length - 1; i >= 0; i--) {
+      const unit = systemUnits.space[i]
+      if (unit.owner !== ownerName) {
+        continue
+      }
+      const unitDef = res.getUnit(unit.type)
+      if (unitDef?.category !== 'ground') {
+        continue
+      }
+      if (unitType && unit.type !== unitType) {
+        continue
+      }
+      systemUnits.planets[planetId].push(systemUnits.space.splice(i, 1)[0])
+      moved++
+      if (count !== undefined && moved >= count) {
+        break
+      }
     }
   }
 
