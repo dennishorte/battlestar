@@ -529,8 +529,8 @@ export default {
   display: flex;
   flex-direction: column;
   height: calc(100vh - 60px);
-  min-width: 300px;
-  max-width: 350px;
+  min-width: 400px;
+  max-width: 400px;
   overflow: hidden;
   background: #f8f9fa;
   color: #333;
