@@ -454,14 +454,11 @@ export default {
       this.$modal('twilight-system-detail').show()
     },
 
-    handleSystemClick({ systemId }) {
-      // If in an active action mode, let the action component handle it
-      if (this.activeActionType) {
-        return
-      }
+    handleSystemClick(event) {
+      const { systemId } = event
 
       // If choices contain this system ID, submit it
-      if (this.waitingRequest) {
+      if (!this.activeActionType && this.waitingRequest) {
         const choices = this.waitingRequest.choices || []
         const match = choices.find(c => {
           const id = typeof c === 'string' ? c : c.title
@@ -479,8 +476,12 @@ export default {
         }
       }
 
-      // Default: open system detail modal
-      this.openSystemDetail(systemId)
+      // Defer so action component handlers run first and can set event.handled
+      setTimeout(() => {
+        if (!event.handled) {
+          this.openSystemDetail(systemId)
+        }
+      }, 0)
     },
 
     handleSubmitAction(payload) {

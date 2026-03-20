@@ -212,9 +212,12 @@ export default {
       })
     },
 
-    onSystemClick({ systemId }) {
+    onSystemClick(event) {
+      const { systemId } = event
+
       // Check if system already in movements list
       if (this.movements.find(m => m.systemId === systemId)) {
+        event.handled = true
         return
       }
 
@@ -249,6 +252,7 @@ export default {
         return
       }
 
+      event.handled = true
       this.movements.push({
         systemId,
         from: systemId,

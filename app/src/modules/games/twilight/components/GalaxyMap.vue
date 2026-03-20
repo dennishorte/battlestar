@@ -238,7 +238,7 @@ export default {
     },
 
     handleSystemClick(systemId) {
-      this.bus.emit('system-click', { systemId })
+      this.bus.emit('system-click', { systemId, handled: false })
     },
 
     measure() {

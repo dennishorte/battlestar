@@ -29,10 +29,11 @@ export default {
   },
 
   methods: {
-    onSystemClick({ systemId }) {
+    onSystemClick(event) {
+      event.handled = true
       this.bus.emit('submit-action', {
         actor: this.playerName || this.actor.name,
-        selection: { action: 'activate-system', systemId },
+        selection: { action: 'activate-system', systemId: event.systemId },
       })
     },
   },
