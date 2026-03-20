@@ -58,9 +58,7 @@ module.exports = function(Twilight) {
       args: { player },
     })
 
-    // Add 3 tokens to tactics, then let the player redistribute (Rule 52.4)
-    player.commandTokens.tactics += 3
-    this._redistributeTokens(player)
+    this._redistributeTokens(player, 3)
 
     this._offerInfluenceForTokens(player)
   }
@@ -651,18 +649,23 @@ module.exports = function(Twilight) {
     this._redistributeTokens(player)
   }
 
-  Twilight.prototype._redistributeTokens = function(player) {
-    const totalTokens = player.commandTokens.tactics + player.commandTokens.strategy + player.commandTokens.fleet
+  Twilight.prototype._redistributeTokens = function(player, newTokens) {
+    newTokens = newTokens || 0
+    const totalTokens = player.commandTokens.tactics + player.commandTokens.strategy + player.commandTokens.fleet + newTokens
     const selection = this.actions.choose(player, ['Done'], {
       title: `Redistribute Tokens (${totalTokens} total)`,
       allowsAction: 'redistribute-tokens',
+      newTokens,
       noAutoRespond: true,
     })
 
     if (selection.action === 'redistribute-tokens') {
       player.setCommandTokens(selection)
     }
-    // Otherwise keep current distribution
+    else {
+      // Player clicked Done without redistributing — assign new tokens to tactics
+      player.commandTokens.tactics += newTokens
+    }
   }
 
 
@@ -753,8 +756,7 @@ module.exports = function(Twilight) {
             args: { player, influence: influenceCost, tokens: tokenCount },
           })
 
-          player.commandTokens.tactics += tokenCount
-          this._redistributeTokens(player)
+          this._redistributeTokens(player, tokenCount)
         }
         else {
           this.log.add({
@@ -1066,9 +1068,7 @@ module.exports = function(Twilight) {
         args: { player, influence: influenceCost, tokens: tokenCount },
       })
 
-      // Add purchased tokens to tactics, then let the player redistribute (Rule 52.4)
-      player.commandTokens.tactics += tokenCount
-      this._redistributeTokens(player)
+      this._redistributeTokens(player, tokenCount)
     }
   }
 

@@ -1051,9 +1051,7 @@ Twilight.prototype.statusPhase = function() {
       })
     }
 
-    // Add new tokens to tactics, then let the player redistribute
-    player.commandTokens.tactics += newTokens
-    this._redistributeTokens(player)
+    this._redistributeTokens(player, newTokens)
   }
 
   // Step 6: Ready cards

@@ -1,13 +1,17 @@
 <template>
   <div class="redistribute-tokens-action">
-    <div class="action-header">Redistribute Command Tokens</div>
-    <div class="token-total">Total: {{ totalTokens }}</div>
+    <div class="action-header">{{ headerText }}</div>
+
+    <div v-if="newTokens > 0" class="unallocated-info">
+      Unallocated: {{ unallocatedTokens }}
+    </div>
+    <div v-else class="token-total">Total: {{ totalTokens }}</div>
 
     <div class="token-pools">
       <div class="pool">
         <div class="pool-label">Tactic</div>
         <div class="pool-controls">
-          <button class="btn btn-sm btn-outline-secondary" @click="tactics--" :disabled="tactics <= 0">-</button>
+          <button class="btn btn-sm btn-outline-secondary" @click="tactics--" :disabled="tactics <= baseTactics">-</button>
           <span class="pool-count">{{ tactics }}</span>
           <button class="btn btn-sm btn-outline-secondary" @click="tactics++" :disabled="!canAdd">+</button>
         </div>
@@ -16,7 +20,7 @@
       <div class="pool">
         <div class="pool-label">Strategy</div>
         <div class="pool-controls">
-          <button class="btn btn-sm btn-outline-secondary" @click="strategy--" :disabled="strategy <= 0">-</button>
+          <button class="btn btn-sm btn-outline-secondary" @click="strategy--" :disabled="strategy <= baseStrategy">-</button>
           <span class="pool-count">{{ strategy }}</span>
           <button class="btn btn-sm btn-outline-secondary" @click="strategy++" :disabled="!canAdd">+</button>
         </div>
@@ -25,7 +29,7 @@
       <div class="pool">
         <div class="pool-label">Fleet</div>
         <div class="pool-controls">
-          <button class="btn btn-sm btn-outline-secondary" @click="fleet--" :disabled="fleet <= 0">-</button>
+          <button class="btn btn-sm btn-outline-secondary" @click="fleet--" :disabled="fleet <= baseFleet">-</button>
           <span class="pool-count">{{ fleet }}</span>
           <button class="btn btn-sm btn-outline-secondary" @click="fleet++" :disabled="!canAdd">+</button>
         </div>
@@ -64,16 +68,52 @@ export default {
       return this.game.players.byName(this.playerName || this.actor.name)
     },
 
+    newTokens() {
+      return this.request?.newTokens || 0
+    },
+
+    headerText() {
+      if (this.newTokens > 0) {
+        return `Allocate Command Tokens (+${this.newTokens})`
+      }
+      return 'Redistribute Command Tokens'
+    },
+
+    baseTactics() {
+      if (this.newTokens === 0) {
+        return 0
+      }
+      return this.currentPlayer?.commandTokens.tactics || 0
+    },
+
+    baseStrategy() {
+      if (this.newTokens === 0) {
+        return 0
+      }
+      return this.currentPlayer?.commandTokens.strategy || 0
+    },
+
+    baseFleet() {
+      if (this.newTokens === 0) {
+        return 0
+      }
+      return this.currentPlayer?.commandTokens.fleet || 0
+    },
+
     totalTokens() {
       if (!this.currentPlayer) {
         return 0
       }
       const ct = this.currentPlayer.commandTokens
-      return ct.tactics + ct.strategy + ct.fleet
+      return ct.tactics + ct.strategy + ct.fleet + this.newTokens
     },
 
     assignedTokens() {
       return this.tactics + this.strategy + this.fleet
+    },
+
+    unallocatedTokens() {
+      return this.totalTokens - this.assignedTokens
     },
 
     canAdd() {
@@ -96,7 +136,7 @@ export default {
   },
 
   created() {
-    // Initialize with current distribution (new tokens start unallocated)
+    // Initialize with current distribution — new tokens start unallocated
     if (this.currentPlayer) {
       const ct = this.currentPlayer.commandTokens
       this.tactics = ct.tactics
@@ -124,6 +164,13 @@ export default {
 .token-total {
   font-size: .8em;
   color: #555;
+  margin-bottom: .35em;
+}
+
+.unallocated-info {
+  font-size: .8em;
+  font-weight: 600;
+  color: #009688;
   margin-bottom: .35em;
 }
 
