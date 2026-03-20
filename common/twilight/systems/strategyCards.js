@@ -659,12 +659,33 @@ module.exports = function(Twilight) {
       noAutoRespond: true,
     })
 
+    const before = { ...player.commandTokens }
     if (selection.action === 'redistribute-tokens') {
       player.setCommandTokens(selection)
     }
     else {
       // Player clicked Done without redistributing — assign new tokens to tactics
       player.commandTokens.tactics += newTokens
+    }
+
+    const dt = player.commandTokens.tactics - before.tactics
+    const ds = player.commandTokens.strategy - before.strategy
+    const df = player.commandTokens.fleet - before.fleet
+    if (dt !== 0 || ds !== 0 || df !== 0) {
+      const parts = []
+      if (dt !== 0) {
+        parts.push(`${dt > 0 ? '+' : ''}${dt} tactic`)
+      }
+      if (ds !== 0) {
+        parts.push(`${ds > 0 ? '+' : ''}${ds} strategy`)
+      }
+      if (df !== 0) {
+        parts.push(`${df > 0 ? '+' : ''}${df} fleet`)
+      }
+      this.log.add({
+        template: `{player} allocates tokens: ${parts.join(', ')}`,
+        args: { player },
+      })
     }
   }
 
