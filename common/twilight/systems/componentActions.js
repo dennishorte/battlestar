@@ -62,6 +62,14 @@ module.exports = function(Twilight) {
       actionId = selection[0]
     }
 
+    const actionDef = actions.find(a => a.id === actionId)
+    if (actionDef) {
+      this.log.add({
+        template: '{player} uses {action}',
+        args: { player, action: actionDef.name || actionDef.id },
+      })
+    }
+
     // Check if it's a tech component action
     const techAction = techActions.find(a => a.id === actionId)
     if (techAction) {
@@ -189,6 +197,7 @@ module.exports = function(Twilight) {
 
     const controlledPlanets = player.getControlledPlanets()
     if (controlledPlanets.length === 0) {
+      this.log.add({ template: 'No controlled planets', args: {} })
       return
     }
 
@@ -208,6 +217,7 @@ module.exports = function(Twilight) {
     }
 
     if (groundForces.length === 0) {
+      this.log.add({ template: 'No ground forces to relocate', args: {} })
       return
     }
 
@@ -286,6 +296,7 @@ module.exports = function(Twilight) {
     }
 
     if (dockSystems.length === 0) {
+      this.log.add({ template: 'No space docks available', args: {} })
       return
     }
 
@@ -302,6 +313,7 @@ module.exports = function(Twilight) {
     })
 
     if (affordableShips.length === 0) {
+      this.log.add({ template: 'No affordable ships to produce', args: {} })
       return
     }
 
@@ -353,6 +365,7 @@ module.exports = function(Twilight) {
     ]
 
     if (choices.length === 0) {
+      this.log.add({ template: 'Nothing to ready', args: {} })
       return
     }
 
@@ -403,6 +416,7 @@ module.exports = function(Twilight) {
 
     const controlledPlanets = player.getControlledPlanets()
     if (controlledPlanets.length === 0) {
+      this.log.add({ template: 'No controlled planets', args: {} })
       return
     }
 
@@ -762,6 +776,7 @@ module.exports = function(Twilight) {
       .map(([type]) => type)
 
     if (purgeableTypes.length === 0) {
+      this.log.add({ template: 'Not enough fragments to purge', args: {} })
       return
     }
 
