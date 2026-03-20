@@ -28,7 +28,7 @@ const port = config.port || 3000
 app.use(history({ index: '/' }))
 app.use(express.static(path.join(__dirname, '../app/dist')))
 app.use(middleware.auth.authenticate)
-app.use(bodyParser.json({ limit: "500kb" }))
+app.use(bodyParser.json({ limit: "2mb" }))
 app.use(middleware.validators.ensureVersion)
 
 // Auto-enrich data in request
