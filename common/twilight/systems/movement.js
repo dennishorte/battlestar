@@ -365,8 +365,30 @@ module.exports = function(Twilight) {
     }
 
     if (movedShips.length > 0 || transportedUnits.length > 0) {
+      // Build detail of what moved from where
+      const movementDetails = []
+      for (const m of shipMovements) {
+        const fromSystemId = String(m.from)
+        // Count how many of this type actually moved (some may have been invalid)
+        const actualCount = movedShips.filter(
+          s => s.type === m.unitType && movedShipPaths[movedShips.indexOf(s)]?.[0] === fromSystemId
+        ).length
+        if (actualCount > 0) {
+          movementDetails.push(`${actualCount} ${m.unitType} from ${fromSystemId}`)
+        }
+      }
+      for (const m of transportedUnits) {
+        if (m.count > 0) {
+          movementDetails.push(`${m.count} ${m.unitType} from ${String(m.from)}`)
+        }
+      }
+
+      const detailStr = movementDetails.length > 0
+        ? ': ' + movementDetails.join(', ')
+        : ''
+
       this.log.add({
-        template: '{player} moves ships to system {system}',
+        template: `{player} moves to system {system}${detailStr}`,
         args: { player, system: targetSystemId },
       })
     }

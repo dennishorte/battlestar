@@ -652,6 +652,12 @@ module.exports = function(Twilight) {
           this.state.planets[planetId] = this.state.planets[planetId] || {}
           this.state.planets[planetId].controller = player.name
           this.state.planets[planetId].exhausted = true
+
+          this.log.add({
+            template: '{player} takes control of {planet}',
+            args: { player: player.name, planet: planetId },
+          })
+
           this._explorePlanet(planetId, player.name)
 
           if (planetId === 'mecatol-rex' && !this.state.custodiansRemoved) {
@@ -1168,6 +1174,11 @@ module.exports = function(Twilight) {
     if (!this.state.planets[targetPlanet]?.controller) {
       this.state.planets[targetPlanet].controller = ownerName
       this.state.planets[targetPlanet].exhausted = true
+
+      this.log.add({
+        template: '{player} takes control of {planet}',
+        args: { player: ownerName, planet: targetPlanet },
+      })
 
       // Explore newly controlled planet
       this._explorePlanet(targetPlanet, ownerName)
