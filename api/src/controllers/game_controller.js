@@ -2,7 +2,7 @@ import db from '../models/db.js'
 import logger from '../utils/logger.js'
 import stats from '../utils/stats.js'
 import gameService from '../services/game_service.js'
-import { NotFoundError } from '../utils/errors.js'
+import { AppError, NotFoundError } from '../utils/errors.js'
 import { GameOverwriteError, GameKilledError } from '../middleware/loaders.js'
 
 // Game controller methods
@@ -292,7 +292,7 @@ export const bugReport = async (req, res, next) => {
   }
   catch (err) {
     logger.error(`Error submitting bug report: ${err.message}`)
-    next(err)
+    next(new AppError(err.message, 502))
   }
 }
 
