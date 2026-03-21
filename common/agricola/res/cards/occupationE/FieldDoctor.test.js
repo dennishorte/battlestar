@@ -39,15 +39,12 @@ describe('Field Doctor', () => {
     })
     game.testSetBreakpoint('initialization-complete', (game) => {
       const dennis = game.players.byName('dennis')
-      // Rearrange farmyard: rooms at (0,1) and (1,0)
-      // Adjacent to (0,1): (0,0), (0,2), (1,1)
-      // Adjacent to (1,0): (2,0), (1,1)
-      // Unique adjacent cells: (0,0), (0,2), (1,1), (2,0) — 4 fields!
-      dennis.farmyard.grid[0][0] = { type: 'field', crop: null, cropCount: 0 }
-      dennis.farmyard.grid[0][1] = { type: 'room', roomType: 'wood' }
-      dennis.farmyard.grid[0][2] = { type: 'field', crop: null, cropCount: 0 }
-      dennis.farmyard.grid[1][1] = { type: 'field', crop: null, cropCount: 0 }
+      // Rearrange farmyard: rooms at (0,0) and (1,0)
+      // Fields at (0,1), (1,1), (2,0), (2,1) — 4 fields surrounding the rooms
+      dennis.farmyard.grid[0][1] = { type: 'field', crop: 'grain', cropCount: 1 }
+      dennis.farmyard.grid[1][1] = { type: 'field', crop: 'grain', cropCount: 1 }
       dennis.farmyard.grid[2][0] = { type: 'field', crop: null, cropCount: 0 }
+      dennis.farmyard.grid[2][1] = { type: 'field', crop: null, cropCount: 0 }
       // Initialize card state (setBoard skips onPlay)
       game.cardState('field-doctor-e092').used = false
     })
@@ -64,12 +61,12 @@ describe('Field Doctor', () => {
         familyMembers: 3,
         occupations: ['field-doctor-e092'],
         farmyard: {
-          rooms: [{ row: 0, col: 1 }, { row: 1, col: 0 }],
+          rooms: [{ row: 0, col: 0 }, { row: 1, col: 0 }],
           fields: [
-            { row: 0, col: 0 },
-            { row: 0, col: 2 },
-            { row: 1, col: 1 },
+            { row: 0, col: 1, crop: 'grain', cropCount: 1 },
+            { row: 1, col: 1, crop: 'grain', cropCount: 1 },
             { row: 2, col: 0 },
+            { row: 2, col: 1 },
           ],
         },
       },

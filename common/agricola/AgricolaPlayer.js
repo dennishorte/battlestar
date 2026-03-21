@@ -464,7 +464,7 @@ class AgricolaPlayer extends BasePlayer {
     const counted = new Set()
     const rooms = this.getRoomSpaces()
     for (const room of rooms) {
-      for (const [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
+      for (const [dr, dc] of [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]) {
         const nr = room.row + dr, nc = room.col + dc
         if (nr >= 0 && nr < res.constants.farmyardRows
           && nc >= 0 && nc < res.constants.farmyardCols
