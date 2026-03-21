@@ -14,7 +14,15 @@
              class="log-line"
              :class="[line.classes, lineClasses(line), { 'private-info': line.isPrivateInfo }]"
              :style="lineStyles(line)">
-          <template v-if="line.type === 'chat'">
+          <template v-if="line.type === 'system'">
+            <div class="system-message-container">
+              <div class="system-message">
+                {{ line.text }}
+              </div>
+            </div>
+          </template>
+
+          <template v-else-if="line.type === 'chat'">
             <div class="chat-container">
               <div class="chat-message">
                 <div>
@@ -279,6 +287,23 @@ onMounted(() => {
 
 .bottom-space {
   height: 2em;
+}
+
+.system-message-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-bottom: .25em;
+  width: 100%;
+}
+
+.system-message {
+  color: #ccc;
+  background-color: #444;
+  padding: .25em .75em;
+  border-radius: .25em;
+  font-size: .85em;
+  font-style: italic;
 }
 
 .chat-container {

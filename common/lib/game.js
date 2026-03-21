@@ -479,6 +479,10 @@ Game.prototype.getViewerName = function() {
   return this.viewerName
 }
 
+Game.prototype.systemMessage = function(text) {
+  this.log.systemMessage(text)
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Protected Methods

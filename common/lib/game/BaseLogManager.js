@@ -9,6 +9,14 @@ class Chat {
   }
 }
 
+class SystemMessage {
+  constructor(text, position) {
+    this.position = position
+    this.text = text
+    this.type = 'system'
+  }
+}
+
 class LogEntry {
   constructor(id, indent, template, args, classes, visibility, redacted, event) {
     this.id = id
@@ -87,6 +95,11 @@ class BaseLogManager {
   chat(playerName, text) {
     const chat = new Chat(playerName, text, this._log.length)
     this._chat.push(chat)
+  }
+
+  systemMessage(text) {
+    const msg = new SystemMessage(text, this._log.length)
+    this._chat.push(msg)
   }
 
   deleteChat(id) {
