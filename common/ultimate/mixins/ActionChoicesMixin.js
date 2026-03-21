@@ -194,7 +194,7 @@ const ActionChoicesMixin = {
       .cards.tops(player)
       .map(card => this.zones.byPlayer(player, card.color))
 
-    const colors = []
+    const choices = []
 
     if (!this.state.didEndorse) {
       for (const zone of stacksWithEndorsableEffects) {
@@ -202,17 +202,41 @@ const ActionChoicesMixin = {
           throw new Error('"Endorsable" stack has no cards: ' + zone.id)
         }
 
-        const dogmaBiscuit = zone.cardlist()[0].dogmaBiscuit
+        const card = zone.cardlist()[0]
+        const dogmaBiscuit = card.dogmaBiscuit
         const canEndorse = cities.some(city => city.biscuits.includes(dogmaBiscuit))
         if (canEndorse) {
-          colors.push(zone.color)
+          const shareInfo = this.getDogmaShareInfo(player, card)
+          const subtitles = []
+
+          if (card.checkHasShare() && shareInfo.sharing.length > 0) {
+            const shareNames = shareInfo.sharing.map(p => p.name).join(', ')
+            subtitles.push(`share with ${shareNames}`)
+          }
+
+          if (card.checkHasCompelExplicit() && shareInfo.sharing.length > 0) {
+            const compelNames = shareInfo.sharing.map(p => p.name).join(', ')
+            subtitles.push(`compel ${compelNames}`)
+          }
+
+          if (card.checkHasDemandExplicit() && shareInfo.demanding.length > 0) {
+            const demandNames = shareInfo.demanding.map(p => p.name).join(', ')
+            subtitles.push(`demand ${demandNames}`)
+          }
+
+          if (subtitles.length > 0) {
+            choices.push({ title: zone.color, subtitles })
+          }
+          else {
+            choices.push(zone.color)
+          }
         }
       }
     }
 
     return {
       title: 'Endorse',
-      choices: colors,
+      choices,
       min: 0,
     }
   },

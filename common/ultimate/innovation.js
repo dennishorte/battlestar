@@ -355,14 +355,28 @@ Innovation.prototype.artifact = function() {
     })
     this.log.indent()
 
-    // Build choices with subtitles for echo effects (version < 4 only)
+    // Build choices with subtitles for sharing info and echo effects
     const choices = ['dogma', 'skip']
+    const subtitles = []
+
+    const shareInfo = this.getDogmaShareInfo(player, artifact, { artifact: true })
+    if (artifact.checkHasShare() && shareInfo.sharing.length > 0) {
+      subtitles.push(`share with ${shareInfo.sharing.map(p => p.name).join(', ')}`)
+    }
+    if (artifact.checkHasCompelExplicit() && shareInfo.sharing.length > 0) {
+      subtitles.push(`compel ${shareInfo.sharing.map(p => p.name).join(', ')}`)
+    }
+    if (artifact.checkHasDemandExplicit() && shareInfo.demanding.length > 0) {
+      subtitles.push(`demand ${shareInfo.demanding.map(p => p.name).join(', ')}`)
+    }
+
     const effects = this.getVisibleEffectsByColor(player, artifact.color, 'echo')
     if (effects.length > 0 && this.settings.version < 4) {
-      choices[0] = {
-        title: 'dogma',
-        subtitles: [`${effects.length} echo effects will trigger`],
-      }
+      subtitles.push(`${effects.length} echo effects will trigger`)
+    }
+
+    if (subtitles.length > 0) {
+      choices[0] = { title: 'dogma', subtitles }
     }
 
     const action = this.requestInputSingle({

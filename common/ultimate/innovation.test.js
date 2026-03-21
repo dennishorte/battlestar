@@ -1610,6 +1610,51 @@ describe('Innovation', () => {
         t.testChoices(request, ['dogma', 'skip'])
       })
 
+      test('free artifact action shows share subtitle when opponent will share', () => {
+        // Pavlovian Tusk: red, biscuits hckc (2 castles visible), dogmaBiscuit c
+        // With artifact bonus dennis has 2 castles.
+        // Translation: blue, biscuits hccc (3 castles visible).
+        // Micah has 3 castles >= dennis 2 castles, so micah shares.
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+        t.setBoard(game, {
+          dennis: {
+            artifact: ['Pavlovian Tusk'],
+          },
+          micah: {
+            blue: ['Translation'],
+          },
+        })
+
+        const request = game.run()
+        const dogmaChoice = request.selectors[0].choices.find(c => c.title === 'dogma')
+        expect(dogmaChoice.subtitles).toContain('share with micah')
+      })
+
+      test('free artifact action includes artifact biscuits in share calculation', () => {
+        // Pavlovian Tusk: red, biscuits hckc (2 castles visible), dogmaBiscuit c
+        // With artifact bonus dennis has 2 castles.
+        // Clothing: green, biscuits hcll (1 castle visible).
+        // Micah has 1 castle < dennis 2 castles, so micah does NOT share.
+        // Without artifact bonus, dennis would have 0 castles and micah would share.
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+        t.setBoard(game, {
+          dennis: {
+            artifact: ['Pavlovian Tusk'],
+          },
+          micah: {
+            green: ['Clothing'],
+          },
+        })
+
+        const request = game.run()
+        const dogmaChoice = request.selectors[0].choices.find(c =>
+          c === 'dogma' || c.title === 'dogma'
+        )
+        // Should be plain string 'dogma' with no subtitles, because artifact
+        // biscuits give dennis enough castles to prevent sharing
+        expect(dogmaChoice).toBe('dogma')
+      })
+
       describe('museums', () => {
         test('museums are available in the achievements', () => {
           const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
