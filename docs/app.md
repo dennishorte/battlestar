@@ -84,6 +84,7 @@ modules/{name}/
 - **WaitingPanel.vue** - "Waiting for other players"
 - **GameLog.vue** + log subcomponents - Game history display
 - **ChatInput.vue** - In-game chat
+- **BugReportModal.vue** - Bug report dialog (available when game is paused)
 - **SavingOverlay.vue** - Save progress indicator
 - **GameEditor.vue** - Dev tool for editing game state
 
@@ -93,6 +94,21 @@ modules/{name}/
 - **tyrants/** - 21 components: hex map (HexTile, HexLocation, HexMap), market, tableau
 - **ultimate/** - 24 components: card display variants, achievements, scoring
 - **cube_draft/** - 7 components: draft UI, card selection
+
+## Bug Reporting
+
+When a game is paused, players can submit bug reports from two locations:
+
+1. **Pause banner** (`GameBase.vue`) — "report bug" button inline with the pause alert
+2. **Game log** (`GameLog.vue`) — "report bug" button at the bottom of the log
+
+Both open `BugReportModal.vue`, which:
+- Presents a textarea for the player to describe the issue
+- On submit, creates a system message via `game.log.systemMessage()` with format: `Bug Report from <player>: <description>`
+- Saves the game state (persisting the system message to the server)
+- Has a TODO placeholder for a callback API integration
+
+System messages appear in the game log as centered, gray, italic text. They cannot be deleted (no `id` property), distinguishing them from player chat messages.
 
 ## Key Patterns
 

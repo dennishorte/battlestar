@@ -116,9 +116,21 @@ Card registry:
 Game history and chat:
 - `add(msg)` - Log entry with template, args, classes, visibility
 - `chat(playerName, text)`, `deleteChat(id)` - Chat messages
+- `systemMessage(text)` - Non-deleteable system message (no author, no id)
 - `indent()`, `outdent()` - Log indentation
 - `merged()` - Combined log and chat chronologically
 - **Arg handlers**: Template enrichment (`player*` → name + class, `card*` → id + class, etc.)
+
+#### Message Types
+
+The log system has three message types stored in the chat array:
+
+| Type | Class | Has `id` | Deleteable | Author | Rendering |
+|------|-------|----------|------------|--------|-----------|
+| `chat` | `Chat` | Yes (`Date.now()`) | Yes | Player name | Right-aligned, blue, with delete button |
+| `system` | `SystemMessage` | No | No | None | Centered, gray, italic |
+
+Both types have a `position` field that anchors them to a log entry index, allowing `merged()` to interleave them chronologically with game log entries.
 
 ### GameProxy (`lib/game/GameProxy.js`)
 
