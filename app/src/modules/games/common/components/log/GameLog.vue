@@ -49,6 +49,10 @@
 
       <RematchButton v-if="rematchButtonVisible" />
 
+      <div v-if="bugReportVisible" class="bug-report-link">
+        <button class="btn btn-sm btn-outline-danger" @click="openBugReport">report bug</button>
+      </div>
+
       <div class="bottom-space" v-if="!nested"/>
 
       <ChatInput id="chat-input-main" :save-on-chat="saveOnChat" v-if="!nested" />
@@ -64,6 +68,7 @@ export default { name: 'GameLog' }
 import { ref, computed, watch, inject, nextTick, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useGameLog } from '../../composables/useGameLog'
+import modalWrapper from '@/util/modal'
 import ChatInput from '@/modules/games/common/components/ChatInput.vue'
 import ChatOffCanvas from '@/modules/games/common/components/log/ChatOffCanvas.vue'
 import GameLogText from '@/modules/games/common/components/log/GameLogText.vue'
@@ -126,6 +131,14 @@ const rematchButtonVisible = computed(() => {
   return props.showRematchButton && game.value?.gameOver && !nested.value
 })
 
+const bugReportVisible = computed(() => {
+  return game.value?.paused && !nested.value
+})
+
+function openBugReport() {
+  modalWrapper.getModal('bug-report-modal')?.show()
+}
+
 function convertLogMessage(entry) {
   let msg = entry.template
   for (const [arg, value] of Object.entries(entry.args)) {
@@ -175,7 +188,7 @@ function nestLog(entries, depth = 0) {
     if (entry.type === 'response-received') {
       // do nothing
     }
-    else if (entry.type === 'chat') {
+    else if (entry.type === 'chat' || entry.type === 'system') {
       output.push(entry)
     }
     else {
@@ -287,6 +300,12 @@ onMounted(() => {
 
 .bottom-space {
   height: 2em;
+}
+
+.bug-report-link {
+  display: flex;
+  justify-content: center;
+  padding: .5em 0;
 }
 
 .system-message-container {
