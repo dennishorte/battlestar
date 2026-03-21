@@ -62,6 +62,7 @@ export default defineConfig([
         setTimeout: "readonly",
 
         // Node.js
+        fetch: "readonly",
         Buffer: "readonly",
         GLOBAL: "readonly",
         clearImmediate: "readonly",

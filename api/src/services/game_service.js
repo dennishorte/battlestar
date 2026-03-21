@@ -1,4 +1,5 @@
 import db from '../models/db.js'
+import logger from '../utils/logger.js'
 import notificationService from './notification_service.js'
 import { magic, util } from 'battlestar-common'
 
@@ -248,6 +249,37 @@ async function _testAndSave(game, evalFunc, previousWaitingState = null) {
   await notificationService.sendGameNotifications(game)
 
   return game.serialize()
+}
+
+Game.submitBugReport = async function({ gameId, description, reporter }) {
+  const callbackUrl = process.env.BUG_REPORT_CALLBACK_URL
+  const secret = process.env.BUG_REPORT_CALLBACK_SECRET
+
+  if (!callbackUrl) {
+    throw new Error('Bug reports are not properly configured. Please inform the site developer.')
+  }
+
+  const gameUrl = `http://${process.env.DOMAIN_HOST || 'localhost'}/game/${gameId}`
+
+  try {
+    await fetch(callbackUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${secret}`,
+      },
+      body: JSON.stringify({
+        gameId,
+        gameUrl,
+        description,
+        reporter,
+        timestamp: new Date().toISOString(),
+      }),
+    })
+  }
+  catch (err) {
+    logger.error(`Bug report callback failed: ${err.message}`)
+  }
 }
 
 export default Game

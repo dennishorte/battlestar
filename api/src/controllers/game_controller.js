@@ -269,6 +269,21 @@ export const stats_agricola = async (req, res, next) => {
   }
 }
 
+export const bugReport = async (req, res, next) => {
+  try {
+    const { gameId, description } = req.body
+    const reporter = req.user.name
+
+    await gameService.submitBugReport({ gameId, description, reporter })
+
+    res.json({ status: 'success' })
+  }
+  catch (err) {
+    logger.error(`Error submitting bug report: ${err.message}`)
+    next(err)
+  }
+}
+
 export const saveNotes = async (req, res, next) => {
   try {
     const { gameId, notes } = req.body

@@ -1,4 +1,3 @@
-/* global fetch */
 import logger from '../../utils/logger.js'
 
 function escapeHtml(text) {
