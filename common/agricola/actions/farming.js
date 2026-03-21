@@ -119,6 +119,13 @@ AgricolaActionManager.prototype._getZigzagPlowSpaces = function(player) {
   return validSpaces
 }
 
+function _getSowingAmount(cropType) {
+  if (cropType === 'grain' || cropType === 'wood') {
+    return res.constants.sowingGrain
+  }
+  return res.constants.sowingVegetables
+}
+
 // Helper: handle one sow iteration (build selector, parse response, execute sow, log)
 // Returns { cropType, row, col } for regular fields, { cropType } for virtual fields,
 // or false if "Done Sowing" was selected.
@@ -165,6 +172,30 @@ AgricolaActionManager.prototype._sowOneField = function(player, options) {
     }
   }
 
+  // Non-standard crop types (wood, stone) from virtual fields
+  const nonStandardCrops = new Set()
+  for (const vf of emptyVirtualFields) {
+    if (vf.cropRestriction && vf.cropRestriction !== 'grain' && vf.cropRestriction !== 'vegetables') {
+      nonStandardCrops.add(vf.cropRestriction)
+    }
+  }
+  for (const cropType of nonStandardCrops) {
+    if (player[cropType] >= 1) {
+      const cropFields = emptyVirtualFields
+        .filter(f => f.cropRestriction === cropType)
+        .map(f => `Field (${f.label})`)
+      if (cropFields.length > 0) {
+        const cropLabel = cropType.charAt(0).toUpperCase() + cropType.slice(1)
+        nestedChoices.push({
+          title: cropLabel,
+          choices: cropFields,
+          min: 0,
+          max: 1,
+        })
+      }
+    }
+  }
+
   if (canDone) {
     nestedChoices.push('Done Sowing')
   }
@@ -204,7 +235,7 @@ AgricolaActionManager.prototype._sowOneField = function(player, options) {
     }
 
     player.sowField(row, col, cropType)
-    const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
+    const amount = _getSowingAmount(cropType)
     this.log.add({
       template: `{player} sows {crop} at ({row},{col}) - {amount} total${logSuffix}`,
       args: { player, crop: cropType, row, col, amount, ...logCardArg },
@@ -225,7 +256,7 @@ AgricolaActionManager.prototype._sowOneField = function(player, options) {
     }
 
     player.sowVirtualField(fieldId, cropType)
-    const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
+    const amount = _getSowingAmount(cropType)
     this.log.add({
       template: `{player} sows {crop} in {label} - {amount} total${logSuffix}`,
       args: { player, crop: cropType, label: virtualField.label, amount, ...logCardArg },
@@ -243,7 +274,7 @@ AgricolaActionManager.prototype._sowOneField = function(player, options) {
   // Handle nested selection (object with title and selection)
   if (typeof choice === 'object' && choice.title && choice.selection && choice.selection.length > 0) {
     const selectedField = choice.selection[0]
-    const cropType = choice.title.startsWith('Grain') ? 'grain' : 'vegetables'
+    const cropType = choice.title.toLowerCase()
     const coordMatch = selectedField.match(/Field \((\d+),(\d+)\)/)
 
     if (coordMatch) {
@@ -251,7 +282,7 @@ AgricolaActionManager.prototype._sowOneField = function(player, options) {
       const col = parseInt(coordMatch[2])
 
       player.sowField(row, col, cropType)
-      const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
+      const amount = _getSowingAmount(cropType)
       this.log.add({
         template: `{player} sows {crop} at ({row},{col}) - {amount} total${logSuffix}`,
         args: { player, crop: cropType, row, col, amount, ...logCardArg },
@@ -266,7 +297,7 @@ AgricolaActionManager.prototype._sowOneField = function(player, options) {
         const vf = emptyVirtualFields.find(f => f.label === label)
         if (vf) {
           player.sowVirtualField(vf.id, cropType)
-          const amount = cropType === 'grain' ? res.constants.sowingGrain : res.constants.sowingVegetables
+          const amount = _getSowingAmount(cropType)
           this.log.add({
             template: `{player} sows {crop} in {label} - {amount} total${logSuffix}`,
             args: { player, crop: cropType, label: vf.label, amount, ...logCardArg },
