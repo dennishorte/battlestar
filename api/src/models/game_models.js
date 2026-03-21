@@ -155,6 +155,13 @@ Game.save = async function(game, previousWaitingState = null) {
   return game
 }
 
+Game.appendChat = async function(gameId, message) {
+  await gameCollection.updateOne(
+    { _id: gameId },
+    { $push: { chat: message } },
+  )
+}
+
 Game.saveSettings = async function(game, settings) {
   return await gameCollection.updateOne(
     { _id: game._id },

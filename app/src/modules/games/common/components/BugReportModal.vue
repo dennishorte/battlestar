@@ -51,18 +51,31 @@ export default {
         return
       }
 
-      this.game.log.systemMessage(`Bug Report from ${this.actor.name}: ${text}`)
-      await this.$store.dispatch('game/save')
-
       try {
         await this.$post('/api/game/bug_report', {
           gameId: this.game._id,
+          gameType: this.game.settings.game,
+          gameName: this.game.settings.name,
           description: text,
         })
       }
       catch (err) {
         const message = err.response?.data?.message || 'Bug report callback failed'
         alert(message)
+        return
+      }
+
+      const systemText = `Bug Report from ${this.actor.name}: ${text}`
+      this.game.log.systemMessage(systemText)
+
+      try {
+        await this.$post('/api/game/system_message', {
+          gameId: this.game._id,
+          text: systemText,
+        })
+      }
+      catch (err) {
+        console.error('Failed to save system message:', err)
       }
 
       this.reset()

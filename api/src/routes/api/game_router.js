@@ -436,6 +436,7 @@ router.post('/stats/innovation', gameController.stats_innovation)
  */
 router.post('/stats/agricola', gameController.stats_agricola)
 
+router.post('/system_message', gameController.systemMessage)
 router.post('/bug_report', gameController.bugReport)
 
 router.post('/notes/save', gameController.saveNotes)

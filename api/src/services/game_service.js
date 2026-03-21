@@ -1,5 +1,4 @@
 import db from '../models/db.js'
-import logger from '../utils/logger.js'
 import notificationService from './notification_service.js'
 import { magic, util } from 'battlestar-common'
 
@@ -251,7 +250,15 @@ async function _testAndSave(game, evalFunc, previousWaitingState = null) {
   return game.serialize()
 }
 
-Game.submitBugReport = async function({ gameId, description, reporter }) {
+Game.addSystemMessage = async function(gameId, text) {
+  await db.game.appendChat(gameId, {
+    position: 0,
+    text,
+    type: 'system',
+  })
+}
+
+Game.submitBugReport = async function({ gameId, gameType, gameName, description, reporter }) {
   const callbackUrl = process.env.BUG_REPORT_CALLBACK_URL
   const secret = process.env.BUG_REPORT_CALLBACK_SECRET
 
@@ -259,26 +266,23 @@ Game.submitBugReport = async function({ gameId, description, reporter }) {
     throw new Error('Bug reports are not properly configured. Please inform the site developer.')
   }
 
-  const gameUrl = `http://${process.env.DOMAIN_HOST || 'localhost'}/game/${gameId}`
+  const response = await fetch(callbackUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${secret}`,
+    },
+    body: JSON.stringify({
+      game_id: gameId,
+      game_type: gameType,
+      game_name: gameName,
+      description,
+      reporter,
+    }),
+  })
 
-  try {
-    await fetch(callbackUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${secret}`,
-      },
-      body: JSON.stringify({
-        gameId,
-        gameUrl,
-        description,
-        reporter,
-        timestamp: new Date().toISOString(),
-      }),
-    })
-  }
-  catch (err) {
-    logger.error(`Bug report callback failed: ${err.message}`)
+  if (!response.ok) {
+    throw new Error(`Bug report callback returned ${response.status}: ${response.statusText}`)
   }
 }
 
