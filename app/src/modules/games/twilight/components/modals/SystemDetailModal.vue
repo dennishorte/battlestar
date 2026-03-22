@@ -56,7 +56,8 @@
           <div class="planet-attachments" v-if="planetAttachments(planet.id).length > 0">
             <span v-for="att in planetAttachments(planet.id)"
                   :key="att.id"
-                  class="attachment-tag">{{ att.name }}</span>
+                  class="attachment-tag"
+                  @click="showAttachment(att.id)">{{ att.name }}</span>
           </div>
           <div class="planet-units" v-if="planetUnits(planet.id).length > 0">
             <div v-for="unit in planetUnits(planet.id)" :key="unit.type + unit.owner" class="unit-entry">
@@ -105,6 +106,7 @@
 
 <script>
 import ModalBase from '@/components/ModalBase.vue'
+import modal from '@/util/modal'
 import { twilight } from 'battlestar-common'
 const res = twilight.res
 
@@ -249,6 +251,13 @@ export default {
   },
 
   methods: {
+    showAttachment(cardId) {
+      this.ui.modals.cardDetail.type = 'exploration-card'
+      this.ui.modals.cardDetail.id = cardId
+      this.ui.modals.cardDetail.context = null
+      modal.getModal('twilight-card-detail')?.show()
+    },
+
     planetUnits(planetId) {
       if (!this.systemId) {
         return []
@@ -494,6 +503,10 @@ export default {
 .attachment-tag {
   font-size: .75em; padding: .1em .3em; border-radius: .15em;
   background: #fff3e0; color: #e65100; font-weight: 500;
+  cursor: pointer;
+}
+.attachment-tag:hover {
+  background: #ffe0b2;
 }
 
 .fleet-warning-row {

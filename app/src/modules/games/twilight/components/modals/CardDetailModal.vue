@@ -59,7 +59,10 @@
         </div>
         <div class="detail-row" v-if="planetAttachments.length > 0">
           <span class="info-key">Attachments:</span>
-          <span v-for="att in planetAttachments" :key="att.id" class="attachment-tag">{{ att.name }}</span>
+          <span v-for="att in planetAttachments"
+                :key="att.id"
+                class="attachment-tag"
+                @click="showAttachment(att.id)">{{ att.name }}</span>
         </div>
       </div>
 
@@ -102,6 +105,17 @@
         </div>
         <div class="description-text" v-if="actionCardData.effect">
           {{ actionCardData.effect }}
+        </div>
+      </div>
+
+      <!-- Exploration Card -->
+      <div v-if="type === 'exploration-card' && explorationCardData">
+        <div class="detail-row">
+          <span class="trait-badge" :class="`trait-${explorationCardData.trait}`">{{ explorationCardData.trait }}</span>
+          <span class="exploration-type-badge" :class="`explore-${explorationCardData.type}`">{{ explorationCardData.type }}</span>
+        </div>
+        <div class="description-text" v-if="explorationCardData.effect">
+          {{ explorationCardData.effect }}
         </div>
       </div>
 
@@ -531,6 +545,9 @@ export default {
       if (this.type === 'action-card' && this.actionCardData) {
         return this.actionCardData.name
       }
+      if (this.type === 'exploration-card' && this.explorationCardData) {
+        return this.explorationCardData.name
+      }
       if (this.type === 'relic' && this.relicData) {
         return this.relicData.name
       }
@@ -591,6 +608,13 @@ export default {
         return null
       }
       return this.game.state.planets[this.id] || null
+    },
+
+    explorationCardData() {
+      if (this.type !== 'exploration-card' || !this.id) {
+        return null
+      }
+      return res.getExplorationCard(this.id)
     },
 
     relicData() {
@@ -783,6 +807,12 @@ export default {
   },
 
   methods: {
+    showAttachment(cardId) {
+      this.ui.modals.cardDetail.type = 'exploration-card'
+      this.ui.modals.cardDetail.id = cardId
+      this.ui.modals.cardDetail.context = null
+    },
+
     drillToCard(zoneType, item) {
       const typeMap = {
         'public-objective': 'objective',
@@ -1171,7 +1201,19 @@ export default {
 .attachment-tag {
   font-size: .8em; padding: .1em .35em; border-radius: .15em;
   background: #fff3e0; color: #e65100; font-weight: 500;
+  cursor: pointer;
 }
+.attachment-tag:hover {
+  background: #ffe0b2;
+}
+
+.exploration-type-badge {
+  font-size: .8em; padding: .15em .5em; border-radius: .2em;
+  text-transform: capitalize; font-weight: 600;
+}
+.explore-attach { background: #e8f5e9; color: #2e7d32; }
+.explore-action { background: #e3f2fd; color: #0d6efd; }
+.explore-fragment { background: #fff3e0; color: #e65100; }
 
 .hero-progress {
   font-size: .85em; font-weight: 600; color: #e65100;

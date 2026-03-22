@@ -27,9 +27,16 @@ const actionCard = computed(() => {
   return res.getAllActionCards().find(c => c.name === props.name)
 })
 
+const explorationCard = computed(() => {
+  return res.getAllExplorationCards().find(c => c.name === props.name)
+})
+
 const tokenClass = computed(() => {
   if (strategyCard.value) {
     return 'ti-strategy-card'
+  }
+  if (explorationCard.value) {
+    return 'ti-exploration-card'
   }
   return 'ti-action-card'
 })
@@ -44,6 +51,12 @@ function showDetails() {
   else if (actionCard.value) {
     ui.modals.cardDetail.type = 'action-card'
     ui.modals.cardDetail.id = actionCard.value.id
+    ui.modals.cardDetail.context = null
+    modal.getModal('twilight-card-detail')?.show()
+  }
+  else if (explorationCard.value) {
+    ui.modals.cardDetail.type = 'exploration-card'
+    ui.modals.cardDetail.id = explorationCard.value.id
     ui.modals.cardDetail.context = null
     modal.getModal('twilight-card-detail')?.show()
   }
@@ -88,5 +101,15 @@ function showDetails() {
 }
 .ti-action-card:hover {
   background: #e0e0e0;
+}
+
+.ti-exploration-card {
+  background: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ffcc80;
+  cursor: pointer;
+}
+.ti-exploration-card:hover {
+  background: #ffe0b2;
 }
 </style>
