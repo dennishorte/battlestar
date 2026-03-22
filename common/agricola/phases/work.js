@@ -173,6 +173,9 @@ Agricola.prototype.playerTurn = function(player, options) {
     // Record unused spaces before action for onUseMultipleSpaces hook
     const unusedBefore = player.getUnusedSpaceCount()
 
+    // Snapshot played cards to detect newly played cards with anytime actions
+    const cardsBefore = new Set([...player.playedMinorImprovements, ...player.playedOccupations])
+
     // Execute the action
     this.actions.executeAction(player, actionId)
 
@@ -200,6 +203,24 @@ Agricola.prototype.playerTurn = function(player, options) {
         this.actions.choose(player, ['End turn'], {
           title: 'You have unused once-per-turn actions.',
           anytimeActions: unusedActions,
+          noAutoRespond: true,
+        })
+      }
+    }
+
+    // If newly played cards introduced activatable anytime actions, offer them before
+    // the turn ends. Only check for discrete actions (card-custom, card-exchange), not
+    // food conversions or crop-moves which are already available on every choose() prompt.
+    if (!options?.isBonusTurn) {
+      const newCardIds = [...player.playedMinorImprovements, ...player.playedOccupations]
+        .filter(id => !cardsBefore.has(id))
+      const activatableTypes = new Set(['card-custom', 'card-exchange'])
+      const newActivatableActions = this.getAnytimeActions(player).filter(
+        a => activatableTypes.has(a.type) && newCardIds.includes(a.cardId)
+      )
+      if (newActivatableActions.length > 0) {
+        this.actions.choose(player, ['End turn'], {
+          title: 'You have new anytime actions available.',
           noAutoRespond: true,
         })
       }
