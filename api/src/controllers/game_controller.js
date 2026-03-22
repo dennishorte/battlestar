@@ -271,8 +271,8 @@ export const stats_agricola = async (req, res, next) => {
 
 export const systemMessage = async (req, res, next) => {
   try {
-    const { gameId, text } = req.body
-    await gameService.addSystemMessage(gameId, text)
+    const { gameId, text, position } = req.body
+    await gameService.addSystemMessage(gameId, text, position)
     res.json({ status: 'success' })
   }
   catch (err) {

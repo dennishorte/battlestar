@@ -163,6 +163,7 @@ class BaseLogManager {
     }
 
     const output = []
+    const sortedChat = [...this._chat].sort((a, b) => a.position - b.position)
 
     let chatIndex = 0
     let logIndex = 0
@@ -170,14 +171,14 @@ class BaseLogManager {
     for (; logIndex < this._log.length; logIndex++) {
       output.push(this._log[logIndex])
 
-      while (this._chat[chatIndex] && this._chat[chatIndex].position === logIndex) {
-        output.push(this._chat[chatIndex])
+      while (sortedChat[chatIndex] && sortedChat[chatIndex].position === logIndex) {
+        output.push(sortedChat[chatIndex])
         chatIndex += 1
       }
     }
 
-    while (chatIndex < this._chat.length) {
-      output.push(this._chat[chatIndex])
+    while (chatIndex < sortedChat.length) {
+      output.push(sortedChat[chatIndex])
       chatIndex += 1
     }
 

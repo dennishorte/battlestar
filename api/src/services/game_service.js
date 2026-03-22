@@ -250,9 +250,9 @@ async function _testAndSave(game, evalFunc, previousWaitingState = null) {
   return game.serialize()
 }
 
-Game.addSystemMessage = async function(gameId, text) {
+Game.addSystemMessage = async function(gameId, text, position) {
   await db.game.appendChat(gameId, {
-    position: 0,
+    position: position ?? 0,
     text,
     type: 'system',
   })

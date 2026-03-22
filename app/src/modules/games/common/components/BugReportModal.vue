@@ -66,12 +66,14 @@ export default {
       }
 
       const systemText = `Bug Report from ${this.actor.name}: ${text}`
+      const position = this.game.log.getLog().length
       this.game.log.systemMessage(systemText)
 
       try {
         await this.$post('/api/game/system_message', {
           gameId: this.game._id,
           text: systemText,
+          position,
         })
       }
       catch (err) {
