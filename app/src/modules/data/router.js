@@ -5,6 +5,7 @@ import HexTileDetail from './components/HexTileDetail.vue'
 import HexTilesViewer from './components/HexTilesViewer.vue'
 import InnovationCards from './components/InnovationCards.vue'
 import InnovationResults from './components/InnovationResults.vue'
+import TwilightData from './components/TwilightData.vue'
 import TyrantsCards from './components/TyrantsCards.vue'
 
 export default [
@@ -37,6 +38,12 @@ export default [
     name: 'Innovation Results',
     title: 'Innovation Results',
     component: InnovationResults,
+  },
+  {
+    path: '/data/twilight/data',
+    name: 'Twilight Data',
+    title: 'Twilight Data',
+    component: TwilightData,
   },
   {
     path: '/data/tyrants/cards',

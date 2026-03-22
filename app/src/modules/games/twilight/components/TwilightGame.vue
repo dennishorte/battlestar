@@ -29,6 +29,7 @@
             <button class="btn btn-sm btn-outline-secondary" @click="openShipOverview">Units</button>
             <button class="btn btn-sm btn-outline-secondary" @click="openTechTree">Tech</button>
             <button class="btn btn-sm btn-outline-secondary" @click="openRulesReference">Rules</button>
+            <router-link class="btn btn-sm btn-outline-secondary" to="/data/twilight/data" target="_blank">Data</router-link>
           </div>
 
           <WaitingPanel />
