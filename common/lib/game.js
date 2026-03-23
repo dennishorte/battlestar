@@ -203,6 +203,14 @@ Game.prototype.requestInputAny = function(array) {
   const resp = this._getResponse() // || this._tryToAutomaticallyRespond(array)
 
   if (resp) {
+    // Validate that the response actor matches one of the expected selectors
+    const expectedActors = array.map(s => s.actor).filter(Boolean)
+    if (resp.actor && expectedActors.length > 0 && !expectedActors.includes(resp.actor)) {
+      throw new Error(
+        `Response actor "${resp.actor}" does not match expected actor(s): ${expectedActors.join(', ')}.`
+        + ` Response #${this.state.responseIndex}, title: "${resp.title || '(none)'}"`
+      )
+    }
     if (resp.isUserResponse) {
       this.log.responseReceived(resp)
     }
@@ -322,6 +330,17 @@ Game.prototype.requestInputMany = function(array) {
     const resp = this._getResponse()
 
     if (resp) {
+      // Validate that the response actor matches one of the expected (unanswered) selectors
+      const expectedActors = array
+        .filter(request => !responses.find(r => r.actor === request.actor))
+        .map(request => request.actor)
+        .filter(Boolean)
+      if (resp.actor && expectedActors.length > 0 && !expectedActors.includes(resp.actor)) {
+        throw new Error(
+          `Response actor "${resp.actor}" does not match expected actor(s): ${expectedActors.join(', ')}.`
+          + ` Response #${this.state.responseIndex}, title: "${resp.title || '(none)'}"`
+        )
+      }
       __prepareInput(resp)
     }
     else {
