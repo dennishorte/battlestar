@@ -425,7 +425,7 @@ module.exports = function(Twilight) {
         }
         else if (infantry) {
           const remove = this.actions.choose(player, ['Yes', 'No'], {
-            title: `Remove 1 infantry from ${this.state.planets[planetId].name}?`,
+            title: `Remove 1 infantry from ${planetId}?`,
           })
           if (remove[0] === 'Yes') {
             this._removeUnit(systemId, planetId, infantry.id)
