@@ -170,7 +170,7 @@ Game.saveFull = async function(game, { branchId, overwrite, chat, responses, wai
     throw new GameKilledError('game_killed')
   }
 
-  if (game.paused) {
+  if (game.paused && !overwrite) {
     throw new Error('This game is paused')
   }
 
