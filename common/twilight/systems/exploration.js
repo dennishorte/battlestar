@@ -424,12 +424,17 @@ module.exports = function(Twilight) {
           eligible = true
         }
         else if (infantry) {
-          this._removeUnit(systemId, planetId, infantry.id)
-          this.log.add({
-            template: '{player} removes 1 infantry from {planet}',
-            args: { player: ownerName, planet: planetId },
+          const remove = this.actions.choose(player, ['Yes', 'No'], {
+            title: `Remove 1 infantry from ${this.state.planets[planetId].name}?`,
           })
-          eligible = true
+          if (remove[0] === 'Yes') {
+            this._removeUnit(systemId, planetId, infantry.id)
+            this.log.add({
+              template: '{player} removes 1 infantry from {planet}',
+              args: { player: ownerName, planet: planetId },
+            })
+            eligible = true
+          }
         }
 
         if (eligible) {

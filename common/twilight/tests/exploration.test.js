@@ -1155,6 +1155,9 @@ describe('Exploration', () => {
         const game = setupHazardousExploration('core-mine-1')
         invadeVefutII(game)
 
+        // Choose to remove infantry
+        t.choose(game, 'Yes')
+
         // 1 infantry landed, Core Mine removes it, Dennis gains 1 TG
         const dennis = game.players.byName('dennis')
         expect(dennis.tradeGoods).toBe(1)
@@ -1162,6 +1165,20 @@ describe('Exploration', () => {
         const vefutUnits = game.state.units['20']?.planets['vefut-ii'] || []
         const infantry = vefutUnits.filter(u => u.type === 'infantry' && u.owner === 'dennis')
         expect(infantry.length).toBe(0)
+      })
+
+      test('decline to remove infantry gets nothing', () => {
+        const game = setupHazardousExploration('core-mine-1')
+        invadeVefutII(game)
+
+        t.choose(game, 'No')
+
+        const dennis = game.players.byName('dennis')
+        expect(dennis.tradeGoods).toBe(0)
+        // Infantry still on the planet
+        const vefutUnits = game.state.units['20']?.planets['vefut-ii'] || []
+        const infantry = vefutUnits.filter(u => u.type === 'infantry' && u.owner === 'dennis')
+        expect(infantry.length).toBe(1)
       })
 
       test('gain 1 trade good with mech (no infantry removed)', () => {
@@ -1194,6 +1211,8 @@ describe('Exploration', () => {
         const game = setupHazardousExploration('expedition-1')
         invadeVefutII(game)
 
+        t.choose(game, 'Yes')
+
         // Expedition readies the planet (was exhausted when taken)
         expect(game.state.planets['vefut-ii'].exhausted).toBe(false)
       })
@@ -1203,6 +1222,8 @@ describe('Exploration', () => {
       test('gain 1 command token by removing infantry', () => {
         const game = setupHazardousExploration('volatile-fuel-source-1')
         invadeVefutII(game)
+
+        t.choose(game, 'Yes')
 
         // Volatile Fuel Source prompts for pool choice
         t.choose(game, 'tactics')
