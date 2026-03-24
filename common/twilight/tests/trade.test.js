@@ -385,6 +385,102 @@ describe('Trade System', () => {
       expect(game.state.phase).toBe('status')
     })
 
+    test('target can counter-offer', () => {
+      const game = t.fixture()
+      const target = findAdjacent('sol-home')
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 3,
+          units: {
+            'sol-home': { space: ['cruiser'] },
+          },
+        },
+        micah: {
+          tradeGoods: 2,
+          commodities: 3,
+          units: {
+            [target]: { space: ['cruiser'] },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Strategic Action.leadership')
+      t.choose(game, 'Done')
+
+      // Dennis proposes: offer 1 TG, request 2 commodities
+      t.choose(game, 'micah')
+      t.action(game, 'trade-offer', {
+        offering: { tradeGoods: 1 },
+        requesting: { commodities: 2 },
+      })
+
+      // Micah counters: offer 1 commodity, request 1 TG
+      t.choose(game, 'Counter')
+      t.action(game, 'trade-offer', {
+        offering: { commodities: 1 },
+        requesting: { tradeGoods: 1 },
+      })
+
+      // Dennis accepts the counter
+      t.choose(game, 'Accept')
+
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+      expect(dennis.tradeGoods).toBe(3)  // 3 - 1 + 1 (commodity → TG)
+      expect(micah.tradeGoods).toBe(3)   // 2 + 1
+      expect(micah.commodities).toBe(2)  // 3 - 1
+    })
+
+    test('original player can reject counter-offer', () => {
+      const game = t.fixture()
+      const target = findAdjacent('sol-home')
+      t.setBoard(game, {
+        dennis: {
+          tradeGoods: 3,
+          units: {
+            'sol-home': { space: ['cruiser'] },
+          },
+        },
+        micah: {
+          tradeGoods: 2,
+          commodities: 3,
+          units: {
+            [target]: { space: ['cruiser'] },
+          },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'leadership', 'diplomacy')
+
+      t.choose(game, 'Strategic Action.leadership')
+      t.choose(game, 'Done')
+
+      t.choose(game, 'micah')
+      t.action(game, 'trade-offer', {
+        offering: { tradeGoods: 1 },
+        requesting: { commodities: 2 },
+      })
+
+      // Micah counters
+      t.choose(game, 'Counter')
+      t.action(game, 'trade-offer', {
+        offering: { commodities: 1 },
+        requesting: { tradeGoods: 3 },
+      })
+
+      // Dennis rejects the counter
+      t.choose(game, 'Reject')
+
+      // No resources changed
+      const dennis = game.players.byName('dennis')
+      const micah = game.players.byName('micah')
+      expect(dennis.tradeGoods).toBe(3)
+      expect(micah.tradeGoods).toBe(2)
+      expect(micah.commodities).toBe(3)
+    })
+
     test('skip transaction without proposing', () => {
       const game = t.fixture()
       const target = findAdjacent('sol-home')

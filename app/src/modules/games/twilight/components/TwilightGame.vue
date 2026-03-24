@@ -18,7 +18,7 @@
           <ActivateSystem v-if="activeActionType === 'activate-system'" :player-name="selectedPlayerName" />
           <MoveShips v-if="activeActionType === 'move-ships'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
           <ProduceUnits v-if="activeActionType === 'produce-units'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
-          <TradeOffer v-if="activeActionType === 'trade-offer'" :player-name="selectedPlayerName" />
+          <TradeOffer v-if="activeActionType === 'trade-offer' || activeActionType === 'transaction-review'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
           <RedistributeTokens v-if="activeActionType === 'redistribute-tokens'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
           <AgendaVote v-if="activeActionType === 'agenda-vote'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
           <ResearchTech v-if="activeActionType === 'research-tech'" :request="selectedWaitingRequest" :player-name="selectedPlayerName" />
@@ -241,7 +241,10 @@ export default {
       if (title.includes('produce') || title.includes('production')) {
         return 'produce-units'
       }
-      if (title.includes('trade') && title.includes('offer')) {
+      if (title.includes('transaction from') || title.includes('counter-offer from')) {
+        return 'transaction-review'
+      }
+      if (request.allowsAction === 'trade-offer') {
         return 'trade-offer'
       }
       if (request.allowsAction === 'commit-ground-forces') {

@@ -110,6 +110,7 @@ module.exports = function(Twilight) {
     const offerSelection = this.actions.choose(player, ['Done'], {
       title: `Offer to ${targetName}`,
       allowsAction: 'trade-offer',
+      context: { targetName },
     })
 
     if (offerSelection.action !== 'trade-offer') {
@@ -201,8 +202,11 @@ module.exports = function(Twilight) {
       return
     }
 
-    // Target player accepts or rejects
-    const response = this.actions.choose(target, ['Accept', 'Reject'], {
+    // Log the proposed offer
+    this._logOffer(player.name, targetName, offering, requesting)
+
+    // Target player accepts, rejects, or counter-offers
+    const response = this.actions.choose(target, ['Accept', 'Reject', 'Counter'], {
       title: `Transaction from ${player.name}`,
       context: {
         offering,
@@ -210,24 +214,84 @@ module.exports = function(Twilight) {
       },
     })
 
-    if (response[0] !== 'Accept') {
+    if (response[0] === 'Accept') {
+      // Validate the target can afford what's requested
+      if ((requesting.tradeGoods || 0) > target.tradeGoods) {
+        return
+      }
+      if ((requesting.commodities || 0) > target.commodities) {
+        return
+      }
+
+      this._executeTransaction(player, target, offering, requesting)
+    }
+    else if (response[0] === 'Counter') {
+      // Target makes a counter-offer
+      const counterSelection = this.actions.choose(target, ['Done'], {
+        title: `Counter-offer to ${player.name}`,
+        allowsAction: 'trade-offer',
+        context: {
+          targetName: player.name,
+          incomingOffer: { offering, requesting },
+        },
+      })
+
+      if (counterSelection.action !== 'trade-offer') {
+        this.log.add({
+          template: '{target} cancels counter-offer to {player}',
+          args: { target: targetName, player },
+        })
+        return
+      }
+
+      const counterOffering = counterSelection.offering || {}
+      const counterRequesting = counterSelection.requesting || {}
+
+      // Validate the target can afford what they're offering
+      if ((counterOffering.tradeGoods || 0) > target.tradeGoods) {
+        return
+      }
+      if ((counterOffering.commodities || 0) > target.commodities) {
+        return
+      }
+
+      // Log the counter-offer
+      this._logOffer(targetName, player.name, counterOffering, counterRequesting, true)
+
+      // Original player accepts or rejects the counter
+      const counterResponse = this.actions.choose(player, ['Accept', 'Reject'], {
+        title: `Counter-offer from ${targetName}`,
+        context: {
+          offering: counterOffering,
+          requesting: counterRequesting,
+        },
+      })
+
+      if (counterResponse[0] !== 'Accept') {
+        this.log.add({
+          template: '{player} rejects counter-offer from {target}',
+          args: { player, target: targetName },
+        })
+        return
+      }
+
+      // Validate the original player can afford what's requested
+      if ((counterRequesting.tradeGoods || 0) > player.tradeGoods) {
+        return
+      }
+      if ((counterRequesting.commodities || 0) > player.commodities) {
+        return
+      }
+
+      // Execute with the counter-offer terms (target is the offerer now)
+      this._executeTransaction(target, player, counterOffering, counterRequesting)
+    }
+    else {
       this.log.add({
         template: '{target} rejects transaction from {player}',
         args: { target: targetName, player },
       })
-      return
     }
-
-    // Validate the target can afford what's requested
-    if ((requesting.tradeGoods || 0) > target.tradeGoods) {
-      return
-    }
-    if ((requesting.commodities || 0) > target.commodities) {
-      return
-    }
-
-    // Execute the exchange
-    this._executeTransaction(player, target, offering, requesting)
   }
 
   Twilight.prototype._executeTransaction = function(player, target, offering, requesting) {
@@ -331,8 +395,13 @@ module.exports = function(Twilight) {
     }
 
     this.log.add({
-      template: '{player} and {target} complete a transaction',
-      args: { player, target },
+      template: '{player} gives {offered} to {target} for {requested}',
+      args: {
+        player,
+        target,
+        offered: this._describeOffer(offering),
+        requested: this._describeOffer(requesting),
+      },
     })
 
     // Dark Pact: check commodity gifts between holder and Empyrean
@@ -456,6 +525,47 @@ module.exports = function(Twilight) {
       .filter(p => p.name !== player.name)
       .filter(p => !traded[p.name])
       .map(p => p.name)
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Offer logging
+
+  Twilight.prototype._describeOffer = function(offer) {
+    const parts = []
+    if (offer.tradeGoods > 0) {
+      parts.push(`${offer.tradeGoods} TG`)
+    }
+    if (offer.commodities > 0) {
+      parts.push(`${offer.commodities} commodity${offer.commodities > 1 ? '' : ''}`)
+    }
+    if (offer.promissoryNotes?.length > 0) {
+      for (const note of offer.promissoryNotes) {
+        parts.push(note.id)
+      }
+    }
+    if (offer.actionCards?.length > 0) {
+      parts.push(`${offer.actionCards.length} action card(s)`)
+    }
+    if (offer.planet) {
+      parts.push(`planet ${offer.planet}`)
+    }
+    if (offer.capturedUnits?.length > 0) {
+      parts.push(`${offer.capturedUnits.length} captured unit(s)`)
+    }
+    return parts.length > 0 ? parts.join(', ') : 'nothing'
+  }
+
+  Twilight.prototype._logOffer = function(fromName, toName, offering, requesting, isCounter) {
+    const prefix = isCounter ? 'Counter-offer' : 'Offer'
+    this.log.add({
+      template: `${prefix}: {from} offers {offered} to {to} for {requested}`,
+      args: {
+        from: fromName,
+        to: toName,
+        offered: this._describeOffer(offering),
+        requested: this._describeOffer(requesting),
+      },
+    })
   }
 
 } // module.exports
