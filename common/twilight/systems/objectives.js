@@ -83,6 +83,11 @@ module.exports = function(Twilight) {
             return `${id}: ${obj.name}`
           })]
 
+          this.log.add({
+            template: '{player}: Score Objectives',
+            args: { player },
+            event: 'step',
+          })
           const selection = this.actions.choose(player, choices, {
             title: 'Score Public Objective',
             noAutoRespond: true,
@@ -114,6 +119,11 @@ module.exports = function(Twilight) {
           return `${id}: ${obj.name}`
         })]
 
+        this.log.add({
+          template: '{player}: Score Objectives',
+          args: { player },
+          event: 'step',
+        })
         const secretSelection = this.actions.choose(player, secretChoices, {
           title: 'Score Secret Objective',
           noAutoRespond: true,

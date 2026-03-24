@@ -652,6 +652,11 @@ module.exports = function(Twilight) {
   Twilight.prototype._redistributeTokens = function(player, newTokens) {
     newTokens = newTokens || 0
     const totalTokens = player.commandTokens.tactics + player.commandTokens.strategy + player.commandTokens.fleet + newTokens
+    this.log.add({
+      template: '{player}: Redistribute Tokens',
+      args: { player },
+      event: 'step',
+    })
     const selection = this.actions.choose(player, ['Done'], {
       title: `Redistribute Tokens (${totalTokens} total)`,
       allowsAction: 'redistribute-tokens',
@@ -763,6 +768,11 @@ module.exports = function(Twilight) {
         for (let i = 1; i <= maxTokens; i++) {
           choices.push(`${i} token${i > 1 ? 's' : ''} (${i * 3} influence)`)
         }
+        this.log.add({
+          template: '{player}: {secondary}',
+          args: { player, secondary: secondaryAvailable },
+          event: 'step',
+        })
         const selection = this.actions.choose(player, choices, {
           title: 'Spend Influence for Command Tokens (free, 1 per 3 influence)',
         })
@@ -806,6 +816,11 @@ module.exports = function(Twilight) {
 
         const costLabel = isFree ? 'free' : 'costs 1 strategy token'
         const choices = ['Pass', ...exhaustedPlanets]
+        this.log.add({
+          template: '{player}: {secondary}',
+          args: { player, secondary: secondaryAvailable },
+          event: 'step',
+        })
         const first = this.actions.choose(player, choices, {
           title: `Ready up to 2 exhausted planets (${costLabel})`,
         })
@@ -848,6 +863,11 @@ module.exports = function(Twilight) {
       const costLabel = isFree ? 'free'
         : cardId === 'technology' ? 'costs 1 strategy token + 4 resources'
           : 'costs 1 strategy token'
+      this.log.add({
+        template: '{player}: {secondary}',
+        args: { player, secondary: secondaryAvailable },
+        event: 'step',
+      })
       const choice = this.actions.choose(player, ['Use Secondary', 'Pass'], {
         title: `${secondaryAvailable} (${costLabel})`,
       })

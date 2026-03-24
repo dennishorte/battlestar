@@ -105,6 +105,7 @@ module.exports = function(Twilight) {
     const isBlockaded = enemyShips.length > 0
 
     // Ask player what to produce
+    this.log.add({ template: 'Produce Units', event: 'step' })
     const produceSelection = this.actions.choose(player, ['Done'], {
       title: 'Produce Units',
       allowsAction: 'produce-units',

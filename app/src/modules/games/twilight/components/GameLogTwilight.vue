@@ -72,6 +72,12 @@ function lineClasses(line) {
   else if (line.event === 'activate-system') {
     classes.push('activate-system')
   }
+  else if (line.event === 'turn-start') {
+    classes.push('turn-start')
+  }
+  else if (line.event === 'step') {
+    classes.push('step-context')
+  }
   else if (line.indent >= 2) {
     classes.push('indented-detail')
   }
@@ -80,7 +86,7 @@ function lineClasses(line) {
 }
 
 function lineStyles(line) {
-  if (line.event === 'player-turn') {
+  if (line.event === 'turn-start') {
     const playerName = line.args?.player?.value
     if (playerName) {
       const player = game.value.players.byName(playerName)
@@ -89,6 +95,15 @@ function lineStyles(line) {
           'background-color': player.color,
           'color': getContrastColor(player.color),
         }
+      }
+    }
+  }
+  if (line.event === 'player-turn') {
+    const playerName = line.args?.player?.value
+    if (playerName) {
+      const player = game.value.players.byName(playerName)
+      if (player?.color) {
+        return { 'border-left-color': player.color }
       }
     }
   }
@@ -243,13 +258,13 @@ useGameLogProvider({
   background: linear-gradient(135deg, #59359a, #6f42c1);
 }
 
-/* ── Player turn (main action choice) ── */
+/* ── Player turn (action label, e.g. "Tactical Action") ── */
 #gamelog-twilight :deep(.player-turn) {
+  border-left: 3px solid #6c757d;
   padding: .15em .6em;
-  border-radius: .2em;
-  margin-top: .4em;
-  font-weight: 700;
-  font-size: 0.95em;
+  margin-top: .15em;
+  font-weight: 600;
+  font-size: 0.9em;
 }
 
 /* ── Player action (secondary: pass, pick card, etc.) ── */
@@ -311,6 +326,25 @@ useGameLogProvider({
   margin-top: .15em;
   color: #adb5bd;
   font-size: 0.9em;
+}
+
+/* ── Turn start (primary turn header) ── */
+#gamelog-twilight :deep(.turn-start) {
+  padding: .15em .6em;
+  border-radius: .2em;
+  margin-top: .5em;
+  font-weight: 700;
+  font-size: 0.95em;
+}
+
+/* ── Step context (sub-step indicator) ── */
+#gamelog-twilight :deep(.step-context) {
+  color: #6c757d;
+  font-style: italic;
+  font-size: 0.85em;
+  border-left: 2px solid #495057;
+  padding: .1em .5em;
+  margin-top: .15em;
 }
 
 #gamelog-twilight :deep(.player-name) {

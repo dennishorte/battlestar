@@ -92,6 +92,7 @@ module.exports = function(Twilight) {
   }
 
   Twilight.prototype._movementStep = function(player, targetSystemId) {
+    this.log.add({ template: 'Move Ships', event: 'step' })
     const moveSelection = this.actions.choose(player, ['Done'], {
       title: 'Move Ships',
       allowsAction: 'move-ships',

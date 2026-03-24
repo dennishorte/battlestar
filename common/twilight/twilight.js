@@ -688,6 +688,12 @@ Twilight.prototype.strategyPhase = function() {
         this.chooseColor(player)
       }
 
+      this.log.add({
+        template: "{player}'s Pick",
+        args: { player },
+        event: 'turn-start',
+      })
+
       const available = this.state.availableStrategyCards
       const selection = this.actions.choose(player, available, {
         title: 'Choose Strategy Card',
@@ -822,6 +828,12 @@ Twilight.prototype.actionPhase = function() {
       ? choices
       : choices.filter(c => c.title !== 'Pass')
 
+    this.log.add({
+      template: "{player}'s Turn",
+      args: { player },
+      event: 'turn-start',
+    })
+
     const selection = this.actions.choose(player, availableChoices, {
       title: 'Choose Action',
       help: 'Select one action to perform this turn. You must use your strategy card before passing.',
@@ -915,6 +927,12 @@ Twilight.prototype.actionPhase = function() {
         })
       }
       bonusChoices.push({ title: 'Decline' })
+
+      this.log.add({
+        template: "{player}'s Turn (Fleet Logistics)",
+        args: { player },
+        event: 'turn-start',
+      })
 
       const bonusSelection = this.actions.choose(player, bonusChoices, {
         title: 'Fleet Logistics: Choose additional action',
@@ -1221,6 +1239,11 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
     }
     else {
       // Rule 94.6: Allow transactions before voting (any player, 1 per player per agenda)
+      this.log.add({
+        template: '{player}: Cast Votes',
+        args: { player },
+        event: 'step',
+      })
       while (true) {
         const agendaPartners = this._getAgendaTradePartners(player)
         const hasPartners = agendaPartners.length > 0
@@ -1440,6 +1463,7 @@ Twilight.prototype._tacticalAction = function(player) {
   this.log.indent()
 
   // Step 1: Activate a system
+  this.log.add({ template: 'Activate System', event: 'step' })
   const activateSelection = this.actions.choose(player, ['Done'], {
     title: 'Activate System',
     allowsAction: 'activate-system',
