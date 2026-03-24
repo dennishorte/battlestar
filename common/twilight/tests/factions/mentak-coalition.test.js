@@ -174,11 +174,8 @@ describe('Mentak Coalition', () => {
       t.choose(game, 'politics')      // micah (2nd pick)
       t.choose(game, 'warfare')       // dennis (2nd pick)
 
-      // Dennis (leadership=1) goes first
-      t.choose(game, 'Strategic Action.leadership')
-      t.choose(game, 'Done')  // allocate tokens
-
-      // Dennis should get transaction window (adjacent to micah via solAdj)
+      // Dennis (leadership=1) goes first — propose transaction before action
+      t.choose(game, 'Propose Transaction')
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: { tradeGoods: 1 },
@@ -242,11 +239,8 @@ describe('Mentak Coalition', () => {
       t.choose(game, 'politics')      // micah (2nd pick)
       t.choose(game, 'warfare')       // dennis (2nd pick)
 
-      // Dennis (leadership=1) goes first
-      t.choose(game, 'Strategic Action.leadership')
-      t.choose(game, 'Done')  // allocate tokens
-
-      // Dennis trades 1 TG to micah — micah now has 2 TG (below 3 threshold)
+      // Dennis (leadership=1) goes first — propose transaction before action
+      t.choose(game, 'Propose Transaction')
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: { tradeGoods: 1 },
@@ -310,12 +304,10 @@ describe('Mentak Coalition', () => {
       t.choose(game, 'politics')      // micah (2nd pick)
       t.choose(game, 'warfare')       // dennis (2nd pick)
 
-      // Dennis (leadership=1) goes first
-      t.choose(game, 'Strategic Action.leadership')
-      t.choose(game, 'Done')  // allocate tokens
-
+      // Dennis (leadership=1) goes first — propose transaction before action
       // Dennis trades 1 TG to micah — micah now has 6 TG (>= 3 threshold)
       // Dennis has 1 TG left (below 3 threshold) so no pillage prompt for dennis
+      t.choose(game, 'Propose Transaction')
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: { tradeGoods: 1 },
@@ -385,11 +377,9 @@ describe('Mentak Coalition', () => {
       t.choose(game, 'politics')      // micah (2nd pick)
       t.choose(game, 'warfare')       // dennis (2nd pick)
 
-      // Dennis (leadership=1) goes first
-      t.choose(game, 'Strategic Action.leadership')
-      t.choose(game, 'Done')  // allocate tokens
-
+      // Dennis (leadership=1) goes first — propose transaction before action
       // Dennis trades 1 TG to micah
+      t.choose(game, 'Propose Transaction')
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: { tradeGoods: 1 },
@@ -666,9 +656,6 @@ describe('Mentak Coalition', () => {
       // Micah (initiative 1): Component Action → Promise of Protection
       t.choose(game, 'Component Action.promise-of-protection')
 
-      // Micah's transaction window: skip (Micah has 2 TG, Dennis has 0)
-      t.choose(game, 'Skip Transaction')
-
       // Dennis (initiative 5): Strategic Action (Trade)
       t.choose(game, 'Strategic Action.trade')
       // Dennis doesn't choose anyone for free secondary
@@ -676,7 +663,12 @@ describe('Mentak Coalition', () => {
       // Micah is offered Trade secondary (free for Hacan)
       t.choose(game, 'Pass')
 
-      // Dennis's transaction window: trade with Micah
+      // Micah's turn: leadership to advance to dennis's next turn
+      t.choose(game, 'Strategic Action.leadership')
+      t.choose(game, 'Done')
+
+      // Dennis proposes transaction with Micah
+      t.choose(game, 'Propose Transaction')
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: { tradeGoods: 1 },

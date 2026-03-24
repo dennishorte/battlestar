@@ -15,6 +15,7 @@ import TiTechToken from './log/TiTechToken.vue'
 import TiObjectiveToken from './log/TiObjectiveToken.vue'
 import TiRelicToken from './log/TiRelicToken.vue'
 import TiPlanetToken from './log/TiPlanetToken.vue'
+import TiTransactionLog from './log/TiTransactionLog.vue'
 
 const game = inject('game')
 
@@ -94,6 +95,9 @@ function lineStyles(line) {
 }
 
 function convertArg(arg, value) {
+  if (arg.startsWith('player')) {
+    return `player(${value.value})`
+  }
   if (arg === 'card') {
     return `ticard(${value.value})`
   }
@@ -116,10 +120,18 @@ function convertArg(arg, value) {
   return undefined
 }
 
+function lineComponent(line) {
+  if (line.event === 'transaction-offer' || line.event === 'transaction-counter') {
+    return TiTransactionLog
+  }
+  return null
+}
+
 useGameLogProvider({
   chatColors,
   lineClasses,
   lineStyles,
+  lineComponent,
   convertArg,
   tokenMatchers: [
     ...defaultMatchers,

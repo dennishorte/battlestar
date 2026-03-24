@@ -576,9 +576,6 @@ describe('Strategic Actions', () => {
       t.choose(game, 'Done')  // micah: allocate 3 tokens
       // Dennis: leadership secondary auto-passes (2I, not enough for tokens)
 
-      // Hacan transaction prompt (has trade goods)
-      t.choose(game, 'Skip Transaction')
-
       // Dennis uses technology (primary: research 1 tech)
       t.choose(game, 'Strategic Action.technology')
       t.choose(game, 'sarween-tools')
@@ -981,7 +978,6 @@ describe('Strategic Actions', () => {
         t.choose(game, 'Strategic Action.leadership')  // micah: leadership
         t.choose(game, 'Done')  // micah: allocate 3 tokens
         // Dennis: leadership secondary auto-passes (2I, not enough for tokens)
-        t.choose(game, 'Skip Transaction')  // hacan transaction prompt (has TG)
 
         t.choose(game, 'Strategic Action.technology')  // dennis: technology
         t.choose(game, 'sarween-tools')  // dennis researches

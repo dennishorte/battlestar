@@ -780,13 +780,10 @@ describe('Council Keleres', () => {
         t.choose(game, 'Strategic Action.leadership')
         t.choose(game, 'Done')  // allocate tokens
 
-        // After Dennis's action, transaction window appears
         // IIHQ Modernization makes Dennis neighbor of Micah (Micah has ships at Mecatol Rex)
-        // So "Propose Transaction?" should include micah
+        // So "Propose Transaction" should be available as an action choice
         const choices = t.currentChoices(game)
-        expect(choices).toContain('micah')
-
-        t.choose(game, 'Skip Transaction')
+        expect(choices).toContain('Propose Transaction')
       })
     })
   })

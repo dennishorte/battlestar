@@ -210,7 +210,12 @@ describe('Trade System', () => {
       t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
-      // Transaction window: dennis chooses micah
+      // Micah's turn: do diplomacy to advance to dennis's next turn
+      t.choose(game, 'Strategic Action.diplomacy')
+      t.choose(game, 'hacan-home')
+
+      // Dennis's turn: Propose Transaction from the Choose Action prompt
+      t.choose(game, 'Propose Transaction')
       t.choose(game, 'micah')
 
       // Dennis offers 1 trade good, requests 2 commodities
@@ -255,7 +260,12 @@ describe('Trade System', () => {
       t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
 
+      // Micah's turn: do diplomacy to advance to dennis's next turn
+      t.choose(game, 'Strategic Action.diplomacy')
+      t.choose(game, 'hacan-home')
+
       // Dennis offers 2 commodities
+      t.choose(game, 'Propose Transaction')
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: { commodities: 2 },
@@ -293,8 +303,12 @@ describe('Trade System', () => {
 
       t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
-      // micah: leadership secondary auto-passes (Hacan 2I)
 
+      // Micah's turn: do diplomacy to advance to dennis's next turn
+      t.choose(game, 'Strategic Action.diplomacy')
+      t.choose(game, 'hacan-home')
+
+      t.choose(game, 'Propose Transaction')
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: { tradeGoods: 1 },
@@ -333,26 +347,25 @@ describe('Trade System', () => {
 
       t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
-      // micah: leadership secondary auto-passes (Hacan 2I)
 
-      // First transaction with micah
-      t.choose(game, 'micah')
+      // Micah's turn: propose transaction to dennis
+      t.choose(game, 'Propose Transaction')
+      t.choose(game, 'dennis')
       t.action(game, 'trade-offer', {
         offering: { tradeGoods: 1 },
         requesting: {},
       })
       t.choose(game, 'Accept')
 
-      // After first transaction, micah is marked as traded.
-      // In 2p game, no more partners → loop auto-exits.
-
-      // Micah: strategic action (new turn = fresh tracking)
+      // After first transaction, dennis is marked as traded for micah.
+      // In 2p game, no more partners → Propose Transaction won't appear.
+      // Micah continues with diplomacy
       t.choose(game, 'Strategic Action.diplomacy')
       t.choose(game, 'hacan-home')
-      // dennis: diplomacy secondary auto-skipped (no exhausted planets)
 
-      // Micah can propose to dennis (fresh turn)
-      t.choose(game, 'dennis')
+      // Dennis's turn: can propose to micah (fresh turn for dennis)
+      t.choose(game, 'Propose Transaction')
+      t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: { tradeGoods: 1 },
         requesting: {},
@@ -409,7 +422,12 @@ describe('Trade System', () => {
       t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')
 
+      // Micah's turn: do diplomacy to advance to dennis's next turn
+      t.choose(game, 'Strategic Action.diplomacy')
+      t.choose(game, 'hacan-home')
+
       // Dennis proposes: offer 1 TG, request 2 commodities
+      t.choose(game, 'Propose Transaction')
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: { tradeGoods: 1 },
@@ -457,6 +475,11 @@ describe('Trade System', () => {
       t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')
 
+      // Micah's turn: do diplomacy to advance to dennis's next turn
+      t.choose(game, 'Strategic Action.diplomacy')
+      t.choose(game, 'hacan-home')
+
+      t.choose(game, 'Propose Transaction')
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: { tradeGoods: 1 },
@@ -505,10 +528,11 @@ describe('Trade System', () => {
       t.choose(game, 'Done')  // allocate tokens
       // micah: leadership secondary auto-passes (Hacan 2I)
 
-      // Skip transaction
-      t.choose(game, 'Skip Transaction')
+      // Propose Transaction is available but not required — player can just take another action
+      const choices = t.currentChoices(game)
+      expect(choices).toContain('Propose Transaction')
 
-      // Resources unchanged
+      // Resources unchanged — no transaction proposed
       const dennis = game.players.byName('dennis')
       expect(dennis.tradeGoods).toBe(3)
     })

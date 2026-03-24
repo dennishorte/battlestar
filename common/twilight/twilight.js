@@ -762,6 +762,9 @@ Twilight.prototype.actionPhase = function() {
       continue
     }
 
+    // Track active turn player for anytime transactions
+    this.state.turnPlayerName = player.name
+
     // Check leader unlock conditions at start of each turn
     this._checkLeaderUnlocks()
 
@@ -875,11 +878,6 @@ Twilight.prototype.actionPhase = function() {
       this._checkElimination()
     }
 
-    // After action (except pass), offer transaction window
-    if (action !== 'Pass') {
-      this._offerTransactions(player)
-    }
-
     // Fleet Logistics: allow one additional action per turn
     if (action !== 'Pass' && !this.state.fleetLogisticsUsed?.[player.name]
         && player.hasTechnology('fleet-logistics')) {
@@ -951,10 +949,6 @@ Twilight.prototype.actionPhase = function() {
         }
 
         this._checkActionPhaseSecrets()
-
-        if (bonusAction !== 'Decline') {
-          this._offerTransactions(player)
-        }
       }
     }
 
@@ -973,6 +967,7 @@ Twilight.prototype.actionPhase = function() {
 
   // Reset Fleet Logistics tracking at end of action phase
   this.state.fleetLogisticsUsed = {}
+  this.state.turnPlayerName = null
 
   this.log.outdent()
 }

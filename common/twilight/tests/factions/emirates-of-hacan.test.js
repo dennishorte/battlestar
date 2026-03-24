@@ -58,12 +58,10 @@ describe('Emirates of Hacan', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action.leadership')
-      t.choose(game, 'Done')  // allocate tokens
-      // micah: leadership secondary auto-passes (Sol 2I)
-
+      // Dennis's Choose Action prompt: Hacan can trade with non-neighbors via Guild Ships
+      // Propose Transaction should be available even though players are not neighbors
       const choices = t.currentChoices(game)
-      expect(choices).toContain('micah')
+      expect(choices).toContain('Propose Transaction')
     })
 
     test('non-Hacan cannot trade with non-neighbors', () => {
@@ -144,10 +142,8 @@ describe('Emirates of Hacan', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action.leadership')
-      t.choose(game, 'Done')  // allocate tokens
-      // micah: leadership secondary auto-passes (Sol 2I)
-
+      // Dennis proposes action card trade via Arbiters before choosing action
+      t.choose(game, 'Propose Transaction')
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: { actionCards: ['sabotage'] },
@@ -250,7 +246,6 @@ describe('Emirates of Hacan', () => {
       // Dennis: strategic action (leadership) — gains 3 tokens
       t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
-      t.choose(game, 'Skip Transaction')  // dennis skips transaction after leadership
 
       // Micah: strategic action (diplomacy)
       t.choose(game, 'Strategic Action.diplomacy')
@@ -371,11 +366,8 @@ describe('Emirates of Hacan', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Dennis takes leadership strategic action
-      t.choose(game, 'Strategic Action.leadership')
-      t.choose(game, 'Done')  // allocate tokens
-
-      // Transaction window: Dennis offers planet arretze to micah
+      // Dennis proposes planet trade before choosing action
+      t.choose(game, 'Propose Transaction')
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: { planet: 'arretze' },
@@ -437,10 +429,14 @@ describe('Emirates of Hacan', () => {
       // Dennis: Component Action → Trade Convoys
       t.choose(game, 'Component Action.trade-convoys')
 
-      // After component action, transaction window opens.
-      // Dennis should see Micah as a trade partner (non-neighbor, but Trade Convoys active).
+      // Micah's turn: diplomacy to advance to dennis's next turn
+      t.choose(game, 'Strategic Action.diplomacy')
+      t.choose(game, 'hacan-home')
+
+      // Dennis's next turn: Trade Convoys is active, so Propose Transaction appears
+      // even though Dennis (Sol) and Micah (Hacan) are not neighbors
       const choices = t.currentChoices(game)
-      expect(choices).toContain('micah')
+      expect(choices).toContain('Propose Transaction')
     })
   })
 

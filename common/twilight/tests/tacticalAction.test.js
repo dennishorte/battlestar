@@ -66,7 +66,6 @@ describe('Tactical Action', () => {
       // micah's turn (skip with component action)
       t.choose(game, 'Component Action.carth-agent')
       t.choose(game, 'Gain 2 Commodities')
-      t.choose(game, 'Skip Transaction')
 
       // dennis's second action: target already has dennis's token
       // Verify the token is there
@@ -178,7 +177,6 @@ describe('Tactical Action', () => {
       // micah's turn — use component action (Hacan agent)
       t.choose(game, 'Component Action.carth-agent')
       t.choose(game, 'Gain 2 Commodities')
-      t.choose(game, 'Skip Transaction')  // dismiss transaction window
 
       // dennis: activate system2, try to move cruiser FROM system1 (has command token)
       t.choose(game, 'Tactical Action')

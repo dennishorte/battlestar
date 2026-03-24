@@ -949,11 +949,8 @@ describe("Vuil'raith Cabal", () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      // Dennis uses leadership, then transaction window
-      t.choose(game, 'Strategic Action.leadership')
-      t.choose(game, 'Done')  // dennis: allocate 3 tokens
-
       // Dennis proposes transaction: return captured cruiser for 1 trade good
+      t.choose(game, 'Propose Transaction')
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: { capturedUnits: [{ type: 'cruiser' }] },
@@ -999,11 +996,8 @@ describe("Vuil'raith Cabal", () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action.leadership')
-      t.choose(game, 'Done')  // dennis: allocate 3 tokens
-      // micah: leadership secondary auto-passes (Hacan 2I)
-
       // Dennis proposes transaction: return captured infantry for 1 trade good
+      t.choose(game, 'Propose Transaction')
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: { capturedUnits: [{ type: 'infantry' }] },

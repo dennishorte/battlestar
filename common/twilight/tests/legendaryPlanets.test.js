@@ -303,12 +303,6 @@ describe('Legendary Planets', () => {
       t.choose(game, dipChoices[0])
       // Dennis: diplomacy secondary auto-skipped (no exhausted planets)
 
-      // Skip transaction if offered
-      const afterMicah = t.currentChoices(game)
-      if (afterMicah.includes('Skip Transaction')) {
-        t.choose(game, 'Skip Transaction')
-      }
-
       // Both pass to end action phase → status phase
       t.choose(game, 'Pass')
       t.choose(game, 'Pass')
@@ -475,12 +469,6 @@ describe('Legendary Planets', () => {
       const dipChoices = t.currentChoices(game)
       t.choose(game, dipChoices[0])  // pick a system for diplomacy
       // micah: diplomacy secondary auto-skipped (no exhausted planets)
-
-      // Handle transaction window if it appears (IIHQ makes dennis neighbor of micah)
-      const postDipChoices = t.currentChoices(game)
-      if (postDipChoices.includes('Skip Transaction')) {
-        t.choose(game, 'Skip Transaction')
-      }
 
       // Micah uses Imperial — controls Mecatol Rex → scores 1 VP
       t.choose(game, 'Strategic Action.imperial')

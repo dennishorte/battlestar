@@ -105,10 +105,8 @@ describe('Promissory Notes', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action.leadership')
-      t.choose(game, 'Done')  // allocate tokens
-
       // Dennis offers 1 TG + support for the throne, requests 2 commodities
+      t.choose(game, 'Propose Transaction')
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: {
@@ -151,11 +149,8 @@ describe('Promissory Notes', () => {
       game.run()
       pickStrategyCards(game, 'leadership', 'diplomacy')
 
-      t.choose(game, 'Strategic Action.leadership')
-      t.choose(game, 'Done')  // allocate tokens
-      // micah: leadership secondary auto-passes (Hacan 2I)
-
       // Dennis offers political-secret note to micah (won't auto-trigger like ceasefire)
+      t.choose(game, 'Propose Transaction')
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: {

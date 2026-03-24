@@ -538,7 +538,6 @@ describe('Empyrean', () => {
 
       // Micah: Component Action → Dark Pact
       t.choose(game, 'Component Action.dark-pact')
-      // Transaction window auto-exits (no resources)
 
       // Dennis: Strategic Action (Trade) — gains 3 TG, replenishes commodities
       t.choose(game, 'Strategic Action.trade')
@@ -547,7 +546,13 @@ describe('Empyrean', () => {
       // Micah accepts free secondary (Hacan gets it free regardless)
       t.choose(game, 'Use Secondary')
 
-      // Dennis's transaction window: request 6 commodities from Micah
+      // Micah's turn: leadership to advance to dennis's next turn
+      t.choose(game, 'Strategic Action.leadership')
+      t.choose(game, 'Done')
+      t.choose(game, 'Pass')  // dennis declines leadership secondary
+
+      // Dennis proposes transaction: request 6 commodities from Micah
+      t.choose(game, 'Propose Transaction')
       t.choose(game, 'micah')
       t.action(game, 'trade-offer', {
         offering: {},
@@ -661,8 +666,6 @@ describe('Empyrean', () => {
       t.choose(game, 'Strategic Action.leadership')
       t.choose(game, 'Done')  // allocate tokens
       t.choose(game, 'Pass')  // dennis declines leadership secondary (Empyrean, The Dark 4I)
-      // Hacan Guild Ships: transaction window (Dennis has TG from Trade)
-      t.choose(game, 'Skip Transaction')
 
       // Both pass to end action phase
       t.choose(game, 'Pass')  // Dennis
