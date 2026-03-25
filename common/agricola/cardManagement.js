@@ -161,7 +161,9 @@ Agricola.prototype.callPlayerCardHook = function(player, hookName, ...args) {
   const cards = this.getPlayerActiveCards(player)
   for (const card of cards) {
     if (card.hasHook(hookName)) {
+      this._logCardTrigger(player, card)
       const result = card.callHook(hookName, this, player, ...args)
+      this.log.outdent()
       if (result !== undefined) {
         results.push({ card, result })
       }
@@ -183,7 +185,9 @@ Agricola.prototype.callPlayerCardHookOrdered = function(player, hookName, ...arg
   }
 
   if (cards.length === 1) {
+    this._logCardTrigger(player, cards[0])
     const result = cards[0].callHook(hookName, this, player, ...args)
+    this.log.outdent()
     return result !== undefined ? [{ card: cards[0], result }] : []
   }
 
@@ -199,12 +203,23 @@ Agricola.prototype.callPlayerCardHookOrdered = function(player, hookName, ...arg
   const results = []
   for (const name of ordered) {
     const card = cards.find(c => c.definition.name === name)
+    this._logCardTrigger(player, card)
     const result = card.callHook(hookName, this, player, ...args)
+    this.log.outdent()
     if (result !== undefined) {
       results.push({ card, result })
     }
   }
   return results
+}
+
+Agricola.prototype._logCardTrigger = function(player, card) {
+  const name = card.definition?.name || card.name || card.id
+  this.log.add({
+    template: '{card} triggers for {player}',
+    args: { player, card: name },
+  })
+  this.log.indent()
 }
 
 Agricola.prototype.callCardHook = function(hookName, ...args) {
