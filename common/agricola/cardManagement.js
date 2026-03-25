@@ -214,10 +214,9 @@ Agricola.prototype.callPlayerCardHookOrdered = function(player, hookName, ...arg
 }
 
 Agricola.prototype._logCardTrigger = function(player, card) {
-  const name = card.definition?.name || card.name || card.id
   this.log.add({
     template: '{card} triggers for {player}',
-    args: { player, card: name },
+    args: { player, card },
   })
   this.log.indent()
 }
