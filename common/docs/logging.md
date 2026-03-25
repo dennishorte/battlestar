@@ -61,12 +61,21 @@ Round 3 (Stage 2)
 - Indent for the results of a triggered effect
 - Outdent when the scope ends
 - Never leave dangling indentation — always pair `indent()` with `outdent()`
+- `indent()` and its matching `outdent()` must always appear in the same function scope. This makes it easy to visually verify that every indent has a matching outdent, and prevents bugs where an early return or exception leaves the indent level wrong.
 
 ```javascript
+// Good — indent/outdent in the same scope
 this.log.add({ template: 'Space combat in {system}', args: { system }, event: 'combat' })
 this.log.indent()
   // ... all combat details logged here ...
 this.log.outdent()
+
+// Bad — indent in caller, outdent in callee (or vice versa)
+function startCombat() {
+  this.log.add({ template: 'Combat' })
+  this.log.indent()
+  resolveCombat()  // outdent hidden inside here
+}
 ```
 
 ### 3. Triggered Effects Are Visible
