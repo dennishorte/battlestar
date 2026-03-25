@@ -37,8 +37,8 @@ module.exports = {
     cardOwner.removeResource('food', 1)
     actingPlayer.addResource('food', 1)
     game.log.add({
-      template: '{player} pays 1 food to {other} ({card})',
-      args: { player: cardOwner, other: actingPlayer , card: this},
+      template: '{player} pays 1 food to {playerOther} ({card})',
+      args: { player: cardOwner, playerOther: actingPlayer, card: this },
     })
 
     // Build 1 room (the buildRoom method handles space selection and cost payment)

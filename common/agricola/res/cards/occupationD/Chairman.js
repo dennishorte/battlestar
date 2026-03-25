@@ -12,8 +12,8 @@ module.exports = {
       if (actingPlayer.name !== cardOwner.name) {
         actingPlayer.addResource('food', 1)
         game.log.add({
-          template: '{player} and {other} each get 1 food from {card}',
-          args: { player: cardOwner, other: actingPlayer , card: this},
+          template: '{player} and {playerOther} each get 1 food from {card}',
+          args: { player: cardOwner, playerOther: actingPlayer, card: this },
         })
       }
       else {
