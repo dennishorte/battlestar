@@ -7,6 +7,12 @@ module.exports = {
   cost: { clay: 2 },
   category: "Food Provider",
   text: "Each harvest, you can use each of your cooking improvements once to get double the amount of food for 1 animal or vegetable.",
+  matches_onHarvest(game, player) {
+    return player.majorImprovements.some(id => {
+      const imp = game.cards.byId(id)
+      return imp && imp.cookingRates
+    })
+  },
   onHarvest(game, player) {
     const cookingImps = []
     for (const id of player.majorImprovements) {
@@ -14,10 +20,6 @@ module.exports = {
       if (imp && imp.cookingRates) {
         cookingImps.push(imp)
       }
-    }
-
-    if (cookingImps.length === 0) {
-      return
     }
 
     for (const imp of cookingImps) {
@@ -68,8 +70,8 @@ module.exports = {
       }
 
       game.log.add({
-        template: '{player} uses {card} with {imp} for double food',
-        args: { player, imp: imp.name , card: this},
+        template: '{player} uses {imp} for double food',
+        args: { player, imp: imp.name },
       })
     }
   },

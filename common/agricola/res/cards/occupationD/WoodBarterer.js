@@ -6,11 +6,11 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time before you use an action space with a \"Build Fences\" or \"Build Rooms\" action, you can choose to either get 2 wood or exchange up to 2 wood for 1 reed each.",
-  onBeforeAction(game, player, actionId) {
+  matches_onBeforeAction(_game, _player, actionId) {
     const buildActions = ['build-room-stable', 'fencing', 'renovation-fencing']
-    if (!buildActions.includes(actionId)) {
-      return
-    }
+    return buildActions.includes(actionId)
+  },
+  onBeforeAction(game, player, _actionId) {
     const choices = ['Get 2 wood']
     if (player.wood >= 1) {
       choices.push('Exchange 1 wood for 1 reed')
@@ -27,24 +27,24 @@ module.exports = {
     if (selection[0] === 'Get 2 wood') {
       player.addResource('wood', 2)
       game.log.add({
-        template: '{player} gets 2 wood ({card})',
-        args: { player , card: this},
+        template: '{player} gets 2 wood',
+        args: { player },
       })
     }
     else if (selection[0] === 'Exchange 1 wood for 1 reed') {
       player.removeResource('wood', 1)
       player.addResource('reed', 1)
       game.log.add({
-        template: '{player} exchanges 1 wood for 1 reed ({card})',
-        args: { player , card: this},
+        template: '{player} exchanges 1 wood for 1 reed',
+        args: { player },
       })
     }
     else if (selection[0] === 'Exchange 2 wood for 2 reed') {
       player.removeResource('wood', 2)
       player.addResource('reed', 2)
       game.log.add({
-        template: '{player} exchanges 2 wood for 2 reed ({card})',
-        args: { player , card: this},
+        template: '{player} exchanges 2 wood for 2 reed',
+        args: { player },
       })
     }
   },

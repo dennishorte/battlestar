@@ -6,11 +6,10 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Before the start of each work phase, you can place a person on an accumulation space of a building resource not in your supply. (Then proceed with the start player.)",
+  matches_onWorkPhaseStart(_game, player) {
+    return player.getAvailableWorkers() > 0
+  },
   onWorkPhaseStart(game, player) {
-    if (player.getAvailableWorkers() === 0) {
-      return
-    }
-
     const missingResources = []
     if (player.wood === 0) {
       missingResources.push('wood')
@@ -74,8 +73,8 @@ module.exports = {
     player._lastActionId = selected.actionId
 
     game.log.add({
-      template: '{player} places person on {action} via {card}',
-      args: { player, action: selected.name , card: this},
+      template: '{player} places person on {action}',
+      args: { player, action: selected.name },
     })
 
     game.actions.executeAction(player, selected.actionId)

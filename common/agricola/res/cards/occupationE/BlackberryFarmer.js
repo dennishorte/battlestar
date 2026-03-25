@@ -14,8 +14,8 @@ module.exports = {
       placedCount++
     }
     game.log.add({
-      template: '{player} schedules {count} food from {card}',
-      args: { player, count: placedCount , card: this},
+      template: '{player} schedules {count} food',
+      args: { player, count: placedCount },
     })
   },
 }

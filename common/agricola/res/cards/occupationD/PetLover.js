@@ -6,18 +6,25 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you use an accumulation space providing exactly 1 animal, you can leave it on the space and get one from the general supply instead, as well as 3 food and 1 grain.",
-  onActionReplace(game, player, actionId) {
+  matches_onActionReplace(game, _player, actionId) {
     const accumulated = game.getAccumulatedResources(actionId)
-    let animalType = null
     let animalCount = 0
+    let hasAnimal = false
     for (const resource of ['sheep', 'boar', 'cattle']) {
       if (accumulated[resource]) {
-        animalType = resource
+        hasAnimal = true
         animalCount += accumulated[resource]
       }
     }
-    if (animalCount !== 1 || !animalType) {
-      return
+    return hasAnimal && animalCount === 1
+  },
+  onActionReplace(game, player, actionId) {
+    const accumulated = game.getAccumulatedResources(actionId)
+    let animalType = null
+    for (const resource of ['sheep', 'boar', 'cattle']) {
+      if (accumulated[resource]) {
+        animalType = resource
+      }
     }
     const choices = [`Leave ${animalType} on space: get 1 ${animalType} + 3 food + 1 grain`, 'Skip']
     const selection = game.actions.choose(player, choices, {
@@ -36,8 +43,8 @@ module.exports = {
       player.addResource('food', 3)
       player.addResource('grain', 1)
       game.log.add({
-        template: '{player} leaves {animal} on space, gets 1 from supply + 3 food + 1 grain from {card}',
-        args: { player, animal: animalType, card: this },
+        template: '{player} leaves {animal} on space, gets 1 from supply + 3 food + 1 grain',
+        args: { player, animal: animalType },
       })
     }
   },

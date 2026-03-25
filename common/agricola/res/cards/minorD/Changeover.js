@@ -50,8 +50,8 @@ module.exports = {
       player.sowField(field.row, field.col, cropType)
 
       game.log.add({
-        template: '{player} uses {card} to replace 1 {oldCrop} with {newCrop} at ({row},{col})',
-        args: { player, card: this, oldCrop: field.crop, newCrop: cropType, row: field.row, col: field.col },
+        template: '{player} replaces 1 {oldCrop} with {newCrop} at ({row},{col})',
+        args: { player, oldCrop: field.crop, newCrop: cropType, row: field.row, col: field.col },
       })
     }
   },

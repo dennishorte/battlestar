@@ -6,22 +6,23 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each harvest, you can use this card to turn exactly 1 stone into 3 food.",
+  matches_onHarvest(_game, player) {
+    return player.stone >= 1
+  },
   onHarvest(game, player) {
-    if (player.stone >= 1) {
-      const choices = ['Convert 1 stone to 3 food', 'Skip']
-      const selection = game.actions.choose(player, choices, {
-        title: 'Stone Carver',
-        min: 1,
-        max: 1,
+    const choices = ['Convert 1 stone to 3 food', 'Skip']
+    const selection = game.actions.choose(player, choices, {
+      title: 'Stone Carver',
+      min: 1,
+      max: 1,
+    })
+    if (selection[0] !== 'Skip') {
+      player.removeResource('stone', 1)
+      player.addResource('food', 3)
+      game.log.add({
+        template: '{player} converts 1 stone to 3 food',
+        args: { player },
       })
-      if (selection[0] !== 'Skip') {
-        player.removeResource('stone', 1)
-        player.addResource('food', 3)
-        game.log.add({
-          template: '{player} converts 1 stone to 3 food ({card})',
-          args: { player , card: this},
-        })
-      }
     }
   },
 }

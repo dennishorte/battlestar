@@ -31,8 +31,8 @@ module.exports = {
     }
     if (any) {
       game.log.add({
-        template: '{player} collects building resources from the board ({card}): {wood} wood, {clay} clay, {reed} reed, {stone} stone',
-        args: { player, ...collected , card: this},
+        template: '{player} collects building resources from the board: {wood} wood, {clay} clay, {reed} reed, {stone} stone',
+        args: { player, ...collected },
       })
     }
   },

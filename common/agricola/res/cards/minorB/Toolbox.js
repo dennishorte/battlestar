@@ -1,4 +1,4 @@
-function offerToolboxMajor(game, player, card) {
+function offerToolboxMajor(game, player) {
   const toolboxMajors = ['joinery', 'pottery', 'basketmakers-workshop']
   const available = game.getAvailableMajorImprovements()
     .filter(id => toolboxMajors.includes(id))
@@ -30,8 +30,8 @@ function offerToolboxMajor(game, player, card) {
 
   if (improvementId) {
     game.actions._completeMajorPurchase(player, improvementId, {
-      logTemplate: '{player} uses {source} to build {card}',
-      logArgs: { source: card },
+      logTemplate: '{player} builds {card}',
+      logArgs: {},
     })
   }
 }
@@ -46,12 +46,12 @@ module.exports = {
   category: "Actions Booster",
   text: "In the work phase, after each turn in which you build at least 1 room, stable or fence, you can build the \"Joinery\", \"Pottery\", or \"Basketmaker's Workshop\" major improvement.",
   onBuildRoom(game, player) {
-    offerToolboxMajor(game, player, this)
+    offerToolboxMajor(game, player)
   },
   onBuildStable(game, player) {
-    offerToolboxMajor(game, player, this)
+    offerToolboxMajor(game, player)
   },
   onBuildFences(game, player) {
-    offerToolboxMajor(game, player, this)
+    offerToolboxMajor(game, player)
   },
 }

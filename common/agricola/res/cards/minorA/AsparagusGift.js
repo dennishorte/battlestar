@@ -8,13 +8,14 @@ module.exports = {
   prereqs: { unplantedFields: 1 },
   category: "Crop Provider",
   text: "Each time you build a number of fences equal to or greater than the current round, you immediately get 1 vegetable.",
-  onBuildFences(game, player, fenceCount) {
-    if (fenceCount >= game.state.round) {
-      player.addResource('vegetables', 1)
-      game.log.add({
-        template: '{player} gets 1 vegetable from {card}',
-        args: { player , card: this},
-      })
-    }
+  matches_onBuildFences(game, _player, fenceCount) {
+    return fenceCount >= game.state.round
+  },
+  onBuildFences(game, player, _fenceCount) {
+    player.addResource('vegetables', 1)
+    game.log.add({
+      template: '{player} gets 1 vegetable',
+      args: { player },
+    })
   },
 }

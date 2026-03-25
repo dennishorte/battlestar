@@ -6,13 +6,14 @@ module.exports = {
   type: "minor",
   cost: { wood: 1 },
   text: "At the start of the breeding phase of each harvest, if you have at least 1 unfenced stable without an animal, you get 1 sheep.",
+  matches_onBreedingPhaseStart(_game, player) {
+    return player.hasEmptyUnfencedStable()
+  },
   onBreedingPhaseStart(game, player) {
-    if (player.hasEmptyUnfencedStable()) {
-      game.actions.handleAnimalPlacement(player, { sheep: 1 })
-      game.log.add({
-        template: '{player} gets 1 sheep from {card}',
-        args: { player, card: this },
-      })
-    }
+    game.actions.handleAnimalPlacement(player, { sheep: 1 })
+    game.log.add({
+      template: '{player} gets 1 sheep',
+      args: { player },
+    })
   },
 }

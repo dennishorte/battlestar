@@ -6,14 +6,15 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "At the start of each work phase, if you have at least 1 wood, 1 clay, 1 reed, 1 stone, 1 grain, and 1 vegetable in your supply, you get 1 bonus point.",
+  matches_onWorkPhaseStart(_game, player) {
+    return player.wood >= 1 && player.clay >= 1 && player.reed >= 1 &&
+      player.stone >= 1 && player.grain >= 1 && player.vegetables >= 1
+  },
   onWorkPhaseStart(game, player) {
-    if (player.wood >= 1 && player.clay >= 1 && player.reed >= 1 &&
-          player.stone >= 1 && player.grain >= 1 && player.vegetables >= 1) {
-      player.addBonusPoints(1)
-      game.log.add({
-        template: '{player} gets 1 bonus point from {card}',
-        args: { player , card: this},
-      })
-    }
+    player.addBonusPoints(1)
+    game.log.add({
+      template: '{player} gets 1 bonus point',
+      args: { player },
+    })
   },
 }

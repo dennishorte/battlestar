@@ -6,24 +6,25 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "In the feeding phase of each harvest, you can use this card to turn 1 wood plus 1 grain into 1 bonus point and 2 food.",
+  matches_onFeedingPhase(_game, player) {
+    return player.wood >= 1 && player.grain >= 1
+  },
   onFeedingPhase(game, player) {
-    if (player.wood >= 1 && player.grain >= 1) {
-      const choices = ['Convert 1 wood + 1 grain to 1 point + 2 food', 'Skip']
-      const selection = game.actions.choose(player, choices, {
-        title: 'Beer Tent Operator',
-        min: 1,
-        max: 1,
+    const choices = ['Convert 1 wood + 1 grain to 1 point + 2 food', 'Skip']
+    const selection = game.actions.choose(player, choices, {
+      title: 'Beer Tent Operator',
+      min: 1,
+      max: 1,
+    })
+    if (selection[0] !== 'Skip') {
+      player.removeResource('wood', 1)
+      player.removeResource('grain', 1)
+      player.addBonusPoints(1)
+      player.addResource('food', 2)
+      game.log.add({
+        template: '{player} converts 1 wood + 1 grain to 1 point + 2 food',
+        args: { player },
       })
-      if (selection[0] !== 'Skip') {
-        player.removeResource('wood', 1)
-        player.removeResource('grain', 1)
-        player.addBonusPoints(1)
-        player.addResource('food', 2)
-        game.log.add({
-          template: '{player} converts 1 wood + 1 grain to 1 point + 2 food ({card})',
-          args: { player , card: this},
-        })
-      }
     }
   },
 }

@@ -25,7 +25,10 @@ module.exports = {
       })
     }
   },
-  afterPlayerAction(game, _player) {
+  matches_afterPlayerAction(_game, _player, _actionId) {
+    return true
+  },
+  afterPlayerAction(game, _player, _actionId) {
     game.cardState(this.id).cookedThisTurn = 0
   },
   onFeedingPhase(game, _player) {

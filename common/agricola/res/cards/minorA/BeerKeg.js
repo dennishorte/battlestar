@@ -8,12 +8,10 @@ module.exports = {
   prereqs: { grain: 2 },
   category: "Food Provider",
   text: "In the feeding phase of each harvest, you can use this card to exchange 1/2/3 grain for 0/1/2 bonus points and exactly 3 food.",
+  matches_onFeedingPhase(_game, player) {
+    return player.grain >= 1
+  },
   onFeedingPhase(game, player) {
-    if (player.grain < 1) {
-      return
-    }
-
-    const card = this
     const selection = game.actions.choose(player, () => {
       const choices = []
       if (player.grain >= 1) {
@@ -28,7 +26,7 @@ module.exports = {
       choices.push('Skip')
       return choices
     }, {
-      title: `${card.name}: Exchange grain for food?`,
+      title: `${this.name}: Exchange grain for food?`,
       min: 1,
       max: 1,
     })
@@ -44,8 +42,8 @@ module.exports = {
           player.addBonusPoints(bonusPoints)
         }
         game.log.add({
-          template: '{player} exchanges {grain} grain for 3 food and {bp} bonus points using {card}',
-          args: { player, grain: grainCount, bp: bonusPoints, card },
+          template: '{player} exchanges {grain} grain for 3 food and {bp} bonus points',
+          args: { player, grain: grainCount, bp: bonusPoints },
         })
       }
     }

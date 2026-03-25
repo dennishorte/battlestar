@@ -20,8 +20,8 @@ module.exports = {
         player.payCost({ food: cost })
         player.addResource('stone', 2)
         game.log.add({
-          template: '{player} buys 2 stone for {cost} food from {card}',
-          args: { player, cost , card: this},
+          template: '{player} buys 2 stone for {cost} food',
+          args: { player, cost },
         })
       }
     }

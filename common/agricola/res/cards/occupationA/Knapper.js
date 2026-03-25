@@ -6,14 +6,15 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time before you use an action space card on round spaces 5 to 7, you get 1 stone.",
-  onBeforeAction(game, player, actionId) {
+  matches_onBeforeAction(game, _player, actionId) {
     const actionRound = game.getActionSpaceRound(actionId)
-    if (actionRound >= 5 && actionRound <= 7) {
-      player.addResource('stone', 1)
-      game.log.add({
-        template: '{player} gets 1 stone from {card}',
-        args: { player , card: this},
-      })
-    }
+    return actionRound >= 5 && actionRound <= 7
+  },
+  onBeforeAction(game, player, _actionId) {
+    player.addResource('stone', 1)
+    game.log.add({
+      template: '{player} gets 1 stone',
+      args: { player },
+    })
   },
 }

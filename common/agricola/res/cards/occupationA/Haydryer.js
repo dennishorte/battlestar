@@ -15,10 +15,9 @@ module.exports = {
     if (cost === 0 && !player.canPlaceAnimals('cattle', 1)) {
       return
     }
-    const cardName = 'Haydryer'
     const label = cost === 0 ? 'Buy 1 cattle for 0 food' : `Buy 1 cattle for ${cost} food`
     const choice = game.actions.choose(player, [label, 'Skip'], {
-      title: `${cardName}: Buy 1 cattle (4 − pastures food, min 0)?`,
+      title: 'Haydryer: Buy 1 cattle (4 − pastures food, min 0)?',
       min: 1,
       max: 1,
     })
@@ -30,8 +29,8 @@ module.exports = {
     }
     game.actions.handleAnimalPlacement(player, { cattle: 1 })
     game.log.add({
-      template: '{player} buys 1 cattle for {cost} food using {card}',
-      args: { player, cost, card: cardName },
+      template: '{player} buys 1 cattle for {cost} food',
+      args: { player, cost },
     })
   },
 }

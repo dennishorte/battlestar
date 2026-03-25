@@ -31,8 +31,8 @@ module.exports = {
   onRenovate(game, player) {
     player.maintenancePremiumFood = 3
     game.log.add({
-      template: '{player} restocks {card} to 3 food',
-      args: { player , card: this},
+      template: '{player} restocks to 3 food',
+      args: { player },
     })
   },
 }

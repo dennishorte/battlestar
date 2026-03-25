@@ -15,6 +15,6 @@ module.exports = {
     })
   },
   onRenovate(game, player) {
-    game.actions.buildFreeStable(player, this)
+    game.actions.buildFreeStable(player)
   },
 }

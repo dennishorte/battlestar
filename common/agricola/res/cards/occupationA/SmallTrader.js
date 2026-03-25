@@ -6,14 +6,15 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you take a \"Major or Minor Improvement\" action to play an improvement from your hand, you also get 3 food.",
-  onBuildImprovement(game, player, cost, card) {
+  matches_onBuildImprovement(_game, _player, _cost, card) {
     // Minor improvements are always played from hand
-    if (card.type === 'minor') {
-      player.addResource('food', 3)
-      game.log.add({
-        template: '{player} gets 3 food from {card}',
-        args: { player , card: this},
-      })
-    }
+    return card.type === 'minor'
+  },
+  onBuildImprovement(game, player, _cost, _card) {
+    player.addResource('food', 3)
+    game.log.add({
+      template: '{player} gets 3 food',
+      args: { player },
+    })
   },
 }

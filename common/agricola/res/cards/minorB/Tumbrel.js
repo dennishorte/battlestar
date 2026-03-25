@@ -14,14 +14,15 @@ module.exports = {
       args: { player , card: this},
     })
   },
+  matches_onSow(_game, player) {
+    return player.getStableCount() > 0
+  },
   onSow(game, player) {
     const stables = player.getStableCount()
-    if (stables > 0) {
-      player.addResource('food', stables)
-      game.log.add({
-        template: '{player} gets {amount} food from {card}',
-        args: { player, amount: stables , card: this},
-      })
-    }
+    player.addResource('food', stables)
+    game.log.add({
+      template: '{player} gets {amount} food',
+      args: { player, amount: stables },
+    })
   },
 }

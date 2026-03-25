@@ -8,11 +8,10 @@ module.exports = {
   prereqs: { occupations: 1 },
   category: "Actions Booster",
   text: "Each time you take a \"Build Rooms\" action while having more rooms than people already, you also get a \"Family Growth\" action and 1 food.",
+  matches_onBuildRoom(_game, player) {
+    return !player._familyFriendlyHomeTriggered
+  },
   onBuildRoom(game, player, _roomType, count = 1) {
-    if (player._familyFriendlyHomeTriggered) {
-      return
-    }
-
     const preActionRooms = player._preActionRoomCount !== undefined
       ? player._preActionRoomCount
       : player.getRoomCount() - count
@@ -23,8 +22,8 @@ module.exports = {
       player._familyFriendlyHomeTriggered = true
       player.addResource('food', 1)
       game.log.add({
-        template: '{player} gets 1 food from {card}',
-        args: { player , card: this},
+        template: '{player} gets 1 food',
+        args: { player },
       })
       game.actions.familyGrowth(player, { fromCard: true })
     }

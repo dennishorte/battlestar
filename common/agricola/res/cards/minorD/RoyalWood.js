@@ -7,23 +7,24 @@ module.exports = {
   cost: { food: 1 },
   category: "Building Resource Provider",
   text: "At the end of each turn in which you use the \"Farm Expansion\" action space or build an improvement, you get 1 wood back for every 2 wood paid during those actions (rounded down).",
+  matches_onBuildImprovement(_game, _player, cost) {
+    return cost && Math.floor((cost.wood || 0) / 2) > 0
+  },
   onBuildImprovement(game, player, cost) {
     const woodBack = Math.floor((cost.wood || 0) / 2)
-    if (woodBack > 0) {
-      player.addResource('wood', woodBack)
-      game.log.add({
-        template: '{player} gets {amount} wood back from {card}',
-        args: { player, amount: woodBack , card: this},
-      })
-    }
+    player.addResource('wood', woodBack)
+    game.log.add({
+      template: '{player} gets {amount} wood back',
+      args: { player, amount: woodBack },
+    })
   },
   onFarmExpansion(game, player, woodPaid) {
     const woodBack = Math.floor(woodPaid / 2)
     if (woodBack > 0) {
       player.addResource('wood', woodBack)
       game.log.add({
-        template: '{player} gets {amount} wood back from {card}',
-        args: { player, amount: woodBack , card: this},
+        template: '{player} gets {amount} wood back',
+        args: { player, amount: woodBack },
       })
     }
   },

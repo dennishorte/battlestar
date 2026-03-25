@@ -11,8 +11,8 @@ module.exports = {
     player.addResource('clay', 2)
     player.addResource('reed', 1)
     game.log.add({
-      template: '{player} gets 2 clay and 1 reed from {card}',
-      args: { player , card: this},
+      template: '{player} gets 2 clay and 1 reed',
+      args: { player },
     })
 
     const validSpaces = player.getValidRoomBuildSpaces()

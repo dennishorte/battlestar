@@ -8,6 +8,9 @@ module.exports = {
   prereqs: { occupations: 2 },
   category: "Points Provider",
   text: "In the field phase of each harvest, if you have at least 1/3/5 cattle, you get 1/2/3 food. During scoring, you get 1 bonus point for every 2 cattle you have.",
+  matches_onHarvest(_game, player) {
+    return player.getTotalAnimals('cattle') >= 1
+  },
   onHarvest(game, player) {
     const cattle = player.getTotalAnimals('cattle')
     let food = 0
@@ -23,8 +26,8 @@ module.exports = {
     if (food > 0) {
       player.addResource('food', food)
       game.log.add({
-        template: '{player} gets {amount} food from {card}',
-        args: { player, amount: food , card: this},
+        template: '{player} gets {amount} food',
+        args: { player, amount: food },
       })
     }
   },

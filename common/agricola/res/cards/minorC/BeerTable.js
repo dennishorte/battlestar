@@ -27,8 +27,8 @@ module.exports = {
           }
         }
         game.log.add({
-          template: '{player} pays 1 grain for 2 bonus points using {card} (others get 1 food)',
-          args: { player, card: this },
+          template: '{player} pays 1 grain for 2 bonus points (others get 1 food)',
+          args: { player },
         })
       }
     }

@@ -35,12 +35,12 @@ module.exports = {
       if (choice.includes('wood for 1 grain')) {
         player.removeResource('wood', 1)
         player.addResource('grain', 1)
-        game.log.add({ template: '{player} exchanges 1 wood for 1 grain (Smuggler)', args: { player } })
+        game.log.add({ template: '{player} exchanges 1 wood for 1 grain', args: { player } })
       }
       else if (choice.includes('grain for 1 stone')) {
         player.removeResource('grain', 1)
         player.addResource('stone', 1)
-        game.log.add({ template: '{player} exchanges 1 grain for 1 stone (Smuggler)', args: { player } })
+        game.log.add({ template: '{player} exchanges 1 grain for 1 stone', args: { player } })
       }
       exchangesLeft--
     }

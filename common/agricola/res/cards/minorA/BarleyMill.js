@@ -9,14 +9,15 @@ module.exports = {
   vps: 1,
   category: "Food Provider",
   text: "In the field phase of each harvest, you get 1 food for each grain field that you harvest.",
+  matches_onHarvest(_game, player) {
+    return player.getGrainFieldCount() > 0
+  },
   onHarvest(game, player) {
     const grainFields = player.getGrainFieldCount()
-    if (grainFields > 0) {
-      player.addResource('food', grainFields)
-      game.log.add({
-        template: '{player} gets {amount} food from {card}',
-        args: { player, amount: grainFields , card: this},
-      })
-    }
+    player.addResource('food', grainFields)
+    game.log.add({
+      template: '{player} gets {amount} food',
+      args: { player, amount: grainFields },
+    })
   },
 }

@@ -8,14 +8,15 @@ module.exports = {
   prereqs: { minRound: 5 },
   category: "Food Provider",
   text: "At the end of each action in which you sow vegetables in a field, you get 1 food for each vegetable field you have (including the new ones).",
+  matches_onSowVegetables(_game, player) {
+    return player.getVegetableFieldCount() > 0
+  },
   onSowVegetables(game, player) {
     const vegFields = player.getVegetableFieldCount()
-    if (vegFields > 0) {
-      player.addResource('food', vegFields)
-      game.log.add({
-        template: '{player} gets {amount} food from {card}',
-        args: { player, amount: vegFields , card: this},
-      })
-    }
+    player.addResource('food', vegFields)
+    game.log.add({
+      template: '{player} gets {amount} food',
+      args: { player, amount: vegFields },
+    })
   },
 }

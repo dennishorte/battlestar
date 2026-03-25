@@ -22,21 +22,22 @@ module.exports = {
       args: { player , card: this},
     })
   },
+  matches_onRenovate(_game, player) {
+    return player.ceilingsRounds && player.ceilingsRounds.length > 0
+  },
   onRenovate(game, player) {
-    if (player.ceilingsRounds && player.ceilingsRounds.length > 0) {
-      for (const round of player.ceilingsRounds) {
-        if (game.state.scheduledWood && game.state.scheduledWood[player.name] && game.state.scheduledWood[player.name][round]) {
-          game.state.scheduledWood[player.name][round]--
-          if (game.state.scheduledWood[player.name][round] <= 0) {
-            delete game.state.scheduledWood[player.name][round]
-          }
+    for (const round of player.ceilingsRounds) {
+      if (game.state.scheduledWood && game.state.scheduledWood[player.name] && game.state.scheduledWood[player.name][round]) {
+        game.state.scheduledWood[player.name][round]--
+        if (game.state.scheduledWood[player.name][round] <= 0) {
+          delete game.state.scheduledWood[player.name][round]
         }
       }
-      player.ceilingsRounds = []
-      game.log.add({
-        template: '{player} removes scheduled wood from {card} due to renovation',
-        args: { player , card: this},
-      })
     }
+    player.ceilingsRounds = []
+    game.log.add({
+      template: '{player} removes scheduled wood due to renovation',
+      args: { player },
+    })
   },
 }

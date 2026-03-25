@@ -51,8 +51,8 @@ module.exports = {
       s.pairs.push(nextPair)
       this._syncPile(game)
       game.log.add({
-        template: '{player} adds {pair} to {card}',
-        args: { player, pair: pairLabel(nextPair) , card: this},
+        template: '{player} adds {pair}',
+        args: { player, pair: pairLabel(nextPair) },
       })
     }
   },

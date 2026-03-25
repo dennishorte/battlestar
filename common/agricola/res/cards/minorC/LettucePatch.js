@@ -33,8 +33,8 @@ module.exports = {
         player.addResource('vegetables', -amount)
         player.addResource('food', amount * 4)
         game.log.add({
-          template: '{player} converts {amount} vegetable to {food} food via {card}',
-          args: { player, amount, food: amount * 4 , card: this},
+          template: '{player} converts {amount} vegetable to {food} food',
+          args: { player, amount, food: amount * 4 },
         })
       }
     }

@@ -6,20 +6,21 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "In the feeding phase of each harvest, you can use this card to turn exactly 1 vegetable into 5 food.",
+  matches_onFeedingPhase(_game, player) {
+    return player.vegetables >= 1
+  },
   onFeedingPhase(game, player) {
-    if (player.vegetables >= 1) {
-      const selection = game.actions.choose(player, () => [
-        'Convert 1 vegetable to 5 food',
-        'Skip',
-      ], { title: 'Schnapps Distiller', min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
-        player.payCost({ vegetables: 1 })
-        player.addResource('food', 5)
-        game.log.add({
-          template: '{player} converts 1 vegetable to 5 food via {card}',
-          args: { player , card: this},
-        })
-      }
+    const selection = game.actions.choose(player, () => [
+      'Convert 1 vegetable to 5 food',
+      'Skip',
+    ], { title: 'Schnapps Distiller', min: 1, max: 1 })
+    if (selection[0] !== 'Skip') {
+      player.payCost({ vegetables: 1 })
+      player.addResource('food', 5)
+      game.log.add({
+        template: '{player} converts 1 vegetable to 5 food',
+        args: { player },
+      })
     }
   },
 }

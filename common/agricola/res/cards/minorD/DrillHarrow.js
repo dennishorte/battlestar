@@ -23,8 +23,8 @@ module.exports = {
           player.payCost({ food: 3 })
           game.actions.plowField(player)
           game.log.add({
-            template: '{player} plows a field using {card}',
-            args: { player, card: this },
+            template: '{player} plows a field',
+            args: { player },
           })
         }
       }

@@ -19,8 +19,8 @@ module.exports = {
     if (peoplePlaced > 0) {
       player.addResource('wood', peoplePlaced)
       game.log.add({
-        template: '{player} gets {amount} wood from {card}',
-        args: { player, amount: peoplePlaced , card: this},
+        template: '{player} gets {amount} wood',
+        args: { player, amount: peoplePlaced },
       })
     }
   },

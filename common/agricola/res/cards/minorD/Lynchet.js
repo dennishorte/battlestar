@@ -7,14 +7,15 @@ module.exports = {
   cost: {},
   category: "Food Provider",
   text: "In the field phase of each harvest, you get 1 food for each harvested field tile that is orthogonally adjacent to your house.",
+  matches_onHarvest(_game, player) {
+    return player.getHarvestedFieldsAdjacentToHouse() > 0
+  },
   onHarvest(game, player) {
     const adjacentHarvestedFields = player.getHarvestedFieldsAdjacentToHouse()
-    if (adjacentHarvestedFields > 0) {
-      player.addResource('food', adjacentHarvestedFields)
-      game.log.add({
-        template: '{player} gets {amount} food from {card}',
-        args: { player, amount: adjacentHarvestedFields , card: this},
-      })
-    }
+    player.addResource('food', adjacentHarvestedFields)
+    game.log.add({
+      template: '{player} gets {amount} food',
+      args: { player, amount: adjacentHarvestedFields },
+    })
   },
 }

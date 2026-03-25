@@ -7,8 +7,11 @@ module.exports = {
   cost: { reed: 1 },
   vps: 1,
   text: "Each time after you use a wood accumulation space, you can place 1 stone from your supply on that space (for the next visitor) to take a \"Build Fences\" action.",
-  afterPlayerAction(game, player, actionId) {
-    if (game.isWoodAccumulationSpace(actionId) && player.stone >= 1) {
+  matches_afterPlayerAction(game, _player, actionId) {
+    return game.isWoodAccumulationSpace(actionId)
+  },
+  afterPlayerAction(game, player, _actionId) {
+    if (player.stone >= 1) {
       const selection = game.actions.choose(player, [
         'Pay 1 stone to build fences',
         'Skip',
@@ -21,8 +24,8 @@ module.exports = {
       if (selection[0] !== 'Skip') {
         player.addResource('stone', -1)
         game.log.add({
-          template: '{player} pays 1 stone using {card} to build fences',
-          args: { player, card: this },
+          template: '{player} pays 1 stone to build fences',
+          args: { player },
         })
         game.actions.buildFences(player)
       }

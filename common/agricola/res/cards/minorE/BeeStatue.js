@@ -10,14 +10,17 @@ module.exports = {
     // Stack: bottom [veg, stone, grain, stone, grain] top
     game.cardState(this.id).stack = ['vegetables', 'stone', 'grain', 'stone', 'grain']
   },
-  afterPlayerAction(game, player, actionId) {
+  matches_afterPlayerAction(_game, _player, actionId) {
+    return actionId === 'day-laborer'
+  },
+  afterPlayerAction(game, player, _actionId) {
     const s = game.cardState(this.id)
-    if (actionId === 'day-laborer' && s.stack && s.stack.length > 0) {
+    if (s.stack && s.stack.length > 0) {
       const resource = s.stack.pop()
       player.addResource(resource, 1)
       game.log.add({
-        template: '{player} gets 1 {resource} from {card}',
-        args: { player, resource , card: this},
+        template: '{player} gets 1 {resource}',
+        args: { player, resource },
       })
     }
   },

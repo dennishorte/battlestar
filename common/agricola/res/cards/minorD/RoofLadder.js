@@ -17,8 +17,8 @@ module.exports = {
   onRenovate(game, player) {
     player.addResource('stone', 1)
     game.log.add({
-      template: '{player} gets 1 stone from {card}',
-      args: { player , card: this},
+      template: '{player} gets 1 stone',
+      args: { player },
     })
   },
 }

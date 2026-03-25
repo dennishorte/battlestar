@@ -11,15 +11,16 @@ module.exports = {
   onPlay(game, _player) {
     game.cardState(this.id).stored = 4
   },
+  matches_onWorkPhaseStart(game, player) {
+    return game.isLastInTurnOrder(player) && (game.cardState(this.id).stored || 0) > 0
+  },
   onWorkPhaseStart(game, player) {
     const s = game.cardState(this.id)
-    if (game.isLastInTurnOrder(player) && (s.stored || 0) > 0) {
-      s.stored--
-      player.addResource('food', 1)
-      game.log.add({
-        template: '{player} gets 1 food from {card}',
-        args: { player , card: this},
-      })
-    }
+    s.stored--
+    player.addResource('food', 1)
+    game.log.add({
+      template: '{player} gets 1 food',
+      args: { player },
+    })
   },
 }

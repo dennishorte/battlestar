@@ -6,10 +6,10 @@ module.exports = {
   type: "occupation",
   players: "4+",
   text: "Each time you use the \"Day Laborer\" action space, instead of 2 food, you can get 3 different animals from the general supply. If you do, you must pay 1 food each harvest left to play.",
-  onActionReplace(game, player, actionId) {
-    if (actionId !== 'day-laborer') {
-      return
-    }
+  matches_onActionReplace(_game, _player, actionId) {
+    return actionId === 'day-laborer'
+  },
+  onActionReplace(game, player, _actionId) {
     // Day Laborer already gave 2 food. "Instead of" means we undo that.
     // Player currently has originalFood + 2. We need (originalFood + 2) - 2 >= harvestsLeft
     // i.e. player.food - 2 >= harvestsLeft
@@ -29,8 +29,8 @@ module.exports = {
         player.payCost({ food: harvestsLeft })
         game.actions.handleAnimalPlacement(player, { sheep: 1, boar: 1, cattle: 1 })
         game.log.add({
-          template: '{player} pays {food} food for 3 animals from {card}',
-          args: { player, food: harvestsLeft, card: this },
+          template: '{player} pays {food} food for 3 animals',
+          args: { player, food: harvestsLeft },
         })
       }
     }

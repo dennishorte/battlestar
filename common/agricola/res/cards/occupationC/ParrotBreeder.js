@@ -19,19 +19,20 @@ module.exports = {
     return state.occupiedBy === rightPlayer.name && rightPlayer._lastActionId === actionId
   },
 
-  onBeforeAction(game, player, actionId) {
+  matches_onBeforeAction(game, player, actionId) {
     const state = game.state.actionSpaces[actionId]
     if (!state.previousOccupiedBy) {
-      return
+      return false
     }
     const rightPlayer = this._getPlayerToRight(game, player)
-    if (rightPlayer && state.previousOccupiedBy === rightPlayer.name) {
-      player.payCost({ grain: 1 })
-      game.log.add({
-        template: '{player} pays 1 grain to copy {action} via {card}',
-        args: { player, action: actionId , card: this},
-      })
-    }
+    return rightPlayer && state.previousOccupiedBy === rightPlayer.name
+  },
+  onBeforeAction(game, player, actionId) {
+    player.payCost({ grain: 1 })
+    game.log.add({
+      template: '{player} pays 1 grain to copy {action}',
+      args: { player, action: actionId },
+    })
   },
 
   _getPlayerToRight(game, player) {

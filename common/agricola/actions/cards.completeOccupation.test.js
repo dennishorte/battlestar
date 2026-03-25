@@ -153,7 +153,7 @@ describe('_completeOccupationPlay', () => {
 
     // Verify Patron message appears exactly once
     const patronLogs = game.log.getLog().filter(
-      e => e.template === '{player} gets 2 food from {card}'
+      e => e.template === '{player} gets 2 food'
     )
     expect(patronLogs).toHaveLength(1)
   })

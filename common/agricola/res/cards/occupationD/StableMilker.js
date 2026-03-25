@@ -16,8 +16,8 @@ module.exports = {
     if (s.stablesBuilt === 2 && player.canPlaceAnimals('cattle', 1)) {
       game.actions.handleAnimalPlacement(player, { cattle: 1 })
       game.log.add({
-        template: '{player} gets 1 cattle from {card}',
-        args: { player , card: this},
+        template: '{player} gets 1 cattle',
+        args: { player },
       })
     }
   },

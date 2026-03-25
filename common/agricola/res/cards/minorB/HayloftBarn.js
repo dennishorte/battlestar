@@ -12,8 +12,8 @@ module.exports = {
   onPlay(game, player) {
     game.cardState(this.id).stored = 4
     game.log.add({
-      template: '{player} places 4 food on {card}',
-      args: { player , card: this},
+      template: '{player} places 4 food on Hayloft Barn',
+      args: { player },
     })
   },
   _obtainGrain(game, player) {
@@ -22,8 +22,8 @@ module.exports = {
       state.stored--
       player.addResource('food', 1)
       game.log.add({
-        template: '{player} gets 1 food from {card} ({remaining} remaining)',
-        args: { player, remaining: state.stored , card: this},
+        template: '{player} gets 1 food ({remaining} remaining)',
+        args: { player, remaining: state.stored },
       })
       if (state.stored === 0) {
         game.actions.familyGrowthWithoutRoom(player, { fromCard: true })

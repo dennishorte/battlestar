@@ -21,8 +21,8 @@ module.exports = {
         player.payCost({ clay: 1 })
         player.addResource('grain', 1)
         game.log.add({
-          template: '{player} exchanges 1 clay for 1 grain using {card}',
-          args: { player, card: this },
+          template: '{player} exchanges 1 clay for 1 grain',
+          args: { player },
         })
       }
     }

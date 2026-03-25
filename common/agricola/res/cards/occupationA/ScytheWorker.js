@@ -28,8 +28,8 @@ module.exports = {
     if (amount > 0) {
       player.addResource('grain', amount)
       game.log.add({
-        template: '{player} harvests {amount} additional grain from {card}',
-        args: { player, amount, card: this},
+        template: '{player} harvests {amount} additional grain',
+        args: { player, amount },
       })
     }
   },

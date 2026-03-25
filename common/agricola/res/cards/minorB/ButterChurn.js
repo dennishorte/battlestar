@@ -9,16 +9,19 @@ module.exports = {
   prereqs: { occupations: 3, occupationsAtMost: true },
   category: "Food Provider",
   text: "In the field phase of each harvest, you get 1 food for every 3 sheep and 1 food for every 2 cattle you have.",
+  matches_onHarvest(_game, player) {
+    const sheep = player.getTotalAnimals('sheep')
+    const cattle = player.getTotalAnimals('cattle')
+    return Math.floor(sheep / 3) + Math.floor(cattle / 2) > 0
+  },
   onHarvest(game, player) {
     const sheep = player.getTotalAnimals('sheep')
     const cattle = player.getTotalAnimals('cattle')
     const food = Math.floor(sheep / 3) + Math.floor(cattle / 2)
-    if (food > 0) {
-      player.addResource('food', food)
-      game.log.add({
-        template: '{player} gets {amount} food from {card}',
-        args: { player, amount: food , card: this},
-      })
-    }
+    player.addResource('food', food)
+    game.log.add({
+      template: '{player} gets {amount} food',
+      args: { player, amount: food },
+    })
   },
 }

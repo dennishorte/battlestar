@@ -26,14 +26,15 @@ module.exports = {
       }
     }
   },
+  matches_onFeedingPhase(game, _player) {
+    return (game.cardState(this.id).wood || 0) > 0
+  },
   onFeedingPhase(game, player) {
     const food = game.cardState(this.id).wood || 0
-    if (food > 0) {
-      player.addResource('food', food)
-      game.log.add({
-        template: '{player} gets {amount} food from {card}',
-        args: { player, amount: food , card: this},
-      })
-    }
+    player.addResource('food', food)
+    game.log.add({
+      template: '{player} gets {amount} food',
+      args: { player, amount: food },
+    })
   },
 }

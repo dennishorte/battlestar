@@ -22,8 +22,8 @@ module.exports = {
         player.useFenceFromSupply()
         player.addResource('food', 5)
         game.log.add({
-          template: '{player} exchanges 1 grain and 1 fence for 5 food using {card}',
-          args: { player, card: this },
+          template: '{player} exchanges 1 grain and 1 fence for 5 food',
+          args: { player },
         })
       }
     }

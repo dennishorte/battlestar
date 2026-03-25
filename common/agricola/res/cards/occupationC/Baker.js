@@ -11,9 +11,10 @@ module.exports = {
       game.actions.bakeBread(player)
     }
   },
+  matches_onFeedingPhase(_game, player) {
+    return player.hasBakingAbility && player.hasBakingAbility() && player.grain >= 1
+  },
   onFeedingPhase(game, player) {
-    if (player.hasBakingAbility && player.hasBakingAbility() && player.grain >= 1) {
-      game.actions.bakeBread(player)
-    }
+    game.actions.bakeBread(player)
   },
 }

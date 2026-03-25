@@ -9,10 +9,10 @@ module.exports = {
   onPlay(game, _player) {
     game.cardState(this.id).used = false
   },
+  matches_onBuildImprovement(game, _player, _cost, _improvement) {
+    return !game.cardState(this.id).used
+  },
   onBuildImprovement(game, player, _cost, improvement) {
-    if (game.cardState(this.id).used) {
-      return
-    }
     const printedCost = improvement.cost
     if (!printedCost) {
       return
@@ -30,8 +30,8 @@ module.exports = {
       }
       game.cardState(this.id).used = true
       game.log.add({
-        template: '{player} gets {cost} from {card}',
-        args: { player, cost: costStr , card: this},
+        template: '{player} gets {cost}',
+        args: { player, cost: costStr },
       })
     }
   },

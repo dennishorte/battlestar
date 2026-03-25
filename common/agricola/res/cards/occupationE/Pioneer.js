@@ -27,16 +27,17 @@ module.exports = {
     }
     player.addResource('food', 1)
     game.log.add({
-      template: '{player} gets {choice} and 1 food from {card}',
-      args: { player, choice , card: this},
+      template: '{player} gets {choice} and 1 food',
+      args: { player, choice },
     })
   },
   onPlay(game, player) {
     this._offerBuildingResource(game, player)
   },
-  onBeforeAction(game, player, actionId) {
-    if (game.getActionSpaceRound(actionId) === game.getMostRecentlyRevealedRound()) {
-      this._offerBuildingResource(game, player)
-    }
+  matches_onBeforeAction(game, _player, actionId) {
+    return game.getActionSpaceRound(actionId) === game.getMostRecentlyRevealedRound()
+  },
+  onBeforeAction(game, player, _actionId) {
+    this._offerBuildingResource(game, player)
   },
 }

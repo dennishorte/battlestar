@@ -6,7 +6,7 @@ module.exports = {
   type: "occupation",
   players: "4+",
   text: "Each time before you place a person, if there are at least 8 wood total on accumulation spaces, you get 1 food.",
-  onBeforeAction(game, player) {
+  matches_onBeforeAction(game, _player, _actionId) {
     let totalWood = 0
     for (const actionId of Object.keys(game.state.actionSpaces)) {
       if (game.isAccumulationSpace(actionId)) {
@@ -14,12 +14,9 @@ module.exports = {
         totalWood += resources.wood || 0
       }
     }
-    if (totalWood >= 8) {
-      player.addResource('food', 1)
-      game.log.add({
-        template: '{player} gets 1 food from {card}',
-        args: { player , card: this},
-      })
-    }
+    return totalWood >= 8
+  },
+  onBeforeAction(_game, player, _actionId) {
+    player.addResource('food', 1)
   },
 }

@@ -8,7 +8,7 @@ module.exports = {
   prereqs: { occupations: 3 },
   category: "Food Provider",
   text: "At the start of the field phase of each harvest, if you have at least 1 grain field, 1 vegetable field, and 1 empty field, you get 3 food.",
-  onHarvest(game, player) {
+  matches_onHarvest(_game, player) {
     const hasGrainField = player.getGrainFieldCount() > 0
     let hasVegetableField = false
     let hasEmptyField = false
@@ -25,12 +25,13 @@ module.exports = {
         }
       }
     }
-    if (hasGrainField && hasVegetableField && hasEmptyField) {
-      player.addResource('food', 3)
-      game.log.add({
-        template: '{player} gets 3 food from {card}',
-        args: { player , card: this},
-      })
-    }
+    return hasGrainField && hasVegetableField && hasEmptyField
+  },
+  onHarvest(game, player) {
+    player.addResource('food', 3)
+    game.log.add({
+      template: '{player} gets 3 food',
+      args: { player },
+    })
   },
 }

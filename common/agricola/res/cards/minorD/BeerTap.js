@@ -14,32 +14,33 @@ module.exports = {
       args: { player , card: this},
     })
   },
+  matches_onFeedingPhase(_game, player) {
+    return player.grain >= 2
+  },
   onFeedingPhase(game, player) {
-    if (player.grain >= 2) {
-      const tiers = [
-        { grain: 2, food: 3 },
-        { grain: 3, food: 6 },
-        { grain: 4, food: 9 },
-      ]
-      const affordable = tiers.filter(t => player.grain >= t.grain)
-      const choices = affordable.map(t => `Convert ${t.grain} grain into ${t.food} food`)
-      choices.push('Skip')
-      const selection = game.actions.choose(player, choices, {
-        title: 'Beer Tap',
-        min: 1,
-        max: 1,
+    const tiers = [
+      { grain: 2, food: 3 },
+      { grain: 3, food: 6 },
+      { grain: 4, food: 9 },
+    ]
+    const affordable = tiers.filter(t => player.grain >= t.grain)
+    const choices = affordable.map(t => `Convert ${t.grain} grain into ${t.food} food`)
+    choices.push('Skip')
+    const selection = game.actions.choose(player, choices, {
+      title: 'Beer Tap',
+      min: 1,
+      max: 1,
+    })
+    if (selection[0] !== 'Skip') {
+      const tier = affordable.find(t =>
+        selection[0] === `Convert ${t.grain} grain into ${t.food} food`
+      )
+      player.payCost({ grain: tier.grain })
+      player.addResource('food', tier.food)
+      game.log.add({
+        template: '{player} converts {grain} grain into {food} food',
+        args: { player, grain: tier.grain, food: tier.food },
       })
-      if (selection[0] !== 'Skip') {
-        const tier = affordable.find(t =>
-          selection[0] === `Convert ${t.grain} grain into ${t.food} food`
-        )
-        player.payCost({ grain: tier.grain })
-        player.addResource('food', tier.food)
-        game.log.add({
-          template: '{player} converts {grain} grain into {food} food using {card}',
-          args: { player, grain: tier.grain, food: tier.food, card: this },
-        })
-      }
     }
   },
 }

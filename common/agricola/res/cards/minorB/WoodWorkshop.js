@@ -11,8 +11,8 @@ module.exports = {
   onBuildImprovement(game, player) {
     player.addResource('wood', 1)
     game.log.add({
-      template: '{player} gets 1 wood from {card}',
-      args: { player , card: this},
+      template: '{player} gets 1 wood',
+      args: { player },
     })
   },
 }

@@ -16,8 +16,8 @@ module.exports = {
   onBuildRoom(game, player) {
     player.furnisherDiscount = true
     game.log.add({
-      template: '{player} can play an improvement for 1 wood less via {card}',
-      args: { player , card: this},
+      template: '{player} can play an improvement for 1 wood less',
+      args: { player },
     })
   },
   modifyImprovementCost(player, cost) {

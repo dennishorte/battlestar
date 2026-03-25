@@ -30,8 +30,8 @@ module.exports = {
       s.wood--
       player.addResource('wood', 1)
       game.log.add({
-        template: '{player} gets 1 wood from {card} ({remaining} left)',
-        args: { player, remaining: s.wood , card: this},
+        template: '{player} gets 1 wood ({remaining} left)',
+        args: { player, remaining: s.wood },
       })
     }
   },
