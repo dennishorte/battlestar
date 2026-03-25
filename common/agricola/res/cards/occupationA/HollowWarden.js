@@ -44,13 +44,14 @@ module.exports = {
       })
     }
   },
-  onAction(game, player, actionId) {
-    if (actionId === 'hollow' || actionId === 'hollow-5' || actionId === 'hollow-6') {
-      player.addResource('food', 1)
-      game.log.add({
-        template: '{player} gets 1 food from {card}',
-        args: { player , card: this},
-      })
-    }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'hollow' || actionId === 'hollow-5' || actionId === 'hollow-6'
+  },
+  onAction(game, player, _actionId) {
+    player.addResource('food', 1)
+    game.log.add({
+      template: '{player} gets 1 food',
+      args: { player },
+    })
   },
 }

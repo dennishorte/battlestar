@@ -13,13 +13,14 @@ module.exports = {
       args: { player , card: this},
     })
   },
-  onAction(game, player, actionId) {
-    if (actionId === 'plow-sow' || actionId === 'sow-bake') {
-      player.addResource('food', 2)
-      game.log.add({
-        template: '{player} gets 2 food from {card}',
-        args: { player , card: this},
-      })
-    }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'plow-sow' || actionId === 'sow-bake'
+  },
+  onAction(game, player, _actionId) {
+    player.addResource('food', 2)
+    game.log.add({
+      template: '{player} gets 2 food',
+      args: { player },
+    })
   },
 }

@@ -6,13 +6,14 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you get food from an action space, you get 1 additional wood.",
-  onAction(game, player, actionId) {
-    if (game.actionSpaceGivesFood(actionId)) {
-      player.addResource('wood', 1)
-      game.log.add({
-        template: '{player} gets 1 wood from {card}',
-        args: { player , card: this},
-      })
-    }
+  matches_onAction(game, player, actionId) {
+    return game.actionSpaceGivesFood(actionId)
+  },
+  onAction(game, player, _actionId) {
+    player.addResource('wood', 1)
+    game.log.add({
+      template: '{player} gets 1 wood',
+      args: { player },
+    })
   },
 }

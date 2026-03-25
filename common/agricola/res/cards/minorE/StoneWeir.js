@@ -8,17 +8,18 @@ module.exports = {
   vps: 1,
   prereqs: { occupations: 2 },
   text: "Each time you use the \"Fishing\" accumulation space, if there are 0/1/2/3 food on the space, you get an additional 4/3/2/1 food from the general supply.",
-  onAction(game, player, actionId) {
-    if (actionId === 'fishing') {
-      const foodOnSpace = game.getAccumulatedResources('fishing').food || 0
-      const bonus = Math.max(0, 4 - foodOnSpace)
-      if (bonus > 0) {
-        player.addResource('food', bonus)
-        game.log.add({
-          template: '{player} gets {amount} bonus food from {card}',
-          args: { player, amount: bonus , card: this},
-        })
-      }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'fishing'
+  },
+  onAction(game, player, _actionId) {
+    const foodOnSpace = game.getAccumulatedResources('fishing').food || 0
+    const bonus = Math.max(0, 4 - foodOnSpace)
+    if (bonus > 0) {
+      player.addResource('food', bonus)
+      game.log.add({
+        template: '{player} gets {amount} bonus food',
+        args: { player, amount: bonus },
+      })
     }
   },
 }

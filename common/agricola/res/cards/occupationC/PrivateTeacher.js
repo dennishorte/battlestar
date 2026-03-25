@@ -6,8 +6,11 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you use the \"Grain Seeds\" action space when any \"Lessons\" action space is occupied, you can also play an occupation for an occupation cost of 1 food.",
-  onAction(game, player, actionId) {
-    if (actionId === 'take-grain' && (game.isActionOccupied('occupation') || game.isActionOccupied('lessons-3') || game.isActionOccupied('lessons-4') || game.isActionOccupied('lessons-5') || game.isActionOccupied('lessons-5b'))) {
+  matches_onAction(game, player, actionId) {
+    return actionId === 'take-grain'
+  },
+  onAction(game, player, _actionId) {
+    if (game.isActionOccupied('occupation') || game.isActionOccupied('lessons-3') || game.isActionOccupied('lessons-4') || game.isActionOccupied('lessons-5') || game.isActionOccupied('lessons-5b')) {
       game.actions.offerPlayOccupation(player, this, { cost: { food: 1 } })
     }
   },

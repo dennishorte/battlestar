@@ -7,11 +7,10 @@ module.exports = {
   cost: { grain: 1 },
   category: "Actions Booster",
   text: "Immediately after each time you use the \"Vegetable Seeds\" action space, you can place another person on an accumulation space and get 1 additional good of the accumulating type.",
-  onAction(game, player, actionId) {
-    if (actionId !== 'take-vegetable') {
-      return
-    }
-
+  matches_onAction(game, player, actionId) {
+    return actionId === 'take-vegetable'
+  },
+  onAction(game, player, _actionId) {
     if (player.getAvailableWorkers() <= 0) {
       return
     }
@@ -39,8 +38,8 @@ module.exports = {
     }
 
     game.log.add({
-      template: '{player} uses {card} to place a person on an accumulation space',
-      args: { player, card: this },
+      template: '{player} places a person on an accumulation space',
+      args: { player },
     })
 
     // Record which spaces were occupied before the bonus turn
@@ -62,8 +61,8 @@ module.exports = {
           for (const [resource] of Object.entries(action.accumulates)) {
             player.addResource(resource, 1)
             game.log.add({
-              template: '{player} gets 1 additional {resource} from {card}',
-              args: { player, resource, card: this },
+              template: '{player} gets 1 additional {resource}',
+              args: { player, resource },
             })
           }
         }

@@ -7,8 +7,11 @@ module.exports = {
   cost: {},
   category: "Food Provider",
   text: "Each time you use the \"Fishing\" accumulation space, you can pay 1 grain to place 1 food on each of the next 6 round spaces. At the start of these rounds, you get the food.",
-  onAction(game, player, actionId) {
-    if (actionId === 'fishing' && player.grain >= 1) {
+  matches_onAction(game, player, actionId) {
+    return actionId === 'fishing'
+  },
+  onAction(game, player, _actionId) {
+    if (player.grain >= 1) {
       const card = this
       const choices = ['Accept', 'Skip']
       const selection = game.actions.choose(player, choices, {
@@ -28,8 +31,8 @@ module.exports = {
           }
         }
         game.log.add({
-          template: '{player} pays 1 grain via {card}, scheduling 1 food on {count} rounds',
-          args: { player, card, count: scheduled },
+          template: '{player} pays 1 grain, scheduling 1 food on {count} rounds',
+          args: { player, count: scheduled },
         })
       }
     }

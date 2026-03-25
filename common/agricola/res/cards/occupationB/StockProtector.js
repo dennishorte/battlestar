@@ -15,9 +15,10 @@ module.exports = {
       })
     }
   },
-  onAction(game, player, actionId) {
-    if (actionId === 'fencing') {
-      game.actions.offerExtraPerson(player, this)
-    }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'fencing'
+  },
+  onAction(game, player, _actionId) {
+    game.actions.offerExtraPerson(player, this)
   },
 }

@@ -6,10 +6,10 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you use a wood accumulation space, you get an additional \"Bake Bread\" action.",
-  onAction(game, player, actionId) {
-    const woodActions = ['take-wood', 'copse', 'copse-5', 'grove', 'grove-5', 'grove-6']
-    if (woodActions.includes(actionId)) {
-      game.actions.bakeBread(player)
-    }
+  matches_onAction(game, player, actionId) {
+    return game.isWoodAccumulationSpace(actionId)
+  },
+  onAction(game, player, _actionId) {
+    game.actions.bakeBread(player)
   },
 }

@@ -8,16 +8,17 @@ module.exports = {
   prereqs: { minRound: 7 },
   category: "Food Provider",
   text: "Each time you use a wood accumulation space while there is at least 1 wild boar on the \"Pig Market\" accumulation space, you also get 2 food.",
-  onAction(game, player, actionId) {
-    if (game.isWoodAccumulationSpace(actionId)) {
-      const pigMarket = game.state.actionSpaces['take-boar']
-      if (pigMarket && pigMarket.accumulated >= 1) {
-        player.addResource('food', 2)
-        game.log.add({
-          template: '{player} gets 2 food from {card}',
-          args: { player , card: this},
-        })
-      }
+  matches_onAction(game, player, actionId) {
+    return game.isWoodAccumulationSpace(actionId)
+  },
+  onAction(game, player, _actionId) {
+    const pigMarket = game.state.actionSpaces['take-boar']
+    if (pigMarket && pigMarket.accumulated >= 1) {
+      player.addResource('food', 2)
+      game.log.add({
+        template: '{player} gets 2 food',
+        args: { player },
+      })
     }
   },
 }

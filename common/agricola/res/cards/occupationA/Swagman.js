@@ -6,6 +6,9 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Immediately after each time you use the \"Farm Expansion\" or \"Grain Seeds\" action space, you can use the respective other space with the same person (even if it is occupied).",
+  matches_onAction(game, player, actionId) {
+    return actionId === 'build-room-stable' || actionId === 'take-grain'
+  },
   onAction(game, player, actionId) {
     if (actionId === 'build-room-stable') {
       game.actions.offerUseOtherSpace(player, this, 'take-grain', { allowOccupied: true })

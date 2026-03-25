@@ -9,19 +9,16 @@ module.exports = {
   onPlay(game, _player) {
     game.cardState(this.id).activeRound = game.state.round + 1
   },
+  matches_onAction(game, player, actionId) {
+    return game.state.round === game.cardState(this.id).activeRound && game.isBuildingResourceAccumulationSpace(actionId)
+  },
   onAction(game, player, actionId, resources) {
-    if (game.state.round !== game.cardState(this.id).activeRound) {
-      return
-    }
-    if (!game.isBuildingResourceAccumulationSpace(actionId)) {
-      return
-    }
     const total = (resources.wood || 0) + (resources.clay || 0) + (resources.reed || 0) + (resources.stone || 0)
     if (total > 0) {
       player.addResource('food', total)
       game.log.add({
-        template: '{player} gets {amount} food from {card}',
-        args: { player, amount: total , card: this},
+        template: '{player} gets {amount} food',
+        args: { player, amount: total },
       })
     }
   },

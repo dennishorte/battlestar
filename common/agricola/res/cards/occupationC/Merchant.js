@@ -6,8 +6,11 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Immediately after each time you take a \"Major or Minor Improvement\" or \"Minor Improvement\" action, you can pay 1 food to take the action a second time.",
-  onAction(game, player, actionId) {
-    if ((actionId === 'major-minor-improvement' || actionId === 'minor-improvement' || actionId === 'improvement-6') && player.food >= 1) {
+  matches_onAction(game, player, actionId) {
+    return actionId === 'major-minor-improvement' || actionId === 'minor-improvement' || actionId === 'improvement-6'
+  },
+  onAction(game, player, _actionId) {
+    if (player.food >= 1) {
       const selection = game.actions.choose(player, () => [
         'Pay 1 food to take improvement action again',
         'Skip',
@@ -16,8 +19,8 @@ module.exports = {
         player.payCost({ food: 1 })
         game.actions.buyImprovement(player, true, true)
         game.log.add({
-          template: '{player} pays 1 food for extra improvement from {card}',
-          args: { player , card: this},
+          template: '{player} pays 1 food for extra improvement',
+          args: { player },
         })
       }
     }

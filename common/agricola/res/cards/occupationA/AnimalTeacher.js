@@ -6,11 +6,10 @@ module.exports = {
   type: "occupation",
   players: "4+",
   text: "Immediately after each time you use a \"Lessons\" action space, you can also buy 1 sheep/wild boar/cattle for 0/1/2 food.",
-  onAction(game, player, actionId) {
-    const isLessons = actionId === 'occupation' || (typeof actionId === 'string' && actionId.startsWith('lessons-'))
-    if (!isLessons) {
-      return
-    }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'occupation' || (typeof actionId === 'string' && actionId.startsWith('lessons-'))
+  },
+  onAction(game, player, _actionId) {
     const cardName = 'Animal Teacher'
     const options = [
       { animal: 'sheep', food: 0, label: 'Buy 1 sheep for 0 food' },
@@ -49,8 +48,8 @@ module.exports = {
     }
     game.actions.handleAnimalPlacement(player, { [chosen.animal]: 1 })
     game.log.add({
-      template: '{player} buys 1 {animal} for {food} food using {card}',
-      args: { player, animal: chosen.animal, food: chosen.food, card: cardName },
+      template: '{player} buys 1 {animal} for {food} food',
+      args: { player, animal: chosen.animal, food: chosen.food },
     })
   },
 }

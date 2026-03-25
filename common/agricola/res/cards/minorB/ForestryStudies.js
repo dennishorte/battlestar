@@ -7,8 +7,11 @@ module.exports = {
   cost: { food: 2 },
   category: "Actions Booster",
   text: "Each time after you use the \"Forest\" accumulation space, you can return 2 wood to that space to play 1 occupation without paying an occupation cost.",
-  onAction(game, player, actionId) {
-    if (actionId === 'take-wood' && player.wood >= 2) {
+  matches_onAction(game, player, actionId) {
+    return actionId === 'take-wood'
+  },
+  onAction(game, player, _actionId) {
+    if (player.wood >= 2) {
       const card = this
       const occupationsInHand = player.hand.filter(cardId => {
         const c = game.cards.byId(cardId)

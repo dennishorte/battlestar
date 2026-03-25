@@ -11,11 +11,10 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you use an animal accumulation space, if you occupy either the action space immediately above or below that accumulation space, you also get 1 wild boar.",
+  matches_onAction(game, player, actionId) {
+    return ANIMAL_ACCUMULATION_IDS.includes(actionId)
+  },
   onAction(game, player, actionId) {
-    if (!ANIMAL_ACCUMULATION_IDS.includes(actionId)) {
-      return
-    }
-
     const playerCount = game.state.numPlayers
     const roundCardPositions = boardLayout.getActiveRoundCardPositions(
       game.state.roundCardDeck, playerCount, game.state.activeActions
@@ -31,8 +30,8 @@ module.exports = {
     if (hasOccupiedAdjacent) {
       game.actions.handleAnimalPlacement(player, { boar: 1 })
       game.log.add({
-        template: '{player} gets 1 wild boar from {card}',
-        args: { player , card: this},
+        template: '{player} gets 1 wild boar',
+        args: { player },
       })
     }
   },

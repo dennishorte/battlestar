@@ -6,22 +6,13 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you use the \"Grove\" or \"Hollow\" accumulation space, you can place 2 reed from the general supply on the other space. If you do, you can immediately place another person.",
+  matches_onAction(game, player, actionId) {
+    const action = game.getActionById(actionId)
+    return action && (action.name === 'Grove' || action.name === 'Hollow')
+  },
   onAction(game, player, actionId) {
     const action = game.getActionById(actionId)
-    if (!action) {
-      return
-    }
-
-    let otherName
-    if (action.name === 'Grove') {
-      otherName = 'Hollow'
-    }
-    else if (action.name === 'Hollow') {
-      otherName = 'Grove'
-    }
-    else {
-      return
-    }
+    const otherName = action.name === 'Grove' ? 'Hollow' : 'Grove'
 
     // Find the other space's ID in the active actions
     const otherId = game.state.activeActions.find(id => {
@@ -48,13 +39,13 @@ module.exports = {
       }
       otherState.bonusResources.reed = (otherState.bonusResources.reed || 0) + 2
       game.log.add({
-        template: '{player} places 2 reed on {space} ({card})',
-        args: { player, space: otherName , card: this},
+        template: '{player} places 2 reed on {space}',
+        args: { player, space: otherName },
       })
       if (player.getAvailableWorkers() > 0) {
         game.log.add({
-          template: '{player} immediately places another person ({card})',
-          args: { player , card: this},
+          template: '{player} immediately places another person',
+          args: { player },
         })
         game.playerTurn(player, { isBonusTurn: true })
       }

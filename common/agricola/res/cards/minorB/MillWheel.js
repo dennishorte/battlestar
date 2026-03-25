@@ -8,16 +8,17 @@ module.exports = {
   vps: 1,
   category: "Food Provider",
   text: "Each time you use the \"Grain Utilization\" action space while the \"Fishing\" accumulation space is occupied, you get an additional 2 food.",
-  onAction(game, player, actionId) {
-    if (actionId === 'sow-bake') {
-      const fishingSpace = game.state.actionSpaces['fishing']
-      if (fishingSpace && fishingSpace.occupiedBy) {
-        player.addResource('food', 2)
-        game.log.add({
-          template: '{player} gets 2 food from {card}',
-          args: { player , card: this},
-        })
-      }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'sow-bake'
+  },
+  onAction(game, player, _actionId) {
+    const fishingSpace = game.state.actionSpaces['fishing']
+    if (fishingSpace && fishingSpace.occupiedBy) {
+      player.addResource('food', 2)
+      game.log.add({
+        template: '{player} gets 2 food',
+        args: { player },
+      })
     }
   },
 }

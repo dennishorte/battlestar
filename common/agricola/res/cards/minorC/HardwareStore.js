@@ -8,8 +8,11 @@ module.exports = {
   vps: 1,
   category: "Building Resource Provider",
   text: "Each time after you use the \"Day Laborer\" action space, you can pay 2 food total to buy 1 wood, 1 clay, 1 reed, and 1 stone.",
-  onAction(game, player, actionId) {
-    if (actionId === 'day-laborer' && player.food >= 2) {
+  matches_onAction(game, player, actionId) {
+    return actionId === 'day-laborer'
+  },
+  onAction(game, player, _actionId) {
+    if (player.food >= 2) {
       const selection = game.actions.choose(player, [
         'Pay 2 food for 1 wood, 1 clay, 1 reed, and 1 stone',
         'Skip',
@@ -25,8 +28,8 @@ module.exports = {
         player.addResource('reed', 1)
         player.addResource('stone', 1)
         game.log.add({
-          template: '{player} buys building materials using {card}',
-          args: { player, card: this },
+          template: '{player} buys building materials',
+          args: { player },
         })
       }
     }

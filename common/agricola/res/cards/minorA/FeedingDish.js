@@ -7,6 +7,9 @@ module.exports = {
   cost: { wood: 1 },
   category: "Crop Provider",
   text: "Each time you use an animal accumulation space while already having an animal of that type, you get 1 grain.",
+  matches_onAction(game, player, actionId) {
+    return actionId === 'take-sheep' || actionId === 'take-boar' || actionId === 'take-cattle'
+  },
   onAction(game, player, actionId) {
     const animalMarkets = {
       'take-sheep': 'sheep',
@@ -17,8 +20,8 @@ module.exports = {
     if (animalType && player.getTotalAnimals(animalType) > 0) {
       player.addResource('grain', 1)
       game.log.add({
-        template: '{player} gets 1 grain from {card}',
-        args: { player , card: this},
+        template: '{player} gets 1 grain',
+        args: { player },
       })
     }
   },

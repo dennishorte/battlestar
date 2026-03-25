@@ -14,9 +14,10 @@ module.exports = {
       args: { player , card: this},
     })
   },
-  onAction(game, player, actionId) {
-    if (actionId === 'plow-field' || actionId === 'plow-sow') {
-      game.actions.bakeBread(player)
-    }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'plow-field' || actionId === 'plow-sow'
+  },
+  onAction(game, player, _actionId) {
+    game.actions.bakeBread(player)
   },
 }

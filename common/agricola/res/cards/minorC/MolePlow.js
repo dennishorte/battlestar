@@ -8,9 +8,10 @@ module.exports = {
   prereqs: { minRound: 9 },
   category: "Farm Planner",
   text: "Each time you use the \"Farmland\" or \"Cultivation\" action space, you can plow 1 additional field.",
-  onAction(game, player, actionId) {
-    if (actionId === 'plow-field' || actionId === 'plow-sow') {
-      game.actions.plowField(player, { immediate: true })
-    }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'plow-field' || actionId === 'plow-sow'
+  },
+  onAction(game, player, _actionId) {
+    game.actions.plowField(player, { immediate: true })
   },
 }

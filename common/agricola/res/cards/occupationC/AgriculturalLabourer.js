@@ -9,19 +9,19 @@ module.exports = {
   onPlay(game, _player) {
     game.cardState(this.id).clay = 8
   },
-  onAction(game, player, actionId) {
-    // Give clay when taking grain (Grain Seeds action)
-    if (actionId === 'take-grain') {
-      const s = game.cardState(this.id)
-      const clayToGive = Math.min(1, s.clay || 0)
-      if (clayToGive > 0) {
-        s.clay -= clayToGive
-        player.addResource('clay', clayToGive)
-        game.log.add({
-          template: '{player} gets {amount} clay from {card}',
-          args: { player, amount: clayToGive , card: this},
-        })
-      }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'take-grain'
+  },
+  onAction(game, player, _actionId) {
+    const s = game.cardState(this.id)
+    const clayToGive = Math.min(1, s.clay || 0)
+    if (clayToGive > 0) {
+      s.clay -= clayToGive
+      player.addResource('clay', clayToGive)
+      game.log.add({
+        template: '{player} gets {amount} clay',
+        args: { player, amount: clayToGive },
+      })
     }
   },
 }

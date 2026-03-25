@@ -9,29 +9,34 @@ module.exports = {
   prereqs: { occupations: 3 },
   text: "Each time you use \"Fishing\", you can place up to 2 wood on this card, irretrievably. During scoring, each such wood is worth 1 bonus point, except the 1st, 4th, 7th, and 10th.",
   storedResource: "wood",
-  onAction(game, player, actionId) {
-    if (actionId === 'fishing' && player.wood >= 1) {
-      const maxStore = Math.min(2, player.wood)
-      const choices = []
-      for (let i = maxStore; i >= 1; i--) {
-        choices.push(`Store ${i} wood on Rod Collection`)
-      }
-      choices.push('Skip')
-      const selection = game.actions.choose(player, choices, {
-        title: 'Rod Collection',
-        min: 1,
-        max: 1,
+  matches_onAction(game, player, actionId) {
+    return actionId === 'fishing'
+  },
+  onAction(game, player, _actionId) {
+    if (player.wood < 1) {
+      return
+    }
+
+    const maxStore = Math.min(2, player.wood)
+    const choices = []
+    for (let i = maxStore; i >= 1; i--) {
+      choices.push(`Store ${i} wood on Rod Collection`)
+    }
+    choices.push('Skip')
+    const selection = game.actions.choose(player, choices, {
+      title: 'Rod Collection',
+      min: 1,
+      max: 1,
+    })
+    if (selection[0] !== 'Skip') {
+      const amount = parseInt(selection[0].match(/\d+/)[0])
+      player.payCost({ wood: amount })
+      const s = game.cardState(this.id)
+      s.stored = (s.stored || 0) + amount
+      game.log.add({
+        template: '{player} stores {amount} wood',
+        args: { player, amount },
       })
-      if (selection[0] !== 'Skip') {
-        const amount = parseInt(selection[0].match(/\d+/)[0])
-        player.payCost({ wood: amount })
-        const s = game.cardState(this.id)
-        s.stored = (s.stored || 0) + amount
-        game.log.add({
-          template: '{player} stores {amount} wood on {card}',
-          args: { player, amount, card: this },
-        })
-      }
     }
   },
   getEndGamePoints(_player, game) {

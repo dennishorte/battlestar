@@ -8,17 +8,18 @@ module.exports = {
   prereqs: { occupations: 2 },
   category: "Farm Planner",
   text: "Once this game, when you use the \"Farmland\" or \"Cultivation\" action space with the first person you place in a round, you can plow 2 additional fields.",
-  onAction(game, player, actionId) {
-    if (!player.wheelPlowUsed && (actionId === 'plow-field' || actionId === 'plow-sow')) {
-      if (player.isFirstWorkerThisRound()) {
-        player.wheelPlowUsed = true
-        game.log.add({
-          template: '{player} plows 2 additional fields from {card}',
-          args: { player , card: this},
-        })
-        game.actions.plowField(player)
-        game.actions.plowField(player)
-      }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'plow-field' || actionId === 'plow-sow'
+  },
+  onAction(game, player, _actionId) {
+    if (!player.wheelPlowUsed && player.isFirstWorkerThisRound()) {
+      player.wheelPlowUsed = true
+      game.log.add({
+        template: '{player} plows 2 additional fields',
+        args: { player },
+      })
+      game.actions.plowField(player)
+      game.actions.plowField(player)
     }
   },
 }

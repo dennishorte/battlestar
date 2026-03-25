@@ -7,8 +7,11 @@ module.exports = {
   cost: { wood: 1 },
   category: "Farm Planner",
   text: "Each time you use a wood accumulation space, you can pay 2 wood to plow 1 field. Place the paid wood on the accumulation space (for the next visitor).",
+  matches_onAction(game, player, actionId) {
+    return game.isWoodAccumulationSpace(actionId)
+  },
   onAction(game, player, actionId) {
-    if (game.isWoodAccumulationSpace(actionId) && player.wood >= 2) {
+    if (player.wood >= 2) {
       const card = this
       const choices = [
         'Pay 2 wood to plow 1 field',
@@ -28,8 +31,8 @@ module.exports = {
         }
         game.actions.plowField(player)
         game.log.add({
-          template: '{player} pays 2 wood to plow a field using {card}',
-          args: { player, card: card },
+          template: '{player} pays 2 wood to plow a field',
+          args: { player },
         })
       }
     }

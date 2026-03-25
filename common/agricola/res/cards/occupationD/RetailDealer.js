@@ -11,9 +11,12 @@ module.exports = {
     s.grain = 3
     s.food = 3
   },
-  onAction(game, player, actionId) {
+  matches_onAction(game, player, actionId) {
+    return actionId === 'resource-market'
+  },
+  onAction(game, player, _actionId) {
     const s = game.cardState(this.id)
-    if (actionId === 'resource-market' && ((s.grain || 0) > 0 || (s.food || 0) > 0)) {
+    if ((s.grain || 0) > 0 || (s.food || 0) > 0) {
       if (s.grain > 0) {
         player.addResource('grain', 1)
         s.grain--
@@ -23,8 +26,8 @@ module.exports = {
         s.food--
       }
       game.log.add({
-        template: '{player} gets resources from {card}',
-        args: { player , card: this},
+        template: '{player} gets resources',
+        args: { player },
       })
     }
   },

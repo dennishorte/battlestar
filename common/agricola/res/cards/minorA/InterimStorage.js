@@ -10,6 +10,11 @@ module.exports = {
   onPlay(game, player) {
     player.interimStorage = { wood: 0, clay: 0, reed: 0 }
   },
+  matches_onAction(game, player, actionId) {
+    return actionId === 'take-clay' || actionId === 'take-clay-2'
+      || actionId === 'take-reed'
+      || actionId === 'take-stone-1' || actionId === 'take-stone-2'
+  },
   onAction(game, player, actionId) {
     if (!player.interimStorage) {
       return

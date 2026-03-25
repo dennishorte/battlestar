@@ -6,14 +6,16 @@ module.exports = {
   type: "occupation",
   players: "3+",
   text: "Each time you use one of the two accumulation spaces for the same type of good containing exactly the same number of goods, you can also buy 1 bonus point for 1 food.",
+  matches_onAction(game, player, actionId) {
+    return actionId === 'take-stone-1' || actionId === 'take-stone-2'
+  },
   onAction(game, player, actionId) {
-    // Matching accumulation spaces: take-stone-1 <-> take-stone-2
     const matchingPairs = {
       'take-stone-1': 'take-stone-2',
       'take-stone-2': 'take-stone-1',
     }
     const otherSpace = matchingPairs[actionId]
-    if (otherSpace && player.food >= 1) {
+    if (player.food >= 1) {
       const thisAmount = game.getAccumulatedResources(actionId).stone || 0
       const otherAmount = game.getAccumulatedResources(otherSpace).stone || 0
       if (thisAmount > 0 && thisAmount === otherAmount) {

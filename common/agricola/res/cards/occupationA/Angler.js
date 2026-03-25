@@ -6,12 +6,13 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time after you use the \"Fishing\" Accumulation space while there are at most 2 food on that space, you get a \"Major or Minor Improvement\" action.",
-  onAction(game, player, actionId) {
-    if (actionId === 'fishing') {
-      const foodOnSpace = game.getAccumulatedResources('fishing').food || 0
-      if (foodOnSpace <= 2) {
-        game.actions.buyImprovement(player, true, true)
-      }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'fishing'
+  },
+  onAction(game, player, _actionId) {
+    const foodOnSpace = game.getAccumulatedResources('fishing').food || 0
+    if (foodOnSpace <= 2) {
+      game.actions.buyImprovement(player, true, true)
     }
   },
 }

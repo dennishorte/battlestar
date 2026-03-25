@@ -6,9 +6,11 @@ module.exports = {
   type: "occupation",
   players: "3+",
   text: "Each time after you use a wood accumulation space, you can pay 1 grain to get 1 wild boar.",
-  onAction(game, player, actionId) {
-    const woodActions = ['take-wood', 'copse', 'copse-5', 'grove', 'grove-5', 'grove-6']
-    if (woodActions.includes(actionId) && player.grain >= 1 && player.canPlaceAnimals('boar', 1)) {
+  matches_onAction(game, player, actionId) {
+    return game.isWoodAccumulationSpace(actionId)
+  },
+  onAction(game, player, _actionId) {
+    if (player.grain >= 1 && player.canPlaceAnimals('boar', 1)) {
       const choices = ['Pay 1 grain for 1 boar', 'Skip']
       const selection = game.actions.choose(player, choices, {
         title: 'Huntsman: Pay 1 grain for 1 boar?',
@@ -19,8 +21,8 @@ module.exports = {
         player.payCost({ grain: 1 })
         game.actions.handleAnimalPlacement(player, { boar: 1 })
         game.log.add({
-          template: '{player} pays 1 grain for 1 boar from {card}',
-          args: { player , card: this},
+          template: '{player} pays 1 grain for 1 boar',
+          args: { player },
         })
       }
     }

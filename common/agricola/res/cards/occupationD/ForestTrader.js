@@ -6,11 +6,11 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you use a wood or clay accumulation space, you can also buy exactly 1 building resource. Wood, clay, and reed cost 1 food each; stone costs 2 food.",
-  onAction(game, player, actionId) {
+  matches_onAction(game, player, actionId) {
     const woodClaySpaces = ['take-wood', 'grove', 'grove-5', 'grove-6', 'copse', 'copse-5', 'take-clay', 'hollow', 'hollow-5', 'hollow-6']
-    if (!woodClaySpaces.includes(actionId)) {
-      return
-    }
+    return woodClaySpaces.includes(actionId)
+  },
+  onAction(game, player, _actionId) {
     if (player.food < 1) {
       return
     }
@@ -36,8 +36,8 @@ module.exports = {
       player.removeResource('food', 2)
       player.addResource('stone', 1)
       game.log.add({
-        template: '{player} buys 1 stone for 2 food ({card})',
-        args: { player , card: this},
+        template: '{player} buys 1 stone for 2 food',
+        args: { player },
       })
     }
     else {
@@ -45,8 +45,8 @@ module.exports = {
       player.removeResource('food', 1)
       player.addResource(resource, 1)
       game.log.add({
-        template: '{player} buys 1 {resource} for 1 food ({card})',
-        args: { player, resource , card: this},
+        template: '{player} buys 1 {resource} for 1 food',
+        args: { player, resource },
       })
     }
   },

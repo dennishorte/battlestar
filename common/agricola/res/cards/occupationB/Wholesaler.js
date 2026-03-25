@@ -9,28 +9,31 @@ module.exports = {
   onPlay(game, _player) {
     game.cardState(this.id).goods = { 8: 'vegetables', 9: 'boar', 10: 'stone', 11: 'cattle' }
   },
+  matches_onAction(game, player, actionId) {
+    const s = game.cardState(this.id)
+    const round = game.getActionSpaceRound(actionId)
+    return !!(s.goods && s.goods[round])
+  },
   onAction(game, player, actionId) {
     const s = game.cardState(this.id)
     const round = game.getActionSpaceRound(actionId)
-    if (s.goods && s.goods[round]) {
-      const good = s.goods[round]
-      if (good === 'boar' || good === 'cattle') {
-        if (player.canPlaceAnimals(good, 1)) {
-          game.actions.handleAnimalPlacement(player, { [good]: 1 })
-          game.log.add({
-            template: '{player} gets 1 {animal} from {card}',
-            args: { player, animal: good , card: this},
-          })
-        }
-      }
-      else {
-        player.addResource(good, 1)
+    const good = s.goods[round]
+    if (good === 'boar' || good === 'cattle') {
+      if (player.canPlaceAnimals(good, 1)) {
+        game.actions.handleAnimalPlacement(player, { [good]: 1 })
         game.log.add({
-          template: '{player} gets 1 {resource} from {card}',
-          args: { player, resource: good , card: this},
+          template: '{player} gets 1 {animal}',
+          args: { player, animal: good },
         })
       }
-      delete s.goods[round]
     }
+    else {
+      player.addResource(good, 1)
+      game.log.add({
+        template: '{player} gets 1 {resource}',
+        args: { player, resource: good },
+      })
+    }
+    delete s.goods[round]
   },
 }

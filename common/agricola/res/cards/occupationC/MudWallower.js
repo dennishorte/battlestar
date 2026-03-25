@@ -12,18 +12,19 @@ module.exports = {
     s.clay = 0
     s.boar = 0
   },
-  onAction(game, player, actionId) {
-    if (game.isAccumulationSpace(actionId)) {
-      const s = game.cardState(this.id)
-      s.clay = (s.clay || 0) + 1
-      while (s.clay >= 4) {
-        s.clay -= 4
-        s.boar = (s.boar || 0) + 1
-        game.log.add({
-          template: '{player} gets 1 wild boar on {card}',
-          args: { player , card: this},
-        })
-      }
+  matches_onAction(game, player, actionId) {
+    return game.isAccumulationSpace(actionId)
+  },
+  onAction(game, player, _actionId) {
+    const s = game.cardState(this.id)
+    s.clay = (s.clay || 0) + 1
+    while (s.clay >= 4) {
+      s.clay -= 4
+      s.boar = (s.boar || 0) + 1
+      game.log.add({
+        template: '{player} gets 1 wild boar on {card}',
+        args: { player, card: this },
+      })
     }
   },
   getAnimalCapacity(game) {

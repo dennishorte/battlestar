@@ -13,18 +13,19 @@ module.exports = {
       args: { player , card: this},
     })
   },
-  onAction(game, player, actionId) {
-    if (game.isAnimalAccumulationSpace(actionId)) {
-      const personNumber = player.getPersonPlacedThisRound()
-      const woodAmounts = { 1: 1, 2: 1, 3: 2, 4: 2, 5: 3 }
-      const wood = woodAmounts[personNumber] || 0
-      if (wood > 0) {
-        player.addResource('wood', wood)
-        game.log.add({
-          template: '{player} gets {amount} wood from {card}',
-          args: { player, amount: wood , card: this},
-        })
-      }
+  matches_onAction(game, player, actionId) {
+    return game.isAnimalAccumulationSpace(actionId)
+  },
+  onAction(game, player, _actionId) {
+    const personNumber = player.getPersonPlacedThisRound()
+    const woodAmounts = { 1: 1, 2: 1, 3: 2, 4: 2, 5: 3 }
+    const wood = woodAmounts[personNumber] || 0
+    if (wood > 0) {
+      player.addResource('wood', wood)
+      game.log.add({
+        template: '{player} gets {amount} wood',
+        args: { player, amount: wood },
+      })
     }
   },
 }

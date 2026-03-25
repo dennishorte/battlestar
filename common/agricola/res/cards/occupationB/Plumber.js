@@ -19,25 +19,26 @@ module.exports = {
     }
     return newCost
   },
-  onAction(game, player, actionId) {
-    if (actionId === 'major-minor-improvement') {
-      // Temporarily activate discount to check if renovation is possible
-      player._plumberActive = true
-      const canReno = player.canRenovate()
-      player._plumberActive = false
+  matches_onAction(game, player, actionId) {
+    return actionId === 'major-minor-improvement'
+  },
+  onAction(game, player, _actionId) {
+    // Temporarily activate discount to check if renovation is possible
+    player._plumberActive = true
+    const canReno = player.canRenovate()
+    player._plumberActive = false
 
-      if (canReno) {
-        const choices = ['Renovate (discounted)', 'Skip']
-        const selection = game.actions.choose(player, choices, {
-          title: 'Plumber: Renovate for 2 clay/stone less?',
-          min: 1,
-          max: 1,
-        })
-        if (selection[0] !== 'Skip') {
-          player._plumberActive = true
-          game.actions.renovate(player)
-          player._plumberActive = false
-        }
+    if (canReno) {
+      const choices = ['Renovate (discounted)', 'Skip']
+      const selection = game.actions.choose(player, choices, {
+        title: 'Plumber: Renovate for 2 clay/stone less?',
+        min: 1,
+        max: 1,
+      })
+      if (selection[0] !== 'Skip') {
+        player._plumberActive = true
+        game.actions.renovate(player)
+        player._plumberActive = false
       }
     }
   },

@@ -13,13 +13,14 @@ module.exports = {
       args: { player , card: this},
     })
   },
-  onAction(game, player, actionId) {
-    if (actionId === 'take-grain') {
-      player.addResource('grain', 1)
-      game.log.add({
-        template: '{player} gets 1 additional grain from {card}',
-        args: { player , card: this},
-      })
-    }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'take-grain'
+  },
+  onAction(game, player, _actionId) {
+    player.addResource('grain', 1)
+    game.log.add({
+      template: '{player} gets 1 additional grain',
+      args: { player },
+    })
   },
 }

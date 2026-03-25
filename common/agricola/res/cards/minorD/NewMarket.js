@@ -8,14 +8,15 @@ module.exports = {
   vps: 1,
   category: "Food Provider",
   text: "Each time you use an action space card on round spaces 8 to 11, you get 1 additional food.",
-  onAction(game, player, actionId) {
+  matches_onAction(game, player, actionId) {
     const round = game.state.round
-    if (round >= 8 && round <= 11 && game.isRoundActionSpace(actionId)) {
-      player.addResource('food', 1)
-      game.log.add({
-        template: '{player} gets 1 food from {card}',
-        args: { player , card: this},
-      })
-    }
+    return round >= 8 && round <= 11 && game.isRoundActionSpace(actionId)
+  },
+  onAction(game, player, _actionId) {
+    player.addResource('food', 1)
+    game.log.add({
+      template: '{player} gets 1 food',
+      args: { player },
+    })
   },
 }

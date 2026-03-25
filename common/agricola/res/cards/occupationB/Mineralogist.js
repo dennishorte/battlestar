@@ -6,19 +6,23 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you use a clay/stone accumulation space, you also get 1 of the other good, stone/clay.",
+  matches_onAction(game, player, actionId) {
+    return actionId === 'take-clay' || actionId === 'take-clay-2'
+      || actionId === 'take-stone-1' || actionId === 'take-stone-2'
+  },
   onAction(game, player, actionId) {
     if (actionId === 'take-clay' || actionId === 'take-clay-2') {
       player.addResource('stone', 1)
       game.log.add({
-        template: '{player} gets 1 stone from {card}',
-        args: { player , card: this},
+        template: '{player} gets 1 stone',
+        args: { player },
       })
     }
     else if (actionId === 'take-stone-1' || actionId === 'take-stone-2') {
       player.addResource('clay', 1)
       game.log.add({
-        template: '{player} gets 1 clay from {card}',
-        args: { player , card: this},
+        template: '{player} gets 1 clay',
+        args: { player },
       })
     }
   },

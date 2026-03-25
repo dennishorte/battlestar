@@ -6,11 +6,10 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time after you use a \"Lesson\" action space, you can buy up to 2 different goods: grain, stone, sheep, and wild boar for 1 food each; cattle and vegetable for 2 food each.",
-  onAction(game, player, actionId) {
-    const isLessonsAction = actionId === 'occupation' || (typeof actionId === 'string' && actionId.startsWith('lessons-'))
-    if (!isLessonsAction) {
-      return
-    }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'occupation' || (typeof actionId === 'string' && actionId.startsWith('lessons-'))
+  },
+  onAction(game, player, _actionId) {
     if (player.food < 1) {
       return
     }
@@ -49,8 +48,8 @@ module.exports = {
         player.addResource(resource, 1)
       }
       game.log.add({
-        template: '{player} buys 1 {resource} for {cost} food ({card})',
-        args: { player, resource, cost , card: this},
+        template: '{player} buys 1 {resource} for {cost} food',
+        args: { player, resource, cost },
       })
     }
   },

@@ -6,9 +6,10 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you use the \"Grain Seeds\" action space, you can also plow 1 field.",
-  onAction(game, player, actionId) {
-    if (actionId === 'take-grain') {
-      game.actions.offerPlow(player, this)
-    }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'take-grain'
+  },
+  onAction(game, player, _actionId) {
+    game.actions.offerPlow(player, this)
   },
 }

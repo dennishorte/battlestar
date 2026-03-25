@@ -15,9 +15,12 @@ module.exports = {
       args: { player , card: this},
     })
   },
-  onAction(game, player, actionId) {
+  matches_onAction(game, player, actionId) {
+    return actionId === 'plow-field'
+  },
+  onAction(game, player, _actionId) {
     const state = game.cardState(this.id)
-    if (actionId !== 'plow-field' || state.charges <= 0) {
+    if (state.charges <= 0) {
       return
     }
 

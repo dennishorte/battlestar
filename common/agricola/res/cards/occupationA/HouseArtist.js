@@ -6,10 +6,10 @@ module.exports = {
   type: "occupation",
   players: "3+",
   text: "Each time you use the \"Traveling Players\" accumulation space, you also get a \"Build Rooms\" action. Each room you build during the action costs you 1 reed less.",
-  onAction(game, player, actionId) {
-    if (actionId !== 'traveling-players' && actionId !== 'traveling-players-5') {
-      return
-    }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'traveling-players' || actionId === 'traveling-players-5'
+  },
+  onAction(game, player, _actionId) {
     const validSpaces = player.getValidRoomBuildSpaces()
     const roomOptions = player.getRoomCostOptions()
     const canAffordWithDiscount = roomOptions.some(opt => {

@@ -6,14 +6,14 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you use the \"Major Improvement\" action space, you also get 1 grain and, afterward, you can take a \"Sow\" action.",
-  onAction(game, player, actionId) {
-    if (actionId !== 'major-minor-improvement') {
-      return
-    }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'major-minor-improvement'
+  },
+  onAction(game, player, _actionId) {
     player.addResource('grain', 1)
     game.log.add({
-      template: '{player} gets 1 grain from {card}',
-      args: { player , card: this},
+      template: '{player} gets 1 grain',
+      args: { player },
     })
     // Offer sow action if player has fields and crops to sow
     const emptyFields = player.getEmptyFields()

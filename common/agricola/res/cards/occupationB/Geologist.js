@@ -6,19 +6,22 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you use the \"Forest\" or \"Reed Bank\" accumulation space, you also get 1 clay. In games with 3 or more players, this also applies to the \"Clay Pit\".",
+  matches_onAction(game, player, actionId) {
+    return actionId === 'take-wood' || actionId === 'take-reed' || actionId === 'take-clay'
+  },
   onAction(game, player, actionId) {
     if (actionId === 'take-wood' || actionId === 'take-reed') {
       player.addResource('clay', 1)
       game.log.add({
-        template: '{player} gets 1 clay from {card}',
-        args: { player , card: this},
+        template: '{player} gets 1 clay',
+        args: { player },
       })
     }
     else if (actionId === 'take-clay' && game.players.all().length >= 3) {
       player.addResource('clay', 1)
       game.log.add({
-        template: '{player} gets 1 clay from {card}',
-        args: { player , card: this},
+        template: '{player} gets 1 clay',
+        args: { player },
       })
     }
   },

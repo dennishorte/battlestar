@@ -9,13 +9,14 @@ module.exports = {
   prereqs: { occupations: 2 },
   category: "Actions Booster",
   text: "Each time you use the \"Farmland\" or \"Cultivation\" action space, you get an additional \"Bake Bread\" action.",
-  onAction(game, player, actionId) {
-    if (actionId === 'plow-field' || actionId === 'plow-sow') {
-      game.log.add({
-        template: '{player} gets an additional Bake Bread action from {card}',
-        args: { player , card: this},
-      })
-      game.actions.bakeBread(player)
-    }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'plow-field' || actionId === 'plow-sow'
+  },
+  onAction(game, player, _actionId) {
+    game.log.add({
+      template: '{player} gets an additional Bake Bread action',
+      args: { player },
+    })
+    game.actions.bakeBread(player)
   },
 }

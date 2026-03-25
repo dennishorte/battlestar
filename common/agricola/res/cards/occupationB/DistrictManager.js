@@ -6,6 +6,10 @@ module.exports = {
   type: "occupation",
   players: "4+",
   text: "At the end of each work phase, if you used both the \"Forest\" and \"Grove\" accumulation spaces, you get 5 food.",
+  matches_onAction(game, player, actionId) {
+    return actionId === 'take-wood'
+      || actionId === 'grove' || actionId === 'grove-5' || actionId === 'grove-6'
+  },
   onAction(game, player, actionId) {
     if (actionId === 'take-wood') {
       player._dmUsedForest = true

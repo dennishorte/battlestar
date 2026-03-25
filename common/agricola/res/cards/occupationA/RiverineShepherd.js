@@ -6,6 +6,9 @@ module.exports = {
   type: "occupation",
   players: "3+",
   text: "Each time you use the \"Sheep Market\" or \"Reed Bank\" accumulation space, you can also take 1 good from the respective other accumulation space, if possible.",
+  matches_onAction(game, player, actionId) {
+    return actionId === 'take-sheep' || actionId === 'take-reed'
+  },
   onAction(game, player, actionId) {
     if (actionId === 'take-sheep') {
       const reedOnBank = game.getAccumulatedResources('take-reed').reed || 0
@@ -13,8 +16,8 @@ module.exports = {
         game.removeFromAccumulationSpace('take-reed', 'reed', 1)
         player.addResource('reed', 1)
         game.log.add({
-          template: '{player} takes 1 reed from Reed Bank via {card}',
-          args: { player , card: this},
+          template: '{player} takes 1 reed from Reed Bank',
+          args: { player },
         })
       }
     }
@@ -24,8 +27,8 @@ module.exports = {
         game.removeFromAccumulationSpace('take-sheep', 'sheep', 1)
         game.actions.handleAnimalPlacement(player, { sheep: 1 })
         game.log.add({
-          template: '{player} takes 1 sheep from Sheep Market via {card}',
-          args: { player , card: this},
+          template: '{player} takes 1 sheep from Sheep Market',
+          args: { player },
         })
       }
     }

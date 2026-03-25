@@ -6,8 +6,11 @@ module.exports = {
   type: "occupation",
   players: "3+",
   text: "Each time you use a building resource accumulation space, you can discard exactly 1 card from your hand to get 1 additional building resource of the accumulating type.",
+  matches_onAction(game, player, actionId) {
+    return game.isBuildingResourceAccumulationSpace(actionId)
+  },
   onAction(game, player, actionId) {
-    if (game.isBuildingResourceAccumulationSpace(actionId) && player.hand.length > 0) {
+    if (player.hand.length > 0) {
       const resourceType = game.getAccumulationSpaceGoodType(actionId)
       if (!resourceType) {
         return
@@ -33,8 +36,8 @@ module.exports = {
         }
         player.addResource(resourceType, 1)
         game.log.add({
-          template: '{player} discards a card for 1 {resource} from {card}',
-          args: { player, resource: resourceType , card: this},
+          template: '{player} discards a card for 1 {resource}',
+          args: { player, resource: resourceType },
         })
       }
     }

@@ -8,6 +8,9 @@ module.exports = {
   prereqs: { occupations: 3 },
   category: "Building Resource Provider",
   text: "Each time after you use an action space, you can take 1 building resource from a building resource accumulation space with at least 4 building resources on it.",
+  matches_onAction() {
+    return true
+  },
   onAction(game, player) {
     const card = this
     const buildingSpaces = ['take-wood', 'take-clay', 'take-reed', 'take-stone']
@@ -39,8 +42,8 @@ module.exports = {
         game.state.actionSpaces[spaceId].accumulated -= 1
         player.addResource(resource, 1)
         game.log.add({
-          template: '{player} takes 1 {resource} using {card}',
-          args: { player, resource, card },
+          template: '{player} takes 1 {resource}',
+          args: { player, resource },
         })
       }
     }

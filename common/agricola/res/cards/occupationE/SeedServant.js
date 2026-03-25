@@ -6,6 +6,9 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time after you use the \"Grain Seeds\" or \"Vegetable Seeds\" action space, you can take a \"Bake bread\" or \"Sow\" action, respectively.",
+  matches_onAction(game, player, actionId) {
+    return actionId === 'take-grain' || actionId === 'take-vegetable'
+  },
   onAction(game, player, actionId) {
     if (actionId === 'take-grain') {
       // Offer bake bread

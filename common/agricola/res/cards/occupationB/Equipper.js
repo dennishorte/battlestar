@@ -6,10 +6,10 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Immediately after each time you use a wood accumulation space, you can play a minor improvement.",
-  onAction(game, player, actionId) {
-    const woodActions = ['take-wood', 'copse', 'copse-5', 'grove', 'grove-5', 'grove-6']
-    if (woodActions.includes(actionId)) {
-      game.actions.buyMinorImprovement(player)
-    }
+  matches_onAction(game, player, actionId) {
+    return game.isWoodAccumulationSpace(actionId)
+  },
+  onAction(game, player, _actionId) {
+    game.actions.buyMinorImprovement(player)
   },
 }

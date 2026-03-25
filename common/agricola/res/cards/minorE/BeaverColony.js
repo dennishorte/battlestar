@@ -9,13 +9,14 @@ module.exports = {
   prereqs: { fencedStables: 1 },
   text: "From now on, one of your pastures with stable cannot hold animals. Each time you get reed from an action space, you get 1 bonus point.",
   disablesPastureWithStable: true,
-  onAction(game, player, actionId) {
-    if (game.actionGivesReed(actionId)) {
-      player.addBonusPoints(1)
-      game.log.add({
-        template: '{player} gets 1 bonus point from {card}',
-        args: { player , card: this},
-      })
-    }
+  matches_onAction(game, player, actionId) {
+    return game.actionGivesReed(actionId)
+  },
+  onAction(game, player, _actionId) {
+    player.addBonusPoints(1)
+    game.log.add({
+      template: '{player} gets 1 bonus point',
+      args: { player },
+    })
   },
 }

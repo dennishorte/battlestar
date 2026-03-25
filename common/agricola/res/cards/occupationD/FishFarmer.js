@@ -6,27 +6,30 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "When you use Reed Bank, Clay Pit, or Forest, if there is at least 1/2/3 food on the Fishing space, you also get 2 food.",
+  matches_onAction(game, player, actionId) {
+    return actionId === 'take-reed' || actionId === 'take-clay' || actionId === 'take-wood'
+  },
   onAction(game, player, actionId) {
     const fishingFood = game.getAccumulatedResources('fishing').food || 0
     if (actionId === 'take-reed' && fishingFood >= 1) {
       player.addResource('food', 2)
       game.log.add({
-        template: '{player} gets 2 food from {card}',
-        args: { player , card: this},
+        template: '{player} gets 2 food',
+        args: { player },
       })
     }
     else if (actionId === 'take-clay' && fishingFood >= 2) {
       player.addResource('food', 2)
       game.log.add({
-        template: '{player} gets 2 food from {card}',
-        args: { player , card: this},
+        template: '{player} gets 2 food',
+        args: { player },
       })
     }
     else if (actionId === 'take-wood' && fishingFood >= 3) {
       player.addResource('food', 2)
       game.log.add({
-        template: '{player} gets 2 food from {card}',
-        args: { player , card: this},
+        template: '{player} gets 2 food',
+        args: { player },
       })
     }
   },

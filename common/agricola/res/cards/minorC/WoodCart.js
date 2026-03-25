@@ -8,13 +8,14 @@ module.exports = {
   prereqs: { occupations: 3 },
   category: "Building Resource Provider",
   text: "Each time you use a wood accumulation space, you get 2 additional wood.",
-  onAction(game, player, actionId) {
-    if (game.isWoodAccumulationSpace(actionId)) {
-      player.addResource('wood', 2)
-      game.log.add({
-        template: '{player} gets 2 wood from {card}',
-        args: { player , card: this},
-      })
-    }
+  matches_onAction(game, player, actionId) {
+    return game.isWoodAccumulationSpace(actionId)
+  },
+  onAction(game, player, _actionId) {
+    player.addResource('wood', 2)
+    game.log.add({
+      template: '{player} gets 2 wood',
+      args: { player },
+    })
   },
 }

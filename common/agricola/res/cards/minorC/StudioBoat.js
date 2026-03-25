@@ -11,13 +11,14 @@ module.exports = {
   providesActionSpace: true,
   actionSpaceId: "studio-boat",
   actionSpaceForPlayerCount: [1, 2, 3],
-  onAction(game, player, actionId) {
-    if (actionId === 'traveling-players' || actionId === 'traveling-players-5') {
-      player.addBonusPoints(1)
-      game.log.add({
-        template: '{player} gets 1 bonus point from {card}',
-        args: { player , card: this},
-      })
-    }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'traveling-players' || actionId === 'traveling-players-5'
+  },
+  onAction(game, player, _actionId) {
+    player.addBonusPoints(1)
+    game.log.add({
+      template: '{player} gets 1 bonus point',
+      args: { player },
+    })
   },
 }

@@ -15,16 +15,17 @@ module.exports = {
       args: { player , card: this},
     })
   },
-  onAction(game, player, actionId) {
-    if (game.isWoodAccumulationSpace(actionId)) {
-      if (player.maintenancePremiumFood > 0) {
-        player.maintenancePremiumFood--
-        player.addResource('food', 1)
-        game.log.add({
-          template: '{player} gets 1 food from {card} ({remaining} remaining)',
-          args: { player, remaining: player.maintenancePremiumFood , card: this},
-        })
-      }
+  matches_onAction(game, player, actionId) {
+    return game.isWoodAccumulationSpace(actionId)
+  },
+  onAction(game, player, _actionId) {
+    if (player.maintenancePremiumFood > 0) {
+      player.maintenancePremiumFood--
+      player.addResource('food', 1)
+      game.log.add({
+        template: '{player} gets 1 food ({remaining} remaining)',
+        args: { player, remaining: player.maintenancePremiumFood },
+      })
     }
   },
   onRenovate(game, player) {

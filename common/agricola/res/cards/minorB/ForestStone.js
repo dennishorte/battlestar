@@ -17,22 +17,25 @@ module.exports = {
       args: { player , card: this},
     })
   },
+  matches_onAction(game, player, actionId) {
+    return game.isWoodAccumulationSpace(actionId) || actionId === 'take-stone-1' || actionId === 'take-stone-2'
+  },
   onAction(game, player, actionId) {
     if (game.isWoodAccumulationSpace(actionId)) {
       if (player.forestStoneFood > 0) {
         player.forestStoneFood--
         player.addResource('food', 1)
         game.log.add({
-          template: '{player} gets 1 food from {card} ({remaining} remaining)',
-          args: { player, remaining: player.forestStoneFood , card: this},
+          template: '{player} gets 1 food ({remaining} remaining)',
+          args: { player, remaining: player.forestStoneFood },
         })
       }
     }
     else if (actionId === 'take-stone-1' || actionId === 'take-stone-2') {
       player.forestStoneFood = (player.forestStoneFood || 0) + 2
       game.log.add({
-        template: '{player} adds 2 food to {card} ({total} total)',
-        args: { player, total: player.forestStoneFood , card: this},
+        template: '{player} adds 2 food ({total} total)',
+        args: { player, total: player.forestStoneFood },
       })
     }
   },

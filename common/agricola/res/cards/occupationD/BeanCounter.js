@@ -9,19 +9,20 @@ module.exports = {
   onPlay(game, _player) {
     game.cardState(this.id).food = 0
   },
-  onAction(game, player, actionId) {
+  matches_onAction(game, player, actionId) {
     const actionRound = game.getActionSpaceRound(actionId)
-    if (actionRound >= 1 && actionRound <= 8) {
-      const s = game.cardState(this.id)
-      s.food = (s.food || 0) + 1
-      if (s.food >= 3) {
-        player.addResource('food', 3)
-        s.food = 0
-        game.log.add({
-          template: '{player} gets 3 food from {card}',
-          args: { player , card: this},
-        })
-      }
+    return actionRound >= 1 && actionRound <= 8
+  },
+  onAction(game, player, _actionId) {
+    const s = game.cardState(this.id)
+    s.food = (s.food || 0) + 1
+    if (s.food >= 3) {
+      player.addResource('food', 3)
+      s.food = 0
+      game.log.add({
+        template: '{player} gets 3 food',
+        args: { player },
+      })
     }
   },
 }

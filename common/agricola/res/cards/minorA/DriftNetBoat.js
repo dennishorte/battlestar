@@ -8,13 +8,14 @@ module.exports = {
   vps: 1,
   category: "Food Provider",
   text: "Each time you use the \"Fishing\" accumulation space, you get an additional 2 food.",
-  onAction(game, player, actionId) {
-    if (actionId === 'fishing') {
-      player.addResource('food', 2)
-      game.log.add({
-        template: '{player} gets 2 additional food from {card}',
-        args: { player , card: this},
-      })
-    }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'fishing'
+  },
+  onAction(game, player, _actionId) {
+    player.addResource('food', 2)
+    game.log.add({
+      template: '{player} gets 2 additional food',
+      args: { player },
+    })
   },
 }

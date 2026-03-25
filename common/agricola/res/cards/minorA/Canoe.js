@@ -9,14 +9,15 @@ module.exports = {
   prereqs: { occupations: 1 },
   category: "Building Resource Provider",
   text: "Each time you use the \"Fishing\" accumulation space, you get an additional 1 food and 1 reed.",
-  onAction(game, player, actionId) {
-    if (actionId === 'fishing') {
-      player.addResource('food', 1)
-      player.addResource('reed', 1)
-      game.log.add({
-        template: '{player} gets 1 food and 1 reed from {card}',
-        args: { player , card: this},
-      })
-    }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'fishing'
+  },
+  onAction(game, player, _actionId) {
+    player.addResource('food', 1)
+    player.addResource('reed', 1)
+    game.log.add({
+      template: '{player} gets 1 food and 1 reed',
+      args: { player },
+    })
   },
 }

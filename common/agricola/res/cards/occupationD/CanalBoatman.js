@@ -6,10 +6,10 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you use \"Fishing\" or \"Reed Bank\", you can pay 1 food to immediately place another person on this card. If you do, you get your choice of 3 stone or 1 grain plus 1 vegetable.",
-  onAction(game, player, actionId) {
-    if (actionId !== 'fishing' && actionId !== 'take-reed') {
-      return
-    }
+  matches_onAction(game, player, actionId) {
+    return actionId === 'fishing' || actionId === 'take-reed'
+  },
+  onAction(game, player, _actionId) {
     if (player.food < 1 || player.getAvailableWorkers() < 1) {
       return
     }
@@ -27,16 +27,16 @@ module.exports = {
     if (selection[0].startsWith('Get 3 stone')) {
       player.addResource('stone', 3)
       game.log.add({
-        template: '{player} places a worker on {card} for 3 stone',
-        args: { player , card: this},
+        template: '{player} places a worker for 3 stone',
+        args: { player },
       })
     }
     else {
       player.addResource('grain', 1)
       player.addResource('vegetables', 1)
       game.log.add({
-        template: '{player} places a worker on {card} for 1 grain + 1 vegetable',
-        args: { player , card: this},
+        template: '{player} places a worker for 1 grain + 1 vegetable',
+        args: { player },
       })
     }
   },

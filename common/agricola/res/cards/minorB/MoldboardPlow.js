@@ -15,8 +15,11 @@ module.exports = {
       args: { player , card: this},
     })
   },
-  onAction(game, player, actionId) {
-    if (actionId === 'plow-field' && player.moldboardPlowCharges > 0) {
+  matches_onAction(game, player, actionId) {
+    return actionId === 'plow-field'
+  },
+  onAction(game, player, _actionId) {
+    if (player.moldboardPlowCharges > 0) {
       player.moldboardPlowCharges--
       game.actions.plowField(player, { immediate: true })
     }

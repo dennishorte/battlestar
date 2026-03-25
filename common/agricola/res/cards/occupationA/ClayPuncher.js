@@ -13,15 +13,16 @@ module.exports = {
       args: { player , card: this},
     })
   },
-  onAction(game, player, actionId) {
+  matches_onAction(game, player, actionId) {
     // Lessons A uses 'occupation', Lessons B/C use 'lessons-3', 'lessons-4', etc.
     const isLessonsAction = actionId === 'occupation' || actionId.startsWith('lessons-')
-    if (isLessonsAction || actionId === 'take-clay') {
-      player.addResource('clay', 1)
-      game.log.add({
-        template: '{player} gets 1 clay from {card}',
-        args: { player , card: this},
-      })
-    }
+    return isLessonsAction || actionId === 'take-clay'
+  },
+  onAction(game, player, _actionId) {
+    player.addResource('clay', 1)
+    game.log.add({
+      template: '{player} gets 1 clay',
+      args: { player },
+    })
   },
 }

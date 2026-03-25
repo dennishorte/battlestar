@@ -6,9 +6,10 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you use a wood accumulation space, you also get a \"Sow\" action for exactly 1 field.",
-  onAction(game, player, actionId) {
-    if (game.isWoodAccumulationSpace(actionId)) {
-      game.actions.sowSingleField(player, this)
-    }
+  matches_onAction(game, player, actionId) {
+    return game.isWoodAccumulationSpace(actionId)
+  },
+  onAction(game, player, _actionId) {
+    game.actions.sowSingleField(player, this)
   },
 }

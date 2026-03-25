@@ -9,25 +9,20 @@ module.exports = {
   vps: 1,
   category: "Food Provider",
   text: "Each time you use the \"Grain Seeds\"/\"Vegetable Seeds\" action space, place 1 food on each of the next 3/2 round spaces. At the start of these rounds, you get the food.",
+  matches_onAction(game, player, actionId) {
+    return actionId === 'take-grain' || actionId === 'take-vegetable'
+  },
   onAction(game, player, actionId) {
     const currentRound = game.state.round
-    let rounds = 0
-    if (actionId === 'take-grain') {
-      rounds = 3
-    }
-    else if (actionId === 'take-vegetable') {
-      rounds = 2
-    }
+    const rounds = actionId === 'take-grain' ? 3 : 2
 
-    if (rounds > 0) {
-      for (let i = 1; i <= rounds; i++) {
-        const round = currentRound + i
-        game.scheduleResource(player, 'food', round, 1)
-      }
-      game.log.add({
-        template: '{player} places food on the next {count} round spaces from {card}',
-        args: { player, count: rounds , card: this},
-      })
+    for (let i = 1; i <= rounds; i++) {
+      const round = currentRound + i
+      game.scheduleResource(player, 'food', round, 1)
     }
+    game.log.add({
+      template: '{player} places food on the next {count} round spaces',
+      args: { player, count: rounds },
+    })
   },
 }
