@@ -15,7 +15,7 @@ module.exports = {
         .colors()
         .filter(color => {
           const zone = game.zones.byPlayer(player, color)
-          return zone.cardlist().length > 1 && zone.splay !== 'right'
+          return zone.cardlist().length > 1 && zone.splay === 'none'
         })
 
       const selected = game.actions.choose(player, choices, {
