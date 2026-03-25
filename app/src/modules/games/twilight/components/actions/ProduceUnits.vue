@@ -54,8 +54,9 @@ export default {
     },
 
     availableUnits() {
-      const unitTypes = ['infantry', 'fighter', 'carrier', 'destroyer', 'cruiser', 'dreadnought', 'space-dock', 'pds', 'mech', 'flagship', 'warsun']
-      return unitTypes.map(type => {
+      const allTypes = ['infantry', 'fighter', 'carrier', 'destroyer', 'cruiser', 'dreadnought', 'space-dock', 'pds', 'mech', 'flagship', 'war-sun']
+      const allowedTypes = this.request?.context?.allowedTypes || allTypes
+      return allowedTypes.map(type => {
         const unit = res.getUnit?.(type)
         return {
           type,
@@ -65,8 +66,7 @@ export default {
     },
 
     capacity() {
-      // Production capacity from request context or default
-      return this.request?.capacity || 6
+      return this.request?.context?.capacity ?? this.request?.capacity ?? 6
     },
 
     usedCapacity() {

@@ -295,38 +295,59 @@ module.exports = function(Twilight) {
       }
     }
 
+    // Clan of Saar Floating Factory: space docks may be in the space area
+    for (const [systemId, systemUnits] of Object.entries(this.state.units)) {
+      if (!dockSystems.includes(systemId)) {
+        const spaceDocks = systemUnits.space.filter(
+          u => u.owner === player.name && u.type === 'space-dock'
+        )
+        if (spaceDocks.length > 0) {
+          dockSystems.push(systemId)
+        }
+      }
+    }
+
     if (dockSystems.length === 0) {
       this.log.add({ template: 'No space docks available', args: {} })
       return
     }
 
     const systemSel = this.actions.choose(player, dockSystems, {
-      title: 'Sling Relay: Choose system to produce in',
+      title: 'Sling Relay: Choose system',
     })
     const targetSystem = systemSel[0]
 
-    // Choose 1 ship to produce (limited to cost the player can afford)
+    // Use produce-units UI, constrained to 1 ship
     const shipTypes = ['fighter', 'destroyer', 'cruiser', 'carrier', 'dreadnought', 'war-sun']
-    const affordableShips = shipTypes.filter(type => {
-      const def = this._getUnitStats(player.name, type)
-      return def && def.cost <= (player.tradeGoods + this._getAvailableResources(player))
+    const produceSelection = this.actions.choose(player, ['Done'], {
+      title: 'Sling Relay',
+      allowsAction: 'produce-units',
+      context: {
+        allowedTypes: shipTypes,
+        capacity: 1,
+      },
     })
 
-    if (affordableShips.length === 0) {
-      this.log.add({ template: 'No affordable ships to produce', args: {} })
+    if (produceSelection.action !== 'produce-units') {
       return
     }
 
-    const shipSel = this.actions.choose(player, affordableShips, {
-      title: 'Sling Relay: Choose ship to produce',
-    })
-    const shipType = shipSel[0]
-    const def = this._getUnitStats(player.name, shipType)
+    const requestedUnits = produceSelection.units || []
+    if (requestedUnits.length === 0) {
+      return
+    }
 
-    this._addUnit(targetSystem, 'space', shipType, player.name)
+    // Take just the first unit (capacity 1)
+    const req = requestedUnits[0]
+    const unitDef = this._getUnitStats(player.name, req.type)
+    if (!unitDef || !shipTypes.includes(req.type)) {
+      return
+    }
+
+    this._addUnit(targetSystem, 'space', req.type, player.name)
 
     // Pay cost
-    let cost = def.cost
+    let cost = unitDef.cost
     const controlledPlanets = player.getControlledPlanets()
     for (const pId of controlledPlanets) {
       if (cost <= 0) {
@@ -346,7 +367,7 @@ module.exports = function(Twilight) {
 
     this.log.add({
       template: '{player} uses Sling Relay to produce a {ship}',
-      args: { player, ship: shipType },
+      args: { player, ship: req.type },
     })
   }
 

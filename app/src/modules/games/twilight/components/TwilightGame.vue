@@ -238,7 +238,7 @@ export default {
       if (title.includes('move') && title.includes('ship')) {
         return 'move-ships'
       }
-      if (title.includes('produce') || title.includes('production')) {
+      if (request.allowsAction === 'produce-units') {
         return 'produce-units'
       }
       if (title.includes('transaction from') || title.includes('counter-offer from')) {
