@@ -166,6 +166,14 @@ useGameLogProvider({
   margin-left: 2em;
 }
 
+#gamelog :deep(.indent-5) {
+  margin-left: 3em;
+}
+
+#gamelog :deep(.indent-6) {
+  margin-left: 4em;
+}
+
 /* Round header banner */
 #gamelog :deep(.round-header) {
   font-weight: bold;
