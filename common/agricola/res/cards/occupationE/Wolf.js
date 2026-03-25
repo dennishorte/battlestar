@@ -9,6 +9,10 @@ module.exports = {
   onPlay(game, _player) {
     game.cardState(this.id).pile = ['clay', 'wood', 'grain']
   },
+  matches_onObtainResource(game, _player, resourceType) {
+    const pile = game.cardState(this.id).pile
+    return pile && pile.length > 0 && pile[pile.length - 1] === resourceType
+  },
   onObtainResource(game, player, resourceType) {
     const pile = game.cardState(this.id).pile
     if (pile && pile.length > 0) {
