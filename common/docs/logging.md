@@ -544,6 +544,70 @@ this.log.add({ template: '{player} plays {card}', args: { player, card } })
 
 ---
 
+## Card Hook Trigger Logging (`matches` Convention)
+
+The dispatch layer in `cardManagement.js` logs `"{card} triggers for {player}"` when a card hook fires. To prevent noisy trigger lines for cards whose conditions aren't met, card definitions can implement a **`matches_hookName`** method that gates the trigger.
+
+### Three-way return values
+
+| Return | Trigger line logged? | Hook called? |
+|--------|---------------------|--------------|
+| `true` | Yes | Yes |
+| `false` | No | No (skipped entirely) |
+| `'silent'` | No | Yes (hook runs silently) |
+
+If no `matches` method exists, the default is `true` (always trigger and log — backward compatible).
+
+### Primary gate pattern
+
+The `matches` method checks only the **primary gate** — typically the action type or hook-specific condition that determines whether the card is *relevant*. Secondary conditions (resource availability, capacity, etc.) stay in the hook body.
+
+```javascript
+// Card definition:
+matches_onAction(game, player, actionId) {
+  return actionId === 'grain-seeds'
+},
+onAction(game, player, actionId) {
+  // Primary condition already checked by matches.
+  // Secondary conditions stay here and log why they fail:
+  if (player.food < 1) {
+    game.log.add({ template: '{player} has no food', args: { player } })
+    return
+  }
+  player.addResource('grain', 1)
+  game.log.add({ template: '{player} gets 1 grain', args: { player } })
+},
+```
+
+Log output:
+```
+Private Teacher triggers for dennis
+  dennis has no food
+```
+
+### Trigger line ownership
+
+The dispatch layer logs the trigger line — card hooks must **not** redundantly include `{card}` or `from {card}` in their own messages. Change:
+```javascript
+// Before (redundant):
+game.log.add({ template: '{player} gets 1 grain from {card}', args: { player, card: this } })
+
+// After (card identity established by trigger line):
+game.log.add({ template: '{player} gets 1 grain', args: { player } })
+```
+
+### `onPlay` exclusion
+
+`onPlay` hooks are excluded from trigger logging entirely — the card play action is already logged by the action system (e.g., `"{player} plays {card}"`).
+
+### Implementation
+
+- **Dispatch**: `callPlayerCardHook` / `callPlayerCardHookOrdered` in `cardManagement.js` call `_checkCardMatch` before logging/invoking
+- **Match check**: `_checkCardMatch(card, hookName, player, ...args)` looks for `matches_{hookName}` on the card definition via `hasHook`/`callHook`
+- **Card definitions**: `AgricolaCard.js` `hasHook`/`callHook` delegate to `this.definition[hookName]`, so `matches_*` methods work automatically
+
+---
+
 ## Checklist for New Game Logging
 
 - [ ] Every player turn starts with a `turn-start` event log entry

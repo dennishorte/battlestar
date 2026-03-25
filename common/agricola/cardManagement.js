@@ -161,9 +161,18 @@ Agricola.prototype.callPlayerCardHook = function(player, hookName, ...args) {
   const cards = this.getPlayerActiveCards(player)
   for (const card of cards) {
     if (card.hasHook(hookName)) {
-      this._logCardTrigger(player, card)
+      const matchResult = this._checkCardMatch(card, hookName, player, ...args)
+      if (matchResult === false) {
+        continue
+      }
+
+      if (matchResult !== 'silent' && hookName !== 'onPlay') {
+        this._logCardTrigger(player, card)
+      }
       const result = card.callHook(hookName, this, player, ...args)
-      this.log.outdent()
+      if (matchResult !== 'silent' && hookName !== 'onPlay') {
+        this.log.outdent()
+      }
       if (result !== undefined) {
         results.push({ card, result })
       }
@@ -179,15 +188,21 @@ Agricola.prototype.callPlayerCardHook = function(player, hookName, ...args) {
 Agricola.prototype.callPlayerCardHookOrdered = function(player, hookName, ...args) {
   const cards = this.getPlayerActiveCards(player)
     .filter(c => c.hasHook(hookName))
+    .filter(c => this._checkCardMatch(c, hookName, player, ...args) !== false)
 
   if (cards.length === 0) {
     return []
   }
 
   if (cards.length === 1) {
-    this._logCardTrigger(player, cards[0])
+    const matchResult = this._checkCardMatch(cards[0], hookName, player, ...args)
+    if (matchResult !== 'silent' && hookName !== 'onPlay') {
+      this._logCardTrigger(player, cards[0])
+    }
     const result = cards[0].callHook(hookName, this, player, ...args)
-    this.log.outdent()
+    if (matchResult !== 'silent' && hookName !== 'onPlay') {
+      this.log.outdent()
+    }
     return result !== undefined ? [{ card: cards[0], result }] : []
   }
 
@@ -203,14 +218,27 @@ Agricola.prototype.callPlayerCardHookOrdered = function(player, hookName, ...arg
   const results = []
   for (const name of ordered) {
     const card = cards.find(c => c.definition.name === name)
-    this._logCardTrigger(player, card)
+    const matchResult = this._checkCardMatch(card, hookName, player, ...args)
+    if (matchResult !== 'silent' && hookName !== 'onPlay') {
+      this._logCardTrigger(player, card)
+    }
     const result = card.callHook(hookName, this, player, ...args)
-    this.log.outdent()
+    if (matchResult !== 'silent' && hookName !== 'onPlay') {
+      this.log.outdent()
+    }
     if (result !== undefined) {
       results.push({ card, result })
     }
   }
   return results
+}
+
+Agricola.prototype._checkCardMatch = function(card, hookName, player, ...args) {
+  const matchesMethod = `matches_${hookName}`
+  if (card.hasHook(matchesMethod)) {
+    return card.callHook(matchesMethod, this, player, ...args)
+  }
+  return true  // default: always trigger
 }
 
 Agricola.prototype._logCardTrigger = function(player, card) {
