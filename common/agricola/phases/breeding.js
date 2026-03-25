@@ -2,7 +2,7 @@ const { Agricola } = require('../agricola.js')
 
 
 Agricola.prototype.breedingPhase = function() {
-  this.log.add({ template: 'Breeding Phase' })
+  this.log.add({ template: 'Breeding Phase', event: 'phase-start' })
   this.log.indent()
 
   const newbornTypesMap = new Map()

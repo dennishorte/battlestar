@@ -125,6 +125,7 @@ AgricolaActionManager.prototype.executeAction = function(player, actionId) {
     args: { player, action: action.name },
     event: 'player-action',
   })
+  this.log.indent()
 
   // Track current action for cards that need to know the context (e.g. Food Chest)
   this.game.state.currentActionId = actionId
@@ -164,6 +165,7 @@ AgricolaActionManager.prototype.executeAction = function(player, actionId) {
     }
 
     this.game.state.lastAccumulated = null
+    this.log.outdent()
     return result
   }
 
@@ -288,6 +290,7 @@ AgricolaActionManager.prototype.executeAction = function(player, actionId) {
   // Call onAnyAction hooks for ALL players' cards
   this.callOnAnyActionHooks(player, actionId)
 
+  this.log.outdent()
   return true
 }
 

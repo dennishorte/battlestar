@@ -2,7 +2,7 @@ const { Agricola } = require('../agricola.js')
 
 
 Agricola.prototype.feedingPhase = function() {
-  this.log.add({ template: 'Feeding Phase' })
+  this.log.add({ template: 'Feeding Phase', event: 'phase-start' })
   this.log.indent()
 
   for (const player of this.players.all()) {

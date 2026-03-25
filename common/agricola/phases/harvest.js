@@ -67,7 +67,7 @@ Agricola.prototype.harvestPhase = function() {
 }
 
 Agricola.prototype.fieldPhase = function() {
-  this.log.add({ template: 'Field Phase: Harvesting crops' })
+  this.log.add({ template: 'Field Phase: Harvesting crops', event: 'phase-start' })
   this.log.indent()
 
   // Record last harvest round for Dutch Windmill
