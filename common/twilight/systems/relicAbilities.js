@@ -339,22 +339,7 @@ module.exports = function(Twilight) {
 
     if (sel[0] === 'Place Structure (3 resources)') {
       // Spend 3 resources
-      let cost = 3
-      for (const pId of controlledPlanets) {
-        if (cost <= 0) {
-          break
-        }
-        if (!this.state.planets[pId]?.exhausted) {
-          const planet = res.getPlanet(pId)
-          if (planet) {
-            this.state.planets[pId].exhausted = true
-            cost -= planet.resources
-          }
-        }
-      }
-      if (cost > 0) {
-        targetPlayer.spendTradeGoods(Math.min(cost, targetPlayer.tradeGoods))
-      }
+      this._payResources(targetPlayer, 3)
 
       // Choose planet for structure
       const planetSel = this.actions.choose(targetPlayer, controlledPlanets, {

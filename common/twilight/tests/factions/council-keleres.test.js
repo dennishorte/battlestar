@@ -692,10 +692,13 @@ describe('Council Keleres', () => {
         t.action(game, 'activate-system', { systemId: 'mentak-home' })
         t.choose(game, 'Done')  // skip movement
 
-        // Produce 2 infantry in mentak-home (cost 1 resource from moll-primus)
+        // Produce 2 infantry in mentak-home (cost 1 resource)
         t.action(game, 'produce-units', {
           units: [{ type: 'infantry', count: 2 }],
         })
+
+        // Pay 1 resource: exhaust new-albion
+        t.choose(game, 'new-albion (1)')
 
         // afterProduction → Agency Supply Network offers bonus production
         t.choose(game, '*27')

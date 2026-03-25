@@ -1113,12 +1113,12 @@ module.exports = function(Twilight) {
     }
   }
 
-  Twilight.prototype._payResources = function(player, cost) {
+  Twilight.prototype._payResources = function(player, cost, options) {
     if (cost <= 0) {
       return
     }
 
-    const canSpendFlexibly = this.factionAbilities.canSpendFlexibly(player)
+    const canSpendFlexibly = options?.flexibleSpend || this.factionAbilities.canSpendFlexibly(player)
     const tgResourceValue = this.factionAbilities.getTradeGoodResourceValue(player)
     const readyPlanets = player.getReadyPlanets()
 

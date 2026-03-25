@@ -617,6 +617,9 @@ describe('Emirates of Hacan', () => {
           units: [{ type: 'destroyer', count: 3 }],
         })
 
+        // Pay 2 resources (3 cost - 1 Sarween): exhaust arretze (2)
+        t.choose(game, 'arretze (2)')
+
         const dennis = game.players.byName('dennis')
         // Should have gained +1 fleet supply from Auto-Factories
         // Started with 3 fleet, then -1 tactics for activation = 2 tactics

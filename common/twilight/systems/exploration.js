@@ -245,27 +245,8 @@ module.exports = function(Twilight) {
           this._addUnit(systemId, planetId, unitType, ownerName)
         }
 
-        // Pay cost: exhaust cheapest planets (both R+I count), then trade goods
-        let cost = unitDef.cost
-        const sortedPlanets = readyPlanets
-          .map(pId => {
-            const p = res.getPlanet(pId)
-            const bonuses = this._getPlanetAttachmentBonuses(pId)
-            const value = (p ? p.resources + p.influence : 0) + bonuses.resources + bonuses.influence
-            return { id: pId, value }
-          })
-          .sort((a, b) => a.value - b.value)
-
-        for (const { id: pId, value } of sortedPlanets) {
-          if (cost <= 0) {
-            break
-          }
-          this.state.planets[pId].exhausted = true
-          cost -= value
-        }
-        if (cost > 0) {
-          player.spendTradeGoods(Math.min(cost, player.tradeGoods))
-        }
+        // Pay cost (influence counts as resources for Freelancers)
+        this._payResources(player, unitDef.cost, { flexibleSpend: true })
 
         this.log.add({
           template: '{player} uses Freelancers to produce 1 {unit}',

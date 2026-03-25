@@ -282,31 +282,8 @@ module.exports = function(Twilight) {
       }
     }
 
-    // Exhaust planets to pay cost, then spend trade goods for remainder
-    let remainingCost = totalCost
-    for (const pId of readyPlanets) {
-      if (remainingCost <= 0) {
-        break
-      }
-      const planet = res.getPlanet(pId)
-      if (planet) {
-        this.state.planets[pId].exhausted = true
-        let planetValue = planet.resources
-        // Archon's Gift: influence counts as resources too
-        if (canSpendFlexibly) {
-          planetValue += planet.influence
-        }
-        remainingCost -= planetValue
-      }
-    }
-    if (remainingCost > 0) {
-    // Mirror Computing: each trade good covers tgResourceValue cost
-      const tgNeeded = Math.ceil(remainingCost / tgResourceValue)
-      if (player.tradeGoods >= tgNeeded) {
-        player.spendTradeGoods(tgNeeded)
-        remainingCost = 0
-      }
-    }
+    // Pay for produced units
+    this._payResources(player, totalCost)
 
     const totalProduced = validatedUnits.length
     if (totalProduced > 0) {

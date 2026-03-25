@@ -347,23 +347,7 @@ module.exports = function(Twilight) {
     this._addUnit(targetSystem, 'space', req.type, player.name)
 
     // Pay cost
-    let cost = unitDef.cost
-    const controlledPlanets = player.getControlledPlanets()
-    for (const pId of controlledPlanets) {
-      if (cost <= 0) {
-        break
-      }
-      if (!this.state.planets[pId]?.exhausted) {
-        const planet = res.getPlanet(pId)
-        if (planet) {
-          this.state.planets[pId].exhausted = true
-          cost -= planet.resources
-        }
-      }
-    }
-    if (cost > 0) {
-      player.spendTradeGoods(Math.min(cost, player.tradeGoods))
-    }
+    this._payResources(player, unitDef.cost)
 
     this.log.add({
       template: '{player} uses Sling Relay to produce a {ship}',

@@ -653,6 +653,9 @@ describe('Clan of Saar', () => {
         units: [{ type: 'fighter', count: 1 }],
       })
 
+      // Pay 1 resource: exhaust lisis-ii
+      t.choose(game, 'lisis-ii (1)')
+
       // Commander prompt: redistribute produced fighters/infantry across space docks?
       t.choose(game, 'Redistribute Units')
 
