@@ -9,6 +9,15 @@
       <polygon :points="hexPoints" class="hex-shape" :class="hexClass" />
     </svg>
 
+    <!-- Wormholes (native + gamma tokens + ion storm) — positioned in upper corner -->
+    <div class="wormhole-badge" v-if="allWormholes.length > 0 || isWormholeNexus">
+      <span v-for="w in allWormholes" :key="w" class="wormhole-symbol">{{ wormholeSymbol(w) }}</span>
+      <template v-if="isWormholeNexus && !nexusActive">
+        <span class="wormhole-symbol wormhole-inactive">&alpha;</span>
+        <span class="wormhole-symbol wormhole-inactive">&beta;</span>
+      </template>
+    </div>
+
     <div class="tile-content">
       <!-- Command tokens -->
       <div class="command-tokens" v-if="commandTokens.length > 0">
@@ -60,15 +69,6 @@
             </span>
           </div>
         </div>
-      </div>
-
-      <!-- Wormholes (native + gamma tokens + ion storm) -->
-      <div class="wormhole-badge" v-if="allWormholes.length > 0 || isWormholeNexus">
-        <span v-for="w in allWormholes" :key="w" class="wormhole-symbol">{{ wormholeSymbol(w) }}</span>
-        <template v-if="isWormholeNexus && !nexusActive">
-          <span class="wormhole-symbol wormhole-inactive">&alpha;</span>
-          <span class="wormhole-symbol wormhole-inactive">&beta;</span>
-        </template>
       </div>
 
       <!-- Nexus badge -->
@@ -661,9 +661,13 @@ export default {
 }
 
 .wormhole-badge {
+  position: absolute;
+  top: 20%;
+  right: 10%;
   font-size: 1em;
   color: #aef;
   font-weight: 700;
+  pointer-events: none;
 }
 
 .wormhole-inactive {
