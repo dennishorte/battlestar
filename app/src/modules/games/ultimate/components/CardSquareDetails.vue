@@ -46,6 +46,6 @@ export default {
 }
 
 .square {
-  width: 1.25em;
+  min-width: 1.25em;
 }
 </style>
