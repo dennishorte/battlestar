@@ -17,12 +17,12 @@ See `common/docs/logging.md` → "Card Hook Trigger Logging" section.
 
 | Batch | Hook type | Card count | Status |
 |-------|-----------|------------|--------|
-| 1 | `onAction` | ~157 | TODO |
-| 2 | `afterPlayerAction` | ~6 | TODO |
-| 3 | `onHarvest`, `onHarvestGrain`, `onHarvestVegetables` | ~20 | TODO |
-| 4 | `onWorkPhaseStart` | ~10 | TODO |
-| 5 | `onFeedingPhase`, `onFeedingPhaseEnd` | ~19 | TODO |
-| 6 | `onBuild*`, `onRenovate`, `onSow` | ~53 | TODO |
-| 7 | `onBreedingPhase*` | ~7 | TODO |
-| 8 | `onBefore*` | ~27 | TODO |
-| 9 | `onGain*`, `onActionReplace`, misc | ~5 | TODO |
+| 1 | `onAction` | ~157 | DONE |
+| 2 | `afterPlayerAction` | ~6 | DONE |
+| 3 | `onHarvest`, `onHarvestGrain`, `onHarvestVegetables` | ~20 | DONE |
+| 4 | `onWorkPhaseStart` | ~10 | DONE |
+| 5 | `onFeedingPhase`, `onFeedingPhaseEnd` | ~19 | DONE |
+| 6 | `onBuild*`, `onRenovate`, `onSow` | ~53 | DONE |
+| 7 | `onBreedingPhase*` | ~7 | DONE |
+| 8 | `onBefore*` | ~27 | DONE |
+| 9 | `onGain*`, `onActionReplace`, misc | ~5 | DONE |
