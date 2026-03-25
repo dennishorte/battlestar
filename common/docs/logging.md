@@ -380,6 +380,39 @@ Arg handlers automatically apply CSS classes (`player-name`, `card-name`, etc.) 
 
 Games extend with their own handlers (e.g., `tech*`, `objective*`, `resource*`, `action*`, `loc*`).
 
+**Pass objects, not strings.** When an arg handler exists for a type, always pass the actual object (player, card, zone, etc.) — not a pre-extracted string like `card.name` or `player.name`. The handler extracts the display value *and* attaches metadata (CSS classes, IDs) that the frontend needs for rendering (chips, hover tooltips, click actions). Passing a string bypasses all of this.
+
+```javascript
+// Good — handler extracts .id, frontend can look up the card for chip rendering
+this.log.add({
+  template: '{card} triggers for {player}',
+  args: { player, card },
+})
+
+// Bad — handler gets a string, frontend can't look up the card
+this.log.add({
+  template: '{card} triggers for {player}',
+  args: { player, card: card.definition.name },
+})
+```
+
+**How it works end-to-end:**
+
+1. **Backend handler** (`BaseLogManager._enrichLogArgs`): Matches arg key against registered handlers (exact match first, then wildcard prefix like `card*`). The handler extracts a display `value` and attaches `classes`. For the base `card*` handler: `{ value: card.id, classes: ['card-id'] }`.
+2. **Frontend conversion** (`GameLog.vue:convertLogMessage`): Maps enriched args to tokenizer syntax based on arg key and classes. For example, `card` args become `card(cardId)` in the text, `player` args become `player(name)`.
+3. **Frontend tokenizer** (`useLogTokenizer`): Parses `card(...)`, `player(...)`, `loc(...)` tokens and renders them as Vue components (`CardName.vue`, `PlayerName.vue`, `LocName.vue`).
+4. **Frontend component** (`CardName.vue`): Looks up the card via `game.cards.byId(id)` to get the full card object, then calls game-specific `cardClasses()` (provided by the game's log component, e.g., `GameLogAgricola.vue`) to apply type-specific styling like `card-type-occupation`.
+
+Key files in the rendering pipeline:
+- `common/lib/game/BaseLogManager.js` — `_enrichLogArgs()`, `_registerDefaultHandlers()`, handler matching
+- Game-specific log managers (e.g., `AgricolaLogManager.js`, `TwilightLogManager.js`) — custom handlers
+- `app/src/modules/games/common/components/log/GameLog.vue` — `convertLogMessage()`, arg-to-token conversion
+- `app/src/modules/games/common/composables/useLogTokenizer.js` — tokenizer patterns
+- `app/src/modules/games/common/components/log/CardName.vue` — card chip component
+- Game-specific log components (e.g., `GameLogAgricola.vue`) — `cardClasses()`, `lineClasses()`, `lineStyles()`
+
+**Create handlers for game-specific types.** If a game has domain objects that appear in logs (resources, technologies, locations, units), register arg handlers for them in the game's LogManager subclass. This ensures the frontend has the data it needs to render them with appropriate styling, and keeps log call sites clean. See `AgricolaLogManager.js` for `resource*` and `action*` handlers, or `TwilightLogManager.js` for `tech*`, `objective*`, `faction*`, `system*`, and `unit*` handlers.
+
 ### Event Types
 
 The `event` field tells the frontend what *type* of message this is, so it can render it appropriately (e.g., different styling, icons, or layout for a phase header vs. a combat log vs. a memo). It is purely a rendering hint — it does not control game flow or signal waiting state.
