@@ -821,7 +821,7 @@ Twilight.prototype.actionPhase = function() {
         min: 0,
       })
     }
-    choices.push({ title: 'Pass', subtitles: ['End your turns for this round. Cannot be undone.'] })
+    choices.push({ title: 'Pass', subtitles: ['End your turns for this round.'] })
 
     // Cannot pass until strategy card is used
     const availableChoices = player.hasUsedStrategyCard()
