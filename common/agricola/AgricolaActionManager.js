@@ -98,7 +98,9 @@ class AgricolaActionManager extends BaseActionManager {
     player.payCardCost(cardId, chosenCost)
 
     if (card.hasHook('onPlay')) {
+      this.log.indent()
       card.callHook('onPlay', this.game, player, chosenCost)
+      this.log.outdent()
     }
 
     this.game.registerCardActionSpace(player, card)

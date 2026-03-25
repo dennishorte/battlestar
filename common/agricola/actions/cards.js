@@ -247,7 +247,9 @@ AgricolaActionManager.prototype._completeOccupationPlay = function(player, cardI
 
   // Execute onPlay effect if present
   if (card.hasHook('onPlay')) {
+    this.game.log.indent()
     card.callHook('onPlay', this.game, player)
+    this.game.log.outdent()
   }
 
   return true
