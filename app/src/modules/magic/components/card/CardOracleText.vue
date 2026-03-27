@@ -5,11 +5,12 @@
         v-for="(part, i) of scarredParts"
         :key="i"
         :class="{
-          'scar-tape': part.scarred,
+          'scar-tape': part.scarred || part.deleted,
+          'scar-tape-blank': part.deleted,
           'narrow-tape': part.scarred,
         }"
       >
-        <ParsedOracleText :text="part.value" />
+        <ParsedOracleText v-if="!part.deleted" :text="part.value" />
       </span>
     </ScarrableContent>
   </div>

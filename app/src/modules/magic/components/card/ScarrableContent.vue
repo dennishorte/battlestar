@@ -13,14 +13,15 @@
     <div v-else>
       <slot>
         <span
-          v-for="part in scarredParts"
-          :key="part.value"
+          v-for="(part, i) in scarredParts"
+          :key="i"
           :class="{
             'original-text': part.scarred && showingOriginalText,
-            'scar-tape': part.scarred,
+            'scar-tape': part.scarred || part.deleted,
+            'scar-tape-blank': part.deleted,
           }"
         >
-          {{ part.value }}
+          <template v-if="!part.deleted">{{ part.value }}</template>
         </span>
       </slot>
     </div>

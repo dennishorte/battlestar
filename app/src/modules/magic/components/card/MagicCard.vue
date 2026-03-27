@@ -485,6 +485,12 @@ $gold: #d9631b;
   margin: -1px -1px;
 }
 
+.scar-tape-blank {
+  min-width: 20px;
+  height: 1.2em;
+  vertical-align: middle;
+}
+
 .scar-tape:hover {
   transform: rotate(-0.5deg) scale(1.02);
 }

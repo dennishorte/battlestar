@@ -79,10 +79,20 @@ export function useScarrableContent(card, faceIndex, field, emit, options) {
 
     const diff = diffWords(originalText.value, editableText.value, { intlSegmenter: intlSegmenterShapedObject })
     return diff
-      .filter(x => x.added || !x.removed)
+      .filter(x => {
+        if (!x.removed) {
+          return true
+        }
+        // Show blank tape for standalone deletions (not adjacent to an added chunk)
+        const i = diff.indexOf(x)
+        const prev = diff[i - 1]
+        const next = diff[i + 1]
+        return !(prev?.added || next?.added)
+      })
       .map(x => ({
-        value: x.value,
+        value: x.removed ? '' : x.value,
         scarred: x.added,
+        deleted: x.removed === true,
       }))
   })
 
