@@ -94,6 +94,7 @@ Request flow: `auth → bodyParser → ensureVersion → coerceMongoIds → load
 
 | Document | When to read |
 |----------|-------------|
+| `docs/new-game-guide/` | Implementing a new game from scratch |
 | `docs/common.md` | Modifying game framework or understanding base classes |
 | `docs/api.md` | Working on API routes, controllers, middleware |
 | `docs/app.md` | Working on frontend components |
