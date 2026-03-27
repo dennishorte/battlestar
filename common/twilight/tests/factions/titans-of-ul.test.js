@@ -189,8 +189,11 @@ describe('Titans of Ul', () => {
       })
 
       // Tellurian prompt appears when hits are scored against Dennis.
+      // Resolve combat choices (retreat announcements, hit assignments) up to the agent prompt.
+      t.resolveCombat(game)
       // Exhaust agent to cancel 1 hit.
       t.choose(game, 'Exhaust Tellurian')
+      t.resolveCombat(game)
 
       // Re-fetch player after game state changes
       const dennis = game.players.byName('dennis')
@@ -229,8 +232,11 @@ describe('Titans of Ul', () => {
         ],
       })
 
+      // Resolve combat choices up to the agent prompt.
+      t.resolveCombat(game)
       // Decline the agent
       t.choose(game, 'Pass')
+      t.resolveCombat(game)
 
       // Agent should still be ready
       const dennis = game.players.byName('dennis')

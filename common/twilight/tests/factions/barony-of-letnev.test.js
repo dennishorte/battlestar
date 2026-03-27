@@ -887,6 +887,7 @@ describe('Barony of Letnev', () => {
           { unitType: 'fighter', from: 'letnev-home', count: 1 },
         ],
       })
+      t.resolveCombat(game)
 
       // With NES, 2 dreadnoughts can sustain and cancel 4 total hits (2 each)
       // 3 cruisers deal at most 3 hits — all absorbed by sustaining 2 dreadnoughts
@@ -944,6 +945,7 @@ describe('Barony of Letnev', () => {
           { unitType: 'dreadnought', from: 'letnev-home', count: 1 },
         ],
       })
+      t.resolveCombat(game)
 
       // 3 different ship types (cruiser, destroyer, dreadnought) = +3 to rolls
       // Letnev should win against 3 cruisers with the combat bonus

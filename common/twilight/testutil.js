@@ -350,6 +350,39 @@ TestUtil.action = function(game, actionName, opts = {}) {
   })
 }
 
+/**
+ * Auto-resolve combat choices (retreat announcements, hit assignments, action card windows)
+ * until combat ends or a non-combat choice appears.
+ * Pass retreatChoices = { playerName: 'Retreat to X' } to actually retreat.
+ */
+TestUtil.resolveCombat = function(game, retreatChoices = {}) {
+  let safety = 0
+  while (game.waiting && safety++ < 200) {
+    const selector = game.waiting.selectors[0]
+    const choices = (selector.choices || []).map(c => typeof c === 'object' ? c.title : c)
+    const actor = selector.actor
+    const title = selector.title || ''
+
+    if (title.includes('retreat') || title.includes('Retreat')) {
+      if (retreatChoices[actor]) {
+        TestUtil.choose(game, retreatChoices[actor])
+      }
+      else {
+        TestUtil.choose(game, 'Continue')
+      }
+    }
+    else if (title.includes('ship type to take a hit') || title.includes('sustain damage')
+      || title.includes('Direct Hit') || title.includes('Skilled Retreat')
+      || title.includes('Fire Team') || title.includes('Assault Cannon')) {
+      // Auto-pick first option for combat choices
+      TestUtil.choose(game, choices[0])
+    }
+    else {
+      break
+    }
+  }
+}
+
 
 /**
  * Create a standard test fixture for Twilight Imperium.

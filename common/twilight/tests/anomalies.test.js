@@ -121,6 +121,7 @@ describe('Anomalies', () => {
       t.action(game, 'move-ships', {
         movements: [{ unitType: 'cruiser', from: '34', count: 5 }],
       })
+      t.resolveCombat(game)
 
       // Combat happens in nebula — defender (micah) gets +1 bonus
       // Just verify combat resolved (one side should be eliminated)

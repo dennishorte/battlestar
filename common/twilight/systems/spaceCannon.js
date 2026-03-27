@@ -830,6 +830,9 @@ module.exports = function(Twilight) {
       this._assignGroundHits(systemId, planetId, defenderName, attackerHits, attackerName)
       this._assignGroundHits(systemId, planetId, attackerName, defenderHits, defenderName)
 
+      // Fire Team action card (after-combat-round): +1 to each ground combat roll
+      this._offerFireTeam(systemId, planetId, attackerName, defenderName, attackerRoll, defenderRoll)
+
       // End-of-round faction abilities (e.g., L1Z1X Harrow, Sardakk Valkyrie Particle Weave)
       this.factionAbilities.onGroundCombatRoundEnd(systemId, planetId, attackerName, defenderName, { attackerHits, defenderHits })
     }
@@ -867,6 +870,62 @@ module.exports = function(Twilight) {
     }
 
     delete this.state.currentCombat
+  }
+
+  // Fire Team action card: +1 to each of your ground forces' combat rolls this round
+  Twilight.prototype._offerFireTeam = function(systemId, planetId, attackerName, defenderName, attackerRoll, defenderRoll) {
+    for (const [combatantName, roll, opponentName] of [
+      [attackerName, attackerRoll, defenderName],
+      [defenderName, defenderRoll, attackerName],
+    ]) {
+      const player = this.players.byName(combatantName)
+      if (!player?.actionCards) {
+        continue
+      }
+
+      const cardIdx = player.actionCards.findIndex(c => c.id === 'fire-team')
+      if (cardIdx === -1) {
+        continue
+      }
+
+      // Count additional hits that +1 would produce
+      let additionalHits = 0
+      for (const entry of roll.rolls) {
+        for (const die of entry.diceResults) {
+          if (!die.hit && (die.roll + 1) >= entry.effectiveCombat) {
+            additionalHits++
+          }
+        }
+      }
+
+      if (additionalHits === 0) {
+        continue
+      }
+
+      const choice = this.actions.choose(player, ['Pass', `Play Fire Team (+${additionalHits} hits)`], {
+        title: 'Fire Team: Apply +1 to each ground combat roll this round?',
+        noAutoRespond: true,
+      })
+
+      if (choice[0] === 'Pass') {
+        continue
+      }
+
+      // Remove and discard card
+      const card = player.actionCards.splice(cardIdx, 1)[0]
+      if (!this.state.actionCardDiscard) {
+        this.state.actionCardDiscard = []
+      }
+      this.state.actionCardDiscard.push(card)
+
+      // Apply additional hits to the opponent
+      this._assignGroundHits(systemId, planetId, opponentName, additionalHits, combatantName)
+
+      this.log.add({
+        template: '{player} plays Fire Team: +{hits} additional hits',
+        args: { player: combatantName, hits: additionalHits },
+      })
+    }
   }
 
   Twilight.prototype._assignGroundHits = function(systemId, planetId, ownerName, hits, destroyerName, hitSource) {

@@ -142,6 +142,7 @@ describe('Status Phase', () => {
       t.action(game, 'move-ships', {
         movements: [{ unitType: 'dreadnought', from: 'sol-home', count: 1 }],
       })
+      t.resolveCombat(game)
 
       // Complete action phase
       t.choose(game, 'Strategic Action.diplomacy')  // micah: diplomacy

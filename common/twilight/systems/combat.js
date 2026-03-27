@@ -78,19 +78,27 @@ module.exports = function(Twilight) {
             u => u.owner === acTarget && u.type !== 'fighter'
           )
           if (targetShips.length > 0) {
-          // Destroy cheapest non-fighter
-            targetShips.sort((a, b) => {
-              const defA = this._getUnitStats(a.owner, a.type)
-              const defB = this._getUnitStats(b.owner, b.type)
-              return (defA?.cost || 0) - (defB?.cost || 0)
-            })
-            const victim = targetShips[0]
-            const idx = systemUnits.space.findIndex(u => u.id === victim.id)
+            // Target player chooses which non-fighter ship to lose
+            const targetPlayer = this.players.byName(acTarget)
+            const targetTypes = [...new Set(targetShips.map(u => u.type))]
+            let victimType
+            if (targetTypes.length <= 1) {
+              victimType = targetTypes[0]
+            }
+            else {
+              const selection = this.actions.choose(targetPlayer, targetTypes, {
+                title: 'Assault Cannon: Choose a non-fighter ship to destroy',
+              })
+              victimType = selection[0]
+            }
+            const idx = systemUnits.space.findIndex(
+              u => u.owner === acTarget && u.type === victimType
+            )
             if (idx !== -1) {
               const removed = systemUnits.space.splice(idx, 1)[0]
               this.log.add({
                 template: 'Assault Cannon: {target} loses a {unit}',
-                args: { target: acTarget, unit: victim.type },
+                args: { target: acTarget, unit: removed.type },
               })
               this.factionAbilities.onUnitDestroyed(systemId, removed, acOwner, null)
             }
@@ -115,10 +123,25 @@ module.exports = function(Twilight) {
         break
       }
 
+      // STEP 2: Announce Retreats (78.4) — defender first, then attacker
+      // Per 78.8, subsequent rounds "begin with the Announce Retreats step"
+      this.state.currentCombat.step = 'announce-retreat'
+      if (round >= 2) {
+        this._offerRetreatAnnouncement(systemId, attacker, defender)
+      }
+
+      // Action card window: Skilled Retreat (start-of-combat-round)
+      const skilledRetreatPlayer = this._offerSkilledRetreat(systemId, attacker, defender)
+      if (skilledRetreatPlayer) {
+        retreatedPlayer = skilledRetreatPlayer
+        break
+      }
+
       // Start-of-round faction abilities (e.g., Letnev Munitions Reserves)
       this.factionAbilities.onSpaceCombatRound(systemId, attacker, defender)
 
-      // Both sides roll simultaneously
+      // STEP 3: Roll Dice (78.5) — attacker then defender
+      this.state.currentCombat.step = 'roll-dice'
       this.state._combatOpponent = { [attacker]: defender, [defender]: attacker }
       const combatContext = { combatType: 'space', systemId }
       const attackerRoll = this._rollCombatDice(attackerShips, combatContext)
@@ -149,7 +172,7 @@ module.exports = function(Twilight) {
         args: { round, aHits: attackerHits, dHits: defenderHits },
       })
 
-      // Assign hits (auto-assign: sustain damage first, then cheapest units)
+      // STEP 4: Assign Hits (78.6)
       this.state.currentCombat.step = 'assign-hits'
       this._assignHits(systemId, defender, attackerHits, attacker)
       this._assignHits(systemId, attacker, defenderHits, defender)
@@ -157,25 +180,29 @@ module.exports = function(Twilight) {
       // Post-round faction abilities (e.g., Yin Devotion)
       this.factionAbilities.afterSpaceCombatRound(systemId, attacker, defender)
 
-      // Check if either side wants to retreat (only after first round)
+      // STEP 5: Execute Retreat (78.7) — if announced in step 2
       this.state.currentCombat.step = 'retreat'
-      if (round >= 1) {
-      // Check for pending retreat announcements
-        const defenderRetreating = this.state.retreatAnnounced?.[defender]
-        const attackerRetreating = this.state.retreatAnnounced?.[attacker]
+      const defenderRetreating = this.state.retreatAnnounced?.[defender]
+      const attackerRetreating = this.state.retreatAnnounced?.[attacker]
 
-        if (defenderRetreating) {
+      // If retreating player's opponent has no ships left, cancel retreat (78.7a)
+      if (defenderRetreating) {
+        const opponentShips = systemUnits.space.filter(u => u.owner === attacker)
+        if (opponentShips.length > 0) {
           this._executeRetreat(systemId, defender, defenderRetreating)
-          delete this.state.retreatAnnounced[defender]
           retreatedPlayer = defender
-          break
         }
-        if (attackerRetreating) {
+        delete this.state.retreatAnnounced[defender]
+        break
+      }
+      if (attackerRetreating) {
+        const opponentShips = systemUnits.space.filter(u => u.owner === defender)
+        if (opponentShips.length > 0) {
           this._executeRetreat(systemId, attacker, attackerRetreating)
-          delete this.state.retreatAnnounced[attacker]
           retreatedPlayer = attacker
-          break
         }
+        delete this.state.retreatAnnounced[attacker]
+        break
       }
     }
 
@@ -218,38 +245,223 @@ module.exports = function(Twilight) {
 
   Twilight.prototype._executeRetreat = function(fromSystemId, playerName, toSystemId) {
     const fromUnits = this.state.units[fromSystemId]
+    const player = this.players.byName(playerName)
 
     // Ensure target system unit structure exists
     if (!this.state.units[toSystemId]) {
       this.state.units[toSystemId] = { space: [], planets: {} }
     }
 
-    // Move all ships belonging to this player
-    const ships = fromUnits.space.filter(u => u.owner === playerName)
-    fromUnits.space = fromUnits.space.filter(u => u.owner !== playerName)
+    // Only ships with move value > 0 can retreat (78.7b)
+    const allPlayerUnits = fromUnits.space.filter(u => u.owner === playerName)
+    const ships = []
+    const strandedUnits = []
+    for (const unit of allPlayerUnits) {
+      const def = this._getUnitStats(playerName, unit.type)
+      if (def && def.move > 0) {
+        ships.push(unit)
+      }
+      else {
+        strandedUnits.push(unit)
+      }
+    }
 
+    // Move ships to retreat target
+    fromUnits.space = fromUnits.space.filter(u => u.owner !== playerName)
     for (const ship of ships) {
       this.state.units[toSystemId].space.push(ship)
+    }
+
+    // Calculate capacity at retreat target for fighters/ground forces (78.7b)
+    let totalCapacity = 0
+    for (const ship of ships) {
+      const def = this._getUnitStats(playerName, ship.type)
+      totalCapacity += def?.capacity || 0
+    }
+
+    // Transport as many stranded units as capacity allows
+    const transported = []
+    let remainingCapacity = totalCapacity
+    for (const unit of strandedUnits) {
+      if (remainingCapacity <= 0) {
+        break
+      }
+      transported.push(unit)
+      remainingCapacity--
+    }
+
+    for (const unit of transported) {
+      this.state.units[toSystemId].space.push(unit)
+    }
+
+    // Remove stranded fighters/ground forces that couldn't be transported (78.7b)
+    const removedCount = strandedUnits.length - transported.length
+    if (removedCount > 0) {
+      this.log.add({
+        template: '{player} removes {count} units unable to retreat',
+        args: { player: playerName, count: removedCount },
+      })
     }
 
     this.log.add({
       template: '{player} retreats to {system}',
       args: { player: playerName, system: toSystemId },
     })
+
+    // Place command token in retreat system (78.7d)
+    if (player && this.state.systems[toSystemId]) {
+      const existingTokens = this.state.systems[toSystemId].commandTokens || []
+      if (!existingTokens.includes(playerName)) {
+        if (player.commandTokens.tactics > 0) {
+          player.commandTokens.tactics--
+        }
+        else if (player.commandTokens.fleet > 0) {
+          player.commandTokens.fleet--
+        }
+        else if (player.commandTokens.strategy > 0) {
+          player.commandTokens.strategy--
+        }
+        this.state.systems[toSystemId].commandTokens.push(playerName)
+      }
+    }
   }
 
   Twilight.prototype._getRetreatTargets = function(systemId, playerName) {
     const adjacentSystems = this._getAdjacentSystems(systemId)
     return adjacentSystems.filter(adjId => {
       const adjUnits = this.state.units[adjId]
-      if (!adjUnits) {
-        return true
+
+      // Cannot retreat into a system with enemy ships (78.7c)
+      if (adjUnits?.space.some(u => u.owner !== playerName)) {
+        return false
       }
-      // Cannot retreat into a system with enemy ships
-      return !adjUnits.space.some(u => u.owner !== playerName)
+
+      // Must contain player's own units or a planet they control (78.7c)
+      const hasOwnUnits = adjUnits && (
+        adjUnits.space.some(u => u.owner === playerName)
+        || Object.values(adjUnits.planets || {}).some(pUnits =>
+          pUnits.some(u => u.owner === playerName)
+        )
+      )
+      const hasControlledPlanet = this._getSystemPlanets(adjId).some(pId =>
+        this.state.planets[pId]?.controller === playerName
+      )
+
+      return hasOwnUnits || hasControlledPlanet
     })
   }
 
+  // STEP 2: Announce Retreats (Rule 78.4)
+  // Defender announces first. If defender announces, attacker cannot (78.4b).
+  Twilight.prototype._offerRetreatAnnouncement = function(systemId, attacker, defender) {
+    if (!this.state.retreatAnnounced) {
+      this.state.retreatAnnounced = {}
+    }
+
+    // Defender announces first (78.4)
+    const defenderTargets = this._getRetreatTargets(systemId, defender)
+    if (defenderTargets.length > 0) {
+      const defenderPlayer = this.players.byName(defender)
+      if (defenderPlayer) {
+        const defOptions = ['Continue', ...defenderTargets.map(t => `Retreat to ${t}`)]
+        const defChoice = this.actions.choose(defenderPlayer, defOptions, {
+          title: 'Announce retreat? (defender)',
+        })
+        if (defChoice[0] !== 'Continue') {
+          const targetSystem = defChoice[0].replace('Retreat to ', '')
+          this.state.retreatAnnounced[defender] = targetSystem
+          this.log.add({
+            template: '{player} announces retreat',
+            args: { player: defender },
+          })
+          return // Attacker cannot announce if defender does (78.4b)
+        }
+      }
+    }
+
+    // Attacker announces (only if defender did not)
+    const attackerTargets = this._getRetreatTargets(systemId, attacker)
+    if (attackerTargets.length > 0) {
+      const attackerPlayer = this.players.byName(attacker)
+      if (attackerPlayer) {
+        const atkOptions = ['Continue', ...attackerTargets.map(t => `Retreat to ${t}`)]
+        const atkChoice = this.actions.choose(attackerPlayer, atkOptions, {
+          title: 'Announce retreat? (attacker)',
+        })
+        if (atkChoice[0] !== 'Continue') {
+          const targetSystem = atkChoice[0].replace('Retreat to ', '')
+          this.state.retreatAnnounced[attacker] = targetSystem
+          this.log.add({
+            template: '{player} announces retreat',
+            args: { player: attacker },
+          })
+        }
+      }
+    }
+  }
+
+  // Skilled Retreat action card (start-of-combat-round)
+  // Per FAQ: NOT a retreat — no command token, not cancellable by Intercept
+  Twilight.prototype._offerSkilledRetreat = function(systemId, attacker, defender) {
+    for (const combatantName of [attacker, defender]) {
+      const player = this.players.byName(combatantName)
+      if (!player?.actionCards) {
+        continue
+      }
+
+      const cardIdx = player.actionCards.findIndex(c => c.id === 'skilled-retreat')
+      if (cardIdx === -1) {
+        continue
+      }
+
+      const adjacentSystems = this._getAdjacentSystems(systemId)
+      if (adjacentSystems.length === 0) {
+        continue
+      }
+
+      const choice = this.actions.choose(player, ['Pass', 'Play Skilled Retreat'], {
+        title: 'Skilled Retreat: Move all ships to an adjacent system?',
+        noAutoRespond: true,
+      })
+
+      if (choice[0] === 'Pass') {
+        continue
+      }
+
+      // Choose destination
+      const destChoice = this.actions.choose(player, adjacentSystems, {
+        title: 'Skilled Retreat: Choose destination system',
+      })
+      const destSystem = destChoice[0]
+
+      // Remove action card from hand and discard
+      const card = player.actionCards.splice(cardIdx, 1)[0]
+      if (!this.state.actionCardDiscard) {
+        this.state.actionCardDiscard = []
+      }
+      this.state.actionCardDiscard.push(card)
+
+      // Move all ships (Skilled Retreat moves all ships, not just those with move > 0)
+      const systemUnits = this.state.units[systemId]
+      if (!this.state.units[destSystem]) {
+        this.state.units[destSystem] = { space: [], planets: {} }
+      }
+
+      const playerUnits = systemUnits.space.filter(u => u.owner === combatantName)
+      systemUnits.space = systemUnits.space.filter(u => u.owner !== combatantName)
+      for (const unit of playerUnits) {
+        this.state.units[destSystem].space.push(unit)
+      }
+
+      this.log.add({
+        template: '{player} plays Skilled Retreat, moving ships to {system}',
+        args: { player: combatantName, system: destSystem },
+      })
+
+      return combatantName
+    }
+    return null
+  }
 
   Twilight.prototype._antiFighterBarrage = function(systemId, attacker, defender) {
     const systemUnits = this.state.units[systemId]
@@ -639,7 +851,7 @@ module.exports = function(Twilight) {
       ? this.factionAbilities.getSustainDamageHitsCancel(owner)
       : 1
 
-    // First, sustain damage on undamaged ships that have the ability
+    // First, sustain damage on undamaged ships that have the ability (78.6a)
     const sustainableShips = systemUnits.space
       .filter(u => u.owner === ownerName && !u.damaged)
       .filter(u => {
@@ -650,14 +862,41 @@ module.exports = function(Twilight) {
         const def = this._getUnitStats(u.owner, u.type)
         return def && def.abilities.includes('sustain-damage')
       })
-    // Prioritize most expensive ships for sustain
-      .sort((a, b) => {
+
+    // Player chooses which ships to sustain when multiple types available
+    const sustainableTypes = [...new Set(sustainableShips.map(u => u.type))]
+    const sustainOrder = []
+    if (sustainableTypes.length <= 1) {
+      // Auto-assign: most expensive first
+      sustainableShips.sort((a, b) => {
         const defA = this._getUnitStats(a.owner, a.type)
         const defB = this._getUnitStats(b.owner, b.type)
         return (defB?.cost || 0) - (defA?.cost || 0)
       })
+      sustainOrder.push(...sustainableShips)
+    }
+    else {
+      // Player chooses sustain order when multiple types exist
+      let remaining = [...sustainableShips]
+      while (remaining.length > 0 && remainingHits > 0) {
+        const types = [...new Set(remaining.map(u => u.type))]
+        if (types.length <= 1) {
+          sustainOrder.push(...remaining)
+          break
+        }
+        const selection = this.actions.choose(owner, types, {
+          title: 'Choose ship type to sustain damage',
+        })
+        const chosenType = selection[0]
+        const chosen = remaining.find(u => u.type === chosenType)
+        if (chosen) {
+          sustainOrder.push(chosen)
+          remaining = remaining.filter(u => u.id !== chosen.id)
+        }
+      }
+    }
 
-    for (const ship of sustainableShips) {
+    for (const ship of sustainOrder) {
       if (remainingHits <= 0) {
         break
       }
@@ -672,22 +911,33 @@ module.exports = function(Twilight) {
       this.factionAbilities.onUnitsSustainedDamage(ownerName, systemId, justSustainedIds.size)
     }
 
-    // Then destroy cheapest ships first
+    // Direct Hit action card window: opponent can destroy ships that just sustained
+    if (justSustainedIds.size > 0 && destroyerName) {
+      this._offerDirectHit(systemId, ownerName, destroyerName, justSustainedIds, assignments)
+    }
+
+    // Player chooses which ships to destroy (78.6)
     while (remainingHits > 0) {
       const ships = systemUnits.space.filter(u => u.owner === ownerName)
       if (ships.length === 0) {
         break
       }
 
-      // Sort by cost ascending (destroy cheapest first)
-      ships.sort((a, b) => {
-        const defA = this._getUnitStats(a.owner, a.type)
-        const defB = this._getUnitStats(b.owner, b.type)
-        return (defA?.cost || 0) - (defB?.cost || 0)
-      })
+      const shipTypes = [...new Set(ships.map(u => u.type))]
+      let typeToDestroy
+      if (shipTypes.length <= 1) {
+        typeToDestroy = shipTypes[0]
+      }
+      else {
+        const selection = this.actions.choose(owner, shipTypes, {
+          title: 'Choose a ship type to take a hit',
+        })
+        typeToDestroy = selection[0]
+      }
 
-      const target = ships[0]
-      const idx = systemUnits.space.findIndex(u => u.id === target.id)
+      const idx = systemUnits.space.findIndex(
+        u => u.owner === ownerName && u.type === typeToDestroy
+      )
       if (idx !== -1) {
         const removed = systemUnits.space.splice(idx, 1)[0]
         // Track destruction of war suns/flagships for secret objectives
@@ -728,6 +978,74 @@ module.exports = function(Twilight) {
         systemId,
         assignments,
       })
+    }
+  }
+
+  // Direct Hit action card: destroy a ship that just used Sustain Damage
+  Twilight.prototype._offerDirectHit = function(systemId, targetOwner, attackerName, justSustainedIds, assignments) {
+    const attacker = this.players.byName(attackerName)
+    if (!attacker?.actionCards) {
+      return
+    }
+
+    const systemUnits = this.state.units[systemId]
+    let directHitCards = attacker.actionCards.filter(c => c.id === 'direct-hit')
+    if (directHitCards.length === 0) {
+      return
+    }
+
+    for (let i = 0; i < directHitCards.length; i++) {
+      // Find ships that sustained this round and are still alive
+      const eligibleTargets = systemUnits.space.filter(u =>
+        justSustainedIds.has(u.id)
+        && u.owner === targetOwner
+        && !this.factionAbilities.isDirectHitImmune(u)
+      )
+      if (eligibleTargets.length === 0) {
+        break
+      }
+
+      const options = ['Pass', ...eligibleTargets.map(u => `Direct Hit: ${u.type}`)]
+      const choice = this.actions.choose(attacker, options, {
+        title: 'Play Direct Hit to destroy a ship that sustained damage?',
+        noAutoRespond: true,
+      })
+
+      if (choice[0] === 'Pass') {
+        break
+      }
+
+      // Find and remove the card from hand
+      const cardIdx = attacker.actionCards.findIndex(c => c.id === 'direct-hit')
+      if (cardIdx === -1) {
+        break
+      }
+      const card = attacker.actionCards.splice(cardIdx, 1)[0]
+      if (!this.state.actionCardDiscard) {
+        this.state.actionCardDiscard = []
+      }
+      this.state.actionCardDiscard.push(card)
+
+      // Determine which ship to destroy
+      const chosenType = choice[0].replace('Direct Hit: ', '')
+      const victimIdx = systemUnits.space.findIndex(u =>
+        u.owner === targetOwner && u.type === chosenType && justSustainedIds.has(u.id)
+      )
+      if (victimIdx !== -1) {
+        const removed = systemUnits.space.splice(victimIdx, 1)[0]
+        justSustainedIds.delete(removed.id)
+        assignments.push({ owner: targetOwner, unitType: removed.type, unitId: removed.id, result: 'direct-hit' })
+
+        this.log.add({
+          template: '{attacker} plays Direct Hit, destroying {target}\'s {unit}',
+          args: { attacker: attackerName, target: targetOwner, unit: removed.type },
+        })
+
+        if (removed.type === 'war-sun' || removed.type === 'flagship') {
+          this._recordSecretTrigger(attackerName, 'destroy-their-greatest-ship')
+        }
+        this.factionAbilities.onUnitDestroyed(systemId, removed, attackerName, null)
+      }
     }
   }
 

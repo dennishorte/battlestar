@@ -205,6 +205,7 @@ describe('Rules Audit — LOW Priority', () => {
       t.action(game, 'move-ships', {
         movements: [{ unitType: 'war-sun', from: 'muaat-home', count: 1 }],
       })
+      t.resolveCombat(game)
 
       // War sun should survive (sustain + 3 dice at combat 3)
       const dennisShips = game.state.units['27'].space
