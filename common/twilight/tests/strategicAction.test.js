@@ -430,36 +430,122 @@ describe('Strategic Actions', () => {
   })
 
   describe('Warfare (#6)', () => {
-    test('primary: remove command token from board and redistribute', () => {
+    test('primary: performs tactical action without spending tactic token', () => {
       const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+          units: {
+            'sol-home': {
+              space: ['cruiser'],
+              'jord': ['space-dock'],
+            },
+          },
+        },
+      })
       game.run()
-
-      // Find an adjacent system to sol-home
-      const targetSystem = game._getAdjacentSystems('sol-home')[0]
-
       pickStrategyCards(game, 'warfare', 'imperial')
 
-      // Dennis has warfare(6), micah has imperial(8). Dennis goes first.
-      // First, use tactical action to place a token on target system
+      // Micah uses imperial first (higher number = dennis goes first with warfare(6))
+      // Actually warfare(6) < imperial(8), so dennis goes first.
+      t.choose(game, 'Strategic Action.warfare')
+      t.choose(game, 'Done')  // pre-redistribution
+
+      const targetSystem = game._getAdjacentSystems('sol-home')[0]
+      t.action(game, 'activate-system', { systemId: targetSystem })
+      t.action(game, 'move-ships', {
+        movements: [{ unitType: 'cruiser', from: 'sol-home', count: 1 }],
+      })
+
+      t.choose(game, 'Done')  // post-redistribution
+      t.choose(game, 'Pass')  // micah declines warfare secondary
+
+      const dennis = game.players.byName('dennis')
+      // Tactic tokens unchanged — warfare doesn't spend one
+      expect(dennis.commandTokens.tactics).toBe(3)
+      // Ship moved to target
+      const targetUnits = game.state.units[targetSystem]?.space || []
+      expect(targetUnits.some(u => u.owner === 'dennis' && u.type === 'cruiser')).toBe(true)
+    })
+
+    test('primary: does not place command token in activated system', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'warfare', 'imperial')
+
+      t.choose(game, 'Strategic Action.warfare')
+      t.choose(game, 'Done')  // pre-redistribution
+
+      const targetSystem = game._getAdjacentSystems('sol-home')[0]
+      t.action(game, 'activate-system', { systemId: targetSystem })
+      t.choose(game, 'Done')  // skip movement
+
+      t.choose(game, 'Done')  // post-redistribution
+      t.choose(game, 'Pass')  // micah declines warfare secondary
+
+      // No command token should be placed in the activated system
+      expect(game.state.systems[targetSystem].commandTokens).not.toContain('dennis')
+    })
+
+    test('primary: can activate system that already has own command token', () => {
+      const game = t.fixture()
+      game.run()
+      pickStrategyCards(game, 'warfare', 'imperial')
+
+      const targetSystem = game._getAdjacentSystems('sol-home')[0]
+
+      // First, normal tactical action to place a token
       t.choose(game, 'Tactical Action')
       t.action(game, 'activate-system', { systemId: targetSystem })
-      t.choose(game, 'Done')  // skip movement (no production since no space dock)
+      t.choose(game, 'Done')  // skip movement
 
-      // Verify token was placed
       expect(game.state.systems[targetSystem].commandTokens).toContain('dennis')
 
-      // Micah uses imperial (no Mecatol = no VP)
+      // Micah uses imperial
       t.choose(game, 'Strategic Action.imperial')
       t.choose(game, 'Pass')  // dennis declines imperial secondary
 
-      // Dennis uses warfare — should see the token to remove
+      // Dennis uses warfare primary — activates same system (already has token)
       t.choose(game, 'Strategic Action.warfare')
-      t.choose(game, '*' + targetSystem)  // remove token (* prefix keeps as string)
-      t.choose(game, 'Done')  // redistribution
+      t.choose(game, 'Done')  // pre-redistribution
+
+      t.action(game, 'activate-system', { systemId: targetSystem })
+      t.choose(game, 'Done')  // skip movement
+
+      t.choose(game, 'Done')  // post-redistribution
       t.choose(game, 'Pass')  // micah declines warfare secondary
 
-      // Token should be removed
-      expect(game.state.systems[targetSystem].commandTokens).not.toContain('dennis')
+      // Should still have exactly one token (the original one, no extra placed)
+      const tokens = game.state.systems[targetSystem].commandTokens.filter(n => n === 'dennis')
+      expect(tokens.length).toBe(1)
+    })
+
+    test('primary: redistribution offered before and after tactical action', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        dennis: {
+          commandTokens: { tactics: 3, strategy: 2, fleet: 3 },
+        },
+      })
+      game.run()
+      pickStrategyCards(game, 'warfare', 'imperial')
+
+      t.choose(game, 'Strategic Action.warfare')
+
+      // Pre-redistribution: move a token from tactics to fleet
+      t.action(game, 'redistribute-tokens', { tactics: 2, strategy: 2, fleet: 4 })
+
+      const targetSystem = game._getAdjacentSystems('sol-home')[0]
+      t.action(game, 'activate-system', { systemId: targetSystem })
+      t.choose(game, 'Done')  // skip movement
+
+      // Post-redistribution: move a token from fleet back to tactics
+      t.action(game, 'redistribute-tokens', { tactics: 3, strategy: 2, fleet: 3 })
+      t.choose(game, 'Pass')  // micah declines warfare secondary
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.commandTokens.tactics).toBe(3)
+      expect(dennis.commandTokens.fleet).toBe(3)
     })
   })
 
@@ -653,11 +739,17 @@ describe('Strategic Actions', () => {
       // Micah has leadership(1), goes first
       t.choose(game, 'Strategic Action.leadership')  // micah: leadership
       t.choose(game, 'Done')  // micah: allocate 3 tokens
-      // Dennis: leadership secondary auto-passes (2I, not enough for tokens)
+      // Dennis: leadership secondary auto-passes (not enough for tokens)
 
-      // Dennis uses warfare (primary: remove token + redistribute)
+      // Dennis uses warfare primary (redistribute → tactical action → redistribute)
       t.choose(game, 'Strategic Action.warfare')
-      t.choose(game, 'Done')  // no tokens to remove — just redistribute
+      t.choose(game, 'Done')  // pre-redistribution
+
+      const targetSystem = game._getAdjacentSystems('sol-home')[0]
+      t.action(game, 'activate-system', { systemId: targetSystem })
+      t.choose(game, 'Done')  // skip movement
+
+      t.choose(game, 'Done')  // post-redistribution
       // Micah uses warfare secondary (produce in home system)
       t.choose(game, 'Use Secondary')
 

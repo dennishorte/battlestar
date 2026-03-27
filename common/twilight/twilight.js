@@ -1458,7 +1458,7 @@ Twilight.prototype._resolveAgendaOutcome = function(agenda, outcome, playerVotes
 ////////////////////////////////////////////////////////////////////////////////
 // Action stubs
 
-Twilight.prototype._tacticalAction = function(player) {
+Twilight.prototype._tacticalAction = function(player, opts = {}) {
   this.state._combatLog = []
   this.log.indent()
 
@@ -1486,8 +1486,11 @@ Twilight.prototype._tacticalAction = function(player) {
     return
   }
 
-  player.spendTacticToken()
-  this.state.systems[systemId].commandTokens.push(player.name)
+  // Warfare primary: no command token is spent or placed
+  if (!opts.warfarePrimary) {
+    player.spendTacticToken()
+    this.state.systems[systemId].commandTokens.push(player.name)
+  }
 
   // Track tactical action context for action phase secret objective detection
   this.state.currentTacticalAction = {
@@ -1503,7 +1506,9 @@ Twilight.prototype._tacticalAction = function(player) {
   }
 
   this.log.add({
-    template: '{player} activates system {system}',
+    template: opts.warfarePrimary
+      ? '{player} activates system {system} (Warfare — no command token)'
+      : '{player} activates system {system}',
     args: { player, system: systemId },
     event: 'activate-system',
   })
@@ -1542,7 +1547,9 @@ Twilight.prototype._tacticalAction = function(player) {
   }
 
   // Z'eu agent (Naalu): may return the command token to the player's reinforcements
-  this.factionAbilities.onCommandTokenPlaced(player.name, systemId)
+  if (!opts.warfarePrimary) {
+    this.factionAbilities.onCommandTokenPlaced(player.name, systemId)
+  }
 
   // Magen Defense Grid: if activated system has another player's structures,
   // that player with the tech gets to place 1 infantry per structure

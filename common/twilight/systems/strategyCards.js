@@ -619,33 +619,13 @@ module.exports = function(Twilight) {
   // Strategy Card — Warfare (#6)
 
   Twilight.prototype._warfarePrimary = function(player) {
-  // Remove 1 command token from the game board
-    const systemsWithTokens = []
-    for (const [systemId, system] of Object.entries(this.state.systems)) {
-      if (system.commandTokens.includes(player.name)) {
-        systemsWithTokens.push(systemId)
-      }
-    }
+    // Redistribute command tokens before the tactical action
+    this._redistributeTokens(player)
 
-    if (systemsWithTokens.length > 0) {
-      const selection = this.actions.choose(player, systemsWithTokens, {
-        title: 'Remove Command Token (Warfare)',
-        noAutoRespond: true,
-      })
-      const chosenSystem = selection[0]
-      const tokens = this.state.systems[chosenSystem].commandTokens
-      const idx = tokens.indexOf(player.name)
-      if (idx !== -1) {
-        tokens.splice(idx, 1)
-      }
+    // Perform a tactical action without spending or placing a command token
+    this._tacticalAction(player, { warfarePrimary: true })
 
-      this.log.add({
-        template: '{player} removes a command token from {system}',
-        args: { player, system: chosenSystem },
-      })
-    }
-
-    // Redistribute command tokens (same as status phase redistribution)
+    // Redistribute command tokens after the tactical action
     this._redistributeTokens(player)
   }
 
