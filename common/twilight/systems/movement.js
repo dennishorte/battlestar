@@ -81,6 +81,24 @@ module.exports = function(Twilight) {
       }
     }
 
+    // Fleet limit: non-fighter ships already at target + non-fighter ships being moved
+    const fleetLimit = this._getFleetLimit(player)
+    let nonFighterShipsAtTarget = 0
+    for (const unit of targetUnits) {
+      if (unit.owner === playerName && unit.type !== 'fighter') {
+        const unitDef = this._getUnitStats(unit.owner, unit.type)
+        if (unitDef?.category === 'ship') {
+          nonFighterShipsAtTarget++
+        }
+      }
+    }
+    let nonFighterShipsMoving = 0
+    for (const m of shipMovements) {
+      if (m.unitType !== 'fighter') {
+        nonFighterShipsMoving += m.count
+      }
+    }
+
     return {
       shipMovements,
       transportedUnits,
@@ -88,6 +106,8 @@ module.exports = function(Twilight) {
       usedCapacity,
       availableCapacity: Math.max(0, totalCapacity - usedCapacity),
       transportCounts,
+      fleetLimit,
+      fleetUsed: nonFighterShipsAtTarget + nonFighterShipsMoving,
     }
   }
 

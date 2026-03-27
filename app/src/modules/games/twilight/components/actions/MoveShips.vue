@@ -18,7 +18,7 @@
     </div>
 
     <div v-else class="no-movements">
-      Select origin systems from the map, or click Done if finished.
+      Click systems on the map to select ships to move. You can move ships from multiple systems. Click Done when finished.
     </div>
 
     <div v-if="preview.totalCapacity > 0" class="capacity-info">
@@ -26,6 +26,10 @@
       <div class="capacity-bar-track">
         <div class="capacity-bar-fill" :class="capacityColorClass" :style="{ width: capacityPercent + '%' }"/>
       </div>
+    </div>
+
+    <div v-if="preview.fleetLimit < 999 && totalSelected > 0" class="fleet-info" :class="{ 'fleet-over': fleetOver }">
+      Fleet: {{ preview.fleetUsed }}/{{ preview.fleetLimit }} non-fighter ships
     </div>
 
     <div v-if="totalSelected > 0 && !hasMovableShip" class="no-movable-warning">
@@ -88,7 +92,7 @@ export default {
 
     preview() {
       if (!this.targetSystemId) {
-        return { shipMovements: [], transportedUnits: [], totalCapacity: 0, usedCapacity: 0, availableCapacity: 0, transportCounts: {} }
+        return { shipMovements: [], transportedUnits: [], totalCapacity: 0, usedCapacity: 0, availableCapacity: 0, transportCounts: {}, fleetLimit: 0, fleetUsed: 0 }
       }
       return this.game.getMovementPreview(this.actorName, this.targetSystemId, this.currentMovements)
     },
@@ -122,6 +126,10 @@ export default {
         return 'cap-orange'
       }
       return 'cap-green'
+    },
+
+    fleetOver() {
+      return this.preview.fleetUsed > this.preview.fleetLimit
     },
   },
 
@@ -370,6 +378,17 @@ export default {
 .cap-green { background: #198754; }
 .cap-orange { background: #e67700; }
 .cap-red { background: #dc3545; }
+
+.fleet-info {
+  font-size: .75em;
+  color: #666;
+  font-weight: 600;
+  margin-top: .25em;
+}
+
+.fleet-over {
+  color: #dc3545;
+}
 
 .no-movable-warning {
   font-size: .75em;
