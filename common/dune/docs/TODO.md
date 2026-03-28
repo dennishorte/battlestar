@@ -1,9 +1,10 @@
 # Dune Imperium: Uprising — Implementation TODO
 
-## Board Space Data (BLOCKED — needs physical board reference)
-- [ ] Populate `res/boardSpaces.js` with all board spaces: id, name, icon, faction, cost, influence requirements, combat/maker/protected flags, control bonuses, effects
-- [ ] Populate `res/observationPosts.js` with spy post connections to board spaces
-- Both files are currently empty stubs
+## Board Space Data
+- [x] Populate `res/boardSpaces.js` with all 22 board spaces: id, name, icon, faction, cost, influence requirements, combat/maker/protected flags, control bonuses, effects
+- [x] Populate `res/observationPosts.js` with 13 spy post connections (A-M) to board spaces
+- [ ] Wire up choice effects (Spice Refinery, Sietch Tabr, Hagga Basin, Deep Desert, Gather Support)
+- [ ] Wire up complex effects: high-council, sword-master, imperial-privilege, steal-intrigue, influence-choice, maker-hook, break-shield-wall, recall-agent, trash-card, contract, sandworm
 
 ## Card Agent Effects
 - [ ] Wire up card `agentAbility` execution during agent turns (currently card is played but only board space resolves)
