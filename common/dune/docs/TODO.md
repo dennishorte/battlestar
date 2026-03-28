@@ -14,7 +14,8 @@
 - [ ] Handle conditional abilities (If/With patterns, Signet Ring, faction synergies)
 
 ## Card Reveal Effects
-- [ ] Wire up `revealAbility` text beyond just `revealPersuasion`/`revealSwords` (e.g., "Fremen Bond: +1 Water", faction affiliation bonuses)
+- [x] Wire up `revealAbility` via `resolveCardRevealAbility` — parses simple effects and faction bonds
+- [ ] Handle complex reveal abilities (conditional bonuses, alliance checks)
 
 ## Combat Reward Distribution
 - [x] Parse and execute conflict card rewards (first/second/third place)
