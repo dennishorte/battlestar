@@ -95,6 +95,8 @@ Dune.prototype._reset = function() {
   // Combat state
   this.state.conflict = {
     cardId: null,
+    currentCard: null,     // Card definition for reward parsing
+    wonCards: {},           // { playerName: [cardDef, ...] } for battle icon tracking
     deployedTroops: {},    // { playerName: count }
     deployedSandworms: {}, // { playerName: count }
   }
