@@ -3,8 +3,9 @@
 ## Board Space Data
 - [x] Populate `res/boardSpaces.js` with all 22 board spaces: id, name, icon, faction, cost, influence requirements, combat/maker/protected flags, control bonuses, effects
 - [x] Populate `res/observationPosts.js` with 13 spy post connections (A-M) to board spaces
-- [ ] Wire up choice effects (Spice Refinery, Sietch Tabr, Hagga Basin, Deep Desert, Gather Support)
-- [ ] Wire up complex effects: high-council, sword-master, imperial-privilege, steal-intrigue, influence-choice, maker-hook, break-shield-wall, recall-agent, trash-card, contract, sandworm
+- [x] Wire up choice effects (Spice Refinery, Sietch Tabr, Hagga Basin, Deep Desert, Gather Support)
+- [x] Wire up simple effects: influence-choice, high-council, sword-master, trash-card, steal-intrigue, vp, influence, control
+- [ ] Wire up remaining complex effects: intrigue-trash-draw, recall-agent, maker-hook, break-shield-wall, contract, sandworm
 
 ## Card Agent Effects
 - [ ] Wire up card `agentAbility` execution during agent turns (currently card is played but only board space resolves)
@@ -14,10 +15,10 @@
 - [ ] Wire up `revealAbility` text beyond just `revealPersuasion`/`revealSwords` (e.g., "Fremen Bond: +1 Water", faction affiliation bonuses)
 
 ## Combat Reward Distribution
-- [ ] Parse and execute conflict card rewards (first/second/third place) — currently logs placement but gives nothing
-- [ ] Winner takes conflict card into supply
-- [ ] Location control: winner gains control marker for location-based conflicts
-- [ ] Battle icon matching: check for pairs when winner takes conflict card (+1 VP)
+- [x] Parse and execute conflict card rewards (first/second/third place)
+- [x] Winner takes conflict card into supply
+- [x] Location control: winner gains control marker for location-based conflicts
+- [x] Battle icon matching: check for pairs when winner takes conflict card (+1 VP)
 - [ ] Sandworm reward doubling (double most rewards, not control or battle icons)
 
 ## Combat Intrigue Effects
@@ -46,8 +47,8 @@
 ## Setup Completeness
 - [ ] Deal objective cards to players, determine first player from objective
 - [ ] Defensive bonus: deploy 1 troop from supply when your controlled location's conflict is revealed
-- [ ] Swordmaster acquisition effect (gain 3rd agent, not just pay cost)
-- [ ] High Council seat effect (take seat, not just pay cost)
+- [x] Swordmaster acquisition effect (gain 3rd agent, dynamic cost 8/6)
+- [x] High Council seat effect (take seat; 2nd visit gives 2 spice + 1 intrigue + 3 troops)
 - [ ] The Spice Must Flow acquisition bonus (+1 VP)
 
 ## Sandworms
@@ -63,6 +64,6 @@
 - [ ] Contract rewards
 
 ## Data Gaps
-- [ ] Conflict card reward text needs to be parsed into executable effects (or keep as text and build a reward parser)
+- [ ] Conflict card reward text needs to be parsed into executable effects (or keep as text and build a reward parser) — DONE: `parseRewardText()` in combat.js
 - [ ] Sardaukar Commander recruitment mechanic
-- [ ] Spice Refinery control bonus should be solari, not spice (verify against rules)
+- [ ] Spice Refinery control bonus should be solari, not spice (verify against rules) — VERIFIED: solari is correct

@@ -113,8 +113,9 @@ function agentTurn(game, player) {
   })
 
   // Pay board space cost
-  if (space.cost) {
-    for (const [resource, amount] of Object.entries(space.cost)) {
+  const cost = getSpaceCost(game, space)
+  if (cost) {
+    for (const [resource, amount] of Object.entries(cost)) {
       player.decrementCounter(resource, amount, { silent: true })
       game.log.add({
         template: '{player} pays {amount} {resource}',
@@ -286,12 +287,18 @@ function canSendAgentTo(game, player, card, space) {
   }
 
   // Player must be able to pay the cost
-  if (space.cost) {
-    for (const [resource, amount] of Object.entries(space.cost)) {
+  const cost = getSpaceCost(game, space)
+  if (cost) {
+    for (const [resource, amount] of Object.entries(cost)) {
       if (player.getCounter(resource) < amount) {
         return false
       }
     }
+  }
+
+  // Swordmaster: can't visit if you already have one
+  if (space.id === 'sword-master' && player.getCounter('hasSwordmaster') > 0) {
+    return false
   }
 
   // Influence requirements
@@ -339,7 +346,6 @@ function deployUnits(game, player) {
 
 /**
  * Resolve board space effects.
- * For now, handles the main resource-giving effects.
  */
 function resolveBoardSpaceEffects(game, player, space) {
   if (!space.effects) {
@@ -347,55 +353,223 @@ function resolveBoardSpaceEffects(game, player, space) {
   }
 
   for (const effect of space.effects) {
-    switch (effect.type) {
-      case 'gain':
-        player.incrementCounter(effect.resource, effect.amount, { silent: true })
+    resolveEffect(game, player, effect, space)
+  }
+}
+
+/**
+ * Resolve a single effect. Used by board spaces, choice sub-effects, and combat rewards.
+ */
+function resolveEffect(game, player, effect, space) {
+  switch (effect.type) {
+    case 'gain':
+      player.incrementCounter(effect.resource, effect.amount, { silent: true })
+      game.log.add({
+        template: '{player} gains {amount} {resource}',
+        args: { player, amount: effect.amount, resource: effect.resource },
+      })
+      break
+
+    case 'troop': {
+      const recruit = Math.min(effect.amount, player.troopsInSupply)
+      if (recruit > 0) {
+        player.decrementCounter('troopsInSupply', recruit, { silent: true })
+        player.incrementCounter('troopsInGarrison', recruit, { silent: true })
         game.log.add({
-          template: '{player} gains {amount} {resource}',
-          args: { player, amount: effect.amount, resource: effect.resource },
+          template: '{player} recruits {amount} troop(s)',
+          args: { player, amount: recruit },
         })
-        break
-      case 'troop':
-        if (player.troopsInSupply >= effect.amount) {
-          player.decrementCounter('troopsInSupply', effect.amount, { silent: true })
-          player.incrementCounter('troopsInGarrison', effect.amount, { silent: true })
-          game.log.add({
-            template: '{player} recruits {amount} troop(s)',
-            args: { player, amount: effect.amount },
-          })
-        }
-        break
-      case 'intrigue':
-        deckEngine.drawIntrigueCard(game, player, effect.amount)
-        break
-      case 'draw':
-        deckEngine.drawCards(game, player, effect.amount)
-        break
-      case 'spy':
-        if (player.spiesInSupply > 0) {
-          player.decrementCounter('spiesInSupply', 1, { silent: true })
-          game.log.add({
-            template: '{player} places a Spy',
-            args: { player },
-          })
-        }
-        break
-      case 'spice-harvest': {
-        const base = effect.amount || 0
-        const bonus = game.state.bonusSpice[space.id] || 0
-        const total = base + bonus
-        if (total > 0) {
-          player.incrementCounter('spice', total, { silent: true })
-          game.log.add({
-            template: '{player} harvests {total} Spice ({base} base + {bonus} bonus)',
-            args: { player, total, base, bonus },
-          })
+      }
+      break
+    }
+
+    case 'intrigue':
+      deckEngine.drawIntrigueCard(game, player, effect.amount)
+      break
+
+    case 'draw':
+      deckEngine.drawCards(game, player, effect.amount)
+      break
+
+    case 'spy':
+      if (player.spiesInSupply > 0) {
+        player.decrementCounter('spiesInSupply', 1, { silent: true })
+        game.log.add({
+          template: '{player} places a Spy',
+          args: { player },
+        })
+      }
+      break
+
+    case 'spice-harvest': {
+      const base = effect.amount || 0
+      const bonus = (space && game.state.bonusSpice[space.id]) || 0
+      const total = base + bonus
+      if (total > 0) {
+        player.incrementCounter('spice', total, { silent: true })
+        game.log.add({
+          template: '{player} harvests {total} Spice ({base} base + {bonus} bonus)',
+          args: { player, total, base, bonus },
+        })
+        if (space) {
           game.state.bonusSpice[space.id] = 0
         }
+      }
+      break
+    }
+
+    case 'choice': {
+      // Filter choices the player can afford / qualifies for
+      const available = effect.choices.filter(c => {
+        if (c.cost) {
+          for (const [resource, amount] of Object.entries(c.cost)) {
+            if (player.getCounter(resource) < amount) {
+              return false
+            }
+          }
+        }
+        if (c.requires === 'maker-hook' && !game.state.makerHooks?.[player.name]) {
+          return false
+        }
+        return true
+      })
+
+      if (available.length === 0) {
         break
       }
+
+      const labels = available.map(c => c.label)
+      const [selected] = game.actions.choose(player, labels, {
+        title: 'Choose an option',
+      })
+      const chosen = available.find(c => c.label === selected)
+
+      // Pay choice cost
+      if (chosen.cost) {
+        for (const [resource, amount] of Object.entries(chosen.cost)) {
+          player.decrementCounter(resource, amount, { silent: true })
+          game.log.add({
+            template: '{player} pays {amount} {resource}',
+            args: { player, amount, resource },
+          })
+        }
+      }
+
+      // Resolve sub-effects
+      for (const subEffect of chosen.effects) {
+        resolveEffect(game, player, subEffect, space)
+      }
+      break
     }
+
+    case 'influence-choice': {
+      const factionChoices = constants.FACTIONS.map(f => f)
+      const [faction] = game.actions.choose(player, factionChoices, {
+        title: 'Choose a faction to gain Influence',
+      })
+      factions.gainInfluence(game, player, faction, effect.amount)
+      break
+    }
+
+    case 'high-council':
+      if (!player.hasHighCouncil) {
+        player.setCounter('hasHighCouncil', 1, { silent: true })
+        game.log.add({
+          template: '{player} gains a seat on the High Council',
+          args: { player },
+        })
+      }
+      else {
+        // 2nd time+: gain 2 spice, draw 1 intrigue, gain 3 troops
+        resolveEffect(game, player, { type: 'gain', resource: 'spice', amount: 2 }, space)
+        resolveEffect(game, player, { type: 'intrigue', amount: 1 }, space)
+        resolveEffect(game, player, { type: 'troop', amount: 3 }, space)
+      }
+      break
+
+    case 'sword-master':
+      if (!player.getCounter('hasSwordmaster')) {
+        player.setCounter('hasSwordmaster', 1, { silent: true })
+        game.log.add({
+          template: '{player} gains a Swordmaster (3rd Agent)',
+          args: { player },
+        })
+      }
+      break
+
+    case 'trash-card': {
+      // Let player choose a card from hand to trash
+      const handZone = game.zones.byId(`${player.name}.hand`)
+      const handCards = handZone.cardlist()
+      if (handCards.length > 0) {
+        const trashChoices = ['Pass', ...handCards.map(c => c.name)]
+        const [trashChoice] = game.actions.choose(player, trashChoices, {
+          title: 'Choose a card to trash',
+        })
+        if (trashChoice !== 'Pass') {
+          const card = handCards.find(c => c.name === trashChoice)
+          if (card) {
+            deckEngine.trashCard(game, card)
+          }
+        }
+      }
+      break
+    }
+
+    case 'steal-intrigue': {
+      // Steal a random intrigue from each opponent with 4+ intrigue cards
+      for (const opponent of game.players.all()) {
+        if (opponent.name === player.name) {
+          continue
+        }
+        const opponentIntrigue = game.zones.byId(`${opponent.name}.intrigue`)
+        if (opponentIntrigue.cardlist().length >= 4) {
+          const cards = opponentIntrigue.cardlist()
+          const randomIndex = Math.floor(game.random() * cards.length)
+          const stolen = cards[randomIndex]
+          const playerIntrigue = game.zones.byId(`${player.name}.intrigue`)
+          stolen.moveTo(playerIntrigue)
+          game.log.add({
+            template: '{player} steals an Intrigue card from {opponent}',
+            args: { player, opponent },
+          })
+        }
+      }
+      break
+    }
+
+    case 'vp':
+      player.incrementCounter('vp', effect.amount, { silent: true })
+      game.log.add({
+        template: '{player} gains {amount} Victory Point(s)',
+        args: { player, amount: effect.amount },
+      })
+      break
+
+    case 'influence':
+      factions.gainInfluence(game, player, effect.faction, effect.amount)
+      break
+
+    case 'control':
+      game.state.controlMarkers[effect.location] = player.name
+      game.log.add({
+        template: '{player} gains control of {location}',
+        args: { player, location: effect.location },
+      })
+      break
   }
+}
+
+/**
+ * Get the effective cost for a board space, handling dynamic costs.
+ */
+function getSpaceCost(game, space) {
+  if (space.dynamicCost === 'sword-master') {
+    // 8 solari for the first player, 6 solari after
+    const anyoneHasSwordmaster = game.players.all().some(p => p.getCounter('hasSwordmaster') > 0)
+    return { solari: anyoneHasSwordmaster ? 6 : 8 }
+  }
+  return space.cost || null
 }
 
 /**
@@ -410,4 +584,5 @@ module.exports = {
   agentTurn,
   revealTurn,
   canSendAgentTo,
+  resolveEffect,
 }

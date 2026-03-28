@@ -157,7 +157,7 @@ const boardSpaces = [
     id: 'sword-master',
     name: 'Sword Master',
     icon: 'green',
-    cost: { solari: 8 },
+    dynamicCost: 'sword-master',
     effects: [
       // Gain your third agent. Cost drops to 6 after first player buys.
       { type: 'sword-master' },

@@ -1,4 +1,4 @@
-// const constants = require('../res/constants.js')  // TODO: needed for reward distribution
+const { resolveEffect } = require('./playerTurns.js')
 
 /**
  * Phase 3: Combat
@@ -134,6 +134,8 @@ function resolveCombat(game) {
     })
   }
 
+  const conflictCard = game.state.conflict.currentCard
+  const rewards = conflictCard ? conflictCard.rewards : null
   const numPlayers = game.settings.numPlayers
 
   // Distribute rewards based on placements
@@ -147,8 +149,12 @@ function resolveCombat(game) {
         template: '{player} wins the Conflict (1st place)',
         args: { player: winner },
       })
-      // TODO: Award 1st place reward from conflict card
-      // TODO: Winner takes conflict card, checks battle icons
+      awardReward(game, winner, rewards?.first, '1st')
+
+      // Winner takes conflict card (for battle icon tracking)
+      if (conflictCard) {
+        moveConflictCardToWinner(game, winner, conflictCard)
+      }
 
       // Second place
       if (placements.length > 1) {
@@ -158,7 +164,7 @@ function resolveCombat(game) {
             template: '{player} gets 2nd place reward',
             args: { player: secondGroup.players[0] },
           })
-          // TODO: Award 2nd place reward
+          awardReward(game, secondGroup.players[0], rewards?.second, '2nd')
 
           // Third place (4-player only)
           if (numPlayers >= 4 && placements.length > 2) {
@@ -168,7 +174,7 @@ function resolveCombat(game) {
                 template: '{player} gets 3rd place reward',
                 args: { player: thirdGroup.players[0] },
               })
-              // TODO: Award 3rd place reward
+              awardReward(game, thirdGroup.players[0], rewards?.third, '3rd')
             }
             // Tie for third: nothing
           }
@@ -180,7 +186,7 @@ function resolveCombat(game) {
               template: '{player} ties for 2nd place — gets 3rd place reward',
               args: { player },
             })
-            // TODO: Award 3rd place reward
+            awardReward(game, player, rewards?.third, '3rd')
           }
         }
       }
@@ -192,7 +198,7 @@ function resolveCombat(game) {
           template: '{player} ties for 1st place — gets 2nd place reward',
           args: { player },
         })
-        // TODO: Award 2nd place reward
+        awardReward(game, player, rewards?.second, '2nd')
       }
 
       // In 4+ player, if exactly 2 tied for first, remaining compete for 3rd
@@ -203,7 +209,7 @@ function resolveCombat(game) {
             template: '{player} gets 3rd place reward',
             args: { player: thirdGroup.players[0] },
           })
-          // TODO: Award 3rd place reward
+          awardReward(game, thirdGroup.players[0], rewards?.third, '3rd')
         }
       }
     }
@@ -212,6 +218,189 @@ function resolveCombat(game) {
   game.log.outdent()
 
   afterCombat(game)
+}
+
+/**
+ * Parse a reward text string into an array of effect objects.
+ * Handles patterns like:
+ *   "+1 Victory point" -> { type: 'vp', amount: 1 }
+ *   "+2 Spice"         -> { type: 'gain', resource: 'spice', amount: 2 }
+ *   "+1 Influence"     -> { type: 'influence-choice', amount: 1 }
+ *   "Arrakeen Control" -> { type: 'control', location: 'arrakeen' }
+ *   "Trash a card"     -> { type: 'trash-card' }
+ *   "+1 Intrigue card" -> { type: 'intrigue', amount: 1 }
+ *   Compound: "X and Y and Z"
+ *   Choice: "X OR Y"
+ */
+function parseRewardText(text) {
+  if (!text) {
+    return []
+  }
+
+  // Handle OR choices
+  if (text.includes(' OR ')) {
+    const parts = text.split(' OR ')
+    return [{
+      type: 'choice',
+      choices: parts.map(p => ({
+        label: p.trim(),
+        effects: parseRewardText(p.trim()),
+      })),
+    }]
+  }
+
+  // Split compound rewards on " and " (but not within sub-phrases)
+  const parts = text.split(' and ')
+  const effects = []
+
+  for (const part of parts) {
+    const trimmed = part.trim()
+    const effect = parseSingleReward(trimmed)
+    if (effect) {
+      effects.push(effect)
+    }
+  }
+
+  return effects
+}
+
+/**
+ * Parse a single reward phrase into an effect object.
+ */
+function parseSingleReward(text) {
+  // "+N Victory point(s)"
+  const vpMatch = text.match(/^\+(\d+)\s+Victory\s+point/i)
+  if (vpMatch) {
+    return { type: 'vp', amount: parseInt(vpMatch[1]) }
+  }
+
+  // "+N Influence" (choice of faction)
+  const influenceMatch = text.match(/^\+(\d+)\s+Influence/i)
+  if (influenceMatch) {
+    return { type: 'influence-choice', amount: parseInt(influenceMatch[1]) }
+  }
+
+  // "Choose two of the 4 Factions. Gain +1 Influence in each."
+  if (text.includes('Choose two') && text.includes('Influence')) {
+    return { type: 'influence-choice-two' }
+  }
+
+  // "+N Intrigue card(s)" / "+N Intrigue"
+  const intrigueMatch = text.match(/^\+(\d+)\s+Intrigue/i)
+  if (intrigueMatch) {
+    return { type: 'intrigue', amount: parseInt(intrigueMatch[1]) }
+  }
+
+  // "+N Spice"
+  const spiceMatch = text.match(/^\+(\d+)\s+Spice/i)
+  if (spiceMatch) {
+    return { type: 'gain', resource: 'spice', amount: parseInt(spiceMatch[1]) }
+  }
+
+  // "+N Solari"
+  const solariMatch = text.match(/^\+(\d+)\s+Solari/i)
+  if (solariMatch) {
+    return { type: 'gain', resource: 'solari', amount: parseInt(solariMatch[1]) }
+  }
+
+  // "+N Water"
+  const waterMatch = text.match(/^\+(\d+)\s+Water/i)
+  if (waterMatch) {
+    return { type: 'gain', resource: 'water', amount: parseInt(waterMatch[1]) }
+  }
+
+  // "Location Control"
+  const controlMatch = text.match(/(Arrakeen|Carthag|Imperial Basin|Spice Refinery)\s+Control/i)
+  if (controlMatch) {
+    const locationMap = {
+      'arrakeen': 'arrakeen',
+      'carthag': 'spice-refinery',
+      'imperial basin': 'imperial-basin',
+      'spice refinery': 'spice-refinery',
+    }
+    return { type: 'control', location: locationMap[controlMatch[1].toLowerCase()] }
+  }
+
+  // "Trash a card"
+  if (/^Trash a card/i.test(text)) {
+    return { type: 'trash-card' }
+  }
+
+  // "Mentat" — TODO: implement mentat recruitment
+  if (/^Mentat/i.test(text)) {
+    return null
+  }
+
+  // "+1 Spy with Deep Cover" — TODO: implement spy deep cover
+  if (/Spy/i.test(text)) {
+    return null
+  }
+
+  return null
+}
+
+/**
+ * Award parsed rewards to a player.
+ */
+function awardReward(game, player, rewardText) {
+  if (!rewardText) {
+    return
+  }
+
+  const effects = parseRewardText(rewardText)
+  game.log.indent()
+
+  for (const effect of effects) {
+    if (effect.type === 'influence-choice-two') {
+      // Special: choose 2 factions for +1 influence each
+      const constants = require('../res/constants.js')
+      const factions = require('../systems/factions.js')
+      for (let i = 0; i < 2; i++) {
+        const remaining = constants.FACTIONS
+        const [faction] = game.actions.choose(player, remaining, {
+          title: `Choose faction for Influence (${i + 1} of 2)`,
+        })
+        factions.gainInfluence(game, player, faction)
+      }
+    }
+    else {
+      resolveEffect(game, player, effect, null)
+    }
+  }
+
+  game.log.outdent()
+}
+
+/**
+ * Move conflict card to winner's collection and check battle icons.
+ */
+function moveConflictCardToWinner(game, winner, conflictCard) {
+  // Track won conflict cards per player for battle icon scoring
+  if (!game.state.conflict.wonCards) {
+    game.state.conflict.wonCards = {}
+  }
+  if (!game.state.conflict.wonCards[winner.name]) {
+    game.state.conflict.wonCards[winner.name] = []
+  }
+  game.state.conflict.wonCards[winner.name].push(conflictCard)
+
+  // Check battle icon pair bonus (+1 VP)
+  if (conflictCard.battleIcon) {
+    const wonCards = game.state.conflict.wonCards[winner.name]
+    const matchingIcons = wonCards.filter(c => c.battleIcon && (
+      c.battleIcon === conflictCard.battleIcon
+      || c.battleIcon === 'wild'
+      || conflictCard.battleIcon === 'wild'
+    ))
+    // A pair means 2 matching icons (including the one just won)
+    if (matchingIcons.length >= 2 && matchingIcons.length % 2 === 0) {
+      winner.incrementCounter('vp', 1, { silent: true })
+      game.log.add({
+        template: '{player} matches battle icons: +1 Victory Point',
+        args: { player: winner },
+      })
+    }
+  }
 }
 
 /**
@@ -231,4 +420,4 @@ function afterCombat(game) {
   }
 }
 
-module.exports = { combatPhase }
+module.exports = { combatPhase, parseRewardText }

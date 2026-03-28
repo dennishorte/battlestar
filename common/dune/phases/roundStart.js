@@ -15,10 +15,13 @@ function roundStartPhase(game) {
   const conflictActive = game.zones.byId('common.conflictActive')
   const conflictCards = conflictDeck.cardlist()
   if (conflictCards.length > 0) {
-    conflictCards[0].moveTo(conflictActive)
-    game.state.conflict.cardId = conflictCards[0].id
+    const card = conflictCards[0]
+    card.moveTo(conflictActive)
+    game.state.conflict.cardId = card.id
+    game.state.conflict.currentCard = card.definition || card
     game.log.add({
-      template: 'Conflict card revealed',
+      template: 'Conflict card revealed: {card}',
+      args: { card: card.name },
       event: 'step',
     })
   }
