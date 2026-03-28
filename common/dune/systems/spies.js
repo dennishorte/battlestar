@@ -107,9 +107,48 @@ function hasSpyAt(game, player, spaceId) {
   return getSpyConnectedSpaces(game, player).has(spaceId)
 }
 
+/**
+ * Recall a spy from a post connected to a specific board space.
+ * If multiple posts connect to the space, the player chooses which spy to recall.
+ */
+function recallSpyAt(game, player, spaceId) {
+  const connectedPosts = observationPosts.filter(post => {
+    const occupants = game.state.spyPosts[post.id] || []
+    return occupants.includes(player.name) && post.spaces.includes(spaceId)
+  })
+
+  if (connectedPosts.length === 0) {
+    return null
+  }
+
+  let post
+  if (connectedPosts.length === 1) {
+    post = connectedPosts[0]
+  }
+  else {
+    const choices = connectedPosts.map(p => `Post ${p.id}`)
+    const [choice] = game.actions.choose(player, choices, {
+      title: 'Choose which Spy to recall',
+    })
+    post = connectedPosts[choices.indexOf(choice)]
+  }
+
+  const occupants = game.state.spyPosts[post.id]
+  occupants.splice(occupants.indexOf(player.name), 1)
+  player.incrementCounter('spiesInSupply', 1, { silent: true })
+
+  game.log.add({
+    template: '{player} recalls a Spy from Post {postId}',
+    args: { player, postId: post.id },
+  })
+
+  return post
+}
+
 module.exports = {
   placeSpy,
   recallSpy,
+  recallSpyAt,
   getSpyConnectedSpaces,
   hasSpyAt,
 }
