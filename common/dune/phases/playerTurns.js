@@ -217,6 +217,11 @@ function revealTurn(game, player) {
     })
   }
 
+  // Resolve card reveal abilities
+  for (const card of revealedCards) {
+    resolveCardRevealAbility(game, player, card, revealedCards)
+  }
+
   // Set combat strength
   const troops = game.state.conflict.deployedTroops[player.name] || 0
   const sandworms = game.state.conflict.deployedSandworms[player.name] || 0
@@ -444,6 +449,74 @@ function resolveCardAgentAbility(game, player, card) {
     else {
       resolveEffect(game, player, effect, null)
     }
+  }
+}
+
+/**
+ * Resolve a card's reveal ability, including faction bond checks.
+ * Bond abilities activate when you have another card of the same faction revealed.
+ */
+function resolveCardRevealAbility(game, player, card, allRevealedCards) {
+  const abilityText = card.definition?.revealAbility
+  if (!abilityText) {
+    return
+  }
+
+  // Check for bond pattern: "Faction Bond: effect"
+  const bondMatch = abilityText.match(/^(\w+)\s+[Bb]ond:\s*(.+)$/i)
+  if (bondMatch) {
+    const bondFaction = bondMatch[1].toLowerCase()
+    const bondEffect = bondMatch[2].trim()
+
+    // Check if another revealed card has the same faction affiliation
+    const hasBond = allRevealedCards.some(c =>
+      c !== card && c.factionAffiliation && c.factionAffiliation.toLowerCase().includes(bondFaction)
+    )
+
+    if (!hasBond) {
+      return
+    }
+
+    game.log.add({
+      template: '{card}: {faction} Bond activates',
+      args: { card: card.name, faction: bondMatch[1] },
+    })
+
+    // Parse the bond effect — handle swords specially
+    const swordMatch = bondEffect.match(/^\+(\d+)\s+Swords?$/i)
+    if (swordMatch) {
+      const swords = parseInt(swordMatch[1])
+      player.incrementCounter('strength', swords * constants.SWORD_STRENGTH, { silent: true })
+      game.log.add({
+        template: '{player} gains {amount} Sword(s)',
+        args: { player, amount: swords },
+      })
+      return
+    }
+
+    const effects = parseAgentAbility(bondEffect)
+    if (effects) {
+      for (const effect of effects) {
+        resolveEffect(game, player, effect, null)
+      }
+    }
+    return
+  }
+
+  // Non-bond reveal abilities — parse with the same parser
+  const effects = parseAgentAbility(abilityText)
+  if (!effects) {
+    // Complex ability — log it
+    game.log.add({
+      template: 'Reveal ability: {ability}',
+      args: { ability: abilityText },
+      event: 'memo',
+    })
+    return
+  }
+
+  for (const effect of effects) {
+    resolveEffect(game, player, effect, null)
   }
 }
 
