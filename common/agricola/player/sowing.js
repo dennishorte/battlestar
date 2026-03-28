@@ -10,12 +10,22 @@ AgricolaPlayer.prototype.getFieldCount = function() {
       }
     }
   }
-  // Sown pasture virtual fields (Love for Agriculture) count as fields for scoring
+  // Virtual fields that count as fields for scoring
+  const scoringGroups = new Set()
   for (const vf of this.virtualFields) {
-    if (vf.countsAsFieldForScoring && vf.crop && vf.cropCount > 0) {
+    if (!vf.countsAsFieldForScoring) {
+      continue
+    }
+    // String value = group ID (multiple virtual fields count as 1 field)
+    if (typeof vf.countsAsFieldForScoring === 'string') {
+      scoringGroups.add(vf.countsAsFieldForScoring)
+    }
+    // Boolean true: only count when sown (e.g. Love for Agriculture pasture fields)
+    else if (vf.crop && vf.cropCount > 0) {
       count++
     }
   }
+  count += scoringGroups.size
   return count
 }
 
@@ -23,10 +33,16 @@ AgricolaPlayer.prototype.getFieldCount = function() {
 // Returns total fields including both field tiles and field cards.
 AgricolaPlayer.prototype.getFieldCountForPrereqs = function() {
   let count = this.getFieldCount()
-  // Add field cards (cards with isField: true property)
+  // Cards already counted via scoring groups
+  const groupCardIds = new Set(
+    this.virtualFields
+      .filter(vf => typeof vf.countsAsFieldForScoring === 'string')
+      .map(vf => vf.cardId)
+  )
+  // Add field cards (cards with isField: true property), excluding grouped ones
   for (const cardId of this.playedMinorImprovements) {
     const card = this.cards.byId(cardId)
-    if (card && card.isField) {
+    if (card && card.isField && !groupCardIds.has(cardId)) {
       count++
     }
   }

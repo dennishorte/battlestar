@@ -10,14 +10,17 @@ module.exports = {
   fieldCrop: "stone",
   fieldSize: 3,
   onPlay(game, player) {
-    player.addVirtualField({
-      cardId: 'rock-garden-e080',
-      label: 'Rock Garden',
-      cropRestriction: 'stone',
-      sowingAmount: 6,  // Counts as 3 fields × 2 vegetables = 6
-    })
+    for (let i = 1; i <= 3; i++) {
+      player.addVirtualField({
+        id: `rock-garden-e080-${i}`,
+        cardId: 'rock-garden-e080',
+        label: `Rock Garden ${i}`,
+        cropRestriction: 'stone',
+        countsAsFieldForScoring: 'rock-garden-e080',
+      })
+    }
     game.log.add({
-      template: '{player} plays {card}, gaining a stone-only field (counts as 3 fields)',
+      template: '{player} plays {card}, gaining 3 stone-only fields',
       args: { player , card: this},
     })
   },
