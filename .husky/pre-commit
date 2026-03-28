@@ -47,7 +47,7 @@ if echo "$STAGED_FILES" | grep -q "^common/"; then
     npx jest
   else
     TEST_PATHS=""
-    for dir in agricola magic twilight tyrants ultimate; do
+    for dir in agricola dune magic twilight tyrants ultimate; do
       if echo "$COMMON_FILES" | grep -q "^${dir}/"; then
         TEST_PATHS="$TEST_PATHS $dir/"
       fi

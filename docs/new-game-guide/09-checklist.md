@@ -47,6 +47,7 @@ A step-by-step checklist for implementing a new game. Each item links to the rel
 - [ ] Create `testutil.js` with `fixture()`, `setBoard()`, `testBoard()`
 - [ ] Write and pass the first test: game creates and runs without error
 - [ ] Create game architecture doc at `docs/games/<game>.md`
+- [ ] Add game directory to `.husky/pre-commit` game loop so commits trigger scoped tests
 
 ---
 
