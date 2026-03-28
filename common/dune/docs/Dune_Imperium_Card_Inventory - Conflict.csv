@@ -1,0 +1,49 @@
+Card Name,Source,Compatibility,Conflict Level,Available VPs,First Place,Second Place,Third Place,Battle Icon
+"Skirmish
+",Base,Base,1,,+1 Influence and +1 Spice,+2 Spice,+1 Spice,
+"Skirmish
+",Base,Base,1,1,+1 Victory point,+1 Intrigue card and +2 Solari,+2 Solari,
+"Skirmish
+",Base,Base,1,,+1 Influence and +2 Solari,+3 Solari,+2 Solari,
+"Skirmish
+",Base,Base,1,1,+1 Victory point,+1 Water,+1 Spice,
+"Cloak and Dagger
+",Base,Base,2,,+1 Influence and +2 Intrigue cards,+1 Intrigue card and +1 Spice,+1 Intrigue card OR +1 Spice,
+"Desert Power
+",Base,Base,2,1,+1 Victory point and +1 Water,+1 Water and +1 Spice,+1 Spice,
+"Guild Bank Raid
+",Base,Base,2,,+6 Solari,+4 Solari,+2 Solari,
+"Machinations
+",Base,Base,2,,"Choose two of the 4 Factions.
+Gain +1 Influence in each.",+1 Water and +2 Solari,+1 Water,
+"Raid Stockpiles
+",Base,Base,2,,+1 Intrigue card and +3 Spice,+2 Spice,+1 Spice,
+"Secure Imperial Basin
+",Base,Base,2,1,"+1 Victory point and Imperial Basin Control
+(Gain Imperial Basin bonus when sending Agent)",+2 Water,+1 Water,
+"Sieg of Arrakeen
+",Base,Base,2,1,"+1 Victory point and Arrakeen Control
+(Gain Arrakeen bonus when sending Agent)",+4 Solari,+2 Solari,
+"Siege of Carthag
+",Base,Base,2,1,"+1 Victory point and Carthag Control
+(Gain Carthag bonus when sending Agent)",+1 Intrigue card and +1 Spice,+1 Spice,
+"Sort Through the Chaos
+",Base,Base,2,,"Mentat and +1 Intrigue and +1 Solari
+(Take the Mentat for the next round)",+1 Intrigue card and +2 Solari,+2 Solari,
+"Terrible Purpose
+",Base,Base,2,1,"+1 Victory point and Trash a card
+(Trashing is optional)",+1 Water and +1 Spice,+1 Spice,
+"Battle for Arrakeen
+",Base,Base,3,2,"+2 Victory points and Arrakeen Control
+(Gain Arrakeen bonus when sending Agent)",+1 Intrigue card and +2 Spice and +3 Solari,+1 Intrigue card and +2 Solari,
+"Battle for Carthag
+",Base,Base,3,2,"+2 Victory points and Carthag Control
+(Gain Carthag bonus when sending Agent)",+1 Intrigue card and +3 Spice,+3 Spice,
+"Battle for Imperial Basin
+",Base,Base,3,2,"+2 Victory points and Imperal Basin Control
+(Gain Imperial Basin bonus when sending Agent)",+5 Spice,+3 Spice,
+"Grand Vision
+",Base,Base,3,2,+2 Influence and +1 Intrigue card,+1 Intrigue card and +3 Spice,+3 Spice,
+"Skirmish
+",Bloodlines,All,1,,Trash a card,+1 Water and +1 Solari,+2 Solari,Wild
+Storms in the South,Bloodlines,Uprising,2,,+1 Spy with Deep Cover and +2 Spice,+2 Intrigue cards and +2 Solari,+1 Intrigue and +2 Solari,Wild

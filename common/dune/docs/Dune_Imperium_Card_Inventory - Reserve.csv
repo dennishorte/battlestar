@@ -1,0 +1,6 @@
+Card Name,Source,Count,Persuasion Cost,Acquisition Bonus,Passive Ability,Green Access,Purple Access,Yellow Access,Emperor Access,Spacing Guild Access,Bene Gesserit Access,Fremen Access,Spy Access,Agent Ability,Reveal Persuasion,Reveal Swords,Reveal Ability,Emperor Affiliation,Spacing Guild Affiliation,Bene Gesserit Affiliation,Fremen Affiliation
+Arrakis Liason,Base,8,2,,,X,X,,,,,,,,2,,,,,,X
+The Spice Must Flow (Base),Base,10,9,+1 Victory Point,,,,,,,,,,,,,+1 Spice,,,,
+Foldspace,Base,6,,,,X,X,X,X,X,X,X,,,,,,,,,
+Prepare the Way,Uprising,8,2,,,X,X,,,,,,,With 2 Influence with Bene Gesserit: Draw a card,2,,,,,X,
+The Spice Must Flow (Uprising),Uprising,10,9,+1 Victory Point,,,,,,,,,,,,,+1 Spice,,X,,
