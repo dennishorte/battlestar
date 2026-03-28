@@ -1,6 +1,7 @@
 const deckEngine = require('../systems/deckEngine.js')
 const factions = require('../systems/factions.js')
 const spies = require('../systems/spies.js')
+const { parseAgentAbility } = require('../systems/cardEffects.js')
 const constants = require('../res/constants.js')
 
 /**
@@ -157,6 +158,9 @@ function agentTurn(game, player) {
   if (space.faction) {
     factions.gainInfluence(game, player, space.faction)
   }
+
+  // Resolve card agent ability
+  resolveCardAgentAbility(game, player, card)
 
   // Resolve board space effects
   resolveBoardSpaceEffects(game, player, space)
@@ -393,6 +397,56 @@ function deployUnits(game, player) {
 /**
  * Resolve board space effects.
  */
+/**
+ * Resolve a card's agent ability, if it has one and we can parse it.
+ */
+function resolveCardAgentAbility(game, player, card) {
+  const abilityText = card.definition?.agentAbility
+  if (!abilityText) {
+    return
+  }
+
+  const effects = parseAgentAbility(abilityText)
+  if (!effects) {
+    // Complex ability we can't execute yet — log it
+    game.log.add({
+      template: 'Card ability: {ability}',
+      args: { ability: abilityText },
+      event: 'memo',
+    })
+    return
+  }
+
+  // Find the card object for trash-self (it's now in the played zone)
+  for (const effect of effects) {
+    if (effect.type === 'trash-self') {
+      deckEngine.trashCard(game, card)
+    }
+    else if (effect.type === 'discard-card') {
+      // Discard from hand
+      const handZone = game.zones.byId(`${player.name}.hand`)
+      const handCards = handZone.cardlist()
+      if (handCards.length > 0) {
+        const choices = handCards.map(c => c.name)
+        const [discardChoice] = game.actions.choose(player, choices, {
+          title: 'Choose a card to discard',
+        })
+        const discardCard = handCards.find(c => c.name === discardChoice)
+        if (discardCard) {
+          deckEngine.discardCard(game, player, discardCard)
+          game.log.add({
+            template: '{player} discards {card}',
+            args: { player, card: discardCard },
+          })
+        }
+      }
+    }
+    else {
+      resolveEffect(game, player, effect, null)
+    }
+  }
+}
+
 function resolveBoardSpaceEffects(game, player, space) {
   if (!space.effects) {
     return
