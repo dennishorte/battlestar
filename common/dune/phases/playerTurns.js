@@ -103,6 +103,34 @@ function agentTurn(game, player) {
   })
   const space = validSpaces.find(s => s.name === spaceChoice)
 
+  // Spy actions before placing agent
+  const spaceOccupied = !!game.state.boardSpaces[space.id]
+  const hasSpyOnPost = spies.hasSpyAt(game, player, space.id)
+
+  if (spaceOccupied && hasSpyOnPost) {
+    // Must infiltrate — recall spy to ignore occupant
+    spies.recallSpyAt(game, player, space.id)
+    game.log.add({
+      template: '{player} infiltrates {boardSpace} (ignoring occupant)',
+      args: { player, boardSpace: space.name },
+    })
+  }
+  else if (!spaceOccupied && hasSpyOnPost) {
+    // Offer Gather Intelligence — recall spy to draw a card
+    const giChoices = ['No', 'Yes — recall Spy to draw a card']
+    const [giChoice] = game.actions.choose(player, giChoices, {
+      title: 'Gather Intelligence?',
+    })
+    if (giChoice !== 'No') {
+      spies.recallSpyAt(game, player, space.id)
+      deckEngine.drawCards(game, player, 1)
+      game.log.add({
+        template: '{player} gathers intelligence at {boardSpace}',
+        args: { player, boardSpace: space.name },
+      })
+    }
+  }
+
   // Play the card and place the agent
   deckEngine.playCard(game, player, card)
   game.state.boardSpaces[space.id] = player.name
@@ -283,17 +311,25 @@ function getAcquirableCards(game, persuasion) {
 
 /**
  * Check if a player can send an agent to a board space with a given card.
+ * A space is accessible if:
+ *   1. Card has a matching agent icon or faction icon for the space, OR
+ *   2. Card has spyAccess and player has a spy on a post connected to the space
+ * A space is blocked if occupied, UNLESS the player can Infiltrate (recall a spy
+ * on a connected post to ignore the occupant).
  */
 function canSendAgentTo(game, player, card, space) {
-  // Space must be unoccupied
-  if (game.state.boardSpaces[space.id]) {
+  // Check icon access
+  const hasMatchingIcon = card.agentIcons.includes(space.icon) || card.factionAccess.includes(space.icon)
+  const hasSpyConnection = card.spyAccess && spies.hasSpyAt(game, player, space.id)
+  if (!hasMatchingIcon && !hasSpyConnection) {
     return false
   }
 
-  // Card must have a matching icon
-  const hasMatchingIcon = card.agentIcons.includes(space.icon) || card.factionAccess.includes(space.icon)
-  if (!hasMatchingIcon && !card.spyAccess) {
-    return false
+  // Space occupancy check — can infiltrate if spy on connected post
+  if (game.state.boardSpaces[space.id]) {
+    if (!spies.hasSpyAt(game, player, space.id)) {
+      return false
+    }
   }
 
   // Player must be able to pay the cost

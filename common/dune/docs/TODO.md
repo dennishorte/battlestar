@@ -28,10 +28,10 @@
 ## Spy System
 - [x] Create `systems/spies.js`
 - [x] Spy placement on observation posts (when spy icon appears on card/board space)
-- [ ] Infiltrate: recall spy to ignore occupied board space
-- [ ] Gather Intelligence: recall spy to draw a card (before resolving effects)
-- [ ] Spy agent icon: send agent to space connected to your spy's post (without recalling)
-- [ ] Wire spy choices into agent turn flow
+- [x] Infiltrate: recall spy to ignore occupied board space
+- [x] Gather Intelligence: recall spy to draw a card (before resolving effects)
+- [x] Spy agent icon: send agent to space connected to your spy's post (via spyAccess on cards)
+- [x] Wire spy choices into agent turn flow
 
 ## Leaders
 - [ ] Create `systems/leaders.js` with ability dispatch

@@ -62,6 +62,20 @@ TestUtil.setBoard = function(game, state) {
       Object.assign(game.state.bonusSpice, state.bonusSpice)
     }
 
+    if (state.spyPosts) {
+      for (const [postId, players] of Object.entries(state.spyPosts)) {
+        game.state.spyPosts[postId] = [...players]
+      }
+    }
+
+    if (state.boardSpaces) {
+      Object.assign(game.state.boardSpaces, state.boardSpaces)
+    }
+
+    if (state.makerHooks) {
+      Object.assign(game.state.makerHooks, state.makerHooks)
+    }
+
     // Per-player state
     for (const playerName of ['dennis', 'micah', 'scott', 'eliya']) {
       if (state[playerName]) {
@@ -133,6 +147,12 @@ TestUtil.testBoard = function(game, expected) {
   }
   if (expected.shieldWall !== undefined) {
     assertEq(errors, 'shieldWall', game.state.shieldWall, expected.shieldWall)
+  }
+
+  if (expected.controlMarkers) {
+    for (const [loc, owner] of Object.entries(expected.controlMarkers)) {
+      assertEq(errors, `controlMarkers.${loc}`, game.state.controlMarkers[loc], owner)
+    }
   }
 
   // Per-player assertions
