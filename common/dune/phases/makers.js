@@ -1,0 +1,26 @@
+/**
+ * Phase 4: Makers
+ * Place 1 spice on each Maker space that does not have an Agent.
+ * Maker spaces: Deep Desert, Hagga Basin, Imperial Basin.
+ */
+function makersPhase(game) {
+  game.state.phase = 'makers'
+  game.log.add({ template: 'Makers', event: 'phase-start' })
+
+  const makerSpaces = ['deep-desert', 'hagga-basin', 'imperial-basin']
+
+  for (const spaceId of makerSpaces) {
+    if (!game.state.boardSpaces[spaceId]) {
+      game.state.bonusSpice[spaceId] = (game.state.bonusSpice[spaceId] || 0) + 1
+      game.log.add({
+        template: '+1 bonus Spice on {boardSpace} (now {total})',
+        args: {
+          boardSpace: spaceId,
+          total: game.state.bonusSpice[spaceId],
+        },
+      })
+    }
+  }
+}
+
+module.exports = { makersPhase }

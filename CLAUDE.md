@@ -15,6 +15,7 @@ Web-based board game platform. Monorepo with npm workspaces.
 | Game | Path | Size | Notes |
 |------|------|------|-------|
 | Agricola | `common/agricola/` | ~1,790 files | Farm-building worker placement |
+| Dune Imperium: Uprising | `common/dune/` | ~50 files | Deck-building worker placement |
 | Innovation: Ultimate | `common/ultimate/` | ~1,380 files | Civilization card game |
 | Twilight Imperium | `common/twilight/` | ~600+ files | Space strategy, 26 factions |
 | Magic: The Gathering | `common/magic/` | ~30 files | Card game with drafting |
@@ -100,6 +101,7 @@ Request flow: `auth → bodyParser → ensureVersion → coerceMongoIds → load
 | `docs/app.md` | Working on frontend components |
 | `docs/testing.md` | Writing or debugging tests |
 | `docs/games/agricola.md` | Modifying Agricola |
+| `docs/games/dune.md` | Modifying Dune Imperium: Uprising |
 | `docs/games/ultimate.md` | Modifying Innovation: Ultimate |
 | `docs/games/magic.md` | Modifying Magic: The Gathering |
 | `docs/games/tyrants.md` | Modifying Tyrants of the Underdark |
