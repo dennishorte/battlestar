@@ -81,6 +81,9 @@ Dune.prototype._reset = function() {
   // Shield Wall
   this.state.shieldWall = true
 
+  // Maker Hooks per player: { playerName: count }
+  this.state.makerHooks = {}
+
   // Faction alliances: { factionId: playerName | null }
   this.state.alliances = {
     emperor: null,

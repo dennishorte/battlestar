@@ -1,5 +1,6 @@
 const deckEngine = require('../systems/deckEngine.js')
 const factions = require('../systems/factions.js')
+const spies = require('../systems/spies.js')
 const constants = require('../res/constants.js')
 
 /**
@@ -236,6 +237,15 @@ function acquireCardsPhase(game, player) {
     if (card) {
       player.decrementCounter('persuasion', card.persuasionCost, { silent: true })
       deckEngine.acquireCard(game, player, card)
+
+      // The Spice Must Flow grants +1 VP on acquisition
+      if (card.name === 'The Spice Must Flow') {
+        player.incrementCounter('vp', 1, { silent: true })
+        game.log.add({
+          template: '{player} gains 1 Victory Point (The Spice Must Flow)',
+          args: { player },
+        })
+      }
     }
   }
 }
@@ -392,13 +402,7 @@ function resolveEffect(game, player, effect, space) {
       break
 
     case 'spy':
-      if (player.spiesInSupply > 0) {
-        player.decrementCounter('spiesInSupply', 1, { silent: true })
-        game.log.add({
-          template: '{player} places a Spy',
-          args: { player },
-        })
-      }
+      spies.placeSpy(game, player)
       break
 
     case 'spice-harvest': {
@@ -557,6 +561,87 @@ function resolveEffect(game, player, effect, space) {
         args: { player, location: effect.location },
       })
       break
+
+    case 'intrigue-trash-draw': {
+      // Trash an intrigue card from hand, then draw a new one
+      const intrigueZone = game.zones.byId(`${player.name}.intrigue`)
+      const intrigueCards = intrigueZone.cardlist()
+      if (intrigueCards.length > 0) {
+        const trashChoices = ['Pass', ...intrigueCards.map(c => c.name)]
+        const [trashChoice] = game.actions.choose(player, trashChoices, {
+          title: 'Choose an Intrigue card to trash',
+        })
+        if (trashChoice !== 'Pass') {
+          const card = intrigueCards.find(c => c.name === trashChoice)
+          if (card) {
+            deckEngine.trashCard(game, card)
+            deckEngine.drawIntrigueCard(game, player, 1)
+          }
+        }
+      }
+      break
+    }
+
+    case 'recall-agent': {
+      // Return one of your agents from the board (freeing the space)
+      const occupiedSpaces = Object.entries(game.state.boardSpaces)
+        .filter(([, occupant]) => occupant === player.name)
+      if (occupiedSpaces.length > 0) {
+        const boardSpaces = getBoardSpaces()
+        const recallChoices = occupiedSpaces.map(([id]) => {
+          const bs = boardSpaces.find(s => s.id === id)
+          return bs ? bs.name : id
+        })
+        const [recallChoice] = game.actions.choose(player, recallChoices, {
+          title: 'Choose an Agent to recall',
+        })
+        const spaceId = occupiedSpaces.find(([id]) => {
+          const bs = boardSpaces.find(s => s.id === id)
+          return (bs ? bs.name : id) === recallChoice
+        })?.[0]
+        if (spaceId) {
+          game.state.boardSpaces[spaceId] = null
+          player.decrementCounter('agentsPlaced', 1, { silent: true })
+          game.log.add({
+            template: '{player} recalls an Agent from {space}',
+            args: { player, space: recallChoice },
+          })
+        }
+      }
+      break
+    }
+
+    case 'maker-hook':
+      if (!game.state.makerHooks) {
+        game.state.makerHooks = {}
+      }
+      game.state.makerHooks[player.name] = (game.state.makerHooks[player.name] || 0) + 1
+      game.log.add({
+        template: '{player} gains a Maker Hook',
+        args: { player },
+      })
+      break
+
+    case 'break-shield-wall':
+      if (game.state.shieldWall) {
+        game.state.shieldWall = false
+        game.log.add({
+          template: '{player} breaks the Shield Wall!',
+          args: { player },
+        })
+      }
+      break
+
+    case 'sandworm': {
+      const count = effect.amount || 1
+      game.state.conflict.deployedSandworms[player.name] =
+        (game.state.conflict.deployedSandworms[player.name] || 0) + count
+      game.log.add({
+        template: '{player} summons {count} Sandworm(s)',
+        args: { player, count },
+      })
+      break
+    }
   }
 }
 

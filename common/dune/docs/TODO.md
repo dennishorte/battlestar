@@ -5,7 +5,8 @@
 - [x] Populate `res/observationPosts.js` with 13 spy post connections (A-M) to board spaces
 - [x] Wire up choice effects (Spice Refinery, Sietch Tabr, Hagga Basin, Deep Desert, Gather Support)
 - [x] Wire up simple effects: influence-choice, high-council, sword-master, trash-card, steal-intrigue, vp, influence, control
-- [ ] Wire up remaining complex effects: intrigue-trash-draw, recall-agent, maker-hook, break-shield-wall, contract, sandworm
+- [x] Wire up remaining complex effects: intrigue-trash-draw, recall-agent, maker-hook, break-shield-wall, sandworm
+- [ ] Wire up contract effect (depends on CHOAM module)
 
 ## Card Agent Effects
 - [ ] Wire up card `agentAbility` execution during agent turns (currently card is played but only board space resolves)
@@ -25,8 +26,8 @@
 - [ ] Execute combat intrigue card effects (currently cards are discarded but effect text is only logged)
 
 ## Spy System
-- [ ] Create `systems/spies.js`
-- [ ] Spy placement on observation posts (when spy icon appears on card/board space)
+- [x] Create `systems/spies.js`
+- [x] Spy placement on observation posts (when spy icon appears on card/board space)
 - [ ] Infiltrate: recall spy to ignore occupied board space
 - [ ] Gather Intelligence: recall spy to draw a card (before resolving effects)
 - [ ] Spy agent icon: send agent to space connected to your spy's post (without recalling)
@@ -49,12 +50,13 @@
 - [ ] Defensive bonus: deploy 1 troop from supply when your controlled location's conflict is revealed
 - [x] Swordmaster acquisition effect (gain 3rd agent, dynamic cost 8/6)
 - [x] High Council seat effect (take seat; 2nd visit gives 2 spice + 1 intrigue + 3 troops)
-- [ ] The Spice Must Flow acquisition bonus (+1 VP)
+- [x] The Spice Must Flow acquisition bonus (+1 VP)
 
 ## Sandworms
-- [ ] Maker Hooks token tracking per player
-- [ ] Sandworm summoning (require Maker Hooks, not protected by Shield Wall)
-- [ ] Shield Wall detonation (remove token, allow sandworms at protected locations)
+- [x] Maker Hooks token tracking per player
+- [x] Sandworm summoning effect (deploys sandworms to conflict)
+- [x] Shield Wall detonation effect (break-shield-wall)
+- [ ] Sandworm deployment restriction: require Maker Hooks, disallow at protected locations unless shield wall broken
 
 ## CHOAM Module
 - [ ] Create `systems/choam.js`
@@ -64,6 +66,7 @@
 - [ ] Contract rewards
 
 ## Data Gaps
-- [ ] Conflict card reward text needs to be parsed into executable effects (or keep as text and build a reward parser) — DONE: `parseRewardText()` in combat.js
+- [x] Conflict card reward text parser — `parseRewardText()` in combat.js
+- [x] Spice Refinery control bonus is solari (verified)
+- [x] Emperor 4-influence bonus is place a spy (corrected from +2 solari)
 - [ ] Sardaukar Commander recruitment mechanic
-- [ ] Spice Refinery control bonus should be solari, not spice (verify against rules) — VERIFIED: solari is correct
