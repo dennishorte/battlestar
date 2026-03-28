@@ -409,6 +409,7 @@ export default {
         case 'grain': return '🌾'
         case 'vegetables': return '🥕'
         case 'wood': return '🪵'
+        case 'stone': return '🪨'
         default: return ''
       }
     },
