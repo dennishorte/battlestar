@@ -68,11 +68,12 @@ function applyFactionBonus(game, player, faction) {
   })
 
   switch (faction) {
-    case 'emperor':
-      // +2 Solari
-      player.incrementCounter('solari', 2, { silent: true })
-      game.log.add({ template: '{player} gains 2 Solari', args: { player } })
+    case 'emperor': {
+      // Place a spy
+      const spies = require('./spies.js')
+      spies.placeSpy(game, player)
       break
+    }
     case 'guild':
       // +3 Solari
       player.incrementCounter('solari', 3, { silent: true })
