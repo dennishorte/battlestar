@@ -9,8 +9,9 @@
 - [ ] Wire up contract effect (depends on CHOAM module)
 
 ## Card Agent Effects
-- [ ] Wire up card `agentAbility` execution during agent turns (currently card is played but only board space resolves)
-- [ ] Convert card ability text strings to executable functions (or build an effect parser)
+- [x] Wire up card `agentAbility` execution during agent turns via `resolveCardAgentAbility`
+- [x] Build agent ability text parser (`systems/cardEffects.js`) for simple patterns
+- [ ] Handle conditional abilities (If/With patterns, Signet Ring, faction synergies)
 
 ## Card Reveal Effects
 - [ ] Wire up `revealAbility` text beyond just `revealPersuasion`/`revealSwords` (e.g., "Fremen Bond: +1 Water", faction affiliation bonuses)
