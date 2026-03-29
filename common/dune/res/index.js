@@ -60,8 +60,9 @@ module.exports = {
     return filterByCompatibility(cards.conflictCards, settings)
   },
 
-  getContractCards(settings) {
-    return filterByCompatibility(cards.contractCards, settings)
+  getContractCards() {
+    // Contracts don't use compatibility — filtered by riseOfIxSpecific in choam.js
+    return cards.contractCards
   },
 
   getLeaders(settings) {

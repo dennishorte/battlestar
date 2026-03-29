@@ -817,6 +817,12 @@ function resolveEffect(game, player, effect, space) {
       })
       break
     }
+
+    case 'contract': {
+      const choam = require('../systems/choam.js')
+      choam.takeContract(game, player)
+      break
+    }
   }
 }
 
