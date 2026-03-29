@@ -100,10 +100,16 @@ function assignLeader(game, player, leader) {
   }
 
   if (leader.name === 'Baron Vladimir Harkonnen') {
-    // Track once-per-game Masterstroke usage
     if (!game.state.leaderBonusTriggered) {
       game.state.leaderBonusTriggered = {}
     }
+  }
+
+  if (leader.name === 'Feyd-Rautha Harkonnen') {
+    if (!game.state.feydTrack) {
+      game.state.feydTrack = {}
+    }
+    game.state.feydTrack[player.name] = 'start'
   }
 }
 
@@ -126,6 +132,13 @@ function resolveSignetRing(game, player, resolveEffectFn) {
     template: '{player} activates Signet Ring: {ability}',
     args: { player, ability: leader.name },
   })
+
+  // Feyd-Rautha: Training Track (special handling)
+  if (leader.name === 'Feyd-Rautha Harkonnen') {
+    const leaderAbilities = require('./leaderAbilities.js')
+    leaderAbilities.resolveFeydTraining(game, player, resolveEffectFn)
+    return
+  }
 
   const effects = parseAgentAbility(abilityText)
   if (effects) {
