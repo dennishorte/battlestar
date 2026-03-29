@@ -22,7 +22,7 @@
 - [x] Winner takes conflict card into supply
 - [x] Location control: winner gains control marker for location-based conflicts
 - [x] Battle icon matching: check for pairs when winner takes conflict card (+1 VP)
-- [ ] Sandworm reward doubling (double most rewards, not control or battle icons)
+- [x] Sandworm reward doubling (double most rewards, not control or battle icons)
 
 ## Combat Intrigue Effects
 - [x] Execute simple combat intrigue effects via parser (swords, resources)
