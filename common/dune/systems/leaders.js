@@ -27,6 +27,11 @@ function selectLeaders(game) {
     return false
   })
 
+  // Shaddam Corrino IV requires CHOAM module
+  if (!settings.useCHOAM) {
+    available = available.filter(l => l.name !== 'Shaddam Corrino IV')
+  }
+
   // Random assignment if configured, otherwise let each player choose
   if (settings.randomLeaders) {
     // Shuffle and deal one to each player
@@ -102,6 +107,31 @@ function assignLeader(game, player, leader) {
   if (leader.name === 'Baron Vladimir Harkonnen') {
     if (!game.state.leaderBonusTriggered) {
       game.state.leaderBonusTriggered = {}
+    }
+  }
+
+  if (leader.name === 'Shaddam Corrino IV') {
+    // Set aside both Sardaukar contracts — only Shaddam can take them
+    if (game.settings.useCHOAM) {
+      const contractDeck = game.zones.byId('common.contractDeck')
+      const contractMarket = game.zones.byId('common.contractMarket')
+      const allContracts = [...contractDeck.cardlist(), ...contractMarket.cardlist()]
+      const sardaukarContracts = allContracts.filter(c => c.name === 'Sardaukar')
+
+      if (!game.state.shaddamReservedContracts) {
+        game.state.shaddamReservedContracts = []
+      }
+
+      for (const contract of sardaukarContracts) {
+        game.state.shaddamReservedContracts.push(contract.id)
+      }
+
+      if (sardaukarContracts.length > 0) {
+        game.log.add({
+          template: '{player}: Sardaukar Commander — {count} Sardaukar contract(s) reserved',
+          args: { player, count: sardaukarContracts.length },
+        })
+      }
     }
   }
 
