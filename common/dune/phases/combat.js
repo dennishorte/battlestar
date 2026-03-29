@@ -356,10 +356,25 @@ function awardReward(game, player, rewardText) {
     return
   }
 
+  const hasSandworms = (game.state.conflict.deployedSandworms[player.name] || 0) > 0
   const effects = parseRewardText(rewardText)
   game.log.indent()
 
+  if (hasSandworms) {
+    game.log.add({
+      template: '{player} has Sandworm(s) — rewards doubled',
+      args: { player },
+    })
+  }
+
   for (const effect of effects) {
+    // Sandworms double most rewards, but NOT control or battle icons
+    if (hasSandworms && canDoubleReward(effect)) {
+      if (effect.amount) {
+        effect.amount *= 2
+      }
+    }
+
     if (effect.type === 'influence-choice-two') {
       // Special: choose 2 factions for +1 influence each
       const constants = require('../res/constants.js')
@@ -427,6 +442,14 @@ function afterCombat(game) {
 
     player.setCounter('strength', 0, { silent: true })
   }
+}
+
+/**
+ * Check if a reward effect can be doubled by sandworms.
+ * Control markers and battle icons are NOT doubled.
+ */
+function canDoubleReward(effect) {
+  return effect.type !== 'control' && effect.type !== 'choice'
 }
 
 module.exports = { combatPhase, parseRewardText }
