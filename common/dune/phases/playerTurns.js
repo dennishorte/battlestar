@@ -676,8 +676,13 @@ function resolveEffect(game, player, effect, space) {
             }
           }
         }
-        if (c.requires === 'maker-hook' && !game.state.makerHooks?.[player.name]) {
-          return false
+        if (c.requires === 'maker-hook') {
+          if (!game.state.makerHooks?.[player.name]) {
+            return false
+          }
+          if (isConflictProtected(game)) {
+            return false
+          }
         }
         return true
       })
@@ -878,6 +883,14 @@ function resolveEffect(game, player, effect, space) {
       break
 
     case 'sandworm': {
+      // Sandworms cannot be summoned to a conflict protected by the Shield Wall
+      if (isConflictProtected(game)) {
+        game.log.add({
+          template: 'Sandworm cannot be summoned — Conflict is protected by the Shield Wall',
+          event: 'memo',
+        })
+        break
+      }
       const count = effect.amount || 1
       game.state.conflict.deployedSandworms[player.name] =
         (game.state.conflict.deployedSandworms[player.name] || 0) + count
@@ -1072,6 +1085,22 @@ function offerPlotIntrigue(game, player) {
       game.log.outdent()
     }
   }
+}
+
+/**
+ * Check if the current conflict is at a location protected by the Shield Wall.
+ */
+function isConflictProtected(game) {
+  if (!game.state.shieldWall) {
+    return false
+  }
+  const currentCard = game.state.conflict.currentCard
+  if (!currentCard || !currentCard.location) {
+    return false
+  }
+  const boardSpacesData = getBoardSpaces()
+  const locationSpace = boardSpacesData.find(s => s.id === currentCard.location)
+  return locationSpace && locationSpace.isProtected
 }
 
 function getSpaceCost(game, space, player) {
