@@ -227,6 +227,90 @@ function ignoresOccupancy(game, player, space) {
   return false
 }
 
+/**
+ * Hook: modify spice harvest amount based on leader ability.
+ * Returns the adjusted total spice amount.
+ */
+function modifyHarvestAmount(game, player, total) {
+  const leader = leaders.getLeader(game, player)
+  if (!leader) {
+    return total
+  }
+
+  if (leader.name === 'Countess Ariana Thorvald' && total > 0) {
+    // Harvest 1 less spice, draw 1 card
+    deckEngine.drawCards(game, player, 1)
+    game.log.add({
+      template: '{player}: Spice Addict — draws 1 card, harvests 1 less Spice',
+      args: { player },
+    })
+    return Math.max(0, total - 1)
+  }
+
+  return total
+}
+
+/**
+ * Hook: modify starting deck based on leader ability.
+ */
+function modifyStartingDeck(game, player, starterCardNames) {
+  const leader = leaders.getLeader(game, player)
+  if (!leader) {
+    return starterCardNames
+  }
+
+  if (leader.name === 'Staban Tuek') {
+    // Start without Diplomacy
+    return starterCardNames.filter(n => n !== 'Diplomacy')
+  }
+
+  return starterCardNames
+}
+
+/**
+ * Hook: called when an opponent sends an agent to a maker space.
+ * Used for Staban Tuek's "Smuggle Spice" ability.
+ */
+function onOpponentVisitsMakerSpace(game, opponent, space) {
+  for (const player of game.players.all()) {
+    if (player.name === opponent.name) {
+      continue
+    }
+    const leader = leaders.getLeader(game, player)
+    if (!leader || leader.name !== 'Staban Tuek') {
+      continue
+    }
+
+    // Check if player is spying on this space
+    const spiesSystem = require('./spies.js')
+    if (spiesSystem.hasSpyAt(game, player, space.id)) {
+      player.incrementCounter('spice', 1, { silent: true })
+      game.log.add({
+        template: '{player}: Smuggle Spice — +1 Spice (spying on {space})',
+        args: { player, space: space.name },
+      })
+    }
+  }
+}
+
+/**
+ * Hook: called when a player gains Solari during their turn.
+ */
+function onGainSolari(game, player, amount) {
+  const leader = leaders.getLeader(game, player)
+  if (!leader) {
+    return
+  }
+
+  if (leader.name === 'Princess Yuna Moritani' && amount > 0) {
+    player.incrementCounter('solari', 1, { silent: true })
+    game.log.add({
+      template: '{player}: Smuggling Operation — +1 bonus Solari',
+      args: { player },
+    })
+  }
+}
+
 module.exports = {
   onRevealTurn,
   onPaySolariForSpace,
@@ -234,4 +318,8 @@ module.exports = {
   onGainInfluence,
   modifySpaceCost,
   ignoresOccupancy,
+  modifyHarvestAmount,
+  modifyStartingDeck,
+  onOpponentVisitsMakerSpace,
+  onGainSolari,
 }

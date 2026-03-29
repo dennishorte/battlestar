@@ -75,6 +75,29 @@ function assignLeader(game, player, leader) {
       args: { player },
     })
   }
+
+  if (leader.name === 'Staban Tuek') {
+    // Remove Diplomacy from deck
+    const deck = game.zones.byId(`${player.name}.deck`)
+    const diplomacy = deck.cardlist().find(c => c.name === 'Diplomacy')
+    if (diplomacy) {
+      const trash = game.zones.byId('common.trash')
+      diplomacy.moveTo(trash)
+      game.log.add({
+        template: '{player} starts without Diplomacy (Limited Allies)',
+        args: { player },
+      })
+    }
+  }
+
+  if (leader.name === 'Princess Yuna Moritani') {
+    // Start with no Water
+    player.setCounter('water', 0, { silent: true })
+    game.log.add({
+      template: '{player} starts with no Water (Smuggling Operation)',
+      args: { player },
+    })
+  }
 }
 
 /**
