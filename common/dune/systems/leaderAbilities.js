@@ -445,6 +445,67 @@ function resolveFeydTraining(game, player, resolveEffectFn) {
   game.log.outdent()
 }
 
+/**
+ * Hook: called after agent is placed on a board space and effects are resolved.
+ * Used for Lady Jessica / Reverend Mother abilities.
+ */
+function onAgentPlaced(game, player, space, resolveBoardSpaceEffectsFn) {
+  const leader = leaders.getLeader(game, player)
+  if (!leader || leader.name !== 'Lady Jessica') {
+    return
+  }
+
+  const isFlipped = game.state.jessicaFlipped?.[player.name]
+
+  if (!isFlipped) {
+    // Lady Jessica (front): When sending agent to BG space, may cash in memories → flip
+    if (space.icon === 'bene-gesserit') {
+      const memories = game.state.jessicaMemories?.[player.name] || 0
+      if (memories > 0) {
+        const choices = ['Pass', `Return ${memories} Memories → Draw ${memories} card(s) and flip Leader`]
+        const [choice] = game.actions.choose(player, choices, {
+          title: 'Lady Jessica: Activate Other Memories?',
+        })
+        if (choice !== 'Pass') {
+          // Return memories to supply as troops
+          player.incrementCounter('troopsInSupply', memories, { silent: true })
+          game.state.jessicaMemories[player.name] = 0
+          // Draw cards
+          deckEngine.drawCards(game, player, memories)
+          // Flip leader
+          game.state.jessicaFlipped[player.name] = true
+          game.log.add({
+            template: '{player}: Other Memories — returns {count} Memories, draws {count} cards, becomes Reverend Mother',
+            args: { player, count: memories },
+          })
+        }
+      }
+    }
+  }
+  else {
+    // Reverend Mother (back): Once/turn on BG or Fremen space, pay 1 water → repeat space effects
+    if ((space.icon === 'bene-gesserit' || space.icon === 'fremen') && player.water >= 1) {
+      if (!game.state.turnTracking?.jessicaUsedRepeat) {
+        const choices = ['Pass', `Pay 1 Water to repeat ${space.name} effects`]
+        const [choice] = game.actions.choose(player, choices, {
+          title: 'Reverend Mother: Repeat board space effects?',
+        })
+        if (choice !== 'Pass') {
+          player.decrementCounter('water', 1, { silent: true })
+          game.log.add({
+            template: '{player}: Reverend Mother — pays 1 Water, repeats {space} effects',
+            args: { player, space: space.name },
+          })
+          if (game.state.turnTracking) {
+            game.state.turnTracking.jessicaUsedRepeat = true
+          }
+          resolveBoardSpaceEffectsFn(game, player, space)
+        }
+      }
+    }
+  }
+}
+
 module.exports = {
   onAgentTurnStart,
   onRevealTurn,
@@ -458,4 +519,5 @@ module.exports = {
   onOpponentVisitsMakerSpace,
   onGainSolari,
   resolveFeydTraining,
+  onAgentPlaced,
 }

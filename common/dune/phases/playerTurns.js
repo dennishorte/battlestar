@@ -202,6 +202,9 @@ function agentTurn(game, player) {
   // Resolve board space effects
   resolveBoardSpaceEffects(game, player, space)
 
+  // Lady Jessica / Reverend Mother: leader ability on BG/Fremen spaces
+  leaderAbilities.onAgentPlaced(game, player, space, resolveBoardSpaceEffects)
+
   // Staban Tuek: opponents gain spice when you visit a maker space they're spying on
   if (space.isMakerSpace) {
     leaderAbilities.onOpponentVisitsMakerSpace(game, player, space)
