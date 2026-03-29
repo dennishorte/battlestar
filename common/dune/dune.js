@@ -84,6 +84,9 @@ Dune.prototype._reset = function() {
   // Maker Hooks per player: { playerName: count }
   this.state.makerHooks = {}
 
+  // Leader assignments: { playerName: leaderDef }
+  this.state.leaders = {}
+
   // Faction alliances: { factionId: playerName | null }
   this.state.alliances = {
     emperor: null,
@@ -125,6 +128,12 @@ Dune.prototype.initialize = function() {
   this.initializeZones()
   this.initializeCards()
   this.initializePlayers()
+
+  if (this.settings.useLeaders) {
+    const leaders = require('./systems/leaders.js')
+    leaders.selectLeaders(this)
+  }
+
   this._breakpoint('initialization-complete')
 }
 

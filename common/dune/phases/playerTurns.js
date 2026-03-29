@@ -423,6 +423,13 @@ function resolveCardAgentAbility(game, player, card) {
     return
   }
 
+  // Signet Ring triggers leader ability
+  if (abilityText === 'Signet Ring') {
+    const leaders = require('../systems/leaders.js')
+    leaders.resolveSignetRing(game, player, resolveEffect)
+    return
+  }
+
   const effects = parseAgentAbility(abilityText)
   if (!effects) {
     // Complex ability we can't execute yet — log it

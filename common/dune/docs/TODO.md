@@ -37,11 +37,12 @@
 - [x] Wire spy choices into agent turn flow
 
 ## Leaders
-- [ ] Create `systems/leaders.js` with ability dispatch
-- [ ] Leader selection during setup (choose or random)
-- [ ] Leader ability 1: passive/triggered effects during play
-- [ ] Signet Ring card triggers leader ability 2
-- [ ] Individual leader implementations (start with simpler complexity-1 leaders)
+- [x] Create `systems/leaders.js` with ability dispatch
+- [x] Leader selection during setup (choose or random)
+- [x] Signet Ring card triggers leader's signet ring ability (parsed via cardEffects)
+- [x] Glossu Rabban starting effect (+1 Spice, +1 Solari)
+- [ ] Leader ability 1: passive/triggered effects during play (per-leader hooks)
+- [ ] Individual leader implementations for complex abilities (Duke Leto cost reduction, Paul prescience, Helena Richese bypassing agents, etc.)
 
 ## Intrigue Cards (Plot/Endgame)
 - [x] Plot intrigue: offered at start of turn, after effects resolve, and at end of turn
