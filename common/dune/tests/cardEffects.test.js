@@ -88,10 +88,56 @@ describe('Card Agent Ability Parser', () => {
     }])
   })
 
-  test('returns null for complex conditional abilities', () => {
+  test('parses "If you have N+ Influence" conditionals', () => {
+    const result = parseAgentAbility('If you have 2+ Influence with the Emperor: +1 Troop')
+    expect(result).toEqual([{
+      type: 'conditional',
+      condition: { type: 'influence', amount: 2, faction: 'emperor' },
+      effects: [{ type: 'troop', amount: 1 }],
+    }])
+  })
+
+  test('parses "If you have another Faction card in play" conditionals', () => {
+    const result = parseAgentAbility('If you have another Bene Gesserit card in play: Draw 1 card')
+    expect(result).not.toBeNull()
+    expect(result[0].type).toBe('conditional')
+    expect(result[0].condition.type).toBe('faction-card-in-play')
+    expect(result[0].condition.faction).toBe('bene gesserit')
+  })
+
+  test('parses "With N Influence with Faction" conditionals', () => {
+    const result = parseAgentAbility('With 2 Influence with Emperor: +2 Spice')
+    expect(result).toEqual([{
+      type: 'conditional',
+      condition: { type: 'influence', amount: 2, faction: 'emperor' },
+      effects: [{ type: 'gain', resource: 'spice', amount: 2 }],
+    }])
+  })
+
+  test('parses "If you completed a contract this turn" conditional', () => {
+    const result = parseAgentAbility('If you completed a contract this turn: +1 Intrigue card')
+    expect(result).not.toBeNull()
+    expect(result[0].condition.type).toBe('completed-contract-this-turn')
+    expect(result[0].effects).toEqual([{ type: 'intrigue', amount: 1 }])
+  })
+
+  test('parses chained "If" conditionals', () => {
+    const result = parseAgentAbility('If you have completed 2+ contracts: Draw a card. If you have completed 4+ contracts: Draw a card.')
+    expect(result).not.toBeNull()
+    expect(result.length).toBe(2)
+    expect(result[0].condition).toEqual({ type: 'completed-contracts', amount: 2 })
+    expect(result[1].condition).toEqual({ type: 'completed-contracts', amount: 4 })
+  })
+
+  test('parses "If you gained N+ Spice this turn" conditional', () => {
+    const result = parseAgentAbility('If you gained 2+ Spice this turn: +1 Troop and Draw a card')
+    expect(result).not.toBeNull()
+    expect(result[0].condition).toEqual({ type: 'gained-spice', amount: 2 })
+    expect(result[0].effects.length).toBe(2)
+  })
+
+  test('returns null for truly unparseable patterns', () => {
     expect(parseAgentAbility('Signet Ring')).toBeNull()
-    expect(parseAgentAbility('If you have another Bene Gesserit card in play: Draw 1 card')).toBeNull()
-    expect(parseAgentAbility('With 2 Emperor Influence: +2 Spice')).toBeNull()
     expect(parseAgentAbility('Each opponent loses 1 Garrisoned Troop')).toBeNull()
   })
 
