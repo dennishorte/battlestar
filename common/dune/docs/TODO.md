@@ -70,7 +70,7 @@
 - [x] Sandworm summoning effect (deploys sandworms to conflict)
 - [x] Shield Wall detonation effect (break-shield-wall)
 - [x] Sandworm deployment restriction: Hagga/Deep Desert not protected; maker-hook check in choice filter
-- [ ] Sandworm summoning at protected locations when shield wall is broken (edge case)
+- [x] Sandworm summoning blocked at protected conflict locations when shield wall intact
 
 ## CHOAM Module
 - [x] Create `systems/choam.js`
