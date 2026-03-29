@@ -21,6 +21,9 @@ function parseAgentAbility(text) {
     return null
   }
 
+  // Normalize newlines to spaces for cleaner parsing
+  text = text.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim()
+
   // Signet Ring handled specially
   if (/^Signet Ring$/i.test(text)) {
     return null
@@ -79,6 +82,34 @@ function parseAgentAbility(text) {
       return null
     }
     return [{ type: 'conditional', condition, effects: parsedEffect }]
+  }
+
+  // "Having N Faction Influence: Effect"
+  const havingInfluenceMatch = text.match(/^Having\s+(\d+)\s+(Emperor|Spacing Guild|Bene Gesserit|Fremen)\s+Influence:\s*(.+)$/i)
+  if (havingInfluenceMatch) {
+    const condition = { type: 'influence', amount: parseInt(havingInfluenceMatch[1]), faction: normalizeFaction(havingInfluenceMatch[2]) }
+    const parsedEffect = parseAgentAbility(havingInfluenceMatch[3].trim())
+    if (parsedEffect) {
+      return [{ type: 'conditional', condition, effects: parsedEffect }]
+    }
+  }
+
+  // "Having X Alliance: Effect" — may be followed by another Having clause (period-separated)
+  const havingMultiMatch = text.match(/^(Having\s+.+?\.\s*)+$/i)
+  if (havingMultiMatch) {
+    const clauses = text.match(/Having\s+[^.]+/gi)
+    if (clauses) {
+      const effects = []
+      for (const clause of clauses) {
+        const parsed = parseAgentAbility(clause.trim())
+        if (parsed) {
+          effects.push(...parsed)
+        }
+      }
+      if (effects.length > 0) {
+        return effects
+      }
+    }
   }
 
   // "Having X Alliance: Effect"
@@ -363,9 +394,33 @@ function parseSingleAbility(text) {
     return { type: 'influence', faction: factionMap[infSpecificMatch[2].toLowerCase()], amount: parseInt(infSpecificMatch[1]) }
   }
 
-  // "Recall an Agent"
-  if (/^Recall an Agent$/i.test(text)) {
+  // "Recall an Agent" / "Recall one of your Agents"
+  if (/^Recall (?:an|one of your) Agents?$/i.test(text)) {
     return { type: 'recall-agent' }
+  }
+
+  // "+N Faction Influence or +N Resource" lowercase "or"
+  const infOrResourceMatch = text.match(/^\+(\d+)\s+(Emperor|Spacing Guild|Bene Gesserit|Fremen)\s+Influence\s+or\s+\+?(\d+)\s+(Spice|Solari|Water|Swords?)/i)
+  if (infOrResourceMatch) {
+    const inf = { type: 'influence', faction: normalizeFaction(infOrResourceMatch[2]), amount: parseInt(infOrResourceMatch[1]) }
+    const res = infOrResourceMatch[4].toLowerCase().startsWith('sword')
+      ? { type: 'swords', amount: parseInt(infOrResourceMatch[3]) }
+      : { type: 'gain', resource: infOrResourceMatch[4].toLowerCase(), amount: parseInt(infOrResourceMatch[3]) }
+    return [{ type: 'choice', choices: [
+      { label: `+${infOrResourceMatch[1]} ${infOrResourceMatch[2]} Influence`, effects: [inf] },
+      { label: `+${infOrResourceMatch[3]} ${infOrResourceMatch[4]}`, effects: [res] },
+    ]}]
+  }
+
+  // "Opponents discard N card or lose N troop"
+  const opponentsChoiceMatch = text.match(/^Opponents?\s+discard\s+(\d+)\s+cards?\s+or\s+lose\s+(\d+)\s+(?:deployed\s+)?Troops?/i)
+  if (opponentsChoiceMatch) {
+    return [{ type: 'opponent-discard-or-lose', discardCount: parseInt(opponentsChoiceMatch[1]), troopCount: parseInt(opponentsChoiceMatch[2]) }]
+  }
+
+  // "Double base spice harvest (not bonus)"
+  if (/^Double base spice harvest/i.test(text)) {
+    return { type: 'double-harvest' }
   }
 
   // "Discard a card" (for cost patterns, not standalone effect)
