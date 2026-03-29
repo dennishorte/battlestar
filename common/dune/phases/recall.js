@@ -1,5 +1,7 @@
 const constants = require('../res/constants.js')
 const { GameOverEvent } = require('../../lib/game.js')
+const { parseAgentAbility } = require('../systems/cardEffects.js')
+const { resolveEffect } = require('./playerTurns.js')
 
 /**
  * Phase 5: Recall
@@ -48,7 +50,10 @@ function recallPhase(game) {
 function endGame(game) {
   game.log.add({ template: 'Game Over', event: 'phase-start' })
 
-  // TODO: Allow players to play Endgame Intrigue cards
+  // Allow each player to play Endgame Intrigue cards
+  for (const player of game.players.all()) {
+    offerEndgameIntrigue(game, player)
+  }
 
   // Determine winner
   const players = game.players.all()
@@ -87,6 +92,62 @@ function endGame(game) {
     player: winner,
     reason: `${winner.vp} Victory Points`,
   })
+}
+
+/**
+ * Offer a player the chance to play Endgame Intrigue cards.
+ */
+function offerEndgameIntrigue(game, player) {
+  while (true) {
+    const intrigueZone = game.zones.byId(`${player.name}.intrigue`)
+    const endgameCards = intrigueZone.cardlist().filter(c =>
+      c.definition && c.definition.endgameEffect
+    )
+
+    if (endgameCards.length === 0) {
+      return
+    }
+
+    const choices = ['Pass', ...endgameCards.map(c => c.name)]
+    const [choice] = game.actions.choose(player, choices, {
+      title: 'Play an Endgame Intrigue card?',
+    })
+
+    if (choice === 'Pass') {
+      return
+    }
+
+    const card = endgameCards.find(c => c.name === choice)
+    if (!card) {
+      return
+    }
+
+    const discardZone = game.zones.byId('common.intrigueDiscard')
+    card.moveTo(discardZone)
+    game.log.add({
+      template: '{player} plays {card} (Endgame)',
+      args: { player, card: card.name },
+    })
+
+    const effectText = card.definition.endgameEffect
+    const effects = parseAgentAbility(effectText)
+    if (effects) {
+      game.log.indent()
+      for (const effect of effects) {
+        resolveEffect(game, player, effect, null)
+      }
+      game.log.outdent()
+    }
+    else {
+      game.log.indent()
+      game.log.add({
+        template: '{effect}',
+        args: { effect: effectText },
+        event: 'memo',
+      })
+      game.log.outdent()
+    }
+  }
 }
 
 module.exports = { recallPhase }
