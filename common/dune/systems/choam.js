@@ -139,6 +139,10 @@ function completeContract(game, player, card) {
     args: { player, contract: card.name },
   })
 
+  if (game.state.turnTracking) {
+    game.state.turnTracking.completedContract = true
+  }
+
   // Parse and resolve the reward
   const rewardText = card.definition.reward
   const effects = parseAgentAbility(rewardText)

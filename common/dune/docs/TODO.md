@@ -11,11 +11,13 @@
 ## Card Agent Effects
 - [x] Wire up card `agentAbility` execution during agent turns via `resolveCardAgentAbility`
 - [x] Build agent ability text parser (`systems/cardEffects.js`) for simple patterns
-- [ ] Handle conditional abilities (If/With patterns, Signet Ring, faction synergies)
+- [x] Handle conditional abilities (If/With patterns, faction synergies, turn tracking)
+- [x] Turn tracking state: spy recalls, contract completions, spice gained
+- [ ] Grafted mechanic (Rise of Ix expansion)
 
 ## Card Reveal Effects
 - [x] Wire up `revealAbility` via `resolveCardRevealAbility` — parses simple effects and faction bonds
-- [ ] Handle complex reveal abilities (conditional bonuses, alliance checks)
+- [x] Conditional reveal abilities parsed via same If/With system
 
 ## Combat Reward Distribution
 - [x] Parse and execute conflict card rewards (first/second/third place)
@@ -48,7 +50,8 @@
 - [x] Plot intrigue: offered at start of turn, after effects resolve, and at end of turn
 - [x] Endgame intrigue: prompted before final scoring in `endGame()`
 - [x] Simple intrigue effects execute via parser; complex ones logged as memo
-- [ ] Execute individual complex intrigue card effects (conditional, faction-specific)
+- [x] Intrigue effects parsed via same conditional system (If/With patterns)
+- [ ] Intrigue effects with unique mechanics (retreat troops, swap cards, etc.)
 
 ## Setup Completeness
 - [x] Deal objective cards to players, determine first player from objective
@@ -71,7 +74,7 @@
 - [x] Contract reward parsing and execution
 - [x] Auto-completing contracts (board space visit, harvest threshold, immediate, acquire TSMF, earn alliance triggers)
 - [x] Contract completion count tracking via `getCompletedContractCount`
-- [ ] Card conditionals that check completed contract count ("If you have completed 4+ Contracts")
+- [x] Card conditionals that check completed contract count ("If you have completed 4+ Contracts")
 
 ## Data Gaps
 - [x] Conflict card reward text parser — `parseRewardText()` in combat.js

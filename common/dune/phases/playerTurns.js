@@ -69,6 +69,9 @@ function agentTurn(game, player) {
   })
   game.log.indent()
 
+  // Initialize turn tracking for conditional card abilities
+  game.state.turnTracking = { recalledSpy: false, completedContract: false, spiceGained: 0 }
+
   // Offer Plot Intrigue at start of turn
   offerPlotIntrigue(game, player)
 
@@ -114,6 +117,7 @@ function agentTurn(game, player) {
   if (spaceOccupied && hasSpyOnPost) {
     // Must infiltrate — recall spy to ignore occupant
     spies.recallSpyAt(game, player, space.id)
+    game.state.turnTracking.recalledSpy = true
     game.log.add({
       template: '{player} infiltrates {boardSpace} (ignoring occupant)',
       args: { player, boardSpace: space.name },
@@ -127,6 +131,7 @@ function agentTurn(game, player) {
     })
     if (giChoice !== 'No') {
       spies.recallSpyAt(game, player, space.id)
+      game.state.turnTracking.recalledSpy = true
       deckEngine.drawCards(game, player, 1)
       game.log.add({
         template: '{player} gathers intelligence at {boardSpace}',
@@ -567,6 +572,9 @@ function resolveEffect(game, player, effect, space) {
         template: '{player} gains {amount} {resource}',
         args: { player, amount: effect.amount, resource: effect.resource },
       })
+      if (effect.resource === 'spice' && game.state.turnTracking) {
+        game.state.turnTracking.spiceGained += effect.amount
+      }
       break
 
     case 'troop': {
@@ -606,6 +614,9 @@ function resolveEffect(game, player, effect, space) {
         })
         if (space) {
           game.state.bonusSpice[space.id] = 0
+        }
+        if (game.state.turnTracking) {
+          game.state.turnTracking.spiceGained += total
         }
         // Check harvest contract completion
         const choamHarvest = require('../systems/choam.js')
@@ -848,6 +859,71 @@ function resolveEffect(game, player, effect, space) {
         args: { player, amount: effect.amount },
       })
       break
+
+    case 'conditional': {
+      if (checkCondition(game, player, effect.condition)) {
+        for (const subEffect of effect.effects) {
+          resolveEffect(game, player, subEffect, space)
+        }
+      }
+      break
+    }
+  }
+}
+
+/**
+ * Check if a conditional effect's condition is met.
+ */
+function checkCondition(game, player, condition) {
+  switch (condition.type) {
+    case 'influence':
+      return player.getInfluence(condition.faction) >= condition.amount
+
+    case 'completed-contracts': {
+      const choamCheck = require('../systems/choam.js')
+      return choamCheck.getCompletedContractCount(game, player) >= condition.amount
+    }
+
+    case 'recalled-spy':
+      return !!(game.state.turnTracking && game.state.turnTracking.recalledSpy)
+
+    case 'completed-contract-this-turn':
+      return !!(game.state.turnTracking && game.state.turnTracking.completedContract)
+
+    case 'gained-spice': {
+      const gained = (game.state.turnTracking && game.state.turnTracking.spiceGained) || 0
+      return gained >= condition.amount
+    }
+
+    case 'faction-card-in-play': {
+      const playedZone = game.zones.byId(`${player.name}.played`)
+      return playedZone.cardlist().some(c =>
+        c.factionAffiliation && c.factionAffiliation.toLowerCase().includes(condition.faction)
+      )
+    }
+
+    case 'sandworms-in-conflict':
+      return (game.state.conflict.deployedSandworms[player.name] || 0) >= condition.amount
+
+    case 'units-in-conflict': {
+      const troops = game.state.conflict.deployedTroops[player.name] || 0
+      const sandworms = game.state.conflict.deployedSandworms[player.name] || 0
+      return (troops + sandworms) >= condition.amount
+    }
+
+    case 'most-deployed-troops': {
+      const myTroops = game.state.conflict.deployedTroops[player.name] || 0
+      return game.players.all().every(p =>
+        p.name === player.name || (game.state.conflict.deployedTroops[p.name] || 0) < myTroops
+      )
+    }
+
+    case 'grafted':
+      // Grafting is a Rise of Ix expansion mechanic — not implemented yet
+      return false
+
+    default:
+      return false
   }
 }
 

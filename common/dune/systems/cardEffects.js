@@ -21,8 +21,68 @@ function parseAgentAbility(text) {
     return null
   }
 
-  // Skip known complex patterns we can't handle yet
-  if (/^(Signet Ring|If |With |When |This |Each opponent|Block |For each|Look at|Put one|Send one|Enemy|You may (take another|acquire|deploy)|Gain rewards|The next|Ignore Influence)/i.test(text)) {
+  // Signet Ring handled specially
+  if (/^Signet Ring$/i.test(text)) {
+    return null
+  }
+
+  // Handle "If condition: effect" patterns
+  const ifMatch = text.match(/^If (.+?):\s*(.+)$/i)
+  if (ifMatch) {
+    const condition = parseCondition(ifMatch[1].trim())
+    const effectText = ifMatch[2].trim()
+
+    // Handle chained conditions: "If X: effect1. If Y: effect2."
+    const dotSplit = effectText.split(/\.\s*If\s+/i)
+    if (dotSplit.length > 1) {
+      const effects = []
+      // First part is the effect of the first condition
+      const firstEffect = parseAgentAbility(dotSplit[0].trim().replace(/\.$/, ''))
+      if (condition && firstEffect) {
+        effects.push({ type: 'conditional', condition, effects: firstEffect })
+      }
+      // Remaining parts are "condition: effect" pairs
+      for (let i = 1; i < dotSplit.length; i++) {
+        const subMatch = dotSplit[i].match(/^(.+?):\s*(.+?)\.?$/i)
+        if (subMatch) {
+          const subCondition = parseCondition(subMatch[1].trim())
+          const subEffect = parseAgentAbility(subMatch[2].trim().replace(/\.$/, ''))
+          if (subCondition && subEffect) {
+            effects.push({ type: 'conditional', condition: subCondition, effects: subEffect })
+          }
+        }
+      }
+      return effects.length > 0 ? effects : null
+    }
+
+    if (!condition) {
+      return null
+    }
+    const parsedEffect = parseAgentAbility(effectText.replace(/\.$/, ''))
+    if (!parsedEffect) {
+      return null
+    }
+    return [{ type: 'conditional', condition, effects: parsedEffect }]
+  }
+
+  // Handle "With N Influence with Faction: effect" patterns
+  const withMatch = text.match(/^With (\d+) Influence with (\w[\w\s]*?):\s*(.+)$/i)
+  if (withMatch) {
+    const condition = {
+      type: 'influence',
+      faction: normalizeFaction(withMatch[2].trim()),
+      amount: parseInt(withMatch[1]),
+    }
+    const effectText = withMatch[3].trim()
+    const parsedEffect = parseAgentAbility(effectText)
+    if (!parsedEffect) {
+      return null
+    }
+    return [{ type: 'conditional', condition, effects: parsedEffect }]
+  }
+
+  // Skip remaining complex patterns
+  if (/^(This |Each opponent|Block |For each|Look at|Put one|Send one|Enemy|You may (take another|acquire|deploy)|Gain rewards|The next|Ignore Influence)/i.test(text)) {
     return null
   }
 
@@ -180,4 +240,88 @@ function parseSingleAbility(text) {
   return null
 }
 
-module.exports = { parseAgentAbility }
+/**
+ * Normalize faction name from card text to internal ID.
+ */
+function normalizeFaction(text) {
+  const map = {
+    'emperor': 'emperor',
+    'the emperor': 'emperor',
+    'spacing guild': 'guild',
+    'the spacing guild': 'guild',
+    'bene gesserit': 'bene-gesserit',
+    'the bene gesserit': 'bene-gesserit',
+    'fremen': 'fremen',
+    'the fremen': 'fremen',
+  }
+  return map[text.toLowerCase()] || text.toLowerCase()
+}
+
+/**
+ * Parse a condition phrase from "If condition:" text.
+ * Returns a condition object or null if unparseable.
+ */
+function parseCondition(text) {
+  // "you have N+ Influence with Faction"
+  const infMatch = text.match(/you have (\d+)\+?\s+Influence with (?:the )?(\w[\w\s]*)/i)
+  if (infMatch) {
+    return {
+      type: 'influence',
+      amount: parseInt(infMatch[1]),
+      faction: normalizeFaction(infMatch[2].trim()),
+    }
+  }
+
+  // "you have completed N+ contracts"
+  const contractMatch = text.match(/you have completed (\d+)\+?\s+contracts/i)
+  if (contractMatch) {
+    return { type: 'completed-contracts', amount: parseInt(contractMatch[1]) }
+  }
+
+  // "you recalled a Spy this turn"
+  if (/you recalled a Spy this turn/i.test(text)) {
+    return { type: 'recalled-spy' }
+  }
+
+  // "you completed a contract this turn"
+  if (/you completed a contract this turn/i.test(text)) {
+    return { type: 'completed-contract-this-turn' }
+  }
+
+  // "you gained N+ Spice this turn"
+  const spiceGainMatch = text.match(/you gained (\d+)\+?\s+Spice this turn/i)
+  if (spiceGainMatch) {
+    return { type: 'gained-spice', amount: parseInt(spiceGainMatch[1]) }
+  }
+
+  // "you have another Faction card in play"
+  const factionCardMatch = text.match(/you have another (\w[\w\s]*?) card in play/i)
+  if (factionCardMatch) {
+    return { type: 'faction-card-in-play', faction: factionCardMatch[1].trim().toLowerCase() }
+  }
+
+  // "you have N+ Sandworms in the Conflict"
+  const sandwormMatch = text.match(/you have (\d+)\+?\s+Sandworms? in the Conflict/i)
+  if (sandwormMatch) {
+    return { type: 'sandworms-in-conflict', amount: parseInt(sandwormMatch[1]) }
+  }
+
+  // "you have three or more units in the conflict"
+  if (/you have three or more units in the conflict/i.test(text)) {
+    return { type: 'units-in-conflict', amount: 3 }
+  }
+
+  // "you have more deployed troops than each opponent"
+  if (/you have more deployed troops than each opponent/i.test(text)) {
+    return { type: 'most-deployed-troops' }
+  }
+
+  // "grafted" (expansion mechanic)
+  if (/grafted/i.test(text)) {
+    return { type: 'grafted' }
+  }
+
+  return null
+}
+
+module.exports = { parseAgentAbility, parseCondition, normalizeFaction }
