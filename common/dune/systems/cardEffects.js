@@ -166,6 +166,11 @@ function parseSingleAbility(text) {
     return { type: 'discard-card' }
   }
 
+  // "+1 Contract"
+  if (/^\+1\s+Contract$/i.test(text)) {
+    return { type: 'contract' }
+  }
+
   return null
 }
 

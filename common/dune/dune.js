@@ -143,6 +143,8 @@ Dune.prototype.initializeZones = function() {
   z('common.reserve.prepareTheWay', 'Prepare the Way', 'public')
   z('common.reserve.spiceMustFlow', 'The Spice Must Flow', 'public')
   z('common.trash', 'Trash', 'hidden')
+  z('common.contractDeck', 'Contract Deck', 'hidden')
+  z('common.contractMarket', 'Contract Market', 'public')
 
   // Per-player zones
   for (const player of this.players.all()) {
@@ -152,11 +154,18 @@ Dune.prototype.initializeZones = function() {
     z(`${player.name}.revealed`, `${player.name}'s Revealed`, 'public')
     z(`${player.name}.discard`, `${player.name}'s Discard`, 'public')
     z(`${player.name}.intrigue`, `${player.name}'s Intrigue`, 'private', player)
+    z(`${player.name}.contracts`, `${player.name}'s Contracts`, 'public')
+    z(`${player.name}.contractsCompleted`, `${player.name}'s Completed Contracts`, 'public')
   }
 }
 
 Dune.prototype.initializeCards = function() {
   deckEngine.initializeCards(this)
+
+  if (this.settings.useCHOAM) {
+    const choam = require('./systems/choam.js')
+    choam.initializeContracts(this)
+  }
 }
 
 Dune.prototype.initializePlayers = function() {

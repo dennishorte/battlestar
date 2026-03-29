@@ -6,7 +6,7 @@
 - [x] Wire up choice effects (Spice Refinery, Sietch Tabr, Hagga Basin, Deep Desert, Gather Support)
 - [x] Wire up simple effects: influence-choice, high-council, sword-master, trash-card, steal-intrigue, vp, influence, control
 - [x] Wire up remaining complex effects: intrigue-trash-draw, recall-agent, maker-hook, break-shield-wall, sandworm
-- [ ] Wire up contract effect (depends on CHOAM module)
+- [x] Wire up contract effect (via CHOAM module)
 
 ## Card Agent Effects
 - [x] Wire up card `agentAbility` execution during agent turns via `resolveCardAgentAbility`
@@ -62,11 +62,12 @@
 - [ ] Sandworm deployment restriction: require Maker Hooks, disallow at protected locations unless shield wall broken
 
 ## CHOAM Module
-- [ ] Create `systems/choam.js`
-- [ ] Contract setup (20 shuffled, 2 face-up)
-- [ ] Taking contracts from board
-- [ ] Completing contracts (board space, harvest, immediate, acquire TSMF)
-- [ ] Contract rewards
+- [x] Create `systems/choam.js`
+- [x] Contract setup (shuffled deck, 2 face-up market)
+- [x] Taking contracts from market
+- [x] Contract reward parsing and execution
+- [ ] Auto-completing contracts (board space visit, harvest threshold, immediate, acquire TSMF triggers)
+- [ ] Contract completion tracking for card conditionals ("If you have completed 4+ Contracts")
 
 ## Data Gaps
 - [x] Conflict card reward text parser — `parseRewardText()` in combat.js
