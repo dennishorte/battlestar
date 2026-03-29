@@ -51,7 +51,7 @@
 - [ ] Execute individual complex intrigue card effects (conditional, faction-specific)
 
 ## Setup Completeness
-- [ ] Deal objective cards to players, determine first player from objective
+- [x] Deal objective cards to players, determine first player from objective
 - [x] Defensive bonus: deploy 1 troop from supply when your controlled location's conflict is revealed
 - [x] Swordmaster acquisition effect (gain 3rd agent, dynamic cost 8/6)
 - [x] High Council seat effect (take seat; 2nd visit gives 2 spice + 1 intrigue + 3 troops)

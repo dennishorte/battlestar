@@ -87,6 +87,10 @@ Dune.prototype._reset = function() {
   // Leader assignments: { playerName: leaderDef }
   this.state.leaders = {}
 
+  // Objective cards: { playerName: objectiveDef }
+  this.state.objectives = {}
+  this.state.firstPlayer = null
+
   // Faction alliances: { factionId: playerName | null }
   this.state.alliances = {
     emperor: null,
@@ -128,6 +132,9 @@ Dune.prototype.initialize = function() {
   this.initializeZones()
   this.initializeCards()
   this.initializePlayers()
+
+  // Deal objective cards and determine first player
+  this.initializeObjectives()
 
   if (this.settings.useLeaders) {
     const leaders = require('./systems/leaders.js')
@@ -181,6 +188,59 @@ Dune.prototype.initializePlayers = function() {
   for (const player of this.players.all()) {
     player.setCounter('water', constants.STARTING_WATER, { silent: true })
     player.setCounter('vp', constants.STARTING_VP[this.settings.numPlayers] || 0, { silent: true })
+  }
+}
+
+Dune.prototype.initializeObjectives = function() {
+  const objectiveCards = require('./res/cards/objectives.js')
+  const numPlayers = this.settings.numPlayers
+
+  // Filter by player count
+  let available = objectiveCards.filter(c => {
+    if (c.playerCount === 'all') {
+      return true
+    }
+    if (c.playerCount === '1-3' && numPlayers <= 3) {
+      return true
+    }
+    if (c.playerCount === '4+' && numPlayers >= 4) {
+      return true
+    }
+    return false
+  })
+
+  // Shuffle
+  for (let i = available.length - 1; i > 0; i--) {
+    const j = Math.floor(this.random() * (i + 1))
+    ;[available[i], available[j]] = [available[j], available[i]]
+  }
+
+  // Deal one to each player
+  let firstPlayerName = null
+  for (const player of this.players.all()) {
+    const card = available.pop()
+    if (!card) {
+      break
+    }
+    this.state.objectives[player.name] = card
+
+    this.log.add({
+      template: '{player} draws objective: {card}',
+      args: { player, card: card.name },
+    })
+
+    if (card.isFirstPlayer) {
+      firstPlayerName = player.name
+    }
+  }
+
+  // Set first player
+  if (firstPlayerName) {
+    this.state.firstPlayer = firstPlayerName
+    this.log.add({
+      template: '{player} is the First Player',
+      args: { player: this.players.byName(firstPlayerName) },
+    })
   }
 }
 
