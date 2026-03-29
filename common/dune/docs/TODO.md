@@ -69,8 +69,9 @@
 - [x] Contract setup (shuffled deck, 2 face-up market)
 - [x] Taking contracts from market
 - [x] Contract reward parsing and execution
-- [ ] Auto-completing contracts (board space visit, harvest threshold, immediate, acquire TSMF triggers)
-- [ ] Contract completion tracking for card conditionals ("If you have completed 4+ Contracts")
+- [x] Auto-completing contracts (board space visit, harvest threshold, immediate, acquire TSMF, earn alliance triggers)
+- [x] Contract completion count tracking via `getCompletedContractCount`
+- [ ] Card conditionals that check completed contract count ("If you have completed 4+ Contracts")
 
 ## Data Gaps
 - [x] Conflict card reward text parser — `parseRewardText()` in combat.js
