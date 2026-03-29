@@ -6,6 +6,44 @@ const leaders = require('./leaders.js')
 const deckEngine = require('./deckEngine.js')
 
 /**
+ * Hook: called at the start of agent turn, before choosing a card.
+ */
+function onAgentTurnStart(game, player) {
+  const leader = leaders.getLeader(game, player)
+  if (!leader) {
+    return
+  }
+
+  if (leader.name === 'Baron Vladimir Harkonnen') {
+    if (!game.state.leaderBonusTriggered) {
+      game.state.leaderBonusTriggered = {}
+    }
+    const key = `${player.name}-masterstroke`
+    if (!game.state.leaderBonusTriggered[key]) {
+      const choices = ['Pass', 'Activate Masterstroke (+1 Influence to 2 Factions)']
+      const [choice] = game.actions.choose(player, choices, {
+        title: 'Baron Vladimir: Use Masterstroke? (once per game)',
+      })
+      if (choice !== 'Pass') {
+        game.state.leaderBonusTriggered[key] = true
+        const constants = require('../res/constants.js')
+        const factionsModule = require('./factions.js')
+        for (let i = 0; i < 2; i++) {
+          const [faction] = game.actions.choose(player, constants.FACTIONS, {
+            title: `Masterstroke: Choose faction ${i + 1} of 2`,
+          })
+          factionsModule.gainInfluence(game, player, faction)
+        }
+        game.log.add({
+          template: '{player}: Masterstroke — +1 Influence to 2 Factions',
+          args: { player },
+        })
+      }
+    }
+  }
+}
+
+/**
  * Hook: called during reveal turn, after cards are revealed.
  */
 function onRevealTurn(game, player) {
@@ -312,6 +350,7 @@ function onGainSolari(game, player, amount) {
 }
 
 module.exports = {
+  onAgentTurnStart,
   onRevealTurn,
   onPaySolariForSpace,
   onGainHighCouncil,

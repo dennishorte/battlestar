@@ -73,6 +73,9 @@ function agentTurn(game, player) {
   // Initialize turn tracking for conditional card abilities
   game.state.turnTracking = { recalledSpy: false, completedContract: false, spiceGained: 0 }
 
+  // Leader start-of-turn hook
+  leaderAbilities.onAgentTurnStart(game, player)
+
   // Offer Plot Intrigue at start of turn
   offerPlotIntrigue(game, player)
 
