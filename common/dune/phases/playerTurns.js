@@ -185,6 +185,11 @@ function agentTurn(game, player) {
   // Resolve board space effects
   resolveBoardSpaceEffects(game, player, space)
 
+  // Staban Tuek: opponents gain spice when you visit a maker space they're spying on
+  if (space.isMakerSpace) {
+    leaderAbilities.onOpponentVisitsMakerSpace(game, player, space)
+  }
+
   // Deploy units if combat space
   if (space.isCombatSpace) {
     deployUnits(game, player)
@@ -590,6 +595,9 @@ function resolveEffect(game, player, effect, space) {
       if (effect.resource === 'spice' && game.state.turnTracking) {
         game.state.turnTracking.spiceGained += effect.amount
       }
+      if (effect.resource === 'solari') {
+        leaderAbilities.onGainSolari(game, player, effect.amount)
+      }
       break
 
     case 'troop': {
@@ -620,7 +628,8 @@ function resolveEffect(game, player, effect, space) {
     case 'spice-harvest': {
       const base = effect.amount || 0
       const bonus = (space && game.state.bonusSpice[space.id]) || 0
-      const total = base + bonus
+      let total = base + bonus
+      total = leaderAbilities.modifyHarvestAmount(game, player, total)
       if (total > 0) {
         player.incrementCounter('spice', total, { silent: true })
         game.log.add({

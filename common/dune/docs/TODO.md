@@ -56,14 +56,15 @@
 - [x] Archduke Armand Ecaz: May trash a card in play at reveal
 - [x] Feyd-Rautha: May recall spy for +2 Strength at reveal
 - [x] Lady Amber Metulli: May retreat a troop at reveal
-- [ ] Paul Atreides: Prescience (view top of deck)
+- [x] Countess Ariana Thorvald: Harvest -1 spice, +1 draw
+- [x] Staban Tuek: Smuggle Spice passive, start without Diplomacy
+- [x] Princess Yuna Moritani: Start with no Water, +1 bonus Solari on gains
+- [ ] Paul Atreides: Prescience (view top of deck — UI-dependent)
 - [ ] Baron Vladimir: Masterstroke (once per game +1 Influence x2)
-- [ ] Countess Ariana Thorvald: Harvest -1 spice, +1 draw
 - [ ] Shaddam Corrino: Sardaukar Commander exclusivity
-- [ ] Staban Tuek: Smuggle Spice passive, start without Diplomacy
 - [ ] Lady Jessica: Other Memories system
 - [ ] Feyd-Rautha: Training track
-- [ ] Rise of Ix leaders (Ilesa, Yuna, Viscount, Tessia, Rhombur)
+- [ ] Rise of Ix leaders (Ilesa, Viscount, Tessia, Rhombur)
 - [ ] Bloodlines leaders (Duncan signet, Chani tactics track)
 
 ## Intrigue Cards (Plot/Endgame)
