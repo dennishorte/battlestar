@@ -646,7 +646,12 @@ function resolveEffect(game, player, effect, space) {
       break
 
     case 'spice-harvest': {
-      const base = effect.amount || 0
+      let base = effect.amount || 0
+      // Double harvest from card effect
+      if (game.state.turnTracking?.doubleHarvest && base > 0) {
+        base *= 2
+        game.state.turnTracking.doubleHarvest = false
+      }
       const bonus = (space && game.state.bonusSpice[space.id]) || 0
       let total = base + bonus
       total = leaderAbilities.modifyHarvestAmount(game, player, total)
@@ -1063,6 +1068,44 @@ function resolveEffect(game, player, effect, space) {
       })
       break
     }
+
+    case 'opponent-discard-or-lose': {
+      for (const opponent of game.players.all()) {
+        if (opponent.name === player.name) {
+          continue
+        }
+        const oppHand = game.zones.byId(`${opponent.name}.hand`)
+        const hasCards = oppHand.cardlist().length > 0
+        const hasTroops = opponent.troopsInGarrison > 0
+        if (hasCards && hasTroops) {
+          const [choice] = game.actions.choose(opponent, ['Discard a card', 'Lose a troop'], {
+            title: 'Choose: discard a card or lose a troop',
+          })
+          if (choice === 'Discard a card') {
+            resolveEffect(game, opponent, { type: 'opponent-discard', amount: 1 }, null)
+          }
+          else {
+            opponent.decrementCounter('troopsInGarrison', 1, { silent: true })
+            game.log.add({ template: '{player} loses 1 troop', args: { player: opponent } })
+          }
+        }
+        else if (hasCards) {
+          resolveEffect(game, opponent, { type: 'opponent-discard', amount: 1 }, null)
+        }
+        else if (hasTroops) {
+          opponent.decrementCounter('troopsInGarrison', 1, { silent: true })
+          game.log.add({ template: '{player} loses 1 troop', args: { player: opponent } })
+        }
+      }
+      break
+    }
+
+    case 'double-harvest':
+      // Doubles the base spice harvest at the current maker space (tracked via turn state)
+      if (game.state.turnTracking) {
+        game.state.turnTracking.doubleHarvest = true
+      }
+      break
 
     case 'complete-contract': {
       const choamComplete = require('../systems/choam.js')
