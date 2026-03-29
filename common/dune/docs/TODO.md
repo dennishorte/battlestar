@@ -25,7 +25,8 @@
 - [ ] Sandworm reward doubling (double most rewards, not control or battle icons)
 
 ## Combat Intrigue Effects
-- [ ] Execute combat intrigue card effects (currently cards are discarded but effect text is only logged)
+- [x] Execute simple combat intrigue effects via parser (swords, resources)
+- [ ] Execute complex combat intrigue effects (conditional, retreat, spy recall combos)
 
 ## Spy System
 - [x] Create `systems/spies.js`
@@ -50,7 +51,7 @@
 
 ## Setup Completeness
 - [ ] Deal objective cards to players, determine first player from objective
-- [ ] Defensive bonus: deploy 1 troop from supply when your controlled location's conflict is revealed
+- [x] Defensive bonus: deploy 1 troop from supply when your controlled location's conflict is revealed
 - [x] Swordmaster acquisition effect (gain 3rd agent, dynamic cost 8/6)
 - [x] High Council seat effect (take seat; 2nd visit gives 2 spice + 1 intrigue + 3 troops)
 - [x] The Spice Must Flow acquisition bonus (+1 VP)
@@ -59,7 +60,8 @@
 - [x] Maker Hooks token tracking per player
 - [x] Sandworm summoning effect (deploys sandworms to conflict)
 - [x] Shield Wall detonation effect (break-shield-wall)
-- [ ] Sandworm deployment restriction: require Maker Hooks, disallow at protected locations unless shield wall broken
+- [x] Sandworm deployment restriction: Hagga/Deep Desert not protected; maker-hook check in choice filter
+- [ ] Sandworm summoning at protected locations when shield wall is broken (edge case)
 
 ## CHOAM Module
 - [x] Create `systems/choam.js`

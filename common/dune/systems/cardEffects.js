@@ -171,6 +171,12 @@ function parseSingleAbility(text) {
     return { type: 'contract' }
   }
 
+  // "+N Sword(s)"
+  const swordMatch = text.match(/^\+(\d+)\s+Swords?$/i)
+  if (swordMatch) {
+    return { type: 'swords', amount: parseInt(swordMatch[1]) }
+  }
+
   return null
 }
 
