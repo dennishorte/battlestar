@@ -102,6 +102,39 @@ function parseAgentAbility(text) {
     }]
   }
 
+  // Handle discard-as-cost patterns: "Discard a card -> Effect" / "Discard N cards -> Effect"
+  const discardCostMatch = text.match(/^Discard\s+(?:a|(\d+))\s+cards?\s*(?:-->?|:)\s*(.+)$/i)
+  if (discardCostMatch) {
+    const discardCount = discardCostMatch[1] ? parseInt(discardCostMatch[1]) : 1
+    const effectText = discardCostMatch[2].trim()
+    const subEffects = parseAgentAbility(effectText)
+    if (!subEffects) {
+      return null
+    }
+    const discardEffects = []
+    for (let i = 0; i < discardCount; i++) {
+      discardEffects.push({ type: 'discard-card' })
+    }
+    return [...discardEffects, ...subEffects]
+  }
+
+  // Handle lose-as-cost patterns: "Lose N troops/influence -> Effect"
+  const loseCostMatch = text.match(/^Lose\s+(?:(\d+)|one|two|three)\s+(?:of\s+your\s+)?(troops?|Influence)\s*(?:-->?|:)?\s*(.+)$/i)
+  if (loseCostMatch) {
+    const numMap = { one: 1, two: 2, three: 3 }
+    const amount = loseCostMatch[1] ? parseInt(loseCostMatch[1]) : (numMap[loseCostMatch[0].match(/one|two|three/i)?.[0]?.toLowerCase()] || 1)
+    const what = loseCostMatch[2].toLowerCase()
+    const effectText = loseCostMatch[3]?.trim()
+    if (effectText) {
+      const subEffects = parseAgentAbility(effectText)
+      if (!subEffects) {
+        return null
+      }
+      const costType = what.startsWith('troop') ? 'lose-troops' : 'lose-influence'
+      return [{ type: costType, amount }, ...subEffects]
+    }
+  }
+
   // Handle retreat-as-cost patterns: "Retreat N Troops -> Effect"
   const retreatCostMatch = text.match(/^Retreat\s+(\d+)\s+(?:of\s+your\s+)?Troops?\s*->\s*(.+)$/i)
   if (retreatCostMatch) {
@@ -117,8 +150,8 @@ function parseAgentAbility(text) {
     ]
   }
 
-  // Handle cost-effect patterns: "Pay N Resource: Effect" or "N Resource -> Effect"
-  const costMatch = text.match(/^(?:Pay\s+)?(\d+)\s+(Solari|Spice|Water|Influence)\s*(?:-->?|:)\s*(.+)$/i)
+  // Handle cost-effect patterns: "Pay/Spend N Resource: Effect" or "N Resource -> Effect"
+  const costMatch = text.match(/^(?:Pay|Spend)?\s*(\d+)\s+(Solari|Spice|Water|Influence)\s*(?:-->?|:)\s*(.+)$/i)
   if (costMatch) {
     const costAmount = parseInt(costMatch[1])
     const costResource = costMatch[2].toLowerCase()
@@ -136,8 +169,8 @@ function parseAgentAbility(text) {
     }]
   }
 
-  // Split compound abilities: ", " or " and " or " AND "
-  const parts = text.split(/\s*,\s*|\s+(?:and|AND)\s+/)
+  // Split compound abilities: ", " or " and " or " AND " or newline
+  const parts = text.split(/\s*[,\n]\s*|\s+(?:and|AND)\s+/).filter(p => p.trim())
   const effects = []
 
   for (const part of parts) {
@@ -219,6 +252,23 @@ function parseSingleAbility(text) {
     return { type: 'influence-choice', amount: parseInt(infChoiceMatch[1]) }
   }
 
+  // "+1 Influence with Specific Faction" / "+1 Influence with the Emperor"
+  const infWithMatch = text.match(/^\+(\d+)\s+Influence\s+with\s+(?:the\s+)?(Emperor|Spacing Guild|Bene Gesserit|Fremen)$/i)
+  if (infWithMatch) {
+    return { type: 'influence', faction: normalizeFaction(infWithMatch[2]), amount: parseInt(infWithMatch[1]) }
+  }
+
+  // "+1 Influence" (generic, no faction specified — offer choice)
+  if (/^\+(\d+)\s+Influence$/i.test(text)) {
+    const m = text.match(/(\d+)/)
+    return { type: 'influence-choice', amount: parseInt(m[1]) }
+  }
+
+  // "Gain N Influence instead of one" / "Gain two influence instead of one"
+  if (/^Gain\s+(?:2|two)\s+[Ii]nfluence\s+instead\s+of\s+one/i.test(text)) {
+    return { type: 'extra-influence' }
+  }
+
   // "+1 Faction Influence" (specific faction)
   const infSpecificMatch = text.match(/^\+(\d+)\s+(Emperor|Spacing Guild|Bene Gesserit|Fremen)\s+Influence$/i)
   if (infSpecificMatch) {
@@ -247,9 +297,51 @@ function parseSingleAbility(text) {
     return { type: 'gain', resource: 'persuasion', amount: parseInt(persuasionMatch[1]) }
   }
 
-  // "Deploy troops" / "Deploy up to N troops"
+  // "Deploy troops" / "Deploy up to N troops from garrison to Conflict"
   if (/^Deploy troops\.?$/i.test(text)) {
     return { type: 'deploy-troops' }
+  }
+  const deployMatch = text.match(/^Deploy\s+(?:up to\s+)?(\d+)\s+[Tt]roops?\s+(?:from\s+(?:your\s+)?garrison\s+)?to\s+(?:the\s+)?Conflict/i)
+  if (deployMatch) {
+    return { type: 'deploy-to-conflict', amount: parseInt(deployMatch[1]) }
+  }
+  if (/^Deploy\s+(?:any\s+number\s+of\s+)?(?:your\s+)?(?:garrisoned\s+)?troops?\s+to\s+(?:the\s+)?Conflict/i.test(text)) {
+    return { type: 'deploy-to-conflict', amount: 99 }
+  }
+
+  // "Each opponent discards a card" / "Each opponent loses N troop(s)"
+  if (/^Each opponent discards?\s+(?:a|\d+)\s+cards?/i.test(text)) {
+    return { type: 'opponent-discard', amount: 1 }
+  }
+  const opponentLoseMatch = text.match(/^Each opponent loses?\s+(?:(\d+)|one)\s+(?:Garrisoned\s+)?[Tt]roops?/i)
+  if (opponentLoseMatch) {
+    return { type: 'opponent-lose-troop', amount: opponentLoseMatch[1] ? parseInt(opponentLoseMatch[1]) : 1 }
+  }
+
+  // "Force an enemy troop to retreat"
+  if (/^Force an enemy (?:troop|unit) to retreat/i.test(text)) {
+    return { type: 'force-retreat' }
+  }
+
+  // "Blow the Shield Wall" / "Destroy the Shield Wall"
+  if (/^(?:Blow|Destroy)\s+the Shield Wall/i.test(text)) {
+    return { type: 'break-shield-wall' }
+  }
+
+  // "+1 Victory point" / "+1 VP"
+  const vpMatch = text.match(/^\+(\d+)\s+Victory\s+[Pp]oints?$/i)
+  if (vpMatch) {
+    return { type: 'vp', amount: parseInt(vpMatch[1]) }
+  }
+
+  // "Shuffle your discard pile into your deck"
+  if (/^Shuffle your discard pile into your deck/i.test(text)) {
+    return { type: 'shuffle-discard' }
+  }
+
+  // "Recal/Recall one of your Agents"
+  if (/^Recal?l?\s+(?:one of\s+)?your\s+Agents?/i.test(text)) {
+    return { type: 'recall-agent' }
   }
 
   // "+1 Contract"
