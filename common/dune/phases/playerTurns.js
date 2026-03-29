@@ -2,6 +2,7 @@ const deckEngine = require('../systems/deckEngine.js')
 const factions = require('../systems/factions.js')
 const spies = require('../systems/spies.js')
 const { parseAgentAbility } = require('../systems/cardEffects.js')
+const leaderAbilities = require('../systems/leaderAbilities.js')
 const constants = require('../res/constants.js')
 
 /**
@@ -151,15 +152,26 @@ function agentTurn(game, player) {
   })
 
   // Pay board space cost
-  const cost = getSpaceCost(game, space)
+  const cost = getSpaceCost(game, space, player)
+  let paidSolari = false
   if (cost) {
     for (const [resource, amount] of Object.entries(cost)) {
-      player.decrementCounter(resource, amount, { silent: true })
-      game.log.add({
-        template: '{player} pays {amount} {resource}',
-        args: { player, amount, resource },
-      })
+      if (amount > 0) {
+        player.decrementCounter(resource, amount, { silent: true })
+        game.log.add({
+          template: '{player} pays {amount} {resource}',
+          args: { player, amount, resource },
+        })
+        if (resource === 'solari') {
+          paidSolari = true
+        }
+      }
     }
+  }
+
+  // Leader hook: Count Ilban Richese draws on paying Solari
+  if (paidSolari) {
+    leaderAbilities.onPaySolariForSpace(game, player)
   }
 
   // Gain faction influence if faction space
@@ -239,6 +251,9 @@ function revealTurn(game, player) {
   for (const card of revealedCards) {
     resolveCardRevealAbility(game, player, card, revealedCards)
   }
+
+  // Leader reveal turn hook
+  leaderAbilities.onRevealTurn(game, player)
 
   // Set combat strength
   const troops = game.state.conflict.deployedTroops[player.name] || 0
@@ -358,17 +373,17 @@ function canSendAgentTo(game, player, card, space) {
     return false
   }
 
-  // Space occupancy check — can infiltrate if spy on connected post
+  // Space occupancy check — can infiltrate if spy on connected post, or leader ignores
   if (game.state.boardSpaces[space.id]) {
-    if (!spies.hasSpyAt(game, player, space.id)) {
+    if (!spies.hasSpyAt(game, player, space.id) && !leaderAbilities.ignoresOccupancy(game, player, space)) {
       return false
     }
   }
 
   // Player must be able to pay the cost
-  const cost = getSpaceCost(game, space)
-  if (cost) {
-    for (const [resource, amount] of Object.entries(cost)) {
+  const canSendCost = getSpaceCost(game, space, player)
+  if (canSendCost) {
+    for (const [resource, amount] of Object.entries(canSendCost)) {
       if (player.getCounter(resource) < amount) {
         return false
       }
@@ -685,6 +700,7 @@ function resolveEffect(game, player, effect, space) {
           template: '{player} gains a seat on the High Council',
           args: { player },
         })
+        leaderAbilities.onGainHighCouncil(game, player)
       }
       else {
         // 2nd time+: gain 2 spice, draw 1 intrigue, gain 3 troops
@@ -988,13 +1004,22 @@ function offerPlotIntrigue(game, player) {
   }
 }
 
-function getSpaceCost(game, space) {
+function getSpaceCost(game, space, player) {
+  let cost
   if (space.dynamicCost === 'sword-master') {
     // 8 solari for the first player, 6 solari after
     const anyoneHasSwordmaster = game.players.all().some(p => p.getCounter('hasSwordmaster') > 0)
-    return { solari: anyoneHasSwordmaster ? 6 : 8 }
+    cost = { solari: anyoneHasSwordmaster ? 6 : 8 }
   }
-  return space.cost || null
+  else {
+    cost = space.cost ? { ...space.cost } : null
+  }
+
+  // Apply leader cost modifications
+  if (player && cost) {
+    cost = leaderAbilities.modifySpaceCost(game, player, space, cost)
+  }
+  return cost
 }
 
 /**
