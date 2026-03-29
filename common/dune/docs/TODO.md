@@ -43,8 +43,28 @@
 - [x] Leader selection during setup (choose or random)
 - [x] Signet Ring card triggers leader's signet ring ability (parsed via cardEffects)
 - [x] Glossu Rabban starting effect (+1 Spice, +1 Solari)
-- [ ] Leader ability 1: passive/triggered effects during play (per-leader hooks)
-- [ ] Individual leader implementations for complex abilities (Duke Leto cost reduction, Paul prescience, Helena Richese bypassing agents, etc.)
+- [x] Leader passive ability hook system (`systems/leaderAbilities.js`)
+- [x] Duke Leto: Green spaces cost 1 less Solari
+- [x] Gurney Halleck: +1 Persuasion at reveal if 6+ strength
+- [x] Muad'Dib: +1 Intrigue at reveal if sandworms in conflict
+- [x] Count Ilban Richese: Draw 1 card when paying Solari for board space
+- [x] Earl Memnon Thorvald: +1 Influence when gaining High Council seat
+- [x] Princess Irulan: +1 Intrigue when reaching 2 Emperor Influence
+- [x] Lady Margot Fenring: +2 Spice when reaching 2 BG Influence
+- [x] Helena Richese: Ignores occupancy at Green/Purple spaces
+- [x] Duncan Idaho: Swordmaster costs 2 less Solari
+- [x] Archduke Armand Ecaz: May trash a card in play at reveal
+- [x] Feyd-Rautha: May recall spy for +2 Strength at reveal
+- [x] Lady Amber Metulli: May retreat a troop at reveal
+- [ ] Paul Atreides: Prescience (view top of deck)
+- [ ] Baron Vladimir: Masterstroke (once per game +1 Influence x2)
+- [ ] Countess Ariana Thorvald: Harvest -1 spice, +1 draw
+- [ ] Shaddam Corrino: Sardaukar Commander exclusivity
+- [ ] Staban Tuek: Smuggle Spice passive, start without Diplomacy
+- [ ] Lady Jessica: Other Memories system
+- [ ] Feyd-Rautha: Training track
+- [ ] Rise of Ix leaders (Ilesa, Yuna, Viscount, Tessia, Rhombur)
+- [ ] Bloodlines leaders (Duncan signet, Chani tactics track)
 
 ## Intrigue Cards (Plot/Endgame)
 - [x] Plot intrigue: offered at start of turn, after effects resolve, and at end of turn
