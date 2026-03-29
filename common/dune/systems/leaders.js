@@ -111,6 +111,17 @@ function assignLeader(game, player, leader) {
     }
     game.state.feydTrack[player.name] = 'start'
   }
+
+  if (leader.name === 'Lady Jessica') {
+    if (!game.state.jessicaMemories) {
+      game.state.jessicaMemories = {}
+    }
+    if (!game.state.jessicaFlipped) {
+      game.state.jessicaFlipped = {}
+    }
+    game.state.jessicaMemories[player.name] = 0
+    game.state.jessicaFlipped[player.name] = false
+  }
 }
 
 /**
@@ -132,6 +143,43 @@ function resolveSignetRing(game, player, resolveEffectFn) {
     template: '{player} activates Signet Ring: {ability}',
     args: { player, ability: leader.name },
   })
+
+  // Lady Jessica: front = Spice Agony, back = Water of Life
+  if (leader.name === 'Lady Jessica') {
+    const isFlipped = game.state.jessicaFlipped?.[player.name]
+    if (!isFlipped) {
+      // Spice Agony: Pay 1 spice → +1 intrigue card, move 1 troop from supply to memories
+      if (player.spice >= 1 && player.troopsInSupply > 0) {
+        const choices = ['Pass', 'Spice Agony (1 Spice → 1 Intrigue + 1 Memory)']
+        const [choice] = game.actions.choose(player, choices, {
+          title: 'Lady Jessica: Activate Spice Agony?',
+        })
+        if (choice !== 'Pass') {
+          player.decrementCounter('spice', 1, { silent: true })
+          const deckEngine = require('./deckEngine.js')
+          deckEngine.drawIntrigueCard(game, player, 1)
+          player.decrementCounter('troopsInSupply', 1, { silent: true })
+          game.state.jessicaMemories[player.name]++
+          game.log.add({
+            template: '{player}: Spice Agony — pays 1 Spice, draws Intrigue, troop becomes a Memory ({count} total)',
+            args: { player, count: game.state.jessicaMemories[player.name] },
+          })
+        }
+      }
+    }
+    else {
+      // Water of Life: Pay 1 spice → +1 water
+      if (player.spice >= 1) {
+        player.decrementCounter('spice', 1, { silent: true })
+        player.incrementCounter('water', 1, { silent: true })
+        game.log.add({
+          template: '{player}: Water of Life — pays 1 Spice, gains 1 Water',
+          args: { player },
+        })
+      }
+    }
+    return
+  }
 
   // Feyd-Rautha: Training Track (special handling)
   if (leader.name === 'Feyd-Rautha Harkonnen') {
