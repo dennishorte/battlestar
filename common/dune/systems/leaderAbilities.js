@@ -5,6 +5,19 @@
 const leaders = require('./leaders.js')
 const deckEngine = require('./deckEngine.js')
 
+// Feyd-Rautha Training Track: branching acyclic graph
+// Start→A|B, A→C, B→C, C→D|E, D→Finish, E→F, F→Finish
+const FEYD_TRACK = {
+  start: { next: ['A', 'B'] },
+  A: { next: ['C'], label: 'Pay 1 Solari to trash a card', reward: 'pay-solari-trash' },
+  B: { next: ['C'], label: 'Place a Spy', reward: 'spy' },
+  C: { next: ['D', 'E'], label: 'Trash a card', reward: 'trash' },
+  D: { next: ['finish'], label: 'Trash a card', reward: 'trash' },
+  E: { next: ['F'], label: 'Place a Spy', reward: 'spy' },
+  F: { next: ['finish'], label: 'Gain 2 Spice', reward: 'spice' },
+  finish: { next: [], label: 'Gain 1 Troop and place a Spy', reward: 'troop-spy' },
+}
+
 /**
  * Hook: called at the start of agent turn, before choosing a card.
  */
@@ -361,6 +374,77 @@ function onGainSolari(game, player, amount) {
   }
 }
 
+/**
+ * Resolve Feyd-Rautha Training Track advancement.
+ * Called from resolveSignetRing for Feyd.
+ */
+function resolveFeydTraining(game, player, resolveEffectFn) {
+  if (!game.state.feydTrack) {
+    return
+  }
+  const current = game.state.feydTrack[player.name]
+  if (!current || current === 'finish') {
+    return
+  }
+
+  const node = FEYD_TRACK[current]
+  if (!node || node.next.length === 0) {
+    return
+  }
+
+  // Choose next node
+  let nextNode
+  if (node.next.length === 1) {
+    nextNode = node.next[0]
+  }
+  else {
+    const labels = node.next.map(n => `${n}: ${FEYD_TRACK[n].label}`)
+    const [choice] = game.actions.choose(player, labels, {
+      title: 'Feyd Training: Choose your path',
+    })
+    nextNode = node.next[labels.indexOf(choice)]
+  }
+
+  game.state.feydTrack[player.name] = nextNode
+  const reward = FEYD_TRACK[nextNode]
+
+  game.log.add({
+    template: '{player}: Training Track → {node} ({label})',
+    args: { player, node: nextNode, label: reward.label },
+  })
+
+  // Resolve reward
+  game.log.indent()
+  switch (reward.reward) {
+    case 'pay-solari-trash':
+      if (player.solari >= 1) {
+        player.decrementCounter('solari', 1, { silent: true })
+        game.log.add({ template: '{player} pays 1 Solari', args: { player } })
+        resolveEffectFn(game, player, { type: 'trash-card' }, null)
+      }
+      break
+    case 'spy': {
+      const spies = require('./spies.js')
+      spies.placeSpy(game, player)
+      break
+    }
+    case 'trash':
+      resolveEffectFn(game, player, { type: 'trash-card' }, null)
+      break
+    case 'spice':
+      player.incrementCounter('spice', 2, { silent: true })
+      game.log.add({ template: '{player} gains 2 Spice', args: { player } })
+      break
+    case 'troop-spy': {
+      resolveEffectFn(game, player, { type: 'troop', amount: 1 }, null)
+      const spiesMod = require('./spies.js')
+      spiesMod.placeSpy(game, player)
+      break
+    }
+  }
+  game.log.outdent()
+}
+
 module.exports = {
   onAgentTurnStart,
   onRevealTurn,
@@ -373,4 +457,5 @@ module.exports = {
   modifyStartingDeck,
   onOpponentVisitsMakerSpace,
   onGainSolari,
+  resolveFeydTraining,
 }
