@@ -102,14 +102,26 @@ function takeContract(game, player) {
     return
   }
 
+  // Filter out Sardaukar contracts reserved for Shaddam Corrino IV
+  const reserved = game.state.shaddamReservedContracts || []
+  const isShaddam = game.state.leaders?.[player.name]?.name === 'Shaddam Corrino IV'
+  const availableContracts = contracts.filter(c =>
+    !reserved.includes(c.id) || isShaddam
+  )
+
+  if (availableContracts.length === 0) {
+    game.log.add({ template: 'No contracts available', event: 'memo' })
+    return
+  }
+
   const playerContracts = game.zones.byId(`${player.name}.contracts`)
-  const choices = contracts.map(c => `${c.name} (${c.definition.reward})`)
+  const choices = availableContracts.map(c => `${c.name} (${c.definition.reward})`)
   const [choice] = game.actions.choose(player, choices, {
     title: 'Choose a Contract to take',
   })
 
   const index = choices.indexOf(choice)
-  const card = contracts[index]
+  const card = availableContracts[index]
   card.moveTo(playerContracts)
 
   game.log.add({
