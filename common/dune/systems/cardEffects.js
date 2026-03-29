@@ -81,8 +81,83 @@ function parseAgentAbility(text) {
     return [{ type: 'conditional', condition, effects: parsedEffect }]
   }
 
+  // "Having X Alliance: Effect"
+  const havingAllianceMatch = text.match(/^Having\s+(Emperor|Spacing Guild|Bene Gesserit|Fremen)\s+Alliance:\s*(.+)$/i)
+  if (havingAllianceMatch) {
+    const condition = { type: 'has-specific-alliance', faction: normalizeFaction(havingAllianceMatch[1]) }
+    const parsedEffect = parseAgentAbility(havingAllianceMatch[2].trim())
+    if (parsedEffect) {
+      return [{ type: 'conditional', condition, effects: parsedEffect }]
+    }
+  }
+
+  // "With another Faction card in play: Effect"
+  const withFactionCardMatch = text.match(/^With\s+(?:another\s+)?(Emperor|Spacing Guild|Bene Gesserit|Fremen)\s+card\s+in\s+play:\s*(.+)$/i)
+  if (withFactionCardMatch) {
+    const condition = { type: 'faction-card-in-play', faction: withFactionCardMatch[1].toLowerCase() }
+    const parsedEffect = parseAgentAbility(withFactionCardMatch[2].trim())
+    if (parsedEffect) {
+      return [{ type: 'conditional', condition, effects: parsedEffect }]
+    }
+  }
+
+  // "Complete one of your contracts"
+  if (/^Complete one of your contracts/i.test(text)) {
+    return [{ type: 'complete-contract' }]
+  }
+
+  // "Pay N Solari: +N Troops to Garrison or Conflict"
+  const paySolariTroopsMatch = text.match(/^Pay\s+(\d+)\s+[Ss]olari:\s*\+(\d+)\s+Troops?\s+to\s+Garrison\s+or\s+Conflict/i)
+  if (paySolariTroopsMatch) {
+    return [{
+      type: 'choice',
+      choices: [
+        {
+          label: `Pay ${paySolariTroopsMatch[1]} Solari for ${paySolariTroopsMatch[2]} troops to Garrison`,
+          cost: { solari: parseInt(paySolariTroopsMatch[1]) },
+          effects: [{ type: 'troop', amount: parseInt(paySolariTroopsMatch[2]) }],
+        },
+        {
+          label: `Pay ${paySolariTroopsMatch[1]} Solari for ${paySolariTroopsMatch[2]} troops to Conflict`,
+          cost: { solari: parseInt(paySolariTroopsMatch[1]) },
+          effects: [{ type: 'deploy-to-conflict', amount: parseInt(paySolariTroopsMatch[2]) }],
+        },
+        { label: 'Decline', effects: [] },
+      ],
+    }]
+  }
+
+  // "Pay N Solari -> +1 Victory Point"
+  const payVPMatch = text.match(/^Pay\s+(\d+)\s+(Solari|Spice|Water)\s*(?:-->?|:|->\s*|for\s+)\+?(\d+)\s+Victory\s+[Pp]oints?/i)
+  if (payVPMatch) {
+    return [{
+      type: 'choice',
+      choices: [
+        { label: text, cost: { [payVPMatch[2].toLowerCase()]: parseInt(payVPMatch[1]) }, effects: [{ type: 'vp', amount: parseInt(payVPMatch[3]) }] },
+        { label: 'Decline', effects: [] },
+      ],
+    }]
+  }
+
+  // "+N Persuation/Persuasion for each X" variable patterns
+  const forEachMatch = text.match(/^\+(\d+)\s+Persuat?ion\s+for\s+each\s+(.+)/i)
+  if (forEachMatch) {
+    return [{ type: 'persuasion-per', amount: parseInt(forEachMatch[1]), per: forEachMatch[2].trim().toLowerCase() }]
+  }
+
+  // "+N Sword for each X" variable patterns
+  const swordsForEachMatch = text.match(/^\+(\d+)\s+Swords?\s+for\s+each\s+(.+)/i)
+  if (swordsForEachMatch) {
+    return [{ type: 'swords-per', amount: parseInt(swordsForEachMatch[1]), per: swordsForEachMatch[2].trim().toLowerCase() }]
+  }
+
+  // "You may deploy a troop from your Garrison to the Conflict"
+  if (/^You may deploy (?:a|one) troop/i.test(text)) {
+    return [{ type: 'deploy-to-conflict', amount: 1 }]
+  }
+
   // Skip remaining complex patterns
-  if (/^(This |Each opponent|Block |For each|Look at|Put one|Send one|Enemy|You may (take another|acquire|deploy)|Gain rewards|The next|Ignore Influence)/i.test(text)) {
+  if (/^(This |Block |Look at|Put one|Send one|Enemy|You may (take another|acquire)|Gain rewards|The next|Ignore Influence|Flip |The card|Remove|Give |At the)/i.test(text)) {
     return null
   }
 
@@ -231,9 +306,16 @@ function parseSingleAbility(text) {
     return { type: 'intrigue', amount: parseInt(m[1]) }
   }
 
-  // "Trash this card"
+  // "Trash this card" / "Trash this card -> Effect" / "Trash this card: Effect"
   if (/^Trash this card$/i.test(text)) {
     return { type: 'trash-self' }
+  }
+  const trashSelfCostMatch = text.match(/^Trash this card\s*(?:-->?|:)\s*(.+)$/i)
+  if (trashSelfCostMatch) {
+    const subEffects = parseAgentAbility(trashSelfCostMatch[1].trim())
+    if (subEffects) {
+      return [{ type: 'trash-self' }, ...subEffects]
+    }
   }
 
   // "Trash a card" / "Trash 1 card"
@@ -291,8 +373,8 @@ function parseSingleAbility(text) {
     return { type: 'discard-card' }
   }
 
-  // "+N Persuasion"
-  const persuasionMatch = text.match(/^\+(\d+)\s+Persuasion$/i)
+  // "+N Persuasion" / "+N Persuation" (handle typo in card data)
+  const persuasionMatch = text.match(/^\+(\d+)\s+Persuat?ion$/i)
   if (persuasionMatch) {
     return { type: 'gain', resource: 'persuasion', amount: parseInt(persuasionMatch[1]) }
   }
@@ -361,11 +443,14 @@ function parseSingleAbility(text) {
     return { type: 'troop', amount: parseInt(troopGainMatch[1]) }
   }
 
-  // "Retreat N of your Troops" / "Retreat any number of your Troops"
-  const retreatMatch = text.match(/^Retreat\s+(?:(\d+)\s+(?:or\s+\d+\s+)?(?:of\s+your\s+)?|any number of your |up to (\d+) of your )Troops?$/i)
+  // "Retreat N Troops" / "Retreat up to N Troops" / "Retreat any number of Troops"
+  const retreatMatch = text.match(/^Retreat\s+(?:up to\s+)?(?:(\d+)\s+)?(?:of\s+your\s+|your\s+)?(?:any number of\s+(?:your\s+)?)?Troops?(?:\s+from\s+Conflict)?$/i)
   if (retreatMatch) {
-    const amount = retreatMatch[1] ? parseInt(retreatMatch[1]) : (retreatMatch[2] ? parseInt(retreatMatch[2]) : 99)
+    const amount = retreatMatch[1] ? parseInt(retreatMatch[1]) : 99
     return { type: 'retreat-troops', amount }
+  }
+  if (/^Retreat any number of\s+(?:your\s+)?Troops/i.test(text)) {
+    return { type: 'retreat-troops', amount: 99 }
   }
 
   return null

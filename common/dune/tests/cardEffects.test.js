@@ -138,7 +138,35 @@ describe('Card Agent Ability Parser', () => {
 
   test('returns null for truly unparseable patterns', () => {
     expect(parseAgentAbility('Signet Ring')).toBeNull()
-    expect(parseAgentAbility('Each opponent loses 1 Garrisoned Troop')).toBeNull()
+    expect(parseAgentAbility('Send one of your agents from anywhere to any board space')).toBeNull()
+  })
+
+  test('parses opponent effects', () => {
+    const result = parseAgentAbility('Each opponent loses 1 Garrisoned Troop')
+    expect(result).toEqual([{ type: 'opponent-lose-troop', amount: 1 }])
+  })
+
+  test('parses Having Alliance conditionals', () => {
+    const result = parseAgentAbility('Having Emperor Alliance: +4 Persuation')
+    expect(result).not.toBeNull()
+    expect(result[0].type).toBe('conditional')
+    expect(result[0].condition.type).toBe('has-specific-alliance')
+    expect(result[0].condition.faction).toBe('emperor')
+    expect(result[0].effects).toEqual([{ type: 'gain', resource: 'persuasion', amount: 4 }])
+  })
+
+  test('parses deploy to conflict', () => {
+    expect(parseAgentAbility('Deploy up to 3 troops from Garrison to Conflict')).toEqual(
+      [{ type: 'deploy-to-conflict', amount: 3 }]
+    )
+  })
+
+  test('parses VP purchase patterns', () => {
+    const result = parseAgentAbility('Pay 6 Solari -> +1 Victory Point')
+    expect(result).not.toBeNull()
+    expect(result[0].type).toBe('choice')
+    expect(result[0].choices[0].cost).toEqual({ solari: 6 })
+    expect(result[0].choices[0].effects).toEqual([{ type: 'vp', amount: 1 }])
   })
 
   test('returns null for null/empty input', () => {
