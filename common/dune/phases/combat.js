@@ -1,4 +1,5 @@
 const { resolveEffect } = require('./playerTurns.js')
+const { parseAgentAbility } = require('../systems/cardEffects.js')
 
 /**
  * Phase 3: Combat
@@ -70,12 +71,20 @@ function combatIntrigueRound(game, combatants) {
             args: { player, card: card.name },
           })
           game.log.indent()
-          // TODO: Resolve combat intrigue card effect
-          game.log.add({
-            template: '{effect}',
-            args: { effect: card.definition.combatEffect || 'Effect resolves' },
-            event: 'memo',
-          })
+          const effectText = card.definition.combatEffect
+          const effects = parseAgentAbility(effectText)
+          if (effects) {
+            for (const effect of effects) {
+              resolveEffect(game, player, effect, null)
+            }
+          }
+          else {
+            game.log.add({
+              template: '{effect}',
+              args: { effect: effectText || 'Effect resolves' },
+              event: 'memo',
+            })
+          }
           game.log.outdent()
         }
         consecutivePasses = 0

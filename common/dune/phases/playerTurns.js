@@ -823,6 +823,14 @@ function resolveEffect(game, player, effect, space) {
       choam.takeContract(game, player)
       break
     }
+
+    case 'swords':
+      player.incrementCounter('strength', effect.amount * constants.SWORD_STRENGTH, { silent: true })
+      game.log.add({
+        template: '{player} gains {amount} Sword(s)',
+        args: { player, amount: effect.amount },
+      })
+      break
   }
 }
 

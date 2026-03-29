@@ -24,6 +24,21 @@ function roundStartPhase(game) {
       args: { card: card.name },
       event: 'step',
     })
+
+    // Defensive bonus: controller of the conflict's location deploys 1 troop
+    const location = card.definition?.location
+    if (location && game.state.controlMarkers[location]) {
+      const controllerName = game.state.controlMarkers[location]
+      const controller = game.players.byName(controllerName)
+      if (controller && controller.troopsInSupply > 0) {
+        controller.decrementCounter('troopsInSupply', 1, { silent: true })
+        controller.incrementCounter('troopsInGarrison', 1, { silent: true })
+        game.log.add({
+          template: '{player} deploys 1 troop (defensive bonus for {location})',
+          args: { player: controller, location },
+        })
+      }
+    }
   }
 
   // Each player draws 5 cards
