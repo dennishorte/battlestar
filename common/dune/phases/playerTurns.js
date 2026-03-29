@@ -940,6 +940,129 @@ function resolveEffect(game, player, effect, space) {
       }
       break
     }
+
+    case 'lose-troops': {
+      const loseCount = Math.min(effect.amount, player.troopsInGarrison)
+      if (loseCount > 0) {
+        player.decrementCounter('troopsInGarrison', loseCount, { silent: true })
+        game.log.add({
+          template: '{player} loses {count} troop(s)',
+          args: { player, count: loseCount },
+        })
+      }
+      break
+    }
+
+    case 'lose-influence': {
+      const factionChoices = constants.FACTIONS.filter(f => player.getInfluence(f) > 0)
+      if (factionChoices.length > 0) {
+        const [faction] = game.actions.choose(player, factionChoices, {
+          title: 'Choose faction to lose Influence',
+        })
+        factions.loseInfluence(game, player, faction, effect.amount)
+      }
+      break
+    }
+
+    case 'deploy-to-conflict': {
+      const garrisoned = player.troopsInGarrison
+      const maxDeploy = Math.min(effect.amount, garrisoned)
+      if (maxDeploy > 0) {
+        const deployChoices = []
+        for (let i = 0; i <= maxDeploy; i++) {
+          deployChoices.push(`Deploy ${i} troop(s) to Conflict`)
+        }
+        const [deployChoice] = game.actions.choose(player, deployChoices, {
+          title: 'Deploy troops to the Conflict',
+        })
+        const count = parseInt(deployChoice.match(/\d+/)[0])
+        if (count > 0) {
+          player.decrementCounter('troopsInGarrison', count, { silent: true })
+          game.state.conflict.deployedTroops[player.name] =
+            (game.state.conflict.deployedTroops[player.name] || 0) + count
+          game.log.add({
+            template: '{player} deploys {count} troop(s) to the Conflict',
+            args: { player, count },
+          })
+        }
+      }
+      break
+    }
+
+    case 'opponent-discard': {
+      for (const opponent of game.players.all()) {
+        if (opponent.name === player.name) {
+          continue
+        }
+        const oppHand = game.zones.byId(`${opponent.name}.hand`)
+        const oppCards = oppHand.cardlist()
+        if (oppCards.length > 0) {
+          const [discardChoice] = game.actions.choose(opponent, oppCards.map(c => c.name), {
+            title: 'Choose a card to discard',
+          })
+          const card = oppCards.find(c => c.name === discardChoice)
+          if (card) {
+            deckEngine.discardCard(game, opponent, card)
+            game.log.add({
+              template: '{player} discards a card',
+              args: { player: opponent },
+            })
+          }
+        }
+      }
+      break
+    }
+
+    case 'opponent-lose-troop': {
+      for (const opponent of game.players.all()) {
+        if (opponent.name === player.name) {
+          continue
+        }
+        if (opponent.troopsInGarrison > 0) {
+          opponent.decrementCounter('troopsInGarrison', 1, { silent: true })
+          game.log.add({
+            template: '{player} loses 1 troop',
+            args: { player: opponent },
+          })
+        }
+      }
+      break
+    }
+
+    case 'force-retreat': {
+      // Force one enemy unit to retreat from the conflict
+      const opponents = game.players.all().filter(p =>
+        p.name !== player.name && (game.state.conflict.deployedTroops[p.name] || 0) > 0
+      )
+      if (opponents.length > 0) {
+        const targetChoices = opponents.map(p => p.name)
+        const [targetName] = game.actions.choose(player, targetChoices, {
+          title: 'Choose opponent to force retreat',
+        })
+        game.state.conflict.deployedTroops[targetName]--
+        const target = game.players.byName(targetName)
+        target.incrementCounter('troopsInSupply', 1, { silent: true })
+        game.log.add({
+          template: '{player} forces {target} to retreat 1 troop',
+          args: { player, target },
+        })
+      }
+      break
+    }
+
+    case 'shuffle-discard': {
+      const discardZone = game.zones.byId(`${player.name}.discard`)
+      const deckZone = game.zones.byId(`${player.name}.deck`)
+      for (const card of discardZone.cardlist()) {
+        card.moveTo(deckZone)
+      }
+      deckZone.shuffle(game.random)
+      game.log.add({
+        template: '{player} shuffles discard pile into deck',
+        args: { player },
+      })
+      break
+    }
   }
 }
 
