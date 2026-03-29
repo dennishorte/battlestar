@@ -1063,7 +1063,83 @@ function resolveEffect(game, player, effect, space) {
       })
       break
     }
+
+    case 'complete-contract': {
+      const choamComplete = require('../systems/choam.js')
+      const playerContracts = game.zones.byId(`${player.name}.contracts`)
+      const contracts = playerContracts.cardlist()
+      if (contracts.length > 0) {
+        const choices = contracts.map(c => c.name)
+        const [choice] = game.actions.choose(player, choices, {
+          title: 'Choose a contract to complete',
+        })
+        const card = contracts.find(c => c.name === choice)
+        if (card) {
+          choamComplete.completeContract(game, player, card)
+        }
+      }
+      break
+    }
+
+    case 'persuasion-per': {
+      const count = countPerVariable(game, player, effect.per)
+      const total = effect.amount * count
+      if (total > 0) {
+        player.incrementCounter('persuasion', total, { silent: true })
+        game.log.add({
+          template: '{player} gains {amount} Persuasion ({count} x {per})',
+          args: { player, amount: total, count, per: effect.per },
+        })
+      }
+      break
+    }
+
+    case 'swords-per': {
+      const swordCount = countPerVariable(game, player, effect.per)
+      const swordTotal = effect.amount * swordCount
+      if (swordTotal > 0) {
+        player.incrementCounter('strength', swordTotal * constants.SWORD_STRENGTH, { silent: true })
+        game.log.add({
+          template: '{player} gains {amount} Sword(s) ({count} x {per})',
+          args: { player, amount: swordTotal, count: swordCount, per: effect.per },
+        })
+      }
+      break
+    }
   }
+}
+
+/**
+ * Count a variable for "per each X" effects.
+ */
+function countPerVariable(game, player, per) {
+  if (/contract.*completed/i.test(per)) {
+    const choamCount = require('../systems/choam.js')
+    return choamCount.getCompletedContractCount(game, player)
+  }
+  if (/fremen card in play/i.test(per)) {
+    const played = game.zones.byId(`${player.name}.played`)
+    return played.cardlist().filter(c => c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('fremen')).length
+  }
+  if (/bene gesserit card in play/i.test(per)) {
+    const played = game.zones.byId(`${player.name}.played`)
+    return played.cardlist().filter(c => c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('bene gesserit')).length
+  }
+  if (/emperor card in play/i.test(per)) {
+    const played = game.zones.byId(`${player.name}.played`)
+    return played.cardlist().filter(c => c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('emperor')).length
+  }
+  if (/garrisoned troop/i.test(per)) {
+    return player.troopsInGarrison
+  }
+  if (/deployed troop/i.test(per)) {
+    return game.state.conflict.deployedTroops[player.name] || 0
+  }
+  if (/spy.*on.*board/i.test(per)) {
+    const spySystem = require('../systems/spies.js')
+    return spySystem.getSpyConnectedSpaces(game, player).size > 0 ? 1 : 0
+  }
+  return 0
 }
 
 /**
@@ -1121,6 +1197,9 @@ function checkCondition(game, player, condition) {
 
     case 'has-alliance':
       return constants.FACTIONS.some(f => game.state.alliances[f] === player.name)
+
+    case 'has-specific-alliance':
+      return game.state.alliances[condition.faction] === player.name
 
     case 'occupying-maker-space': {
       const boardSpacesData = getBoardSpaces()
