@@ -1,8 +1,8 @@
 # Dune Imperium: Uprising — Implementation TODO
 
 ## Board Space Data
-- [x] Populate `res/boardSpaces.js` with all 22 board spaces: id, name, icon, faction, cost, influence requirements, combat/maker/protected flags, control bonuses, effects
-- [x] Populate `res/observationPosts.js` with 13 spy post connections (A-M) to board spaces
+- [x] Populate `res/boardSpaces.js` with all 22 board spaces
+- [x] Populate `res/observationPosts.js` with 13 spy post connections (A-M)
 - [x] Wire up choice effects (Spice Refinery, Sietch Tabr, Hagga Basin, Deep Desert, Gather Support)
 - [x] Wire up simple effects: influence-choice, high-council, sword-master, trash-card, steal-intrigue, vp, influence, control
 - [x] Wire up remaining complex effects: intrigue-trash-draw, recall-agent, maker-hook, break-shield-wall, sandworm
@@ -12,11 +12,9 @@
 - [x] Wire up card `agentAbility` execution during agent turns via `resolveCardAgentAbility`
 - [x] Build agent ability text parser (`systems/cardEffects.js`) for simple patterns
 - [x] Handle conditional abilities (If/With patterns, faction synergies, turn tracking)
-- [x] Turn tracking state: spy recalls, contract completions, spice gained
+- [x] Turn tracking state: spy recalls, contract completions, spice gained, maker/faction space visits
 - [x] Extended condition checks: high council, swordmaster, alliance, maker/faction space, persuasion, garrison, spies on board
-- [x] Extended turn tracking: maker space visits, faction space visits
-- [ ] Grafted mechanic (Rise of Ix expansion)
-- [ ] Remaining unparseable patterns (~308 unique effects across imperium/intrigue — mostly expansion-specific or highly unique)
+- [ ] Remaining unparseable card ability patterns (unique per-card effects)
 
 ## Card Reveal Effects
 - [x] Wire up `revealAbility` via `resolveCardRevealAbility` — parses simple effects and faction bonds
@@ -36,47 +34,29 @@
 
 ## Spy System
 - [x] Create `systems/spies.js`
-- [x] Spy placement on observation posts (when spy icon appears on card/board space)
+- [x] Spy placement on observation posts
 - [x] Infiltrate: recall spy to ignore occupied board space
-- [x] Gather Intelligence: recall spy to draw a card (before resolving effects)
-- [x] Spy agent icon: send agent to space connected to your spy's post (via spyAccess on cards)
+- [x] Gather Intelligence: recall spy to draw a card
+- [x] Spy agent icon: send agent to space connected to your spy's post
 - [x] Wire spy choices into agent turn flow
 
 ## Leaders
 - [x] Create `systems/leaders.js` with ability dispatch
 - [x] Leader selection during setup (choose or random)
-- [x] Signet Ring card triggers leader's signet ring ability (parsed via cardEffects)
-- [x] Glossu Rabban starting effect (+1 Spice, +1 Solari)
+- [x] Signet Ring card triggers leader's signet ring ability
 - [x] Leader passive ability hook system (`systems/leaderAbilities.js`)
-- [x] Duke Leto: Green spaces cost 1 less Solari
-- [x] Gurney Halleck: +1 Persuasion at reveal if 6+ strength
-- [x] Muad'Dib: +1 Intrigue at reveal if sandworms in conflict
-- [x] Count Ilban Richese: Draw 1 card when paying Solari for board space
-- [x] Earl Memnon Thorvald: +1 Influence when gaining High Council seat
-- [x] Princess Irulan: +1 Intrigue when reaching 2 Emperor Influence
-- [x] Lady Margot Fenring: +2 Spice when reaching 2 BG Influence
-- [x] Helena Richese: Ignores occupancy at Green/Purple spaces
-- [x] Duncan Idaho: Swordmaster costs 2 less Solari
-- [x] Archduke Armand Ecaz: May trash a card in play at reveal
-- [x] Feyd-Rautha: May recall spy for +2 Strength at reveal
-- [x] Lady Amber Metulli: May retreat a troop at reveal
-- [x] Countess Ariana Thorvald: Harvest -1 spice, +1 draw
-- [x] Staban Tuek: Smuggle Spice passive, start without Diplomacy
-- [x] Princess Yuna Moritani: Start with no Water, +1 bonus Solari on gains
-- [ ] Paul Atreides: Prescience (view top of deck — UI-dependent)
-- [x] Baron Vladimir: Masterstroke (once per game +1 Influence x2)
+- [x] 16 leader abilities implemented (Leto, Paul signet, Gurney, Muad'Dib, Rabban, Baron, Richese x2, Thorvald x2, Ecaz, Feyd, Metulli, Irulan, Margot, Duncan, Staban, Yuna)
+- [ ] Paul Atreides: Prescience (view top of deck — needs frontend)
 - [ ] Shaddam Corrino: Sardaukar Commander exclusivity
 - [ ] Lady Jessica: Other Memories system
 - [ ] Feyd-Rautha: Training track
-- [ ] Rise of Ix leaders (Ilesa, Viscount, Tessia, Rhombur)
-- [ ] Bloodlines leaders (Duncan signet, Chani tactics track)
 
 ## Intrigue Cards (Plot/Endgame)
 - [x] Plot intrigue: offered at start of turn, after effects resolve, and at end of turn
 - [x] Endgame intrigue: prompted before final scoring in `endGame()`
 - [x] Simple intrigue effects execute via parser; complex ones logged as memo
 - [x] Intrigue effects parsed via same conditional system (If/With patterns)
-- [ ] Intrigue effects with unique mechanics (retreat troops, swap cards, etc.)
+- [ ] Intrigue effects with unique mechanics (deploy troops, swap cards, etc.)
 
 ## Setup Completeness
 - [x] Deal objective cards to players, determine first player from objective
@@ -99,10 +79,10 @@
 - [x] Contract reward parsing and execution
 - [x] Auto-completing contracts (board space visit, harvest threshold, immediate, acquire TSMF, earn alliance triggers)
 - [x] Contract completion count tracking via `getCompletedContractCount`
-- [x] Card conditionals that check completed contract count ("If you have completed 4+ Contracts")
+- [x] Card conditionals that check completed contract count
 
 ## Data Gaps
 - [x] Conflict card reward text parser — `parseRewardText()` in combat.js
 - [x] Spice Refinery control bonus is solari (verified)
-- [x] Emperor 4-influence bonus is place a spy (corrected from +2 solari)
+- [x] Emperor 4-influence bonus is place a spy (corrected)
 - [ ] Sardaukar Commander recruitment mechanic

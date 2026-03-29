@@ -355,11 +355,6 @@ function parseCondition(text) {
     return { type: 'most-deployed-troops' }
   }
 
-  // "grafted" (expansion mechanic)
-  if (/grafted/i.test(text)) {
-    return { type: 'grafted' }
-  }
-
   // "you have a seat on the High Council"
   if (/you have a seat on the High Council/i.test(text)) {
     return { type: 'has-high-council' }

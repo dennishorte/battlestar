@@ -974,9 +974,6 @@ function checkCondition(game, player, condition) {
       )
     }
 
-    case 'grafted':
-      return false
-
     case 'has-high-council':
       return !!player.hasHighCouncil
 
