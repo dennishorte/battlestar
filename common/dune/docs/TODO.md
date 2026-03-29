@@ -60,7 +60,7 @@
 - [x] Staban Tuek: Smuggle Spice passive, start without Diplomacy
 - [x] Princess Yuna Moritani: Start with no Water, +1 bonus Solari on gains
 - [ ] Paul Atreides: Prescience (view top of deck — UI-dependent)
-- [ ] Baron Vladimir: Masterstroke (once per game +1 Influence x2)
+- [x] Baron Vladimir: Masterstroke (once per game +1 Influence x2)
 - [ ] Shaddam Corrino: Sardaukar Commander exclusivity
 - [ ] Lady Jessica: Other Memories system
 - [ ] Feyd-Rautha: Training track

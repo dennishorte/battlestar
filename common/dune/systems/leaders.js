@@ -98,6 +98,13 @@ function assignLeader(game, player, leader) {
       args: { player },
     })
   }
+
+  if (leader.name === 'Baron Vladimir Harkonnen') {
+    // Track once-per-game Masterstroke usage
+    if (!game.state.leaderBonusTriggered) {
+      game.state.leaderBonusTriggered = {}
+    }
+  }
 }
 
 /**
