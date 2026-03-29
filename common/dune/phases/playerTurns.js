@@ -71,7 +71,13 @@ function agentTurn(game, player) {
   game.log.indent()
 
   // Initialize turn tracking for conditional card abilities
-  game.state.turnTracking = { recalledSpy: false, completedContract: false, spiceGained: 0 }
+  game.state.turnTracking = {
+    recalledSpy: false,
+    completedContract: false,
+    spiceGained: 0,
+    sentToMakerSpace: false,
+    sentToFactionSpace: false,
+  }
 
   // Leader start-of-turn hook
   leaderAbilities.onAgentTurnStart(game, player)
@@ -175,6 +181,14 @@ function agentTurn(game, player) {
   // Leader hook: Count Ilban Richese draws on paying Solari
   if (paidSolari) {
     leaderAbilities.onPaySolariForSpace(game, player)
+  }
+
+  // Track space type for conditional cards
+  if (space.isMakerSpace) {
+    game.state.turnTracking.sentToMakerSpace = true
+  }
+  if (space.faction) {
+    game.state.turnTracking.sentToFactionSpace = true
   }
 
   // Gain faction influence if faction space
@@ -888,6 +902,20 @@ function resolveEffect(game, player, effect, space) {
       })
       break
 
+    case 'retreat-troops': {
+      const deployedTroops = game.state.conflict.deployedTroops[player.name] || 0
+      const retreatCount = Math.min(effect.amount, deployedTroops)
+      if (retreatCount > 0) {
+        game.state.conflict.deployedTroops[player.name] -= retreatCount
+        player.incrementCounter('troopsInSupply', retreatCount, { silent: true })
+        game.log.add({
+          template: '{player} retreats {count} troop(s)',
+          args: { player, count: retreatCount },
+        })
+      }
+      break
+    }
+
     case 'conditional': {
       if (checkCondition(game, player, effect.condition)) {
         for (const subEffect of effect.effects) {
@@ -947,8 +975,41 @@ function checkCondition(game, player, condition) {
     }
 
     case 'grafted':
-      // Grafting is a Rise of Ix expansion mechanic — not implemented yet
       return false
+
+    case 'has-high-council':
+      return !!player.hasHighCouncil
+
+    case 'has-swordmaster':
+      return player.getCounter('hasSwordmaster') > 0
+
+    case 'has-alliance':
+      return constants.FACTIONS.some(f => game.state.alliances[f] === player.name)
+
+    case 'occupying-maker-space': {
+      const boardSpacesData = getBoardSpaces()
+      return boardSpacesData.some(s => s.isMakerSpace && game.state.boardSpaces[s.id] === player.name)
+    }
+
+    case 'sent-to-maker':
+      return !!(game.state.turnTracking && game.state.turnTracking.sentToMakerSpace)
+
+    case 'sent-to-faction':
+      return !!(game.state.turnTracking && game.state.turnTracking.sentToFactionSpace)
+
+    case 'has-resource':
+      return player.getCounter(condition.resource) >= condition.amount
+
+    case 'has-persuasion':
+      return player.getCounter('persuasion') >= condition.amount
+
+    case 'has-garrison':
+      return player.troopsInGarrison >= condition.amount
+
+    case 'has-spies-on-board': {
+      const totalSpies = player.getCounter('spiesTotal') - player.spiesInSupply
+      return totalSpies >= condition.amount
+    }
 
     default:
       return false

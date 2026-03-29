@@ -13,7 +13,10 @@
 - [x] Build agent ability text parser (`systems/cardEffects.js`) for simple patterns
 - [x] Handle conditional abilities (If/With patterns, faction synergies, turn tracking)
 - [x] Turn tracking state: spy recalls, contract completions, spice gained
+- [x] Extended condition checks: high council, swordmaster, alliance, maker/faction space, persuasion, garrison, spies on board
+- [x] Extended turn tracking: maker space visits, faction space visits
 - [ ] Grafted mechanic (Rise of Ix expansion)
+- [ ] Remaining unparseable patterns (~308 unique effects across imperium/intrigue — mostly expansion-specific or highly unique)
 
 ## Card Reveal Effects
 - [x] Wire up `revealAbility` via `resolveCardRevealAbility` — parses simple effects and faction bonds
@@ -28,7 +31,8 @@
 
 ## Combat Intrigue Effects
 - [x] Execute simple combat intrigue effects via parser (swords, resources)
-- [ ] Execute complex combat intrigue effects (conditional, retreat, spy recall combos)
+- [x] Retreat troops effect type for combat intrigue
+- [ ] Complex combat intrigue: spy recall combos, deploy from garrison, opponent effects
 
 ## Spy System
 - [x] Create `systems/spies.js`
