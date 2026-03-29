@@ -43,9 +43,10 @@
 - [ ] Individual leader implementations (start with simpler complexity-1 leaders)
 
 ## Intrigue Cards (Plot/Endgame)
-- [ ] Plot intrigue: offer to play during agent or reveal turns
-- [ ] Endgame intrigue: prompt before final scoring in `endGame()`
-- [ ] Execute individual intrigue card effects
+- [x] Plot intrigue: offered at start of turn, after effects resolve, and at end of turn
+- [x] Endgame intrigue: prompted before final scoring in `endGame()`
+- [x] Simple intrigue effects execute via parser; complex ones logged as memo
+- [ ] Execute individual complex intrigue card effects (conditional, faction-specific)
 
 ## Setup Completeness
 - [ ] Deal objective cards to players, determine first player from objective

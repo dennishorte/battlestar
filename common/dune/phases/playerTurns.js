@@ -69,6 +69,9 @@ function agentTurn(game, player) {
   })
   game.log.indent()
 
+  // Offer Plot Intrigue at start of turn
+  offerPlotIntrigue(game, player)
+
   // Step 1: Choose a card from hand
   const handZone = game.zones.byId(`${player.name}.hand`)
   const handCards = handZone.cardlist()
@@ -183,6 +186,9 @@ function agentTurn(game, player) {
     }
   }
 
+  // Offer to play a Plot Intrigue card
+  offerPlotIntrigue(game, player)
+
   game.log.outdent()
 }
 
@@ -196,6 +202,9 @@ function revealTurn(game, player) {
     event: 'player-turn',
   })
   game.log.indent()
+
+  // Offer Plot Intrigue at start of turn
+  offerPlotIntrigue(game, player)
 
   // Step 1: Reveal all remaining hand cards
   const revealedCards = deckEngine.revealHand(game, player)
@@ -240,6 +249,9 @@ function revealTurn(game, player) {
 
   // Step 3: Acquire cards with persuasion
   acquireCardsPhase(game, player)
+
+  // Offer Plot Intrigue at end of turn
+  offerPlotIntrigue(game, player)
 
   // Step 4: Clean up
   deckEngine.cleanUp(game, player)
@@ -811,6 +823,64 @@ function resolveEffect(game, player, effect, space) {
 /**
  * Get the effective cost for a board space, handling dynamic costs.
  */
+/**
+ * Offer the player a chance to play a Plot Intrigue card.
+ * Loops until the player passes, so they can play multiple plot cards.
+ */
+function offerPlotIntrigue(game, player) {
+  while (true) {
+    const intrigueZone = game.zones.byId(`${player.name}.intrigue`)
+    const plotCards = intrigueZone.cardlist().filter(c =>
+      c.definition && c.definition.plotEffect
+    )
+
+    if (plotCards.length === 0) {
+      return
+    }
+
+    const choices = ['Pass', ...plotCards.map(c => c.name)]
+    const [choice] = game.actions.choose(player, choices, {
+      title: 'Play a Plot Intrigue card?',
+    })
+
+    if (choice === 'Pass') {
+      return
+    }
+
+    const card = plotCards.find(c => c.name === choice)
+    if (!card) {
+      return
+    }
+
+    const discardZone = game.zones.byId('common.intrigueDiscard')
+    card.moveTo(discardZone)
+    game.log.add({
+      template: '{player} plays {card} (Plot)',
+      args: { player, card: card.name },
+    })
+
+    // Try to parse and execute the plot effect
+    const effectText = card.definition.plotEffect
+    const effects = parseAgentAbility(effectText)
+    if (effects) {
+      game.log.indent()
+      for (const effect of effects) {
+        resolveEffect(game, player, effect, null)
+      }
+      game.log.outdent()
+    }
+    else {
+      game.log.indent()
+      game.log.add({
+        template: '{effect}',
+        args: { effect: effectText },
+        event: 'memo',
+      })
+      game.log.outdent()
+    }
+  }
+}
+
 function getSpaceCost(game, space) {
   if (space.dynamicCost === 'sword-master') {
     // 8 solari for the first player, 6 solari after
