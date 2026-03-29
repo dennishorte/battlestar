@@ -14,6 +14,18 @@ function onAgentTurnStart(game, player) {
     return
   }
 
+  // Paul Atreides: Prescience — peek at top card of deck
+  if (leader.name === 'Paul Atreides') {
+    const deckZone = game.zones.byId(`${player.name}.deck`)
+    const topCards = deckZone.cardlist()
+    if (topCards.length > 0) {
+      game.log.add({
+        template: '{player}: Prescience — top of deck is {card}',
+        args: { player, card: topCards[0].name },
+      })
+    }
+  }
+
   if (leader.name === 'Baron Vladimir Harkonnen') {
     if (!game.state.leaderBonusTriggered) {
       game.state.leaderBonusTriggered = {}
