@@ -102,6 +102,21 @@ function parseAgentAbility(text) {
     }]
   }
 
+  // Handle retreat-as-cost patterns: "Retreat N Troops -> Effect"
+  const retreatCostMatch = text.match(/^Retreat\s+(\d+)\s+(?:of\s+your\s+)?Troops?\s*->\s*(.+)$/i)
+  if (retreatCostMatch) {
+    const retreatCount = parseInt(retreatCostMatch[1])
+    const effectText = retreatCostMatch[2].trim()
+    const subEffects = parseAgentAbility(effectText)
+    if (!subEffects) {
+      return null
+    }
+    return [
+      { type: 'retreat-troops', amount: retreatCount },
+      ...subEffects,
+    ]
+  }
+
   // Handle cost-effect patterns: "Pay N Resource: Effect" or "N Resource -> Effect"
   const costMatch = text.match(/^(?:Pay\s+)?(\d+)\s+(Solari|Spice|Water|Influence)\s*(?:-->?|:)\s*(.+)$/i)
   if (costMatch) {
@@ -226,6 +241,17 @@ function parseSingleAbility(text) {
     return { type: 'discard-card' }
   }
 
+  // "+N Persuasion"
+  const persuasionMatch = text.match(/^\+(\d+)\s+Persuasion$/i)
+  if (persuasionMatch) {
+    return { type: 'gain', resource: 'persuasion', amount: parseInt(persuasionMatch[1]) }
+  }
+
+  // "Deploy troops" / "Deploy up to N troops"
+  if (/^Deploy troops\.?$/i.test(text)) {
+    return { type: 'deploy-troops' }
+  }
+
   // "+1 Contract"
   if (/^\+1\s+Contract$/i.test(text)) {
     return { type: 'contract' }
@@ -235,6 +261,19 @@ function parseSingleAbility(text) {
   const swordMatch = text.match(/^\+(\d+)\s+Swords?$/i)
   if (swordMatch) {
     return { type: 'swords', amount: parseInt(swordMatch[1]) }
+  }
+
+  // "+N Troops"
+  const troopGainMatch = text.match(/^\+(\d+)\s+Troops$/i)
+  if (troopGainMatch) {
+    return { type: 'troop', amount: parseInt(troopGainMatch[1]) }
+  }
+
+  // "Retreat N of your Troops" / "Retreat any number of your Troops"
+  const retreatMatch = text.match(/^Retreat\s+(?:(\d+)\s+(?:or\s+\d+\s+)?(?:of\s+your\s+)?|any number of your |up to (\d+) of your )Troops?$/i)
+  if (retreatMatch) {
+    const amount = retreatMatch[1] ? parseInt(retreatMatch[1]) : (retreatMatch[2] ? parseInt(retreatMatch[2]) : 99)
+    return { type: 'retreat-troops', amount }
   }
 
   return null
@@ -319,6 +358,62 @@ function parseCondition(text) {
   // "grafted" (expansion mechanic)
   if (/grafted/i.test(text)) {
     return { type: 'grafted' }
+  }
+
+  // "you have a seat on the High Council"
+  if (/you have a seat on the High Council/i.test(text)) {
+    return { type: 'has-high-council' }
+  }
+
+  // "you have a Swordmaster" / "you ALSO have a Swordmaster"
+  if (/you (?:ALSO )?have (?:a |your )?Swordmaster/i.test(text)) {
+    return { type: 'has-swordmaster' }
+  }
+
+  // "you have a Faction Alliance" / "you have an Alliance"
+  if (/you have (?:a Faction |an? )?Alliance/i.test(text)) {
+    return { type: 'has-alliance' }
+  }
+
+  // "you are occupying a Maker board space"
+  if (/you are occupying a Maker board space/i.test(text)) {
+    return { type: 'occupying-maker-space' }
+  }
+
+  // "you sent an Agent to a Maker board space this turn"
+  if (/you sent an Agent to a Maker board space\s+this turn/i.test(text)) {
+    return { type: 'sent-to-maker' }
+  }
+
+  // "you sent an Agent to a Faction board space this turn"
+  if (/you sent an Agent to a Faction board space this turn/i.test(text)) {
+    return { type: 'sent-to-faction' }
+  }
+
+  // "you have N+ Spice" / "you have N+ Solari" / "you have N+ Water"
+  const resourceMatch = text.match(/you have (\d+)\+?\s+or more\s+(Spice|Solari|Water)/i)
+    || text.match(/you have (\d+)\+?\s+(Spice|Solari|Water)/i)
+  if (resourceMatch) {
+    return { type: 'has-resource', resource: resourceMatch[2].toLowerCase(), amount: parseInt(resourceMatch[1]) }
+  }
+
+  // "you have 6+ Persuasion"
+  const persuasionCondMatch = text.match(/you have (\d+)\+?\s+Persuasion/i)
+  if (persuasionCondMatch) {
+    return { type: 'has-persuasion', amount: parseInt(persuasionCondMatch[1]) }
+  }
+
+  // "you have 4+ garrisoned units"
+  const garrisonMatch = text.match(/you have (\d+)\+?\s+garrisoned units/i)
+  if (garrisonMatch) {
+    return { type: 'has-garrison', amount: parseInt(garrisonMatch[1]) }
+  }
+
+  // "you have two or more Spies on the board"
+  const spyCountMatch = text.match(/you have (?:(\d+)|two|three)\s+or more Spies on the board/i)
+  if (spyCountMatch) {
+    const count = spyCountMatch[1] ? parseInt(spyCountMatch[1]) : (text.includes('three') ? 3 : 2)
+    return { type: 'has-spies-on-board', amount: count }
   }
 
   return null
