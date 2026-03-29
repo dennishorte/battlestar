@@ -108,6 +108,9 @@ function checkAlliance(game, player, faction) {
       template: '{player} earns the {faction} Alliance: +1 Victory Point',
       args: { player, faction },
     })
+    // Check contract completion
+    const choam = require('./choam.js')
+    choam.checkContractCompletion(game, player, 'earn-alliance', {})
   }
   else if (currentHolder !== player.name) {
     // Someone else has it — check if we overtake them

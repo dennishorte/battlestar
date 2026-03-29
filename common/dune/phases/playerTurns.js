@@ -186,6 +186,10 @@ function agentTurn(game, player) {
     }
   }
 
+  // Check contract completion for board space visit
+  const choam = require('../systems/choam.js')
+  choam.checkContractCompletion(game, player, 'board-space', { spaceId: space.id })
+
   // Offer to play a Plot Intrigue card
   offerPlotIntrigue(game, player)
 
@@ -294,6 +298,9 @@ function acquireCardsPhase(game, player) {
           template: '{player} gains 1 Victory Point (The Spice Must Flow)',
           args: { player },
         })
+        // Check contract completion
+        const choamTsmf = require('../systems/choam.js')
+        choamTsmf.checkContractCompletion(game, player, 'acquire-tsmf', {})
       }
     }
   }
@@ -600,6 +607,9 @@ function resolveEffect(game, player, effect, space) {
         if (space) {
           game.state.bonusSpice[space.id] = 0
         }
+        // Check harvest contract completion
+        const choamHarvest = require('../systems/choam.js')
+        choamHarvest.checkContractCompletion(game, player, 'harvest', { spiceAmount: total })
       }
       break
     }

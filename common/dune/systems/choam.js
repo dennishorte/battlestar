@@ -1,9 +1,48 @@
 const { DuneCard } = require('../DuneCard.js')
 const { parseAgentAbility } = require('./cardEffects.js')
 
+// Map contract names to board space IDs for board-space-visit triggers
+const BOARD_SPACE_CONTRACTS = {
+  'Arakeen': 'arrakeen',
+  'Deliver Supplies': 'deliver-supplies',
+  'Espionage': 'espionage',
+  'Heighliner': 'heighliner',
+  'High Council': 'high-council',
+  'Research Station': 'research-station',
+  'Sardaukar': 'sardaukar',
+  'Secrets': 'secrets',
+  'Spice Refinery': 'spice-refinery',
+  'Interstellar Shipping': 'shipping',
+  'Smuggling': 'shipping',
+}
+
+/**
+ * Get the trigger type for a contract based on its name.
+ */
+function getContractTrigger(contractName) {
+  if (BOARD_SPACE_CONTRACTS[contractName]) {
+    return { type: 'board-space', spaceId: BOARD_SPACE_CONTRACTS[contractName] }
+  }
+  if (contractName === 'Immediate') {
+    return { type: 'immediate' }
+  }
+  if (contractName === 'Acquire The Spice Must Flow') {
+    return { type: 'acquire-tsmf' }
+  }
+  if (contractName === 'Earn Any Alliance') {
+    return { type: 'earn-alliance' }
+  }
+  if (contractName.startsWith('Harvest')) {
+    const thresholdMatch = contractName.match(/(\d+)\+/)
+    return { type: 'harvest', threshold: thresholdMatch ? parseInt(thresholdMatch[1]) : 1 }
+  }
+  // Tech/Dreadnought — Rise of Ix specific, not implemented yet
+  return null
+}
+
 /**
  * Initialize CHOAM contract system.
- * Shuffle 20 contracts, place 2 face-up in the market.
+ * Shuffle contracts, place 2 face-up in the market.
  */
 function initializeContracts(game) {
   const settings = game.settings
@@ -79,13 +118,19 @@ function takeContract(game, player) {
   })
 
   refillContractMarket(game)
+
+  // Check if this is an Immediate contract — complete it right away
+  const trigger = getContractTrigger(card.name)
+  if (trigger && trigger.type === 'immediate') {
+    completeContract(game, player, card)
+  }
 }
 
 /**
  * Complete a contract and gain its reward.
- * Called when a contract's completion condition is met.
  */
-function completeContract(game, player, card, resolveEffectFn) {
+function completeContract(game, player, card) {
+  const { resolveEffect } = require('../phases/playerTurns.js')
   const completedZone = game.zones.byId(`${player.name}.contractsCompleted`)
   card.moveTo(completedZone)
 
@@ -101,11 +146,10 @@ function completeContract(game, player, card, resolveEffectFn) {
     game.log.indent()
     for (const effect of effects) {
       if (effect.type === 'contract') {
-        // "+1 Contract" means take another contract
         takeContract(game, player)
       }
       else {
-        resolveEffectFn(game, player, effect, null)
+        resolveEffect(game, player, effect, null)
       }
     }
     game.log.outdent()
@@ -121,9 +165,71 @@ function completeContract(game, player, card, resolveEffectFn) {
   }
 }
 
+/**
+ * Check and auto-complete contracts for a player when a trigger event occurs.
+ * @param {string} triggerType - 'board-space', 'harvest', 'acquire-tsmf', 'earn-alliance'
+ * @param {object} triggerData - Additional data (e.g., { spaceId } or { spiceAmount })
+ */
+function checkContractCompletion(game, player, triggerType, triggerData) {
+  if (!game.settings.useCHOAM) {
+    return
+  }
+
+  const playerContracts = game.zones.byId(`${player.name}.contracts`)
+  const contracts = playerContracts.cardlist()
+
+  for (const card of contracts) {
+    const trigger = getContractTrigger(card.name)
+    if (!trigger) {
+      continue
+    }
+
+    let shouldComplete = false
+
+    switch (trigger.type) {
+      case 'board-space':
+        if (triggerType === 'board-space' && triggerData.spaceId === trigger.spaceId) {
+          shouldComplete = true
+        }
+        break
+      case 'harvest':
+        if (triggerType === 'harvest' && triggerData.spiceAmount >= trigger.threshold) {
+          shouldComplete = true
+        }
+        break
+      case 'acquire-tsmf':
+        if (triggerType === 'acquire-tsmf') {
+          shouldComplete = true
+        }
+        break
+      case 'earn-alliance':
+        if (triggerType === 'earn-alliance') {
+          shouldComplete = true
+        }
+        break
+    }
+
+    if (shouldComplete) {
+      completeContract(game, player, card)
+      return // Complete one at a time (re-check needed since zone changed)
+    }
+  }
+}
+
+/**
+ * Get the number of contracts a player has completed.
+ */
+function getCompletedContractCount(game, player) {
+  const completedZone = game.zones.byId(`${player.name}.contractsCompleted`)
+  return completedZone.cardlist().length
+}
+
 module.exports = {
   initializeContracts,
   refillContractMarket,
   takeContract,
   completeContract,
+  checkContractCompletion,
+  getCompletedContractCount,
+  getContractTrigger,
 }
