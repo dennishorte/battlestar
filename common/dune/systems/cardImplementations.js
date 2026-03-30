@@ -1309,6 +1309,899 @@ implementations['Undercover Asset'].revealEffect = function(game, player) {
   }
 }
 
+// ── Intrigue Card Effects ──────────────────────────────────────
+// Plot, Combat, and Endgame effects for intrigue cards.
+// Added as separate entries or augmented onto existing entries.
+
+Object.assign(implementations, {
+  'Adaptive Tactics': {
+    plotEffect(game, player) {
+      if (player.spice >= 1) {
+        const choices = ['Pass', 'Spend 1 Spice for +1 Troop and Combat space']
+        const [choice] = game.actions.choose(player, choices, { title: 'Adaptive Tactics' })
+        if (choice !== 'Pass') {
+          player.decrementCounter('spice', 1, { silent: true })
+          const recruit = Math.min(1, player.troopsInSupply)
+          if (recruit > 0) {
+            player.decrementCounter('troopsInSupply', recruit, { silent: true })
+            player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+          }
+          if (game.state.turnTracking) {
+            game.state.turnTracking.spaceIsCombat = true
+          }
+        }
+      }
+    },
+  },
+
+  'Ambitious': {
+    plotEffect(game, player) {
+      if (player.troopsInGarrison >= 3) {
+        const choices = ['Pass', 'Lose 3 troops for +1 Influence']
+        const [choice] = game.actions.choose(player, choices, { title: 'Ambitious' })
+        if (choice !== 'Pass') {
+          player.decrementCounter('troopsInGarrison', 3, { silent: true })
+          const [faction] = game.actions.choose(player, constants.FACTIONS, { title: '+1 Influence with:' })
+          factions.gainInfluence(game, player, faction)
+        }
+      }
+    },
+  },
+
+  'Bribery': {
+    plotEffect(game, player) {
+      if (player.solari >= 2) {
+        player.decrementCounter('solari', 2, { silent: true })
+        const [faction] = game.actions.choose(player, constants.FACTIONS, { title: '+1 Influence with:' })
+        factions.gainInfluence(game, player, faction)
+      }
+    },
+  },
+
+  'Buy Access': {
+    plotEffect(game, player) {
+      if (player.solari >= 5) {
+        player.decrementCounter('solari', 5, { silent: true })
+        for (let i = 0; i < 2; i++) {
+          const [faction] = game.actions.choose(player, constants.FACTIONS, { title: `+1 Influence (${i + 1}/2)` })
+          factions.gainInfluence(game, player, faction)
+        }
+      }
+    },
+  },
+
+  'Calculating': {
+    plotEffect(game, player) {
+      let types = 0
+      if ((game.state.conflict.deployedTroops[player.name] || 0) > 0) {
+        types++
+      }
+      if ((game.state.conflict.deployedSandworms[player.name] || 0) > 0) {
+        types++
+      }
+      if (types > 0) {
+        player.incrementCounter('solari', types, { silent: true })
+        game.log.add({ template: '{player}: +{count} Solari ({count} unit types)', args: { player, count: types } })
+      }
+    },
+  },
+
+  'Call to Arms': {
+    plotEffect(game) {
+      if (game.state.turnTracking) {
+        game.state.turnTracking.troopOnAcquire = true
+      }
+    },
+  },
+
+  'Change Allegiences': {
+    plotEffect(game, player) {
+      // Lose 1 Influence -> +1 Influence; Pay 3 Spice -> +1 Influence
+      const loseFactions = constants.FACTIONS.filter(f => player.getInfluence(f) > 0)
+      if (loseFactions.length > 0) {
+        const choices = ['Pass', ...loseFactions.map(f => `Lose 1 ${f}`)]
+        const [choice] = game.actions.choose(player, choices, { title: 'Swap influence?' })
+        if (choice !== 'Pass') {
+          const loseFaction = loseFactions.find(f => choice.includes(f))
+          factions.loseInfluence(game, player, loseFaction, 1)
+          const [gf] = game.actions.choose(player, constants.FACTIONS, { title: 'Gain +1 Influence' })
+          factions.gainInfluence(game, player, gf)
+        }
+      }
+      if (player.spice >= 3) {
+        const choices2 = ['Pass', 'Pay 3 Spice for +1 Influence']
+        const [c2] = game.actions.choose(player, choices2, { title: 'Also pay 3 Spice?' })
+        if (c2 !== 'Pass') {
+          player.decrementCounter('spice', 3, { silent: true })
+          const [gf] = game.actions.choose(player, constants.FACTIONS, { title: 'Gain +1 Influence' })
+          factions.gainInfluence(game, player, gf)
+        }
+      }
+    },
+  },
+
+  'Charisma': {
+    plotEffect(game, player) {
+      player.incrementCounter('persuasion', 2, { silent: true })
+      game.log.add({ template: '{player}: +2 Persuasion this Reveal turn', args: { player } })
+    },
+  },
+
+  'Depart for Arrakis': {
+    plotEffect(game, player) {
+      if (player.spice >= 2) {
+        const choices = ['Pass', 'Pay 2 Spice for +3 Troops']
+        const [choice] = game.actions.choose(player, choices, { title: 'Depart for Arrakis' })
+        if (choice !== 'Pass') {
+          player.decrementCounter('spice', 2, { silent: true })
+          const recruit = Math.min(3, player.troopsInSupply)
+          if (recruit > 0) {
+            player.decrementCounter('troopsInSupply', recruit, { silent: true })
+            player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+          }
+          if (player.getInfluence('guild') >= 3) {
+            deckEngine.drawCards(game, player, 1)
+            game.log.add({ template: '{player}: Guild synergy — draws 1 card', args: { player } })
+          }
+        }
+      }
+    },
+  },
+
+  'Detonation': {
+    plotEffect(game, player) {
+      const choices = []
+      if (game.state.shieldWall) {
+        choices.push('Blow the Shield Wall')
+      }
+      if (player.troopsInGarrison > 0) {
+        choices.push('Deploy up to 4 Troops to Conflict')
+      }
+      choices.push('Pass')
+      const [choice] = game.actions.choose(player, choices, { title: 'Detonation' })
+      if (choice.includes('Shield Wall')) {
+        game.state.shieldWall = false
+        game.log.add({ template: '{player} destroys the Shield Wall!', args: { player } })
+      }
+      else if (choice.includes('Deploy')) {
+        const max = Math.min(4, player.troopsInGarrison)
+        const deployChoices = []
+        for (let i = 1; i <= max; i++) {
+          deployChoices.push(`Deploy ${i}`)
+        }
+        const [dc] = game.actions.choose(player, deployChoices, { title: 'How many?' })
+        const count = parseInt(dc.match(/\d+/)[0])
+        player.decrementCounter('troopsInGarrison', count, { silent: true })
+        game.state.conflict.deployedTroops[player.name] = (game.state.conflict.deployedTroops[player.name] || 0) + count
+        game.log.add({ template: '{player} deploys {count} troops to Conflict', args: { player, count } })
+      }
+    },
+  },
+
+  'Devious': {
+    plotEffect(game, player) {
+      const choices = []
+      const handZone = game.zones.byId(`${player.name}.hand`)
+      if (handZone.cardlist().length > 0) {
+        choices.push('Trash a card from hand')
+      }
+      if (player.troopsInGarrison > 0) {
+        choices.push('Deploy up to 2 troops')
+      }
+      choices.push('Pass')
+      const [choice] = game.actions.choose(player, choices, { title: 'Devious' })
+      if (choice.includes('Trash')) {
+        const cards = handZone.cardlist()
+        const [tc] = game.actions.choose(player, cards.map(c => c.name), { title: 'Trash which card?' })
+        const card = cards.find(c => c.name === tc)
+        if (card) {
+          deckEngine.trashCard(game, card)
+        }
+      }
+      else if (choice.includes('Deploy')) {
+        const max = Math.min(2, player.troopsInGarrison)
+        const deployChoices = []
+        for (let i = 1; i <= max; i++) {
+          deployChoices.push(`Deploy ${i}`)
+        }
+        const [dc] = game.actions.choose(player, deployChoices, { title: 'How many?' })
+        const count = parseInt(dc.match(/\d+/)[0])
+        player.decrementCounter('troopsInGarrison', count, { silent: true })
+        game.state.conflict.deployedTroops[player.name] = (game.state.conflict.deployedTroops[player.name] || 0) + count
+      }
+    },
+  },
+
+  'Discerning': {
+    plotEffect(game, player) {
+      const handZone = game.zones.byId(`${player.name}.hand`)
+      const hasAlliance = constants.FACTIONS.some(f => game.state.alliances[f] === player.name)
+      if (hasAlliance) {
+        deckEngine.drawCards(game, player, 1)
+      }
+      else if (handZone.cardlist().length > 0) {
+        const cards = handZone.cardlist()
+        const [choice] = game.actions.choose(player, cards.map(c => c.name), { title: 'Discard a card to draw' })
+        const card = cards.find(c => c.name === choice)
+        if (card) {
+          deckEngine.discardCard(game, player, card)
+          deckEngine.drawCards(game, player, 1)
+        }
+      }
+    },
+  },
+
+  'Double Cross': {
+    plotEffect(game, player) {
+      if (player.solari >= 1) {
+        const opponents = game.players.all().filter(p =>
+          p.name !== player.name && (game.state.conflict.deployedTroops[p.name] || 0) > 0
+        )
+        if (opponents.length > 0) {
+          const choices = ['Pass', ...opponents.map(p => p.name)]
+          const [choice] = game.actions.choose(player, choices, { title: 'Pay 1 Solari — which opponent loses a troop?' })
+          if (choice !== 'Pass') {
+            player.decrementCounter('solari', 1, { silent: true })
+            game.state.conflict.deployedTroops[choice]--
+            const target = game.players.byName(choice)
+            target.incrementCounter('troopsInSupply', 1, { silent: true })
+            // Deploy one of your troops
+            if (player.troopsInGarrison > 0) {
+              player.decrementCounter('troopsInGarrison', 1, { silent: true })
+              game.state.conflict.deployedTroops[player.name] = (game.state.conflict.deployedTroops[player.name] || 0) + 1
+            }
+            game.log.add({ template: '{player} forces {target} to lose 1 troop, deploys 1', args: { player, target } })
+          }
+        }
+      }
+    },
+  },
+
+  "Emperor's Invitation": {
+    plotEffect(game) {
+      if (game.state.turnTracking) {
+        game.state.turnTracking.hasEmperorIcon = true
+      }
+      game.log.add({ template: 'Card gains Emperor icon this turn', event: 'memo' })
+    },
+  },
+
+  'Finesse': {
+    plotEffect(game, player) {
+      const loseFactions = constants.FACTIONS.filter(f => player.getInfluence(f) > 0)
+      if (loseFactions.length > 0) {
+        const choices = ['Pass', ...loseFactions.map(f => `Lose 1 ${f}`)]
+        const [choice] = game.actions.choose(player, choices, { title: 'Swap influence?' })
+        if (choice !== 'Pass') {
+          const loseFaction = loseFactions.find(f => choice.includes(f))
+          factions.loseInfluence(game, player, loseFaction, 1)
+          const [gf] = game.actions.choose(player, constants.FACTIONS, { title: '+1 Influence' })
+          factions.gainInfluence(game, player, gf)
+        }
+      }
+    },
+  },
+
+  'Infiltrate': {
+    plotEffect(game) {
+      if (game.state.turnTracking) {
+        game.state.turnTracking.ignoreOccupancy = true
+      }
+    },
+  },
+
+  'Intelligence Report': {
+    plotEffect(game, player) {
+      deckEngine.drawCards(game, player, 1)
+      // Check spy count on board
+      const observationPosts = require('../res/observationPosts.js')
+      let spyCount = 0
+      for (const post of observationPosts) {
+        const occupants = game.state.spyPosts[post.id] || []
+        if (occupants.includes(player.name)) {
+          spyCount++
+        }
+      }
+      if (spyCount >= 2) {
+        deckEngine.drawCards(game, player, 1)
+        game.log.add({ template: '{player}: 2+ Spies — draws another card', args: { player } })
+      }
+    },
+  },
+
+  'Leverage': {
+    plotEffect(game, player) {
+      const gained = game.state.turnTracking?.spiceGained || 0
+      if (gained > 0) {
+        const choam = require('./choam.js')
+        choam.takeContract(game, player)
+        player.incrementCounter('solari', 1, { silent: true })
+        game.log.add({ template: '{player}: +1 Contract, +1 Solari', args: { player } })
+      }
+    },
+  },
+
+  'Opportunism': {
+    plotEffect(game, player) {
+      if (player.solari >= 2) {
+        const loseFactions = constants.FACTIONS.filter(f => player.getInfluence(f) > 0)
+        if (loseFactions.length >= 2) {
+          const choices = ['Pass', 'Lose 1 Influence with 2 Factions + 2 Solari -> +1 VP']
+          const [choice] = game.actions.choose(player, choices, { title: 'Opportunism' })
+          if (choice !== 'Pass') {
+            for (let i = 0; i < 2; i++) {
+              const available = constants.FACTIONS.filter(f => player.getInfluence(f) > 0)
+              const [faction] = game.actions.choose(player, available, { title: `Lose Influence (${i + 1}/2)` })
+              factions.loseInfluence(game, player, faction, 1)
+            }
+            player.decrementCounter('solari', 2, { silent: true })
+            player.incrementCounter('vp', 1, { silent: true })
+            game.log.add({ template: '{player}: +1 VP', args: { player } })
+          }
+        }
+      }
+    },
+  },
+
+  'Poison Snooper': {
+    plotEffect(game, player) {
+      const deckZone = game.zones.byId(`${player.name}.deck`)
+      const topCards = deckZone.cardlist()
+      if (topCards.length > 0) {
+        const topCard = topCards[0]
+        const choices = [`Draw ${topCard.name}`, `Trash ${topCard.name}`]
+        const [choice] = game.actions.choose(player, choices, { title: 'Poison Snooper: Top card' })
+        if (choice.includes('Draw')) {
+          const handZone = game.zones.byId(`${player.name}.hand`)
+          topCard.moveTo(handZone)
+        }
+        else {
+          deckEngine.trashCard(game, topCard)
+        }
+      }
+    },
+  },
+
+  'Quid Pro Quo': {
+    plotEffect(game, player) {
+      if (player.spice >= 2) {
+        const choices = ['Pass', 'Pay 2 Spice for +1 Influence per faction with agents']
+        const [choice] = game.actions.choose(player, choices, { title: 'Quid Pro Quo' })
+        if (choice !== 'Pass') {
+          player.decrementCounter('spice', 2, { silent: true })
+          // Gain influence with each faction that has at least one of your agents
+          const boardSpacesData = require('../res/boardSpaces.js')
+          const factionSet = new Set()
+          for (const space of boardSpacesData) {
+            if (game.state.boardSpaces[space.id] === player.name && space.faction) {
+              factionSet.add(space.faction)
+            }
+          }
+          for (const faction of factionSet) {
+            factions.gainInfluence(game, player, faction)
+          }
+        }
+      }
+    },
+  },
+
+  'Refocus': {
+    plotEffect(game, player) {
+      const discardZone = game.zones.byId(`${player.name}.discard`)
+      const deckZone = game.zones.byId(`${player.name}.deck`)
+      for (const card of discardZone.cardlist()) {
+        card.moveTo(deckZone)
+      }
+      deckZone.shuffle(game.random)
+      deckEngine.drawCards(game, player, 1)
+      game.log.add({ template: '{player}: Shuffles discard into deck, draws 1', args: { player } })
+    },
+  },
+
+  'Reinforcements': {
+    plotEffect(game, player) {
+      if (player.solari >= 3) {
+        const choices = ['Pass', 'Pay 3 Solari for +3 Troops']
+        const [choice] = game.actions.choose(player, choices, { title: 'Reinforcements' })
+        if (choice !== 'Pass') {
+          player.decrementCounter('solari', 3, { silent: true })
+          const recruit = Math.min(3, player.troopsInSupply)
+          if (recruit > 0) {
+            player.decrementCounter('troopsInSupply', recruit, { silent: true })
+            player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+          }
+        }
+      }
+    },
+  },
+
+  'Resourceful': {
+    plotEffect(game) {
+      if (game.state.turnTracking) {
+        game.state.turnTracking.allIcons = true
+      }
+    },
+  },
+
+  "Shaddam's Favor": {
+    plotEffect(game, player) {
+      const recruit = Math.min(1, player.troopsInSupply)
+      if (recruit > 0) {
+        player.decrementCounter('troopsInSupply', recruit, { silent: true })
+        player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+      }
+      if (player.getInfluence('emperor') >= 3) {
+        player.incrementCounter('solari', 3, { silent: true })
+        game.log.add({ template: '{player}: Emperor synergy — +3 Solari', args: { player } })
+      }
+    },
+  },
+
+  'Special Mission': {
+    plotEffect(game, player) {
+      const choices = ['Place 1 Spy']
+      const observationPosts = require('../res/observationPosts.js')
+      const hasSpy = observationPosts.some(p => (game.state.spyPosts[p.id] || []).includes(player.name))
+      if (hasSpy) {
+        choices.push('Recall Spy -> Blow Shield Wall + 2 Spice')
+      }
+      choices.push('Pass')
+      const [choice] = game.actions.choose(player, choices, { title: 'Special Mission' })
+      if (choice.includes('Place')) {
+        spies.placeSpy(game, player)
+      }
+      else if (choice.includes('Recall')) {
+        spies.recallSpy(game, player)
+        game.state.shieldWall = false
+        player.incrementCounter('spice', 2, { silent: true })
+        game.log.add({ template: '{player}: Blows Shield Wall, +2 Spice', args: { player } })
+      }
+    },
+  },
+
+  'Strongarm': {
+    plotEffect(game, player) {
+      if (player.troopsInGarrison > 0) {
+        player.decrementCounter('troopsInGarrison', 1, { silent: true })
+        const [faction] = game.actions.choose(player, constants.FACTIONS, { title: '+1 Influence' })
+        factions.gainInfluence(game, player, faction)
+      }
+    },
+  },
+
+  'Unexpected Allies': {
+    plotEffect(game, player) {
+      if (player.water >= 2) {
+        const choices = ['Pass', 'Pay 2 Water: Blow Shield Wall + 1 Sandworm']
+        const [choice] = game.actions.choose(player, choices, { title: 'Unexpected Allies' })
+        if (choice !== 'Pass') {
+          player.decrementCounter('water', 2, { silent: true })
+          game.state.shieldWall = false
+          game.state.conflict.deployedSandworms[player.name] =
+            (game.state.conflict.deployedSandworms[player.name] || 0) + 1
+          game.log.add({ template: '{player}: Blows Shield Wall, deploys Sandworm', args: { player } })
+        }
+      }
+    },
+  },
+
+  'Unnatural': {
+    plotEffect(game, player) {
+      const intrigueZone = game.zones.byId(`${player.name}.intrigue`)
+      const cards = intrigueZone.cardlist()
+      if (cards.length > 0) {
+        const choices = ['Pass', ...cards.map(c => c.name)]
+        const [choice] = game.actions.choose(player, choices, { title: 'Trash an Intrigue card?' })
+        if (choice !== 'Pass') {
+          const card = cards.find(c => c.name === choice)
+          if (card) {
+            deckEngine.trashCard(game, card)
+            deckEngine.drawIntrigueCard(game, player, 1)
+            const recruit = Math.min(1, player.troopsInSupply)
+            if (recruit > 0) {
+              player.decrementCounter('troopsInSupply', recruit, { silent: true })
+              player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+            }
+          }
+        }
+      }
+    },
+  },
+
+  'Withdrawn': {
+    plotEffect(game) {
+      if (game.state.turnTracking) {
+        game.state.turnTracking.passedTurn = true
+      }
+    },
+  },
+
+  // ── Combat Intrigue Effects ──────────────────────────────────
+
+  'Demand Respect': {
+    combatEffect(game) {
+      // When you win: +1 Influence OR Pay 2 Spice -> +2 Influence
+      if (game.state.turnTracking) {
+        game.state.turnTracking.demandRespect = true
+      }
+    },
+  },
+
+  'Devour': {
+    combatEffect(game, player) {
+      player.incrementCounter('strength', 2 * constants.SWORD_STRENGTH, { silent: true })
+      const sandworms = game.state.conflict.deployedSandworms[player.name] || 0
+      if (sandworms > 0) {
+        player.incrementCounter('strength', 2 * constants.SWORD_STRENGTH, { silent: true })
+        // Trash a card
+        const handZone = game.zones.byId(`${player.name}.hand`)
+        const cards = handZone.cardlist()
+        if (cards.length > 0) {
+          const [choice] = game.actions.choose(player, cards.map(c => c.name), { title: 'Trash a card' })
+          const card = cards.find(c => c.name === choice)
+          if (card) {
+            deckEngine.trashCard(game, card)
+          }
+        }
+        game.log.add({ template: '{player}: +4 Swords (Sandworm bonus)', args: { player } })
+      }
+      else {
+        game.log.add({ template: '{player}: +2 Swords', args: { player } })
+      }
+    },
+  },
+
+  'Find Weakness': {
+    combatEffect(game, player) {
+      player.incrementCounter('strength', 2 * constants.SWORD_STRENGTH, { silent: true })
+      const observationPosts = require('../res/observationPosts.js')
+      const hasSpy = observationPosts.some(p => (game.state.spyPosts[p.id] || []).includes(player.name))
+      if (hasSpy) {
+        spies.recallSpy(game, player)
+        player.incrementCounter('strength', 3 * constants.SWORD_STRENGTH, { silent: true })
+        game.log.add({ template: '{player}: +5 Swords (recalled Spy)', args: { player } })
+      }
+      else {
+        game.log.add({ template: '{player}: +2 Swords', args: { player } })
+      }
+    },
+  },
+
+  'Go to Ground': {
+    combatEffect(game, player) {
+      const deployed = game.state.conflict.deployedTroops[player.name] || 0
+      const retreatMax = Math.min(2, deployed)
+      if (retreatMax > 0) {
+        const choices = []
+        for (let i = 1; i <= retreatMax; i++) {
+          choices.push(`Retreat ${i}`)
+        }
+        choices.push('Pass')
+        const [choice] = game.actions.choose(player, choices, { title: 'Retreat for +1 Spy?' })
+        if (choice !== 'Pass') {
+          const count = parseInt(choice.match(/\d+/)[0])
+          game.state.conflict.deployedTroops[player.name] -= count
+          player.incrementCounter('troopsInSupply', count, { silent: true })
+          spies.placeSpy(game, player)
+        }
+      }
+    },
+  },
+
+  'Impress': {
+    combatEffect(game, player) {
+      player.incrementCounter('strength', 2 * constants.SWORD_STRENGTH, { silent: true })
+      // Acquire a card costing 3 or less — modifier
+      player.incrementCounter('persuasion', 3, { silent: true })
+      game.log.add({ template: '{player}: +2 Swords, +3 Persuasion for acquire', args: { player } })
+    },
+  },
+
+  'Questionable Methods': {
+    combatEffect(game, player) {
+      player.incrementCounter('strength', 1 * constants.SWORD_STRENGTH, { silent: true })
+      const loseFactions = constants.FACTIONS.filter(f => player.getInfluence(f) > 0)
+      if (loseFactions.length > 0) {
+        const choices = ['Pass', ...loseFactions.map(f => `Lose 1 ${f} for +4 Swords`)]
+        const [choice] = game.actions.choose(player, choices, { title: 'Questionable Methods' })
+        if (choice !== 'Pass') {
+          const faction = loseFactions.find(f => choice.includes(f))
+          factions.loseInfluence(game, player, faction, 1)
+          player.incrementCounter('strength', 4 * constants.SWORD_STRENGTH, { silent: true })
+        }
+      }
+    },
+  },
+
+  'Reach Agreement': {
+    combatEffect(game, player) {
+      const deployed = game.state.conflict.deployedTroops[player.name] || 0
+      const retreatMax = Math.min(2, deployed)
+      if (retreatMax > 0) {
+        const choices = []
+        for (let i = 1; i <= retreatMax; i++) {
+          choices.push(`Retreat ${i}`)
+        }
+        choices.push('Pass')
+        const [choice] = game.actions.choose(player, choices, { title: 'Retreat for +1 Contract?' })
+        if (choice !== 'Pass') {
+          const count = parseInt(choice.match(/\d+/)[0])
+          game.state.conflict.deployedTroops[player.name] -= count
+          player.incrementCounter('troopsInSupply', count, { silent: true })
+          const choam = require('./choam.js')
+          choam.takeContract(game, player)
+        }
+      }
+    },
+  },
+
+  'Return the Favor': {
+    combatEffect(game, player) {
+      let swords = 1
+      for (const faction of constants.FACTIONS) {
+        if (player.getInfluence(faction) >= 2) {
+          swords++
+        }
+      }
+      player.incrementCounter('strength', swords * constants.SWORD_STRENGTH, { silent: true })
+      game.log.add({ template: '{player}: +{count} Swords', args: { player, count: swords } })
+    },
+  },
+
+  'Ripples in the Sand': {
+    combatEffect(game, player) {
+      player.incrementCounter('strength', 3 * constants.SWORD_STRENGTH, { silent: true })
+      const sandworms = game.state.conflict.deployedSandworms[player.name] || 0
+      if (sandworms > 0) {
+        deckEngine.drawIntrigueCard(game, player, 1)
+        game.log.add({ template: '{player}: +3 Swords, +1 Intrigue (Sandworm)', args: { player } })
+      }
+      else {
+        game.log.add({ template: '{player}: +3 Swords', args: { player } })
+      }
+    },
+  },
+
+  'Second Wave': {
+    combatEffect(game, player) {
+      player.incrementCounter('strength', 2 * constants.SWORD_STRENGTH, { silent: true })
+      const max = Math.min(2, player.troopsInGarrison)
+      if (max > 0) {
+        const choices = []
+        for (let i = 0; i <= max; i++) {
+          choices.push(`Deploy ${i}`)
+        }
+        const [choice] = game.actions.choose(player, choices, { title: 'Deploy to Conflict?' })
+        const count = parseInt(choice.match(/\d+/)[0])
+        if (count > 0) {
+          player.decrementCounter('troopsInGarrison', count, { silent: true })
+          game.state.conflict.deployedTroops[player.name] = (game.state.conflict.deployedTroops[player.name] || 0) + count
+        }
+      }
+    },
+  },
+
+  'Shrewd': {
+    combatEffect(game, player) {
+      const deployed = game.state.conflict.deployedTroops[player.name] || 0
+      if (deployed > 0) {
+        game.state.conflict.deployedTroops[player.name]--
+        player.incrementCounter('troopsInSupply', 1, { silent: true })
+        player.incrementCounter('spice', 1, { silent: true })
+        game.log.add({ template: '{player}: Loses 1 troop, +1 Spice', args: { player } })
+      }
+    },
+  },
+
+  'Staged Incident': {
+    combatEffect(game, player) {
+      const deployed = game.state.conflict.deployedTroops[player.name] || 0
+      if (deployed >= 3) {
+        game.state.conflict.deployedTroops[player.name] -= 3
+        player.incrementCounter('troopsInSupply', 3, { silent: true })
+        player.incrementCounter('vp', 1, { silent: true })
+        game.log.add({ template: '{player}: Loses 3 troops, +1 VP', args: { player } })
+      }
+    },
+  },
+
+  'Strategic Push': {
+    combatEffect(game, player) {
+      player.incrementCounter('strength', 2 * constants.SWORD_STRENGTH, { silent: true })
+      if (game.state.turnTracking) {
+        game.state.turnTracking.strategicPush = true
+      }
+      game.log.add({ template: '{player}: +2 Swords (if win: +2 Solari)', args: { player } })
+    },
+  },
+
+  'The Strong Survive': {
+    combatEffect(game, player) {
+      const choices = ['+3 Troops']
+      const deployed = game.state.conflict.deployedTroops[player.name] || 0
+      if (deployed > 0) {
+        choices.push('Retreat 1 troop -> Trash a card')
+      }
+      const [choice] = game.actions.choose(player, choices, { title: 'The Strong Survive' })
+      if (choice.includes('+3')) {
+        const recruit = Math.min(3, player.troopsInSupply)
+        if (recruit > 0) {
+          player.decrementCounter('troopsInSupply', recruit, { silent: true })
+          player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+        }
+      }
+      else {
+        game.state.conflict.deployedTroops[player.name]--
+        player.incrementCounter('troopsInSupply', 1, { silent: true })
+        const handZone = game.zones.byId(`${player.name}.hand`)
+        const cards = handZone.cardlist()
+        if (cards.length > 0) {
+          const [tc] = game.actions.choose(player, cards.map(c => c.name), { title: 'Trash' })
+          const card = cards.find(c => c.name === tc)
+          if (card) {
+            deckEngine.trashCard(game, card)
+          }
+        }
+      }
+    },
+  },
+
+  'To the Victor …': {
+    combatEffect(game) {
+      if (game.state.turnTracking) {
+        game.state.turnTracking.toTheVictor = true
+      }
+    },
+  },
+
+  'Weirding Combat': {
+    combatEffect(game, player) {
+      let swords = 3
+      if (player.getInfluence('bene-gesserit') >= 3) {
+        swords += 2
+      }
+      player.incrementCounter('strength', swords * constants.SWORD_STRENGTH, { silent: true })
+      game.log.add({ template: '{player}: +{count} Swords', args: { player, count: swords } })
+    },
+  },
+
+  // ── Endgame Intrigue Effects ─────────────────────────────────
+
+  'Corner The Market': {
+    endgameEffect(game, player) {
+      // Count TSMF cards
+      const allZones = [
+        game.zones.byId(`${player.name}.deck`),
+        game.zones.byId(`${player.name}.hand`),
+        game.zones.byId(`${player.name}.discard`),
+        game.zones.byId(`${player.name}.played`),
+      ]
+      let tsmfCount = 0
+      for (const zone of allZones) {
+        tsmfCount += zone.cardlist().filter(c => c.name === 'The Spice Must Flow').length
+      }
+      if (tsmfCount >= 2) {
+        player.incrementCounter('vp', 1, { silent: true })
+        game.log.add({ template: '{player}: +1 VP (2+ TSMF)', args: { player } })
+      }
+    },
+  },
+
+  'Crysknife': {
+    endgameEffect(game, player) {
+      // Flip a crysknife/wild conflict card -> +1 VP
+      const wonCards = game.state.conflict.wonCards?.[player.name] || []
+      const flippable = wonCards.filter(c => c.battleIcon === 'blue' || c.battleIcon === 'wild')
+      if (flippable.length > 0) {
+        player.incrementCounter('vp', 1, { silent: true })
+        game.log.add({ template: '{player}: Flips Crysknife icon — +1 VP', args: { player } })
+      }
+    },
+  },
+
+  'Desert Mouse': {
+    endgameEffect(game, player) {
+      const wonCards = game.state.conflict.wonCards?.[player.name] || []
+      const flippable = wonCards.filter(c => c.battleIcon === 'yellow' || c.battleIcon === 'wild')
+      if (flippable.length > 0) {
+        player.incrementCounter('vp', 1, { silent: true })
+        game.log.add({ template: '{player}: Flips Desert Mouse icon — +1 VP', args: { player } })
+      }
+    },
+  },
+
+  'Grasp Arrakis': {
+    endgameEffect(game, player) {
+      // Flip two conflict cards -> +1 VP
+      const wonCards = game.state.conflict.wonCards?.[player.name] || []
+      if (wonCards.length >= 2) {
+        player.incrementCounter('vp', 1, { silent: true })
+        game.log.add({ template: '{player}: Flips 2 conflict cards — +1 VP', args: { player } })
+      }
+    },
+  },
+
+  'Ornithopter': {
+    endgameEffect(game, player) {
+      const wonCards = game.state.conflict.wonCards?.[player.name] || []
+      const flippable = wonCards.filter(c => c.battleIcon === 'green' || c.battleIcon === 'wild')
+      if (flippable.length > 0) {
+        player.incrementCounter('vp', 1, { silent: true })
+        game.log.add({ template: '{player}: Flips Ornithopter icon — +1 VP', args: { player } })
+      }
+    },
+  },
+
+  'Plans Within Plans': {
+    endgameEffect(game, player) {
+      // Having 3+ Influence on 3 Factions: +1 VP OR 3+ on all 4: +2 VP
+      const factionsAt3 = constants.FACTIONS.filter(f => player.getInfluence(f) >= 3).length
+      if (factionsAt3 >= 4) {
+        player.incrementCounter('vp', 2, { silent: true })
+        game.log.add({ template: '{player}: +2 VP (3+ on all 4 Factions)', args: { player } })
+      }
+      else if (factionsAt3 >= 3) {
+        player.incrementCounter('vp', 1, { silent: true })
+        game.log.add({ template: '{player}: +1 VP (3+ on 3 Factions)', args: { player } })
+      }
+    },
+  },
+
+  'Secure Spice Trade': {
+    endgameEffect(game, player) {
+      const allZones = [
+        game.zones.byId(`${player.name}.deck`),
+        game.zones.byId(`${player.name}.hand`),
+        game.zones.byId(`${player.name}.discard`),
+        game.zones.byId(`${player.name}.played`),
+      ]
+      let tsmfCount = 0
+      for (const zone of allZones) {
+        tsmfCount += zone.cardlist().filter(c => c.name === 'The Spice Must Flow').length
+      }
+      if (tsmfCount >= 2) {
+        player.incrementCounter('vp', 1, { silent: true })
+        player.incrementCounter('spice', 2, { silent: true })
+        game.log.add({ template: '{player}: +1 VP, +2 Spice (2+ TSMF)', args: { player } })
+      }
+    },
+  },
+})
+
+// Add Tenuous Bond combat effect to existing entry or create new
+if (!implementations['Tenuous Bond']) {
+  implementations['Tenuous Bond'] = {}
+}
+implementations['Tenuous Bond'].plotEffect = function(game, player) {
+  const loseFactions = constants.FACTIONS.filter(f => player.getInfluence(f) > 0)
+  if (loseFactions.length > 0) {
+    const choices = ['Pass', ...loseFactions.map(f => `Lose 1 ${f}`)]
+    const [choice] = game.actions.choose(player, choices, { title: 'Swap influence?' })
+    if (choice !== 'Pass') {
+      const loseFaction = loseFactions.find(f => choice.includes(f))
+      factions.loseInfluence(game, player, loseFaction, 1)
+      const [gf] = game.actions.choose(player, constants.FACTIONS, { title: '+1 Influence' })
+      factions.gainInfluence(game, player, gf)
+    }
+  }
+}
+implementations['Tenuous Bond'].combatEffect = function(game, player) {
+  // Trash a card from discard that costs 1+ Persuasion -> +4 Swords
+  const discardZone = game.zones.byId(`${player.name}.discard`)
+  const trashable = discardZone.cardlist().filter(c => c.persuasionCost > 0)
+  if (trashable.length > 0) {
+    const choices = ['Pass', ...trashable.map(c => c.name)]
+    const [choice] = game.actions.choose(player, choices, { title: 'Trash from discard for +4 Swords?' })
+    if (choice !== 'Pass') {
+      const card = trashable.find(c => c.name === choice)
+      if (card) {
+        deckEngine.trashCard(game, card)
+        player.incrementCounter('strength', 4 * constants.SWORD_STRENGTH, { silent: true })
+      }
+    }
+  }
+}
+
 /**
  * Get the implementation for a card by name, if one exists.
  */
