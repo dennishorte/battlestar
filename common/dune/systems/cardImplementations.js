@@ -221,6 +221,302 @@ const implementations = {
     },
   },
 
+  // ── More Imperium Agent Effects ──────────────────────────────
+
+  'Esmar Tuek': {
+    agentEffect(game, player) {
+      // Pay 1 Spice -> +1 BG Influence and Draw 1 card
+      if (player.spice >= 1) {
+        const choices = ['Pass', 'Pay 1 Spice for +1 BG Influence and Draw 1 card']
+        const [choice] = game.actions.choose(player, choices, { title: 'Esmar Tuek' })
+        if (choice !== 'Pass') {
+          player.decrementCounter('spice', 1, { silent: true })
+          factions.gainInfluence(game, player, 'bene-gesserit')
+          deckEngine.drawCards(game, player, 1)
+        }
+      }
+    },
+  },
+
+  'Guild Spy': {
+    agentEffect(game, player) {
+      // Discard 1 card -> Draw 1 card. If you discarded a Spacing Guild card: +1 Intrigue card.
+      const handZone = game.zones.byId(`${player.name}.hand`)
+      const handCards = handZone.cardlist()
+      if (handCards.length > 0) {
+        const choices = handCards.map(c => c.name)
+        const [choice] = game.actions.choose(player, choices, { title: 'Discard a card' })
+        const card = handCards.find(c => c.name === choice)
+        if (card) {
+          const isGuild = card.factionAffiliation && card.factionAffiliation.toLowerCase().includes('spacing guild')
+          deckEngine.discardCard(game, player, card)
+          deckEngine.drawCards(game, player, 1)
+          if (isGuild) {
+            deckEngine.drawIntrigueCard(game, player, 1)
+            game.log.add({ template: '{player}: Guild synergy — +1 Intrigue card', args: { player } })
+          }
+        }
+      }
+    },
+  },
+
+  'Space-Time Folding': {
+    agentEffect(game, player) {
+      // Discard a card -> Draw a card. If discarded Spacing Guild: Draw another card.
+      const handZone = game.zones.byId(`${player.name}.hand`)
+      const handCards = handZone.cardlist()
+      if (handCards.length > 0) {
+        const choices = handCards.map(c => c.name)
+        const [choice] = game.actions.choose(player, choices, { title: 'Discard a card' })
+        const card = handCards.find(c => c.name === choice)
+        if (card) {
+          const isGuild = card.factionAffiliation && card.factionAffiliation.toLowerCase().includes('spacing guild')
+          deckEngine.discardCard(game, player, card)
+          deckEngine.drawCards(game, player, 1)
+          if (isGuild) {
+            deckEngine.drawCards(game, player, 1)
+            game.log.add({ template: '{player}: Guild synergy — draws another card', args: { player } })
+          }
+        }
+      }
+    },
+  },
+
+  'Guild Envoy': {
+    agentEffect(game, player) {
+      // Discard a card. If discarded Spacing Guild: Draw 2 cards.
+      const handZone = game.zones.byId(`${player.name}.hand`)
+      const handCards = handZone.cardlist()
+      if (handCards.length > 0) {
+        const choices = handCards.map(c => c.name)
+        const [choice] = game.actions.choose(player, choices, { title: 'Discard a card' })
+        const card = handCards.find(c => c.name === choice)
+        if (card) {
+          const isGuild = card.factionAffiliation && card.factionAffiliation.toLowerCase().includes('spacing guild')
+          deckEngine.discardCard(game, player, card)
+          if (isGuild) {
+            deckEngine.drawCards(game, player, 2)
+            game.log.add({ template: '{player}: Guild synergy — draws 2 cards', args: { player } })
+          }
+        }
+      }
+    },
+  },
+
+  'Arrakis Observer': {
+    agentEffect(game, player) {
+      // Discard a card -> +1 Spy with Deep Cover. If discarded Spacing Guild: +2 Spice.
+      const handZone = game.zones.byId(`${player.name}.hand`)
+      const handCards = handZone.cardlist()
+      if (handCards.length > 0) {
+        const choices = handCards.map(c => c.name)
+        const [choice] = game.actions.choose(player, choices, { title: 'Discard a card' })
+        const card = handCards.find(c => c.name === choice)
+        if (card) {
+          const isGuild = card.factionAffiliation && card.factionAffiliation.toLowerCase().includes('spacing guild')
+          deckEngine.discardCard(game, player, card)
+          spies.placeSpy(game, player)
+          if (isGuild) {
+            player.incrementCounter('spice', 2, { silent: true })
+            game.log.add({ template: '{player}: Guild synergy — +2 Spice', args: { player } })
+          }
+        }
+      }
+    },
+  },
+
+  'Local Fence': {
+    agentEffect(game, player) {
+      // Pay 2 Spice -> +5 Solari OR Pay 5 Solari -> +4 Spice
+      const choices = []
+      if (player.spice >= 2) {
+        choices.push('Pay 2 Spice for 5 Solari')
+      }
+      if (player.solari >= 5) {
+        choices.push('Pay 5 Solari for 4 Spice')
+      }
+      choices.push('Pass')
+      const [choice] = game.actions.choose(player, choices, { title: 'Local Fence' })
+      if (choice.includes('2 Spice')) {
+        player.decrementCounter('spice', 2, { silent: true })
+        player.incrementCounter('solari', 5, { silent: true })
+      }
+      else if (choice.includes('5 Solari')) {
+        player.decrementCounter('solari', 5, { silent: true })
+        player.incrementCounter('spice', 4, { silent: true })
+      }
+    },
+  },
+
+  'Smuggler\'s Haven': {
+    agentEffect(game, player) {
+      // Pay 4 Spice -> +1 VP
+      if (player.spice >= 4) {
+        const choices = ['Pass', 'Pay 4 Spice for +1 Victory Point']
+        const [choice] = game.actions.choose(player, choices, { title: 'Smuggler\'s Haven' })
+        if (choice !== 'Pass') {
+          player.decrementCounter('spice', 4, { silent: true })
+          player.incrementCounter('vp', 1, { silent: true })
+          game.log.add({ template: '{player} gains 1 Victory Point', args: { player } })
+        }
+      }
+    },
+  },
+
+  'Corrinth City': {
+    agentEffect(game, player) {
+      // Discard two cards and pay 5 Solari -> +1 VP
+      const handZone = game.zones.byId(`${player.name}.hand`)
+      if (handZone.cardlist().length >= 2 && player.solari >= 5) {
+        const choices = ['Pass', 'Discard 2 cards and pay 5 Solari for +1 VP']
+        const [choice] = game.actions.choose(player, choices, { title: 'Corrinth City' })
+        if (choice !== 'Pass') {
+          for (let i = 0; i < 2; i++) {
+            const cards = handZone.cardlist()
+            if (cards.length > 0) {
+              const [dc] = game.actions.choose(player, cards.map(c => c.name), { title: 'Discard a card' })
+              const card = cards.find(c => c.name === dc)
+              if (card) {
+                deckEngine.discardCard(game, player, card)
+              }
+            }
+          }
+          player.decrementCounter('solari', 5, { silent: true })
+          player.incrementCounter('vp', 1, { silent: true })
+          game.log.add({ template: '{player} gains 1 Victory Point', args: { player } })
+        }
+      }
+    },
+  },
+
+  'Dangerous Rhetoric': {
+    agentEffect(game, player, card) {
+      // +1 Influence with a Faction. Trash this card.
+      const [faction] = game.actions.choose(player, constants.FACTIONS, {
+        title: 'Choose faction for +1 Influence',
+      })
+      factions.gainInfluence(game, player, faction)
+      deckEngine.trashCard(game, card)
+    },
+  },
+
+  'Shifting Allegiances': {
+    agentEffect(game, player) {
+      // Pay 1 Influence and 2 Spice to gain +2 other Influence
+      if (player.spice >= 2) {
+        const loseFactions = constants.FACTIONS.filter(f => player.getInfluence(f) > 0)
+        if (loseFactions.length > 0) {
+          const choices = ['Pass', ...loseFactions.map(f => `Lose 1 ${f} Influence + 2 Spice`)]
+          const [choice] = game.actions.choose(player, choices, { title: 'Shifting Allegiances' })
+          if (choice !== 'Pass') {
+            const loseFaction = loseFactions.find(f => choice.includes(f))
+            factions.loseInfluence(game, player, loseFaction, 1)
+            player.decrementCounter('spice', 2, { silent: true })
+            // Gain +2 influence (choose faction twice)
+            for (let i = 0; i < 2; i++) {
+              const gainFactions = constants.FACTIONS.filter(f => f !== loseFaction)
+              const [gf] = game.actions.choose(player, gainFactions, {
+                title: `Gain Influence (${i + 1} of 2)`,
+              })
+              factions.gainInfluence(game, player, gf)
+            }
+          }
+        }
+      }
+    },
+  },
+
+  'Elite Forces': {
+    agentEffect(game, player) {
+      // You may trash a card from hand. If Emperor card: +1 Intrigue, +1 Troop, Deploy troops.
+      const handZone = game.zones.byId(`${player.name}.hand`)
+      const handCards = handZone.cardlist()
+      if (handCards.length > 0) {
+        const choices = ['Pass', ...handCards.map(c => c.name)]
+        const [choice] = game.actions.choose(player, choices, { title: 'Trash a card?' })
+        if (choice !== 'Pass') {
+          const card = handCards.find(c => c.name === choice)
+          if (card) {
+            const isEmperor = card.factionAffiliation && card.factionAffiliation.toLowerCase().includes('emperor')
+            deckEngine.trashCard(game, card)
+            if (isEmperor) {
+              deckEngine.drawIntrigueCard(game, player, 1)
+              const recruit = Math.min(1, player.troopsInSupply)
+              if (recruit > 0) {
+                player.decrementCounter('troopsInSupply', recruit, { silent: true })
+                player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+              }
+              game.log.add({ template: '{player}: Emperor synergy — +1 Intrigue, +1 Troop', args: { player } })
+            }
+          }
+        }
+      }
+    },
+  },
+
+  'Leadership': {
+    agentEffect(game, player) {
+      // For each Sandworm you have in the conflict: Draw a card.
+      const sandworms = game.state.conflict.deployedSandworms[player.name] || 0
+      if (sandworms > 0) {
+        deckEngine.drawCards(game, player, sandworms)
+        game.log.add({ template: '{player} draws {count} card(s) (Sandworm synergy)', args: { player, count: sandworms } })
+      }
+    },
+  },
+
+  'Sardaukar Coordination': {
+    agentEffect(game) {
+      // You may deploy any troops you recruit this turn to the conflict.
+      if (game.state.turnTracking) {
+        game.state.turnTracking.recruitToConflict = true
+      }
+    },
+  },
+
+  'Stillsuit Manufacturer': {
+    agentEffect(game, player, card) {
+      // +1 Water AND If you have the Fremen Alliance: Return this card from play to hand.
+      player.incrementCounter('water', 1, { silent: true })
+      game.log.add({ template: '{player} gains 1 Water', args: { player } })
+      if (game.state.alliances.fremen === player.name) {
+        const handZone = game.zones.byId(`${player.name}.hand`)
+        card.moveTo(handZone)
+        game.log.add({ template: '{player} returns {card} to hand (Fremen Alliance)', args: { player, card: card.name } })
+      }
+    },
+  },
+
+  'Maker Keeper': {
+    agentEffect(game, player) {
+      // With 2 BG Influence: +1 Water. With 2 Fremen Influence: +1 Spice.
+      if (player.getInfluence('bene-gesserit') >= 2) {
+        player.incrementCounter('water', 1, { silent: true })
+        game.log.add({ template: '{player}: +1 Water (BG Influence)', args: { player } })
+      }
+      if (player.getInfluence('fremen') >= 2) {
+        player.incrementCounter('spice', 1, { silent: true })
+        game.log.add({ template: '{player}: +1 Spice (Fremen Influence)', args: { player } })
+      }
+    },
+  },
+
+  'High Priority Travel': {
+    agentEffect(game, player) {
+      // With 2 Guild Influence: Draw a card OR Turn space into Combat space
+      if (player.getInfluence('guild') >= 2) {
+        const choices = ['Draw a card', 'Turn space into a Combat space']
+        const [choice] = game.actions.choose(player, choices, { title: 'High Priority Travel' })
+        if (choice.includes('Draw')) {
+          deckEngine.drawCards(game, player, 1)
+        }
+        else if (game.state.turnTracking) {
+          game.state.turnTracking.spaceIsCombat = true
+        }
+      }
+    },
+  },
+
   'Reverend Mother Mohiam': {
     agentEffect(game, player) {
       // With another BG card in play: each opponent discards 2 cards
