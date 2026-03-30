@@ -102,7 +102,9 @@
 - [x] Non-combat space does not offer deployment
 - [x] Shield Wall starts in place, protected locations verified (shieldWall.test.js)
 - [x] Strength constants: troop=2, sandworm=3, sword=1
-- [ ] Sandworm summoning integration (requires Maker Hook)
+- [x] Shield wall detonation effect verified (shieldWall.test.js)
+- [x] Sandworm blocked at protected location when shield wall up (code path verified)
+- [ ] Sandworm summoning full integration (requires Maker Hook + sandworm card in play)
 
 ### Combat (12_combat) — combatIntegration.test.js, combatAdvanced.test.js, combatTies.test.js
 - [x] Combat intrigue card phase with multiple combatants

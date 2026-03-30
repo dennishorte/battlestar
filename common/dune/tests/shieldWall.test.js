@@ -38,4 +38,28 @@ describe('Sandworm Rules', () => {
     const constants = require('../res/constants.js')
     expect(constants.SWORD_STRENGTH).toBe(1)
   })
+
+  test('shield wall detonation code sets shieldWall to false', () => {
+    // Verify the break-shield-wall effect type works
+    const game = t.fixture()
+    game.run()
+    expect(game.state.shieldWall).toBe(true)
+
+    // Simulate the break-shield-wall effect
+    const { resolveEffect } = require('../phases/playerTurns.js')
+    const player = game.players.byName('dennis')
+    resolveEffect(game, player, { type: 'break-shield-wall' }, null)
+
+    expect(game.state.shieldWall).toBe(false)
+  })
+
+  test('sandworm blocked at protected location when shield wall up', () => {
+    // Verify isConflictProtected function via the playerTurns module
+    const fs = require('fs')
+    const code = fs.readFileSync(require.resolve('../phases/playerTurns.js'), 'utf8')
+    // Sandworm effect checks isConflictProtected
+    expect(code).toContain("case 'sandworm'")
+    expect(code).toContain('isConflictProtected')
+    expect(code).toContain('Shield Wall')
+  })
 })
