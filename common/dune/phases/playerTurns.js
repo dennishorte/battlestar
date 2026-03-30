@@ -193,7 +193,11 @@ function agentTurn(game, player) {
 
   // Gain faction influence if faction space
   if (space.faction) {
-    factions.gainInfluence(game, player, space.faction)
+    const influenceAmount = game.state.turnTracking?.extraInfluence ? 2 : 1
+    factions.gainInfluence(game, player, space.faction, influenceAmount)
+    if (game.state.turnTracking?.extraInfluence) {
+      game.state.turnTracking.extraInfluence = false
+    }
   }
 
   // Resolve card agent ability
@@ -210,8 +214,8 @@ function agentTurn(game, player) {
     leaderAbilities.onOpponentVisitsMakerSpace(game, player, space)
   }
 
-  // Deploy units if combat space
-  if (space.isCombatSpace) {
+  // Deploy units if combat space (or card made it a combat space)
+  if (space.isCombatSpace || game.state.turnTracking?.spaceIsCombat) {
     deployUnits(game, player)
   }
 
@@ -313,17 +317,22 @@ function revealTurn(game, player) {
  * Let player spend persuasion to acquire cards.
  */
 function acquireCardsPhase(game, player) {
-  while (player.getCounter('persuasion') > 0) {
-    const persuasion = player.getCounter('persuasion')
-    const acquirableCards = getAcquirableCards(game, persuasion)
+  const useSolari = game.state.turnTracking?.acquireWithSolari
+  while (true) {
+    const budget = useSolari ? player.solari : player.getCounter('persuasion')
+    if (budget <= 0) {
+      break
+    }
 
+    const acquirableCards = getAcquirableCards(game, budget)
     if (acquirableCards.length === 0) {
       break
     }
 
+    const resource = useSolari ? 'Solari' : 'Persuasion'
     const choices = ['Pass', ...acquirableCards.map(c => c.name)]
     const selected = game.actions.choose(player, choices, {
-      title: `Acquire cards (${persuasion} Persuasion available)`,
+      title: `Acquire cards (${budget} ${resource} available)`,
     })
     const choice = selected[0]
 
@@ -333,8 +342,34 @@ function acquireCardsPhase(game, player) {
 
     const card = acquirableCards.find(c => c.name === choice)
     if (card) {
-      player.decrementCounter('persuasion', card.persuasionCost, { silent: true })
-      deckEngine.acquireCard(game, player, card)
+      // Pay with persuasion (or solari if Price is Not Object active)
+      if (game.state.turnTracking?.acquireWithSolari) {
+        player.decrementCounter('solari', card.persuasionCost, { silent: true })
+      }
+      else {
+        player.decrementCounter('persuasion', card.persuasionCost, { silent: true })
+      }
+
+      // Acquire to top of deck or discard pile
+      if (game.state.turnTracking?.acquireToTopOfDeck) {
+        const deckZone = game.zones.byId(`${player.name}.deck`)
+        card.moveTo(deckZone)
+        game.log.add({ template: '{player} acquires {card} to top of deck', args: { player, card } })
+        deckEngine.refillImperiumRow(game)
+      }
+      else {
+        deckEngine.acquireCard(game, player, card)
+      }
+
+      // Troop on acquire (Call to Arms)
+      if (game.state.turnTracking?.troopOnAcquire) {
+        const recruit = Math.min(1, player.troopsInSupply)
+        if (recruit > 0) {
+          player.decrementCounter('troopsInSupply', recruit, { silent: true })
+          player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+          game.log.add({ template: '{player}: +1 Troop (Call to Arms)', args: { player } })
+        }
+      }
 
       // The Spice Must Flow grants +1 VP on acquisition
       if (card.name === 'The Spice Must Flow') {
@@ -391,16 +426,20 @@ function getAcquirableCards(game, persuasion) {
  * on a connected post to ignore the occupant).
  */
 function canSendAgentTo(game, player, card, space) {
-  // Check icon access
-  const hasMatchingIcon = card.agentIcons.includes(space.icon) || card.factionAccess.includes(space.icon)
+  // Check icon access — allIcons/allFactionIcons from Resourceful/Dispatch an Envoy bypass this
+  const allIcons = game.state.turnTracking?.allIcons
+  const allFactionIcons = game.state.turnTracking?.allFactionIcons
+  const hasMatchingIcon = allIcons || allFactionIcons
+    || card.agentIcons.includes(space.icon) || card.factionAccess.includes(space.icon)
   const hasSpyConnection = card.spyAccess && spies.hasSpyAt(game, player, space.id)
   if (!hasMatchingIcon && !hasSpyConnection) {
     return false
   }
 
-  // Space occupancy check — can infiltrate if spy on connected post, or leader ignores
+  // Space occupancy check — can infiltrate if spy on connected post, leader ignores, or card ignores
   if (game.state.boardSpaces[space.id]) {
-    if (!spies.hasSpyAt(game, player, space.id) && !leaderAbilities.ignoresOccupancy(game, player, space)) {
+    const cardIgnores = game.state.turnTracking?.ignoreOccupancy
+    if (!spies.hasSpyAt(game, player, space.id) && !leaderAbilities.ignoresOccupancy(game, player, space) && !cardIgnores) {
       return false
     }
   }
@@ -420,12 +459,17 @@ function canSendAgentTo(game, player, card, space) {
     return false
   }
 
-  // Influence requirements
-  if (space.influenceRequirement) {
+  // Influence requirements (skipped by Undercover Asset / Insider Information)
+  if (space.influenceRequirement && !game.state.turnTracking?.ignoreInfluenceRequirements) {
     const req = space.influenceRequirement
     if (player.getInfluence(req.faction) < req.amount) {
       return false
     }
+  }
+
+  // Blocked spaces (The Voice)
+  if (game.state.blockedSpaces?.includes(space.id) && game.state.boardSpaces[space.id] !== player.name) {
+    return false
   }
 
   return true
@@ -460,6 +504,30 @@ function deployUnits(game, player) {
       template: '{player} deploys {count} troop(s) to the Conflict',
       args: { player, count },
     })
+
+    // Desert Ambush: force enemy retreat per troop deployed
+    if (game.state.turnTracking?.forceRetreatOnDeploy) {
+      for (let i = 0; i < count; i++) {
+        const opponents = game.players.all().filter(p =>
+          p.name !== player.name && (game.state.conflict.deployedTroops[p.name] || 0) > 0
+        )
+        if (opponents.length > 0) {
+          const targetChoices = ['Pass', ...opponents.map(p => p.name)]
+          const [targetName] = game.actions.choose(player, targetChoices, {
+            title: 'Force an enemy troop to retreat?',
+          })
+          if (targetName !== 'Pass') {
+            game.state.conflict.deployedTroops[targetName]--
+            const target = game.players.byName(targetName)
+            target.incrementCounter('troopsInSupply', 1, { silent: true })
+            game.log.add({
+              template: '{player} forces {target} to retreat 1 troop',
+              args: { player, target },
+            })
+          }
+        }
+      }
+    }
   }
 }
 
@@ -640,11 +708,22 @@ function resolveEffect(game, player, effect, space) {
       const recruit = Math.min(effect.amount, player.troopsInSupply)
       if (recruit > 0) {
         player.decrementCounter('troopsInSupply', recruit, { silent: true })
-        player.incrementCounter('troopsInGarrison', recruit, { silent: true })
-        game.log.add({
-          template: '{player} recruits {amount} troop(s)',
-          args: { player, amount: recruit },
-        })
+        // Sardaukar Coordination: recruited troops go to conflict instead of garrison
+        if (game.state.turnTracking?.recruitToConflict) {
+          game.state.conflict.deployedTroops[player.name] =
+            (game.state.conflict.deployedTroops[player.name] || 0) + recruit
+          game.log.add({
+            template: '{player} recruits {amount} troop(s) to Conflict',
+            args: { player, amount: recruit },
+          })
+        }
+        else {
+          player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+          game.log.add({
+            template: '{player} recruits {amount} troop(s)',
+            args: { player, amount: recruit },
+          })
+        }
       }
       break
     }

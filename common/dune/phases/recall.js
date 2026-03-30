@@ -33,6 +33,10 @@ function recallPhase(game) {
     game.state.boardSpaces[spaceId] = null
   }
 
+  // Clear round-scoped state
+  game.state.blockedSpaces = []
+  game.state.tsmfDiscount = 0
+
   // Pass first player clockwise
   const allPlayers = game.players.all()
   game.state.firstPlayerIndex = (game.state.firstPlayerIndex + 1) % allPlayers.length

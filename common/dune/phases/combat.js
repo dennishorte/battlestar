@@ -175,6 +175,9 @@ function resolveCombat(game) {
         moveConflictCardToWinner(game, winner, conflictCard)
       }
 
+      // "When you win" combat card effects
+      resolveWinnerBonuses(game, winner)
+
       // Second place
       if (placements.length > 1) {
         const secondGroup = placements[1]
@@ -440,6 +443,55 @@ function moveConflictCardToWinner(game, winner, conflictCard) {
 /**
  * After combat: troops return to supply, sandworms return to bank, reset strength.
  */
+/**
+ * Resolve "when you win" combat card bonuses.
+ */
+function resolveWinnerBonuses(game, winner) {
+  const factionsMod = require('../systems/factions.js')
+  const constants = require('../res/constants.js')
+
+  // Demand Respect: +1 Influence OR Pay 2 Spice -> +2 Influence
+  if (game.state.turnTracking?.demandRespect) {
+    const choices = ['+1 Influence with any Faction']
+    if (winner.spice >= 2) {
+      choices.push('Pay 2 Spice for +2 Influence')
+    }
+    const [choice] = game.actions.choose(winner, choices, { title: 'Demand Respect' })
+    if (choice.includes('+2')) {
+      winner.decrementCounter('spice', 2, { silent: true })
+      for (let i = 0; i < 2; i++) {
+        const [f] = game.actions.choose(winner, constants.FACTIONS, { title: `+1 Influence (${i + 1}/2)` })
+        factionsMod.gainInfluence(game, winner, f)
+      }
+    }
+    else {
+      const [f] = game.actions.choose(winner, constants.FACTIONS, { title: '+1 Influence' })
+      factionsMod.gainInfluence(game, winner, f)
+    }
+  }
+
+  // To the Victor: +3 Spice
+  if (game.state.turnTracking?.toTheVictor) {
+    winner.incrementCounter('spice', 3, { silent: true })
+    game.log.add({ template: '{player}: To the Victor — +3 Spice', args: { player: winner } })
+  }
+
+  // Strategic Push: +2 Solari
+  if (game.state.turnTracking?.strategicPush) {
+    winner.incrementCounter('solari', 2, { silent: true })
+    game.log.add({ template: '{player}: Strategic Push — +2 Solari', args: { player: winner } })
+  }
+
+  // Pivotal Gambit: bonus first place influence
+  if (game.state.conflict.bonusFirstPlaceInfluence) {
+    const bonusAmt = game.state.conflict.bonusFirstPlaceInfluence
+    for (let i = 0; i < bonusAmt; i++) {
+      const [f] = game.actions.choose(winner, constants.FACTIONS, { title: 'Bonus +1 Influence (Pivotal Gambit)' })
+      factionsMod.gainInfluence(game, winner, f)
+    }
+  }
+}
+
 function afterCombat(game) {
   for (const player of game.players.all()) {
     const troops = game.state.conflict.deployedTroops[player.name] || 0
