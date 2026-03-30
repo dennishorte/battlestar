@@ -1284,6 +1284,33 @@ function checkCondition(game, player, condition) {
       return totalSpies >= condition.amount
     }
 
+    case 'agent-on-space': {
+      const allSpaces = getBoardSpaces()
+      return allSpaces.some(s => {
+        if (game.state.boardSpaces[s.id] !== player.name) {
+          return false
+        }
+        if (['green', 'purple', 'yellow'].includes(condition.icon)) {
+          return s.icon === condition.icon
+        }
+        // Faction name
+        return s.faction === condition.icon || s.icon === condition.icon
+      })
+    }
+
+    case 'sent-to-occupied':
+      return !!(game.state.turnTracking && game.state.turnTracking.sentToOccupied)
+
+    case 'deck-size': {
+      const deckSize = game.zones.byId(`${player.name}.deck`).cardlist().length
+      return deckSize >= condition.amount
+    }
+
+    case 'opponent-has-alliance':
+      return constants.FACTIONS.some(f =>
+        game.state.alliances[f] && game.state.alliances[f] !== player.name
+      )
+
     default:
       return false
   }
