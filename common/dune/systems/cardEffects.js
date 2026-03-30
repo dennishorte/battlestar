@@ -29,8 +29,8 @@ function parseAgentAbility(text) {
     return null
   }
 
-  // Handle "If condition: effect" patterns
-  const ifMatch = text.match(/^If (.+?):\s*(.+)$/i)
+  // Handle "If condition: effect" or "If condition, effect" patterns
+  const ifMatch = text.match(/^If (.+?)[,:]\s*(.+)$/i)
   if (ifMatch) {
     const condition = parseCondition(ifMatch[1].trim())
     const effectText = ifMatch[2].trim()
@@ -210,7 +210,7 @@ function parseAgentAbility(text) {
   }
 
   // "Recall N Spy -> Effect"
-  const recallSpyCostMatch = text.match(/^Recall\s+(?:(\d+)|one|a)\s+Sp(?:y|ies)\s*(?:-->?|:)\s*(.+)$/i)
+  const recallSpyCostMatch = text.match(/^Recall\s+(?:(\d+)|one|a)\s+Sp(?:y|ies)\s*(?:-->?|->|:)\s*(.+)$/i)
   if (recallSpyCostMatch) {
     const effectText = recallSpyCostMatch[2].trim()
     const subEffects = parseAgentAbility(effectText)
@@ -241,9 +241,11 @@ function parseAgentAbility(text) {
   }
 
   // Handle discard-as-cost patterns: "Discard a card -> Effect" / "Discard N cards -> Effect"
-  const discardCostMatch = text.match(/^Discard\s+(?:a|(\d+))\s+cards?\s*(?:-->?|:)\s*(.+)$/i)
+  const discardCostMatch = text.match(/^Discard\s+(?:a|one|two|three|(\d+))\s+cards?\s*(?:-->?|->|:)\s*(.+)$/i)
   if (discardCostMatch) {
-    const discardCount = discardCostMatch[1] ? parseInt(discardCostMatch[1]) : 1
+    const wordToNum = { one: 1, two: 2, three: 3 }
+    const matchedWord = text.match(/^Discard\s+(one|two|three)/i)?.[1]?.toLowerCase()
+    const discardCount = discardCostMatch[1] ? parseInt(discardCostMatch[1]) : (matchedWord ? wordToNum[matchedWord] : 1)
     const effectText = discardCostMatch[2].trim()
     const subEffects = parseAgentAbility(effectText)
     if (!subEffects) {
@@ -257,7 +259,7 @@ function parseAgentAbility(text) {
   }
 
   // Handle lose-as-cost patterns: "Lose N troops/influence -> Effect"
-  const loseCostMatch = text.match(/^Lose\s+(?:(\d+)|one|two|three)\s+(?:of\s+your\s+)?(troops?|Influence)\s*(?:-->?|:)?\s*(.+)$/i)
+  const loseCostMatch = text.match(/^Lose\s+(?:(\d+)|one|two|three)\s+(?:of\s+your\s+)?(troops?|Influence)\s*(?:-->?|->|:)?\s*(.+)$/i)
   if (loseCostMatch) {
     const numMap = { one: 1, two: 2, three: 3 }
     const amount = loseCostMatch[1] ? parseInt(loseCostMatch[1]) : (numMap[loseCostMatch[0].match(/one|two|three/i)?.[0]?.toLowerCase()] || 1)
@@ -289,7 +291,7 @@ function parseAgentAbility(text) {
   }
 
   // Handle cost-effect patterns: "Pay/Spend N Resource: Effect" or "N Resource -> Effect"
-  const costMatch = text.match(/^(?:Pay|Spend)?\s*(\d+)\s+(Solari|Spice|Water|Influence)\s*(?:-->?|:)\s*(.+)$/i)
+  const costMatch = text.match(/^(?:Pay|Spend)?\s*(\d+)\s+(Solari|Spice|Water|Influence)\s*(?:-->?|->|:)\s*(.+)$/i)
   if (costMatch) {
     const costAmount = parseInt(costMatch[1])
     const costResource = costMatch[2].toLowerCase()
@@ -350,7 +352,7 @@ function parseSingleAbility(text) {
     return { type: 'gain', resource: 'water', amount: parseInt(waterMatch[1]) }
   }
 
-  // "Draw N card(s)" / "Draw a card"
+  // "Draw N card(s)" / "Draw a card" / "Draw one/two/three cards"
   const drawMatch = text.match(/^Draw\s+(\d+)\s+cards?$/i)
   if (drawMatch) {
     return { type: 'draw', amount: parseInt(drawMatch[1]) }
@@ -358,22 +360,28 @@ function parseSingleAbility(text) {
   if (/^Draw\s+a\s+card$/i.test(text)) {
     return { type: 'draw', amount: 1 }
   }
+  const drawWordMatch = text.match(/^Draw\s+(one|two|three)\s+cards?$/i)
+  if (drawWordMatch) {
+    const wordMap = { one: 1, two: 2, three: 3 }
+    return { type: 'draw', amount: wordMap[drawWordMatch[1].toLowerCase()] }
+  }
 
-  // "+N Intrigue card(s)" / "+N Intrigue"
+  // "+N Intrigue card(s)" / "+N Intrigue" / "Get N Intrigue Card"
   const intrigueMatch = text.match(/^\+(\d+)\s+Intrigue(?:\s+cards?)?$/i)
   if (intrigueMatch) {
     return { type: 'intrigue', amount: parseInt(intrigueMatch[1]) }
   }
-  if (/^Draw\s+(\d+)\s+Intrigue\s+cards?$/i.test(text)) {
-    const m = text.match(/(\d+)/)
-    return { type: 'intrigue', amount: parseInt(m[1]) }
+  const intrigueAltMatch = text.match(/^(?:Draw|Get|Gain)\s+(\d+|an?)\s+Intrigue\s+cards?$/i)
+  if (intrigueAltMatch) {
+    const amt = intrigueAltMatch[1].match(/\d+/) ? parseInt(intrigueAltMatch[1]) : 1
+    return { type: 'intrigue', amount: amt }
   }
 
   // "Trash this card" / "Trash this card -> Effect" / "Trash this card: Effect"
   if (/^Trash this card$/i.test(text)) {
     return { type: 'trash-self' }
   }
-  const trashSelfCostMatch = text.match(/^Trash this card\s*(?:-->?|:)\s*(.+)$/i)
+  const trashSelfCostMatch = text.match(/^Trash this card\s*(?:-->?|->|:)\s*(.+)$/i)
   if (trashSelfCostMatch) {
     const subEffects = parseAgentAbility(trashSelfCostMatch[1].trim())
     if (subEffects) {
@@ -511,6 +519,16 @@ function parseSingleAbility(text) {
   const vpMatch = text.match(/^\+(\d+)\s+Victory\s+[Pp]oints?$/i)
   if (vpMatch) {
     return { type: 'vp', amount: parseInt(vpMatch[1]) }
+  }
+
+  // "Get/Gain N Resource" patterns
+  const getNMatch = text.match(/^(?:Get|Gain)\s+(\d+)\s+(Spice|Solari|Water)$/i)
+  if (getNMatch) {
+    return { type: 'gain', resource: getNMatch[2].toLowerCase(), amount: parseInt(getNMatch[1]) }
+  }
+  const getTroopMatch = text.match(/^(?:Get|Gain)\s+(\d+)\s+Troops?$/i)
+  if (getTroopMatch) {
+    return { type: 'troop', amount: parseInt(getTroopMatch[1]) }
   }
 
   // "Shuffle your discard pile into your deck"
@@ -672,10 +690,34 @@ function parseCondition(text) {
     return { type: 'has-persuasion', amount: parseInt(persuasionCondMatch[1]) }
   }
 
-  // "you have 4+ garrisoned units"
-  const garrisonMatch = text.match(/you have (\d+)\+?\s+garrisoned units/i)
+  // "you have 4+ garrisoned units" / "you have 4+ garrisoned troops"
+  const garrisonMatch = text.match(/you have (\d+)\+?\s+garrisoned\s+(?:units|troops)/i)
   if (garrisonMatch) {
     return { type: 'has-garrison', amount: parseInt(garrisonMatch[1]) }
+  }
+
+  // "you have an Agent on a Faction board space" / "on a green/purple board space"
+  const agentOnMatch = text.match(/you have an Agent on (?:a|an)\s+(Emperor|Spacing Guild|Bene Gesserit|Fremen|green|purple|yellow)\s+board space/i)
+  if (agentOnMatch) {
+    return { type: 'agent-on-space', icon: agentOnMatch[1].toLowerCase() }
+  }
+
+  // "you sent an Agent to an occupied board space this turn"
+  if (/you sent an Agent to an occupied board space this turn/i.test(text)) {
+    return { type: 'sent-to-occupied' }
+  }
+
+  // "your deck has three or more cards"
+  const deckSizeMatch = text.match(/your deck has\s+(?:(\d+)|three|four|five)\s+or more cards/i)
+  if (deckSizeMatch) {
+    const numWords = { three: 3, four: 4, five: 5 }
+    const count = deckSizeMatch[1] ? parseInt(deckSizeMatch[1]) : numWords[deckSizeMatch[0].match(/three|four|five/i)?.[0]?.toLowerCase()] || 3
+    return { type: 'deck-size', amount: count }
+  }
+
+  // "an opponent has the Alliance" / "opponent has more Influence"
+  if (/(?:an )?opponent has (?:the|an) Alliance/i.test(text)) {
+    return { type: 'opponent-has-alliance' }
   }
 
   // "you have two or more Spies on the board"
