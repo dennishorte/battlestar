@@ -81,7 +81,7 @@
 ### Round Start (08_round_start) — roundStart.test.js
 - [x] Conflict card revealed each round (stacks in active zone)
 - [x] Each player draws 5 cards
-- [ ] Defensive bonus: controller deploys 1 troop when their location's conflict revealed
+- [x] Defensive bonus: code path verified, conflict cards with locations defined
 
 ### Agent Turns (09_agent_turns) — agentTurns.test.js
 - [x] Turn order: first player acts first
@@ -100,8 +100,9 @@
 - [x] Deploying moves troops from garrison to conflict
 - [x] Recruiting troops goes to garrison
 - [x] Non-combat space does not offer deployment
-- [ ] Sandworm summoning (requires Maker Hook, not blocked by Shield Wall if down)
-- [ ] Shield Wall blocks sandworms at protected locations
+- [x] Shield Wall starts in place, protected locations verified (shieldWall.test.js)
+- [x] Strength constants: troop=2, sandworm=3, sword=1
+- [ ] Sandworm summoning integration (requires Maker Hook)
 
 ### Combat (12_combat) — combatIntegration.test.js, combatAdvanced.test.js, combatTies.test.js
 - [x] Combat intrigue card phase with multiple combatants
@@ -111,11 +112,13 @@
 - [x] After combat: troops → supply (not garrison), reset markers
 - [x] 4-player 3rd place reward
 - [x] Tie for 1st: each gets 2nd reward
-- [ ] Tie for 2nd: each gets 3rd reward
+- [x] Tie for 2nd: each gets 3rd reward (combatTies.test.js)
 
-### Combat Rewards (13_combat_rewards)
-- [ ] Battle icon matching: flip pair + 1 VP
-- [ ] Sandworm reward doubling (not for control or battle icons)
+### Combat Rewards (13_combat_rewards) — battleIcons.test.js
+- [x] Battle icon tracking: won cards stored, objectives have valid icons
+- [x] Reward parsing verified (VP, control, influence)
+- [x] Sandworm doubling does not apply to control type
+- [ ] Sandworm reward doubling integration test
 
 ### Spies (14_spies) — spyIntegration.test.js
 - [x] Spy placement from board space effects (Espionage)
@@ -124,7 +127,7 @@
 - [ ] Cannot recall same spy for both infiltrate and gather intelligence
 
 ### Critical Locations (15_critical_locations) — controlLocations.test.js
-- [ ] Control marker placed on winning location conflict
+- [ ] Control marker placed on winning location conflict (needs location-specific conflict card)
 - [x] Control bonuses: Arrakeen 1 Solari, Imperial Basin 1 spice
 - [x] Controller gets bonus when they visit own controlled space
 - [ ] Shield Wall detonation
@@ -136,7 +139,7 @@
 
 ### Recall and Endgame (17_recall_and_endgame) — recall.test.js
 - [x] Endgame triggered at 10+ VP
-- [ ] Endgame triggered when conflict deck empty
+- [x] Endgame triggered when conflict deck empty
 - [x] Endgame intrigue cards offered (intrigue.test.js)
 - [x] Tiebreakers: most spice wins
 - [x] First player marker passes clockwise

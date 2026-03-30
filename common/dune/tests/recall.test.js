@@ -47,6 +47,29 @@ describe('Recall and Endgame', () => {
     expect(game.gameOverData.player).toBe('dennis')
   })
 
+  test('endgame triggers when conflict deck empty', () => {
+    const game = t.fixture()
+    // Use breakpoint to empty conflict deck before main loop
+    game.testSetBreakpoint('initialization-complete', (g) => {
+      const deck = g.zones.byId('common.conflictDeck')
+      const trash = g.zones.byId('common.trash')
+      // Keep only 1 card (round 1 will reveal it, leaving deck empty)
+      const cards = deck.cardlist()
+      for (let i = 1; i < cards.length; i++) {
+        cards[i].moveTo(trash)
+      }
+    })
+    game.run()
+
+    // After round 1 start, 1 card revealed from deck → deck now empty
+    expect(game.zones.byId('common.conflictDeck').cardlist().length).toBe(0)
+
+    // Complete round 1 — endgame should trigger in recall phase
+    completeRound(game)
+
+    expect(game.gameOver).toBe(true)
+  })
+
   test('endgame tiebreaker: most spice wins', () => {
     const game = t.fixture()
     t.setBoard(game, {
