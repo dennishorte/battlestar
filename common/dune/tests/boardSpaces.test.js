@@ -94,10 +94,19 @@ describe('Board Space Effects', () => {
     }
 
     t.choose(game, 'Spice Refinery')
-    t.choose(game, 'Gain 2 Solari')
 
-    // Deploy 0
-    t.choose(game, 'Deploy 0 troop(s) from garrison')
+    // If player has 0 spice, "Gain 2 Solari" auto-selects (only option).
+    // Otherwise we need to choose it.
+    const afterSpaceChoices = t.currentChoices(game)
+    if (afterSpaceChoices.some(c => c.includes('Gain 2 Solari'))) {
+      t.choose(game, 'Gain 2 Solari')
+    }
+
+    // Deploy 0 (Spice Refinery is a combat space)
+    const deployChoices = t.currentChoices(game)
+    if (deployChoices.some(c => c.includes('Deploy'))) {
+      t.choose(game, 'Deploy 0 troop(s) from garrison')
+    }
 
     const player = game.players.byName('dennis')
     expect(player.solari).toBe(2)

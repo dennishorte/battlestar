@@ -1,9 +1,11 @@
 'use strict'
 
 const reserveCards = [
+  // Base game reserves — NOT used in Uprising
   {
     name: 'Arrakis Liason',
     source: 'Base',
+    compatibility: 'Dune Imperium (Base Only)',
     count: 8,
     persuasionCost: 2,
     acquisitionBonus: null,
@@ -18,6 +20,7 @@ const reserveCards = [
   {
     name: 'The Spice Must Flow (Base)',
     source: 'Base',
+    compatibility: 'Dune Imperium (Base Only)',
     count: 10,
     persuasionCost: 9,
     acquisitionBonus: '+1 Victory Point',
@@ -32,6 +35,7 @@ const reserveCards = [
   {
     name: 'Foldspace',
     source: 'Base',
+    compatibility: 'Dune Imperium (Base Only)',
     count: 6,
     persuasionCost: 0,
     acquisitionBonus: null,
@@ -43,9 +47,12 @@ const reserveCards = [
     revealSwords: 0,
     revealAbility: null,
   },
+
+  // Uprising reserves
   {
     name: 'Prepare the Way',
     source: 'Uprising',
+    compatibility: 'Uprising',
     count: 8,
     persuasionCost: 2,
     acquisitionBonus: null,
@@ -58,8 +65,9 @@ const reserveCards = [
     revealAbility: null,
   },
   {
-    name: 'The Spice Must Flow (Uprising)',
+    name: 'The Spice Must Flow',
     source: 'Uprising',
+    compatibility: 'Uprising',
     count: 10,
     persuasionCost: 9,
     acquisitionBonus: '+1 Victory Point',

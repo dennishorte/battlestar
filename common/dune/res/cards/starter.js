@@ -88,7 +88,7 @@ const starterCards = [
   {
     name: 'Control the Spice',
     source: 'Rise of Ix',
-    compatibility: 'All',
+    compatibility: 'Rise of Ix',
     countPerPlayer: 1,
     agentIcons: ['yellow'],
     factionAccess: [],
