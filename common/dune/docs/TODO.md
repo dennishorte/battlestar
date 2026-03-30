@@ -125,10 +125,10 @@
 - [x] Controller gets bonus when they visit own controlled space
 - [ ] Shield Wall detonation
 
-### Makers (16_makers) — makers.test.js
+### Makers (16_makers) — makers.test.js, harvestAndSpice.test.js
 - [x] Spice accumulates on unoccupied maker spaces each round
 - [x] Bonus spice accumulates over multiple rounds
-- [ ] Bonus spice collected on harvest
+- [x] Bonus spice collected on harvest (cleared after collection)
 
 ### Recall and Endgame (17_recall_and_endgame) — recall.test.js
 - [x] Endgame triggered at 10+ VP
