@@ -68,6 +68,38 @@ function parseAgentAbility(text) {
     return [{ type: 'conditional', condition, effects: parsedEffect }]
   }
 
+  // Handle "With N Influence with Faction: effect" or "With N Faction Infl.: effect"
+  const withAbbrMatch = text.match(/^With (\d+)\s+(Emperor|Guild|Spacing Guild|Bene|Bene Gesserit|Fremen)\s+Infl\.?:\s*(.+)$/i)
+  if (withAbbrMatch) {
+    const factionMap = { bene: 'bene-gesserit', guild: 'guild' }
+    const faction = factionMap[withAbbrMatch[2].toLowerCase()] || normalizeFaction(withAbbrMatch[2])
+    const condition = { type: 'influence', faction, amount: parseInt(withAbbrMatch[1]) }
+    const parsedEffect = parseAgentAbility(withAbbrMatch[3].trim())
+    if (parsedEffect) {
+      return [{ type: 'conditional', condition, effects: parsedEffect }]
+    }
+  }
+
+  // "With N Faction Influence: effect" (full name, colon separator)
+  const withFullMatch = text.match(/^With (\d+)\s+(Emperor|Spacing Guild|Bene Gesserit|Fremen)\s+Influence:\s*(.+)$/i)
+  if (withFullMatch) {
+    const condition = { type: 'influence', faction: normalizeFaction(withFullMatch[2]), amount: parseInt(withFullMatch[1]) }
+    const parsedEffect = parseAgentAbility(withFullMatch[3].trim())
+    if (parsedEffect) {
+      return [{ type: 'conditional', condition, effects: parsedEffect }]
+    }
+  }
+
+  // Multi-clause "With X: A and With Y: B" joined with " and "
+  const multiWithMatch = text.match(/^(With \d+\s+.+?)(?:\s+and\s+)(With \d+\s+.+)$/i)
+  if (multiWithMatch) {
+    const first = parseAgentAbility(multiWithMatch[1].trim())
+    const second = parseAgentAbility(multiWithMatch[2].trim())
+    if (first && second) {
+      return [...first, ...second]
+    }
+  }
+
   // Handle "With N Influence with Faction: effect" patterns
   const withMatch = text.match(/^With (\d+) Influence with (\w[\w\s]*?):\s*(.+)$/i)
   if (withMatch) {
@@ -209,8 +241,8 @@ function parseAgentAbility(text) {
     return { type: 'gain', resource: endgameMatch[2].toLowerCase(), amount: parseInt(endgameMatch[1]) }
   }
 
-  // "Recall N Spy -> Effect"
-  const recallSpyCostMatch = text.match(/^Recall\s+(?:(\d+)|one|a)\s+Sp(?:y|ies)\s*(?:-->?|->|:)\s*(.+)$/i)
+  // "Recall N Spy/Spies -> Effect"
+  const recallSpyCostMatch = text.match(/^Recall\s+(?:(\d+)|one|a|two)\s+Sp(?:y|ies)\s*(?:-->?|->|:)\s*(.+)$/i)
   if (recallSpyCostMatch) {
     const effectText = recallSpyCostMatch[2].trim()
     const subEffects = parseAgentAbility(effectText)
@@ -288,6 +320,26 @@ function parseAgentAbility(text) {
       { type: 'retreat-troops', amount: retreatCount },
       ...subEffects,
     ]
+  }
+
+  // Handle multi-resource cost: "Pay N Resource and N Resource -> Effect"
+  const multiCostMatch = text.match(/^(?:Pay|Spend)\s+(\d+)\s+(Solari|Spice|Water|Influence)\s+and\s+(\d+)\s+(Solari|Spice|Water|Influence)\s*(?:-->?|->|:)\s*(.+)$/i)
+  if (multiCostMatch) {
+    const cost = {
+      [multiCostMatch[2].toLowerCase()]: parseInt(multiCostMatch[1]),
+      [multiCostMatch[4].toLowerCase()]: parseInt(multiCostMatch[3]),
+    }
+    const effectText = multiCostMatch[5].trim()
+    const subEffects = parseAgentAbility(effectText)
+    if (subEffects) {
+      return [{
+        type: 'choice',
+        choices: [
+          { label: text, cost, effects: subEffects },
+          { label: 'Decline', effects: [] },
+        ],
+      }]
+    }
   }
 
   // Handle cost-effect patterns: "Pay/Spend N Resource: Effect" or "N Resource -> Effect"
@@ -394,6 +446,15 @@ function parseSingleAbility(text) {
     return { type: 'trash-card' }
   }
 
+  // "Trash a card -> Effect" / "Trash a card --> Effect"
+  const trashCostMatch = text.match(/^Trash (?:a|1) card\s*(?:-->?|->|:)\s*(.+)$/i)
+  if (trashCostMatch) {
+    const subEffects = parseAgentAbility(trashCostMatch[1].trim())
+    if (subEffects) {
+      return [{ type: 'trash-card' }, ...subEffects]
+    }
+  }
+
   // "+1 Spy" / "+N Spies"
   const spyMatch = text.match(/^\+(\d+)\s+Sp(?:y|ies)$/i)
   if (spyMatch) {
@@ -425,6 +486,27 @@ function parseSingleAbility(text) {
   if (/^\+(\d+)\s+Influence$/i.test(text)) {
     const m = text.match(/(\d+)/)
     return { type: 'influence-choice', amount: parseInt(m[1]) }
+  }
+
+  // "+1 Influence with Faction1 or Faction2"
+  const infOrFaction = text.match(/^\+(\d+)\s+Influence\s+with\s+(Emperor|Spacing Guild|Bene Gesserit|Fremen)\s+or\s+(Emperor|Spacing Guild|Bene Gesserit|Fremen)$/i)
+  if (infOrFaction) {
+    const amt = parseInt(infOrFaction[1])
+    const f1 = normalizeFaction(infOrFaction[2])
+    const f2 = normalizeFaction(infOrFaction[3])
+    return [{
+      type: 'choice',
+      choices: [
+        { label: `+${amt} ${infOrFaction[2]} Influence`, effects: [{ type: 'influence', faction: f1, amount: amt }] },
+        { label: `+${amt} ${infOrFaction[3]} Influence`, effects: [{ type: 'influence', faction: f2, amount: amt }] },
+      ],
+    }]
+  }
+
+  // "+1 Infl. with Faction" (abbreviated)
+  const infAbbrMatch = text.match(/^\+(\d+)\s+Infl\.\s+with:?\s*(Emperor|Spacing Guild|Bene Gesserit|Fremen)$/i)
+  if (infAbbrMatch) {
+    return { type: 'influence', faction: normalizeFaction(infAbbrMatch[2]), amount: parseInt(infAbbrMatch[1]) }
   }
 
   // "Gain N Influence instead of one" / "Gain two influence instead of one"
@@ -541,8 +623,9 @@ function parseSingleAbility(text) {
     return { type: 'recall-agent' }
   }
 
-  // "+1 Contract"
-  if (/^\+1\s+Contract$/i.test(text)) {
+  // "+1 Contract" / "+N Contract(s)"
+  const contractMatch = text.match(/^\+(\d+)\s+Contracts?$/i)
+  if (contractMatch) {
     return { type: 'contract' }
   }
 
