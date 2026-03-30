@@ -144,6 +144,20 @@ function applyPlayerState(game, name, state) {
       }
     }
   }
+
+  // Contracts: move named cards from contract deck/market to player's contracts zone
+  if (state.contracts) {
+    const contractDeck = game.zones.byId('common.contractDeck')
+    const contractMarket = game.zones.byId('common.contractMarket')
+    const playerContracts = game.zones.byId(`${name}.contracts`)
+    for (const cardName of state.contracts) {
+      const allContracts = [...contractMarket.cardlist(), ...contractDeck.cardlist()]
+      const card = allContracts.find(c => c.name === cardName)
+      if (card) {
+        card.moveTo(playerContracts)
+      }
+    }
+  }
 }
 
 
