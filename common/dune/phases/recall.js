@@ -130,7 +130,7 @@ function offerEndgameIntrigue(game, player) {
     })
 
     const effectText = card.definition.endgameEffect
-    const effects = parseAgentAbility(effectText)
+    const effects = card.definition.parsedEndgameEffect || parseAgentAbility(effectText)
     if (effects) {
       game.log.indent()
       for (const effect of effects) {
