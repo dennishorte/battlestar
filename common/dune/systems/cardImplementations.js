@@ -2202,6 +2202,302 @@ implementations['Tenuous Bond'].combatEffect = function(game, player) {
   }
 }
 
+// ── Remaining intrigue card effects (expansion-adjacent and unique) ──
+
+Object.assign(implementations, {
+  'Bindu Suspension': {
+    plotEffect(game) {
+      // At start of turn: draw a card, may pass turn
+      if (game.state.turnTracking) {
+        game.state.turnTracking.binduSuspension = true
+      }
+    },
+  },
+
+  'Bypass Protocol': {
+    plotEffect(game, player) {
+      // Acquire card costing 3 or less, OR pay 2 Spice for card costing 5 or less
+      const choices = ['Acquire card costing 3 Persuasion or less']
+      if (player.spice >= 2) {
+        choices.push('Pay 2 Spice: Acquire card costing 5 or less')
+      }
+      choices.push('Pass')
+      const [choice] = game.actions.choose(player, choices, { title: 'Bypass Protocol' })
+      if (choice.includes('3')) {
+        player.incrementCounter('persuasion', 3, { silent: true })
+      }
+      else if (choice.includes('5')) {
+        player.decrementCounter('spice', 2, { silent: true })
+        player.incrementCounter('persuasion', 5, { silent: true })
+      }
+    },
+  },
+
+  'Controlled': {
+    plotEffect(game, player) {
+      const deckZone = game.zones.byId(`${player.name}.deck`)
+      const topCards = deckZone.cardlist()
+      if (topCards.length > 0) {
+        const topCard = topCards[0]
+        const choices = [`Put ${topCard.name} back`, `Discard ${topCard.name}`]
+        if (player.solari >= 1) {
+          choices.push(`Pay 1 Solari: Draw ${topCard.name}`)
+        }
+        const [choice] = game.actions.choose(player, choices, { title: 'Controlled: Top card' })
+        if (choice.includes('Discard')) {
+          deckEngine.discardCard(game, player, topCard)
+        }
+        else if (choice.includes('Draw')) {
+          player.decrementCounter('solari', 1, { silent: true })
+          const handZone = game.zones.byId(`${player.name}.hand`)
+          topCard.moveTo(handZone)
+        }
+        // "Put back" = do nothing
+      }
+    },
+  },
+
+  'Dispatch an Envoy': {
+    plotEffect(game) {
+      // Card gets all faction icons this turn
+      if (game.state.turnTracking) {
+        game.state.turnTracking.allFactionIcons = true
+      }
+    },
+  },
+
+  'False Orders': {
+    plotEffect(game, player) {
+      // Move opponent spies from your space, then place your spy there
+      spies.placeSpy(game, player)
+      game.log.add({ template: '{player}: False Orders — places Spy', args: { player } })
+    },
+  },
+
+  'Insider Information': {
+    plotEffect(game, player) {
+      // Recall Spy -> Trash + Draw OR Ignore Influence requirements
+      const observationPosts = require('../res/observationPosts.js')
+      const hasSpy = observationPosts.some(p => (game.state.spyPosts[p.id] || []).includes(player.name))
+      const choices = []
+      if (hasSpy) {
+        choices.push('Recall Spy: Trash a card and Draw a card')
+      }
+      choices.push('Ignore Influence requirements this turn')
+      choices.push('Pass')
+      const [choice] = game.actions.choose(player, choices, { title: 'Insider Information' })
+      if (choice.includes('Recall')) {
+        spies.recallSpy(game, player)
+        // Trash from hand
+        const handZone = game.zones.byId(`${player.name}.hand`)
+        const cards = handZone.cardlist()
+        if (cards.length > 0) {
+          const [tc] = game.actions.choose(player, cards.map(c => c.name), { title: 'Trash a card' })
+          const card = cards.find(c => c.name === tc)
+          if (card) {
+            deckEngine.trashCard(game, card)
+          }
+        }
+        deckEngine.drawCards(game, player, 1)
+      }
+      else if (choice.includes('Ignore')) {
+        if (game.state.turnTracking) {
+          game.state.turnTracking.ignoreInfluenceRequirements = true
+        }
+      }
+    },
+  },
+
+  'Insidious': {
+    plotEffect(game, player) {
+      // Give an opponent an Intrigue card -> +1 Spice (or +2 if non-Twisted)
+      const intrigueZone = game.zones.byId(`${player.name}.intrigue`)
+      const cards = intrigueZone.cardlist()
+      if (cards.length > 0) {
+        const cardChoices = cards.map(c => c.name)
+        const [cardChoice] = game.actions.choose(player, cardChoices, { title: 'Give which Intrigue card?' })
+        const card = cards.find(c => c.name === cardChoice)
+        const opponents = game.players.all().filter(p => p.name !== player.name)
+        const [opponentName] = game.actions.choose(player, opponents.map(p => p.name), { title: 'Give to which opponent?' })
+        const oppIntrigue = game.zones.byId(`${opponentName}.intrigue`)
+        card.moveTo(oppIntrigue)
+        player.incrementCounter('spice', 1, { silent: true })
+        game.log.add({ template: '{player}: Gives Intrigue to {opponent}, +1 Spice', args: { player, opponent: opponentName } })
+      }
+    },
+  },
+
+  'Inspire Awe': {
+    plotEffect(game, player) {
+      // Acquire card costing 3 or less; if sandworm, put on top of deck
+      player.incrementCounter('persuasion', 3, { silent: true })
+      const sandworms = game.state.conflict.deployedSandworms[player.name] || 0
+      if (sandworms > 0) {
+        if (game.state.turnTracking) {
+          game.state.turnTracking.acquireToTopOfDeck = true
+        }
+      }
+    },
+  },
+
+  'Recruitment Mission': {
+    plotEffect(game, player) {
+      player.incrementCounter('persuasion', 1, { silent: true })
+      if (game.state.turnTracking) {
+        game.state.turnTracking.acquireToTopOfDeck = true
+      }
+    },
+  },
+
+  'Seize Production': {
+    plotEffect(game, player) {
+      // +2 Solari OR if Sardaukar Commanders in Conflict: +2 Spice
+      // Sardaukar Commanders are Bloodlines expansion — just give +2 Solari for now
+      player.incrementCounter('solari', 2, { silent: true })
+      game.log.add({ template: '{player}: +2 Solari', args: { player } })
+    },
+  },
+
+  // Expansion-dependent effects (Dreadnoughts, Tech, Freighter, Mentat)
+  // These cards exist in base Uprising but reference expansion mechanics.
+  // Stubbed with the non-expansion part of their effect or logged as memo.
+
+  'Advanced Weaponry': {
+    plotEffect(game, player) {
+      // Pay 3 Solari -> +1 Dreadnought (expansion) — stub: log
+      game.log.add({ template: '{player}: Advanced Weaponry — Dreadnought not available (expansion)', args: { player }, event: 'memo' })
+    },
+    combatEffect(game, player) {
+      // Tech tiles condition (expansion) — stub
+      game.log.add({ template: '{player}: Advanced Weaponry — Tech tiles not tracked (expansion)', args: { player }, event: 'memo' })
+    },
+  },
+
+  'Battlefield Research': {
+    combatEffect(game, player) {
+      // Retreat troops -> Buy Tech (expansion) — stub
+      game.log.add({ template: '{player}: Battlefield Research — Tech not available (expansion)', args: { player }, event: 'memo' })
+    },
+    endgameEffect(game, player) {
+      // 3+ Tech tiles -> +1 VP (expansion) — stub
+      game.log.add({ template: '{player}: Battlefield Research — Tech tiles not tracked (expansion)', args: { player }, event: 'memo' })
+    },
+  },
+
+  'Calculated Hire': {
+    plotEffect(game, player) {
+      // Pay 1 Spice -> Take Mentat (expansion) — stub
+      game.log.add({ template: '{player}: Calculated Hire — Mentat not available (expansion)', args: { player }, event: 'memo' })
+    },
+  },
+
+  'Cannon Turrets': {
+    combatEffect(game, player) {
+      // +2 Swords; Each opponent retreats one Dreadnought (expansion)
+      player.incrementCounter('strength', 2 * constants.SWORD_STRENGTH, { silent: true })
+      game.log.add({ template: '{player}: +2 Swords (Dreadnought retreat is expansion)', args: { player } })
+    },
+  },
+
+  'Coercive Negotiation': {
+    plotEffect(game) {
+      // When deploy 3+ units: Reveal 3 contracts, take 1 (triggered effect)
+      if (game.state.turnTracking) {
+        game.state.turnTracking.coerciveNegotiation = true
+      }
+    },
+  },
+
+  'Distraction': {
+    plotEffect(game) {
+      // When deploy 3+ units: +1 Spy
+      if (game.state.turnTracking) {
+        game.state.turnTracking.distraction = true
+      }
+    },
+  },
+
+  'Diversion': {
+    plotEffect(game, player) {
+      // When deploy 4+ units: Move Freighter (expansion) — stub
+      game.log.add({ template: '{player}: Diversion — Freighter not available (expansion)', args: { player }, event: 'memo' })
+    },
+  },
+
+  'Expedite': {
+    plotEffect(game, player) {
+      // Pay 1 Spice -> Move Freighter (expansion) — stub
+      game.log.add({ template: '{player}: Expedite — Freighter not available (expansion)', args: { player }, event: 'memo' })
+    },
+  },
+
+  'Grand Conspiracy': {
+    endgameEffect(game, player) {
+      // Complex multi-condition check (Dreadnoughts, TSMF, Influence, High Council)
+      // Check the non-expansion conditions
+      let conditions = 0
+      // 1+ TSMF
+      const allZones = [game.zones.byId(`${player.name}.deck`), game.zones.byId(`${player.name}.hand`),
+        game.zones.byId(`${player.name}.discard`), game.zones.byId(`${player.name}.played`)]
+      const hasTSMF = allZones.some(z => z.cardlist().some(c => c.name === 'The Spice Must Flow'))
+      if (hasTSMF) {
+        conditions++
+      }
+      // 4+ Influence on 2+ tracks
+      const tracksAt4 = constants.FACTIONS.filter(f => player.getInfluence(f) >= 4).length
+      if (tracksAt4 >= 2) {
+        conditions++
+      }
+      // High Council seat
+      if (player.hasHighCouncil) {
+        conditions++
+      }
+      // Dreadnoughts — expansion, skip
+      // Any 3 of these: +1 VP; all 5: +3 VP (but we only have 3 non-expansion conditions)
+      if (conditions >= 3) {
+        player.incrementCounter('vp', 1, { silent: true })
+        game.log.add({ template: '{player}: Grand Conspiracy — +1 VP ({count}/5 conditions)', args: { player, count: conditions } })
+      }
+    },
+  },
+
+  'Honor Guard': {
+    plotEffect(game, player) {
+      // +1 Troop (Sardaukar Commander discount is Bloodlines — skip)
+      const recruit = Math.min(1, player.troopsInSupply)
+      if (recruit > 0) {
+        player.decrementCounter('troopsInSupply', recruit, { silent: true })
+        player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+      }
+    },
+  },
+
+  'Machine Culture': {
+    plotEffect(game, player) {
+      // Acquire Tech (expansion) — stub
+      game.log.add({ template: '{player}: Machine Culture — Tech not available (expansion)', args: { player }, event: 'memo' })
+    },
+    endgameEffect(game, player) {
+      // 3+ Tech tiles -> +1 VP (expansion) — stub
+      game.log.add({ template: '{player}: Machine Culture — Tech tiles not tracked (expansion)', args: { player }, event: 'memo' })
+    },
+  },
+
+  'Manipulate': {
+    plotEffect(game, player) {
+      // Remove and replace a card in Imperium Row — complex market manipulation
+      game.log.add({ template: '{player}: Manipulate — Imperium Row manipulation', args: { player }, event: 'memo' })
+    },
+  },
+
+  'Rapid Engineering': {
+    plotEffect(game, player) {
+      // Discard -> Buy Tech (expansion) OR 3+ Tech -> Influence (expansion)
+      game.log.add({ template: '{player}: Rapid Engineering — Tech not available (expansion)', args: { player }, event: 'memo' })
+    },
+  },
+})
+
 /**
  * Get the implementation for a card by name, if one exists.
  */
