@@ -187,14 +187,46 @@ function parseAgentAbility(text) {
     return [{ type: 'deploy-to-conflict', amount: 1 }]
   }
 
+  // "Fremen/Emperor/BG/Guild Bond: Effect"
+  const bondInline = text.match(/^(Fremen|Emperor|Bene Gesserit|Spacing Guild)\s+[Bb]ond:\s*(.+)$/i)
+  if (bondInline) {
+    const bondFaction = bondInline[1].toLowerCase()
+    const bondEffect = parseAgentAbility(bondInline[2].trim())
+    if (bondEffect) {
+      return [{ type: 'conditional', condition: { type: 'faction-card-in-play', faction: bondFaction }, effects: bondEffect }]
+    }
+  }
+
+  // "+N Swords in Combat" (just swords)
+  const swordsCombatMatch = text.match(/^\+(\d+)\s+Swords?\s+in\s+Combat$/i)
+  if (swordsCombatMatch) {
+    return { type: 'swords', amount: parseInt(swordsCombatMatch[1]) }
+  }
+
+  // "+N Resource during Endgame" (endgame scoring bonus)
+  const endgameMatch = text.match(/^\+(\d+)\s+(Spice|Solari|Water)\s+during\s+Endgame/i)
+  if (endgameMatch) {
+    return { type: 'gain', resource: endgameMatch[2].toLowerCase(), amount: parseInt(endgameMatch[1]) }
+  }
+
+  // "Recall N Spy -> Effect"
+  const recallSpyCostMatch = text.match(/^Recall\s+(?:(\d+)|one|a)\s+Sp(?:y|ies)\s*(?:-->?|:)\s*(.+)$/i)
+  if (recallSpyCostMatch) {
+    const effectText = recallSpyCostMatch[2].trim()
+    const subEffects = parseAgentAbility(effectText)
+    if (subEffects) {
+      return [{ type: 'recall-spy-cost' }, ...subEffects]
+    }
+  }
+
   // Skip remaining complex patterns
-  if (/^(This |Block |Look at|Put one|Send one|Enemy|You may (take another|acquire)|Gain rewards|The next|Ignore Influence|Flip |The card|Remove|Give |At the)/i.test(text)) {
+  if (/^(This |Block |Look at|Put one|Send one|Enemy|You may (take another|acquire)|Gain rewards|The next|Ignore Influence|Flip |The card|Remove|Give |At the|Recruiting)/i.test(text)) {
     return null
   }
 
-  // Handle OR choices
-  if (/\bOR\b/.test(text)) {
-    const parts = text.split(/\s+OR\s+/)
+  // Handle OR choices — uppercase OR only to avoid matching "or" in phrases like "Garrison or Conflict"
+  if (/\bOR\b/.test(text) || /\bOr\b/.test(text)) {
+    const parts = text.split(/\s+(?:OR|Or)\s+/)
     const parsed = parts.map(p => parseAgentAbility(p.trim()))
     if (parsed.some(p => p === null)) {
       return null
@@ -275,8 +307,8 @@ function parseAgentAbility(text) {
     }]
   }
 
-  // Split compound abilities: ", " or " and " or " AND " or newline
-  const parts = text.split(/\s*[,\n]\s*|\s+(?:and|AND)\s+/).filter(p => p.trim())
+  // Split compound abilities: ", " or " and " or " AND " or newline or "; "
+  const parts = text.split(/\s*[,;\n]\s*|\s+(?:and|AND)\s+/).filter(p => p.trim())
   const effects = []
 
   for (const part of parts) {
@@ -354,9 +386,19 @@ function parseSingleAbility(text) {
     return { type: 'trash-card' }
   }
 
-  // "+1 Spy"
-  if (/^\+1\s+Spy$/i.test(text)) {
-    return { type: 'spy' }
+  // "+1 Spy" / "+N Spies"
+  const spyMatch = text.match(/^\+(\d+)\s+Sp(?:y|ies)$/i)
+  if (spyMatch) {
+    const spyCount = parseInt(spyMatch[1])
+    if (spyCount === 1) {
+      return { type: 'spy' }
+    }
+    // Multiple spies: return array
+    const spyEffects = []
+    for (let i = 0; i < spyCount; i++) {
+      spyEffects.push({ type: 'spy' })
+    }
+    return spyEffects
   }
 
   // "+1 Influence with a Faction" / "+1 Influence with any Faction"

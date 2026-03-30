@@ -937,6 +937,21 @@ function resolveEffect(game, player, effect, space) {
       break
     }
 
+    case 'recall-spy-cost': {
+      const spyMod = require('../systems/spies.js')
+      spyMod.recallSpy(game, player)
+      if (game.state.turnTracking) {
+        game.state.turnTracking.recalledSpy = true
+      }
+      break
+    }
+
+    case 'extra-influence':
+      if (game.state.turnTracking) {
+        game.state.turnTracking.extraInfluence = true
+      }
+      break
+
     case 'conditional': {
       if (checkCondition(game, player, effect.condition)) {
         for (const subEffect of effect.effects) {
