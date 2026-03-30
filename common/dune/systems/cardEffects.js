@@ -21,12 +21,22 @@ function parseAgentAbility(text) {
     return null
   }
 
-  // Normalize newlines to spaces for cleaner parsing
-  text = text.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim()
+  // Normalize: newlines to spaces, collapse whitespace, strip trailing period
+  text = text.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim().replace(/\.\s*$/, '')
 
   // Signet Ring handled specially
   if (/^Signet Ring$/i.test(text)) {
     return null
+  }
+
+  // Handle chained "If X: A If Y: B" patterns (no separator between clauses)
+  const chainedIfMatch = text.match(/^(If .+?:\s*.+?)\s+(If .+)$/i)
+  if (chainedIfMatch) {
+    const first = parseAgentAbility(chainedIfMatch[1].trim())
+    const second = parseAgentAbility(chainedIfMatch[2].trim())
+    if (first && second) {
+      return [...first, ...second]
+    }
   }
 
   // Handle "If condition: effect" or "If condition, effect" patterns
@@ -561,7 +571,7 @@ function parseSingleAbility(text) {
   }
 
   // "+N Persuasion" / "+N Persuation" (handle typo in card data)
-  const persuasionMatch = text.match(/^\+(\d+)\s+Persuat?ion$/i)
+  const persuasionMatch = text.match(/^\+(\d+)\s+Persu\w+$/i)
   if (persuasionMatch) {
     return { type: 'gain', resource: 'persuasion', amount: parseInt(persuasionMatch[1]) }
   }
@@ -773,12 +783,6 @@ function parseCondition(text) {
     return { type: 'has-persuasion', amount: parseInt(persuasionCondMatch[1]) }
   }
 
-  // "you have 4+ garrisoned units" / "you have 4+ garrisoned troops"
-  const garrisonMatch = text.match(/you have (\d+)\+?\s+garrisoned\s+(?:units|troops)/i)
-  if (garrisonMatch) {
-    return { type: 'has-garrison', amount: parseInt(garrisonMatch[1]) }
-  }
-
   // "you have an Agent on a Faction board space" / "on a green/purple board space"
   const agentOnMatch = text.match(/you have an Agent on (?:a|an)\s+(Emperor|Spacing Guild|Bene Gesserit|Fremen|green|purple|yellow)\s+board space/i)
   if (agentOnMatch) {
@@ -803,11 +807,22 @@ function parseCondition(text) {
     return { type: 'opponent-has-alliance' }
   }
 
+  // "used to send an Agent to a board space with an enemy Agent"
+  if (/used to send an Agent to a board space with an enemy Agent/i.test(text)) {
+    return { type: 'sent-to-occupied' }
+  }
+
   // "you have two or more Spies on the board"
-  const spyCountMatch = text.match(/you have (?:(\d+)|two|three)\s+or more Spies on the board/i)
+  const spyCountMatch = text.match(/you have (?:(\d+)|two|three|four)\s+or more Spies on the board/i)
   if (spyCountMatch) {
-    const count = spyCountMatch[1] ? parseInt(spyCountMatch[1]) : (text.includes('three') ? 3 : 2)
+    const count = spyCountMatch[1] ? parseInt(spyCountMatch[1]) : (/three/i.test(text) ? 3 : /four/i.test(text) ? 4 : 2)
     return { type: 'has-spies-on-board', amount: count }
+  }
+
+  // "you have N+ garrisoned units/troops"
+  const garrisonUnitsMatch = text.match(/you have (\d+)\+?\s+garrisoned\s+(?:units|troops)/i)
+  if (garrisonUnitsMatch) {
+    return { type: 'has-garrison', amount: parseInt(garrisonUnitsMatch[1]) }
   }
 
   return null
