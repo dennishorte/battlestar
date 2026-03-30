@@ -151,7 +151,7 @@
 
 ### CHOAM Module (18_choam) — choamIntegration.test.js, choamContracts.test.js
 - [x] Taking contracts from market (with CHOAM enabled)
-- [x] Completing board-space contracts (verified in Node, skipped in Jest — module issue)
+- [x] Completing board-space contracts
 - [x] Contract icon gives 2 Solari without CHOAM module
 - [x] Market refills after taking contract
 - [x] Accept Contract space gives contract + draw 1 (with CHOAM)

@@ -2,10 +2,7 @@ const t = require('../testutil')
 
 describe('CHOAM Contract Completion', () => {
 
-  // TODO: This test passes in Node but fails in Jest due to module resolution
-  // differences with the CHOAM system's require() calls during replay.
-  // The contract completion mechanism works correctly in the game.
-  test.skip('board-space contract completes when visiting the named space', () => {
+  test('board-space contract completes when visiting the named space', () => {
     const game = t.fixture({ useCHOAM: true })
     t.setBoard(game, {
       dennis: { contracts: ['Deliver Supplies'] },
