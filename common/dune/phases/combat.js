@@ -71,8 +71,18 @@ function combatIntrigueRound(game, combatants) {
             args: { player, card: card.name },
           })
           game.log.indent()
+          const { getImplementation: getCombatImpl } = require('../systems/cardImplementations.js')
+          const combatImpl = getCombatImpl(card.name)
+          if (combatImpl && combatImpl.combatEffect) {
+            combatImpl.combatEffect(game, player, card)
+            game.log.outdent()
+            consecutivePasses = 0
+            currentIndex++
+            continue
+          }
+
           const effectText = card.definition.combatEffect
-          const effects = card.definition.parsedCombatEffect || parseAgentAbility(effectText)
+          const effects = parseAgentAbility(effectText)
           if (effects) {
             for (const effect of effects) {
               resolveEffect(game, player, effect, null)
