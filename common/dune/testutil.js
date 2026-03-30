@@ -132,6 +132,18 @@ function applyPlayerState(game, name, state) {
   if (state.hasHighCouncil !== undefined) {
     player.setCounter('hasHighCouncil', state.hasHighCouncil ? 1 : 0, { silent: true })
   }
+
+  // Intrigue cards: move named cards from intrigue deck to player's intrigue zone
+  if (state.intrigue) {
+    const intrigueDeck = game.zones.byId('common.intrigueDeck')
+    const playerIntrigue = game.zones.byId(`${name}.intrigue`)
+    for (const cardName of state.intrigue) {
+      const card = intrigueDeck.cardlist().find(c => c.name === cardName)
+      if (card) {
+        card.moveTo(playerIntrigue)
+      }
+    }
+  }
 }
 
 
