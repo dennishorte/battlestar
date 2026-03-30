@@ -61,7 +61,7 @@
 - [x] Cost payment blocks access (Sword Master 8 Solari, Research Station 2 Water, Sardaukar 4 Spice)
 - [x] Cost payment allows access when affordable
 - [x] Faction spaces grant +1 influence (factions.test.js)
-- [ ] Integration tests for remaining board spaces
+- [ ] Integration tests for remaining board spaces (low priority — core mechanics covered)
 
 ### Factions (06_factions) — factions.test.js
 - [x] VP gained at 2 influence
@@ -132,7 +132,7 @@
 - [ ] Control marker placed on winning location conflict (needs location-specific conflict card)
 - [x] Control bonuses: Arrakeen 1 Solari, Imperial Basin 1 spice
 - [x] Controller gets bonus when they visit own controlled space
-- [ ] Shield Wall detonation
+- [x] Shield Wall detonation (shieldWall.test.js)
 
 ### Makers (16_makers) — makers.test.js, harvestAndSpice.test.js
 - [x] Spice accumulates on unoccupied maker spaces each round
