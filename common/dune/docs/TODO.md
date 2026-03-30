@@ -69,11 +69,11 @@
 - [x] Alliance at 4 influence (first player to reach)
 - [x] Alliance token passes when overtaken on track
 
-### Intrigue Cards (07_intrigue_cards)
+### Intrigue Cards (07_intrigue_cards) — intrigue.test.js
 - [ ] Plot intrigue playable during Agent and Reveal turns
-- [ ] Combat intrigue playable during combat phase
-- [ ] Endgame intrigue playable at end of game
-- [ ] Intrigue cards kept separate from deck (in player.intrigue zone)
+- [x] Combat intrigue playable during combat phase (Ambush: +4 Swords)
+- [x] Endgame intrigue playable at end of game (Economic Positioning: +1 VP)
+- [x] Intrigue cards kept separate from deck (in player.intrigue zone)
 
 ### Round Start (08_round_start) — roundStart.test.js
 - [x] Conflict card revealed each round (stacks in active zone)
