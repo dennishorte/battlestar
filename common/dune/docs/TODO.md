@@ -41,14 +41,15 @@
 - [x] Faction influence starts at 0 for all four factions
 - [x] Shield wall in place, control markers unowned, alliances unclaimed
 
-### Deck Building (03_deck_building) — revealTurns.test.js
+### Deck Building (03_deck_building) — revealTurns.test.js, deckBuilding.test.js
 - [x] Acquiring a card with persuasion moves it to discard
 - [x] Imperium Row refills after acquisition
-- [ ] Trashing a card removes it from the game
-- [ ] Reshuffle discard into deck when deck empty
+- [x] Trashing a card removes it from the game
+- [x] Reshuffle discard into deck when deck empty
 
-### Agents (04_agents) — agentTurns.test.js
-- [ ] Swordmaster (3rd agent) acquisition via Sword Master space
+### Agents (04_agents) — agentTurns.test.js, deckBuilding.test.js
+- [x] Swordmaster (3rd agent) acquisition via Sword Master space
+- [x] Cannot revisit Sword Master if already have swordmaster
 - [x] Occupied space blocks agent placement (no spy)
 - [x] Agent icon matching enforced (card icon must match space icon)
 - [x] Faction card accesses faction spaces
@@ -74,8 +75,9 @@
 - [ ] Endgame intrigue playable at end of game
 - [ ] Intrigue cards kept separate from deck (in player.intrigue zone)
 
-### Round Start (08_round_start)
-- [ ] Conflict card revealed each round
+### Round Start (08_round_start) — roundStart.test.js
+- [x] Conflict card revealed each round (stacks in active zone)
+- [x] Each player draws 5 cards
 - [ ] Defensive bonus: controller deploys 1 troop when their location's conflict revealed
 
 ### Agent Turns (09_agent_turns) — agentTurns.test.js
@@ -98,12 +100,13 @@
 - [ ] Sandworm summoning (requires Maker Hook, not blocked by Shield Wall if down)
 - [ ] Shield Wall blocks sandworms at protected locations
 
-### Combat (12_combat)
+### Combat (12_combat) — combatIntegration.test.js
 - [ ] Combat intrigue card phase (pass-until-all-pass)
-- [ ] Reward distribution: 1st/2nd/3rd place by strength
-- [ ] 0 strength = no reward
+- [x] Reward distribution: 1st and 2nd place by strength
+- [x] 0 strength = no reward
 - [ ] Winner takes conflict card
-- [ ] After combat: troops → supply (not garrison), sandworms → bank, reset markers
+- [x] After combat: troops → supply (not garrison), reset markers
+- [ ] 4-player 3rd place reward
 
 ### Combat Rewards (13_combat_rewards)
 - [ ] Battle icon matching: flip pair + 1 VP
@@ -140,10 +143,11 @@
 - [ ] Contract icon gives 2 Solari without CHOAM module
 - [ ] Replacement of taken contracts from deck
 
-### Objectives (19_objectives)
-- [ ] Objective card distribution by player count
-- [ ] Battle icon matching with objectives
-- [ ] First player determined by objective card
+### Objectives (19_objectives) — objectives.test.js
+- [x] Objective card distribution (each player gets one, valid battle icons)
+- [x] 4-player game deals to all players
+- [x] First player determined by objective card (or defaults to index 0)
+- [ ] Battle icon matching with objectives (via combat)
 
 ## Expansion Stubs (logged as memo, not implemented)
 - Dreadnoughts, Tech tiles, Freighter, Mentat, Sardaukar Commanders
