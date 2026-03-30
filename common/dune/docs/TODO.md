@@ -61,7 +61,7 @@
 - [x] Cost payment blocks access (Sword Master 8 Solari, Research Station 2 Water, Sardaukar 4 Spice)
 - [x] Cost payment allows access when affordable
 - [x] Faction spaces grant +1 influence (factions.test.js)
-- [ ] Integration tests for remaining board spaces (low priority — core mechanics covered)
+- [x] Additional board space tests: Deliver Supplies, Secrets, Fremkit, Hagga Basin, High Council, Desert Tactics, Imperial Basin harvest (moreSpaces.test.js)
 
 ### Factions (06_factions) — factions.test.js
 - [x] VP gained at 2 influence
@@ -103,8 +103,11 @@
 - [x] Shield Wall starts in place, protected locations verified (shieldWall.test.js)
 - [x] Strength constants: troop=2, sandworm=3, sword=1
 - [x] Shield wall detonation effect verified (shieldWall.test.js)
-- [x] Sandworm blocked at protected location when shield wall up (code path verified)
-- [ ] Sandworm summoning full integration (requires Maker Hook + sandworm card in play)
+- [x] Sandworm blocked at protected location when shield wall up
+- [x] Sandworm allowed at non-location conflict regardless of shield wall
+- [x] Sandworm allowed at protected location when shield wall is down
+- [x] Maker hook effect grants token
+- [x] Sandworm summoning deploys to conflict (sandworms.test.js)
 
 ### Combat (12_combat) — combatIntegration.test.js, combatAdvanced.test.js, combatTies.test.js
 - [x] Combat intrigue card phase with multiple combatants
@@ -120,16 +123,16 @@
 - [x] Battle icon tracking: won cards stored, objectives have valid icons
 - [x] Reward parsing verified (VP, control, influence)
 - [x] Sandworm doubling does not apply to control type
-- [ ] Sandworm reward doubling integration test
+- [x] Sandworm reward doubling: hasSandworms check, reset to bank, strength calc verified
 
 ### Spies (14_spies) — spyIntegration.test.js
 - [x] Spy placement from board space effects (Espionage)
 - [x] Spy infiltrate allows visiting occupied space
 - [x] Gather intelligence draws a card
-- [ ] Cannot recall same spy for both infiltrate and gather intelligence
+- [x] Cannot recall same spy for both infiltrate and gather intelligence (spyRestrictions.test.js)
 
 ### Critical Locations (15_critical_locations) — controlLocations.test.js
-- [ ] Control marker placed on winning location conflict (needs location-specific conflict card)
+- [x] Control marker placed on winning location conflict (controlFromCombat.test.js)
 - [x] Control bonuses: Arrakeen 1 Solari, Imperial Basin 1 spice
 - [x] Controller gets bonus when they visit own controlled space
 - [x] Shield Wall detonation (shieldWall.test.js)
@@ -157,7 +160,7 @@
 - [x] Objective card distribution (each player gets one, valid battle icons)
 - [x] 4-player game deals to all players
 - [x] First player determined by objective card (or defaults to index 0)
-- [ ] Battle icon matching with objectives (via combat)
+- [x] Battle icon matching: won card tracking, wild icon matching (battleIconMatching.test.js)
 
 ## Expansion Stubs (logged as memo, not implemented)
 - Dreadnoughts, Tech tiles, Freighter, Mentat, Sardaukar Commanders
