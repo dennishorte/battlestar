@@ -482,31 +482,11 @@ function resolveCardAgentAbility(game, player, card) {
     return
   }
 
-  // Check for pre-structured effects on the card definition
-  const structured = card.definition?.parsedAgentEffect
-  if (structured) {
-    for (const effect of structured) {
-      if (effect.type === 'trash-self') {
-        deckEngine.trashCard(game, card)
-      }
-      else if (effect.type === 'discard-card') {
-        const handZone = game.zones.byId(`${player.name}.hand`)
-        const handCards = handZone.cardlist()
-        if (handCards.length > 0) {
-          const choices = handCards.map(c => c.name)
-          const [discardChoice] = game.actions.choose(player, choices, {
-            title: 'Choose a card to discard',
-          })
-          const discardCard = handCards.find(c => c.name === discardChoice)
-          if (discardCard) {
-            deckEngine.discardCard(game, player, discardCard)
-          }
-        }
-      }
-      else {
-        resolveEffect(game, player, effect, null)
-      }
-    }
+  // Check for card-specific implementation function
+  const { getImplementation } = require('../systems/cardImplementations.js')
+  const impl = getImplementation(card.name)
+  if (impl && impl.agentEffect) {
+    impl.agentEffect(game, player, card)
     return
   }
 
@@ -561,12 +541,11 @@ function resolveCardRevealAbility(game, player, card, allRevealedCards) {
     return
   }
 
-  // Check for pre-structured reveal effects
-  const structured = card.definition?.parsedRevealEffect
-  if (structured) {
-    for (const effect of structured) {
-      resolveEffect(game, player, effect, null)
-    }
+  // Check for card-specific implementation function
+  const { getImplementation: getRevealImpl } = require('../systems/cardImplementations.js')
+  const revealImpl = getRevealImpl(card.name)
+  if (revealImpl && revealImpl.revealEffect) {
+    revealImpl.revealEffect(game, player, card, allRevealedCards)
     return
   }
 
@@ -1392,9 +1371,18 @@ function offerPlotIntrigue(game, player) {
       args: { player, card: card.name },
     })
 
-    // Try to parse and execute the plot effect
+    // Try implementation function, then parser
+    const { getImplementation: getPlotImpl } = require('../systems/cardImplementations.js')
+    const plotImpl = getPlotImpl(card.name)
+    if (plotImpl && plotImpl.plotEffect) {
+      game.log.indent()
+      plotImpl.plotEffect(game, player, card)
+      game.log.outdent()
+      continue
+    }
+
     const effectText = card.definition.plotEffect
-    const effects = card.definition.parsedPlotEffect || parseAgentAbility(effectText)
+    const effects = parseAgentAbility(effectText)
     if (effects) {
       game.log.indent()
       for (const effect of effects) {

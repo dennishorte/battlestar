@@ -129,8 +129,17 @@ function offerEndgameIntrigue(game, player) {
       args: { player, card: card.name },
     })
 
+    const { getImplementation: getEndImpl } = require('../systems/cardImplementations.js')
+    const endImpl = getEndImpl(card.name)
+    if (endImpl && endImpl.endgameEffect) {
+      game.log.indent()
+      endImpl.endgameEffect(game, player, card)
+      game.log.outdent()
+      continue
+    }
+
     const effectText = card.definition.endgameEffect
-    const effects = card.definition.parsedEndgameEffect || parseAgentAbility(effectText)
+    const effects = parseAgentAbility(effectText)
     if (effects) {
       game.log.indent()
       for (const effect of effects) {
