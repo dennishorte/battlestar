@@ -72,7 +72,7 @@ function combatIntrigueRound(game, combatants) {
           })
           game.log.indent()
           const effectText = card.definition.combatEffect
-          const effects = parseAgentAbility(effectText)
+          const effects = card.definition.parsedCombatEffect || parseAgentAbility(effectText)
           if (effects) {
             for (const effect of effects) {
               resolveEffect(game, player, effect, null)

@@ -482,6 +482,34 @@ function resolveCardAgentAbility(game, player, card) {
     return
   }
 
+  // Check for pre-structured effects on the card definition
+  const structured = card.definition?.parsedAgentEffect
+  if (structured) {
+    for (const effect of structured) {
+      if (effect.type === 'trash-self') {
+        deckEngine.trashCard(game, card)
+      }
+      else if (effect.type === 'discard-card') {
+        const handZone = game.zones.byId(`${player.name}.hand`)
+        const handCards = handZone.cardlist()
+        if (handCards.length > 0) {
+          const choices = handCards.map(c => c.name)
+          const [discardChoice] = game.actions.choose(player, choices, {
+            title: 'Choose a card to discard',
+          })
+          const discardCard = handCards.find(c => c.name === discardChoice)
+          if (discardCard) {
+            deckEngine.discardCard(game, player, discardCard)
+          }
+        }
+      }
+      else {
+        resolveEffect(game, player, effect, null)
+      }
+    }
+    return
+  }
+
   const effects = parseAgentAbility(abilityText)
   if (!effects) {
     // Complex ability we can't execute yet — log it
@@ -530,6 +558,15 @@ function resolveCardAgentAbility(game, player, card) {
 function resolveCardRevealAbility(game, player, card, allRevealedCards) {
   const abilityText = card.definition?.revealAbility
   if (!abilityText) {
+    return
+  }
+
+  // Check for pre-structured reveal effects
+  const structured = card.definition?.parsedRevealEffect
+  if (structured) {
+    for (const effect of structured) {
+      resolveEffect(game, player, effect, null)
+    }
     return
   }
 
@@ -1357,7 +1394,7 @@ function offerPlotIntrigue(game, player) {
 
     // Try to parse and execute the plot effect
     const effectText = card.definition.plotEffect
-    const effects = parseAgentAbility(effectText)
+    const effects = card.definition.parsedPlotEffect || parseAgentAbility(effectText)
     if (effects) {
       game.log.indent()
       for (const effect of effects) {
