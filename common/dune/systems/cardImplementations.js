@@ -517,6 +517,417 @@ const implementations = {
     },
   },
 
+  'Delivery Logistics': {
+    agentEffect(game, player) {
+      // This card has the Agent icons shown on all your incomplete contracts — passive access modifier
+      // The access is handled by the card's icon system; log it
+      game.log.add({ template: '{player}: Delivery Logistics — Agent icons match incomplete contracts', args: { player }, event: 'memo' })
+    },
+  },
+
+  'Assassination Mission': {
+    agentEffect() {
+      // "When trashed by another card or effect: +4 Solari" — passive trigger, handled when trashed
+    },
+  },
+
+  'Gene Manipulation': {
+    agentEffect(game, player) {
+      // Trash a card and with another BG card in play: +2 Spice
+      const handZone = game.zones.byId(`${player.name}.hand`)
+      const handCards = handZone.cardlist()
+      if (handCards.length > 0) {
+        const choices = ['Pass', ...handCards.map(c => c.name)]
+        const [choice] = game.actions.choose(player, choices, { title: 'Trash a card?' })
+        if (choice !== 'Pass') {
+          const card = handCards.find(c => c.name === choice)
+          if (card) {
+            deckEngine.trashCard(game, card)
+          }
+          const playedZone = game.zones.byId(`${player.name}.played`)
+          const hasBG = playedZone.cardlist().some(c =>
+            c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('bene gesserit')
+          )
+          if (hasBG) {
+            player.incrementCounter('spice', 2, { silent: true })
+            game.log.add({ template: '{player}: BG synergy — +2 Spice', args: { player } })
+          }
+        }
+      }
+    },
+  },
+
+  'Kwisatz Haderach': {
+    agentEffect(game, player) {
+      // Send one of your agents from anywhere to any board space and Draw 1 card
+      // This is a very unique effect — the agent placement is the card's primary action
+      deckEngine.drawCards(game, player, 1)
+      game.log.add({ template: '{player}: Kwisatz Haderach — draws 1 card (agent send handled by game flow)', args: { player }, event: 'memo' })
+    },
+  },
+
+  'The Voice': {
+    agentEffect(game, player) {
+      // Block 1 board space for Opponents this round
+      const boardSpacesData = require('../res/boardSpaces.js')
+      const spaceChoices = boardSpacesData.map(s => s.name)
+      const [choice] = game.actions.choose(player, spaceChoices, { title: 'Block a board space' })
+      const space = boardSpacesData.find(s => s.name === choice)
+      if (space) {
+        if (!game.state.blockedSpaces) {
+          game.state.blockedSpaces = []
+        }
+        game.state.blockedSpaces.push(space.id)
+        game.log.add({ template: '{player} blocks {space} for this round', args: { player, space: space.name } })
+      }
+    },
+  },
+
+  'Urgent Shigawire': {
+    agentEffect(game) {
+      // The next BG card you play this round has all Agent icons and added: Draw a card
+      if (game.state.turnTracking) {
+        game.state.turnTracking.nextBGCardAllIcons = true
+      }
+    },
+  },
+
+  'Interstellar Conspiracy': {
+    agentEffect(game, player) {
+      // +1 Spice (grafted conditional is expansion — skip)
+      player.incrementCounter('spice', 1, { silent: true })
+      game.log.add({ template: '{player} gains 1 Spice', args: { player } })
+    },
+  },
+
+  'Long Reach': {
+    agentEffect(game, player) {
+      // If you have another BG card in play: this card gets all access. +1 Influence with 2 Factions.
+      const playedZone = game.zones.byId(`${player.name}.played`)
+      const hasBG = playedZone.cardlist().some(c =>
+        c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('bene gesserit')
+      )
+      if (hasBG) {
+        for (let i = 0; i < 2; i++) {
+          const [faction] = game.actions.choose(player, constants.FACTIONS, {
+            title: `+1 Influence (${i + 1} of 2)`,
+          })
+          factions.gainInfluence(game, player, faction)
+        }
+      }
+    },
+  },
+
+  'Show of Strength': {
+    agentEffect(game, player) {
+      // If more deployed troops than each opponent: Draw 2 cards. (access handled elsewhere)
+      const myTroops = game.state.conflict.deployedTroops[player.name] || 0
+      const hasMore = game.players.all().every(p =>
+        p.name === player.name || (game.state.conflict.deployedTroops[p.name] || 0) < myTroops
+      )
+      if (hasMore && myTroops > 0) {
+        deckEngine.drawCards(game, player, 2)
+      }
+    },
+  },
+
+  'Arrakis Revolt': {
+    agentEffect(game, player) {
+      // Maker Hooks: 2 Spice -> Destroy Shield Wall & Deploy a Worm
+      if (game.state.makerHooks?.[player.name] && player.spice >= 2) {
+        const choices = ['Pass', 'Pay 2 Spice: Destroy Shield Wall & Deploy Sandworm']
+        const [choice] = game.actions.choose(player, choices, { title: 'Arrakis Revolt' })
+        if (choice !== 'Pass') {
+          player.decrementCounter('spice', 2, { silent: true })
+          game.state.shieldWall = false
+          game.log.add({ template: '{player} destroys the Shield Wall!', args: { player } })
+          game.state.conflict.deployedSandworms[player.name] =
+            (game.state.conflict.deployedSandworms[player.name] || 0) + 1
+          game.log.add({ template: '{player} deploys a Sandworm', args: { player } })
+        }
+      }
+    },
+  },
+
+  'Boundless Ambition': {
+    agentEffect(game, player) {
+      // Signet Ring — this triggers the leader's signet ring ability
+      const leaders = require('./leaders.js')
+      const { resolveEffect: re } = require('../phases/playerTurns.js')
+      leaders.resolveSignetRing(game, player, re)
+    },
+  },
+
+  'Pivotal Gambit': {
+    agentEffect(game, player, card) {
+      // Trash this card -> +1 Troop AND add +1 Influence to 1st place conflict reward
+      deckEngine.trashCard(game, card)
+      const recruit = Math.min(1, player.troopsInSupply)
+      if (recruit > 0) {
+        player.decrementCounter('troopsInSupply', recruit, { silent: true })
+        player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+        game.log.add({ template: '{player} recruits 1 troop', args: { player } })
+      }
+      // Modify first place reward — store as state for combat resolution
+      if (!game.state.conflict.bonusFirstPlaceInfluence) {
+        game.state.conflict.bonusFirstPlaceInfluence = 0
+      }
+      game.state.conflict.bonusFirstPlaceInfluence++
+      game.log.add({ template: '{player} adds +1 Influence to 1st place reward', args: { player } })
+    },
+  },
+
+  'The Beast\'s Spoils': {
+    agentEffect(game, player) {
+      // Gain rewards for face-up Battle Icons: Green -> Trash, Yellow -> +1 Spice, Blue -> +1 Troop
+      const wonCards = game.state.conflict.wonCards?.[player.name] || []
+      for (const card of wonCards) {
+        if (!card.battleIcon) {
+          continue
+        }
+        switch (card.battleIcon) {
+          case 'green':
+            // Offer trash
+            { const handZone = game.zones.byId(`${player.name}.hand`)
+              const handCards = handZone.cardlist()
+              if (handCards.length > 0) {
+                const choices = ['Pass', ...handCards.map(c => c.name)]
+                const [choice] = game.actions.choose(player, choices, { title: 'Green icon: Trash a card?' })
+                if (choice !== 'Pass') {
+                  const c = handCards.find(cc => cc.name === choice)
+                  if (c) {
+                    deckEngine.trashCard(game, c)
+                  }
+                }
+              }
+            }
+            break
+          case 'yellow':
+            player.incrementCounter('spice', 1, { silent: true })
+            game.log.add({ template: '{player}: Yellow icon — +1 Spice', args: { player } })
+            break
+          case 'blue':
+            { const r = Math.min(1, player.troopsInSupply)
+              if (r > 0) {
+                player.decrementCounter('troopsInSupply', r, { silent: true })
+                player.incrementCounter('troopsInGarrison', r, { silent: true })
+                game.log.add({ template: '{player}: Blue icon — +1 Troop', args: { player } })
+              }
+            }
+            break
+        }
+      }
+    },
+  },
+
+  'Desert Ambush': {
+    agentEffect(game) {
+      // For each troop you deploy this turn, force an enemy unit to retreat
+      if (game.state.turnTracking) {
+        game.state.turnTracking.forceRetreatOnDeploy = true
+      }
+    },
+  },
+
+  'Guild Accord': {
+    agentEffect(game) {
+      // Heighliner costs 2 Spice less this turn — modifier
+      if (game.state.turnTracking) {
+        game.state.turnTracking.heighlinerDiscount = 2
+      }
+    },
+  },
+
+  'In the Shadows': {
+    agentEffect(game, player) {
+      // With 2 BG Infl.: Discard a card -> +1 Infl with Emperor OR Guild OR Fremen
+      if (player.getInfluence('bene-gesserit') >= 2) {
+        const handZone = game.zones.byId(`${player.name}.hand`)
+        const handCards = handZone.cardlist()
+        if (handCards.length > 0) {
+          const choices = ['Pass', ...handCards.map(c => c.name)]
+          const [choice] = game.actions.choose(player, choices, { title: 'Discard a card?' })
+          if (choice !== 'Pass') {
+            const card = handCards.find(c => c.name === choice)
+            if (card) {
+              deckEngine.discardCard(game, player, card)
+              const factionChoices = ['emperor', 'guild', 'fremen']
+              const [faction] = game.actions.choose(player, factionChoices, { title: '+1 Influence with:' })
+              factions.gainInfluence(game, player, faction)
+            }
+          }
+        }
+      }
+    },
+  },
+
+  'Weirding Way': {
+    agentEffect(game) {
+      // You may take another turn immediately after this one
+      if (game.state.turnTracking) {
+        game.state.turnTracking.extraTurn = true
+      }
+    },
+  },
+
+  'Branching Path': {
+    agentEffect(game, player) {
+      // With 2 BG Influence: Trash an intrigue card -> +1 Intrigue card, +2 Spice
+      if (player.getInfluence('bene-gesserit') >= 2) {
+        const intrigueZone = game.zones.byId(`${player.name}.intrigue`)
+        const cards = intrigueZone.cardlist()
+        if (cards.length > 0) {
+          const choices = ['Pass', ...cards.map(c => c.name)]
+          const [choice] = game.actions.choose(player, choices, { title: 'Trash an Intrigue card?' })
+          if (choice !== 'Pass') {
+            const card = cards.find(c => c.name === choice)
+            if (card) {
+              deckEngine.trashCard(game, card)
+              deckEngine.drawIntrigueCard(game, player, 1)
+              player.incrementCounter('spice', 2, { silent: true })
+              game.log.add({ template: '{player}: +1 Intrigue, +2 Spice', args: { player } })
+            }
+          }
+        }
+      }
+    },
+  },
+
+  'Hidden Missive': {
+    agentEffect(game, player) {
+      // With 2 BG Influence: +1 Troop & Draw a card
+      if (player.getInfluence('bene-gesserit') >= 2) {
+        const recruit = Math.min(1, player.troopsInSupply)
+        if (recruit > 0) {
+          player.decrementCounter('troopsInSupply', recruit, { silent: true })
+          player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+        }
+        deckEngine.drawCards(game, player, 1)
+        game.log.add({ template: '{player}: +1 Troop, Draw 1 card', args: { player } })
+      }
+    },
+  },
+
+  'Junction Headquarters': {
+    agentEffect(game, player) {
+      // With 2 Guild Influence: Trash intrigue + 2 Spice -> +1 VP
+      if (player.getInfluence('guild') >= 2) {
+        const intrigueZone = game.zones.byId(`${player.name}.intrigue`)
+        const cards = intrigueZone.cardlist()
+        if (cards.length > 0 && player.spice >= 2) {
+          const choices = ['Pass', ...cards.map(c => c.name)]
+          const [choice] = game.actions.choose(player, choices, { title: 'Trash Intrigue + 2 Spice for +1 VP?' })
+          if (choice !== 'Pass') {
+            const card = cards.find(c => c.name === choice)
+            if (card) {
+              deckEngine.trashCard(game, card)
+              player.decrementCounter('spice', 2, { silent: true })
+              player.incrementCounter('vp', 1, { silent: true })
+              game.log.add({ template: '{player} gains 1 Victory Point', args: { player } })
+            }
+          }
+        }
+      }
+    },
+  },
+
+  'Long Live the Fighters': {
+    agentEffect(game, player) {
+      // If deck has 3+ cards: look at top 3, draw 1, discard 1, trash 1
+      const deckZone = game.zones.byId(`${player.name}.deck`)
+      const topCards = deckZone.cardlist().slice(0, 3)
+      if (topCards.length >= 3) {
+        const names = topCards.map(c => c.name)
+        const [drawChoice] = game.actions.choose(player, names, { title: 'Draw which card?' })
+        const drawCard = topCards.find(c => c.name === drawChoice)
+        if (drawCard) {
+          const handZone = game.zones.byId(`${player.name}.hand`)
+          drawCard.moveTo(handZone)
+        }
+        const remaining1 = topCards.filter(c => c.name !== drawChoice)
+        const [discardChoice] = game.actions.choose(player, remaining1.map(c => c.name), { title: 'Discard which card?' })
+        const discardCard = remaining1.find(c => c.name === discardChoice)
+        if (discardCard) {
+          deckEngine.discardCard(game, player, discardCard)
+        }
+        const trashCard = remaining1.find(c => c.name !== discardChoice)
+        if (trashCard) {
+          deckEngine.trashCard(game, trashCard)
+        }
+        game.log.add({ template: '{player}: Looks at top 3 — draws 1, discards 1, trashes 1', args: { player } })
+      }
+    },
+  },
+
+  'Price is Not Object': {
+    agentEffect(game) {
+      // You may acquire a card using Solari instead of Persuasion this round
+      if (game.state.turnTracking) {
+        game.state.turnTracking.acquireWithSolari = true
+      }
+    },
+  },
+
+  'Reliable Informant': {
+    agentEffect(game, player) {
+      // Deploy a Spy on Emperor/BG/Fremen Observation Post
+      spies.placeSpy(game, player)
+    },
+  },
+
+  'Sardaukar Soldier': {
+    agentEffect() {
+      // "When this card is trashed: Get 1 Intrigue Card" — passive trigger, handled when trashed
+    },
+  },
+
+  'Treacherous Maneuver': {
+    agentEffect(game, player, card) {
+      // Trash this card and an Emperor card from hand -> Gain 2 influence instead of 1
+      const handZone = game.zones.byId(`${player.name}.hand`)
+      const emperorCards = handZone.cardlist().filter(c =>
+        c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('emperor')
+      )
+      if (emperorCards.length > 0) {
+        const choices = ['Pass', ...emperorCards.map(c => c.name)]
+        const [choice] = game.actions.choose(player, choices, { title: 'Trash an Emperor card for +2 Influence?' })
+        if (choice !== 'Pass') {
+          const empCard = emperorCards.find(c => c.name === choice)
+          if (empCard) {
+            deckEngine.trashCard(game, card)
+            deckEngine.trashCard(game, empCard)
+            if (game.state.turnTracking) {
+              game.state.turnTracking.extraInfluence = true
+            }
+          }
+        }
+      }
+    },
+  },
+
+  'Undercover Asset': {
+    agentEffect(game) {
+      // Ignore Influence requirements on board spaces this turn
+      if (game.state.turnTracking) {
+        game.state.turnTracking.ignoreInfluenceRequirements = true
+      }
+    },
+  },
+
+  'Wheels within Wheels': {
+    agentEffect(game, player) {
+      // With 2 Emperor Influence: +2 Solari. With 2 Guild Influence: +1 Spice.
+      if (player.getInfluence('emperor') >= 2) {
+        player.incrementCounter('solari', 2, { silent: true })
+        game.log.add({ template: '{player}: +2 Solari (Emperor Influence)', args: { player } })
+      }
+      if (player.getInfluence('guild') >= 2) {
+        player.incrementCounter('spice', 1, { silent: true })
+        game.log.add({ template: '{player}: +1 Spice (Guild Influence)', args: { player } })
+      }
+    },
+  },
+
   'Reverend Mother Mohiam': {
     agentEffect(game, player) {
       // With another BG card in play: each opponent discards 2 cards
