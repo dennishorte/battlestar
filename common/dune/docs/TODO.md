@@ -55,12 +55,13 @@
 - [x] Faction card accesses faction spaces
 - [x] Influence requirement blocks/allows access
 
-### Board Spaces (05_board_spaces) — boardSpaces.test.js, agentTurns.test.js
-- [x] Influence requirements: Sietch Tabr (2+ Fremen)
-- [ ] Influence requirements: Imperial Privilege (2+ Emperor), Shipping (2+ Guild)
-- [ ] Cost payment enforced before effects
+### Board Spaces (05_board_spaces) — boardSpaces.test.js, agentTurns.test.js, boardSpaceRules.test.js
+- [x] Influence requirements: Sietch Tabr (2+ Fremen), Imperial Privilege (2+ Emperor)
+- [x] Shipping influence requirement verified via data
+- [x] Cost payment blocks access (Sword Master 8 Solari, Research Station 2 Water, Sardaukar 4 Spice)
+- [x] Cost payment allows access when affordable
 - [x] Faction spaces grant +1 influence (factions.test.js)
-- [ ] Integration tests for remaining 18 spaces (only Arrakeen, Assembly Hall, Spice Refinery, Gather Support tested)
+- [ ] Integration tests for remaining board spaces
 
 ### Factions (06_factions) — factions.test.js
 - [x] VP gained at 2 influence
@@ -69,8 +70,10 @@
 - [x] Alliance at 4 influence (first player to reach)
 - [x] Alliance token passes when overtaken on track
 
-### Intrigue Cards (07_intrigue_cards) — intrigue.test.js
-- [ ] Plot intrigue playable during Agent and Reveal turns
+### Intrigue Cards (07_intrigue_cards) — intrigue.test.js, plotIntrigue.test.js
+- [x] Plot intrigue playable during Agent turns (Windfall: +2 Solari)
+- [x] Plot intrigue playable during Reveal turns (Water Peddlers Union: +1 Water)
+- [x] Can pass on plot intrigue
 - [x] Combat intrigue playable during combat phase (Ambush: +4 Swords)
 - [x] Endgame intrigue playable at end of game (Economic Positioning: +1 VP)
 - [x] Intrigue cards kept separate from deck (in player.intrigue zone)
@@ -100,23 +103,24 @@
 - [ ] Sandworm summoning (requires Maker Hook, not blocked by Shield Wall if down)
 - [ ] Shield Wall blocks sandworms at protected locations
 
-### Combat (12_combat) — combatIntegration.test.js
-- [ ] Combat intrigue card phase (pass-until-all-pass)
+### Combat (12_combat) — combatIntegration.test.js, combatAdvanced.test.js, combatTies.test.js
+- [x] Combat intrigue card phase with multiple combatants
 - [x] Reward distribution: 1st and 2nd place by strength
 - [x] 0 strength = no reward
-- [ ] Winner takes conflict card
+- [x] Winner takes conflict card into supply
 - [x] After combat: troops → supply (not garrison), reset markers
-- [ ] 4-player 3rd place reward
+- [x] 4-player 3rd place reward
+- [x] Tie for 1st: each gets 2nd reward
+- [ ] Tie for 2nd: each gets 3rd reward
 
 ### Combat Rewards (13_combat_rewards)
 - [ ] Battle icon matching: flip pair + 1 VP
 - [ ] Sandworm reward doubling (not for control or battle icons)
-- [ ] Tie for 1st: each gets 2nd reward, no winner
-- [ ] Tie for 2nd: each gets 3rd reward
-- [ ] 4-player 3rd place reward
 
-### Spies (14_spies)
-- [ ] Spy placement from card/board space effects (integration)
+### Spies (14_spies) — spyIntegration.test.js
+- [x] Spy placement from board space effects (Espionage)
+- [x] Spy infiltrate allows visiting occupied space
+- [x] Gather intelligence draws a card
 - [ ] Cannot recall same spy for both infiltrate and gather intelligence
 
 ### Critical Locations (15_critical_locations) — controlLocations.test.js
@@ -133,15 +137,16 @@
 ### Recall and Endgame (17_recall_and_endgame) — recall.test.js
 - [x] Endgame triggered at 10+ VP
 - [ ] Endgame triggered when conflict deck empty
-- [ ] Endgame intrigue cards offered
+- [x] Endgame intrigue cards offered (intrigue.test.js)
 - [x] Tiebreakers: most spice wins
 - [x] First player marker passes clockwise
 
-### CHOAM Module (18_choam)
-- [ ] Taking contracts from market
+### CHOAM Module (18_choam) — choamIntegration.test.js
+- [x] Taking contracts from market (with CHOAM enabled)
 - [ ] Completing board-space contracts
-- [ ] Contract icon gives 2 Solari without CHOAM module
-- [ ] Replacement of taken contracts from deck
+- [x] Contract icon gives 2 Solari without CHOAM module
+- [x] Market refills after taking contract
+- [ ] Accept Contract space gives contract + draw 1
 
 ### Objectives (19_objectives) — objectives.test.js
 - [x] Objective card distribution (each player gets one, valid battle icons)

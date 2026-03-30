@@ -1005,8 +1005,18 @@ function resolveEffect(game, player, effect, space) {
     }
 
     case 'contract': {
-      const choam = require('../systems/choam.js')
-      choam.takeContract(game, player)
+      if (game.settings.useCHOAM) {
+        const choam = require('../systems/choam.js')
+        choam.takeContract(game, player)
+      }
+      else {
+        // Without CHOAM module, contract icon gives 2 Solari
+        player.incrementCounter('solari', 2, { silent: true })
+        game.log.add({
+          template: '{player} gains 2 Solari (contract)',
+          args: { player },
+        })
+      }
       break
     }
 
