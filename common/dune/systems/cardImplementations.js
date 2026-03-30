@@ -961,6 +961,352 @@ const implementations = {
       }
     },
   },
+  // ── Imperium Reveal Effects ─────────────────────────────────
+
+  'CHOAM Demands': {
+    revealEffect(game, player, card) {
+      const choam = require('./choam.js')
+      if (choam.getCompletedContractCount(game, player) >= 4) {
+        const choices = ['Pass', 'Trash this card for +1 Influence with every Faction']
+        const [choice] = game.actions.choose(player, choices, { title: 'CHOAM Demands' })
+        if (choice !== 'Pass') {
+          deckEngine.trashCard(game, card)
+          for (const faction of constants.FACTIONS) {
+            factions.gainInfluence(game, player, faction)
+          }
+        }
+      }
+    },
+  },
+
+  'Interstellar Trade': {
+    revealEffect(game, player) {
+      const choam = require('./choam.js')
+      const count = choam.getCompletedContractCount(game, player)
+      if (count > 0) {
+        player.incrementCounter('persuasion', count, { silent: true })
+        game.log.add({ template: '{player}: +{count} Persuasion ({count} contracts)', args: { player, count } })
+      }
+    },
+  },
+
+  'Guild Bankers': {
+    revealEffect(game) {
+      if (!game.state.tsmfDiscount) {
+        game.state.tsmfDiscount = 0
+      }
+      game.state.tsmfDiscount += 3
+    },
+  },
+
+  'Worm Riders': {
+    revealEffect(game, player) {
+      if (player.getInfluence('fremen') >= 2) {
+        player.incrementCounter('strength', 4 * constants.SWORD_STRENGTH, { silent: true })
+        game.log.add({ template: '{player}: +4 Swords (Fremen Influence)', args: { player } })
+      }
+      if (game.state.alliances.fremen === player.name) {
+        player.incrementCounter('strength', 2 * constants.SWORD_STRENGTH, { silent: true })
+        game.log.add({ template: '{player}: +2 Swords (Fremen Alliance)', args: { player } })
+      }
+    },
+  },
+
+  'Engineered Miracle': {
+    revealEffect(game, player, card) {
+      if (player.getCounter('persuasion') >= 6) {
+        const choices = ['Pass', 'Trash this card to acquire from Imperium Row']
+        const [choice] = game.actions.choose(player, choices, { title: 'Engineered Miracle' })
+        if (choice !== 'Pass') {
+          deckEngine.trashCard(game, card)
+          game.log.add({ template: '{player}: Acquires from Imperium Row (special)', args: { player }, event: 'memo' })
+        }
+      }
+    },
+  },
+
+  'Holy War': {
+    revealEffect(game, player, card, allRevealedCards) {
+      const recruit = Math.min(1, player.troopsInSupply)
+      if (recruit > 0) {
+        player.decrementCounter('troopsInSupply', recruit, { silent: true })
+        player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+      }
+      const hasFremen = allRevealedCards.some(c =>
+        c !== card && c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('fremen')
+      )
+      if (hasFremen) {
+        game.log.add({ template: '{player}: Fremen Bond — may deploy troops', args: { player }, event: 'memo' })
+      }
+    },
+  },
+
+  'For Humanity': {
+    revealEffect(game, player) {
+      if (game.state.alliances['bene-gesserit'] === player.name) {
+        const loseFactions = constants.FACTIONS.filter(f => player.getInfluence(f) >= 2)
+        if (loseFactions.length > 0) {
+          const choices = ['Pass', ...loseFactions]
+          const [choice] = game.actions.choose(player, choices, { title: 'Lose 2 Influence for +1 VP?' })
+          if (choice !== 'Pass') {
+            factions.loseInfluence(game, player, choice, 2)
+            player.incrementCounter('vp', 1, { silent: true })
+            game.log.add({ template: '{player}: +1 VP', args: { player } })
+          }
+        }
+      }
+    },
+  },
+
+  'Shadout Mapes': {
+    revealEffect(game, player) {
+      const choices = ['Pass']
+      if (player.troopsInGarrison > 0) {
+        choices.push('Deploy 1 troop to Conflict')
+      }
+      const deployed = game.state.conflict.deployedTroops[player.name] || 0
+      if (deployed > 0) {
+        choices.push('Retreat 1 troop')
+      }
+      if (choices.length > 1) {
+        const [choice] = game.actions.choose(player, choices, { title: 'Shadout Mapes' })
+        if (choice.includes('Deploy')) {
+          player.decrementCounter('troopsInGarrison', 1, { silent: true })
+          game.state.conflict.deployedTroops[player.name] = (game.state.conflict.deployedTroops[player.name] || 0) + 1
+        }
+        else if (choice.includes('Retreat')) {
+          game.state.conflict.deployedTroops[player.name]--
+          player.incrementCounter('troopsInSupply', 1, { silent: true })
+        }
+      }
+    },
+  },
+
+  'Negotiated Withdrawal': {
+    revealEffect(game, player) {
+      const deployed = game.state.conflict.deployedTroops[player.name] || 0
+      if (deployed >= 3) {
+        const choices = ['Pass', 'Retreat 3 troops for +1 Influence']
+        const [choice] = game.actions.choose(player, choices, { title: 'Negotiated Withdrawal' })
+        if (choice !== 'Pass') {
+          game.state.conflict.deployedTroops[player.name] -= 3
+          player.incrementCounter('troopsInSupply', 3, { silent: true })
+          const [faction] = game.actions.choose(player, constants.FACTIONS, { title: '+1 Influence with:' })
+          factions.gainInfluence(game, player, faction)
+        }
+      }
+    },
+  },
+
+  'Treachery': {
+    revealEffect(game, player) {
+      const recruit = Math.min(2, player.troopsInSupply)
+      if (recruit > 0) {
+        player.decrementCounter('troopsInSupply', recruit, { silent: true })
+        game.state.conflict.deployedTroops[player.name] = (game.state.conflict.deployedTroops[player.name] || 0) + recruit
+        game.log.add({ template: '{player}: +{count} troops to Conflict', args: { player, count: recruit } })
+      }
+    },
+  },
+
+  'Calculus of Power': {
+    revealEffect(game, player) {
+      const playedZone = game.zones.byId(`${player.name}.played`)
+      const emperorCards = playedZone.cardlist().filter(c =>
+        c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('emperor')
+      )
+      if (emperorCards.length > 0) {
+        const choices = ['Pass', ...emperorCards.map(c => c.name)]
+        const [choice] = game.actions.choose(player, choices, { title: 'Trash Emperor card for +3 Swords?' })
+        if (choice !== 'Pass') {
+          const card = emperorCards.find(c => c.name === choice)
+          if (card) {
+            deckEngine.trashCard(game, card)
+            player.incrementCounter('strength', 3 * constants.SWORD_STRENGTH, { silent: true })
+          }
+        }
+      }
+    },
+  },
+
+  'Captured Mentat': {
+    revealEffect(game, player) {
+      const loseFactions = constants.FACTIONS.filter(f => player.getInfluence(f) > 0)
+      if (loseFactions.length > 0) {
+        const choices = ['Pass', ...loseFactions.map(f => `Lose 1 ${f}`)]
+        const [choice] = game.actions.choose(player, choices, { title: 'Swap influence?' })
+        if (choice !== 'Pass') {
+          const loseFaction = loseFactions.find(f => choice.includes(f))
+          factions.loseInfluence(game, player, loseFaction, 1)
+          const gainFactions = constants.FACTIONS.filter(f => f !== loseFaction)
+          const [gf] = game.actions.choose(player, gainFactions, { title: '+1 Influence with:' })
+          factions.gainInfluence(game, player, gf)
+        }
+      }
+    },
+  },
+
+  'Chani, Clever Tactician': {
+    revealEffect(game, player, card, allRevealedCards) {
+      const deployed = game.state.conflict.deployedTroops[player.name] || 0
+      if (deployed >= 2) {
+        const choices = ['Pass', 'Retreat 2 troops for +4 Swords']
+        const [choice] = game.actions.choose(player, choices, { title: 'Chani' })
+        if (choice !== 'Pass') {
+          game.state.conflict.deployedTroops[player.name] -= 2
+          player.incrementCounter('troopsInSupply', 2, { silent: true })
+          player.incrementCounter('strength', 4 * constants.SWORD_STRENGTH, { silent: true })
+        }
+      }
+      const hasFremen = allRevealedCards.some(c =>
+        c !== card && c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('fremen')
+      )
+      if (hasFremen) {
+        player.incrementCounter('persuasion', 2, { silent: true })
+        game.log.add({ template: '{player}: Fremen Bond — +2 Persuasion', args: { player } })
+      }
+    },
+  },
+
+  'Desert Power': {
+    revealEffect(game, player) {
+      const hasMaker = game.state.makerHooks?.[player.name]
+      const choices = ['+2 Persuasion']
+      if (hasMaker && player.water >= 1) {
+        choices.push('Pay 1 Water for 1 Sandworm')
+      }
+      const [choice] = game.actions.choose(player, choices, { title: 'Desert Power' })
+      if (choice.includes('Persuasion')) {
+        player.incrementCounter('persuasion', 2, { silent: true })
+      }
+      else {
+        player.decrementCounter('water', 1, { silent: true })
+        game.state.conflict.deployedSandworms[player.name] =
+          (game.state.conflict.deployedSandworms[player.name] || 0) + 1
+        game.log.add({ template: '{player}: deploys 1 Sandworm', args: { player } })
+      }
+    },
+  },
+
+  'Southern Elders': {
+    revealEffect(game, player, card, allRevealedCards) {
+      player.incrementCounter('water', 1, { silent: true })
+      game.log.add({ template: '{player}: +1 Water', args: { player } })
+      const hasFremen = allRevealedCards.some(c =>
+        c !== card && c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('fremen')
+      )
+      if (hasFremen) {
+        player.incrementCounter('persuasion', 2, { silent: true })
+        game.log.add({ template: '{player}: Fremen Bond — +2 Persuasion', args: { player } })
+      }
+    },
+  },
+
+  "Spacing Guild's Favor": {
+    revealEffect(game, player) {
+      if (player.spice >= 3) {
+        const choices = ['Pass', 'Pay 3 Spice for +1 Influence']
+        const [choice] = game.actions.choose(player, choices, { title: "Spacing Guild's Favor" })
+        if (choice !== 'Pass') {
+          player.decrementCounter('spice', 3, { silent: true })
+          const [faction] = game.actions.choose(player, constants.FACTIONS, { title: '+1 Influence with:' })
+          factions.gainInfluence(game, player, faction)
+        }
+      }
+    },
+  },
+
+  'Stilgar, The Devoted': {
+    revealEffect(game, player, card, allRevealedCards) {
+      const fremenCount = allRevealedCards.filter(c =>
+        c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('fremen')
+      ).length
+      const total = fremenCount * 2
+      if (total > 0) {
+        player.incrementCounter('persuasion', total, { silent: true })
+        game.log.add({ template: '{player}: +{total} Persuasion ({count} Fremen)', args: { player, total, count: fremenCount } })
+      }
+    },
+  },
+
+  'Unswerving Loyalty': {
+    revealEffect(game, player, card, allRevealedCards) {
+      const recruit = Math.min(1, player.troopsInSupply)
+      if (recruit > 0) {
+        player.decrementCounter('troopsInSupply', recruit, { silent: true })
+        player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+      }
+      const hasFremen = allRevealedCards.some(c =>
+        c !== card && c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('fremen')
+      )
+      if (hasFremen) {
+        const choices = ['Pass']
+        if (player.troopsInGarrison > 0) {
+          choices.push('Deploy 1 troop')
+        }
+        const deployed = game.state.conflict.deployedTroops[player.name] || 0
+        if (deployed > 0) {
+          choices.push('Retreat 1 troop')
+        }
+        if (choices.length > 1) {
+          const [choice] = game.actions.choose(player, choices, { title: 'Fremen Bond' })
+          if (choice.includes('Deploy')) {
+            player.decrementCounter('troopsInGarrison', 1, { silent: true })
+            game.state.conflict.deployedTroops[player.name] = (game.state.conflict.deployedTroops[player.name] || 0) + 1
+          }
+          else if (choice.includes('Retreat')) {
+            game.state.conflict.deployedTroops[player.name]--
+            player.incrementCounter('troopsInSupply', 1, { silent: true })
+          }
+        }
+      }
+    },
+  },
+}
+
+// Add reveal effects to cards that already have agent implementations
+implementations['Boundless Ambition'].revealEffect = function(game, player) {
+  if (game.state.turnTracking) {
+    game.state.turnTracking.freeAcquire5 = true
+  }
+  game.log.add({ template: '{player}: May acquire a card costing 5 or less', args: { player }, event: 'memo' })
+}
+implementations['Corrinth City'].revealEffect = function(game, player) {
+  if (!player.hasHighCouncil && player.solari >= 5) {
+    const choices = ['Pass', 'Pay 5 Solari for High Council seat']
+    const [choice] = game.actions.choose(player, choices, { title: 'Corrinth City' })
+    if (choice !== 'Pass') {
+      player.decrementCounter('solari', 5, { silent: true })
+      player.setCounter('hasHighCouncil', 1, { silent: true })
+      game.log.add({ template: '{player} takes High Council seat', args: { player } })
+    }
+  }
+}
+implementations['Guild Accord'].revealEffect = function(game, player) {
+  player.incrementCounter('water', 1, { silent: true })
+  if (game.state.alliances.guild === player.name) {
+    player.incrementCounter('spice', 3, { silent: true })
+    game.log.add({ template: '{player}: +1 Water, +3 Spice (Guild Alliance)', args: { player } })
+  }
+  else {
+    game.log.add({ template: '{player}: +1 Water', args: { player } })
+  }
+}
+implementations['Guild Spy'].revealEffect = function(game) {
+  if (game.state.turnTracking) {
+    game.state.turnTracking.guildSpyTSMF = true
+  }
+}
+implementations['Undercover Asset'].revealEffect = function(game, player) {
+  const choices = ['+1 Spy', '+2 Swords']
+  const [choice] = game.actions.choose(player, choices, { title: 'Undercover Asset' })
+  if (choice.includes('Spy')) {
+    spies.placeSpy(game, player)
+  }
+  else {
+    player.incrementCounter('strength', 2 * constants.SWORD_STRENGTH, { silent: true })
+    game.log.add({ template: '{player}: +2 Swords', args: { player } })
+  }
 }
 
 /**
