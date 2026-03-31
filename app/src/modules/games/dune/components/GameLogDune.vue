@@ -52,7 +52,7 @@ function lineStyles(line) {
 }
 
 function playerStyles(player) {
-  return { 'background-color': player.color }
+  return { 'border-bottom': `2px solid ${player.color}`, 'font-weight': 'bold' }
 }
 
 useGameLogProvider({
@@ -73,8 +73,8 @@ useGameLogProvider({
   padding: 6px 12px;
   border-radius: 4px;
   margin-top: 14px;
-  background-color: #6b4c1e;
-  color: #f5e6c8;
+  background-color: #8b6914;
+  color: white;
 }
 
 /* Phase headers */
@@ -83,8 +83,8 @@ useGameLogProvider({
   width: 100%;
   font-weight: 600;
   font-size: 0.9em;
-  color: #e8dcc8;
-  background-color: #3d2e1a;
+  color: #4a3a20;
+  background-color: #e8dcc0;
   padding: 4px 12px;
   border-radius: 4px;
   margin-top: 10px;
@@ -99,13 +99,14 @@ useGameLogProvider({
   padding: 5px 12px;
   border-radius: 4px;
   margin-top: 8px;
+  color: white;
 }
 
 /* Step headers */
 #gamelog :deep(.step-header) {
   font-weight: 600;
   font-size: 0.85em;
-  color: #c8b898;
+  color: #6a5a40;
   padding: 2px 10px;
   margin-top: 4px;
 }
@@ -113,7 +114,7 @@ useGameLogProvider({
 /* Memos — subtle system notes */
 #gamelog :deep(.memo) {
   font-style: italic;
-  opacity: 0.7;
+  opacity: 0.6;
   font-size: 0.85em;
 }
 
@@ -133,7 +134,7 @@ useGameLogProvider({
 /* Card names — amber */
 #gamelog :deep(.card-name) {
   display: inline-block;
-  color: #e8a83e;
+  color: #8b6914;
   font-weight: bold;
 }
 
@@ -154,7 +155,7 @@ useGameLogProvider({
 /* Board space names */
 #gamelog :deep(.board-space-name) {
   display: inline-block;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(0, 0, 0, 0.08);
   border-radius: .15em;
   padding: 0 .3em;
 }
@@ -162,7 +163,7 @@ useGameLogProvider({
 /* Leader names */
 #gamelog :deep(.leader-name) {
   display: inline-block;
-  color: #d4a8e8;
+  color: #6a3d8a;
   font-weight: bold;
 }
 

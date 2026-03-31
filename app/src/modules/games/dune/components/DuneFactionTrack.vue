@@ -61,14 +61,15 @@ export default {
 .faction-tracks {
   margin: .5em 0;
   padding: .5em;
-  border: 1px solid #3d2e1a;
+  border: 1px solid #d4c8a8;
   border-radius: .3em;
+  background-color: white;
 }
 
 .section-header {
   font-weight: 600;
   font-size: .9em;
-  color: #e8a83e;
+  color: #8b6914;
   margin-bottom: .3em;
 }
 
@@ -87,14 +88,15 @@ export default {
   font-size: .85em;
 }
 
-.track-emperor { background-color: rgba(139, 32, 32, 0.3); }
-.track-guild { background-color: rgba(192, 112, 32, 0.3); }
-.track-bene-gesserit { background-color: rgba(91, 58, 138, 0.3); }
-.track-fremen { background-color: rgba(42, 96, 144, 0.3); }
+.track-emperor { background-color: rgba(139, 32, 32, 0.12); }
+.track-guild { background-color: rgba(192, 112, 32, 0.12); }
+.track-bene-gesserit { background-color: rgba(91, 58, 138, 0.12); }
+.track-fremen { background-color: rgba(42, 96, 144, 0.12); }
 
 .faction-label {
   font-weight: 600;
   min-width: 6em;
+  color: #2c2416;
 }
 
 .faction-players {
@@ -108,7 +110,7 @@ export default {
 
 .alliance {
   font-size: .8em;
-  color: #e8a83e;
+  color: #8b6914;
   font-style: italic;
 }
 </style>

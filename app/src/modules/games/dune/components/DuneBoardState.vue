@@ -65,8 +65,9 @@ export default {
 .board-state {
   margin: .5em 0;
   padding: .5em;
-  border: 1px solid #3d2e1a;
+  border: 1px solid #d4c8a8;
   border-radius: .3em;
+  background-color: white;
 }
 
 .section-header {
@@ -75,7 +76,7 @@ export default {
   align-items: center;
   font-weight: 600;
   font-size: .9em;
-  color: #e8a83e;
+  color: #8b6914;
   margin-bottom: .3em;
 }
 
@@ -103,7 +104,7 @@ export default {
 }
 
 .control-marker, .occupied-space {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: #f5f0e8;
   padding: .1em .4em;
   border-radius: .15em;
 }

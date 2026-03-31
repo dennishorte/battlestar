@@ -27,6 +27,10 @@
           />
         </div>
 
+        <div class="col spaces-column">
+          <DuneActionSpaces />
+        </div>
+
       </div>
     </div>
 
@@ -48,6 +52,7 @@ import DuneConflict from './DuneConflict.vue'
 import DuneFactionTrack from './DuneFactionTrack.vue'
 import DuneBoardState from './DuneBoardState.vue'
 import DuneContractMarket from './DuneContractMarket.vue'
+import DuneActionSpaces from './DuneActionSpaces.vue'
 
 
 export default {
@@ -56,6 +61,7 @@ export default {
   components: {
     DebugModal,
     DropdownButton,
+    DuneActionSpaces,
     DuneBoardState,
     DuneConflict,
     DuneContractMarket,
@@ -110,8 +116,8 @@ export default {
   height: calc(100vh - 60px);
   font-size: .8rem;
   overflow: auto;
-  color: #e8dcc8;
-  background-color: #1a1510;
+  color: #2c2416;
+  background-color: #f8f5f0;
 }
 
 .history-column {
@@ -136,6 +142,15 @@ export default {
   height: calc(100vh - 60px);
   min-width: 220px;
   max-width: 300px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-bottom: 3em;
+}
+
+.spaces-column {
+  height: calc(100vh - 60px);
+  min-width: 200px;
+  max-width: 240px;
   overflow-x: hidden;
   overflow-y: auto;
   padding-bottom: 3em;

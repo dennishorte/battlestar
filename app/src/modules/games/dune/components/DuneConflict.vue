@@ -6,8 +6,15 @@
     </div>
 
     <div v-if="conflictCard" class="conflict-card">
-      <div class="conflict-name">{{ conflictCard.name }}</div>
-      <div class="conflict-tier">Tier {{ conflictCard.tier }}</div>
+      <div class="conflict-main">
+        <span class="conflict-name">{{ conflictCard.name }}</span>
+        <span class="conflict-tier">Tier {{ conflictCard.tier }}</span>
+      </div>
+      <div class="rewards" v-if="conflictCard.rewards">
+        <div class="reward-line"><span class="reward-label">1st:</span> {{ conflictCard.rewards.first }}</div>
+        <div class="reward-line"><span class="reward-label">2nd:</span> {{ conflictCard.rewards.second }}</div>
+        <div class="reward-line" v-if="conflictCard.rewards.third"><span class="reward-label">3rd:</span> {{ conflictCard.rewards.third }}</div>
+      </div>
     </div>
     <div v-else class="no-conflict">No active conflict</div>
 
@@ -63,9 +70,10 @@ export default {
 <style scoped>
 .conflict {
   padding: .5em;
-  border: 1px solid #3d2e1a;
+  border: 1px solid #d4c8a8;
   border-radius: .3em;
   margin-bottom: .5em;
+  background-color: white;
 }
 
 .section-header {
@@ -74,7 +82,7 @@ export default {
   align-items: center;
   font-weight: 600;
   font-size: .9em;
-  color: #e8a83e;
+  color: #8b6914;
   margin-bottom: .3em;
 }
 
@@ -85,27 +93,47 @@ export default {
 }
 
 .conflict-card {
+  background-color: #f5f0e8;
+  padding: .4em .5em;
+  border-radius: .2em;
+  border: 1px solid #d4c8a8;
+}
+
+.conflict-main {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #2a2318;
-  padding: .3em .5em;
-  border-radius: .2em;
-  border: 1px solid #5a4020;
 }
 
 .conflict-name {
   font-weight: bold;
-  color: #f0d8a0;
+  color: #2c2416;
 }
 
 .conflict-tier {
   font-size: .85em;
-  color: #b8a888;
+  color: #8a7a68;
+}
+
+.rewards {
+  margin-top: .3em;
+  padding-top: .3em;
+  border-top: 1px solid #e0d8c8;
+}
+
+.reward-line {
+  font-size: .85em;
+  color: #4a3a20;
+  padding: .1em 0;
+}
+
+.reward-label {
+  font-weight: 600;
+  color: #8b6914;
 }
 
 .no-conflict {
-  color: #6a5a48;
+  color: #8a7a68;
   font-style: italic;
 }
 
@@ -127,6 +155,6 @@ export default {
 .conflict-deck-info {
   margin-top: .3em;
   font-size: .8em;
-  color: #6a5a48;
+  color: #8a7a68;
 }
 </style>

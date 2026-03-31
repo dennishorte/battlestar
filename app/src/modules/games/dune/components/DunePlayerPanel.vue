@@ -7,9 +7,9 @@
 
     <div class="body">
       <div class="resources">
-        <span class="resource" title="Solari">{{ player.solari }} sol</span>
-        <span class="resource" title="Spice">{{ player.spice }} spi</span>
-        <span class="resource" title="Water">{{ player.water }} wat</span>
+        <span class="resource" title="Solari">{{ player.solari }} solari</span>
+        <span class="resource" title="Spice">{{ player.spice }} spice</span>
+        <span class="resource" title="Water">{{ player.water }} water</span>
       </div>
 
       <div class="units">
@@ -107,9 +107,10 @@ export default {
 <style scoped>
 .player-panel {
   margin-bottom: .5em;
-  border: 1px solid #3d2e1a;
+  border: 1px solid #d4c8a8;
   border-radius: .3em;
   overflow: hidden;
+  background-color: white;
 }
 
 .header {
@@ -139,13 +140,14 @@ export default {
   display: flex;
   gap: .75em;
   font-weight: 600;
+  color: #2c2416;
 }
 
 .units {
   display: flex;
   gap: .5em;
   font-size: .85em;
-  color: #b8a888;
+  color: #6a5a48;
 }
 
 .influence-row {
@@ -158,12 +160,13 @@ export default {
   border-radius: .15em;
   font-size: .85em;
   font-weight: 600;
+  color: white;
 }
 
-.inf-emperor { background-color: #5a1515; }
-.inf-guild { background-color: #6a4010; }
-.inf-bg { background-color: #3a2060; }
-.inf-fremen { background-color: #1a4060; }
+.inf-emperor { background-color: #8b2020; }
+.inf-guild { background-color: #c07020; }
+.inf-bg { background-color: #5b3a8a; }
+.inf-fremen { background-color: #2a6090; }
 
 .deck-info {
   display: flex;
@@ -182,7 +185,7 @@ export default {
 .hand, .played, .revealed {
   padding: 0 .3em .3em;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 2px;
 }
 </style>
