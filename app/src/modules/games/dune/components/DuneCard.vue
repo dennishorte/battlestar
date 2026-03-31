@@ -64,18 +64,18 @@ export default {
   gap: .3em;
   padding: .15em .5em;
   border-radius: .2em;
-  background-color: #2a2318;
-  border: 1px solid #4a3c28;
+  background-color: #f5f0e8;
+  border: 1px solid #d4c8a8;
   font-size: .85em;
   margin: 1px;
 }
 
 .card-name {
-  color: #e8dcc8;
+  color: #2c2416;
 }
 
 .card-cost {
-  color: #e8a83e;
+  color: #8b6914;
   font-weight: bold;
   font-size: .85em;
 }

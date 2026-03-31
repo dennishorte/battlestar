@@ -30,38 +30,39 @@ export default {
 .contract-market {
   margin: .5em 0;
   padding: .5em;
-  border: 1px solid #3d2e1a;
+  border: 1px solid #d4c8a8;
   border-radius: .3em;
+  background-color: white;
 }
 
 .section-header {
   font-weight: 600;
   font-size: .9em;
-  color: #e8a83e;
+  color: #8b6914;
   margin-bottom: .3em;
 }
 
 .cards {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 3px;
 }
 
 .contract-card {
-  display: inline-flex;
+  display: flex;
   padding: .15em .5em;
   border-radius: .2em;
-  background-color: #2a2318;
-  border: 1px solid #5a6020;
+  background-color: #f0f5e8;
+  border: 1px solid #b8c888;
   font-size: .85em;
 }
 
 .contract-name {
-  color: #c8d888;
+  color: #4a5a20;
 }
 
 .no-contracts {
-  color: #6a5a48;
+  color: #8a7a68;
   font-style: italic;
   font-size: .85em;
 }
