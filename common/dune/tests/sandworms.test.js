@@ -16,8 +16,7 @@ describe('Sandworm Summoning', () => {
     t.choose(game, 'Pass')
 
     // Micah plays Dune TDP (yellow) to Hagga Basin (maker space with sandworm option)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Hagga Basin')
 
     // Choose the maker hook option to get a sandworm
@@ -59,8 +58,7 @@ describe('Sandworm Summoning', () => {
     t.choose(game, 'Pass')
 
     // Micah plays yellow card to Hagga Basin
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Hagga Basin')
 
     const choices = t.currentChoices(game)
@@ -92,8 +90,7 @@ describe('Sandworm Summoning', () => {
     t.choose(game, 'Pass')
 
     // Micah plays yellow card to Hagga Basin
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Hagga Basin')
 
     const choices = t.currentChoices(game)
@@ -124,8 +121,7 @@ describe('Sandworm Summoning', () => {
     t.choose(game, 'Pass')
 
     // Micah plays yellow card
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Hagga Basin')
 
     const choices = t.currentChoices(game)
@@ -148,8 +144,7 @@ describe('Sandworm Summoning', () => {
     expect(game.state.makerHooks?.dennis || 0).toBe(0)
 
     // Sietch Tabr grants maker-hook. Dennis plays Diplomacy -> Sietch Tabr
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
 
     const spaces = t.currentChoices(game)
     if (!spaces.includes('Sietch Tabr')) {
@@ -184,8 +179,7 @@ describe('Sandworm Reward Doubling', () => {
     game.run()
 
     // Deploy troops
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 

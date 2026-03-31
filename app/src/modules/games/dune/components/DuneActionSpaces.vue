@@ -15,9 +15,18 @@
     </div>
 
     <div v-for="group in spaceGroups" :key="group.label" class="space-group">
-      <div class="group-label" :class="`group-${group.icon}`">{{ group.label }}</div>
+      <div class="group-label" :class="`group-${group.icon}`">
+        <DuneFactionIcon v-if="isFaction(group.icon)"
+                         :faction="group.icon"
+                         size=".9em"
+                         class="group-icon" />
+        {{ group.label }}
+      </div>
       <div v-for="space in group.spaces" :key="space.id" class="space-row">
-        <span class="space-icon" :class="`icon-${space.icon}`" />
+        <DuneFactionIcon v-if="isFaction(space.icon)"
+                         :faction="space.icon"
+                         size=".85em" />
+        <span v-else class="space-icon" :class="`icon-${space.icon}`" />
         <span class="space-name">{{ space.name }}</span>
         <span class="space-occupant" v-if="game.state.boardSpaces[space.id]">
           {{ game.state.boardSpaces[space.id] }}
@@ -46,11 +55,17 @@
 
 <script>
 import { dune } from 'battlestar-common'
+import DuneFactionIcon from './DuneFactionIcon.vue'
 
 const boardSpaces = dune.res.boardSpaces
+const factionIds = new Set(['emperor', 'guild', 'bene-gesserit', 'fremen'])
 
 export default {
   name: 'DuneActionSpaces',
+
+  components: {
+    DuneFactionIcon,
+  },
 
   inject: ['game'],
 
@@ -82,6 +97,10 @@ export default {
   },
 
   methods: {
+    isFaction(icon) {
+      return factionIds.has(icon)
+    },
+
     costLabel(space) {
       if (!space.cost) {
         return null
@@ -159,6 +178,7 @@ export default {
   color: white;
 }
 
+.group-icon { color: white; }
 .group-purple { background-color: #6a3d8a; }
 .group-yellow { background-color: #b8860b; }
 .group-green { background-color: #3a7d3a; }
@@ -189,10 +209,6 @@ export default {
 .icon-purple { background-color: #6a3d8a; border-radius: 50%; }
 .icon-yellow { background-color: #b8860b; clip-path: polygon(50% 0%, 100% 100%, 0% 100%); }
 .icon-green { background-color: #3a7d3a; clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); }
-.icon-emperor { background-color: #d03030; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
-.icon-guild { background-color: #e08828; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
-.icon-bene-gesserit { background-color: #8855cc; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
-.icon-fremen { background-color: #3088cc; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
 
 .space-name {
   flex: 1;

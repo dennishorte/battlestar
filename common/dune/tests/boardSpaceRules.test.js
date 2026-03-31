@@ -7,8 +7,7 @@ describe('Board Space Rules', () => {
     game.run()
 
     // Dagger (green) — Imperial Privilege is green but needs 2+ Emperor
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger')
+    t.choose(game, 'Agent Turn.Dagger')
 
     const spaces = t.currentChoices(game)
     expect(spaces).not.toContain('Imperial Privilege')
@@ -21,8 +20,7 @@ describe('Board Space Rules', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger')
+    t.choose(game, 'Agent Turn.Dagger')
 
     const spaces = t.currentChoices(game)
     expect(spaces).toContain('Imperial Privilege')
@@ -49,8 +47,7 @@ describe('Board Space Rules', () => {
     game.run()
 
     // Dagger (green) → Sword Master costs 8 Solari. With 0 Solari, can't visit.
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger')
+    t.choose(game, 'Agent Turn.Dagger')
 
     const spaces = t.currentChoices(game)
     expect(spaces).not.toContain('Sword Master')
@@ -63,8 +60,7 @@ describe('Board Space Rules', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger')
+    t.choose(game, 'Agent Turn.Dagger')
 
     const spaces = t.currentChoices(game)
     expect(spaces).toContain('Sword Master')
@@ -77,8 +73,7 @@ describe('Board Space Rules', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance') // purple
+    t.choose(game, 'Agent Turn.Reconnaissance') // purple
 
     const spaces = t.currentChoices(game)
     expect(spaces).not.toContain('Research Station')
@@ -91,8 +86,7 @@ describe('Board Space Rules', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
 
     const spaces = t.currentChoices(game)
     expect(spaces).toContain('Research Station')
@@ -105,8 +99,7 @@ describe('Board Space Rules', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
 
     const spaces = t.currentChoices(game)
     expect(spaces).not.toContain('Sardaukar')
@@ -119,8 +112,7 @@ describe('Board Space Rules', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
 
     const spaces = t.currentChoices(game)
     expect(spaces).toContain('Sardaukar')

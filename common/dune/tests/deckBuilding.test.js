@@ -35,8 +35,7 @@ describe('Deck Building', () => {
     expect(player.getCounter('hasSwordmaster')).toBe(0)
 
     // Dagger (green) -> Sword Master (green, cost: 8 solari)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger')
+    t.choose(game, 'Agent Turn.Dagger')
 
     const spaces = t.currentChoices(game)
     expect(spaces).toContain('Sword Master')
@@ -54,8 +53,7 @@ describe('Deck Building', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger')
+    t.choose(game, 'Agent Turn.Dagger')
 
     const spaces = t.currentChoices(game)
     expect(spaces).not.toContain('Sword Master')

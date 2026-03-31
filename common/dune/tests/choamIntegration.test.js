@@ -10,8 +10,7 @@ describe('CHOAM Integration', () => {
     game.run()
 
     // Diplomacy → Dutiful Service (emperor, has contract effect)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
     t.choose(game, 'Dutiful Service')
 
     const player = game.players.byName('dennis')
@@ -27,8 +26,7 @@ describe('CHOAM Integration', () => {
     expect(marketBefore).toBe(2)
 
     // Diplomacy → Dutiful Service (contract effect)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
     t.choose(game, 'Dutiful Service')
 
     // Should be offered contract choice
@@ -63,8 +61,7 @@ describe('CHOAM Integration', () => {
     t.choose(game, 'Pass')
 
     // Micah: Dune TDP (yellow) → Accept Contract
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
 
     const spaces = t.currentChoices(game)
     expect(spaces).toContain('Accept Contract')

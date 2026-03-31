@@ -16,17 +16,13 @@ describe('Spice Refinery Control Bonus', () => {
     t.choose(game, 'Pass')
 
     // Micah visits Spice Refinery — needs a purple card
-    // Find a purple card in micah's choices
-    t.choose(game, 'Agent Turn')
-    const cards = t.currentChoices(game)
-    // Micah has: starting deck — Reconnaissance is the only purple card
-    // Or Signet Ring has purple
-    const purpleCard = cards.find(c => c === 'Reconnaissance' || c === 'Signet Ring')
+    const handZone = game.zones.byId('micah.hand')
+    const purpleCard = handZone.cardlist().find(c => c.agentIcons.includes('purple'))
     if (!purpleCard) {
       // Skip if no purple card in hand
       return
     }
-    t.choose(game, purpleCard)
+    t.choose(game, 'Agent Turn.' + purpleCard.name)
 
     const spaces = t.currentChoices(game)
     if (!spaces.includes('Spice Refinery')) {

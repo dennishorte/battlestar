@@ -10,8 +10,7 @@ describe('Units and Deployment', () => {
     game.run()
 
     // Reconnaissance (purple) → Arrakeen (combat space)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
 
     const choices = t.currentChoices(game)
@@ -28,8 +27,7 @@ describe('Units and Deployment', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 
@@ -48,8 +46,7 @@ describe('Units and Deployment', () => {
     game.run()
 
     // Arrakeen gives +1 troop
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 0 troop(s) from garrison')
 
@@ -64,8 +61,7 @@ describe('Units and Deployment', () => {
     game.run()
 
     // Dagger (green) → Assembly Hall (non-combat)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger')
+    t.choose(game, 'Agent Turn.Dagger')
     t.choose(game, 'Assembly Hall')
 
     // Should NOT be at a deploy prompt — should be at plot intrigue or next player

@@ -2,10 +2,14 @@
   <div class="dune-card" :class="cardClasses">
     <div class="card-header-row">
       <span class="card-icons" v-if="allIcons.length">
-        <span v-for="(icon, i) in allIcons"
-              :key="i"
-              class="icon"
-              :class="`icon-${icon.type} shape-${icon.shape}`" />
+        <template v-for="(icon, i) in allIcons" :key="i">
+          <DuneFactionIcon v-if="icon.faction"
+                           :faction="icon.type"
+                           size=".95em" />
+          <span v-else
+                class="icon"
+                :class="`icon-${icon.type} shape-${icon.shape}`" />
+        </template>
       </span>
       <span class="card-name">{{ card.name }}</span>
       <span class="card-cost" v-if="card.persuasionCost">{{ card.persuasionCost }}</span>
@@ -23,8 +27,14 @@
 
 
 <script>
+import DuneFactionIcon from './DuneFactionIcon.vue'
+
 export default {
   name: 'DuneCard',
+
+  components: {
+    DuneFactionIcon,
+  },
 
   props: {
     card: {
@@ -55,7 +65,7 @@ export default {
         icons.push({ type: icon, shape: this.shapeFor(icon) })
       }
       for (const faction of factionAccess) {
-        icons.push({ type: faction, shape: 'diamond' })
+        icons.push({ type: faction, faction: true })
       }
       return icons
     },
@@ -92,7 +102,7 @@ export default {
       if (icon === 'yellow') {
         return 'triangle'
       }
-      return 'diamond'
+      return 'circle'
     },
   },
 }
@@ -157,20 +167,10 @@ export default {
   clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
 }
 
-.shape-diamond {
-  width: .95em;
-  height: .95em;
-  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-}
-
 /* Colors */
 .icon-green { background-color: #3a7d3a; }
 .icon-purple { background-color: #6a3d8a; }
 .icon-yellow { background-color: #b8860b; }
-.icon-emperor { background-color: #d03030; }
-.icon-guild { background-color: #e08828; }
-.icon-bene-gesserit { background-color: #8855cc; }
-.icon-fremen { background-color: #3088cc; }
 
 .card-effects {
   margin-top: .15em;

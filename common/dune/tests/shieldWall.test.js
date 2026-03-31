@@ -48,8 +48,7 @@ describe('Sandworm Rules', () => {
     expect(game.state.shieldWall).toBe(true)
 
     // Reconnaissance (purple) -> Sietch Tabr (purple, requires fremen >= 2)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
 
     const spaces = t.currentChoices(game)
     if (!spaces.includes('Sietch Tabr')) {

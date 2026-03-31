@@ -17,8 +17,7 @@ describe('Harvest and Bonus Spice', () => {
     t.choose(game, 'Pass')
 
     // Micah has Dune, The Desert Planet (yellow) → Imperial Basin
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Imperial Basin')
     t.choose(game, 'Deploy 0 troop(s) from garrison')
 

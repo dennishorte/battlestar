@@ -10,8 +10,7 @@ describe('Supply Exhaustion', () => {
     game.run()
 
     // Dennis visits Arrakeen which gives +1 troop — but supply is empty
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
 
     // After space effects, garrison and supply should be unchanged for troop recruitment

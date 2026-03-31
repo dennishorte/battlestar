@@ -40,8 +40,7 @@ describe('Control Marker from Combat', () => {
     expect(game.state.controlMarkers[location]).toBeNull()
 
     // Dennis deploys troops and wins combat
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 

@@ -40,13 +40,28 @@ function playerTurnsPhase(game) {
       })
 
       if (player.availableAgents > 0) {
-        const choices = ['Agent Turn', 'Reveal Turn']
+        // Build playable card list for nested Agent Turn choice
+        const handZone = game.zones.byId(`${player.name}.hand`)
+        const handCards = handZone.cardlist()
+        const playableCards = handCards.filter(c => c.agentIcons.length > 0 || c.factionAccess.length > 0 || c.spyAccess)
+
+        const choices = []
+        if (playableCards.length > 0) {
+          choices.push({
+            title: 'Agent Turn',
+            choices: playableCards.map(c => c.name),
+          })
+        }
+        choices.push('Reveal Turn')
+
         const [choice] = game.actions.choose(player, choices, {
-          title: 'Choose Turn Type',
+          title: 'Choose Turn',
         })
 
-        if (choice === 'Agent Turn') {
-          agentTurn(game, player)
+        if (choice.title === 'Agent Turn') {
+          const cardName = choice.selection[0]
+          const card = playableCards.find(c => c.name === cardName)
+          agentTurn(game, player, card)
         }
         else {
           revealTurn(game, player)
@@ -62,7 +77,7 @@ function playerTurnsPhase(game) {
 /**
  * Agent Turn: Play a card, send an agent to a board space, resolve effects.
  */
-function agentTurn(game, player) {
+function agentTurn(game, player, card) {
   game.log.add({
     template: '{player}: Agent Turn',
     args: { player },
@@ -84,25 +99,6 @@ function agentTurn(game, player) {
 
   // Offer Plot Intrigue at start of turn
   offerPlotIntrigue(game, player)
-
-  // Step 1: Choose a card from hand
-  const handZone = game.zones.byId(`${player.name}.hand`)
-  const handCards = handZone.cardlist()
-  const playableCards = handCards.filter(c => c.agentIcons.length > 0 || c.factionAccess.length > 0 || c.spyAccess)
-
-  if (playableCards.length === 0) {
-    game.log.add({ template: 'No playable cards', event: 'memo' })
-    // Force reveal turn instead
-    game.log.outdent()
-    revealTurn(game, player)
-    return
-  }
-
-  const cardChoices = playableCards.map(c => c.name)
-  const [cardChoice] = game.actions.choose(player, cardChoices, {
-    title: 'Choose a card to play',
-  })
-  const card = playableCards.find(c => c.name === cardChoice)
 
   // Step 2: Choose a board space
   const boardSpaces = getBoardSpaces()

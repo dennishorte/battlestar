@@ -10,8 +10,7 @@ describe('Faction Bonus Permanence', () => {
     game.run()
 
     // Gain guild influence to 4 via Deliver Supplies
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
     t.choose(game, 'Deliver Supplies')
 
     // Guild 3 -> 4: +3 Solari bonus
@@ -30,8 +29,7 @@ describe('Faction Bonus Permanence', () => {
     game.run()
 
     // Gain fremen influence to 4 via Fremkit (fremen faction space)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
     t.choose(game, 'Fremkit')
 
     // Fremen 3 -> 4: bonus is +1 Water

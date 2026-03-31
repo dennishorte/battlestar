@@ -24,8 +24,7 @@ describe('Agent Recall', () => {
     game.run()
 
     // Dennis places an agent
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger')
+    t.choose(game, 'Agent Turn.Dagger')
     t.choose(game, 'Assembly Hall')
 
     // Board space should be occupied

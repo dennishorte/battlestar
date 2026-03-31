@@ -10,8 +10,7 @@ describe('Spy Integration', () => {
     game.run()
 
     // Diplomacy → Espionage (bene-gesserit faction space)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
     t.choose(game, 'Espionage')
 
     // Espionage effects include spy placement — should get a spy post choice
@@ -50,8 +49,7 @@ describe('Spy Integration', () => {
 
     // Dagger (green) → Assembly Hall is occupied by micah
     // Dennis has spy on post I → can infiltrate
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger')
+    t.choose(game, 'Agent Turn.Dagger')
 
     const spaces = t.currentChoices(game)
     expect(spaces).toContain('Assembly Hall')
@@ -71,8 +69,7 @@ describe('Spy Integration', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger')
+    t.choose(game, 'Agent Turn.Dagger')
     t.choose(game, 'Assembly Hall')
 
     // Should be offered Gather Intelligence

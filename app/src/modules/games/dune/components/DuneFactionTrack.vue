@@ -18,7 +18,10 @@
       </thead>
       <tbody>
         <tr v-for="faction in factions" :key="faction.id" class="faction-row">
-          <td class="faction-label" :class="`label-${faction.id}`">{{ faction.short }}</td>
+          <td class="faction-label" :class="`label-${faction.id}`">
+            <DuneFactionIcon :faction="faction.id" size="1em" />
+            {{ faction.short }}
+          </td>
           <td v-for="player in players" :key="player.name" class="influence-cell">
             <span class="influence-val"
                   :class="levelClass(player.getInfluence(faction.id))">
@@ -41,8 +44,14 @@
 
 
 <script>
+import DuneFactionIcon from './DuneFactionIcon.vue'
+
 export default {
   name: 'DuneFactionTrack',
+
+  components: {
+    DuneFactionIcon,
+  },
 
   inject: ['actor', 'game'],
 
@@ -123,9 +132,13 @@ export default {
 }
 
 .faction-label {
+  display: flex;
+  align-items: center;
+  gap: .25em;
   font-weight: 600;
   padding: .2em .3em;
   font-size: .85em;
+  white-space: nowrap;
 }
 
 .label-emperor { color: #d03030; }

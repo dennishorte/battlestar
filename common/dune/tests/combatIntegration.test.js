@@ -26,8 +26,7 @@ describe('Combat Integration', () => {
     game.run()
 
     // Dennis sends agent to Arrakeen (combat space), deploys 2
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 
@@ -56,8 +55,7 @@ describe('Combat Integration', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 1 troop(s) from garrison')
 
@@ -97,8 +95,7 @@ describe('Combat Integration', () => {
     game.run()
 
     // Dennis deploys troops
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 
@@ -131,16 +128,14 @@ describe('Combat Integration', () => {
     game.run()
 
     // Dennis: deploy 2 troops to conflict via Arrakeen
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 
     // Micah: deploy 1 troop to conflict via a different combat space
-    t.choose(game, 'Agent Turn')
     // Micah has: CA, Seek Allies, Dune TDP, Dagger, Diplomacy
     // Dune TDP (yellow) can go to Imperial Basin (combat)
-    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Imperial Basin')
     t.choose(game, 'Deploy 1 troop(s) from garrison')
 

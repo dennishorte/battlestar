@@ -9,8 +9,7 @@ describe('CHOAM Contract Completion', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
     t.choose(game, 'Deliver Supplies')
 
     const completed = game.zones.byId('dennis.contractsCompleted')
@@ -26,8 +25,7 @@ describe('CHOAM Contract Completion', () => {
     t.choose(game, 'Pass')
 
     // Micah: Dune TDP (yellow) → Accept Contract
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Accept Contract')
 
     // Should be offered contract choice from market

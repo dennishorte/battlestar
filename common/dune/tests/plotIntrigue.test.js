@@ -9,10 +9,10 @@ describe('Plot Intrigue Cards', () => {
     })
     game.run()
 
-    // Dennis takes agent turn
-    t.choose(game, 'Agent Turn')
+    // Dennis takes agent turn with Dagger
+    t.choose(game, 'Agent Turn.Dagger')
 
-    // Plot intrigue is offered before card choice
+    // Plot intrigue is offered after turn+card selection
     const choices = t.currentChoices(game)
     expect(choices).toContain('Windfall')
     expect(choices).toContain('Pass')
@@ -35,14 +35,14 @@ describe('Plot Intrigue Cards', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
+    t.choose(game, 'Agent Turn.Dagger')
 
     // Pass on plot intrigue
     t.choose(game, 'Pass')
 
-    // Should now be at card choice
+    // Should now be at board space choice
     const choices = t.currentChoices(game)
-    expect(choices).toContain('Dagger')
+    expect(choices).toContain('Assembly Hall')
 
     const player = game.players.byName('dennis')
     expect(player.solari).toBe(0)

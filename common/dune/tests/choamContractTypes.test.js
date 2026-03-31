@@ -29,8 +29,7 @@ describe('CHOAM Contract Types', () => {
 
     // Dennis sends agent to Imperial Basin (maker space) to harvest spice
     // Base harvest is 1, plus 2 bonus = 3 spice total -> triggers Harvest 3+
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Imperial Basin')
     // Imperial Basin offers deployment
     const choices = t.currentChoices(game)
@@ -55,8 +54,7 @@ describe('CHOAM Contract Types', () => {
     t.choose(game, 'Pass')
 
     // Micah visits Accept Contract
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Accept Contract')
 
     // Choose a contract from market

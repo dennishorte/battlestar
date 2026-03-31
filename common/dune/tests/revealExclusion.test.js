@@ -9,8 +9,7 @@ describe('Agent-Turn Cards Excluded from Reveal', () => {
     expect(game.zones.byId('dennis.hand').cardlist().length).toBe(5)
 
     // Dennis plays Dagger (green) to Assembly Hall
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger')
+    t.choose(game, 'Agent Turn.Dagger')
     t.choose(game, 'Assembly Hall')
 
     // Dagger is now in played zone, not hand
@@ -26,19 +25,16 @@ describe('Agent-Turn Cards Excluded from Reveal', () => {
     game.run()
 
     // Dennis plays 2 agent turns (has 2 agents)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger')
+    t.choose(game, 'Agent Turn.Dagger')
     t.choose(game, 'Assembly Hall')
 
-    // Micah takes turn
-    t.choose(game, 'Agent Turn')
-    const micahCard = t.currentChoices(game)[0]
-    t.choose(game, micahCard)
+    // Micah takes turn — pick first available card
+    const micahCards = game.waiting.selectors[0].choices.find(c => c.title === 'Agent Turn').choices
+    t.choose(game, 'Agent Turn.' + micahCards[0])
     t.choose(game, t.currentChoices(game)[0])
 
     // Dennis plays second agent
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 0 troop(s) from garrison')
 
