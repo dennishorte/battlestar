@@ -34,7 +34,7 @@ function drawCards(game, player, count) {
 
   if (drawn > 0) {
     game.log.add({
-      template: '{player} draws {count} card(s)',
+      template: '{player} draws {count} cards',
       args: { player, count: drawn },
     })
   }
@@ -68,7 +68,7 @@ function revealHand(game, player) {
 
   if (cards.length > 0) {
     game.log.add({
-      template: '{player} reveals {count} card(s)',
+      template: '{player} reveals {count} cards',
       args: { player, count: cards.length },
     })
   }
@@ -163,7 +163,7 @@ function drawIntrigueCard(game, player, count = 1) {
 
   if (drawn > 0) {
     game.log.add({
-      template: '{player} draws {count} Intrigue card(s)',
+      template: '{player} draws {count} Intrigue cards',
       args: { player, count: drawn },
     })
   }

@@ -1,6 +1,6 @@
 <template>
   <div class="player-panel">
-    <div class="header" :style="{ 'background-color': player.color }">
+    <div class="header" :style="{ 'border-color': player.color }">
       {{ player.name }}
       <span class="vp-badge">{{ player.vp }} VP</span>
     </div>
@@ -119,11 +119,13 @@ export default {
   align-items: center;
   padding: .25em .5em;
   font-weight: bold;
-  color: white;
+  color: #2c2416;
+  border-bottom: 3px solid;
 }
 
 .vp-badge {
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: #8b6914;
+  color: white;
   padding: .1em .4em;
   border-radius: .2em;
   font-size: .9em;

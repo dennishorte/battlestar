@@ -12,7 +12,7 @@
                 :key="player.name"
                 class="player-influence"
                 :style="{ color: player.color }">
-            {{ player.name[0] }}:{{ player.getInfluence(faction) }}
+            {{ player.name }}:{{ player.getInfluence(faction) }}
           </span>
         </div>
         <div class="alliance" v-if="game.state.alliances[faction]">
