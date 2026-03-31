@@ -30,6 +30,16 @@ TestUtil.fixture = function(options = {}) {
     ...options,
   }, options.viewer || 'dennis')
 
+  // Pre-assign colors so chooseColor is a no-op in tests
+  const defaultColors = ['#d42e35', '#73bbfa', '#2ebd32', '#e8811c']
+  game.testSetBreakpoint('initialization-complete', (game) => {
+    game.players.all().forEach((p, i) => {
+      if (!p.color) {
+        p.color = defaultColors[i]
+      }
+    })
+  })
+
   return game
 }
 
