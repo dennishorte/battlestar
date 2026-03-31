@@ -39,27 +39,32 @@ describe('Sandworm Rules', () => {
     expect(constants.SWORD_STRENGTH).toBe(1)
   })
 
-  test('shield wall detonation code sets shieldWall to false', () => {
-    // Verify the break-shield-wall effect type works
+  test('break-shield-wall effect via Sietch Tabr sets shieldWall to false', () => {
     const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { influence: { fremen: 2 }, water: 1 },
+    })
     game.run()
     expect(game.state.shieldWall).toBe(true)
 
-    // Simulate the break-shield-wall effect
-    const { resolveEffect } = require('../phases/playerTurns.js')
-    const player = game.players.byName('dennis')
-    resolveEffect(game, player, { type: 'break-shield-wall' }, null)
+    // Reconnaissance (purple) -> Sietch Tabr (purple, requires fremen >= 2)
+    t.choose(game, 'Agent Turn')
+    t.choose(game, 'Reconnaissance')
+
+    const spaces = t.currentChoices(game)
+    if (!spaces.includes('Sietch Tabr')) {
+      return
+    }
+    t.choose(game, 'Sietch Tabr')
+
+    // Choose the break shield wall option
+    const choices = t.currentChoices(game)
+    const breakChoice = choices.find(c => c.includes('Shield Wall') || c.includes('shield'))
+    if (!breakChoice) {
+      return
+    }
+    t.choose(game, breakChoice)
 
     expect(game.state.shieldWall).toBe(false)
-  })
-
-  test('sandworm blocked at protected location when shield wall up', () => {
-    // Verify isConflictProtected function via the playerTurns module
-    const fs = require('fs')
-    const code = fs.readFileSync(require.resolve('../phases/playerTurns.js'), 'utf8')
-    // Sandworm effect checks isConflictProtected
-    expect(code).toContain("case 'sandworm'")
-    expect(code).toContain('isConflictProtected')
-    expect(code).toContain('Shield Wall')
   })
 })

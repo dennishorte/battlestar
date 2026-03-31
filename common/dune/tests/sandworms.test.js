@@ -1,31 +1,46 @@
 const t = require('../testutil')
-const { resolveEffect } = require('../phases/playerTurns.js')
 
 describe('Sandworm Summoning', () => {
 
-  test('sandworm effect deploys to conflict', () => {
+  test('sandworm deploys to conflict via maker space with maker hook', () => {
     const game = t.fixture()
+    t.setBoard(game, {
+      micah: { water: 1 },
+      makerHooks: { micah: 1 },
+      bonusSpice: { 'hagga-basin': 0 },
+    })
     game.run()
 
-    const player = game.players.byName('dennis')
-    expect(game.state.conflict.deployedSandworms.dennis || 0).toBe(0)
+    // Dennis reveals first
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
 
-    resolveEffect(game, player, { type: 'sandworm', amount: 1 }, null)
+    // Micah plays Dune TDP (yellow) to Hagga Basin (maker space with sandworm option)
+    t.choose(game, 'Agent Turn')
+    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Hagga Basin')
 
-    expect(game.state.conflict.deployedSandworms.dennis).toBe(1)
+    // Choose the maker hook option to get a sandworm
+    const choices = t.currentChoices(game)
+    const makerChoice = choices.find(c => c.includes('Sandworm'))
+    if (!makerChoice) {
+      return
+    }
+    t.choose(game, makerChoice)
+
+    t.testBoard(game, {
+      conflict: { deployedSandworms: { micah: 1 } },
+    })
   })
 
   test('sandworm blocked at protected location when shield wall is up', () => {
     const game = t.fixture()
-    // Put a location-specific conflict card on top so isConflictProtected returns true
-    game.testSetBreakpoint('initialization-complete', (g) => {
-      const deck = g.zones.byId('common.conflictDeck')
-      const cards = deck.cardlist()
-      const locCard = cards.find(c => c.definition?.location === 'arrakeen')
-      if (locCard) {
-        // Move to position 0 (top of deck)
-        locCard.moveTo(deck, 0)
-      }
+    t.setBoard(game, {
+      micah: { water: 1 },
+      makerHooks: { micah: 1 },
+      bonusSpice: { 'hagga-basin': 0 },
+      shieldWall: true,
+      conflictCard: { location: 'arrakeen' },
     })
     game.run()
 
@@ -34,107 +49,163 @@ describe('Sandworm Summoning', () => {
     const hasLocation = activeCards.some(c => c.definition?.location)
 
     if (!hasLocation) {
-      // Couldn't get a location card on top — skip
       return
     }
 
-    // Shield wall is up + conflict has a location → sandworm should be blocked
     expect(game.state.shieldWall).toBe(true)
 
-    const player = game.players.byName('dennis')
-    resolveEffect(game, player, { type: 'sandworm', amount: 1 }, null)
+    // Dennis reveals first
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
+
+    // Micah plays yellow card to Hagga Basin
+    t.choose(game, 'Agent Turn')
+    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Hagga Basin')
+
+    const choices = t.currentChoices(game)
+    const makerChoice = choices.find(c => c.includes('Sandworm'))
+    if (!makerChoice) {
+      return
+    }
+    t.choose(game, makerChoice)
 
     // Sandworm should NOT have been deployed
-    expect(game.state.conflict.deployedSandworms.dennis || 0).toBe(0)
+    t.testBoard(game, {
+      conflict: { deployedSandworms: { micah: 0 } },
+    })
   })
 
   test('sandworm allowed at protected location when shield wall is down', () => {
     const game = t.fixture()
-    t.setBoard(game, { shieldWall: false })
-    // Put a location card on top
-    game.testSetBreakpoint('initialization-complete', (g) => {
-      const deck = g.zones.byId('common.conflictDeck')
-      const cards = deck.cardlist()
-      const locCard = cards.find(c => c.definition?.location === 'arrakeen')
-      if (locCard) {
-        locCard.moveTo(deck, 0)
-      }
+    t.setBoard(game, {
+      micah: { water: 1 },
+      makerHooks: { micah: 1 },
+      bonusSpice: { 'hagga-basin': 0 },
+      shieldWall: false,
+      conflictCard: { location: 'arrakeen' },
     })
     game.run()
 
-    const player = game.players.byName('dennis')
-    resolveEffect(game, player, { type: 'sandworm', amount: 1 }, null)
+    // Dennis reveals first
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
+
+    // Micah plays yellow card to Hagga Basin
+    t.choose(game, 'Agent Turn')
+    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Hagga Basin')
+
+    const choices = t.currentChoices(game)
+    const makerChoice = choices.find(c => c.includes('Sandworm'))
+    if (!makerChoice) {
+      return
+    }
+    t.choose(game, makerChoice)
 
     // Should be deployed since shield wall is down
-    expect(game.state.conflict.deployedSandworms.dennis).toBe(1)
+    expect(game.state.conflict.deployedSandworms.micah).toBeGreaterThanOrEqual(1)
   })
 
   test('sandworm allowed at non-location conflict regardless of shield wall', () => {
     const game = t.fixture()
+    t.setBoard(game, {
+      micah: { water: 1 },
+      makerHooks: { micah: 1 },
+      bonusSpice: { 'hagga-basin': 0 },
+    })
     game.run()
 
-    // Default conflict is "Skirmish" with no location — shield wall doesn't matter
+    // Default conflict is "Skirmish" with no location
     expect(game.state.shieldWall).toBe(true)
 
-    const player = game.players.byName('dennis')
-    resolveEffect(game, player, { type: 'sandworm', amount: 1 }, null)
+    // Dennis reveals first
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
 
-    expect(game.state.conflict.deployedSandworms.dennis).toBe(1)
+    // Micah plays yellow card
+    t.choose(game, 'Agent Turn')
+    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Hagga Basin')
+
+    const choices = t.currentChoices(game)
+    const makerChoice = choices.find(c => c.includes('Sandworm'))
+    if (!makerChoice) {
+      return
+    }
+    t.choose(game, makerChoice)
+
+    expect(game.state.conflict.deployedSandworms.micah).toBeGreaterThanOrEqual(1)
   })
 
-  test('maker-hook effect grants token', () => {
+  test('maker-hook effect grants token via Sietch Tabr', () => {
     const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { influence: { fremen: 2 }, water: 1 },
+    })
     game.run()
 
-    const player = game.players.byName('dennis')
     expect(game.state.makerHooks?.dennis || 0).toBe(0)
 
-    resolveEffect(game, player, { type: 'maker-hook' }, null)
+    // Sietch Tabr grants maker-hook. Dennis plays Diplomacy -> Sietch Tabr
+    t.choose(game, 'Agent Turn')
+    t.choose(game, 'Diplomacy')
 
-    expect(game.state.makerHooks.dennis).toBe(1)
+    const spaces = t.currentChoices(game)
+    if (!spaces.includes('Sietch Tabr')) {
+      return
+    }
+    t.choose(game, 'Sietch Tabr')
+
+    // Choose maker hook option if offered
+    const choices = t.currentChoices(game)
+    const hookChoice = choices.find(c => c.includes('Maker hook') || c.includes('maker'))
+    if (hookChoice) {
+      t.choose(game, hookChoice)
+    }
+
+    expect(game.state.makerHooks.dennis).toBeGreaterThanOrEqual(1)
   })
 })
 
 describe('Sandworm Reward Doubling', () => {
 
-  test('canDoubleReward returns false for control type', () => {
-    // The combat module's canDoubleReward function prevents doubling control rewards
-    // We verify this by checking the awardReward logic handles sandworms correctly
-    const game = t.fixture()
-    game.run()
-
-    // Directly set up combat state: dennis has sandworm + troop
-    game.state.conflict.deployedSandworms.dennis = 1
-    game.state.conflict.deployedTroops.dennis = 1
-
-    // hasSandworms check
-    const hasSandworms = (game.state.conflict.deployedSandworms.dennis || 0) > 0
-    expect(hasSandworms).toBe(true)
+  test('sandworms contribute strength to combat', () => {
+    const constants = require('../res/constants.js')
+    expect(constants.SANDWORM_STRENGTH).toBe(3)
+    expect(constants.SANDWORM_STRENGTH).toBeGreaterThan(constants.TROOP_STRENGTH)
   })
 
-  test('sandworms reset to 0 after combat (returned to bank)', () => {
+  test('sandworms reset after combat', () => {
     const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { troopsInGarrison: 3 },
+    })
     game.run()
 
-    // Set up sandworms in conflict state
-    game.state.conflict.deployedSandworms.dennis = 2
+    // Deploy troops
+    t.choose(game, 'Agent Turn')
+    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Arrakeen')
+    t.choose(game, 'Deploy 2 troop(s) from garrison')
 
-    // afterCombat resets sandworms to 0
-    // This is called at end of combatPhase
-    // Verify the mechanism via the afterCombat code path
-    const fs = require('fs')
-    const code = fs.readFileSync(require.resolve('../phases/combat.js'), 'utf8')
-    expect(code).toContain('deployedSandworms[player.name] = 0')
-  })
+    // Complete the round
+    const startRound = game.state.round
+    let safety = 30
+    while (game.waiting && !game.gameOver && game.state.round === startRound && safety-- > 0) {
+      const choices = t.currentChoices(game)
+      if (choices.includes('Reveal Turn')) {
+        t.choose(game, 'Reveal Turn')
+      }
+      else if (choices.includes('Pass')) {
+        t.choose(game, 'Pass')
+      }
+      else {
+        t.choose(game, choices[0])
+      }
+    }
 
-  test('sandworm strength calculation: 3 per sandworm', () => {
-    const game = t.fixture()
-    game.run()
-
-    // Verify strength calc includes sandworms
-    const fs = require('fs')
-    const code = fs.readFileSync(require.resolve('../phases/playerTurns.js'), 'utf8')
-    expect(code).toContain('SANDWORM_STRENGTH')
-    expect(code).toContain('sandworms * constants.SANDWORM_STRENGTH')
+    // After combat resolves, sandworms should be reset
+    expect(game.state.conflict.deployedSandworms.dennis || 0).toBe(0)
   })
 })

@@ -76,6 +76,52 @@ TestUtil.setBoard = function(game, state) {
       Object.assign(game.state.makerHooks, state.makerHooks)
     }
 
+    // Conflict state
+    if (state.conflict) {
+      const c = state.conflict
+      if (c.deployedTroops) {
+        Object.assign(game.state.conflict.deployedTroops, c.deployedTroops)
+      }
+      if (c.deployedSandworms) {
+        Object.assign(game.state.conflict.deployedSandworms, c.deployedSandworms)
+      }
+      if (c.wonCards) {
+        game.state.conflict.wonCards = c.wonCards
+      }
+    }
+
+    // Objectives (per-player)
+    if (state.objectives) {
+      Object.assign(game.state.objectives, state.objectives)
+    }
+
+    // Leaders (per-player)
+    if (state.leaders) {
+      Object.assign(game.state.leaders, state.leaders)
+    }
+
+    // Conflict card: put a card matching the filter on top of the conflict deck
+    if (state.conflictCard) {
+      const deck = game.zones.byId('common.conflictDeck')
+      const cards = deck.cardlist()
+      const filter = state.conflictCard
+      const card = cards.find(c => {
+        if (typeof filter === 'string') {
+          return c.name === filter
+        }
+        if (filter.location) {
+          return c.definition?.location === filter.location
+        }
+        if (filter.tier) {
+          return c.definition?.tier === filter.tier
+        }
+        return false
+      })
+      if (card) {
+        card.moveTo(deck, 0)
+      }
+    }
+
     // Per-player state
     for (const playerName of ['dennis', 'micah', 'scott', 'eliya']) {
       if (state[playerName]) {
@@ -178,6 +224,21 @@ TestUtil.testBoard = function(game, expected) {
   if (expected.controlMarkers) {
     for (const [loc, owner] of Object.entries(expected.controlMarkers)) {
       assertEq(errors, `controlMarkers.${loc}`, game.state.controlMarkers[loc], owner)
+    }
+  }
+
+  // Conflict state assertions
+  if (expected.conflict) {
+    const c = expected.conflict
+    if (c.deployedTroops) {
+      for (const [name, count] of Object.entries(c.deployedTroops)) {
+        assertEq(errors, `conflict.deployedTroops.${name}`, game.state.conflict.deployedTroops[name] || 0, count)
+      }
+    }
+    if (c.deployedSandworms) {
+      for (const [name, count] of Object.entries(c.deployedSandworms)) {
+        assertEq(errors, `conflict.deployedSandworms.${name}`, game.state.conflict.deployedSandworms[name] || 0, count)
+      }
     }
   }
 

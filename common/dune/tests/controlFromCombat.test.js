@@ -24,20 +24,7 @@ describe('Control Marker from Combat', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { troopsInGarrison: 5 },
-    })
-    // Put "Secure Imperial Basin" (location: imperial-basin) as the first conflict card
-    game.testSetBreakpoint('initialization-complete', (g) => {
-      const deck = g.zones.byId('common.conflictDeck')
-      const cards = deck.cardlist()
-      const locCard = cards.find(c => c.definition?.location === 'imperial-basin' && c.definition?.tier === 2)
-      if (locCard) {
-        // Remove it from current position and insert at top
-        const idx = cards.indexOf(locCard)
-        if (idx > 0) {
-          // Move other cards down, put this at index 0
-          locCard.moveTo(deck, 0)
-        }
-      }
+      conflictCard: { location: 'imperial-basin' },
     })
     game.run()
 
@@ -69,15 +56,7 @@ describe('Control Marker from Combat', () => {
     t.setBoard(game, {
       controlMarkers: { 'imperial-basin': 'dennis' },
       dennis: { troopsInSupply: 5, troopsInGarrison: 3 },
-    })
-    // Put "Secure Imperial Basin" as the conflict card for round 1
-    game.testSetBreakpoint('initialization-complete', (g) => {
-      const deck = g.zones.byId('common.conflictDeck')
-      const cards = deck.cardlist()
-      const locCard = cards.find(c => c.definition?.location === 'imperial-basin')
-      if (locCard) {
-        locCard.moveTo(deck, 0)
-      }
+      conflictCard: { location: 'imperial-basin' },
     })
     game.run()
 

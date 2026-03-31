@@ -1,5 +1,3 @@
-const t = require('../testutil')
-
 describe('Battle Icons', () => {
 
   test('objectives have valid battle icons', () => {
@@ -10,49 +8,27 @@ describe('Battle Icons', () => {
     }
   })
 
-  test('moveConflictCardToWinner tracks won cards', () => {
-    const game = t.fixture()
-    game.run()
+  test('conflict cards have battle icons defined', () => {
+    const conflictCards = require('../res/cards/conflict.js')
+    const withIcons = conflictCards.filter(c => c.battleIcon)
+    expect(withIcons.length).toBeGreaterThan(0)
 
-    // Simulate winning a conflict card
-    const conflictCard = { name: 'Test Conflict', battleIcon: 'crysknife' }
-    if (!game.state.conflict.wonCards) {
-      game.state.conflict.wonCards = {}
+    const validIcons = ['crysknife', 'desert-mouse', 'ornithopter', 'wild']
+    for (const card of withIcons) {
+      expect(validIcons).toContain(card.battleIcon)
     }
-    if (!game.state.conflict.wonCards.dennis) {
-      game.state.conflict.wonCards.dennis = []
-    }
-    game.state.conflict.wonCards.dennis.push(conflictCard)
-
-    expect(game.state.conflict.wonCards.dennis.length).toBe(1)
-    expect(game.state.conflict.wonCards.dennis[0].battleIcon).toBe('crysknife')
   })
 
-  test('battle icon pair grants VP (code path verified)', () => {
-    // The moveConflictCardToWinner function checks for icon pairs.
-    // With 2 matching icons, it grants +1 VP.
-    // We test the parse function to verify reward parsing handles this.
-    const { parseRewardText } = require('../phases/combat')
+  test('conflict card rewards include VP and control types', () => {
+    const conflictCards = require('../res/cards/conflict.js')
 
-    const effects = parseRewardText('+1 Victory point and Arrakeen Control')
-    expect(effects).toEqual([
-      { type: 'vp', amount: 1 },
-      { type: 'control', location: 'arrakeen' },
-    ])
-  })
+    const allRewards = conflictCards.flatMap(c =>
+      [c.rewards?.first, c.rewards?.second, c.rewards?.third].filter(Boolean)
+    )
 
-  test('sandworm reward doubling does not double control', () => {
-    // canDoubleReward is internal, but we verify the logic:
-    // control and choice types should NOT be doubled.
-    const { parseRewardText } = require('../phases/combat')
-
-    // Control reward
-    const control = parseRewardText('Arrakeen Control')
-    expect(control[0].type).toBe('control')
-
-    // VP reward (should be doubled by sandworms)
-    const vp = parseRewardText('+1 Victory point')
-    expect(vp[0].type).toBe('vp')
-    expect(vp[0].amount).toBe(1)
+    const hasVP = allRewards.some(r => r.includes('Victory point'))
+    const hasControl = allRewards.some(r => r.includes('Control'))
+    expect(hasVP).toBe(true)
+    expect(hasControl).toBe(true)
   })
 })
