@@ -227,6 +227,29 @@ Everything in the "ephemeral" column is reconstructed identically on each replay
 
 ---
 
+## Player Color Selection
+
+The base `Game` class provides `this.chooseColor(player)` which prompts a player to pick from the available colors (red, orange, yellow, lime, green, blue, indigo, pink). It's idempotent -- if a player already has a color, it returns immediately.
+
+Call it before a player's first visible action so that log entries and UI elements have a color to display. Common patterns:
+
+```javascript
+// At the start of each player's first turn (Agricola)
+MyGame.prototype.playerTurn = function(player) {
+  this.chooseColor(player)
+  // ...
+}
+
+// During a setup phase before the main loop (Twilight Imperium)
+for (const player of this.players.all()) {
+  this.chooseColor(player)
+}
+```
+
+Don't call it during `initialize()` -- it triggers an input request, which means it needs to happen after the initialization-complete breakpoint so that `setBoard()` works correctly in tests. For test fixtures, you can skip color selection by pre-assigning colors in `setBoard()` or by setting `chooseColors: false` in settings (if your game supports that flag).
+
+---
+
 ## End Game
 
 When the game ends, throw `GameOverEvent`:

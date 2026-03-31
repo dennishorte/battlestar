@@ -33,10 +33,15 @@ function playerTurnsPhase(game) {
         continue
       }
 
+      // Choose color on first turn of round 1
+      if (game.state.round === 1) {
+        game.chooseColor(player)
+      }
+
       game.log.add({
-        template: "{player}'s Turn",
-        args: { player },
+        template: `${player.name}'s Turn`,
         event: 'turn-start',
+        args: { player },
       })
 
       if (player.availableAgents > 0) {
@@ -78,11 +83,6 @@ function playerTurnsPhase(game) {
  * Agent Turn: Play a card, send an agent to a board space, resolve effects.
  */
 function agentTurn(game, player, card) {
-  game.log.add({
-    template: '{player}: Agent Turn',
-    args: { player },
-    event: 'player-turn',
-  })
   game.log.indent()
 
   // Initialize turn tracking for conditional card abilities
@@ -243,8 +243,7 @@ function agentTurn(game, player, card) {
  */
 function revealTurn(game, player) {
   game.log.add({
-    template: '{player}: Reveal Turn',
-    args: { player },
+    template: 'Reveal',
     event: 'player-turn',
   })
   game.log.indent()

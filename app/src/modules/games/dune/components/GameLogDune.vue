@@ -172,5 +172,6 @@ useGameLogProvider({
   display: inline-block;
   padding: 0 .4em;
   border-radius: .15em;
+  background-color: #ebe4d8;
 }
 </style>
