@@ -13,9 +13,12 @@
         <div class="col game-column">
           <DuneConflict />
           <DuneFactionTrack />
+          <WaitingPanel />
+        </div>
+
+        <div class="col market-column">
           <DuneImperiumRow />
           <DuneContractMarket v-if="game.settings.useCHOAM" />
-          <WaitingPanel />
         </div>
 
         <div class="col player-column">
@@ -130,6 +133,15 @@ export default {
   height: calc(100vh - 60px);
   min-width: 280px;
   max-width: 380px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-bottom: 3em;
+}
+
+.market-column {
+  height: calc(100vh - 60px);
+  min-width: 220px;
+  max-width: 300px;
   overflow-x: hidden;
   overflow-y: auto;
   padding-bottom: 3em;
