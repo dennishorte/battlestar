@@ -2,6 +2,9 @@
   <div class="player-panel">
     <div class="header" :style="{ 'border-color': player.color }">
       {{ player.name }}
+      <span class="objective" v-if="objective" :title="objective.name">
+        {{ battleIconLabel(objective.battleIcon) }}
+      </span>
       <span class="vp-badge">{{ player.vp }} VP</span>
     </div>
 
@@ -99,6 +102,22 @@ export default {
     intrigueCount() {
       return this.game.zones.byId(`${this.player.name}.intrigue`).cardlist().length
     },
+
+    objective() {
+      return this.game.state.objectives[this.player.name] || null
+    },
+  },
+
+  methods: {
+    battleIconLabel(icon) {
+      const labels = {
+        'desert-mouse': '🐭',
+        crysknife: '🗡',
+        ornithopter: '🦅',
+        wild: '★',
+      }
+      return labels[icon] || icon
+    },
   },
 }
 </script>
@@ -121,6 +140,11 @@ export default {
   font-weight: bold;
   color: #2c2416;
   border-bottom: 3px solid;
+}
+
+.objective {
+  font-size: 1.1em;
+  margin-left: auto;
 }
 
 .vp-badge {

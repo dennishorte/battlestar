@@ -1,23 +1,36 @@
 <template>
   <div class="faction-tracks">
     <div class="section-header">Factions</div>
-    <div class="tracks">
-      <div v-for="faction in factions"
-           :key="faction"
-           class="track"
-           :class="`track-${faction}`">
-        <div class="faction-label">{{ factionLabel(faction) }}</div>
-        <div class="faction-players">
-          <span v-for="player in players"
-                :key="player.name"
-                class="player-influence"
-                :style="{ color: player.color }">
-            {{ player.name }}:{{ player.getInfluence(faction) }}
-          </span>
+    <div v-for="faction in factions" :key="faction.id" class="track">
+      <div class="track-header" :class="`track-${faction.id}`">
+        <span class="faction-label">{{ faction.label }}</span>
+        <span class="alliance-holder" v-if="game.state.alliances[faction.id]">
+          {{ game.state.alliances[faction.id] }}
+        </span>
+      </div>
+
+      <div class="track-bar">
+        <div v-for="level in 7"
+             :key="level - 1"
+             class="track-cell"
+             :class="{ 'threshold-vp': level - 1 === 2, 'threshold-alliance': level - 1 === 4 }">
+          <span class="cell-number">{{ level - 1 }}</span>
+          <div class="cell-markers">
+            <span v-for="player in playersAtLevel(faction.id, level - 1)"
+                  :key="player.name"
+                  class="player-marker"
+                  :style="{ 'background-color': player.color }"
+                  :class="{ 'is-viewer': player.name === actor.name }"
+                  :title="player.name">
+              {{ player.name[0] }}
+            </span>
+          </div>
         </div>
-        <div class="alliance" v-if="game.state.alliances[faction]">
-          alliance: {{ game.state.alliances[faction] }}
-        </div>
+      </div>
+
+      <div class="track-legend">
+        <span class="legend-item">2: +1 VP</span>
+        <span class="legend-item">4: {{ faction.bonus }}</span>
       </div>
     </div>
   </div>
@@ -28,29 +41,22 @@
 export default {
   name: 'DuneFactionTrack',
 
-  inject: ['game'],
+  inject: ['actor', 'game'],
 
   data() {
     return {
-      factions: ['emperor', 'guild', 'bene-gesserit', 'fremen'],
+      factions: [
+        { id: 'emperor', label: 'Emperor', bonus: '+1 Spy' },
+        { id: 'guild', label: 'Spacing Guild', bonus: '+3 Solari' },
+        { id: 'bene-gesserit', label: 'Bene Gesserit', bonus: '+1 Intrigue' },
+        { id: 'fremen', label: 'Fremen', bonus: '+1 Water' },
+      ],
     }
   },
 
-  computed: {
-    players() {
-      return this.game.players.all()
-    },
-  },
-
   methods: {
-    factionLabel(faction) {
-      const labels = {
-        emperor: 'Emperor',
-        guild: 'Spacing Guild',
-        'bene-gesserit': 'Bene Gesserit',
-        fremen: 'Fremen',
-      }
-      return labels[faction] || faction
+    playersAtLevel(faction, level) {
+      return this.game.players.all().filter(p => p.getInfluence(faction) === level)
     },
   },
 }
@@ -70,47 +76,104 @@ export default {
   font-weight: 600;
   font-size: .9em;
   color: #8b6914;
-  margin-bottom: .3em;
-}
-
-.tracks {
-  display: flex;
-  flex-direction: column;
-  gap: .3em;
+  margin-bottom: .4em;
 }
 
 .track {
+  margin-bottom: .6em;
+}
+
+.track:last-child {
+  margin-bottom: 0;
+}
+
+.track-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: .5em;
-  padding: .2em .4em;
-  border-radius: .2em;
-  font-size: .85em;
-}
-
-.track-emperor { background-color: rgba(139, 32, 32, 0.12); }
-.track-guild { background-color: rgba(192, 112, 32, 0.12); }
-.track-bene-gesserit { background-color: rgba(91, 58, 138, 0.12); }
-.track-fremen { background-color: rgba(42, 96, 144, 0.12); }
-
-.faction-label {
-  font-weight: 600;
-  min-width: 6em;
-  color: #2c2416;
-}
-
-.faction-players {
-  display: flex;
-  gap: .5em;
-}
-
-.player-influence {
-  font-weight: bold;
-}
-
-.alliance {
+  padding: .15em .4em;
+  border-radius: .15em;
+  color: white;
   font-size: .8em;
-  color: #8b6914;
-  font-style: italic;
+  font-weight: 600;
+}
+
+.track-emperor { background-color: #d03030; }
+.track-guild { background-color: #e08828; }
+.track-bene-gesserit { background-color: #8855cc; }
+.track-fremen { background-color: #3088cc; }
+
+.alliance-holder {
+  font-weight: 400;
+  font-size: .9em;
+  opacity: .9;
+}
+
+.track-bar {
+  display: flex;
+  margin-top: 2px;
+}
+
+.track-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-right: 1px solid #e8e0d4;
+  padding: .15em 0;
+  min-height: 2em;
+}
+
+.track-cell:last-child {
+  border-right: none;
+}
+
+.threshold-vp {
+  background-color: rgba(139, 105, 20, 0.1);
+  border-bottom: 2px solid #8b6914;
+}
+
+.threshold-alliance {
+  background-color: rgba(139, 105, 20, 0.15);
+  border-bottom: 2px solid #c09020;
+}
+
+.cell-number {
+  font-size: .65em;
+  color: #8a7a68;
+  line-height: 1;
+}
+
+.cell-markers {
+  display: flex;
+  gap: 1px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 1px;
+}
+
+.player-marker {
+  display: inline-block;
+  width: 1.3em;
+  height: 1.3em;
+  line-height: 1.3em;
+  text-align: center;
+  border-radius: 50%;
+  font-size: .65em;
+  font-weight: bold;
+  color: white;
+}
+
+.player-marker.is-viewer {
+  box-shadow: 0 0 0 2px #2c2416;
+}
+
+.track-legend {
+  display: flex;
+  gap: .75em;
+  font-size: .7em;
+  color: #8a7a68;
+  margin-top: 1px;
+  padding-left: .2em;
 }
 </style>
