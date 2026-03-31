@@ -22,6 +22,7 @@ This guide walks through the end-to-end process of adding a new board game to th
 | 7 | [Testing Strategy](07-testing-strategy.md) | Integration testing philosophy, testutil design, test patterns |
 | 8 | [Frontend Integration](08-frontend-integration.md) | Vue components, store, game-specific UI |
 | 9 | [Implementation Checklist](09-checklist.md) | Step-by-step checklist with links to each section |
+| 10 | [Data Page](10-data-page.md) | Browsable card/data reference page for players |
 
 ## Suggested Reading Order
 

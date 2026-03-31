@@ -158,8 +158,8 @@ export default {
 }
 
 .shape-diamond {
-  width: .75em;
-  height: .75em;
+  width: .95em;
+  height: .95em;
   clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
 }
 
