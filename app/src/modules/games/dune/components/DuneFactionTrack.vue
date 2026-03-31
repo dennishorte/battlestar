@@ -1,38 +1,41 @@
 <template>
   <div class="faction-tracks">
     <div class="section-header">Factions</div>
-    <div v-for="faction in factions" :key="faction.id" class="track">
-      <div class="track-header" :class="`track-${faction.id}`">
-        <span class="faction-label">{{ faction.label }}</span>
-        <span class="alliance-holder" v-if="game.state.alliances[faction.id]">
-          {{ game.state.alliances[faction.id] }}
-        </span>
-      </div>
-
-      <div class="track-bar">
-        <div v-for="level in 7"
-             :key="level - 1"
-             class="track-cell"
-             :class="{ 'threshold-vp': level - 1 === 2, 'threshold-alliance': level - 1 === 4 }">
-          <span class="cell-number">{{ level - 1 }}</span>
-          <div class="cell-markers">
-            <span v-for="player in playersAtLevel(faction.id, level - 1)"
-                  :key="player.name"
-                  class="player-marker"
-                  :style="{ 'background-color': player.color }"
-                  :class="{ 'is-viewer': player.name === actor.name }"
-                  :title="player.name">
-              {{ player.name[0] }}
+    <table class="track-table">
+      <thead>
+        <tr>
+          <th/>
+          <th v-for="player in players"
+              :key="player.name"
+              :style="{ 'border-bottom-color': player.color }"
+              class="player-col"
+              :class="{ 'is-viewer': player.name === actor.name }">
+            {{ player.name }}
+          </th>
+          <th class="alliance-col">Alliance</th>
+          <th class="bonus-col">4 Bonus</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="faction in factions" :key="faction.id" class="faction-row">
+          <td class="faction-label" :class="`label-${faction.id}`">{{ faction.short }}</td>
+          <td v-for="player in players" :key="player.name" class="influence-cell">
+            <span class="influence-val"
+                  :class="levelClass(player.getInfluence(faction.id))">
+              {{ player.getInfluence(faction.id) }}
             </span>
-          </div>
-        </div>
-      </div>
-
-      <div class="track-legend">
-        <span class="legend-item">2: +1 VP</span>
-        <span class="legend-item">4: {{ faction.bonus }}</span>
-      </div>
-    </div>
+          </td>
+          <td class="alliance-cell">
+            <span v-if="game.state.alliances[faction.id]" class="alliance-name">
+              {{ game.state.alliances[faction.id] }}
+            </span>
+            <span v-else class="alliance-empty">—</span>
+          </td>
+          <td class="bonus-cell">{{ faction.bonus }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="track-footnote">2 = +1 VP · 4 = alliance + bonus</div>
   </div>
 </template>
 
@@ -46,17 +49,29 @@ export default {
   data() {
     return {
       factions: [
-        { id: 'emperor', label: 'Emperor', bonus: '+1 Spy' },
-        { id: 'guild', label: 'Spacing Guild', bonus: '+3 Solari' },
-        { id: 'bene-gesserit', label: 'Bene Gesserit', bonus: '+1 Intrigue' },
-        { id: 'fremen', label: 'Fremen', bonus: '+1 Water' },
+        { id: 'emperor', short: 'Emp', bonus: 'Spy' },
+        { id: 'guild', short: 'Guild', bonus: '3 sol' },
+        { id: 'bene-gesserit', short: 'BG', bonus: 'Intrigue' },
+        { id: 'fremen', short: 'Fremen', bonus: 'Water' },
       ],
     }
   },
 
+  computed: {
+    players() {
+      return this.game.players.all()
+    },
+  },
+
   methods: {
-    playersAtLevel(faction, level) {
-      return this.game.players.all().filter(p => p.getInfluence(faction) === level)
+    levelClass(level) {
+      if (level >= 4) {
+        return 'level-alliance'
+      }
+      if (level >= 2) {
+        return 'level-vp'
+      }
+      return ''
     },
   },
 }
@@ -76,104 +91,106 @@ export default {
   font-weight: 600;
   font-size: .9em;
   color: #8b6914;
-  margin-bottom: .4em;
+  margin-bottom: .3em;
 }
 
-.track {
-  margin-bottom: .6em;
+.track-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .85em;
 }
 
-.track:last-child {
-  margin-bottom: 0;
+.track-table th {
+  font-weight: 600;
+  padding: .15em .3em;
+  text-align: center;
+  font-size: .85em;
+  color: #4a3a20;
 }
 
-.track-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: .15em .4em;
-  border-radius: .15em;
-  color: white;
+.player-col {
+  border-bottom: 3px solid transparent;
+}
+
+.player-col.is-viewer {
+  font-weight: 700;
+}
+
+.alliance-col {
+  color: #8a7a68;
+  font-weight: 400;
   font-size: .8em;
+}
+
+.faction-label {
+  font-weight: 600;
+  padding: .2em .3em;
+  font-size: .85em;
+}
+
+.label-emperor { color: #d03030; }
+.label-guild { color: #c07020; }
+.label-bene-gesserit { color: #8855cc; }
+.label-fremen { color: #3088cc; }
+
+.influence-cell {
+  text-align: center;
+  padding: .15em .2em;
+}
+
+.influence-val {
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  line-height: 1.5em;
+  text-align: center;
+  border-radius: .2em;
+  font-weight: 700;
+  color: #6a5a48;
+  background-color: #f5f0e8;
+}
+
+.influence-val.level-vp {
+  background-color: #e8dcc0;
+  color: #6a5010;
+}
+
+.influence-val.level-alliance {
+  background-color: #8b6914;
+  color: white;
+}
+
+.alliance-cell {
+  text-align: center;
+  padding: .15em .2em;
+  font-size: .85em;
+}
+
+.alliance-name {
+  color: #8b6914;
   font-weight: 600;
 }
 
-.track-emperor { background-color: #d03030; }
-.track-guild { background-color: #e08828; }
-.track-bene-gesserit { background-color: #8855cc; }
-.track-fremen { background-color: #3088cc; }
-
-.alliance-holder {
-  font-weight: 400;
-  font-size: .9em;
-  opacity: .9;
+.alliance-empty {
+  color: #ccc;
 }
 
-.track-bar {
-  display: flex;
-  margin-top: 2px;
-}
-
-.track-cell {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border-right: 1px solid #e8e0d4;
-  padding: .15em 0;
-  min-height: 2em;
-}
-
-.track-cell:last-child {
-  border-right: none;
-}
-
-.threshold-vp {
-  background-color: rgba(139, 105, 20, 0.1);
-  border-bottom: 2px solid #8b6914;
-}
-
-.threshold-alliance {
-  background-color: rgba(139, 105, 20, 0.15);
-  border-bottom: 2px solid #c09020;
-}
-
-.cell-number {
-  font-size: .65em;
+.bonus-col {
   color: #8a7a68;
-  line-height: 1;
+  font-weight: 400;
+  font-size: .8em;
 }
 
-.cell-markers {
-  display: flex;
-  gap: 1px;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 1px;
-}
-
-.player-marker {
-  display: inline-block;
-  width: 1.3em;
-  height: 1.3em;
-  line-height: 1.3em;
+.bonus-cell {
+  font-size: .75em;
+  color: #8a7a68;
+  padding: .15em .3em;
   text-align: center;
-  border-radius: 50%;
-  font-size: .65em;
-  font-weight: bold;
-  color: white;
 }
 
-.player-marker.is-viewer {
-  box-shadow: 0 0 0 2px #2c2416;
-}
-
-.track-legend {
-  display: flex;
-  gap: .75em;
+.track-footnote {
   font-size: .7em;
   color: #8a7a68;
-  margin-top: 1px;
-  padding-left: .2em;
+  margin-top: .2em;
 }
 </style>
