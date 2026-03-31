@@ -124,6 +124,18 @@ A step-by-step checklist for implementing a new game. Each item links to the rel
 
 ---
 
+## Phase 6b: Data Page
+
+- [ ] Create data page component in `app/src/modules/data/components/` ([Section 10](10-data-page.md))
+  - [ ] Tabs for each card/data type
+  - [ ] Search filter across all text fields
+  - [ ] Source/expansion filter
+  - [ ] Sortable columns
+- [ ] Register route in `app/src/modules/data/router.js`
+- [ ] Add link in `GameData.vue` data hub
+
+---
+
 ## Phase 7: Polish
 
 - [ ] Review log output for clarity and completeness
