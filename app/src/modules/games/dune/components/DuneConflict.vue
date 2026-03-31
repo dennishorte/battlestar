@@ -8,6 +8,9 @@
     <div v-if="conflictCard" class="conflict-card">
       <div class="conflict-main">
         <span class="conflict-name">{{ conflictCard.name }}</span>
+        <span class="battle-icon" v-if="conflictCard.battleIcon" :title="conflictCard.battleIcon">
+          {{ battleIconLabel(conflictCard.battleIcon) }}
+        </span>
         <span class="conflict-tier">Tier {{ conflictCard.tier }}</span>
       </div>
       <div class="rewards" v-if="conflictCard.rewards">
@@ -63,6 +66,18 @@ export default {
       return this.game.zones.byId('common.conflictDeck').cardlist().length
     },
   },
+
+  methods: {
+    battleIconLabel(icon) {
+      const labels = {
+        'desert-mouse': '🐭',
+        crysknife: '🗡',
+        ornithopter: '🦅',
+        wild: '★',
+      }
+      return labels[icon] || icon
+    },
+  },
 }
 </script>
 
@@ -108,6 +123,10 @@ export default {
 .conflict-name {
   font-weight: bold;
   color: #2c2416;
+}
+
+.battle-icon {
+  font-size: 1.1em;
 }
 
 .conflict-tier {
