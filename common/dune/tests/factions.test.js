@@ -6,8 +6,7 @@ describe('Faction Influence', () => {
     const game = t.fixture()
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
 
     const spaces = t.currentChoices(game)
     expect(spaces).toContain('Dutiful Service')
@@ -25,8 +24,7 @@ describe('Faction Influence', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
     t.choose(game, 'Dutiful Service')
 
     t.testBoard(game, {
@@ -46,8 +44,7 @@ describe('Faction Influence', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
     t.choose(game, 'Deliver Supplies')
 
     const player = game.players.byName('dennis')
@@ -62,8 +59,7 @@ describe('Faction Influence', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
     t.choose(game, 'Dutiful Service')
     // Emperor 4-influence bonus: place a spy
     t.choose(game, t.currentChoices(game)[0])

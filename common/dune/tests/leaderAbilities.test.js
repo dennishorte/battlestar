@@ -58,8 +58,7 @@ describe('Leader Abilities', () => {
     }
 
     // Play Signet Ring to a green space
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Signet Ring')
+    t.choose(game, 'Agent Turn.Signet Ring')
 
     // Should be able to access green/purple/yellow spaces
     const spaces = t.currentChoices(game)

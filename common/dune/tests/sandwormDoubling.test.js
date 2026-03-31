@@ -11,8 +11,7 @@ describe('Sandworm Reward Doubling', () => {
     game.run()
 
     // Dennis deploys troops for combat
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 

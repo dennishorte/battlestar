@@ -29,8 +29,7 @@ describe('Agent Turns', () => {
     game.run()
 
     // Dennis plays Dagger (green), should not see Assembly Hall
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger')
+    t.choose(game, 'Agent Turn.Dagger')
 
     const spaces = t.currentChoices(game)
     expect(spaces).not.toContain('Assembly Hall')
@@ -41,8 +40,7 @@ describe('Agent Turns', () => {
     game.run()
 
     // Dennis plays Dagger (green only)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger')
+    t.choose(game, 'Agent Turn.Dagger')
 
     const spaces = t.currentChoices(game)
     // Green spaces: Assembly Hall, Gather Support, High Council, Imperial Privilege, Sword Master
@@ -58,8 +56,7 @@ describe('Agent Turns', () => {
     game.run()
 
     // Dennis plays Diplomacy (factionAccess: all 4 factions)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
 
     const spaces = t.currentChoices(game)
     // All no-cost faction spaces should be available
@@ -78,8 +75,7 @@ describe('Agent Turns', () => {
     game.run()
 
     // Reconnaissance (purple) — Sietch Tabr requires 2+ Fremen influence
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
 
     const spaces = t.currentChoices(game)
     expect(spaces).not.toContain('Sietch Tabr')
@@ -92,8 +88,7 @@ describe('Agent Turns', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
 
     const spaces = t.currentChoices(game)
     expect(spaces).toContain('Sietch Tabr')

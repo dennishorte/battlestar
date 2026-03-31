@@ -30,14 +30,12 @@ describe('Combat intrigue consecutive pass mechanic', () => {
     game.run()
 
     // Dennis deploys to conflict
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 
     // Micah deploys to conflict
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Imperial Basin')
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 
@@ -82,8 +80,7 @@ describe('Sandworm never placed in garrison', () => {
     t.choose(game, 'Pass')
 
     // Micah plays yellow card to Hagga Basin, choose sandworm option
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Hagga Basin')
 
     const choices = t.currentChoices(game)
@@ -114,8 +111,7 @@ describe('Sandworm never placed in garrison', () => {
     t.choose(game, 'Pass')
 
     // Micah plays yellow card
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Hagga Basin')
 
     const choices = t.currentChoices(game)
@@ -137,21 +133,17 @@ describe('No-icon cards cannot be used for agent turns', () => {
     const game = t.fixture()
     game.run()
 
-    t.choose(game, 'Agent Turn')
-
-    const cardChoices = t.currentChoices(game)
-    expect(cardChoices).not.toContain('Convincing Argument')
+    const agentTurnChoice = game.waiting.selectors[0].choices.find(c => c.title === 'Agent Turn')
+    expect(agentTurnChoice.choices).not.toContain('Convincing Argument')
   })
 
   test('cards with agent icons are offered during agent turn', () => {
     const game = t.fixture()
     game.run()
 
-    t.choose(game, 'Agent Turn')
-
-    const cardChoices = t.currentChoices(game)
-    expect(cardChoices).toContain('Dagger')
-    expect(cardChoices).toContain('Reconnaissance')
+    const agentTurnChoice = game.waiting.selectors[0].choices.find(c => c.title === 'Agent Turn')
+    expect(agentTurnChoice.choices).toContain('Dagger')
+    expect(agentTurnChoice.choices).toContain('Reconnaissance')
   })
 })
 
@@ -167,8 +159,7 @@ describe('Gather Intelligence timing', () => {
     game.run()
 
     // Dennis plays an agent to a space
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger')
+    t.choose(game, 'Agent Turn.Dagger')
 
     const spaces = t.currentChoices(game)
     t.choose(game, spaces[0])
@@ -341,8 +332,7 @@ describe('Board space effects combined with card effects', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
 
     const choices = t.currentChoices(game)
@@ -357,8 +347,7 @@ describe('Board space effects combined with card effects', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
     t.choose(game, 'Deliver Supplies')
 
     t.testBoard(game, {

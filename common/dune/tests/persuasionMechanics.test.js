@@ -7,8 +7,7 @@ describe('Persuasion Mechanics', () => {
     game.run()
 
     // Both players reveal — dennis accumulates persuasion from cards
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger')
+    t.choose(game, 'Agent Turn.Dagger')
     t.choose(game, 'Assembly Hall')
 
     t.choose(game, 'Reveal Turn') // micah

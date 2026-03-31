@@ -35,8 +35,7 @@ describe('Reveal Turns', () => {
     game.run()
 
     // Dennis: Agent Turn with Reconnaissance to Arrakeen (combat space)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     // Deploy 1 troop from garrison
     t.choose(game, 'Deploy 1 troop(s) from garrison')

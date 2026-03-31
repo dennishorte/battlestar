@@ -7,8 +7,7 @@ describe('Additional Board Space Effects', () => {
     game.run()
 
     // Dennis: Diplomacy → Deliver Supplies (guild)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
     t.choose(game, 'Deliver Supplies')
 
     const player = game.players.byName('dennis')
@@ -21,8 +20,7 @@ describe('Additional Board Space Effects', () => {
     game.run()
 
     // Dennis: Diplomacy → Secrets (bene-gesserit)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
     t.choose(game, 'Secrets')
 
     // Dennis should have gained intrigue card(s)
@@ -35,8 +33,7 @@ describe('Additional Board Space Effects', () => {
     game.run()
 
     // Dennis: Diplomacy → Fremkit (fremen, no cost, combat)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
     t.choose(game, 'Fremkit')
 
     // Should offer deploy (it's a combat space)
@@ -56,8 +53,7 @@ describe('Additional Board Space Effects', () => {
     t.choose(game, 'Pass')
 
     // Micah: Dune TDP (yellow) → Hagga Basin (costs 1 water)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
 
     const spaces = t.currentChoices(game)
     expect(spaces).toContain('Hagga Basin')
@@ -75,8 +71,7 @@ describe('Additional Board Space Effects', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger') // green
+    t.choose(game, 'Agent Turn.Dagger') // green
     t.choose(game, 'High Council')
 
     const player = game.players.byName('dennis')
@@ -91,8 +86,7 @@ describe('Additional Board Space Effects', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
     t.choose(game, 'Desert Tactics')
 
     // Desert Tactics: +1 troop, trash a card. It's a combat space.
@@ -132,8 +126,7 @@ describe('Additional Board Space Effects', () => {
     t.choose(game, 'Reveal Turn')
     t.choose(game, 'Pass')
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Imperial Basin')
     t.choose(game, 'Deploy 0 troop(s) from garrison')
 

@@ -11,8 +11,7 @@ describe('Critical Locations and Control', () => {
     game.run()
 
     // Dennis sends agent to Arrakeen — micah (controller) gets 1 solari
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 0 troop(s) from garrison')
 
@@ -33,8 +32,7 @@ describe('Critical Locations and Control', () => {
     t.choose(game, 'Pass') // acquire
 
     // Micah visits Imperial Basin with Dune, The Desert Planet (yellow)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Imperial Basin')
     t.choose(game, 'Deploy 0 troop(s) from garrison')
 
@@ -52,8 +50,7 @@ describe('Critical Locations and Control', () => {
     game.run()
 
     // Dennis visits own controlled Arrakeen
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 0 troop(s) from garrison')
 

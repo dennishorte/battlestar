@@ -7,8 +7,7 @@ describe('Strength Requires Units', () => {
     game.run()
 
     // Dennis plays Dagger (green) to Assembly Hall (non-combat, green space)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger')
+    t.choose(game, 'Agent Turn.Dagger')
     t.choose(game, 'Assembly Hall')
 
     // Micah reveals
@@ -31,8 +30,7 @@ describe('Strength Requires Units', () => {
     game.run()
 
     // Dennis sends agent to combat space, deploys 1 troop
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 1 troop(s) from garrison')
 

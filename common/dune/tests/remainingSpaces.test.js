@@ -9,8 +9,7 @@ describe('Remaining Board Space Effects', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Sietch Tabr')
 
     // Sietch Tabr offers a choice
@@ -49,8 +48,7 @@ describe('Remaining Board Space Effects', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
     t.choose(game, 'Heighliner')
 
     // Deploy choice (combat space)
@@ -68,8 +66,7 @@ describe('Remaining Board Space Effects', () => {
     const game = t.fixture()
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
     t.choose(game, 'Dutiful Service')
 
     const dennis = game.players.byName('dennis')
@@ -83,8 +80,7 @@ describe('Remaining Board Space Effects', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Diplomacy')
+    t.choose(game, 'Agent Turn.Diplomacy')
     t.choose(game, 'Espionage')
 
     // Should offer spy placement

@@ -49,17 +49,14 @@ describe('Spy System', () => {
     })
     game.run()
 
-    // Dennis: Agent Turn
-    t.choose(game, 'Agent Turn')
-
-    // Pick a card with purple icon
+    // Dennis: Agent Turn — pick a card with purple icon
     const handZone = game.zones.byId('dennis.hand')
     const purpleCard = handZone.cardlist().find(c => c.agentIcons.includes('purple'))
     if (!purpleCard) {
       return
     }
 
-    t.choose(game, purpleCard.name)
+    t.choose(game, 'Agent Turn.' + purpleCard.name)
 
     // Arrakeen should be available despite being occupied (infiltrate)
     const spaceChoices = t.currentChoices(game)
@@ -97,17 +94,14 @@ describe('Spy System', () => {
     })
     game.run()
 
-    // Dennis: Agent Turn
-    t.choose(game, 'Agent Turn')
-
-    // Pick a green card for Landsraad spaces
+    // Dennis: Agent Turn — pick a green card for Landsraad spaces
     const handZone = game.zones.byId('dennis.hand')
     const greenCard = handZone.cardlist().find(c => c.agentIcons.includes('green'))
     if (!greenCard) {
       return
     }
 
-    t.choose(game, greenCard.name)
+    t.choose(game, 'Agent Turn.' + greenCard.name)
 
     const spaceChoices = t.currentChoices(game)
     if (!spaceChoices.includes('Assembly Hall')) {

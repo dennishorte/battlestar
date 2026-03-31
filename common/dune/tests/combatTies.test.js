@@ -29,14 +29,12 @@ describe('Combat Ties', () => {
     game.run()
 
     // Dennis deploys 1 troop via Arrakeen
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 1 troop(s) from garrison')
 
     // Micah deploys 1 troop via Imperial Basin
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Imperial Basin')
     t.choose(game, 'Deploy 1 troop(s) from garrison')
 
@@ -62,14 +60,12 @@ describe('Combat Ties', () => {
     game.run()
 
     // Dennis deploys 2 (strongest)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 
     // Micah deploys 1
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Imperial Basin')
     t.choose(game, 'Deploy 1 troop(s) from garrison')
 
@@ -79,8 +75,7 @@ describe('Combat Ties', () => {
     if (!yellowCard) {
       return
     }
-    t.choose(game, 'Agent Turn')
-    t.choose(game, yellowCard.name)
+    t.choose(game, 'Agent Turn.' + yellowCard.name)
     const spaces = t.currentChoices(game)
     const combatSpace = spaces.find(s => {
       const boardSpaces = require('../res/boardSpaces.js')
@@ -115,14 +110,12 @@ describe('Combat Ties', () => {
     game.run()
 
     // Dennis deploys 2 troops (strongest)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 
     // Micah deploys 1 troop
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dune, The Desert Planet')
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Imperial Basin')
     t.choose(game, 'Deploy 1 troop(s) from garrison')
 
@@ -133,8 +126,7 @@ describe('Combat Ties', () => {
       // Skip — can't set up 3-way combat with this seed
       return
     }
-    t.choose(game, 'Agent Turn')
-    t.choose(game, yellowCard.name)
+    t.choose(game, 'Agent Turn.' + yellowCard.name)
     const spaces = t.currentChoices(game)
     const combatSpace = spaces.find(s => s !== 'Arrakeen' && s !== 'Imperial Basin')
     if (!combatSpace) {

@@ -16,8 +16,7 @@ describe('Spy Restrictions', () => {
     game.run()
 
     // Dennis: Dagger (green) → Assembly Hall (occupied by micah)
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger')
+    t.choose(game, 'Agent Turn.Dagger')
 
     // Assembly Hall should be available via infiltrate
     const spaces = t.currentChoices(game)
@@ -48,8 +47,7 @@ describe('Spy Restrictions', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-    t.choose(game, 'Dagger')
+    t.choose(game, 'Agent Turn.Dagger')
     t.choose(game, 'Assembly Hall')
 
     // After infiltrate, the spy is recalled. The next prompt should NOT be

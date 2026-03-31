@@ -9,23 +9,16 @@ describe('Board Space Effects', () => {
     })
     game.run()
 
-    // Dennis: Agent Turn
-    t.choose(game, 'Agent Turn')
-
-    // Pick a card with purple icon (city)
-    const choices = t.currentChoices(game)
-    const purpleCard = choices.find(c => {
-      const handZone = game.zones.byId('dennis.hand')
-      const card = handZone.cardlist().find(cc => cc.name === c)
-      return card && card.agentIcons.includes('purple')
-    })
+    // Dennis: Agent Turn — pick a card with purple icon (city)
+    const handZone = game.zones.byId('dennis.hand')
+    const purpleCard = handZone.cardlist().find(c => c.agentIcons.includes('purple'))
 
     if (!purpleCard) {
       // No purple cards in hand — skip this test run gracefully
       return
     }
 
-    t.choose(game, purpleCard)
+    t.choose(game, 'Agent Turn.' + purpleCard.name)
     t.choose(game, 'Arrakeen')
 
     // Deploy 0 troops from garrison (since we have troops from the effect now)
@@ -41,21 +34,15 @@ describe('Board Space Effects', () => {
     const game = t.fixture()
     game.run()
 
-    // Dennis: Agent Turn
-    t.choose(game, 'Agent Turn')
-
-    const choices = t.currentChoices(game)
-    const greenCard = choices.find(c => {
-      const handZone = game.zones.byId('dennis.hand')
-      const card = handZone.cardlist().find(cc => cc.name === c)
-      return card && card.agentIcons.includes('green')
-    })
+    // Dennis: Agent Turn — pick a green card
+    const handZone = game.zones.byId('dennis.hand')
+    const greenCard = handZone.cardlist().find(c => c.agentIcons.includes('green'))
 
     if (!greenCard) {
       return
     }
 
-    t.choose(game, greenCard)
+    t.choose(game, 'Agent Turn.' + greenCard.name)
 
     // Check if Assembly Hall is available
     const spaceChoices = t.currentChoices(game)
@@ -73,20 +60,14 @@ describe('Board Space Effects', () => {
     const game = t.fixture()
     game.run()
 
-    t.choose(game, 'Agent Turn')
-
-    const choices = t.currentChoices(game)
-    const purpleCard = choices.find(c => {
-      const handZone = game.zones.byId('dennis.hand')
-      const card = handZone.cardlist().find(cc => cc.name === c)
-      return card && card.agentIcons.includes('purple')
-    })
+    const handZone = game.zones.byId('dennis.hand')
+    const purpleCard = handZone.cardlist().find(c => c.agentIcons.includes('purple'))
 
     if (!purpleCard) {
       return
     }
 
-    t.choose(game, purpleCard)
+    t.choose(game, 'Agent Turn.' + purpleCard.name)
 
     const spaceChoices = t.currentChoices(game)
     if (!spaceChoices.includes('Spice Refinery')) {
@@ -119,20 +100,14 @@ describe('Board Space Effects', () => {
     })
     game.run()
 
-    t.choose(game, 'Agent Turn')
-
-    const choices = t.currentChoices(game)
-    const greenCard = choices.find(c => {
-      const handZone = game.zones.byId('dennis.hand')
-      const card = handZone.cardlist().find(cc => cc.name === c)
-      return card && card.agentIcons.includes('green')
-    })
+    const handZone = game.zones.byId('dennis.hand')
+    const greenCard = handZone.cardlist().find(c => c.agentIcons.includes('green'))
 
     if (!greenCard) {
       return
     }
 
-    t.choose(game, greenCard)
+    t.choose(game, 'Agent Turn.' + greenCard.name)
 
     const spaceChoices = t.currentChoices(game)
     if (!spaceChoices.includes('Gather Support')) {
