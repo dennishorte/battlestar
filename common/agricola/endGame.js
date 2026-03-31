@@ -45,29 +45,9 @@ Agricola.prototype.endGame = function() {
     const buildingResources = player.getBuildingResourcesCount()
 
     this.log.add({
-      template: '{player} score breakdown:',
+      template: `{player}: ${breakdown.total} points`,
       args: { player },
     })
-    this.log.indent()
-
-    this.log.add({ template: `Fields: ${breakdown.fields.count} = ${breakdown.fields.points} pts` })
-    this.log.add({ template: `Pastures: ${breakdown.pastures.count} = ${breakdown.pastures.points} pts` })
-    this.log.add({ template: `Grain: ${breakdown.grain.count} = ${breakdown.grain.points} pts` })
-    this.log.add({ template: `Vegetables: ${breakdown.vegetables.count} = ${breakdown.vegetables.points} pts` })
-    this.log.add({ template: `Sheep: ${breakdown.sheep.count} = ${breakdown.sheep.points} pts` })
-    this.log.add({ template: `Wild Boar: ${breakdown.boar.count} = ${breakdown.boar.points} pts` })
-    this.log.add({ template: `Cattle: ${breakdown.cattle.count} = ${breakdown.cattle.points} pts` })
-    this.log.add({ template: `Rooms (${breakdown.rooms.type}): ${breakdown.rooms.count} = ${breakdown.rooms.points} pts` })
-    this.log.add({ template: `Family: ${breakdown.familyMembers.count} = ${breakdown.familyMembers.points} pts` })
-    this.log.add({ template: `Unused spaces: ${breakdown.unusedSpaces.count} = ${breakdown.unusedSpaces.points} pts` })
-    this.log.add({ template: `Fenced stables: ${breakdown.fencedStables.count} = ${breakdown.fencedStables.points} pts` })
-    this.log.add({ template: `Begging cards: ${breakdown.beggingCards.count} = ${breakdown.beggingCards.points} pts` })
-    this.log.add({ template: `Card points: ${breakdown.cardPoints} pts` })
-    this.log.add({ template: `Bonus points: ${breakdown.bonusPoints} pts` })
-    this.log.add({ template: `TOTAL: ${breakdown.total} points` })
-    this.log.add({ template: `Building resources remaining: ${buildingResources}` })
-
-    this.log.outdent()
 
     playerResults.push({
       player,
