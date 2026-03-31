@@ -70,4 +70,43 @@ describe('Wolf', () => {
     const cardState = game.cardState('wolf-e103')
     expect(cardState.pile).toEqual(['clay', 'wood'])
   })
+
+  test('gives boar even when player has no room (triggers overflow)', () => {
+    const game = t.fixture({ cardSets: ['occupationE', 'minorImprovementA', 'test'] })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['wolf-e103'],
+        pet: 'sheep', // Pet slot occupied — boar has nowhere to go
+      },
+    })
+    game.run()
+
+    // Play Wolf (sets pile: [clay, wood, grain])
+    t.choose(game, 'Lessons A')
+    t.choose(game, 'Wolf')
+
+    // Micah's turn, then Dennis takes Grain Seeds
+    t.choose(game, 'Forest')      // micah
+    t.choose(game, 'Grain Seeds') // dennis - triggers onObtainResource with 'grain'
+
+    // Boar can't be placed — release it via overflow modal
+    t.action(game, 'animal-placement', {
+      placements: [],
+      overflow: { release: { boar: 1 } },
+    })
+
+    t.testBoard(game, {
+      dennis: {
+        grain: 2,   // 1 from Grain Seeds + 1 from Wolf bonus
+        animals: { sheep: 1, boar: 0 },
+        pet: 'sheep',
+        occupations: ['wolf-e103'],
+      },
+    })
+
+    // Pile should still be consumed: [clay, wood]
+    const cardState = game.cardState('wolf-e103')
+    expect(cardState.pile).toEqual(['clay', 'wood'])
+  })
 })
