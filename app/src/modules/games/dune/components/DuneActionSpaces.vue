@@ -182,18 +182,17 @@ export default {
 
 .space-icon {
   display: inline-block;
-  width: .6em;
-  height: .6em;
-  border-radius: 50%;
+  width: .7em;
+  height: .7em;
 }
 
-.icon-purple { background-color: #6a3d8a; }
-.icon-yellow { background-color: #b8860b; }
-.icon-green { background-color: #3a7d3a; }
-.icon-emperor { background-color: #8b2020; }
-.icon-guild { background-color: #c07020; }
-.icon-bene-gesserit { background-color: #5b3a8a; }
-.icon-fremen { background-color: #2a6090; }
+.icon-purple { background-color: #6a3d8a; border-radius: 50%; }
+.icon-yellow { background-color: #b8860b; clip-path: polygon(50% 0%, 100% 100%, 0% 100%); }
+.icon-green { background-color: #3a7d3a; clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); }
+.icon-emperor { background-color: #d03030; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+.icon-guild { background-color: #e08828; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+.icon-bene-gesserit { background-color: #8855cc; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+.icon-fremen { background-color: #3088cc; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
 
 .space-name {
   flex: 1;
