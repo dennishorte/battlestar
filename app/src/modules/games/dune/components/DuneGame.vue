@@ -12,7 +12,6 @@
 
         <div class="col game-column">
           <DuneConflict />
-          <DuneBoardState />
           <DuneFactionTrack />
           <DuneImperiumRow />
           <DuneContractMarket v-if="game.settings.useCHOAM" />
@@ -50,7 +49,6 @@ import DunePlayerPanel from './DunePlayerPanel.vue'
 import DuneImperiumRow from './DuneImperiumRow.vue'
 import DuneConflict from './DuneConflict.vue'
 import DuneFactionTrack from './DuneFactionTrack.vue'
-import DuneBoardState from './DuneBoardState.vue'
 import DuneContractMarket from './DuneContractMarket.vue'
 import DuneActionSpaces from './DuneActionSpaces.vue'
 
@@ -62,7 +60,6 @@ export default {
     DebugModal,
     DropdownButton,
     DuneActionSpaces,
-    DuneBoardState,
     DuneConflict,
     DuneContractMarket,
     DuneFactionTrack,

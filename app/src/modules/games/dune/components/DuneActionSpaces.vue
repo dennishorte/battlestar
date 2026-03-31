@@ -1,6 +1,18 @@
 <template>
   <div class="action-spaces">
-    <div class="section-header">Action Spaces</div>
+    <div class="section-header">
+      Action Spaces
+      <span class="shield-wall-destroyed" v-if="!game.state.shieldWall">Shield Wall Destroyed</span>
+    </div>
+
+    <div class="control-row" v-if="hasControl">
+      <span v-for="(owner, loc) in game.state.controlMarkers"
+            :key="loc"
+            v-show="owner"
+            class="control-chip">
+        {{ formatName(loc) }}: {{ owner }}
+      </span>
+    </div>
 
     <div v-for="group in spaceGroups" :key="group.label" class="space-group">
       <div class="group-label" :class="`group-${group.icon}`">{{ group.label }}</div>
@@ -60,6 +72,10 @@ export default {
       })).filter(g => g.spaces.length > 0)
     },
 
+    hasControl() {
+      return Object.values(this.game.state.controlMarkers).some(v => v != null)
+    },
+
     hasBonusSpice() {
       return Object.values(this.game.state.bonusSpice).some(v => v > 0)
     },
@@ -99,10 +115,34 @@ export default {
 }
 
 .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-weight: 600;
   font-size: .9em;
   color: #8b6914;
   margin-bottom: .3em;
+}
+
+.shield-wall-destroyed {
+  font-size: .8em;
+  color: #c04040;
+  font-weight: 400;
+}
+
+.control-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3em;
+  margin-bottom: .5em;
+}
+
+.control-chip {
+  font-size: .8em;
+  background-color: #f5f0e8;
+  border: 1px solid #d4c8a8;
+  padding: .1em .4em;
+  border-radius: .15em;
 }
 
 .space-group {

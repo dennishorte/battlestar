@@ -460,7 +460,7 @@ const implementations = {
       const sandworms = game.state.conflict.deployedSandworms[player.name] || 0
       if (sandworms > 0) {
         deckEngine.drawCards(game, player, sandworms)
-        game.log.add({ template: '{player} draws {count} card(s) (Sandworm synergy)', args: { player, count: sandworms } })
+        game.log.add({ template: '{player} draws {count} cards (Sandworm synergy)', args: { player, count: sandworms } })
       }
     },
   },

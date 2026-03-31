@@ -462,7 +462,7 @@ function onAgentPlaced(game, player, space, resolveBoardSpaceEffectsFn) {
     if (space.icon === 'bene-gesserit') {
       const memories = game.state.jessicaMemories?.[player.name] || 0
       if (memories > 0) {
-        const choices = ['Pass', `Return ${memories} Memories → Draw ${memories} card(s) and flip Leader`]
+        const choices = ['Pass', `Return ${memories} Memories → Draw ${memories} cards and flip Leader`]
         const [choice] = game.actions.choose(player, choices, {
           title: 'Lady Jessica: Activate Other Memories?',
         })
