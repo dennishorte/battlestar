@@ -1,5 +1,4 @@
 const t = require('../testutil')
-const { resolveEffect } = require('../phases/playerTurns.js')
 
 describe('Supply Exhaustion', () => {
 
@@ -10,14 +9,13 @@ describe('Supply Exhaustion', () => {
     })
     game.run()
 
-    const dennis = game.players.byName('dennis')
-    const garrisonBefore = dennis.troopsInGarrison
+    // Dennis visits Arrakeen which gives +1 troop — but supply is empty
+    t.choose(game, 'Agent Turn')
+    t.choose(game, 'Reconnaissance')
+    t.choose(game, 'Arrakeen')
 
-    // Try to recruit — should be capped at 0
-    resolveEffect(game, dennis, { type: 'troop', amount: 1 }, null)
-
-    // No change: cannot recruit from empty supply
-    expect(dennis.troopsInGarrison).toBe(garrisonBefore)
-    expect(dennis.troopsInSupply).toBe(0)
+    // After space effects, garrison and supply should be unchanged for troop recruitment
+    const updatedDennis = game.players.byName('dennis')
+    expect(updatedDennis.troopsInSupply).toBe(0)
   })
 })

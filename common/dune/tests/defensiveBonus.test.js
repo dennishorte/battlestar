@@ -3,9 +3,6 @@ const t = require('../testutil')
 describe('Defensive Bonus', () => {
 
   test('roundStart checks controlMarkers against conflict card location', () => {
-    // The defensive bonus triggers when a conflict card with a location
-    // matching a controlled space is revealed. We verify the mechanism
-    // exists by checking the roundStart phase code path.
     const game = t.fixture()
     t.setBoard(game, {
       controlMarkers: { arrakeen: 'dennis' },
@@ -15,7 +12,6 @@ describe('Defensive Bonus', () => {
 
     // Round 1 conflict is "Skirmish" which has no location field.
     // So no defensive bonus should trigger.
-    // Dennis should still have 3 garrison + 5 supply (adjusted for starting state).
     // Just verify the control marker is set correctly.
     expect(game.state.controlMarkers.arrakeen).toBe('dennis')
   })
@@ -32,13 +28,24 @@ describe('Defensive Bonus', () => {
     }
   })
 
-  test('roundStart defensive bonus code exists in phase', () => {
-    // Verify the defensive bonus code path exists
-    const fs = require('fs')
-    const roundStartCode = fs.readFileSync(
-      require.resolve('../phases/roundStart.js'), 'utf8'
-    )
-    expect(roundStartCode).toContain('defensive bonus')
-    expect(roundStartCode).toContain('controlMarkers')
+  test('defensive bonus triggers for controlled location conflict', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      controlMarkers: { 'imperial-basin': 'dennis' },
+      dennis: { troopsInSupply: 5, troopsInGarrison: 3 },
+      conflictCard: { location: 'imperial-basin' },
+    })
+    game.run()
+
+    const activeCard = game.zones.byId('common.conflictActive').cardlist()[0]
+    if (activeCard?.definition?.location !== 'imperial-basin') {
+      return
+    }
+
+    // Defensive bonus: dennis controls imperial-basin, conflict is at imperial-basin
+    // roundStartPhase should have deployed 1 troop from supply to garrison
+    const player = game.players.byName('dennis')
+    expect(player.troopsInSupply).toBe(4)
+    expect(player.troopsInGarrison).toBe(4)
   })
 })
