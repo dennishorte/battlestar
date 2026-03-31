@@ -206,18 +206,19 @@ Agricola.prototype.callPlayerCardHookOrdered = function(player, hookName, ...arg
     return result !== undefined ? [{ card: cards[0], result }] : []
   }
 
-  // Multiple cards — let player choose execution order
-  const cardNames = cards.map(c => c.definition.name)
-  const ordered = this.actions.choose(player, cardNames, {
-    title: `Choose order for ${hookName} effects`,
-    min: cards.length,
-    max: cards.length,
-    noAutoRespond: true,
-  })
-
+  // Multiple cards — let player choose one at a time
+  const remaining = [...cards]
   const results = []
-  for (const name of ordered) {
-    const card = cards.find(c => c.definition.name === name)
+  while (remaining.length > 1) {
+    const remainingNames = remaining.map(c => c.definition.name)
+    const [name] = this.actions.choose(player, remainingNames, {
+      title: `Choose next ${hookName} effect`,
+      min: 1,
+      max: 1,
+      noAutoRespond: true,
+    })
+    const idx = remaining.findIndex(c => c.definition.name === name)
+    const card = remaining.splice(idx, 1)[0]
     const matchResult = this._checkCardMatch(card, hookName, player, ...args)
     if (matchResult !== 'silent' && hookName !== 'onPlay') {
       this._logCardTrigger(player, card)
@@ -229,6 +230,19 @@ Agricola.prototype.callPlayerCardHookOrdered = function(player, hookName, ...arg
     if (result !== undefined) {
       results.push({ card, result })
     }
+  }
+  // Last remaining card — no choice needed
+  const lastCard = remaining[0]
+  const matchResult = this._checkCardMatch(lastCard, hookName, player, ...args)
+  if (matchResult !== 'silent' && hookName !== 'onPlay') {
+    this._logCardTrigger(player, lastCard)
+  }
+  const result = lastCard.callHook(hookName, this, player, ...args)
+  if (matchResult !== 'silent' && hookName !== 'onPlay') {
+    this.log.outdent()
+  }
+  if (result !== undefined) {
+    results.push({ card: lastCard, result })
   }
   return results
 }

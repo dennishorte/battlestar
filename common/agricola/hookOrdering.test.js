@@ -23,8 +23,8 @@ describe('callPlayerCardHookOrdered', () => {
     expect(choices).toContain('District Manager')
     expect(choices).toContain('Inner Districts Director')
 
-    // Pick order: Inner Districts Director first, then District Manager
-    t.choose(game, 'Inner Districts Director', 'District Manager')
+    // Pick which to resolve first (second fires automatically)
+    t.choose(game, 'Inner Districts Director')
 
     // Inner Districts Director offers to place stone on Clay Pit
     t.choose(game, 'Do not place stone')
