@@ -141,6 +141,7 @@ Dune.prototype.initialize = function() {
     leaders.selectLeaders(this)
   }
 
+  this.state.initializationComplete = true
   this._breakpoint('initialization-complete')
 }
 
