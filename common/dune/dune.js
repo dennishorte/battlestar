@@ -136,12 +136,12 @@ Dune.prototype.initialize = function() {
   // Deal objective cards and determine first player
   this.initializeObjectives()
 
-  if (this.settings.useLeaders) {
-    const leaders = require('./systems/leaders.js')
-    leaders.selectLeaders(this)
-  }
-
   this.state.initializationComplete = true
+  this._breakpoint('before-leaders')
+
+  const leaders = require('./systems/leaders.js')
+  leaders.selectLeaders(this)
+
   this._breakpoint('initialization-complete')
 }
 

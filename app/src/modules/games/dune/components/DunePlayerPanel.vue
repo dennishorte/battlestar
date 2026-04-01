@@ -2,6 +2,7 @@
   <div class="player-panel">
     <div class="header" :style="{ 'border-color': player.color }">
       {{ player.name }}
+      <span class="leader-name" v-if="leader">{{ leader.name }}</span>
       <span class="objective" v-if="objective" :title="objective.name">
         {{ battleIconLabel(objective.battleIcon) }}
       </span>
@@ -103,6 +104,10 @@ export default {
       return this.game.zones.byId(`${this.player.name}.intrigue`).cardlist().length
     },
 
+    leader() {
+      return this.game.state.leaders[this.player.name] || null
+    },
+
     objective() {
       return this.game.state.objectives[this.player.name] || null
     },
@@ -140,6 +145,12 @@ export default {
   font-weight: bold;
   color: #2c2416;
   border-bottom: 3px solid;
+}
+
+.leader-name {
+  font-weight: 400;
+  font-size: .8em;
+  color: #6a5a48;
 }
 
 .objective {

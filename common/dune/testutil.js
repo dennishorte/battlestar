@@ -30,6 +30,22 @@ TestUtil.fixture = function(options = {}) {
     ...options,
   }, options.viewer || 'dennis')
 
+  // Pre-assign leaders with no passive gameplay effects so selectLeaders is a no-op in tests
+  const leaderData = require('./res/leaders/index.js')
+  const defaultLeaders = [
+    leaderData.find(l => l.name === 'Paul Atreides'),
+    leaderData.find(l => l.name === "Muad'Dib"),
+    leaderData.find(l => l.name === 'Gurney Halleck'),
+    leaderData.find(l => l.name === 'Count Ilban Richese'),
+  ]
+  game.testSetBreakpoint('before-leaders', (game) => {
+    game.players.all().forEach((p, i) => {
+      if (!game.state.leaders[p.name]) {
+        game.state.leaders[p.name] = defaultLeaders[i]
+      }
+    })
+  })
+
   // Pre-assign colors so chooseColor is a no-op in tests
   const defaultColors = ['#d42e35', '#73bbfa', '#2ebd32', '#e8811c']
   game.testSetBreakpoint('initialization-complete', (game) => {
@@ -45,6 +61,17 @@ TestUtil.fixture = function(options = {}) {
 
 
 TestUtil.setBoard = function(game, state) {
+  // Leaders must be set before selectLeaders runs, using assignLeader for starting effects
+  if (state.leaders) {
+    const leaders = require('./systems/leaders.js')
+    game.testSetBreakpoint('before-leaders', (game) => {
+      for (const [playerName, leaderDef] of Object.entries(state.leaders)) {
+        const player = game.players.byName(playerName)
+        leaders.assignLeader(game, player, leaderDef)
+      }
+    })
+  }
+
   game.testSetBreakpoint('initialization-complete', (game) => {
     // Game-level state
     if (state.round !== undefined) {
@@ -103,11 +130,6 @@ TestUtil.setBoard = function(game, state) {
     // Objectives (per-player)
     if (state.objectives) {
       Object.assign(game.state.objectives, state.objectives)
-    }
-
-    // Leaders (per-player)
-    if (state.leaders) {
-      Object.assign(game.state.leaders, state.leaders)
     }
 
     // Conflict card: put a card matching the filter on top of the conflict deck
