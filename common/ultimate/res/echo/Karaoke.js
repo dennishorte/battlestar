@@ -17,15 +17,17 @@ module.exports = {
     },
 
     (game, player, { self }) => {
-      if (!game.state.dogmaInfo.karaoke) {
+      const card = game.state.dogmaInfo.karaoke
+        ? game.state.dogmaInfo.karaoke[player.name]
+        : undefined
+
+      if (!card) {
         game.log.add({
           template: '{player} did not meld any cards during the echo effect',
           args: { player }
         })
         return
       }
-
-      const card = game.state.dogmaInfo.karaoke[player.name]
       const options = player
         .availableStandardAchievements()
         .filter(ach => ach.getAge() === card.getAge())
