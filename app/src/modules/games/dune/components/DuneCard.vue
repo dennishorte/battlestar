@@ -16,10 +16,16 @@
     </div>
     <div class="card-effects" v-if="hasEffects">
       <div v-if="def.agentAbility" class="effect agent-effect">
-        <span class="effect-label">Agent:</span> {{ def.agentAbility }}
+        <span class="effect-label">Agent:</span>
+        <div v-for="(line, i) in textLines(def.agentAbility)"
+             :key="'a'+i"
+             :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
       </div>
       <div class="effect reveal-effect" v-if="revealText">
-        <span class="effect-label">Reveal:</span> {{ revealText }}
+        <span class="effect-label">Reveal:</span>
+        <div v-for="(line, i) in textLines(revealText)"
+             :key="'r'+i"
+             :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
       </div>
     </div>
   </div>
@@ -92,6 +98,13 @@ export default {
   },
 
   methods: {
+    textLines(text) {
+      if (!text) {
+        return []
+      }
+      return text.split('\n').filter(l => l.trim())
+    },
+
     shapeFor(icon) {
       if (icon === 'green') {
         return 'pentagon'
@@ -188,6 +201,10 @@ export default {
   font-weight: 600;
   font-size: .85em;
   color: #8a7a68;
+}
+
+.bullet {
+  padding-left: .8em;
 }
 
 .faction-emperor { border-color: #8b2020; }
