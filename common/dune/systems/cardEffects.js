@@ -21,8 +21,8 @@ function parseAgentAbility(text) {
     return null
   }
 
-  // Normalize: newlines to spaces, collapse whitespace, strip trailing period
-  text = text.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim().replace(/\.\s*$/, '')
+  // Normalize: strip bullet prefixes, newlines to spaces, collapse whitespace, strip trailing period
+  text = text.replace(/·\s*/g, '').replace(/\n/g, ' ').replace(/\s+/g, ' ').trim().replace(/\.\s*$/, '')
 
   // Signet Ring handled specially
   if (/^Signet Ring$/i.test(text)) {
