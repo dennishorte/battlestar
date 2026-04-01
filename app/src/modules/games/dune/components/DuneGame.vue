@@ -47,6 +47,8 @@ import GameMenu from '@/modules/games/common/components/GameMenu.vue'
 import WaitingPanel from '@/modules/games/common/components/WaitingPanel.vue'
 import DebugModal from '@/modules/games/common/components/DebugModal.vue'
 
+import { dune } from 'battlestar-common'
+
 import GameLogDune from './GameLogDune.vue'
 import DunePlayerPanel from './DunePlayerPanel.vue'
 import DuneImperiumRow from './DuneImperiumRow.vue'
@@ -54,6 +56,7 @@ import DuneConflict from './DuneConflict.vue'
 import DuneFactionTrack from './DuneFactionTrack.vue'
 import DuneContractMarket from './DuneContractMarket.vue'
 import DuneActionSpaces from './DuneActionSpaces.vue'
+import DuneOptionChip from './DuneOptionChip.vue'
 
 
 export default {
@@ -105,6 +108,49 @@ export default {
 
   mounted() {
     document.title = this.game.settings.name || 'Dune Imperium: Uprising'
+
+    // Build name -> definition lookup for cards and leaders
+    const allCards = [
+      ...dune.res.cards.imperiumCards,
+      ...dune.res.cards.intrigueCards,
+      ...dune.res.cards.reserveCards,
+      ...dune.res.cards.starterCards,
+      ...dune.res.cards.contractCards,
+      ...dune.res.cards.techCards,
+    ]
+    const cardsByName = {}
+    for (const card of allCards) {
+      cardsByName[card.name] = card
+    }
+    const leadersByName = {}
+    for (const leader of dune.res.leaderData) {
+      leadersByName[leader.name] = leader
+    }
+
+    this.ui.fn.selectorOptionComponent = (option) => {
+      const name = option.title || option
+      if (typeof name !== 'string') {
+        return null
+      }
+
+      const leader = leadersByName[name]
+      if (leader) {
+        return {
+          component: DuneOptionChip,
+          props: { name, leader },
+        }
+      }
+
+      const card = cardsByName[name]
+      if (card) {
+        return {
+          component: DuneOptionChip,
+          props: { name, card },
+        }
+      }
+
+      return null
+    }
   },
 }
 </script>
