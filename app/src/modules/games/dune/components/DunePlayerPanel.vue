@@ -1,8 +1,16 @@
 <template>
   <div class="player-panel">
     <div class="header" :style="{ 'border-color': player.color }">
-      {{ player.name }}
-      <span class="leader-name" v-if="leader">{{ leader.name }}</span>
+      <div class="header-left">
+        <div class="header-top-row">
+          {{ player.name }}
+          <span class="first-player" v-if="isFirstPlayer" title="First Player">1st</span>
+        </div>
+        <DuneOptionChip v-if="leader"
+                        :name="leader.name"
+                        :leader="leader"
+                        class="leader-chip" />
+      </div>
       <span class="objective" v-if="objective" :title="objective.name">
         {{ battleIconLabel(objective.battleIcon) }}
       </span>
@@ -59,11 +67,12 @@
 
 <script>
 import DuneCard from './DuneCard.vue'
+import DuneOptionChip from './DuneOptionChip.vue'
 
 export default {
   name: 'DunePlayerPanel',
 
-  components: { DuneCard },
+  components: { DuneCard, DuneOptionChip },
 
   inject: ['actor', 'game'],
 
@@ -77,6 +86,11 @@ export default {
   computed: {
     isViewer() {
       return this.player.name === this.actor.name
+    },
+
+    isFirstPlayer() {
+      const allPlayers = this.game.players.all()
+      return allPlayers[this.game.state.firstPlayerIndex]?.name === this.player.name
     },
 
     hand() {
@@ -147,10 +161,28 @@ export default {
   border-bottom: 3px solid;
 }
 
-.leader-name {
-  font-weight: 400;
+.first-player {
+  background-color: #8b6914;
+  color: white;
+  padding: .05em .35em;
+  border-radius: .2em;
+  font-size: .75em;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: .1em;
+}
+
+.header-top-row {
+  display: flex;
+  align-items: center;
+  gap: .3em;
+}
+
+.leader-chip {
   font-size: .8em;
-  color: #6a5a48;
 }
 
 .objective {
