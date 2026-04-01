@@ -507,7 +507,6 @@ const cardData = [
     points: 2,
     innerPoints: 3,
     count: 3,
-    autoplay: true,
     text: [
       "Choose 1:",
       "- +2 power and +1 influence",
