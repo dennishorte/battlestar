@@ -111,7 +111,7 @@ export default {
 
     detail() {
       if (this.leader) {
-        return this.leader.house || ''
+        return ''
       }
       if (this.card?.persuasionCost) {
         return `${this.card.persuasionCost}`
