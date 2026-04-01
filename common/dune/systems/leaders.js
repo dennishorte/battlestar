@@ -10,9 +10,14 @@ const { parseAgentAbility } = require('./cardEffects.js')
  */
 
 /**
- * Initialize leaders: each player selects one.
+ * Initialize leaders: deal 2 to each player, all choose simultaneously.
  */
 function selectLeaders(game) {
+  // Skip if leaders already assigned (e.g. by test fixture)
+  if (game.players.all().every(p => game.state.leaders[p.name])) {
+    return
+  }
+
   const leaderData = require('../res/leaders/index.js')
   const settings = game.settings
 
@@ -32,31 +37,33 @@ function selectLeaders(game) {
     available = available.filter(l => l.name !== 'Shaddam Corrino IV')
   }
 
-  // Random assignment if configured, otherwise let each player choose
-  if (settings.randomLeaders) {
-    // Shuffle and deal one to each player
-    const shuffled = [...available]
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(game.random() * (i + 1))
-      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-    }
-    for (const player of game.players.all()) {
-      const leader = shuffled.pop()
-      assignLeader(game, player, leader)
-    }
+  // Shuffle
+  const shuffled = [...available]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(game.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
   }
-  else {
-    // Each player picks from remaining leaders
-    const remaining = [...available]
-    for (const player of game.players.all()) {
-      const names = remaining.map(l => l.name)
-      const [choice] = game.actions.choose(player, names, {
-        title: 'Choose a Leader',
-      })
-      const leader = remaining.find(l => l.name === choice)
-      remaining.splice(remaining.indexOf(leader), 1)
-      assignLeader(game, player, leader)
-    }
+
+  // Deal 2 leaders to each player
+  const dealt = {}
+  for (const player of game.players.all()) {
+    dealt[player.name] = [shuffled.pop(), shuffled.pop()]
+  }
+
+  // All players choose simultaneously
+  const selectors = game.players.all().map(player => ({
+    actor: player.name,
+    title: 'Choose a Leader',
+    choices: dealt[player.name].map(l => l.name),
+  }))
+
+  const responses = game.requestInputMany(selectors)
+
+  for (const response of responses) {
+    const player = game.players.byName(response.actor)
+    const chosenName = response.selection[0]
+    const leader = dealt[player.name].find(l => l.name === chosenName)
+    assignLeader(game, player, leader)
   }
 }
 
@@ -72,7 +79,7 @@ function assignLeader(game, player, leader) {
   })
 
   // Apply starting effects for known leaders
-  if (leader.name === 'Glossu "The Beast" Rabban') {
+  if (leader.name.includes('Rabban')) {
     player.incrementCounter('spice', 1, { silent: true })
     player.incrementCounter('solari', 1, { silent: true })
     game.log.add({

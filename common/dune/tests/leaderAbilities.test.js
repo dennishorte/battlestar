@@ -2,8 +2,8 @@ const t = require('../testutil')
 
 describe('Leader Abilities', () => {
 
-  test('Signet Ring card is in starting deck when leaders enabled', () => {
-    const game = t.fixture({ useLeaders: true, randomLeaders: true })
+  test('Signet Ring card is in starting deck', () => {
+    const game = t.fixture()
     game.run()
 
     // Verify Signet Ring is in the starting deck
@@ -37,7 +37,7 @@ describe('Leader Abilities', () => {
   })
 
   test('Paul Atreides Signet Ring can be played via gameplay', () => {
-    const game = t.fixture({ useLeaders: true })
+    const game = t.fixture()
     t.setBoard(game, {
       leaders: {
         dennis: {
