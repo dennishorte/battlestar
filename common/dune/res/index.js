@@ -1,4 +1,5 @@
 const boardSpaces = require('./boardSpaces')
+const observationPosts = require('./observationPosts')
 const constants = require('./constants')
 const cards = require('./cards/index')
 const leaderData = require('./leaders/index')
@@ -36,6 +37,7 @@ function filterByCompatibility(items, settings) {
 
 module.exports = {
   boardSpaces,
+  observationPosts,
   constants,
   cards,
   leaderData,

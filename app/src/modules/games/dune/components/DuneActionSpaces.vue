@@ -1,10 +1,5 @@
 <template>
   <div class="action-spaces">
-    <div class="section-header">
-      Action Spaces
-      <span class="shield-wall-destroyed" v-if="!game.state.shieldWall">Shield Wall Destroyed</span>
-    </div>
-
     <div class="control-row" v-if="hasControl">
       <span v-for="(owner, loc) in game.state.controlMarkers"
             :key="loc"
@@ -14,48 +9,97 @@
       </span>
     </div>
 
-    <div v-for="group in spaceGroups" :key="group.label" class="space-group">
-      <div class="group-label" :class="`group-${group.icon}`">
-        <DuneFactionIcon v-if="isFaction(group.icon)"
-                         :faction="group.icon"
-                         size=".9em"
-                         class="group-icon" />
-        {{ group.label }}
-      </div>
-      <div v-for="space in group.spaces" :key="space.id" class="space-entry">
-        <div class="space-row">
-          <DuneFactionIcon v-if="isFaction(space.icon)"
-                           :faction="space.icon"
-                           size=".85em" />
-          <span v-else class="space-icon" :class="`icon-${space.icon}`" />
-          <span class="space-name">{{ space.name }}</span>
-          <span class="space-occupant" v-if="game.state.boardSpaces[space.id]">
-            {{ game.state.boardSpaces[space.id] }}
-          </span>
-          <span class="space-cost" v-if="costLabel(space)">{{ costLabel(space) }}</span>
-          <span class="space-req" v-if="space.influenceRequirement">
-            {{ reqLabel(space.influenceRequirement) }}
-          </span>
-          <span class="space-combat" v-if="space.isCombatSpace" title="Combat">C</span>
+    <div class="board-layout">
+      <svg class="spy-track" ref="spyTrack">
+        <template v-for="post in postPositions" :key="post.id">
+          <line v-for="(sy, si) in post.spaceYs"
+                :key="si"
+                :x1="trackCx"
+                :y1="post.y"
+                :x2="trackWidth"
+                :y2="sy"
+                stroke="#6a5a48"
+                stroke-width="1.5" />
+          <circle :cx="trackCx"
+                  :cy="post.y"
+                  :r="postRadius"
+                  :fill="postFill(post.id)"
+                  stroke="#6a5a48"
+                  stroke-width="1.5" />
+          <text :x="trackCx"
+                :y="post.y + 3.5"
+                text-anchor="middle"
+                font-size="9"
+                font-weight="600"
+                :fill="postTextFill(post.id)">
+            {{ post.id }}
+          </text>
+          <!-- Multiple occupants: show colored dots above the post circle -->
+          <template v-if="postOccupants(post.id).length > 1">
+            <circle v-for="(color, oi) in postOccupantColors(post.id)"
+                    :key="'o' + oi"
+                    :cx="trackCx - 6 + oi * 12 / (postOccupants(post.id).length - 1 || 1)"
+                    :cy="post.y - postRadius - 5"
+                    r="3"
+                    :fill="color"
+                    stroke="#6a5a48"
+                    stroke-width="0.75" />
+          </template>
+        </template>
+      </svg>
+
+      <div class="spaces-column" ref="spacesColumn">
+        <div class="section-header">
+          Action Spaces
+          <span class="shield-wall-destroyed" v-if="!game.state.shieldWall">Shield Wall Destroyed</span>
         </div>
-        <div class="space-effects">
-          <div v-for="(line, i) in describeSpace(space)"
-               :key="i"
-               :class="line.startsWith('+') ? 'effect-always' : 'effect-line'">
-            {{ line }}
+        <div v-for="group in spaceGroups" :key="group.label" class="space-group">
+          <div class="group-label" :class="`group-${group.icon}`">
+            <DuneFactionIcon v-if="isFaction(group.icon)"
+                             :faction="group.icon"
+                             size=".9em"
+                             class="group-icon" />
+            {{ group.label }}
+          </div>
+          <div v-for="space in group.spaces"
+               :key="space.id"
+               class="space-entry"
+               :data-space-id="space.id">
+            <div class="space-row">
+              <DuneFactionIcon v-if="isFaction(space.icon)"
+                               :faction="space.icon"
+                               size=".85em" />
+              <span v-else class="space-icon" :class="`icon-${space.icon}`" />
+              <span class="space-name">{{ space.name }}</span>
+              <span class="space-occupant" v-if="game.state.boardSpaces[space.id]">
+                {{ game.state.boardSpaces[space.id] }}
+              </span>
+              <span class="space-cost" v-if="costLabel(space)">{{ costLabel(space) }}</span>
+              <span class="space-req" v-if="space.influenceRequirement">
+                {{ reqLabel(space.influenceRequirement) }}
+              </span>
+              <span class="space-combat" v-if="space.isCombatSpace" title="Combat">C</span>
+            </div>
+            <div class="space-effects">
+              <div v-for="(line, i) in describeSpace(space)"
+                   :key="i"
+                   :class="line.startsWith('+') ? 'effect-always' : 'effect-line'">
+                {{ line }}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <div class="space-group" v-if="hasBonusSpice">
-      <div class="group-label group-yellow">Bonus Spice</div>
-      <div v-for="(count, spaceId) in game.state.bonusSpice"
-           :key="spaceId"
-           v-show="count > 0"
-           class="space-row">
-        <span class="space-name">{{ formatName(spaceId) }}</span>
-        <span class="bonus-amount">+{{ count }}</span>
+        <div class="space-group" v-if="hasBonusSpice">
+          <div class="group-label group-yellow">Bonus Spice</div>
+          <div v-for="(count, spaceId) in game.state.bonusSpice"
+               :key="spaceId"
+               v-show="count > 0"
+               class="space-row">
+            <span class="space-name">{{ formatName(spaceId) }}</span>
+            <span class="bonus-amount">+{{ count }}</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -67,6 +111,7 @@ import { dune } from 'battlestar-common'
 import DuneFactionIcon from './DuneFactionIcon.vue'
 
 const boardSpaces = dune.res.boardSpaces
+const observationPosts = dune.res.observationPosts
 const factionIds = new Set(['emperor', 'guild', 'bene-gesserit', 'fremen'])
 
 export default {
@@ -77,6 +122,15 @@ export default {
   },
 
   inject: ['game'],
+
+  data() {
+    return {
+      trackWidth: 30,
+      trackCx: 12,
+      postRadius: 10,
+      postPositions: [],
+    }
+  },
 
   computed: {
     spaceGroups() {
@@ -103,9 +157,101 @@ export default {
     hasBonusSpice() {
       return Object.values(this.game.state.bonusSpice).some(v => v > 0)
     },
+
+    playerColorMap() {
+      const map = {}
+      for (const player of this.game.players) {
+        map[player.name] = player.color
+      }
+      return map
+    },
+  },
+
+  mounted() {
+    this.updatePostPositions()
+  },
+
+  updated() {
+    this.$nextTick(() => this.updatePostPositions())
   },
 
   methods: {
+    updatePostPositions() {
+      const col = this.$refs.spacesColumn
+      if (!col) {
+        return
+      }
+
+      const colRect = col.getBoundingClientRect()
+      const spaceYMap = {}
+
+      col.querySelectorAll('[data-space-id]').forEach(el => {
+        const id = el.dataset.spaceId
+        const rect = el.getBoundingClientRect()
+        // Use center of the first row (space name line), not the full entry with effects
+        const row = el.querySelector('.space-row')
+        if (row) {
+          const rowRect = row.getBoundingClientRect()
+          spaceYMap[id] = rowRect.top + rowRect.height / 2 - colRect.top
+        }
+        else {
+          spaceYMap[id] = rect.top + rect.height / 2 - colRect.top
+        }
+      })
+
+      const positions = []
+      for (const post of observationPosts) {
+        const spaceYs = post.spaces
+          .map(id => spaceYMap[id])
+          .filter(y => y != null)
+        if (spaceYs.length === 0) {
+          continue
+        }
+
+        const y = spaceYs.reduce((a, b) => a + b, 0) / spaceYs.length
+        positions.push({ id: post.id, y, spaceYs })
+      }
+
+      // Only update reactive data if positions actually changed to avoid infinite update loop
+      const posKey = positions.map(p => `${p.id}:${Math.round(p.y)}`).join(',')
+      if (posKey === this._lastPosKey) {
+        return
+      }
+      this._lastPosKey = posKey
+
+      this.postPositions = positions
+
+      // Set SVG height to match column
+      const svg = this.$refs.spyTrack
+      if (svg) {
+        svg.setAttribute('height', colRect.height)
+      }
+    },
+
+    postFill(postId) {
+      const occupants = this.game.state.spyPosts[postId] || []
+      if (occupants.length === 1) {
+        return this.playerColorMap[occupants[0]] || '#6a5a48'
+      }
+      return '#fff'
+    },
+
+    postTextFill(postId) {
+      const occupants = this.game.state.spyPosts[postId] || []
+      if (occupants.length === 1) {
+        return '#fff'
+      }
+      return '#6a5a48'
+    },
+
+    postOccupants(postId) {
+      return this.game.state.spyPosts[postId] || []
+    },
+
+    postOccupantColors(postId) {
+      return this.postOccupants(postId).map(name => this.playerColorMap[name] || '#6a5a48')
+    },
+
     isFaction(icon) {
       return factionIds.has(icon)
     },
@@ -239,6 +385,21 @@ export default {
   border: 1px solid #d4c8a8;
   padding: .1em .4em;
   border-radius: .15em;
+}
+
+.board-layout {
+  display: flex;
+  align-items: flex-start;
+}
+
+.spy-track {
+  width: 30px;
+  flex-shrink: 0;
+}
+
+.spaces-column {
+  flex: 1;
+  min-width: 0;
 }
 
 .space-group {
