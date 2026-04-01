@@ -33,10 +33,10 @@
             {{ game.state.boardSpaces[space.id] }}
           </span>
           <span class="space-cost" v-if="costLabel(space)">{{ costLabel(space) }}</span>
-          <span class="space-combat" v-if="space.isCombatSpace" title="Combat">C</span>
           <span class="space-req" v-if="space.influenceRequirement">
             {{ reqLabel(space.influenceRequirement) }}
           </span>
+          <span class="space-combat" v-if="space.isCombatSpace" title="Combat">C</span>
         </div>
         <div class="space-effects">
           <div v-for="(line, i) in describeSpace(space)"
