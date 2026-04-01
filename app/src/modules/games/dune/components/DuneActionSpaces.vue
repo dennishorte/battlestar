@@ -176,6 +176,9 @@ export default {
     },
 
     costLabel(space) {
+      if (space.dynamicCost === 'sword-master') {
+        return '8/6 solari'
+      }
       if (!space.cost) {
         return null
       }
