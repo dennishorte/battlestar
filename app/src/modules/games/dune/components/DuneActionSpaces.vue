@@ -22,20 +22,29 @@
                          class="group-icon" />
         {{ group.label }}
       </div>
-      <div v-for="space in group.spaces" :key="space.id" class="space-row">
-        <DuneFactionIcon v-if="isFaction(space.icon)"
-                         :faction="space.icon"
-                         size=".85em" />
-        <span v-else class="space-icon" :class="`icon-${space.icon}`" />
-        <span class="space-name">{{ space.name }}</span>
-        <span class="space-occupant" v-if="game.state.boardSpaces[space.id]">
-          {{ game.state.boardSpaces[space.id] }}
-        </span>
-        <span class="space-cost" v-if="costLabel(space)">{{ costLabel(space) }}</span>
-        <span class="space-combat" v-if="space.isCombatSpace" title="Combat">C</span>
-        <span class="space-req" v-if="space.influenceRequirement">
-          {{ reqLabel(space.influenceRequirement) }}
-        </span>
+      <div v-for="space in group.spaces" :key="space.id" class="space-entry">
+        <div class="space-row">
+          <DuneFactionIcon v-if="isFaction(space.icon)"
+                           :faction="space.icon"
+                           size=".85em" />
+          <span v-else class="space-icon" :class="`icon-${space.icon}`" />
+          <span class="space-name">{{ space.name }}</span>
+          <span class="space-occupant" v-if="game.state.boardSpaces[space.id]">
+            {{ game.state.boardSpaces[space.id] }}
+          </span>
+          <span class="space-cost" v-if="costLabel(space)">{{ costLabel(space) }}</span>
+          <span class="space-combat" v-if="space.isCombatSpace" title="Combat">C</span>
+          <span class="space-req" v-if="space.influenceRequirement">
+            {{ reqLabel(space.influenceRequirement) }}
+          </span>
+        </div>
+        <div class="space-effects">
+          <div v-for="(line, i) in describeSpace(space)"
+               :key="i"
+               :class="line.startsWith('+') ? 'effect-always' : 'effect-line'">
+            {{ line }}
+          </div>
+        </div>
       </div>
     </div>
 
@@ -99,6 +108,71 @@ export default {
   methods: {
     isFaction(icon) {
       return factionIds.has(icon)
+    },
+
+    describeEffect(effect) {
+      const labels = {
+        'troop': (e) => `+${e.amount} troop${e.amount > 1 ? 's' : ''}`,
+        'draw': (e) => `draw ${e.amount} card${e.amount > 1 ? 's' : ''}`,
+        'intrigue': (e) => `+${e.amount} intrigue`,
+        'gain': (e) => `+${e.amount} ${e.resource}`,
+        'spy': () => '+1 spy',
+        'contract': () => '+1 contract',
+        'spice-harvest': (e) => e.amount > 0 ? `harvest ${e.amount} spice` : null,
+        'sandworm': (e) => `+${e.amount} sandworm${e.amount > 1 ? 's' : ''}`,
+        'maker-hook': () => '+1 maker hook',
+        'trash-card': () => 'trash a card',
+        'steal-intrigue': () => 'steal intrigue (4+ cards)',
+        'high-council': () => 'gain High Council seat',
+        'sword-master': () => 'gain Swordmaster (3rd agent)',
+        'recall-agent': () => 'recall an agent',
+        'intrigue-trash-draw': () => 'trash intrigue → draw intrigue',
+        'break-shield-wall': () => 'destroy Shield Wall',
+        'influence-choice': (e) => `+${e.amount} influence (any faction)`,
+      }
+      const fn = labels[effect.type]
+      return fn ? fn(effect) : effect.type
+    },
+
+    describeEffects(effects) {
+      if (!effects || effects.length === 0) {
+        return []
+      }
+      const lines = []
+      for (const effect of effects) {
+        if (effect.type === 'choice') {
+          effect.choices.forEach((choice, ci) => {
+            const parts = choice.effects.map(e => this.describeEffect(e)).filter(Boolean)
+            let line = parts.join(', ')
+            if (choice.cost) {
+              const costStr = Object.entries(choice.cost).map(([r, a]) => `${a} ${r}`).join(', ')
+              line = `pay ${costStr} → ${line}`
+            }
+            if (choice.requires) {
+              line = `with ${choice.requires}: ${line}`
+            }
+            if (ci > 0) {
+              lines.push('  OR')
+            }
+            lines.push(`· ${line}`)
+          })
+        }
+        else {
+          const desc = this.describeEffect(effect)
+          if (desc) {
+            lines.push(`· ${desc}`)
+          }
+        }
+      }
+      return lines
+    },
+
+    describeSpace(space) {
+      const lines = this.describeEffects(space.effects)
+      if (space.isMakerSpace) {
+        lines.push('+ bonus spice')
+      }
+      return lines
     },
 
     costLabel(space) {
@@ -187,17 +261,40 @@ export default {
 .group-bene-gesserit { background-color: #5b3a8a; }
 .group-fremen { background-color: #2a6090; }
 
+.space-entry {
+  border-bottom: 1px solid #e8e0d4;
+  padding-bottom: .15em;
+  margin-bottom: .15em;
+}
+
+.space-entry:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
 .space-row {
   display: flex;
   align-items: center;
   gap: .3em;
   padding: .15em .3em;
   font-size: .85em;
-  border-bottom: 1px solid #e8e0d4;
 }
 
-.space-row:last-child {
-  border-bottom: none;
+.space-effects {
+  padding-left: 1.3em;
+  font-size: .75em;
+  color: #6a5a48;
+  line-height: 1.3;
+}
+
+.effect-line {
+  padding-left: .5em;
+}
+
+.effect-always {
+  margin-top: .15em;
+  font-style: italic;
+  color: #8a7a68;
 }
 
 .space-icon {

@@ -678,6 +678,27 @@ function resolveBoardSpaceEffects(game, player, space) {
   for (const effect of space.effects) {
     resolveEffect(game, player, effect, space)
   }
+
+  // Maker spaces always grant bonus spice (independent of harvest/worm choice)
+  if (space.isMakerSpace) {
+    const bonus = game.state.bonusSpice[space.id] || 0
+    if (bonus > 0) {
+      player.incrementCounter('spice', bonus, { silent: true })
+      game.log.add({
+        template: '{player} collects {amount} bonus Spice',
+        args: { player, amount: bonus },
+      })
+      game.state.bonusSpice[space.id] = 0
+      if (game.state.turnTracking) {
+        game.state.turnTracking.spiceGained += bonus
+      }
+    }
+    // Check harvest contract using total spice gained this turn
+    if (game.state.turnTracking?.spiceGained > 0) {
+      const choamHarvest = require('../systems/choam.js')
+      choamHarvest.checkContractCompletion(game, player, 'harvest', { spiceAmount: game.state.turnTracking.spiceGained })
+    }
+  }
 }
 
 /**
@@ -737,29 +758,24 @@ function resolveEffect(game, player, effect, space) {
 
     case 'spice-harvest': {
       let base = effect.amount || 0
+      if (base === 0) {
+        break
+      }
       // Double harvest from card effect
-      if (game.state.turnTracking?.doubleHarvest && base > 0) {
+      if (game.state.turnTracking?.doubleHarvest) {
         base *= 2
         game.state.turnTracking.doubleHarvest = false
       }
-      const bonus = (space && game.state.bonusSpice[space.id]) || 0
-      let total = base + bonus
-      total = leaderAbilities.modifyHarvestAmount(game, player, total)
+      let total = leaderAbilities.modifyHarvestAmount(game, player, base)
       if (total > 0) {
         player.incrementCounter('spice', total, { silent: true })
         game.log.add({
-          template: '{player} harvests {total} Spice ({base} base + {bonus} bonus)',
-          args: { player, total, base, bonus },
+          template: '{player} harvests {total} Spice',
+          args: { player, total },
         })
-        if (space) {
-          game.state.bonusSpice[space.id] = 0
-        }
         if (game.state.turnTracking) {
           game.state.turnTracking.spiceGained += total
         }
-        // Check harvest contract completion
-        const choamHarvest = require('../systems/choam.js')
-        choamHarvest.checkContractCompletion(game, player, 'harvest', { spiceAmount: total })
       }
       break
     }
