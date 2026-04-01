@@ -88,7 +88,7 @@ const boardSpaces = [
       // Gain 2 spice OR (if maker hook: get a sandworm). Plus bonus spice.
       { type: 'choice', choices: [
         { label: 'Gain 2 Spice', effects: [{ type: 'spice-harvest', amount: 2 }] },
-        { label: 'Maker hook: get a Sandworm', requires: 'maker-hook', effects: [{ type: 'sandworm', amount: 1 }, { type: 'spice-harvest', amount: 0 }] },
+        { label: 'Maker hook: get a Sandworm', requires: 'maker-hook', effects: [{ type: 'sandworm', amount: 1 }] },
       ]},
     ],
   },
@@ -103,7 +103,7 @@ const boardSpaces = [
       // Gain 4 spice OR (if maker hook: get 2 sandworms). Plus bonus spice.
       { type: 'choice', choices: [
         { label: 'Gain 4 Spice', effects: [{ type: 'spice-harvest', amount: 4 }] },
-        { label: 'Maker hook: get 2 Sandworms', requires: 'maker-hook', effects: [{ type: 'sandworm', amount: 2 }, { type: 'spice-harvest', amount: 0 }] },
+        { label: 'Maker hook: get 2 Sandworms', requires: 'maker-hook', effects: [{ type: 'sandworm', amount: 2 }] },
       ]},
     ],
   },
