@@ -59,7 +59,7 @@ const reserveCards = [
     passiveAbility: null,
     agentIcons: ['green', 'purple'],
     factionAccess: [],
-    agentAbility: 'With 2 Influence with Bene Gesserit: Draw a card',
+    agentAbility: 'With 2 Influence with Bene Gesserit:\n· Draw a card',
     revealPersuasion: 2,
     revealSwords: 0,
     revealAbility: null,
