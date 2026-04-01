@@ -195,6 +195,13 @@ export default {
   font-size: .9em;
   color: #4a3a20;
   line-height: 1.3;
+  padding: .1em .3em;
+}
+
+.reveal-effect {
+  background-color: #ede7da;
+  border-radius: .15em;
+  margin-top: .1em;
 }
 
 .effect-label {
