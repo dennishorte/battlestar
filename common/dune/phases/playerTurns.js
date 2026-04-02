@@ -202,10 +202,10 @@ function agentTurn(game, player, card) {
   // Resolve card agent ability and board space effects (player chooses order per rules)
   const hasCardAbility = !!card.definition?.agentAbility
   if (hasCardAbility) {
-    const [order] = game.actions.choose(player, ['Card ability first', 'Board space first'], {
-      title: 'Resolve effects in which order?',
+    const [order] = game.actions.choose(player, [card.name, space.name], {
+      title: 'Which effect to resolve first?',
     })
-    if (order === 'Card ability first') {
+    if (order === card.name) {
       resolveCardAgentAbility(game, player, card)
       resolveBoardSpaceEffects(game, player, space)
     }

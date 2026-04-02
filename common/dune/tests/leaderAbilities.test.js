@@ -85,7 +85,7 @@ describe('Leader Abilities', () => {
     // Signet Ring to purple space (Arrakeen)
     t.choose(game, 'Agent Turn.Signet Ring')
     t.choose(game, 'Arrakeen')
-    t.choose(game, 'Card ability first')
+    t.choose(game, 'Signet Ring')
 
     const player = game.players.byName('dennis')
     expect(player.solari).toBe(1)
@@ -111,7 +111,7 @@ describe('Leader Abilities', () => {
     // Signet Ring to yellow space (Imperial Basin)
     t.choose(game, 'Agent Turn.Signet Ring')
     t.choose(game, 'Imperial Basin')
-    t.choose(game, 'Card ability first')
+    t.choose(game, 'Signet Ring')
 
     const player = game.players.byName('dennis')
     // Imperial Basin harvests 1 spice + 1 from Liet Kynes
@@ -137,7 +137,7 @@ describe('Leader Abilities', () => {
     // Signet Ring to green space (Assembly Hall)
     t.choose(game, 'Agent Turn.Signet Ring')
     t.choose(game, 'Assembly Hall')
-    t.choose(game, 'Card ability first')
+    t.choose(game, 'Signet Ring')
 
     const player = game.players.byName('dennis')
     expect(player.water).toBe(1)
@@ -162,7 +162,7 @@ describe('Leader Abilities', () => {
     // Signet Ring to green space (Assembly Hall)
     t.choose(game, 'Agent Turn.Signet Ring')
     t.choose(game, 'Assembly Hall')
-    t.choose(game, 'Card ability first')
+    t.choose(game, 'Signet Ring')
 
     const player = game.players.byName('dennis')
     expect(player.water).toBe(0)
@@ -183,8 +183,8 @@ describe('Leader Abilities', () => {
     t.choose(game, 'Assembly Hall')
 
     const choices = t.currentChoices(game)
-    expect(choices).toContain('Card ability first')
-    expect(choices).toContain('Board space first')
+    expect(choices).toContain('Signet Ring')
+    expect(choices).toContain('Assembly Hall')
   })
 
   test('no effect order choice when card has no agent ability', () => {
@@ -197,8 +197,8 @@ describe('Leader Abilities', () => {
 
     // Should skip straight to plot intrigue or next player — no order choice
     const choices = t.currentChoices(game)
-    expect(choices).not.toContain('Card ability first')
-    expect(choices).not.toContain('Board space first')
+    expect(choices).not.toContain('Dagger')
+    expect(choices).not.toContain('Assembly Hall')
   })
 
   test('board space first resolves space effects before card ability', () => {
@@ -220,7 +220,7 @@ describe('Leader Abilities', () => {
     // Board space first — Arrakeen gives +1 troop, draw 1; then Liet gives +1 solari
     t.choose(game, 'Agent Turn.Signet Ring')
     t.choose(game, 'Arrakeen')
-    t.choose(game, 'Board space first')
+    t.choose(game, 'Arrakeen')
 
     const player = game.players.byName('dennis')
     expect(player.solari).toBe(1)

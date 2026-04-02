@@ -1,11 +1,16 @@
 <template>
   <span class="dune-chip" :class="chipClass" @click.stop="showModal = true">
-    <DuneFactionIcon v-if="spaceIcon && isFaction(spaceIcon)"
-                     :faction="spaceIcon"
-                     size=".85em" />
-    <span v-else-if="spaceIcon" class="space-icon" :class="`icon-${spaceIcon}`" />
-    <span class="chip-name">{{ name }}</span>
-    <span class="chip-detail" v-if="detail">{{ detail }}</span>
+    <span class="chip-main">
+      <span class="chip-header">
+        <DuneFactionIcon v-if="spaceIcon && isFaction(spaceIcon)"
+                         :faction="spaceIcon"
+                         size=".85em" />
+        <span v-else-if="spaceIcon" class="space-icon" :class="`icon-${spaceIcon}`" />
+        <span class="chip-name">{{ name }}</span>
+        <span class="chip-detail" v-if="detail">{{ detail }}</span>
+      </span>
+      <span class="chip-subtitle" v-if="subtitle">{{ subtitle }}</span>
+    </span>
   </span>
 
   <teleport to="body">
@@ -110,6 +115,7 @@ export default {
     card: { type: Object, default: null },
     leader: { type: Object, default: null },
     boardSpace: { type: Object, default: null },
+    subtitle: { type: String, default: null },
   },
 
   data() {
@@ -258,6 +264,17 @@ export default {
   background-color: #e8dcc0;
 }
 
+.chip-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.chip-header {
+  display: flex;
+  align-items: center;
+  gap: .4em;
+}
+
 .chip-name {
   font-weight: 600;
   color: #2c2416;
@@ -266,6 +283,12 @@ export default {
 .chip-detail {
   font-size: .85em;
   color: #8a7a68;
+}
+
+.chip-subtitle {
+  font-size: .8em;
+  color: #6a5a48;
+  line-height: 1.3;
 }
 
 .chip-leader {
