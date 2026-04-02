@@ -293,6 +293,21 @@ export default {
       if (this.leader) {
         return ''
       }
+      if (this.boardSpace) {
+        const parts = []
+        if (this.boardSpace.dynamicCost === 'sword-master') {
+          parts.push('8/6 solari')
+        }
+        else if (this.boardSpace.cost) {
+          parts.push(this.formatCost(this.boardSpace.cost))
+        }
+        if (this.boardSpace.influenceRequirement) {
+          const req = this.boardSpace.influenceRequirement
+          const labels = { emperor: 'Emp', guild: 'Guild', 'bene-gesserit': 'BG', fremen: 'Fremen' }
+          parts.push(`${labels[req.faction] || req.faction} ${req.amount}+`)
+        }
+        return parts.join(' · ')
+      }
       if (this.isIntrigueCard) {
         if (this.card.plotEffect) {
           return 'Plot'
