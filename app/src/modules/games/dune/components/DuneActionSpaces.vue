@@ -77,16 +77,20 @@
                 stroke-width="1.5" />
           <circle :cx="trackCx"
                   :cy="post.y"
-                  :r="postRadius"
+                  :r="clickablePostIds.has(post.id) ? postRadius + 2 : postRadius"
                   :fill="postFill(post.id)"
-                  stroke="#6a5a48"
-                  stroke-width="1.5" />
+                  :stroke="clickablePostIds.has(post.id) ? '#e8b830' : '#6a5a48'"
+                  :stroke-width="clickablePostIds.has(post.id) ? 2.5 : 1.5"
+                  :class="{ 'clickable-post': clickablePostIds.has(post.id) }"
+                  @click="clickPost(post.id)" />
           <text :x="trackCx"
                 :y="post.y + 3.5"
                 text-anchor="middle"
                 font-size="9"
                 font-weight="600"
-                :fill="postTextFill(post.id)">
+                :fill="postTextFill(post.id)"
+                :class="{ 'clickable-post': clickablePostIds.has(post.id) }"
+                @click="clickPost(post.id)">
             {{ post.id }}
           </text>
           <!-- Multiple occupants: show colored dots above the post circle -->
@@ -122,7 +126,7 @@ export default {
     DuneFactionIcon,
   },
 
-  inject: ['game'],
+  inject: ['actor', 'bus', 'game'],
 
   data() {
     return {
@@ -165,6 +169,30 @@ export default {
         map[player.name] = player.color
       }
       return map
+    },
+
+    spyPlacementRequest() {
+      const owner = this.game.players.byName(this.actor.name)
+      const request = this.game.getWaiting(owner)
+      if (request && request.title === 'Choose an observation post for your Spy') {
+        return request
+      }
+      return null
+    },
+
+    clickablePostIds() {
+      if (!this.spyPlacementRequest) {
+        return new Set()
+      }
+      const ids = new Set()
+      for (const choice of this.spyPlacementRequest.choices) {
+        const name = choice.title || choice
+        const match = name.match(/^Post ([A-M])\b/)
+        if (match) {
+          ids.add(match[1])
+        }
+      }
+      return ids
     },
   },
 
@@ -344,6 +372,21 @@ export default {
       return `${labels[req.faction] || req.faction} ${req.amount}+`
     },
 
+    clickPost(postId) {
+      if (!this.clickablePostIds.has(postId)) {
+        return
+      }
+      const owner = this.game.players.byName(this.actor.name)
+      this.bus.emit('user-select-option', {
+        actor: owner,
+        optionName: `post ${postId}`,
+        opts: { prefix: true },
+      })
+      this.$nextTick(() => {
+        this.bus.emit('click-choose-selected-option')
+      })
+    },
+
     formatName(id) {
       return id.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')
     },
@@ -516,5 +559,13 @@ export default {
 .bonus-amount {
   color: #b8860b;
   font-weight: bold;
+}
+
+.clickable-post {
+  cursor: pointer;
+}
+
+.clickable-post:hover {
+  filter: brightness(1.2);
 }
 </style>
