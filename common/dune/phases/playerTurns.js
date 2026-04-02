@@ -260,7 +260,7 @@ function agentTurn(game, player, card) {
 function revealTurn(game, player) {
   game.log.add({
     template: 'Reveal',
-    event: 'player-turn',
+    event: 'step',
   })
   game.log.indent()
 
@@ -270,26 +270,42 @@ function revealTurn(game, player) {
   // Step 1: Reveal all remaining hand cards
   const revealedCards = deckEngine.revealHand(game, player)
 
-  // Step 2: Resolve reveal effects — accumulate persuasion and swords
+  // Step 2: Log each card and resolve its reveal effects
   let totalPersuasion = 0
   let totalSwords = 0
 
   for (const card of revealedCards) {
-    totalPersuasion += card.revealPersuasion || 0
-    totalSwords += card.revealSwords || 0
+    const cardPersuasion = card.revealPersuasion || 0
+    const cardSwords = card.revealSwords || 0
+    totalPersuasion += cardPersuasion
+    totalSwords += cardSwords
+
+    game.log.add({
+      template: '{player} reveals {card}',
+      args: { player, card: card.name },
+    })
+    game.log.indent()
+
+    if (cardPersuasion > 0) {
+      game.log.add({
+        template: '+{amount} Persuasion',
+        args: { amount: cardPersuasion },
+      })
+    }
+    if (cardSwords > 0) {
+      game.log.add({
+        template: '+{amount} Sword(s)',
+        args: { amount: cardSwords },
+      })
+    }
+
+    resolveCardRevealAbility(game, player, card, revealedCards)
+
+    game.log.outdent()
   }
 
   if (totalPersuasion > 0) {
     player.incrementCounter('persuasion', totalPersuasion, { silent: true })
-    game.log.add({
-      template: '{player} gains {amount} Persuasion',
-      args: { player, amount: totalPersuasion },
-    })
-  }
-
-  // Resolve card reveal abilities
-  for (const card of revealedCards) {
-    resolveCardRevealAbility(game, player, card, revealedCards)
   }
 
   // Leader reveal turn hook
