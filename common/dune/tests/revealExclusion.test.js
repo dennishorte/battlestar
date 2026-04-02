@@ -32,6 +32,10 @@ describe('Agent-Turn Cards Excluded from Reveal', () => {
     const micahCards = game.waiting.selectors[0].choices.find(c => c.title === 'Agent Turn').choices
     t.choose(game, 'Agent Turn.' + micahCards[0])
     t.choose(game, t.currentChoices(game)[0])
+    // Handle effect order choice if card has an agent ability
+    if (t.currentChoices(game).includes('Card ability first')) {
+      t.choose(game, 'Card ability first')
+    }
 
     // Dennis plays second agent
     t.choose(game, 'Agent Turn.Reconnaissance')

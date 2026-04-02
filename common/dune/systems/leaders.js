@@ -225,6 +225,27 @@ function resolveSignetRing(game, player, resolveEffectFn) {
     return
   }
 
+  // Liet Kynes: Judge of the Change — reward based on space icon sent to this turn
+  if (leader.name === 'Liet Kynes') {
+    const icon = game.state.turnTracking?.spaceIcon
+    game.log.indent()
+    if (icon === 'green' && player.getInfluence('emperor') >= 2) {
+      resolveEffectFn(game, player, { type: 'gain', resource: 'water', amount: 1 }, null)
+    }
+    if (icon === 'purple') {
+      resolveEffectFn(game, player, { type: 'gain', resource: 'solari', amount: 1 }, null)
+    }
+    if (icon === 'yellow') {
+      resolveEffectFn(game, player, { type: 'gain', resource: 'spice', amount: 1 }, null)
+    }
+    // Faction spaces (emperor, guild, bene-gesserit, fremen) don't match any color
+    if (!['green', 'purple', 'yellow'].includes(icon)) {
+      game.log.add({ template: 'No matching space color for Judge of the Change', event: 'memo' })
+    }
+    game.log.outdent()
+    return
+  }
+
   const effects = parseAgentAbility(abilityText)
   if (effects) {
     game.log.indent()

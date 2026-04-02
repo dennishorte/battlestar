@@ -66,6 +66,166 @@ describe('Leader Abilities', () => {
     t.choose(game, spaces[0])
   })
 
+  test('Liet Kynes signet ring grants solari on purple space', () => {
+    const leaderData = require('../res/leaders/index.js')
+    const liet = leaderData.find(l => l.name === 'Liet Kynes')
+    const game = t.fixture({ seed: 'liet_purple' })
+    t.setBoard(game, {
+      leaders: { dennis: liet },
+      dennis: { solari: 0 },
+    })
+    game.run()
+
+    const hand = game.zones.byId('dennis.hand').cardlist()
+    const signet = hand.find(c => c.name === 'Signet Ring')
+    if (!signet) {
+      return
+    }
+
+    // Signet Ring to purple space (Arrakeen)
+    t.choose(game, 'Agent Turn.Signet Ring')
+    t.choose(game, 'Arrakeen')
+    t.choose(game, 'Card ability first')
+
+    const player = game.players.byName('dennis')
+    expect(player.solari).toBe(1)
+  })
+
+  test('Liet Kynes signet ring grants spice on yellow space', () => {
+    const leaderData = require('../res/leaders/index.js')
+    const liet = leaderData.find(l => l.name === 'Liet Kynes')
+    const game = t.fixture({ seed: 'liet_yellow2' })
+    t.setBoard(game, {
+      leaders: { dennis: liet },
+      dennis: { spice: 0 },
+      firstPlayerIndex: 0,
+    })
+    game.run()
+
+    const hand = game.zones.byId('dennis.hand').cardlist()
+    const signet = hand.find(c => c.name === 'Signet Ring')
+    if (!signet) {
+      return
+    }
+
+    // Signet Ring to yellow space (Imperial Basin)
+    t.choose(game, 'Agent Turn.Signet Ring')
+    t.choose(game, 'Imperial Basin')
+    t.choose(game, 'Card ability first')
+
+    const player = game.players.byName('dennis')
+    // Imperial Basin harvests 1 spice + 1 from Liet Kynes
+    expect(player.spice).toBe(2)
+  })
+
+  test('Liet Kynes signet ring grants water on green space with 2+ emperor influence', () => {
+    const leaderData = require('../res/leaders/index.js')
+    const liet = leaderData.find(l => l.name === 'Liet Kynes')
+    const game = t.fixture({ seed: 'liet_green' })
+    t.setBoard(game, {
+      leaders: { dennis: liet },
+      dennis: { water: 0, influence: { emperor: 2 } },
+    })
+    game.run()
+
+    const hand = game.zones.byId('dennis.hand').cardlist()
+    const signet = hand.find(c => c.name === 'Signet Ring')
+    if (!signet) {
+      return
+    }
+
+    // Signet Ring to green space (Assembly Hall)
+    t.choose(game, 'Agent Turn.Signet Ring')
+    t.choose(game, 'Assembly Hall')
+    t.choose(game, 'Card ability first')
+
+    const player = game.players.byName('dennis')
+    expect(player.water).toBe(1)
+  })
+
+  test('Liet Kynes signet ring no water on green space without emperor influence', () => {
+    const leaderData = require('../res/leaders/index.js')
+    const liet = leaderData.find(l => l.name === 'Liet Kynes')
+    const game = t.fixture({ seed: 'liet_green_no_inf' })
+    t.setBoard(game, {
+      leaders: { dennis: liet },
+      dennis: { water: 0, influence: { emperor: 1 } },
+    })
+    game.run()
+
+    const hand = game.zones.byId('dennis.hand').cardlist()
+    const signet = hand.find(c => c.name === 'Signet Ring')
+    if (!signet) {
+      return
+    }
+
+    // Signet Ring to green space (Assembly Hall)
+    t.choose(game, 'Agent Turn.Signet Ring')
+    t.choose(game, 'Assembly Hall')
+    t.choose(game, 'Card ability first')
+
+    const player = game.players.byName('dennis')
+    expect(player.water).toBe(0)
+  })
+
+  test('effect order choice is offered when card has agent ability', () => {
+    const game = t.fixture()
+    game.run()
+
+    // Signet Ring has an agent ability
+    const hand = game.zones.byId('dennis.hand').cardlist()
+    const signet = hand.find(c => c.name === 'Signet Ring')
+    if (!signet) {
+      return
+    }
+
+    t.choose(game, 'Agent Turn.Signet Ring')
+    t.choose(game, 'Assembly Hall')
+
+    const choices = t.currentChoices(game)
+    expect(choices).toContain('Card ability first')
+    expect(choices).toContain('Board space first')
+  })
+
+  test('no effect order choice when card has no agent ability', () => {
+    const game = t.fixture()
+    game.run()
+
+    // Dagger has no agent ability
+    t.choose(game, 'Agent Turn.Dagger')
+    t.choose(game, 'Assembly Hall')
+
+    // Should skip straight to plot intrigue or next player — no order choice
+    const choices = t.currentChoices(game)
+    expect(choices).not.toContain('Card ability first')
+    expect(choices).not.toContain('Board space first')
+  })
+
+  test('board space first resolves space effects before card ability', () => {
+    const leaderData = require('../res/leaders/index.js')
+    const liet = leaderData.find(l => l.name === 'Liet Kynes')
+    const game = t.fixture({ seed: 'liet_order' })
+    t.setBoard(game, {
+      leaders: { dennis: liet },
+      dennis: { solari: 0 },
+    })
+    game.run()
+
+    const hand = game.zones.byId('dennis.hand').cardlist()
+    const signet = hand.find(c => c.name === 'Signet Ring')
+    if (!signet) {
+      return
+    }
+
+    // Board space first — Arrakeen gives +1 troop, draw 1; then Liet gives +1 solari
+    t.choose(game, 'Agent Turn.Signet Ring')
+    t.choose(game, 'Arrakeen')
+    t.choose(game, 'Board space first')
+
+    const player = game.players.byName('dennis')
+    expect(player.solari).toBe(1)
+  })
+
   test('Shaddam Corrino IV is excluded without CHOAM', () => {
     const leaderData = require('../res/leaders/index.js')
     const shaddam = leaderData.find(l => l.name === 'Shaddam Corrino IV')

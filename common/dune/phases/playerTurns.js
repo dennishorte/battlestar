@@ -92,6 +92,7 @@ function agentTurn(game, player, card) {
     spiceGained: 0,
     sentToMakerSpace: false,
     sentToFactionSpace: false,
+    spaceIcon: null,
     garrisonAtTurnStart: player.troopsInGarrison,
   }
 
@@ -181,6 +182,7 @@ function agentTurn(game, player, card) {
   }
 
   // Track space type for conditional cards
+  game.state.turnTracking.spaceIcon = space.icon
   if (space.isMakerSpace) {
     game.state.turnTracking.sentToMakerSpace = true
   }
@@ -197,11 +199,24 @@ function agentTurn(game, player, card) {
     }
   }
 
-  // Resolve card agent ability
-  resolveCardAgentAbility(game, player, card)
-
-  // Resolve board space effects
-  resolveBoardSpaceEffects(game, player, space)
+  // Resolve card agent ability and board space effects (player chooses order per rules)
+  const hasCardAbility = !!card.definition?.agentAbility
+  if (hasCardAbility) {
+    const [order] = game.actions.choose(player, ['Card ability first', 'Board space first'], {
+      title: 'Resolve effects in which order?',
+    })
+    if (order === 'Card ability first') {
+      resolveCardAgentAbility(game, player, card)
+      resolveBoardSpaceEffects(game, player, space)
+    }
+    else {
+      resolveBoardSpaceEffects(game, player, space)
+      resolveCardAgentAbility(game, player, card)
+    }
+  }
+  else {
+    resolveBoardSpaceEffects(game, player, space)
+  }
 
   // Lady Jessica / Reverend Mother: leader ability on BG/Fremen spaces
   leaderAbilities.onAgentPlaced(game, player, space, resolveBoardSpaceEffects)

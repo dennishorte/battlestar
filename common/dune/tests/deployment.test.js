@@ -144,6 +144,7 @@ describe('Units and Deployment', () => {
     // Arrakis Recruiter (+1 troop from card) → Arrakeen (+1 troop from space) = 2 recruited
     t.choose(game, 'Agent Turn.Arrakis Recruiter')
     t.choose(game, 'Arrakeen')
+    t.choose(game, 'Card ability first')
 
     // 2 pre-existing + 2 recruited = 4 in garrison
     // Can deploy: 2 recruited + min(2, 2 pre-existing) = 4
