@@ -10,44 +10,6 @@
     </div>
 
     <div class="board-layout">
-      <svg class="spy-track" ref="spyTrack">
-        <template v-for="post in postPositions" :key="post.id">
-          <line v-for="(sy, si) in post.spaceYs"
-                :key="si"
-                :x1="trackCx"
-                :y1="post.y"
-                :x2="trackWidth"
-                :y2="sy"
-                stroke="#6a5a48"
-                stroke-width="1.5" />
-          <circle :cx="trackCx"
-                  :cy="post.y"
-                  :r="postRadius"
-                  :fill="postFill(post.id)"
-                  stroke="#6a5a48"
-                  stroke-width="1.5" />
-          <text :x="trackCx"
-                :y="post.y + 3.5"
-                text-anchor="middle"
-                font-size="9"
-                font-weight="600"
-                :fill="postTextFill(post.id)">
-            {{ post.id }}
-          </text>
-          <!-- Multiple occupants: show colored dots above the post circle -->
-          <template v-if="postOccupants(post.id).length > 1">
-            <circle v-for="(color, oi) in postOccupantColors(post.id)"
-                    :key="'o' + oi"
-                    :cx="trackCx - 6 + oi * 12 / (postOccupants(post.id).length - 1 || 1)"
-                    :cy="post.y - postRadius - 5"
-                    r="3"
-                    :fill="color"
-                    stroke="#6a5a48"
-                    stroke-width="0.75" />
-          </template>
-        </template>
-      </svg>
-
       <div class="spaces-column" ref="spacesColumn">
         <div class="section-header">
           Action Spaces
@@ -64,6 +26,7 @@
           <div v-for="space in group.spaces"
                :key="space.id"
                class="space-entry"
+               :class="{ occupied: game.state.boardSpaces[space.id] }"
                :data-space-id="space.id">
             <div class="space-row">
               <DuneFactionIcon v-if="isFaction(space.icon)"
@@ -101,6 +64,44 @@
           </div>
         </div>
       </div>
+
+      <svg class="spy-track" ref="spyTrack">
+        <template v-for="post in postPositions" :key="post.id">
+          <line v-for="(sy, si) in post.spaceYs"
+                :key="si"
+                :x1="0"
+                :y1="sy"
+                :x2="trackCx"
+                :y2="post.y"
+                stroke="#6a5a48"
+                stroke-width="1.5" />
+          <circle :cx="trackCx"
+                  :cy="post.y"
+                  :r="postRadius"
+                  :fill="postFill(post.id)"
+                  stroke="#6a5a48"
+                  stroke-width="1.5" />
+          <text :x="trackCx"
+                :y="post.y + 3.5"
+                text-anchor="middle"
+                font-size="9"
+                font-weight="600"
+                :fill="postTextFill(post.id)">
+            {{ post.id }}
+          </text>
+          <!-- Multiple occupants: show colored dots above the post circle -->
+          <template v-if="postOccupants(post.id).length > 1">
+            <circle v-for="(color, oi) in postOccupantColors(post.id)"
+                    :key="'o' + oi"
+                    :cx="trackCx - 6 + oi * 12 / (postOccupants(post.id).length - 1 || 1)"
+                    :cy="post.y - postRadius - 5"
+                    r="3"
+                    :fill="color"
+                    stroke="#6a5a48"
+                    stroke-width="0.75" />
+          </template>
+        </template>
+      </svg>
     </div>
   </div>
 </template>
@@ -126,7 +127,7 @@ export default {
   data() {
     return {
       trackWidth: 30,
-      trackCx: 12,
+      trackCx: 18,
       postRadius: 10,
       postPositions: [],
     }
@@ -353,7 +354,10 @@ export default {
 
 <style scoped>
 .action-spaces {
-  padding: .25em;
+  padding: .5em;
+  border: 1px solid #d4c8a8;
+  border-radius: .3em;
+  background-color: white;
 }
 
 .section-header {
@@ -434,6 +438,10 @@ export default {
 .space-entry:last-child {
   border-bottom: none;
   margin-bottom: 0;
+}
+
+.space-entry.occupied {
+  opacity: .45;
 }
 
 .space-row {
