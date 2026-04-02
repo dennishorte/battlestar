@@ -66,12 +66,6 @@ function revealHand(game, player) {
     card.moveTo(revealedZone)
   }
 
-  if (cards.length > 0) {
-    game.log.add({
-      template: '{player} reveals {count} cards',
-      args: { player, count: cards.length },
-    })
-  }
 
   return cards
 }
