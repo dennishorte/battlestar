@@ -212,6 +212,19 @@ export default {
         }
       }
 
+      // Contract choices: "Name (reward text)"
+      const contractMatch = name.match(/^(.+?) \((.+)\)$/s)
+      if (contractMatch) {
+        const contractCard = cardsByName[contractMatch[1]]
+        if (contractCard) {
+          const cardWithReward = { ...contractCard, reward: contractMatch[2] }
+          return {
+            component: DuneOptionChip,
+            props: { name: contractMatch[1], card: cardWithReward, subtitle: contractMatch[2] },
+          }
+        }
+      }
+
       return null
     }
   },
