@@ -1,5 +1,9 @@
 <template>
   <span class="dune-chip" :class="chipClass" @click.stop="showModal = true">
+    <DuneFactionIcon v-if="spaceIcon && isFaction(spaceIcon)"
+                     :faction="spaceIcon"
+                     size=".85em" />
+    <span v-else-if="spaceIcon" class="space-icon" :class="`icon-${spaceIcon}`" />
     <span class="chip-name">{{ name }}</span>
     <span class="chip-detail" v-if="detail">{{ detail }}</span>
   </span>
@@ -31,6 +35,22 @@
               <div v-for="(line, i) in textLines(leader.signetRingAbility)"
                    :key="i"
                    :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
+            </div>
+          </template>
+          <template v-else-if="boardSpace">
+            <div class="field" v-if="boardSpace.cost">
+              <span class="label">Cost:</span> {{ formatCost(boardSpace.cost) }}
+            </div>
+            <div class="field" v-if="boardSpace.influenceRequirement">
+              <span class="label">Requires:</span>
+              {{ boardSpace.influenceRequirement.faction }} {{ boardSpace.influenceRequirement.amount }}+
+            </div>
+            <div class="field" v-if="boardSpace.isCombatSpace">
+              <span class="label">Combat space</span>
+            </div>
+            <div class="field" v-if="spaceEffectLines.length">
+              <span class="label">Effects:</span>
+              <div v-for="(line, i) in spaceEffectLines" :key="i" class="bullet">{{ line }}</div>
             </div>
           </template>
           <template v-else-if="card">
@@ -76,13 +96,20 @@
 
 
 <script>
+import DuneFactionIcon from './DuneFactionIcon.vue'
+
+const factionIds = new Set(['emperor', 'guild', 'bene-gesserit', 'fremen'])
+
 export default {
   name: 'DuneOptionChip',
+
+  components: { DuneFactionIcon },
 
   props: {
     name: { type: String, required: true },
     card: { type: Object, default: null },
     leader: { type: Object, default: null },
+    boardSpace: { type: Object, default: null },
   },
 
   data() {
@@ -96,12 +123,86 @@ export default {
       }
       return text.split('\n').filter(l => l.trim())
     },
+
+    isFaction(icon) {
+      return factionIds.has(icon)
+    },
+
+    formatCost(cost) {
+      return Object.entries(cost).map(([r, a]) => `${a} ${r}`).join(', ')
+    },
+
+    describeEffect(effect) {
+      const labels = {
+        'troop': (e) => `+${e.amount} troop${e.amount > 1 ? 's' : ''}`,
+        'draw': (e) => `draw ${e.amount} card${e.amount > 1 ? 's' : ''}`,
+        'intrigue': (e) => `+${e.amount} intrigue`,
+        'gain': (e) => `+${e.amount} ${e.resource}`,
+        'spy': () => '+1 spy',
+        'contract': () => '+1 contract',
+        'spice-harvest': (e) => e.amount > 0 ? `harvest ${e.amount} spice` : null,
+        'sandworm': (e) => `+${e.amount} sandworm${e.amount > 1 ? 's' : ''}`,
+        'maker-hook': () => '+1 maker hook',
+        'trash-card': () => 'trash a card',
+        'steal-intrigue': () => 'steal intrigue (4+ cards)',
+        'high-council': () => 'gain High Council seat',
+        'sword-master': () => 'gain Swordmaster (3rd agent)',
+        'recall-agent': () => 'recall an agent',
+        'intrigue-trash-draw': () => 'trash intrigue → draw intrigue',
+        'break-shield-wall': () => 'destroy Shield Wall',
+        'influence-choice': (e) => `+${e.amount} influence (any faction)`,
+      }
+      const fn = labels[effect.type]
+      return fn ? fn(effect) : effect.type
+    },
   },
 
   computed: {
+    spaceIcon() {
+      return this.boardSpace?.icon || null
+    },
+
+    spaceEffectLines() {
+      if (!this.boardSpace?.effects) {
+        return []
+      }
+      const lines = []
+      for (const effect of this.boardSpace.effects) {
+        if (effect.type === 'choice') {
+          effect.choices.forEach((choice, ci) => {
+            const parts = choice.effects.map(e => this.describeEffect(e)).filter(Boolean)
+            let line = parts.join(', ')
+            if (choice.cost) {
+              line = `pay ${this.formatCost(choice.cost)} → ${line}`
+            }
+            if (choice.requires) {
+              line = `with ${choice.requires}: ${line}`
+            }
+            if (ci > 0) {
+              lines.push('  OR')
+            }
+            lines.push(`· ${line}`)
+          })
+        }
+        else {
+          const desc = this.describeEffect(effect)
+          if (desc) {
+            lines.push(`· ${desc}`)
+          }
+        }
+      }
+      if (this.boardSpace.isMakerSpace) {
+        lines.push('· + bonus spice')
+      }
+      return lines
+    },
+
     chipClass() {
       if (this.leader) {
         return 'chip-leader'
+      }
+      if (this.boardSpace) {
+        return `chip-space-${this.boardSpace.icon}`
       }
       if (this.card?.factionAffiliation) {
         return `chip-faction-${this.card.factionAffiliation}`
@@ -177,6 +278,23 @@ export default {
 .chip-faction-guild { border-color: #c07020; }
 .chip-faction-bene-gesserit { border-color: #5b3a8a; }
 .chip-faction-fremen { border-color: #2a6090; }
+
+.chip-space-purple { border-color: #6a3d8a; }
+.chip-space-yellow { border-color: #b8860b; }
+.chip-space-green { border-color: #3a7d3a; }
+.chip-space-emperor { border-color: #8b2020; }
+.chip-space-guild { border-color: #c07020; }
+.chip-space-bene-gesserit { border-color: #5b3a8a; }
+.chip-space-fremen { border-color: #2a6090; }
+
+.space-icon {
+  display: inline-block;
+  width: .7em;
+  height: .7em;
+}
+.icon-purple { background-color: #6a3d8a; border-radius: 50%; }
+.icon-yellow { background-color: #b8860b; clip-path: polygon(50% 0%, 100% 100%, 0% 100%); }
+.icon-green { background-color: #3a7d3a; clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); }
 
 .dune-modal-backdrop {
   position: fixed;

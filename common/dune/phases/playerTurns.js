@@ -92,6 +92,7 @@ function agentTurn(game, player, card) {
     spiceGained: 0,
     sentToMakerSpace: false,
     sentToFactionSpace: false,
+    garrisonAtTurnStart: player.troopsInGarrison,
   }
 
   // Leader start-of-turn hook
@@ -480,9 +481,13 @@ function deployUnits(game, player) {
     return
   }
 
-  const maxFromGarrison = Math.min(2, garrisoned)
+  // Per rules: deploy any/all troops recruited this turn + up to 2 from pre-existing garrison
+  const garrisonAtStart = game.state.turnTracking?.garrisonAtTurnStart ?? garrisoned
+  const recruited = Math.max(0, garrisoned - garrisonAtStart)
+  const preExisting = garrisonAtStart
+  const maxDeploy = Math.min(garrisoned, recruited + Math.min(2, preExisting))
   const choices = []
-  for (let i = 0; i <= maxFromGarrison; i++) {
+  for (let i = 0; i <= maxDeploy; i++) {
     choices.push(`Deploy ${i} troop(s) from garrison`)
   }
 

@@ -126,6 +126,10 @@ export default {
     for (const leader of dune.res.leaderData) {
       leadersByName[leader.name] = leader
     }
+    const spacesByName = {}
+    for (const space of dune.res.boardSpaces) {
+      spacesByName[space.name] = space
+    }
 
     this.ui.fn.selectorOptionComponent = (option) => {
       const name = option.title || option
@@ -138,6 +142,14 @@ export default {
         return {
           component: DuneOptionChip,
           props: { name, leader },
+        }
+      }
+
+      const space = spacesByName[name]
+      if (space) {
+        return {
+          component: DuneOptionChip,
+          props: { name, boardSpace: space },
         }
       }
 
