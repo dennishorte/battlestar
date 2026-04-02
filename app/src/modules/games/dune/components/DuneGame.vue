@@ -131,6 +131,54 @@ export default {
       spacesByName[space.name] = space
     }
 
+    function cardSubtitle(card) {
+      if (!card.agentAbility) {
+        return null
+      }
+      // Clean up multiline ability text into a single line summary
+      return card.agentAbility.split('\n').map(l => l.trim()).filter(Boolean).join(' ')
+    }
+
+    function spaceSubtitle(space) {
+      if (!space.effects || space.effects.length === 0) {
+        return null
+      }
+      const parts = []
+      for (const effect of space.effects) {
+        if (effect.type === 'choice') {
+          const choiceDescs = effect.choices.map(c =>
+            c.effects.map(e => describeEffect(e)).filter(Boolean).join(', ')
+          )
+          parts.push(choiceDescs.join(' OR '))
+        }
+        else {
+          const desc = describeEffect(effect)
+          if (desc) {
+            parts.push(desc)
+          }
+        }
+      }
+      return parts.join(', ') || null
+    }
+
+    function describeEffect(effect) {
+      const labels = {
+        'troop': (e) => `+${e.amount} troop${e.amount > 1 ? 's' : ''}`,
+        'draw': (e) => `draw ${e.amount}`,
+        'intrigue': (e) => `+${e.amount} intrigue`,
+        'gain': (e) => `+${e.amount} ${e.resource}`,
+        'spy': () => '+1 spy',
+        'contract': () => '+1 contract',
+        'spice-harvest': (e) => e.amount > 0 ? `${e.amount} spice` : null,
+        'sandworm': (e) => `+${e.amount} sandworm${e.amount > 1 ? 's' : ''}`,
+        'high-council': () => 'High Council',
+        'sword-master': () => 'Swordmaster',
+        'influence-choice': (e) => `+${e.amount} influence`,
+      }
+      const fn = labels[effect.type]
+      return fn ? fn(effect) : null
+    }
+
     this.ui.fn.selectorOptionComponent = (option) => {
       const name = option.title || option
       if (typeof name !== 'string') {
@@ -149,7 +197,7 @@ export default {
       if (space) {
         return {
           component: DuneOptionChip,
-          props: { name, boardSpace: space },
+          props: { name, boardSpace: space, subtitle: spaceSubtitle(space) },
         }
       }
 
@@ -157,7 +205,7 @@ export default {
       if (card) {
         return {
           component: DuneOptionChip,
-          props: { name, card },
+          props: { name, card, subtitle: cardSubtitle(card) },
         }
       }
 
