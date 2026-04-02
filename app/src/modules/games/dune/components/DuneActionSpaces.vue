@@ -165,13 +165,19 @@ export default {
 
     playerColorMap() {
       const map = {}
-      for (const player of this.game.players) {
+      if (!this.game?.players) {
+        return map
+      }
+      for (const player of this.game.players.all()) {
         map[player.name] = player.color
       }
       return map
     },
 
     spyPlacementRequest() {
+      if (!this.game?.players) {
+        return null
+      }
       const owner = this.game.players.byName(this.actor.name)
       const request = this.game.getWaiting(owner)
       if (request && request.title === 'Choose an observation post for your Spy') {
