@@ -132,11 +132,14 @@ export default {
     }
 
     function cardSubtitle(card) {
-      if (!card.agentAbility) {
-        return null
-      }
-      // Clean up multiline ability text into a single line summary
-      return card.agentAbility.split('\n').map(l => l.trim()).filter(Boolean).join(' ')
+      // Pick the most relevant ability text for the subtitle
+      const text = card.agentAbility
+        || card.plotEffect
+        || card.combatEffect
+        || card.endgameEffect
+        || card.reward
+        || card.effect
+      return text || null
     }
 
     function spaceSubtitle(space) {

@@ -9,7 +9,11 @@
         <span class="chip-name">{{ name }}</span>
         <span class="chip-detail" v-if="detail">{{ detail }}</span>
       </span>
-      <span class="chip-subtitle" v-if="subtitle">{{ subtitle }}</span>
+      <span class="chip-subtitle" v-if="subtitleLines.length">
+        <span v-for="(line, i) in subtitleLines"
+              :key="i"
+              :class="line.startsWith('·') ? 'sub-bullet' : 'sub-line'">{{ line }}</span>
+      </span>
     </span>
   </span>
 
@@ -59,6 +63,7 @@
             </div>
           </template>
           <template v-else-if="card">
+            <!-- Imperium / Starter cards -->
             <div class="field" v-if="card.persuasionCost">
               <span class="label">Cost:</span> {{ card.persuasionCost }}
             </div>
@@ -91,6 +96,46 @@
               <div v-for="(line, i) in textLines(card.acquisitionBonus)"
                    :key="i"
                    :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
+            </div>
+            <!-- Intrigue cards -->
+            <div class="field" v-if="card.plotEffect">
+              <span class="label">Plot:</span>
+              <div v-for="(line, i) in textLines(card.plotEffect)"
+                   :key="i"
+                   :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
+            </div>
+            <div class="field" v-if="card.combatEffect">
+              <span class="label">Combat:</span>
+              <div v-for="(line, i) in textLines(card.combatEffect)"
+                   :key="i"
+                   :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
+            </div>
+            <div class="field" v-if="card.endgameEffect">
+              <span class="label">Endgame:</span>
+              <div v-for="(line, i) in textLines(card.endgameEffect)"
+                   :key="i"
+                   :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
+            </div>
+            <!-- Contract cards -->
+            <div class="field" v-if="card.reward">
+              <span class="label">Reward:</span>
+              <div v-for="(line, i) in textLines(card.reward)"
+                   :key="i"
+                   :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
+            </div>
+            <!-- Tech cards -->
+            <div class="field" v-if="card.spiceCost">
+              <span class="label">Cost:</span> {{ card.spiceCost }} spice
+            </div>
+            <div class="field" v-if="card.effect">
+              <span class="label">Effect:</span>
+              <div v-for="(line, i) in textLines(card.effect)"
+                   :key="i"
+                   :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
+            </div>
+            <!-- Faction affiliation -->
+            <div class="field" v-if="card.factionAffiliation">
+              <span class="label">Faction:</span> {{ card.factionAffiliation }}
             </div>
           </template>
         </div>
@@ -164,6 +209,13 @@ export default {
   },
 
   computed: {
+    subtitleLines() {
+      if (!this.subtitle) {
+        return []
+      }
+      return this.subtitle.split('\n').map(l => l.trim()).filter(Boolean)
+    },
+
     spaceIcon() {
       return this.boardSpace?.icon || null
     },
@@ -210,15 +262,54 @@ export default {
       if (this.boardSpace) {
         return `chip-space-${this.boardSpace.icon}`
       }
+      if (this.isIntrigueCard) {
+        return 'chip-intrigue'
+      }
+      if (this.isContractCard) {
+        return 'chip-contract'
+      }
+      if (this.isTechCard) {
+        return 'chip-tech'
+      }
       if (this.card?.factionAffiliation) {
         return `chip-faction-${this.card.factionAffiliation}`
       }
       return 'chip-card'
     },
 
+    isIntrigueCard() {
+      return this.card && ('plotEffect' in this.card || 'combatEffect' in this.card || 'endgameEffect' in this.card)
+    },
+
+    isContractCard() {
+      return this.card && 'reward' in this.card
+    },
+
+    isTechCard() {
+      return this.card && 'effect' in this.card && 'spiceCost' in this.card
+    },
+
     detail() {
       if (this.leader) {
         return ''
+      }
+      if (this.isIntrigueCard) {
+        if (this.card.plotEffect) {
+          return 'Plot'
+        }
+        if (this.card.combatEffect) {
+          return 'Combat'
+        }
+        if (this.card.endgameEffect) {
+          return 'Endgame'
+        }
+        return ''
+      }
+      if (this.isContractCard) {
+        return 'Contract'
+      }
+      if (this.isTechCard) {
+        return `${this.card.spiceCost} spice`
       }
       if (this.card?.persuasionCost) {
         return `${this.card.persuasionCost}`
@@ -286,9 +377,18 @@ export default {
 }
 
 .chip-subtitle {
+  display: flex;
+  flex-direction: column;
   font-size: .8em;
   color: #6a5a48;
   line-height: 1.3;
+}
+
+.sub-bullet {
+  padding-left: .6em;
+}
+
+.sub-line {
 }
 
 .chip-leader {
@@ -301,6 +401,13 @@ export default {
 .chip-faction-guild { border-color: #c07020; }
 .chip-faction-bene-gesserit { border-color: #5b3a8a; }
 .chip-faction-fremen { border-color: #2a6090; }
+
+.chip-intrigue { border-color: #8b6914; background-color: #fdf8ee; }
+.chip-intrigue:hover { background-color: #f5ecd8; }
+.chip-contract { border-color: #c07020; background-color: #fef5ee; }
+.chip-contract:hover { background-color: #f8e8d4; }
+.chip-tech { border-color: #3a7d7d; background-color: #eef7f7; }
+.chip-tech:hover { background-color: #dceeed; }
 
 .chip-space-purple { border-color: #6a3d8a; }
 .chip-space-yellow { border-color: #b8860b; }
