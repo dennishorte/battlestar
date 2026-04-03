@@ -45,13 +45,15 @@ function combatIntrigueRound(game, combatants) {
   while (consecutivePasses < combatants.length) {
     const player = combatants[currentIndex % combatants.length]
 
-    // Check if player has combat intrigue cards
+    // Always ask if the player has any intrigue cards in hand,
+    // to avoid revealing whether they hold combat cards.
     const intrigueZone = game.zones.byId(`${player.name}.intrigue`)
-    const combatCards = intrigueZone.cardlist().filter(c =>
+    const allCards = intrigueZone.cardlist()
+    const combatCards = allCards.filter(c =>
       c.definition && c.definition.combatEffect
     )
 
-    if (combatCards.length > 0) {
+    if (allCards.length > 0) {
       const choices = ['Pass', ...combatCards.map(c => c.name)]
       const [choice] = game.actions.choose(player, choices, {
         title: 'Play Combat Intrigue card or Pass',
@@ -85,7 +87,7 @@ function combatIntrigueRound(game, combatants) {
           const effects = parseAgentAbility(effectText)
           if (effects) {
             for (const effect of effects) {
-              resolveEffect(game, player, effect, null)
+              resolveEffect(game, player, effect, null, card.name)
             }
           }
           else {
@@ -101,7 +103,7 @@ function combatIntrigueRound(game, combatants) {
       }
     }
     else {
-      // Auto-pass if no combat intrigue cards
+      // Auto-pass only if player has no intrigue cards at all
       consecutivePasses++
     }
 
