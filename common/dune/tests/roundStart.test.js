@@ -16,10 +16,11 @@ describe('Round Start', () => {
     t.choose(game, 'Reveal Turn')
     t.choose(game, 'Pass')
 
-    // Round 2: 2 cards stacked in active, 8 remaining
+    // Round 2: 1 active card (old one discarded), 8 remaining in deck
     expect(game.state.round).toBe(2)
-    expect(game.zones.byId('common.conflictActive').cardlist().length).toBe(2)
+    expect(game.zones.byId('common.conflictActive').cardlist().length).toBe(1)
     expect(game.zones.byId('common.conflictDeck').cardlist().length).toBe(8)
+    expect(game.zones.byId('common.conflictDiscard').cardlist().length).toBe(1)
   })
 
   test('each player draws 5 cards at round start', () => {
