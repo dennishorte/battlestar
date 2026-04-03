@@ -159,6 +159,12 @@ export default {
   height: calc(100vh - 60px);
   font-size: .8rem;
   overflow: auto;
+
+  --waiting-bg: #faf8f5;
+  --waiting-active-bg: #ede8e0;
+  --waiting-border-color: #d0c8b8;
+  --waiting-tab-color: #6b6050;
+  --waiting-tab-active-color: #2c2416;
 }
 
 .game-column {

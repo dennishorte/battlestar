@@ -70,6 +70,9 @@ export default {
     },
 
     costLabel() {
+      if (this.def.tier) {
+        return `Tier ${this.def.tier}`
+      }
       if (this.def.persuasionCost) {
         return `${this.def.persuasionCost}`
       }
@@ -183,6 +186,13 @@ export default {
 }
 
 /* Card type colors */
+.card-conflict {
+  background-color: #f5eef0;
+  border-color: #c08888;
+}
+.card-conflict .card-name { color: #6a2030; }
+.card-conflict .effect-label { color: #8b4050; }
+
 .card-contract {
   background-color: #f0f5e8;
   border-color: #b8c888;

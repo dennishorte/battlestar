@@ -103,18 +103,24 @@ export default {
 
 <style scoped>
 .waiting-panel {
-  background-color: white;
+  background-color: var(--waiting-bg, white);
+  color: var(--waiting-color, inherit);
+}
+
+.nav-link {
+  color: var(--waiting-tab-color, inherit);
 }
 
 .nav-link.active {
-  background-color: #eee!important;
-  border-color: #ccc!important;
-  border-bottom-color: #eee!important;
+  background-color: var(--waiting-active-bg, #eee)!important;
+  border-color: var(--waiting-border-color, #ccc)!important;
+  border-bottom-color: var(--waiting-active-bg, #eee)!important;
+  color: var(--waiting-tab-active-color, inherit)!important;
 }
 
 .tab-content .active {
   padding: .05rem .75rem;
-  background-color: #eee;
+  background-color: var(--waiting-active-bg, #eee);
   margin-left: -15px;
   margin-right: -15px;
 }

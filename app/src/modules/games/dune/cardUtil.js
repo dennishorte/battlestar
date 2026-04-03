@@ -20,6 +20,9 @@ export function cardType(card) {
   if (!card) {
     return null
   }
+  if ('tier' in card && 'rewards' in card) {
+    return 'conflict'
+  }
   if ('plotEffect' in card || 'combatEffect' in card || 'endgameEffect' in card) {
     return 'intrigue'
   }
@@ -62,7 +65,16 @@ export function cardSections(card) {
   const sections = []
   const type = cardType(card)
 
-  if (type === 'imperium') {
+  if (type === 'conflict') {
+    if (card.rewards) {
+      sections.push({ label: '1st', text: card.rewards.first })
+      sections.push({ label: '2nd', text: card.rewards.second })
+      if (card.rewards.third) {
+        sections.push({ label: '3rd', text: card.rewards.third })
+      }
+    }
+  }
+  else if (type === 'imperium') {
     if (card.agentAbility) {
       sections.push({ label: 'Agent', text: card.agentAbility })
     }
@@ -113,6 +125,9 @@ export function cardDetail(card) {
     return ''
   }
   const type = cardType(card)
+  if (type === 'conflict') {
+    return `Tier ${card.tier}`
+  }
   if (type === 'intrigue') {
     if (card.plotEffect) {
       return 'Plot'
@@ -145,6 +160,9 @@ export function cardChipClass(card) {
     return 'chip-card'
   }
   const type = cardType(card)
+  if (type === 'conflict') {
+    return 'chip-conflict'
+  }
   if (type === 'intrigue') {
     return 'chip-intrigue'
   }

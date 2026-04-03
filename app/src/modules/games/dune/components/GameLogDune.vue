@@ -19,6 +19,7 @@ for (const card of [
   ...dune.res.cards.starterCards,
   ...dune.res.cards.contractCards,
   ...dune.res.cards.techCards,
+  ...dune.res.cards.conflictCards,
 ]) {
   cardsByName[card.name] = card
 }

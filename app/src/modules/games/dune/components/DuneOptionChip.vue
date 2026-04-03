@@ -279,6 +279,8 @@ export default {
 }
 .chip-leader:hover { background-color: #e8ddf0; }
 
+.chip-conflict { border-color: #c08888; background-color: #f5eef0; }
+.chip-conflict:hover { background-color: #ecdce0; }
 .chip-intrigue { border-color: #8b6914; background-color: #fdf8ee; }
 .chip-intrigue:hover { background-color: #f5ecd8; }
 .chip-contract { border-color: #c07020; background-color: #fef5ee; }

@@ -127,6 +127,7 @@ export default {
       ...dune.res.cards.starterCards,
       ...dune.res.cards.contractCards,
       ...dune.res.cards.techCards,
+      ...dune.res.cards.conflictCards,
     ]
     const cardsByName = {}
     for (const card of allCards) {
@@ -239,6 +240,12 @@ export default {
   overflow: auto;
   color: #2c2416;
   background-color: #f8f5f0;
+
+  --waiting-bg: #f8f5f0;
+  --waiting-active-bg: #efe8db;
+  --waiting-border-color: #d4c8b4;
+  --waiting-tab-color: #6b5a42;
+  --waiting-tab-active-color: #2c2416;
 }
 
 .history-column {
