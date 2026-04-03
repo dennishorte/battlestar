@@ -16,7 +16,7 @@
       <div class="rewards" v-if="conflictCard.rewards">
         <div class="reward-line"><span class="reward-label">1st:</span> {{ conflictCard.rewards.first }}</div>
         <div class="reward-line"><span class="reward-label">2nd:</span> {{ conflictCard.rewards.second }}</div>
-        <div class="reward-line" v-if="conflictCard.rewards.third"><span class="reward-label">3rd:</span> {{ conflictCard.rewards.third }}</div>
+        <div class="reward-line" v-if="conflictCard.rewards.third" :class="{ 'reward-unavailable': !thirdPlaceAvailable }"><span class="reward-label">3rd:</span> {{ conflictCard.rewards.third }}</div>
       </div>
     </div>
     <div v-else class="no-conflict">No active conflict</div>
@@ -68,6 +68,10 @@ export default {
         return cards[0].data || cards[0]
       }
       return this.game.state.conflict.currentCard
+    },
+
+    thirdPlaceAvailable() {
+      return this.game.players.all().length >= 4
     },
 
     combatants() {
@@ -185,6 +189,11 @@ export default {
 .reward-label {
   font-weight: 600;
   color: #8b6914;
+}
+
+.reward-unavailable {
+  opacity: .4;
+  text-decoration: line-through;
 }
 
 .no-conflict {
