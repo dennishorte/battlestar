@@ -31,13 +31,6 @@
         <span title="Spies in Supply">{{ player.spiesInSupply }} spies</span>
       </div>
 
-      <div class="influence-row">
-        <span class="influence inf-emperor" title="Emperor">E:{{ player.getInfluence('emperor') }}</span>
-        <span class="influence inf-guild" title="Spacing Guild">G:{{ player.getInfluence('guild') }}</span>
-        <span class="influence inf-bg" title="Bene Gesserit">BG:{{ player.getInfluence('bene-gesserit') }}</span>
-        <span class="influence inf-fremen" title="Fremen">F:{{ player.getInfluence('fremen') }}</span>
-      </div>
-
       <div class="deck-info">
         <span>deck: {{ deckCount }}</span>
         <span>discard: {{ discardCount }}</span>
@@ -218,24 +211,6 @@ export default {
   font-size: .85em;
   color: #6a5a48;
 }
-
-.influence-row {
-  display: flex;
-  gap: .5em;
-}
-
-.influence {
-  padding: .05em .3em;
-  border-radius: .15em;
-  font-size: .85em;
-  font-weight: 600;
-  color: white;
-}
-
-.inf-emperor { background-color: #8b2020; }
-.inf-guild { background-color: #c07020; }
-.inf-bg { background-color: #5b3a8a; }
-.inf-fremen { background-color: #2a6090; }
 
 .deck-info {
   display: flex;
