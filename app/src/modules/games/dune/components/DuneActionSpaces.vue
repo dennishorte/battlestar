@@ -53,16 +53,6 @@
           </div>
         </div>
 
-        <div class="space-group" v-if="hasBonusSpice">
-          <div class="group-label group-yellow">Bonus Spice</div>
-          <div v-for="(count, spaceId) in game.state.bonusSpice"
-               :key="spaceId"
-               v-show="count > 0"
-               class="space-row">
-            <span class="space-name">{{ formatName(spaceId) }}</span>
-            <span class="bonus-amount">+{{ count }}</span>
-          </div>
-        </div>
       </div>
 
       <svg class="spy-track" ref="spyTrack">
@@ -157,10 +147,6 @@ export default {
 
     hasControl() {
       return Object.values(this.game.state.controlMarkers).some(v => v != null)
-    },
-
-    hasBonusSpice() {
-      return Object.values(this.game.state.bonusSpice).some(v => v > 0)
     },
 
     playerColorMap() {
@@ -351,7 +337,8 @@ export default {
     describeSpace(space) {
       const lines = this.describeEffects(space.effects)
       if (space.isMakerSpace) {
-        lines.push('+ bonus spice')
+        const bonus = this.game.state.bonusSpice[space.id] || 0
+        lines.push(`+${bonus} bonus spice`)
       }
       return lines
     },
@@ -560,11 +547,6 @@ export default {
   color: #6a5a48;
   font-size: .75em;
   font-style: italic;
-}
-
-.bonus-amount {
-  color: #b8860b;
-  font-weight: bold;
 }
 
 .clickable-post {
