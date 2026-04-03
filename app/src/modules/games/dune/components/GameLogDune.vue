@@ -6,11 +6,35 @@
 import { inject } from 'vue'
 import GameLog from '@/modules/games/common/components/log/GameLog.vue'
 import { useGameLogProvider } from '@/modules/games/common/composables/useGameLog'
+import { dune } from 'battlestar-common'
 
 const game = inject('game')
+const ui = inject('ui')
+
+const cardsByName = {}
+for (const card of [
+  ...dune.res.cards.imperiumCards,
+  ...dune.res.cards.intrigueCards,
+  ...dune.res.cards.reserveCards,
+  ...dune.res.cards.starterCards,
+  ...dune.res.cards.contractCards,
+  ...dune.res.cards.techCards,
+]) {
+  cardsByName[card.name] = card
+}
+
+function cardClick(card, name) {
+  const def = card?.definition || card?.data || cardsByName[name] || null
+  if (def) {
+    ui.modals.cardViewer = def
+  }
+}
 
 function chatColors() {
   const output = {}
+  if (!game.value?.players) {
+    return output
+  }
   for (const player of game.value.players.all()) {
     output[player.name] = player.color
   }
@@ -56,6 +80,7 @@ function playerStyles(player) {
 }
 
 useGameLogProvider({
+  cardClick,
   chatColors,
   lineClasses,
   lineStyles,
@@ -131,11 +156,21 @@ useGameLogProvider({
   margin-left: 3em;
 }
 
-/* Card names — amber */
+/* Card names — inline chip style */
 #gamelog :deep(.card-name) {
   display: inline-block;
-  color: #8b6914;
-  font-weight: bold;
+  color: #2c2416;
+  font-weight: 600;
+  cursor: pointer;
+  background-color: #f5f0e8;
+  border: 1px solid #d4c8a8;
+  border-radius: .2em;
+  padding: 0 .35em;
+  font-size: .95em;
+}
+
+#gamelog :deep(.card-name:hover) {
+  background-color: #e8dcc0;
 }
 
 /* Faction names — colored by faction */

@@ -58,7 +58,7 @@ const styles = computed(() => {
 
 function click() {
   if (funcs.cardClick) {
-    funcs.cardClick(card.value)
+    funcs.cardClick(card.value, props.name)
   }
 }
 
