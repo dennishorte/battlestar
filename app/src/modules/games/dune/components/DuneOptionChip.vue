@@ -20,29 +20,16 @@
   <teleport to="body">
     <div v-if="showModal" class="dune-modal-backdrop" @click="showModal = false">
       <div class="dune-modal" @click.stop>
-        <div class="modal-header">
+        <div class="modal-header" v-if="!card">
           <strong>{{ name }}</strong>
           <button class="modal-close" @click="showModal = false">&times;</button>
         </div>
         <div class="modal-body">
           <template v-if="leader">
-            <div class="field"><span class="label">House:</span> {{ leader.house || 'None' }}</div>
-            <div class="field" v-if="leader.startingEffect">
-              <span class="label">Starting:</span>
-              <div v-for="(line, i) in textLines(leader.startingEffect)"
-                   :key="i"
-                   :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
-            </div>
-            <div class="field">
-              <span class="label">Ability:</span>
-              <div v-for="(line, i) in textLines(leader.leaderAbility)"
-                   :key="i"
-                   :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
-            </div>
-            <div class="field" v-if="leader.signetRingAbility">
-              <span class="label">Signet Ring:</span>
-              <div v-for="(line, i) in textLines(leader.signetRingAbility)"
-                   :key="i"
+            <div v-for="(section, i) in leaderSections" :key="i" class="field">
+              <span class="label">{{ section.label }}:</span>
+              <div v-for="(line, li) in section.lines"
+                   :key="li"
                    :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
             </div>
           </template>
@@ -63,80 +50,7 @@
             </div>
           </template>
           <template v-else-if="card">
-            <!-- Imperium / Starter cards -->
-            <div class="field" v-if="card.persuasionCost">
-              <span class="label">Cost:</span> {{ card.persuasionCost }}
-            </div>
-            <div class="field" v-if="card.agentIcons?.length">
-              <span class="label">Agent Icons:</span> {{ card.agentIcons.join(', ') }}
-            </div>
-            <div class="field" v-if="card.factionAccess?.length">
-              <span class="label">Faction Access:</span> {{ card.factionAccess.join(', ') }}
-            </div>
-            <div class="field" v-if="card.agentAbility">
-              <span class="label">Agent:</span>
-              <div v-for="(line, i) in textLines(card.agentAbility)"
-                   :key="i"
-                   :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
-            </div>
-            <div class="field" v-if="revealText">
-              <span class="label">Reveal:</span>
-              <div v-for="(line, i) in textLines(revealText)"
-                   :key="i"
-                   :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
-            </div>
-            <div class="field" v-if="card.passiveAbility">
-              <span class="label">Passive:</span>
-              <div v-for="(line, i) in textLines(card.passiveAbility)"
-                   :key="i"
-                   :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
-            </div>
-            <div class="field" v-if="card.acquisitionBonus">
-              <span class="label">Acquire:</span>
-              <div v-for="(line, i) in textLines(card.acquisitionBonus)"
-                   :key="i"
-                   :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
-            </div>
-            <!-- Intrigue cards -->
-            <div class="field" v-if="card.plotEffect">
-              <span class="label">Plot:</span>
-              <div v-for="(line, i) in textLines(card.plotEffect)"
-                   :key="i"
-                   :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
-            </div>
-            <div class="field" v-if="card.combatEffect">
-              <span class="label">Combat:</span>
-              <div v-for="(line, i) in textLines(card.combatEffect)"
-                   :key="i"
-                   :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
-            </div>
-            <div class="field" v-if="card.endgameEffect">
-              <span class="label">Endgame:</span>
-              <div v-for="(line, i) in textLines(card.endgameEffect)"
-                   :key="i"
-                   :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
-            </div>
-            <!-- Contract cards -->
-            <div class="field" v-if="card.reward">
-              <span class="label">Reward:</span>
-              <div v-for="(line, i) in textLines(card.reward)"
-                   :key="i"
-                   :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
-            </div>
-            <!-- Tech cards -->
-            <div class="field" v-if="card.spiceCost">
-              <span class="label">Cost:</span> {{ card.spiceCost }} spice
-            </div>
-            <div class="field" v-if="card.effect">
-              <span class="label">Effect:</span>
-              <div v-for="(line, i) in textLines(card.effect)"
-                   :key="i"
-                   :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
-            </div>
-            <!-- Faction affiliation -->
-            <div class="field" v-if="card.factionAffiliation">
-              <span class="label">Faction:</span> {{ card.factionAffiliation }}
-            </div>
+            <DuneCard :card="card" class="modal-card" />
           </template>
         </div>
       </div>
@@ -146,14 +60,18 @@
 
 
 <script>
+import DuneCard from './DuneCard.vue'
 import DuneFactionIcon from './DuneFactionIcon.vue'
+import { textLines, cardDetail, cardChipClass } from '../cardUtil.js'
 
 const factionIds = new Set(['emperor', 'guild', 'bene-gesserit', 'fremen'])
 
 export default {
   name: 'DuneOptionChip',
 
-  components: { DuneFactionIcon },
+  inheritAttrs: false,
+
+  components: { DuneCard, DuneFactionIcon },
 
   props: {
     name: { type: String, required: true },
@@ -168,13 +86,6 @@ export default {
   },
 
   methods: {
-    textLines(text) {
-      if (!text) {
-        return []
-      }
-      return text.split('\n').filter(l => l.trim())
-    },
-
     isFaction(icon) {
       return factionIds.has(icon)
     },
@@ -220,6 +131,24 @@ export default {
       return this.boardSpace?.icon || null
     },
 
+    leaderSections() {
+      if (!this.leader) {
+        return []
+      }
+      const sections = []
+      sections.push({ label: 'House', lines: [this.leader.house || 'None'] })
+      if (this.leader.startingEffect) {
+        sections.push({ label: 'Starting', lines: textLines(this.leader.startingEffect) })
+      }
+      if (this.leader.leaderAbility) {
+        sections.push({ label: 'Ability', lines: textLines(this.leader.leaderAbility) })
+      }
+      if (this.leader.signetRingAbility) {
+        sections.push({ label: 'Signet Ring', lines: textLines(this.leader.signetRingAbility) })
+      }
+      return sections
+    },
+
     spaceEffectLines() {
       if (!this.boardSpace?.effects) {
         return []
@@ -262,31 +191,7 @@ export default {
       if (this.boardSpace) {
         return `chip-space-${this.boardSpace.icon}`
       }
-      if (this.isIntrigueCard) {
-        return 'chip-intrigue'
-      }
-      if (this.isContractCard) {
-        return 'chip-contract'
-      }
-      if (this.isTechCard) {
-        return 'chip-tech'
-      }
-      if (this.card?.factionAffiliation) {
-        return `chip-faction-${this.card.factionAffiliation}`
-      }
-      return 'chip-card'
-    },
-
-    isIntrigueCard() {
-      return this.card && ('plotEffect' in this.card || 'combatEffect' in this.card || 'endgameEffect' in this.card)
-    },
-
-    isContractCard() {
-      return this.card && 'reward' in this.card
-    },
-
-    isTechCard() {
-      return this.card && 'effect' in this.card && 'spiceCost' in this.card
+      return cardChipClass(this.card)
     },
 
     detail() {
@@ -308,45 +213,7 @@ export default {
         }
         return parts.join(' · ')
       }
-      if (this.isIntrigueCard) {
-        if (this.card.plotEffect) {
-          return 'Plot'
-        }
-        if (this.card.combatEffect) {
-          return 'Combat'
-        }
-        if (this.card.endgameEffect) {
-          return 'Endgame'
-        }
-        return ''
-      }
-      if (this.isContractCard) {
-        return 'Contract'
-      }
-      if (this.isTechCard) {
-        return `${this.card.spiceCost} spice`
-      }
-      if (this.card?.persuasionCost) {
-        return `${this.card.persuasionCost}`
-      }
-      return ''
-    },
-
-    revealText() {
-      if (!this.card) {
-        return null
-      }
-      const parts = []
-      if (this.card.revealPersuasion > 0) {
-        parts.push(`+${this.card.revealPersuasion} persuasion`)
-      }
-      if (this.card.revealSwords > 0) {
-        parts.push(`+${this.card.revealSwords} sword${this.card.revealSwords > 1 ? 's' : ''}`)
-      }
-      if (this.card.revealAbility) {
-        parts.push(this.card.revealAbility)
-      }
-      return parts.join(', ') || null
+      return cardDetail(this.card)
     },
   },
 }
@@ -412,11 +279,6 @@ export default {
 }
 .chip-leader:hover { background-color: #e8ddf0; }
 
-.chip-faction-emperor { border-color: #8b2020; }
-.chip-faction-guild { border-color: #c07020; }
-.chip-faction-bene-gesserit { border-color: #5b3a8a; }
-.chip-faction-fremen { border-color: #2a6090; }
-
 .chip-intrigue { border-color: #8b6914; background-color: #fdf8ee; }
 .chip-intrigue:hover { background-color: #f5ecd8; }
 .chip-contract { border-color: #c07020; background-color: #fef5ee; }
@@ -479,6 +341,12 @@ export default {
 
 .modal-body {
   padding: .6em .8em;
+}
+
+.modal-card {
+  margin: 0;
+  border: none;
+  font-size: 1em;
 }
 
 .field {

@@ -37,6 +37,14 @@
     </div>
 
     <DebugModal />
+
+    <teleport to="body">
+      <div v-if="ui.modals.cardViewer" class="dune-modal-backdrop" @click="ui.modals.cardViewer = null">
+        <div class="dune-modal" @click.stop>
+          <DuneCard :card="ui.modals.cardViewer" class="modal-card" />
+        </div>
+      </div>
+    </teleport>
   </div>
 </template>
 
@@ -49,6 +57,7 @@ import DebugModal from '@/modules/games/common/components/DebugModal.vue'
 
 import { dune } from 'battlestar-common'
 
+import DuneCard from './DuneCard.vue'
 import GameLogDune from './GameLogDune.vue'
 import DunePlayerPanel from './DunePlayerPanel.vue'
 import DuneImperiumRow from './DuneImperiumRow.vue'
@@ -64,6 +73,7 @@ export default {
 
   components: {
     DebugModal,
+    DuneCard,
     DropdownButton,
     DuneActionSpaces,
     DuneConflict,
@@ -129,17 +139,6 @@ export default {
     const spacesByName = {}
     for (const space of dune.res.boardSpaces) {
       spacesByName[space.name] = space
-    }
-
-    function cardSubtitle(card) {
-      // Pick the most relevant ability text for the subtitle
-      const text = card.agentAbility
-        || card.plotEffect
-        || card.combatEffect
-        || card.endgameEffect
-        || card.reward
-        || card.effect
-      return text || null
     }
 
     function spaceSubtitle(space) {
@@ -208,7 +207,7 @@ export default {
       if (card) {
         return {
           component: DuneOptionChip,
-          props: { name, card, subtitle: cardSubtitle(card) },
+          props: { name, card },
         }
       }
 
@@ -220,7 +219,7 @@ export default {
           const cardWithReward = { ...contractCard, reward: contractMatch[2] }
           return {
             component: DuneOptionChip,
-            props: { name: contractMatch[1], card: cardWithReward, subtitle: contractMatch[2] },
+            props: { name: contractMatch[1], card: cardWithReward },
           }
         }
       }
@@ -285,5 +284,30 @@ export default {
   overflow-x: hidden;
   overflow-y: auto;
   padding-bottom: 3em;
+}
+
+.dune-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.dune-modal {
+  background: white;
+  border-radius: .5em;
+  min-width: 300px;
+  max-width: 450px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, .3);
+}
+
+.modal-card {
+  margin: 0;
+  border: none;
+  font-size: 1em;
+  padding: .6em .8em;
 }
 </style>

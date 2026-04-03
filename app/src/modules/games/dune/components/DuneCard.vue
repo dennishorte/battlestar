@@ -1,5 +1,5 @@
 <template>
-  <div class="dune-card" :class="cardClasses">
+  <div class="dune-card" :class="`card-${type}`">
     <div class="card-header-row">
       <span class="card-icons" v-if="allIcons.length">
         <template v-for="(icon, i) in allIcons" :key="i">
@@ -11,20 +11,17 @@
                 :class="`icon-${icon.type} shape-${icon.shape}`" />
         </template>
       </span>
-      <span class="card-name">{{ card.name }}</span>
-      <span class="card-cost" v-if="card.persuasionCost">{{ card.persuasionCost }}</span>
+      <span class="card-name">{{ def.name }}</span>
+      <span class="card-cost" v-if="costLabel">{{ costLabel }}</span>
     </div>
-    <div class="card-effects" v-if="hasEffects">
-      <div v-if="def.agentAbility" class="effect agent-effect">
-        <span class="effect-label">Agent:</span>
-        <div v-for="(line, i) in textLines(def.agentAbility)"
-             :key="'a'+i"
-             :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
-      </div>
-      <div class="effect reveal-effect" v-if="revealText">
-        <span class="effect-label">Reveal:</span>
-        <div v-for="(line, i) in textLines(revealText)"
-             :key="'r'+i"
+    <div class="card-effects" v-if="sections.length">
+      <div v-for="(section, i) in sections"
+           :key="i"
+           class="effect"
+           :class="{ 'effect-highlight': section.highlight }">
+        <span class="effect-label">{{ section.label }}:</span>
+        <div v-for="(line, li) in section.lines"
+             :key="li"
              :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
       </div>
     </div>
@@ -34,6 +31,9 @@
 
 <script>
 import DuneFactionIcon from './DuneFactionIcon.vue'
+import { textLines, cardType, cardSections } from '../cardUtil.js'
+
+const shapeMap = { green: 'pentagon', purple: 'circle', yellow: 'triangle' }
 
 export default {
   name: 'DuneCard',
@@ -54,68 +54,36 @@ export default {
       return this.card.definition || this.card.data || this.card
     },
 
-    cardClasses() {
-      const classes = []
-      if (this.def.factionAffiliation) {
-        classes.push(`faction-${this.def.factionAffiliation}`)
-      }
-      return classes
+    type() {
+      return cardType(this.def)
     },
 
     allIcons() {
       const icons = []
-      const agentIcons = this.def.agentIcons || []
-      const factionAccess = this.def.factionAccess || []
-
-      for (const icon of agentIcons) {
-        icons.push({ type: icon, shape: this.shapeFor(icon) })
+      for (const icon of this.def.agentIcons || []) {
+        icons.push({ type: icon, shape: shapeMap[icon] || 'circle' })
       }
-      for (const faction of factionAccess) {
+      for (const faction of this.def.factionAccess || []) {
         icons.push({ type: faction, faction: true })
       }
       return icons
     },
 
-    hasEffects() {
-      return this.def.agentAbility || this.revealText
+    costLabel() {
+      if (this.def.persuasionCost) {
+        return `${this.def.persuasionCost}`
+      }
+      if (this.def.spiceCost != null) {
+        return `${this.def.spiceCost} spice`
+      }
+      return null
     },
 
-    revealText() {
-      const parts = []
-      const p = this.def.revealPersuasion || 0
-      const s = this.def.revealSwords || 0
-      if (p > 0) {
-        parts.push(`+${p} persuasion`)
-      }
-      if (s > 0) {
-        parts.push(`+${s} sword${s > 1 ? 's' : ''}`)
-      }
-      if (this.def.revealAbility) {
-        parts.push(this.def.revealAbility)
-      }
-      return parts.join(', ') || null
-    },
-  },
-
-  methods: {
-    textLines(text) {
-      if (!text) {
-        return []
-      }
-      return text.split('\n').filter(l => l.trim())
-    },
-
-    shapeFor(icon) {
-      if (icon === 'green') {
-        return 'pentagon'
-      }
-      if (icon === 'purple') {
-        return 'circle'
-      }
-      if (icon === 'yellow') {
-        return 'triangle'
-      }
-      return 'circle'
+    sections() {
+      return cardSections(this.def).map(s => ({
+        ...s,
+        lines: textLines(s.text),
+      }))
     },
   },
 }
@@ -198,7 +166,7 @@ export default {
   padding: .1em .3em;
 }
 
-.reveal-effect {
+.effect-highlight {
   background-color: #ede7da;
   border-radius: .15em;
   margin-top: .1em;
@@ -214,8 +182,25 @@ export default {
   padding-left: .8em;
 }
 
-.faction-emperor { border-color: #8b2020; }
-.faction-guild { border-color: #c07020; }
-.faction-bene-gesserit { border-color: #5b3a8a; }
-.faction-fremen { border-color: #2a6090; }
+/* Card type colors */
+.card-contract {
+  background-color: #f0f5e8;
+  border-color: #b8c888;
+}
+.card-contract .card-name { color: #4a5a20; }
+.card-contract .effect-label { color: #6a7a48; }
+
+.card-intrigue {
+  background-color: #fdf8ee;
+  border-color: #d4b868;
+}
+.card-intrigue .card-name { color: #6a5010; }
+.card-intrigue .effect-label { color: #8b7a40; }
+
+.card-tech {
+  background-color: #eef7f7;
+  border-color: #88b8b8;
+}
+.card-tech .card-name { color: #2a5a5a; }
+.card-tech .effect-label { color: #5a8a8a; }
 </style>
