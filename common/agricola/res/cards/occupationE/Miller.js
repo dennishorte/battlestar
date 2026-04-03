@@ -17,6 +17,9 @@ module.exports = {
       game.actions.buyMajorImprovement(player, bakingImprovements)
     }
   },
+  matches_onAnyAction(game, cardOwner, actingPlayer, actionId) {
+    return actionId === 'take-grain' && actingPlayer.name !== cardOwner.name && cardOwner.hasBakingAbility() && cardOwner.grain >= 1
+  },
   onAnyAction(game, actingPlayer, actionId, cardOwner) {
     if (actionId === 'take-grain' && actingPlayer.name !== cardOwner.name) {
       // Offer bake bread

@@ -8,7 +8,15 @@ AgricolaActionManager.prototype.callOnAnyActionHooks = function(actingPlayer, ac
     const cards = this.game.getPlayerActiveCards(player)
     for (const card of cards) {
       if (card.hasHook('onAnyAction')) {
+        const shouldLog = card.hasHook('matches_onAnyAction')
+          && card.callHook('matches_onAnyAction', this.game, player, actingPlayer, actionId, detailsOrResources)
+        if (shouldLog) {
+          this.game._logCardTrigger(player, card)
+        }
         card.callHook('onAnyAction', this.game, actingPlayer, actionId, player, detailsOrResources)
+        if (shouldLog) {
+          this.game.log.outdent()
+        }
       }
     }
   }
