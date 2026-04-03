@@ -272,13 +272,15 @@ function revealTurn(game, player) {
 
   // Step 2: Log each card and resolve its reveal effects
   let totalPersuasion = 0
-  let totalSwords = 0
+  const swordSources = []
 
   for (const card of revealedCards) {
     const cardPersuasion = card.revealPersuasion || 0
     const cardSwords = card.revealSwords || 0
     totalPersuasion += cardPersuasion
-    totalSwords += cardSwords
+    if (cardSwords > 0) {
+      swordSources.push({ label: card.name, swords: cardSwords })
+    }
 
     game.log.add({
       template: '{player} reveals {card}',
@@ -312,18 +314,12 @@ function revealTurn(game, player) {
   leaderAbilities.onRevealTurn(game, player)
 
   // Set combat strength
-  const troops = game.state.conflict.deployedTroops[player.name] || 0
-  const sandworms = game.state.conflict.deployedSandworms[player.name] || 0
-  const hasUnits = (troops + sandworms) > 0
-
-  if (hasUnits) {
-    const strength = troops * constants.TROOP_STRENGTH
-      + sandworms * constants.SANDWORM_STRENGTH
-      + totalSwords * constants.SWORD_STRENGTH
-    player.setCounter('strength', strength, { silent: true })
+  const { setRevealStrength } = require('../systems/strengthBreakdown.js')
+  const revealStr = setRevealStrength(game, player, swordSources)
+  if (revealStr > 0) {
     game.log.add({
       template: '{player} sets strength to {strength}',
-      args: { player, strength },
+      args: { player, strength: revealStr },
     })
   }
 
@@ -625,7 +621,7 @@ function resolveCardAgentAbility(game, player, card) {
       }
     }
     else {
-      resolveEffect(game, player, effect, null)
+      resolveEffect(game, player, effect, null, card?.name)
     }
   }
 }
@@ -672,7 +668,8 @@ function resolveCardRevealAbility(game, player, card, allRevealedCards) {
     const swordMatch = bondEffect.match(/^\+(\d+)\s+Swords?$/i)
     if (swordMatch) {
       const swords = parseInt(swordMatch[1])
-      player.incrementCounter('strength', swords * constants.SWORD_STRENGTH, { silent: true })
+      const { addStrength } = require('../systems/strengthBreakdown.js')
+      addStrength(game, player, 'card', `${card.name} (Bond)`, swords * constants.SWORD_STRENGTH)
       game.log.add({
         template: '{player} gains {amount} Sword(s)',
         args: { player, amount: swords },
@@ -683,7 +680,7 @@ function resolveCardRevealAbility(game, player, card, allRevealedCards) {
     const effects = parseAgentAbility(bondEffect)
     if (effects) {
       for (const effect of effects) {
-        resolveEffect(game, player, effect, null)
+        resolveEffect(game, player, effect, null, `${card.name} (Bond)`)
       }
     }
     return
@@ -702,7 +699,7 @@ function resolveCardRevealAbility(game, player, card, allRevealedCards) {
   }
 
   for (const effect of effects) {
-    resolveEffect(game, player, effect, null)
+    resolveEffect(game, player, effect, null, card.name)
   }
 }
 
@@ -712,7 +709,7 @@ function resolveBoardSpaceEffects(game, player, space) {
   }
 
   for (const effect of space.effects) {
-    resolveEffect(game, player, effect, space)
+    resolveEffect(game, player, effect, space, space.name)
   }
 
   // Maker spaces always grant bonus spice (independent of harvest/worm choice)
@@ -740,7 +737,7 @@ function resolveBoardSpaceEffects(game, player, space) {
 /**
  * Resolve a single effect. Used by board spaces, choice sub-effects, and combat rewards.
  */
-function resolveEffect(game, player, effect, space) {
+function resolveEffect(game, player, effect, space, sourceName) {
   switch (effect.type) {
     case 'gain':
       player.incrementCounter(effect.resource, effect.amount, { silent: true })
@@ -860,7 +857,7 @@ function resolveEffect(game, player, effect, space) {
 
       // Resolve sub-effects
       for (const subEffect of chosen.effects) {
-        resolveEffect(game, player, subEffect, space)
+        resolveEffect(game, player, subEffect, space, sourceName)
       }
       break
     }
@@ -1067,13 +1064,15 @@ function resolveEffect(game, player, effect, space) {
       break
     }
 
-    case 'swords':
-      player.incrementCounter('strength', effect.amount * constants.SWORD_STRENGTH, { silent: true })
+    case 'swords': {
+      const { addStrength } = require('../systems/strengthBreakdown.js')
+      addStrength(game, player, 'card', sourceName || 'Swords', effect.amount * constants.SWORD_STRENGTH)
       game.log.add({
         template: '{player} gains {amount} Sword(s)',
         args: { player, amount: effect.amount },
       })
       break
+    }
 
     case 'retreat-troops': {
       const deployedTroops = game.state.conflict.deployedTroops[player.name] || 0
@@ -1107,7 +1106,7 @@ function resolveEffect(game, player, effect, space) {
     case 'conditional': {
       if (checkCondition(game, player, effect.condition)) {
         for (const subEffect of effect.effects) {
-          resolveEffect(game, player, subEffect, space)
+          resolveEffect(game, player, subEffect, space, sourceName)
         }
       }
       break
@@ -1308,7 +1307,8 @@ function resolveEffect(game, player, effect, space) {
       const swordCount = countPerVariable(game, player, effect.per)
       const swordTotal = effect.amount * swordCount
       if (swordTotal > 0) {
-        player.incrementCounter('strength', swordTotal * constants.SWORD_STRENGTH, { silent: true })
+        const { addStrength } = require('../systems/strengthBreakdown.js')
+        addStrength(game, player, 'card', sourceName || 'Swords', swordTotal * constants.SWORD_STRENGTH)
         game.log.add({
           template: '{player} gains {amount} Sword(s) ({count} x {per})',
           args: { player, amount: swordTotal, count: swordCount, per: effect.per },

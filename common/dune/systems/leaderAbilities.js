@@ -140,7 +140,8 @@ function onRevealTurn(game, player) {
         })
         if (choice !== 'Pass') {
           spies.recallSpy(game, player)
-          player.incrementCounter('strength', 2 * constants.SWORD_STRENGTH, { silent: true })
+          const { addStrength } = require('./strengthBreakdown.js')
+          addStrength(game, player, 'leader', 'Devious Strength', 2 * constants.SWORD_STRENGTH)
           game.log.add({
             template: '{player}: Devious Strength — recalls Spy for +2 Strength',
             args: { player },

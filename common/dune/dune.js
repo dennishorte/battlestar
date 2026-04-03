@@ -109,6 +109,7 @@ Dune.prototype._reset = function() {
     wonCards: {},           // { playerName: [cardDef, ...] } for battle icon tracking
     deployedTroops: {},    // { playerName: count }
     deployedSandworms: {}, // { playerName: count }
+    strengthBreakdown: {}, // { playerName: [{ source, label, amount }] }
   }
 
   // Bonus spice on Maker spaces

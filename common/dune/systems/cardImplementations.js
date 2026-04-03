@@ -17,6 +17,7 @@ const deckEngine = require('./deckEngine.js')
 const factions = require('./factions.js')
 const spies = require('./spies.js')
 const constants = require('../res/constants.js')
+const { addStrength } = require('./strengthBreakdown.js')
 
 const implementations = {
   // ── Imperium Card Agent Effects ────────────────────────────────
@@ -1002,11 +1003,11 @@ const implementations = {
   'Worm Riders': {
     revealEffect(game, player) {
       if (player.getInfluence('fremen') >= 2) {
-        player.incrementCounter('strength', 4 * constants.SWORD_STRENGTH, { silent: true })
+        addStrength(game, player, 'card', 'Worm Riders (Fremen)', 4 * constants.SWORD_STRENGTH)
         game.log.add({ template: '{player}: +4 Swords (Fremen Influence)', args: { player } })
       }
       if (game.state.alliances.fremen === player.name) {
-        player.incrementCounter('strength', 2 * constants.SWORD_STRENGTH, { silent: true })
+        addStrength(game, player, 'card', 'Worm Riders (Alliance)', 2 * constants.SWORD_STRENGTH)
         game.log.add({ template: '{player}: +2 Swords (Fremen Alliance)', args: { player } })
       }
     },
@@ -1122,7 +1123,7 @@ const implementations = {
           const card = emperorCards.find(c => c.name === choice)
           if (card) {
             deckEngine.trashCard(game, card)
-            player.incrementCounter('strength', 3 * constants.SWORD_STRENGTH, { silent: true })
+            addStrength(game, player, 'card', 'Calculus of Power', 3 * constants.SWORD_STRENGTH)
           }
         }
       }
@@ -1155,7 +1156,7 @@ const implementations = {
         if (choice !== 'Pass') {
           game.state.conflict.deployedTroops[player.name] -= 2
           player.incrementCounter('troopsInSupply', 2, { silent: true })
-          player.incrementCounter('strength', 4 * constants.SWORD_STRENGTH, { silent: true })
+          addStrength(game, player, 'card', 'Chani, Clever Tactician', 4 * constants.SWORD_STRENGTH)
         }
       }
       const hasFremen = allRevealedCards.some(c =>
@@ -1304,7 +1305,7 @@ implementations['Undercover Asset'].revealEffect = function(game, player) {
     spies.placeSpy(game, player)
   }
   else {
-    player.incrementCounter('strength', 2 * constants.SWORD_STRENGTH, { silent: true })
+    addStrength(game, player, 'card', 'Undercover Asset', 2 * constants.SWORD_STRENGTH)
     game.log.add({ template: '{player}: +2 Swords', args: { player } })
   }
 }
@@ -1829,10 +1830,10 @@ Object.assign(implementations, {
 
   'Devour': {
     combatEffect(game, player) {
-      player.incrementCounter('strength', 2 * constants.SWORD_STRENGTH, { silent: true })
+      addStrength(game, player, 'intrigue', 'Devour', 2 * constants.SWORD_STRENGTH)
       const sandworms = game.state.conflict.deployedSandworms[player.name] || 0
       if (sandworms > 0) {
-        player.incrementCounter('strength', 2 * constants.SWORD_STRENGTH, { silent: true })
+        addStrength(game, player, 'intrigue', 'Devour (Sandworm)', 2 * constants.SWORD_STRENGTH)
         // Trash a card
         const handZone = game.zones.byId(`${player.name}.hand`)
         const cards = handZone.cardlist()
@@ -1853,12 +1854,12 @@ Object.assign(implementations, {
 
   'Find Weakness': {
     combatEffect(game, player) {
-      player.incrementCounter('strength', 2 * constants.SWORD_STRENGTH, { silent: true })
+      addStrength(game, player, 'intrigue', 'Find Weakness', 2 * constants.SWORD_STRENGTH)
       const observationPosts = require('../res/observationPosts.js')
       const hasSpy = observationPosts.some(p => (game.state.spyPosts[p.id] || []).includes(player.name))
       if (hasSpy) {
         spies.recallSpy(game, player)
-        player.incrementCounter('strength', 3 * constants.SWORD_STRENGTH, { silent: true })
+        addStrength(game, player, 'intrigue', 'Find Weakness (Spy)', 3 * constants.SWORD_STRENGTH)
         game.log.add({ template: '{player}: +5 Swords (recalled Spy)', args: { player } })
       }
       else {
@@ -1890,7 +1891,7 @@ Object.assign(implementations, {
 
   'Impress': {
     combatEffect(game, player) {
-      player.incrementCounter('strength', 2 * constants.SWORD_STRENGTH, { silent: true })
+      addStrength(game, player, 'intrigue', 'Impress', 2 * constants.SWORD_STRENGTH)
       // Acquire a card costing 3 or less — modifier
       player.incrementCounter('persuasion', 3, { silent: true })
       game.log.add({ template: '{player}: +2 Swords, +3 Persuasion for acquire', args: { player } })
@@ -1899,7 +1900,7 @@ Object.assign(implementations, {
 
   'Questionable Methods': {
     combatEffect(game, player) {
-      player.incrementCounter('strength', 1 * constants.SWORD_STRENGTH, { silent: true })
+      addStrength(game, player, 'intrigue', 'Questionable Methods', 1 * constants.SWORD_STRENGTH)
       const loseFactions = constants.FACTIONS.filter(f => player.getInfluence(f) > 0)
       if (loseFactions.length > 0) {
         const choices = ['Pass', ...loseFactions.map(f => `Lose 1 ${f} for +4 Swords`)]
@@ -1907,7 +1908,7 @@ Object.assign(implementations, {
         if (choice !== 'Pass') {
           const faction = loseFactions.find(f => choice.includes(f))
           factions.loseInfluence(game, player, faction, 1)
-          player.incrementCounter('strength', 4 * constants.SWORD_STRENGTH, { silent: true })
+          addStrength(game, player, 'intrigue', 'Questionable Methods', 4 * constants.SWORD_STRENGTH)
         }
       }
     },
@@ -1943,14 +1944,14 @@ Object.assign(implementations, {
           swords++
         }
       }
-      player.incrementCounter('strength', swords * constants.SWORD_STRENGTH, { silent: true })
+      addStrength(game, player, 'intrigue', 'Return the Favor', swords * constants.SWORD_STRENGTH)
       game.log.add({ template: '{player}: +{count} Swords', args: { player, count: swords } })
     },
   },
 
   'Ripples in the Sand': {
     combatEffect(game, player) {
-      player.incrementCounter('strength', 3 * constants.SWORD_STRENGTH, { silent: true })
+      addStrength(game, player, 'intrigue', 'Ripples in the Sand', 3 * constants.SWORD_STRENGTH)
       const sandworms = game.state.conflict.deployedSandworms[player.name] || 0
       if (sandworms > 0) {
         deckEngine.drawIntrigueCard(game, player, 1)
@@ -1964,7 +1965,7 @@ Object.assign(implementations, {
 
   'Second Wave': {
     combatEffect(game, player) {
-      player.incrementCounter('strength', 2 * constants.SWORD_STRENGTH, { silent: true })
+      addStrength(game, player, 'intrigue', 'Second Wave', 2 * constants.SWORD_STRENGTH)
       const max = Math.min(2, player.troopsInGarrison)
       if (max > 0) {
         const choices = []
@@ -2007,7 +2008,7 @@ Object.assign(implementations, {
 
   'Strategic Push': {
     combatEffect(game, player) {
-      player.incrementCounter('strength', 2 * constants.SWORD_STRENGTH, { silent: true })
+      addStrength(game, player, 'intrigue', 'Strategic Push', 2 * constants.SWORD_STRENGTH)
       if (game.state.turnTracking) {
         game.state.turnTracking.strategicPush = true
       }
@@ -2060,7 +2061,7 @@ Object.assign(implementations, {
       if (player.getInfluence('bene-gesserit') >= 3) {
         swords += 2
       }
-      player.incrementCounter('strength', swords * constants.SWORD_STRENGTH, { silent: true })
+      addStrength(game, player, 'intrigue', 'Weirding Combat', swords * constants.SWORD_STRENGTH)
       game.log.add({ template: '{player}: +{count} Swords', args: { player, count: swords } })
     },
   },
@@ -2196,7 +2197,7 @@ implementations['Tenuous Bond'].combatEffect = function(game, player) {
       const card = trashable.find(c => c.name === choice)
       if (card) {
         deckEngine.trashCard(game, card)
-        player.incrementCounter('strength', 4 * constants.SWORD_STRENGTH, { silent: true })
+        addStrength(game, player, 'card', 'Tenuous Bond', 4 * constants.SWORD_STRENGTH)
       }
     }
   }
@@ -2394,7 +2395,7 @@ Object.assign(implementations, {
   'Cannon Turrets': {
     combatEffect(game, player) {
       // +2 Swords; Each opponent retreats one Dreadnought (expansion)
-      player.incrementCounter('strength', 2 * constants.SWORD_STRENGTH, { silent: true })
+      addStrength(game, player, 'intrigue', 'Cannon Turrets', 2 * constants.SWORD_STRENGTH)
       game.log.add({ template: '{player}: +2 Swords (Dreadnought retreat is expansion)', args: { player } })
     },
   },
