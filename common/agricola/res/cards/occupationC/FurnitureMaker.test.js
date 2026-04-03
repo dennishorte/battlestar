@@ -30,6 +30,41 @@ describe('Furniture Maker', () => {
     })
   })
 
+  test('does not give extra wood when played as a non-first occupation', () => {
+    const game = t.fixture({ cardSets: ['occupationC', 'test'] })
+    t.setBoard(game, {
+      actionSpaces: ['Grain Utilization', 'Sheep Market'],
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['test-occupation-1', 'furniture-maker-c116'],
+        food: 10,
+      },
+      micah: { food: 10 },
+    })
+    game.run()
+
+    // Round 2: Play test-occupation-1 (first occ, free)
+    t.choose(game, 'Lessons A')
+    t.choose(game, 'Test Occupation 1')
+    t.choose(game, 'Day Laborer')  // micah
+    t.choose(game, 'Grain Seeds')  // dennis
+    t.choose(game, 'Grain Utilization')  // micah
+
+    // Round 3: Play Furniture Maker (second occ, costs 1 food)
+    // Should get only the 1 wood from onPlay, not extra from self-trigger.
+    t.choose(game, 'Lessons A')
+    t.choose(game, 'Furniture Maker')
+
+    t.testBoard(game, {
+      dennis: {
+        food: 9,  // 10 - 1 for occupation cost
+        wood: 1,  // only onPlay wood, no self-trigger
+        grain: 1,
+        occupations: ['test-occupation-1', 'furniture-maker-c116'],
+      },
+    })
+  })
+
   test('gives wood when playing subsequent occupation', () => {
     const game = t.fixture({ cardSets: ['occupationC', 'test'] })
     t.setBoard(game, {

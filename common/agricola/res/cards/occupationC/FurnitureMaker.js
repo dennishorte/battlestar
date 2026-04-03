@@ -13,7 +13,11 @@ module.exports = {
       args: { player , card: this},
     })
   },
-  onPlayOccupation(game, player, _card) {
+  onPlayOccupation(game, player, card) {
+    if (card.id === this.id) {
+      return
+    }
+
     // The occupation count now includes the just-played card, so the cost
     // for that card was based on count-1 (before it was added).
     // First occupation is free, subsequent cost 1 food each (base).
