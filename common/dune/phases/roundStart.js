@@ -47,8 +47,10 @@ function roundStartPhase(game) {
   }
 
   // Reset combat state for the round
+  const { resetBreakdown } = require('../systems/strengthBreakdown.js')
   game.state.conflict.deployedTroops = {}
   game.state.conflict.deployedSandworms = {}
+  resetBreakdown(game)
   for (const player of game.players.all()) {
     game.state.conflict.deployedTroops[player.name] = 0
     game.state.conflict.deployedSandworms[player.name] = 0

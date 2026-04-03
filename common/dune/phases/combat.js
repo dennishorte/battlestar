@@ -493,6 +493,7 @@ function resolveWinnerBonuses(game, winner) {
 }
 
 function afterCombat(game) {
+  const { resetBreakdown } = require('../systems/strengthBreakdown.js')
   for (const player of game.players.all()) {
     const troops = game.state.conflict.deployedTroops[player.name] || 0
     if (troops > 0) {
@@ -504,6 +505,7 @@ function afterCombat(game) {
 
     player.setCounter('strength', 0, { silent: true })
   }
+  resetBreakdown(game)
 }
 
 /**
