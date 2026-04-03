@@ -13,6 +13,11 @@ function roundStartPhase(game) {
   // Reveal conflict card
   const conflictDeck = game.zones.byId('common.conflictDeck')
   const conflictActive = game.zones.byId('common.conflictActive')
+  // Clear previous conflict card
+  const conflictDiscard = game.zones.byId('common.conflictDiscard')
+  for (const old of conflictActive.cardlist()) {
+    old.moveTo(conflictDiscard)
+  }
   const conflictCards = conflictDeck.cardlist()
   if (conflictCards.length > 0) {
     const card = conflictCards[0]
