@@ -308,13 +308,45 @@ export default {
 
     getActionTypeHandler(request) {
       if (request.title === 'Rotate Hex Tiles') {
+        const isOwner = request.actor === this.actor.name
         return {
-          message: 'Click hex tiles on the map to rotate them. Click Confirm when done.',
-          buttonLabel: 'Confirm Rotations',
-          handler: () => this.submitRotations(),
+          message: isOwner
+            ? 'Click hex tiles on the map to rotate them. Click Confirm when done.'
+            : `Waiting for ${request.actor} to set rotations. Click tiles to preview.`,
+          buttonLabel: isOwner ? 'Confirm Rotations' : null,
+          handler: isOwner ? () => this.submitRotations() : null,
         }
       }
       return null
+    },
+
+    onWaitingPlayerSelected(playerName) {
+      // Enter rotation mode when viewing another player's Rotate Hex Tiles action
+      if (playerName === this.actor.name) {
+        // Switching back to own tab — exit spectator rotation if active
+        if (this.ui.rotationMode && !this.optionSelector) {
+          this.ui.rotationMode = false
+          this.ui.pendingRotations = {}
+        }
+        return
+      }
+
+      const player = this.game.players.byName(playerName)
+      if (!player || !this.game.checkPlayerHasActionWaiting(player)) {
+        return
+      }
+
+      const waiting = this.game.getWaiting(player)
+      if (waiting && waiting.title === 'Rotate Hex Tiles' && !this.ui.rotationMode) {
+        this.ui.rotationMode = true
+        const pending = {}
+        if (this.game.state.assembledMap) {
+          for (const hex of this.game.state.assembledMap.hexes) {
+            pending[hex.tileId] = hex.rotation
+          }
+        }
+        this.ui.pendingRotations = pending
+      }
     },
 
     clickHexForRotation(tileId) {
@@ -645,6 +677,7 @@ export default {
     this.bus.on('waiting-mouse-entered', this.waitingMouseEntered)
     this.bus.on('waiting-mouse-exited', this.waitingMouseExited)
     this.bus.on('waiting-selection-changed', this.waitingSelectionChanged)
+    this.bus.on('waiting-player-selected', this.onWaitingPlayerSelected)
   },
 
   mounted() {
