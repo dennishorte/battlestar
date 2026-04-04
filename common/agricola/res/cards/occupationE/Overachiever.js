@@ -6,8 +6,20 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you use a \"Wish for Children\" action space, you can play 1 additional improvement by paying its cost less 1 resource of your choice.",
+  matches_onActionAnnounce(game, player, actionId) {
+    if (actionId === 'family-growth-minor') {
+      return 'silent'
+    }
+    return false
+  },
+  onActionAnnounce(game, player) {
+    game.log.add({
+      template: '{card}: {player} may play an additional improvement afterward',
+      args: { player, card: this },
+    })
+  },
   matches_onAction(game, player, actionId) {
-    return actionId === 'family-growth' || actionId === 'family-growth-urgent'
+    return actionId === 'family-growth-minor' || actionId === 'family-growth-urgent'
   },
   onAction(game, player, _actionId) {
     const selection = game.actions.choose(player, ['Build improvement (discounted)', 'Skip'], {

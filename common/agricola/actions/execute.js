@@ -130,6 +130,9 @@ AgricolaActionManager.prototype.executeAction = function(player, actionId) {
   // Track current action for cards that need to know the context (e.g. Food Chest)
   this.game.state.currentActionId = actionId
 
+  // Let cards announce effects before action steps execute (e.g. Overachiever)
+  this.game.callPlayerCardHook(player, 'onActionAnnounce', actionId)
+
   // Block linked space if this action has one
   this.game.blockLinkedSpace(actionId)
 

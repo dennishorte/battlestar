@@ -120,6 +120,51 @@ describe('Overachiever', () => {
     })
   })
 
+  test('triggers after Basic Wish for Children and applies discount', () => {
+    const game = t.fixture({ cardSets: ['occupationE', 'minorE', 'test'] })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      actionSpaces: ['Basic Wish for Children'],
+      dennis: {
+        occupations: ['overachiever-e130'],
+        hand: ['boar-spear-e053'],
+        wood: 1,
+        stone: 0,  // Boar Spear costs {wood:1, stone:1} — 0 stone, discount makes it affordable
+        food: 10,
+        farmyard: {
+          rooms: [{ row: 2, col: 0 }],
+        },
+      },
+      micah: { food: 10 },
+    })
+    game.run()
+
+    // Use Basic Wish for Children (family-growth-minor)
+    t.choose(game, 'Basic Wish for Children')
+    // Built-in minor improvement auto-skips (Boar Spear unaffordable at normal cost)
+    // Overachiever fires after
+    t.choose(game, 'Build improvement (discounted)')
+    // Boar Spear costs {wood:1, stone:1}, discount reduces stone to 0
+    t.choose(game, 'Minor Improvement.Boar Spear')
+    // Discount auto-applied to stone (only resource that makes it affordable)
+    t.choose(game, 'Reduce stone by 1')
+
+    t.testBoard(game, {
+      currentPlayer: 'micah',
+      dennis: {
+        wood: 0,   // 1 - 1 = 0
+        stone: 0,  // 0 - 0 = 0 (discount reduced cost to 0)
+        food: 10,
+        familyMembers: 3,
+        occupations: ['overachiever-e130'],
+        minorImprovements: ['boar-spear-e053'],
+        farmyard: {
+          rooms: [{ row: 0, col: 0 }, { row: 1, col: 0 }, { row: 2, col: 0 }],
+        },
+      },
+    })
+  })
+
   test('can skip the improvement offer', () => {
     const game = t.fixture({ cardSets: ['occupationE', 'test'] })
     t.setBoard(game, {
