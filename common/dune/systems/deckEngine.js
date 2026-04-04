@@ -247,7 +247,7 @@ function initializeCards(game) {
   util.array.shuffle(tierI, game.random)
   // Stack the deck: tier I on top (index 0), tier II middle, tier III bottom.
   // push(card, 0) inserts at the top.
-  for (const card of tierIII) {
+  for (const card of tierIII.slice(0, constants.CONFLICT_III_COUNT)) {
     conflictDeckZone.push(card)
   }
   for (const card of tierII.slice(0, constants.CONFLICT_II_COUNT)) {

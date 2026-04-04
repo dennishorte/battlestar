@@ -59,15 +59,15 @@ describe('Intrigue Cards', () => {
     // Combat phase: dennis has Ambush (+4 Swords)
     // Should be offered to play it
     const choices = t.currentChoices(game)
-    const hasAmbush = choices.includes('Ambush')
-    expect(hasAmbush).toBe(true)
+    expect(choices).toContain('Ambush')
 
     t.choose(game, 'Ambush')
 
-    // Ambush adds +4 swords worth of strength
-    // Dennis: 2 troops × 2 + 1 sword (Dagger) + 4 swords (Ambush) = 9
-    const player = game.players.byName('dennis')
-    expect(player.strength).toBeGreaterThanOrEqual(9)
+    // Combat resolves and advances to next round — strength resets after combat.
+    // Verify Ambush was consumed (no longer in intrigue zone).
+    const intrigueZone = game.zones.byId('dennis.intrigue')
+    const remaining = intrigueZone.cardlist().map(c => c.name)
+    expect(remaining).not.toContain('Ambush')
   })
 
   test('endgame intrigue played at end of game', () => {

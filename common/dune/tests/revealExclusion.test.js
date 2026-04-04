@@ -28,15 +28,8 @@ describe('Agent-Turn Cards Excluded from Reveal', () => {
     t.choose(game, 'Agent Turn.Dagger')
     t.choose(game, 'Assembly Hall')
 
-    // Micah takes turn — pick first available card
-    const micahCards = game.waiting.selectors[0].choices.find(c => c.title === 'Agent Turn').choices
-    t.choose(game, 'Agent Turn.' + micahCards[0])
-    t.choose(game, t.currentChoices(game)[0])
-    // Handle effect order choice if card has an agent ability
-    const orderChoices = t.currentChoices(game)
-    if (orderChoices.length === 2 && !orderChoices.includes('Reveal Turn')) {
-      t.choose(game, orderChoices[0])
-    }
+    // Micah takes turn — Dagger with only Gather Support available (auto-selected)
+    t.choose(game, 'Agent Turn.Dagger')
 
     // Dennis plays second agent
     t.choose(game, 'Agent Turn.Reconnaissance')

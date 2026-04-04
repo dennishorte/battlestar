@@ -6,11 +6,11 @@ describe('Reveal Turns', () => {
     const game = t.fixture()
     game.run()
 
-    // Dennis hand: Dagger(0), CA(2), Diplomacy(1), CA(2), Recon(1) = 6 persuasion
+    // Dennis hand: Dagger(0), Dune(1), Diplomacy(1), CA(2), Recon(1) = 5 persuasion
     t.choose(game, 'Reveal Turn')
 
     const player = game.players.byName('dennis')
-    expect(player.getCounter('persuasion')).toBe(6)
+    expect(player.getCounter('persuasion')).toBe(5)
   })
 
   test('reveal accumulates swords from revealed cards', () => {
@@ -86,9 +86,9 @@ describe('Reveal Turns', () => {
     const row = game.zones.byId('common.imperiumRow')
     expect(row.cardlist().length).toBe(5)
 
-    // Remaining persuasion = 6 - 2 = 4
+    // Remaining persuasion = 5 - 2 = 3
     const player = game.players.byName('dennis')
-    expect(player.getCounter('persuasion')).toBe(4)
+    expect(player.getCounter('persuasion')).toBe(3)
   })
 
   test('clean up moves all cards to discard', () => {

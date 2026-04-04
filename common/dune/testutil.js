@@ -54,6 +54,39 @@ TestUtil.fixture = function(options = {}) {
         p.color = defaultColors[i]
       }
     })
+
+    // Sort decks into canonical order so tests are deterministic regardless of
+    // card pool size changes (which shift seeded RNG consumption).
+    // Starting hand (first 5): Dagger, Dune, Diplomacy, CA, Reconnaissance = 5 persuasion, 1 sword
+    // Covers all agent icon types: green, yellow, faction, -, purple
+    // Remainder: Signet Ring, CA, Seek Allies, Dune, Dagger
+    const deckOrder = {
+      'dagger-0': 0,
+      'dune-the-desert-planet-0': 1,
+      'diplomacy-0': 2,
+      'convincing-argument-0': 3,
+      'reconnaissance-0': 4,
+      'signet-ring-0': 5,
+      'convincing-argument-1': 6,
+      'seek-allies-0': 7,
+      'dune-the-desert-planet-1': 8,
+      'dagger-1': 9,
+    }
+    for (const player of game.players.all()) {
+      const deck = game.zones.byId(`${player.name}.deck`)
+      deck.sort((a, b) => {
+        const slug = id => id.replace(/^starter-\w+-/, '')
+        return (deckOrder[slug(a.id)] ?? 99) - (deckOrder[slug(b.id)] ?? 99)
+      })
+    }
+    const conflictDeck = game.zones.byId('common.conflictDeck')
+    conflictDeck.sort((a, b) => {
+      const tierDiff = (a.definition?.tier || 0) - (b.definition?.tier || 0)
+      if (tierDiff !== 0) {
+        return tierDiff
+      }
+      return a.id.localeCompare(b.id)
+    })
   })
 
   return game

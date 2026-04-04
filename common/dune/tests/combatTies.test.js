@@ -23,6 +23,7 @@ describe('Combat Ties', () => {
   test('tie for 1st: each gets 2nd place reward, no winner', () => {
     const game = t.fixture()
     t.setBoard(game, {
+      conflictCard: 'Siege of Arrakeen',
       dennis: { troopsInGarrison: 2, solari: 0 },
       micah: { troopsInGarrison: 2, solari: 0 },
     })
@@ -45,9 +46,9 @@ describe('Combat Ties', () => {
     const dennis = game.players.byName('dennis')
     const micah = game.players.byName('micah')
     // Tied for 1st → each gets 2nd place reward
-    // Skirmish 2nd place: "+3 Solari"
-    expect(dennis.solari).toBeGreaterThanOrEqual(3)
-    expect(micah.solari).toBeGreaterThanOrEqual(0) // micah harvested spice, check solari
+    // Siege of Arrakeen 2nd place: "+4 Solari and +1 Troop"
+    expect(dennis.solari).toBeGreaterThanOrEqual(4)
+    expect(micah.solari).toBeGreaterThanOrEqual(4)
   })
 
   test('tie for 2nd: each gets 3rd place reward', () => {

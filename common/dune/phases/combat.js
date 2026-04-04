@@ -298,6 +298,18 @@ function parseSingleReward(text) {
     return { type: 'vp', amount: parseInt(vpMatch[1]) }
   }
 
+  // "+N [Faction] Influence" (specific faction)
+  const factionInfluenceMatch = text.match(/^\+(\d+)\s+(Emperor|Spacing Guild|Bene Gesserit|Fremen)\s+Influence/i)
+  if (factionInfluenceMatch) {
+    const factionNameMap = {
+      'emperor': 'emperor',
+      'spacing guild': 'guild',
+      'bene gesserit': 'bene-gesserit',
+      'fremen': 'fremen',
+    }
+    return { type: 'influence', faction: factionNameMap[factionInfluenceMatch[2].toLowerCase()], amount: parseInt(factionInfluenceMatch[1]) }
+  }
+
   // "+N Influence" (choice of faction)
   const influenceMatch = text.match(/^\+(\d+)\s+Influence/i)
   if (influenceMatch) {
@@ -333,16 +345,57 @@ function parseSingleReward(text) {
     return { type: 'gain', resource: 'water', amount: parseInt(waterMatch[1]) }
   }
 
+  // "+N Troop(s)"
+  const troopMatch = text.match(/^\+(\d+)\s+Troops?/i)
+  if (troopMatch) {
+    return { type: 'troop', amount: parseInt(troopMatch[1]) }
+  }
+
+  // "+N Contract(s)"
+  const contractMatch = text.match(/^\+(\d+)\s+Contracts?/i)
+  if (contractMatch) {
+    return { type: 'contract', amount: parseInt(contractMatch[1]) }
+  }
+
+  // "+N Spy" (without Deep Cover)
+  const spyMatch = text.match(/^\+(\d+)\s+Spy$/i)
+  if (spyMatch) {
+    return { type: 'spy', amount: parseInt(spyMatch[1]) }
+  }
+
   // "Location Control"
   const controlMatch = text.match(/(Arrakeen|Carthag|Imperial Basin|Spice Refinery)\s+Control/i)
   if (controlMatch) {
     const locationMap = {
       'arrakeen': 'arrakeen',
-      'carthag': 'spice-refinery',
+      'carthag': 'carthag',
       'imperial basin': 'imperial-basin',
       'spice refinery': 'spice-refinery',
     }
     return { type: 'control', location: locationMap[controlMatch[1].toLowerCase()] }
+  }
+
+  // "Pay N Resource for +M Victory point" (conditional VP trade)
+  const payForVpMatch = text.match(/^Pay\s+(\d+)\s+(\w+)\s+for\s+\+(\d+)\s+Victory\s+point/i)
+  if (payForVpMatch) {
+    const resource = payForVpMatch[2].toLowerCase()
+    return {
+      type: 'choice',
+      choices: [
+        {
+          label: text,
+          cost: { [resource]: parseInt(payForVpMatch[1]) },
+          effects: [{ type: 'vp', amount: parseInt(payForVpMatch[3]) }],
+        },
+        { label: 'Pass', effects: [] },
+      ],
+    }
+  }
+
+  // "Return 2 Spies for +N Victory point" (conditional VP trade)
+  const returnSpiesMatch = text.match(/^Return\s+(\d+)\s+Spies?\s+for\s+\+(\d+)\s+Victory\s+point/i)
+  if (returnSpiesMatch) {
+    return { type: 'return-spies-for-vp', spyCount: parseInt(returnSpiesMatch[1]), vpAmount: parseInt(returnSpiesMatch[2]) }
   }
 
   // "Trash a card"
@@ -356,7 +409,7 @@ function parseSingleReward(text) {
   }
 
   // "+1 Spy with Deep Cover" — TODO: implement spy deep cover
-  if (/Spy/i.test(text)) {
+  if (/Spy with Deep Cover/i.test(text)) {
     return null
   }
 
@@ -400,6 +453,32 @@ function awardReward(game, player, rewardText) {
           title: `Choose faction for Influence (${i + 1} of 2)`,
         })
         factions.gainInfluence(game, player, faction)
+      }
+    }
+    else if (effect.type === 'return-spies-for-vp') {
+      // Optional: return N spies to supply for VP
+      const spies = require('../systems/spies.js')
+      const observationPosts = require('../res/observationPosts.js')
+      const playerSpyCount = observationPosts.reduce((count, post) => {
+        const occupants = game.state.spyPosts[post.id] || []
+        return count + occupants.filter(n => n === player.name).length
+      }, 0)
+
+      if (playerSpyCount >= effect.spyCount) {
+        const choices = [`Return ${effect.spyCount} Spies for +${effect.vpAmount} Victory point`, 'Pass']
+        const [choice] = game.actions.choose(player, choices, {
+          title: `Return ${effect.spyCount} Spies for +${effect.vpAmount} VP?`,
+        })
+        if (choice !== 'Pass') {
+          for (let i = 0; i < effect.spyCount; i++) {
+            spies.recallSpy(game, player)
+          }
+          player.incrementCounter('vp', effect.vpAmount, { silent: true })
+          game.log.add({
+            template: '{player} gains {amount} Victory Point(s)',
+            args: { player, amount: effect.vpAmount },
+          })
+        }
       }
     }
     else {
@@ -515,7 +594,7 @@ function afterCombat(game) {
  * Control markers and battle icons are NOT doubled.
  */
 function canDoubleReward(effect) {
-  return effect.type !== 'control' && effect.type !== 'choice'
+  return effect.type !== 'control' && effect.type !== 'choice' && effect.type !== 'return-spies-for-vp'
 }
 
 module.exports = { combatPhase, parseRewardText }

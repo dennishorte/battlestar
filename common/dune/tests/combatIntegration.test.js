@@ -7,7 +7,10 @@ function finishUntilNextRound(game) {
   let safety = 30
   while (game.waiting && !game.gameOver && game.state.round === startRound && safety-- > 0) {
     const choices = t.currentChoices(game)
-    if (choices.includes('Pass')) {
+    if (choices.includes('Reveal Turn')) {
+      t.choose(game, 'Reveal Turn')
+    }
+    else if (choices.includes('Pass')) {
       t.choose(game, 'Pass')
     }
     else {
@@ -90,6 +93,7 @@ describe('Combat Integration', () => {
   test('winner gets first place reward from conflict card', () => {
     const game = t.fixture()
     t.setBoard(game, {
+      conflictCard: 'Shadow Contest',
       dennis: { troopsInGarrison: 3, solari: 0 },
     })
     game.run()
@@ -106,22 +110,17 @@ describe('Combat Integration', () => {
     t.choose(game, 'Reveal Turn')
     t.choose(game, 'Pass') // acquire
 
-    // Combat phase: Dennis wins (only participant)
-    // Conflict: Skirmish — first: "+1 Influence and +2 Solari"
-    // Should get influence choice
-    const choices = t.currentChoices(game)
-    expect(choices).toContain('emperor')
-    t.choose(game, 'emperor')
-
-    // After combat, verify rewards before any round 2 activity
+    // Combat resolves automatically — Dennis wins (only participant)
+    // Shadow Contest 1st: "+1 Bene Gesserit Influence and +1 Intrigue card"
+    expect(game.state.round).toBe(2)
     const dennis = game.players.byName('dennis')
-    expect(dennis.solari).toBeGreaterThanOrEqual(2)
-    expect(dennis.getInfluence('emperor')).toBe(1)
+    expect(dennis.getInfluence('bene-gesserit')).toBe(1)
   })
 
   test('second place gets second reward', () => {
     const game = t.fixture()
     t.setBoard(game, {
+      conflictCard: 'Siege of Arrakeen',
       dennis: { troopsInGarrison: 3 },
       micah: { troopsInGarrison: 1 },
     })
@@ -132,27 +131,17 @@ describe('Combat Integration', () => {
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 
-    // Micah: deploy 1 troop to conflict via a different combat space
-    // Micah has: CA, Seek Allies, Dune TDP, Dagger, Diplomacy
-    // Dune TDP (yellow) can go to Imperial Basin (combat)
+    // Micah: deploy 1 troop to conflict via Imperial Basin
     t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Imperial Basin')
     t.choose(game, 'Deploy 1 troop(s) from garrison')
 
-    // Both reveal
-    t.choose(game, 'Reveal Turn')
-    t.choose(game, 'Pass')
-    t.choose(game, 'Reveal Turn')
-    t.choose(game, 'Pass')
-
-    // Combat: Dennis has more strength → first place
-    // Micah → second place
-    // Process all combat reward choices
+    // Both reveal + combat resolves automatically
     finishUntilNextRound(game)
 
     expect(game.state.round).toBe(2)
-    // Micah should have received 2nd place reward: "+3 Solari"
+    // Micah should have received 2nd place reward: "+4 Solari and +1 Troop"
     const micah = game.players.byName('micah')
-    expect(micah.solari).toBeGreaterThanOrEqual(3)
+    expect(micah.solari).toBeGreaterThanOrEqual(4)
   })
 })
