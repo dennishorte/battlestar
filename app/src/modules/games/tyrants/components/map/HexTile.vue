@@ -122,13 +122,11 @@ export default {
     },
 
     innerStyle() {
-      if (this.rotationDelta === 0) {
-        return {}
-      }
-      const degrees = this.rotationDelta * 60
-      return {
-        transform: `rotate(${degrees}deg)`,
-      }
+      // No CSS rotation — hex outline is rotationally symmetric, and CSS rotate()
+      // operates in pixel space which doesn't match rotateHexPosition's normalized
+      // space when the bounding box is non-square. Path lines and label are rotated
+      // mathematically instead (see pathLines, labelX, labelY).
+      return {}
     },
 
     svgStyle() {
@@ -158,12 +156,18 @@ export default {
     },
 
     labelX() {
-      const pos = this.hex.labelPosition || { x: 0.5, y: 0.5 }
+      let pos = this.hex.labelPosition || { x: 0.5, y: 0.5 }
+      if (this.rotationDelta !== 0) {
+        pos = rotateHexPosition(pos, this.rotationDelta)
+      }
       return (pos.x - 0.5) * this.hexWidth
     },
 
     labelY() {
-      const pos = this.hex.labelPosition || { x: 0.5, y: 0.5 }
+      let pos = this.hex.labelPosition || { x: 0.5, y: 0.5 }
+      if (this.rotationDelta !== 0) {
+        pos = rotateHexPosition(pos, this.rotationDelta)
+      }
       return (pos.y - 0.5) * this.hexHeight
     },
 
@@ -210,7 +214,10 @@ export default {
     },
 
     triadStyle() {
-      const pos = this.hex.rulesPosition || { x: 0.5, y: 0.5 }
+      let pos = this.hex.rulesPosition || { x: 0.5, y: 0.5 }
+      if (this.rotationDelta !== 0) {
+        pos = rotateHexPosition(pos, this.rotationDelta)
+      }
       return {
         left: (pos.x * this.hexWidth) + 'px',
         top: (pos.y * this.hexHeight) + 'px',
@@ -233,7 +240,10 @@ export default {
       // Paths use short names (e.g., 'great-web'), locations have full names (e.g., 'A1.great-web')
       const locPositions = {}
       for (const loc of this.hex.locations) {
-        const pos = loc.hexPosition || { x: 0.5, y: 0.5 }
+        let pos = loc.hexPosition || { x: 0.5, y: 0.5 }
+        if (this.rotationDelta !== 0) {
+          pos = rotateHexPosition(pos, this.rotationDelta)
+        }
         // Convert from 0-1 range to SVG coordinates (centered at 0,0)
         const coords = {
           x: (pos.x - 0.5) * this.hexWidth,
@@ -291,7 +301,6 @@ export default {
 .hex-inner {
   width: 100%;
   height: 100%;
-  transition: transform 0.2s ease;
 }
 
 .hex-svg {
