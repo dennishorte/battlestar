@@ -16,28 +16,13 @@ module.exports = {
       max: 1,
     })
     if (selection[0] !== 'Skip') {
-      const built = game.actions.buildImprovement(player)
-      if (built) {
-        // Refund 1 resource of choice
-        const refundChoices = []
-        for (const res of ['wood', 'clay', 'reed', 'stone']) {
-          if (player[res] !== undefined) {
-            refundChoices.push(`Refund 1 ${res}`)
-          }
-        }
-        if (refundChoices.length > 0) {
-          const refund = game.actions.choose(player, refundChoices, {
-            title: 'Overachiever: Which resource to refund?',
-            min: 1,
-            max: 1,
-          })
-          const resource = refund[0].match(/Refund 1 (\w+)/)[1]
-          player.addResource(resource, 1)
-          game.log.add({
-            template: '{player} gets 1 {resource} back',
-            args: { player, resource },
-          })
-        }
+      const prev = player._houseRedevelopmentDiscount || 0
+      player._houseRedevelopmentDiscount = prev + 1
+      try {
+        game.actions.buildImprovement(player)
+      }
+      finally {
+        player._houseRedevelopmentDiscount = prev
       }
     }
   },
