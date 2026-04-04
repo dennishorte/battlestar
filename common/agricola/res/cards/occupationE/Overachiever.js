@@ -16,13 +16,13 @@ module.exports = {
       max: 1,
     })
     if (selection[0] !== 'Skip') {
-      const prev = player._houseRedevelopmentDiscount || 0
-      player._houseRedevelopmentDiscount = prev + 1
+      const prev = player._anyResourceDiscount || 0
+      player._anyResourceDiscount = prev + 1
       try {
         game.actions.buildImprovement(player)
       }
       finally {
-        player._houseRedevelopmentDiscount = prev
+        player._anyResourceDiscount = prev
       }
     }
   },

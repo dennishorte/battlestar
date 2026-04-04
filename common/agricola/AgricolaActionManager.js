@@ -64,6 +64,29 @@ class AgricolaActionManager extends BaseActionManager {
     return modified
   }
 
+  _applyAnyResourceDiscount(player, cost, discount) {
+    const resources = Object.keys(cost).filter(r => (cost[r] || 0) > 0)
+    if (resources.length === 0 || discount <= 0) {
+      return cost
+    }
+
+    const modified = { ...cost }
+    if (resources.length === 1) {
+      modified[resources[0]] = Math.max(0, modified[resources[0]] - discount)
+    }
+    else {
+      const choices = resources.map(r => `Reduce ${r} by 1`)
+      const selection = this.choose(player, choices, {
+        title: 'Choose resource discount',
+        min: 1,
+        max: 1,
+      })
+      const chosenResource = resources[choices.indexOf(selection[0])]
+      modified[chosenResource] = Math.max(0, modified[chosenResource] - discount)
+    }
+    return modified
+  }
+
   _playMinorWithCostChoice(player, cardId) {
     const card = this.game.cards.byId(cardId)
     const affordableOptions = player.getAffordableCardCostOptions(cardId)
@@ -86,6 +109,9 @@ class AgricolaActionManager extends BaseActionManager {
     // Apply House Redevelopment discount (Hunting Trophy)
     if ((player._houseRedevelopmentDiscount || 0) > 0) {
       chosenCost = this._applyBuildingResourceDiscount(player, chosenCost, player._houseRedevelopmentDiscount)
+    }
+    if ((player._anyResourceDiscount || 0) > 0) {
+      chosenCost = this._applyAnyResourceDiscount(player, chosenCost, player._anyResourceDiscount)
     }
 
     player.playCard(cardId)

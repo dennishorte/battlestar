@@ -83,6 +83,9 @@ AgricolaActionManager.prototype._completeMajorPurchase = function(player, improv
     if ((player._houseRedevelopmentDiscount || 0) > 0) {
       impCost = this._applyBuildingResourceDiscount(player, impCost, player._houseRedevelopmentDiscount)
     }
+    if ((player._anyResourceDiscount || 0) > 0) {
+      impCost = this._applyAnyResourceDiscount(player, impCost, player._anyResourceDiscount)
+    }
     player.payCost(impCost)
   }
 

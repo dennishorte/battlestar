@@ -151,6 +151,21 @@ AgricolaPlayer.prototype._canAffordWithBuildingResourceDiscount = function(cost,
   return false
 }
 
+AgricolaPlayer.prototype._canAffordWithAnyResourceDiscount = function(cost, discount) {
+  const resources = Object.keys(cost).filter(r => (cost[r] || 0) > 0)
+  if (resources.length === 0 || discount <= 0) {
+    return this.canAffordSingleCost(cost)
+  }
+  for (const resource of resources) {
+    const modified = { ...cost }
+    modified[resource] = Math.max(0, modified[resource] - discount)
+    if (this.canAffordSingleCost(modified)) {
+      return true
+    }
+  }
+  return false
+}
+
 AgricolaPlayer.prototype.canAffordCard = function(cardId) {
   const card = this.cards.byId(cardId)
   if (!card) {
@@ -166,6 +181,9 @@ AgricolaPlayer.prototype.canAffordCard = function(cardId) {
   if ((this._houseRedevelopmentDiscount || 0) > 0) {
     return options.some(opt => this._canAffordWithBuildingResourceDiscount(opt.cost, this._houseRedevelopmentDiscount))
   }
+  if ((this._anyResourceDiscount || 0) > 0) {
+    return options.some(opt => this._canAffordWithAnyResourceDiscount(opt.cost, this._anyResourceDiscount))
+  }
   return options.some(opt => this.canAffordSingleCost(opt.cost))
 }
 
@@ -177,6 +195,9 @@ AgricolaPlayer.prototype.getAffordableCardCostOptions = function(cardId) {
   const options = this.getCardCostOptions(card)
   if ((this._houseRedevelopmentDiscount || 0) > 0) {
     return options.filter(opt => this._canAffordWithBuildingResourceDiscount(opt.cost, this._houseRedevelopmentDiscount))
+  }
+  if ((this._anyResourceDiscount || 0) > 0) {
+    return options.filter(opt => this._canAffordWithAnyResourceDiscount(opt.cost, this._anyResourceDiscount))
   }
   return options.filter(opt => this.canAffordSingleCost(opt.cost))
 }
@@ -736,6 +757,9 @@ AgricolaPlayer.prototype.getAffordableMajorImprovementCostOptions = function(imp
   const options = this.getMajorImprovementCostOptions(improvementId)
   if ((this._houseRedevelopmentDiscount || 0) > 0) {
     return options.filter(opt => this._canAffordWithBuildingResourceDiscount(opt.cost, this._houseRedevelopmentDiscount))
+  }
+  if ((this._anyResourceDiscount || 0) > 0) {
+    return options.filter(opt => this._canAffordWithAnyResourceDiscount(opt.cost, this._anyResourceDiscount))
   }
   return options.filter(opt => this.canAffordSingleCost(opt.cost))
 }
