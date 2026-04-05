@@ -312,9 +312,9 @@ export default {
         return {
           message: isOwner
             ? 'Click hex tiles on the map to rotate them. Click Confirm when done.'
-            : `Waiting for ${request.actor} to set rotations. Click tiles to preview.`,
-          buttonLabel: isOwner ? 'Confirm Rotations' : null,
-          handler: isOwner ? () => this.submitRotations() : null,
+            : `Click hex tiles to set rotations for ${request.actor}. Click Confirm when done.`,
+          buttonLabel: 'Confirm Rotations',
+          handler: () => this.submitRotations(request.actor),
         }
       }
       return null
@@ -361,9 +361,9 @@ export default {
       }
     },
 
-    submitRotations() {
+    submitRotations(actorName) {
       this.game.respondToInputRequest({
-        actor: this.actor.name,
+        actor: actorName || this.actor.name,
         title: 'Rotate Hex Tiles',
         selection: [{ rotations: this.ui.pendingRotations }],
       })
