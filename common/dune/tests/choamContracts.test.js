@@ -3,7 +3,7 @@ const t = require('../testutil')
 describe('CHOAM Contract Completion', () => {
 
   test('board-space contract completes when visiting the named space', () => {
-    const game = t.fixture({ useCHOAM: true })
+    const game = t.fixture()
     t.setBoard(game, {
       dennis: { contracts: ['Deliver Supplies'] },
     })
@@ -16,11 +16,13 @@ describe('CHOAM Contract Completion', () => {
     expect(completed.cardlist().length).toBe(1)
   })
 
-  test('Accept Contract space gives contract + draw 1 (with CHOAM)', () => {
-    const game = t.fixture({ useCHOAM: true })
+  test('Accept Contract space gives contract + draw 1', () => {
+    const game = t.fixture()
     game.run()
 
-    // Dennis reveals, then micah visits Accept Contract
+    // Dennis reveals, scott reveals, then micah visits Accept Contract
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
     t.choose(game, 'Reveal Turn')
     t.choose(game, 'Pass')
 

@@ -52,6 +52,10 @@ describe('Additional Board Space Effects', () => {
     t.choose(game, 'Reveal Turn')
     t.choose(game, 'Pass')
 
+    // Scott reveals
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
+
     // Micah: Dune TDP (yellow) → Hagga Basin (costs 1 water)
     t.choose(game, 'Agent Turn.Dune, The Desert Planet')
 
@@ -122,7 +126,9 @@ describe('Additional Board Space Effects', () => {
     })
     game.run()
 
-    // Dennis reveals, micah harvests
+    // Dennis reveals, scott reveals, then micah harvests
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
     t.choose(game, 'Reveal Turn')
     t.choose(game, 'Pass')
 

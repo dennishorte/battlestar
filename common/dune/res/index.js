@@ -8,10 +8,7 @@ const leaderData = require('./leaders/index')
  * Returns the set of compatibility values that are valid for the given settings.
  */
 function getValidCompatibilities(settings) {
-  const valid = new Set(['All', 'Uprising'])
-  if (settings.useCHOAM) {
-    valid.add('Contracts (Uprising)')
-  }
+  const valid = new Set(['All', 'Uprising', 'Contracts (Uprising)'])
   if (settings.useRiseOfIx) {
     valid.add('Rise of Ix')
     valid.add('Shipping (Rise of Ix)')

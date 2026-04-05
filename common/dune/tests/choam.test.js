@@ -2,8 +2,8 @@ const t = require('../testutil')
 
 describe('CHOAM Contracts', () => {
 
-  test('CHOAM game initializes with contract deck and market', () => {
-    const game = t.fixture({ useCHOAM: true })
+  test('game initializes with contract deck and market', () => {
+    const game = t.fixture()
     game.run()
 
     const deck = game.zones.byId('common.contractDeck')
@@ -15,18 +15,8 @@ describe('CHOAM Contracts', () => {
     expect(deck.cardlist().length + market.cardlist().length).toBeGreaterThan(0)
   })
 
-  test('non-CHOAM game has empty contract zones', () => {
-    const game = t.fixture({ useCHOAM: false })
-    game.run()
-
-    const deck = game.zones.byId('common.contractDeck')
-    const market = game.zones.byId('common.contractMarket')
-    expect(deck.cardlist().length).toBe(0)
-    expect(market.cardlist().length).toBe(0)
-  })
-
   test('player contract zones exist', () => {
-    const game = t.fixture({ useCHOAM: true })
+    const game = t.fixture()
     game.run()
 
     const dennisContracts = game.zones.byId('dennis.contracts')

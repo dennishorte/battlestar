@@ -23,7 +23,7 @@ describe('Combat Ties', () => {
   test('tie for 1st: each gets 2nd place reward, no winner', () => {
     const game = t.fixture()
     t.setBoard(game, {
-      conflictCard: 'Siege of Arrakeen',
+      conflictCard: 'CHOAM Security',
       dennis: { troopsInGarrison: 2, solari: 0 },
       micah: { troopsInGarrison: 2, solari: 0 },
     })
@@ -34,21 +34,25 @@ describe('Combat Ties', () => {
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 1 troop(s) from garrison')
 
+    // Scott reveals
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
+
     // Micah deploys 1 troop via Imperial Basin
     t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Imperial Basin')
     t.choose(game, 'Deploy 1 troop(s) from garrison')
 
-    // Both reveal — handle acquire prompts between
+    // All reveal — handle acquire prompts between
     finishUntilNextRound(game)
 
     expect(game.state.round).toBe(2)
     const dennis = game.players.byName('dennis')
     const micah = game.players.byName('micah')
     // Tied for 1st → each gets 2nd place reward
-    // Siege of Arrakeen 2nd place: "+4 Solari and +1 Troop"
-    expect(dennis.solari).toBeGreaterThanOrEqual(4)
-    expect(micah.solari).toBeGreaterThanOrEqual(4)
+    // CHOAM Security 2nd place: "+1 Water and +2 Troops and +2 Solari"
+    expect(dennis.solari).toBeGreaterThanOrEqual(2)
+    expect(micah.solari).toBeGreaterThanOrEqual(2)
   })
 
   test('tie for 2nd: each gets 3rd place reward', () => {

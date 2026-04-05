@@ -10,7 +10,9 @@ describe('Round Start', () => {
     expect(game.zones.byId('common.conflictActive').cardlist().length).toBe(1)
     expect(game.zones.byId('common.conflictDeck').cardlist().length).toBe(9)
 
-    // Both reveal + pass to complete round 1
+    // All 3 reveal + pass to complete round 1
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
     t.choose(game, 'Reveal Turn')
     t.choose(game, 'Pass')
     t.choose(game, 'Reveal Turn')

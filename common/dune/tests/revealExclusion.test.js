@@ -24,23 +24,24 @@ describe('Agent-Turn Cards Excluded from Reveal', () => {
     const game = t.fixture()
     game.run()
 
-    // Dennis plays 2 agent turns (has 2 agents)
+    // Dennis plays Dagger to Gather Support (no intrigue draw, avoids plot prompt)
     t.choose(game, 'Agent Turn.Dagger')
-    t.choose(game, 'Assembly Hall')
+    t.choose(game, 'Gather Support')
 
-    // Micah takes turn — Dagger with only Gather Support available (auto-selected)
-    t.choose(game, 'Agent Turn.Dagger')
+    // Scott reveals
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
+
+    // Micah reveals
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
 
     // Dennis plays second agent
     t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 0 troop(s) from garrison')
 
-    // Micah reveals
-    t.choose(game, 'Reveal Turn')
-    t.choose(game, 'Pass')
-
-    // Dennis should now reveal (no agents left, auto-reveal)
+    // Dennis should now reveal (no agents left)
     // 5 cards - 2 played = 3 remaining in hand to reveal
     // Verify played zone has 2, and strength calculation only uses revealed cards
     const playedZone = game.zones.byId('dennis.played')

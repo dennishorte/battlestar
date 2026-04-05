@@ -107,13 +107,14 @@ describe('Dune Imperium: Uprising - Basic', () => {
     expect(choices).toContain('Reveal Turn')
   })
 
-  test('both players can reveal to complete player turns phase', () => {
+  test('all players can reveal to complete player turns phase', () => {
     const game = t.fixture()
     game.run()
 
-    // Both players reveal and pass on acquiring
+    // All players reveal and pass on acquiring
     revealAndPass(game) // dennis
     revealAndPass(game) // micah
+    revealAndPass(game) // scott
 
     // Should now be in round 2
     t.testBoard(game, { round: 2 })

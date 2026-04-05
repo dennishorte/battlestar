@@ -187,10 +187,6 @@ function completeContract(game, player, card) {
  * @param {object} triggerData - Additional data (e.g., { spaceId } or { spiceAmount })
  */
 function checkContractCompletion(game, player, triggerType, triggerData) {
-  if (!game.settings.useCHOAM) {
-    return
-  }
-
   const playerContracts = game.zones.byId(`${player.name}.contracts`)
   const contracts = playerContracts.cardlist()
 

@@ -9,6 +9,11 @@ describe('Strength Requires Units', () => {
     // Dennis plays Dagger (green) to Assembly Hall (non-combat, green space)
     t.choose(game, 'Agent Turn.Dagger')
     t.choose(game, 'Assembly Hall')
+    t.choose(game, 'Pass') // pass on plot intrigue (Assembly Hall draws intrigue)
+
+    // Scott reveals
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
 
     // Micah reveals
     t.choose(game, 'Reveal Turn')
@@ -33,6 +38,10 @@ describe('Strength Requires Units', () => {
     t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 1 troop(s) from garrison')
+
+    // Scott reveals
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
 
     // Micah reveals
     t.choose(game, 'Reveal Turn')

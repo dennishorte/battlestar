@@ -33,12 +33,7 @@ describe('Combat Integration', () => {
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 
-    // Micah reveals
-    t.choose(game, 'Reveal Turn')
-    t.choose(game, 'Pass')
-    // Dennis reveals
-    t.choose(game, 'Reveal Turn')
-    // Finish combat rewards + makers + recall
+    // Finish round (scott + micah reveal, combat, makers, recall)
     finishUntilNextRound(game)
 
     expect(game.state.round).toBe(2)
@@ -62,9 +57,7 @@ describe('Combat Integration', () => {
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 1 troop(s) from garrison')
 
-    t.choose(game, 'Reveal Turn') // micah
-    t.choose(game, 'Pass')
-    t.choose(game, 'Reveal Turn') // dennis
+    // Finish round (scott + micah reveal, dennis reveals, combat, makers, recall)
     finishUntilNextRound(game)
 
     expect(game.state.round).toBe(2)
@@ -80,10 +73,7 @@ describe('Combat Integration', () => {
     })
     game.run()
 
-    // Both reveal — no troops deployed
-    t.choose(game, 'Reveal Turn')
-    t.choose(game, 'Pass')
-    t.choose(game, 'Reveal Turn')
+    // All reveal — no troops deployed
     finishUntilNextRound(game)
 
     const dennis = game.players.byName('dennis')
@@ -103,12 +93,8 @@ describe('Combat Integration', () => {
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 
-    // Micah reveals (no combat)
-    t.choose(game, 'Reveal Turn')
-    t.choose(game, 'Pass')
-    // Dennis reveals
-    t.choose(game, 'Reveal Turn')
-    t.choose(game, 'Pass') // acquire
+    // Finish round (scott + micah reveal, dennis reveals, combat)
+    finishUntilNextRound(game)
 
     // Combat resolves automatically — Dennis wins (only participant)
     // Shadow Contest 1st: "+1 Bene Gesserit Influence and +1 Intrigue card"
@@ -120,9 +106,9 @@ describe('Combat Integration', () => {
   test('second place gets second reward', () => {
     const game = t.fixture()
     t.setBoard(game, {
-      conflictCard: 'Siege of Arrakeen',
-      dennis: { troopsInGarrison: 3 },
-      micah: { troopsInGarrison: 1 },
+      conflictCard: 'CHOAM Security',
+      dennis: { troopsInGarrison: 3, solari: 0 },
+      micah: { troopsInGarrison: 1, solari: 0 },
     })
     game.run()
 
@@ -131,17 +117,21 @@ describe('Combat Integration', () => {
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 
+    // Scott reveals
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
+
     // Micah: deploy 1 troop to conflict via Imperial Basin
     t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Imperial Basin')
     t.choose(game, 'Deploy 1 troop(s) from garrison')
 
-    // Both reveal + combat resolves automatically
+    // All reveal + combat resolves automatically
     finishUntilNextRound(game)
 
     expect(game.state.round).toBe(2)
-    // Micah should have received 2nd place reward: "+4 Solari and +1 Troop"
+    // Micah should have received 2nd place reward: "+1 Water and +2 Troops and +2 Solari"
     const micah = game.players.byName('micah')
-    expect(micah.solari).toBeGreaterThanOrEqual(4)
+    expect(micah.solari).toBeGreaterThanOrEqual(2)
   })
 })

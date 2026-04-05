@@ -34,12 +34,16 @@ describe('Combat intrigue consecutive pass mechanic', () => {
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 
+    // Scott reveals
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
+
     // Micah deploys to conflict
     t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Imperial Basin')
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 
-    // Both reveal
+    // Dennis and micah reveal
     t.choose(game, 'Reveal Turn')
     t.choose(game, 'Pass')
     t.choose(game, 'Reveal Turn')
@@ -79,6 +83,10 @@ describe('Sandworm never placed in garrison', () => {
     t.choose(game, 'Reveal Turn')
     t.choose(game, 'Pass')
 
+    // Scott reveals
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
+
     // Micah plays yellow card to Hagga Basin, choose sandworm option
     t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Hagga Basin')
@@ -107,6 +115,10 @@ describe('Sandworm never placed in garrison', () => {
     const supplyBefore = micah.troopsInSupply
 
     // Dennis reveals first
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
+
+    // Scott reveals
     t.choose(game, 'Reveal Turn')
     t.choose(game, 'Pass')
 
@@ -209,16 +221,15 @@ describe('Sandworm doubling of pay-cost rewards', () => {
 
 describe('CHOAM additional imperium cards', () => {
 
-  test('CHOAM game includes additional imperium cards with Contracts (Uprising) compatibility', () => {
+  test('all games include Contracts (Uprising) imperium cards', () => {
     const res = require('../res/index.js')
 
-    const withCHOAM = res.getImperiumCards({ useCHOAM: true })
-    const withoutCHOAM = res.getImperiumCards({ useCHOAM: false })
-
-    expect(withCHOAM.length).toBeGreaterThan(withoutCHOAM.length)
+    const allCards = res.getImperiumCards({})
+    const contractCards = allCards.filter(c => c.compatibility === 'Contracts (Uprising)')
+    expect(contractCards.length).toBeGreaterThan(0)
   })
 
-  test('CHOAM-specific imperium cards have Contracts (Uprising) compatibility', () => {
+  test('Contracts (Uprising) imperium cards include expected cards', () => {
     const cards = require('../res/cards/index.js')
 
     const choamCards = cards.imperiumCards.filter(c => c.compatibility === 'Contracts (Uprising)')
@@ -302,17 +313,20 @@ describe('Imperium row replacement acquirable same turn', () => {
     })
     game.run()
 
-    // Dennis reveals (all 5 starting hand cards)
+    // Dennis reveals (all 5 starting hand cards = 5 persuasion)
     t.choose(game, 'Reveal Turn')
 
     const row = game.zones.byId('common.imperiumRow')
     expect(row.cardlist().length).toBe(5)
 
+    // Buy the cheapest card so persuasion remains for another buy
     const choices = t.currentChoices(game)
     const acquireChoices = choices.filter(c => c !== 'Pass')
     expect(acquireChoices.length).toBeGreaterThan(0)
-
-    t.choose(game, acquireChoices[0])
+    const cheapest = acquireChoices
+      .map(name => ({ name, cost: row.cardlist().find(c => c.name === name)?.persuasionCost ?? 0 }))
+      .sort((a, b) => a.cost - b.cost)[0]
+    t.choose(game, cheapest.name)
 
     // Row should refill to 5
     expect(row.cardlist().length).toBe(5)

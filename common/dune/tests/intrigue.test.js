@@ -49,6 +49,9 @@ describe('Intrigue Cards', () => {
     t.choose(game, 'Arrakeen')
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 
+    // Scott reveals
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
     // Micah reveals
     t.choose(game, 'Reveal Turn')
     t.choose(game, 'Pass')

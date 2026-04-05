@@ -31,7 +31,7 @@ describe('Recall and Endgame', () => {
     completeRound(game)
 
     expect(game.state.round).toBe(2)
-    expect(game.waiting.selectors[0].actor).toBe('micah')
+    expect(game.waiting.selectors[0].actor).toBe('scott')
   })
 
   test('endgame triggers at 10 VP', () => {

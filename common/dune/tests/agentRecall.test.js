@@ -42,14 +42,20 @@ describe('Agent Recall', () => {
     const game = t.fixture()
     game.run()
 
-    // Dennis reveals all 5 cards for max persuasion
+    // Dennis reveals all 5 cards for 5 persuasion
     t.choose(game, 'Reveal Turn')
 
-    // First acquisition
+    // Find a cheap card so we have persuasion left for a second buy
     const choices = t.currentChoices(game)
     const affordable = choices.filter(c => c !== 'Pass')
     expect(affordable.length).toBeGreaterThan(0)
-    t.choose(game, affordable[0])
+
+    // Pick the cheapest available card
+    const row = game.zones.byId('common.imperiumRow')
+    const cheapest = affordable
+      .map(name => ({ name, cost: row.cardlist().find(c => c.name === name)?.persuasionCost ?? 0 }))
+      .sort((a, b) => a.cost - b.cost)[0]
+    t.choose(game, cheapest.name)
 
     // Row should refill — check that there are still cards to acquire
     const choices2 = t.currentChoices(game)
@@ -59,7 +65,6 @@ describe('Agent Recall', () => {
     t.choose(game, 'Pass')
 
     // Verify imperium row is back to 5
-    const row = game.zones.byId('common.imperiumRow')
     expect(row.cardlist().length).toBe(5)
   })
 })

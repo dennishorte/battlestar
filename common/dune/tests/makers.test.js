@@ -20,8 +20,9 @@ describe('Makers Phase', () => {
     const game = t.fixture()
     game.run()
 
-    // Both players reveal immediately — no agents placed on maker spaces
+    // All 3 players reveal immediately — no agents placed on maker spaces
     revealAndPass(game) // dennis
+    revealAndPass(game) // scott
     revealAndPass(game) // micah
     // After combat (no combatants), makers phase runs
 
@@ -36,11 +37,13 @@ describe('Makers Phase', () => {
     const game = t.fixture()
     game.run()
 
-    // Round 1: both reveal
+    // Round 1: all 3 reveal
+    revealAndPass(game)
     revealAndPass(game)
     revealAndPass(game)
 
-    // Round 2: both reveal again
+    // Round 2: all 3 reveal again
+    revealAndPass(game)
     revealAndPass(game)
     revealAndPass(game)
 

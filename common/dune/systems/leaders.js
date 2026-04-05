@@ -19,7 +19,6 @@ function selectLeaders(game) {
   }
 
   const leaderData = require('../res/leaders/index.js')
-  const settings = game.settings
 
   // Filter leaders by compatibility
   let available = leaderData.filter(l => {
@@ -31,11 +30,6 @@ function selectLeaders(game) {
     }
     return false
   })
-
-  // Shaddam Corrino IV requires CHOAM module
-  if (!settings.useCHOAM) {
-    available = available.filter(l => l.name !== 'Shaddam Corrino IV')
-  }
 
   // Shuffle
   const shuffled = [...available]
@@ -119,7 +113,7 @@ function assignLeader(game, player, leader) {
 
   if (leader.name === 'Shaddam Corrino IV') {
     // Set aside both Sardaukar contracts — only Shaddam can take them
-    if (game.settings.useCHOAM) {
+    {
       const contractDeck = game.zones.byId('common.contractDeck')
       const contractMarket = game.zones.byId('common.contractMarket')
       const allContracts = [...contractDeck.cardlist(), ...contractMarket.cardlist()]

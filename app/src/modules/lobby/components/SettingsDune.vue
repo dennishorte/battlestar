@@ -6,16 +6,6 @@
       <input
         class="form-check-input"
         type="checkbox"
-        v-model="models.useCHOAM"
-        @change="optionsChanged"
-      />
-      <label class="form-check-label">CHOAM Contracts</label>
-    </div>
-
-    <div class="form-check">
-      <input
-        class="form-check-input"
-        type="checkbox"
         v-model="models.useRiseOfIx"
         @change="optionsChanged"
         disabled
@@ -57,7 +47,6 @@ export default {
   data() {
     return {
       models: {
-        useCHOAM: false,
         useRiseOfIx: false,
         useImmortality: false,
         useBloodlines: false,
@@ -65,22 +54,39 @@ export default {
     }
   },
 
+  computed: {
+    playerCount() {
+      return this.lobby.users?.length || 0
+    },
+  },
+
+  watch: {
+    'lobby.users': {
+      handler() {
+        this.updateValid()
+      },
+      deep: true,
+    },
+  },
+
   methods: {
+    updateValid() {
+      this.lobby.valid = this.playerCount >= 3 && this.playerCount <= 4
+      this.save()
+    },
+
     optionsChanged() {
       this.lobby.options = {
-        useCHOAM: this.models.useCHOAM,
         useRiseOfIx: this.models.useRiseOfIx,
         useImmortality: this.models.useImmortality,
         useBloodlines: this.models.useBloodlines,
       }
-      this.lobby.valid = true
-      this.save()
+      this.updateValid()
     },
   },
 
   created() {
     if (this.lobby.options) {
-      this.models.useCHOAM = Boolean(this.lobby.options.useCHOAM)
       this.models.useRiseOfIx = Boolean(this.lobby.options.useRiseOfIx)
       this.models.useImmortality = Boolean(this.lobby.options.useImmortality)
       this.models.useBloodlines = Boolean(this.lobby.options.useBloodlines)
@@ -88,7 +94,7 @@ export default {
     else {
       this.lobby.options = {}
     }
-    this.lobby.valid = true
+    this.updateValid()
   },
 }
 </script>

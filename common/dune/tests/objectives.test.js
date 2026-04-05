@@ -38,12 +38,11 @@ describe('Objectives', () => {
   })
 
   test('first player set correctly based on objectives', () => {
-    // test_seed doesn't draw the first player objective
+    // With 3-player test_seed, scott draws the first player objective
     const game = t.fixture()
     game.run()
 
-    // When no FP objective drawn, firstPlayer is null and index defaults to 0
-    expect(game.state.firstPlayer).toBeNull()
+    expect(game.state.firstPlayer).toBe('scott')
     expect(game.state.firstPlayerIndex).toBe(0)
   })
 

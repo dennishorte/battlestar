@@ -13,7 +13,7 @@ TestUtil.fixture = function(options = {}) {
     { _id: 'eliya_id', name: 'eliya' },
   ]
 
-  const numPlayers = options.numPlayers || 2
+  const numPlayers = options.numPlayers || 3
   const activePlayers = players.slice(0, numPlayers)
 
   const game = DuneFactory({
@@ -23,7 +23,7 @@ TestUtil.fixture = function(options = {}) {
     players: activePlayers,
     numPlayers,
     shuffleSeats: false,
-    useCHOAM: options.useCHOAM || false,
+    useCHOAM: true,
     useRiseOfIx: options.useRiseOfIx || false,
     useImmortality: options.useImmortality || false,
     useBloodlines: options.useBloodlines || false,
@@ -79,6 +79,12 @@ TestUtil.fixture = function(options = {}) {
         return (deckOrder[slug(a.id)] ?? 99) - (deckOrder[slug(b.id)] ?? 99)
       })
     }
+    // Sort all shared decks by ID for deterministic order.
+    const idSort = (a, b) => a.id.localeCompare(b.id)
+    game.zones.byId('common.imperiumDeck').sort(idSort)
+    game.zones.byId('common.intrigueDeck').sort(idSort)
+    game.zones.byId('common.contractDeck').sort(idSort)
+    game.zones.byId('common.contractMarket').sort(idSort)
     const conflictDeck = game.zones.byId('common.conflictDeck')
     conflictDeck.sort((a, b) => {
       const tierDiff = (a.definition?.tier || 0) - (b.definition?.tier || 0)

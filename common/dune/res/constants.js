@@ -1,6 +1,6 @@
 module.exports = {
   // Player counts
-  MIN_PLAYERS: 2,
+  MIN_PLAYERS: 3,
   MAX_PLAYERS: 4,
 
   // Starting resources per player

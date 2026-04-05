@@ -18,7 +18,7 @@
 
         <div class="col market-column">
           <DuneImperiumRow />
-          <DuneContractMarket v-if="game.settings.useCHOAM" />
+          <DuneContractMarket />
         </div>
 
         <div class="col player-column">

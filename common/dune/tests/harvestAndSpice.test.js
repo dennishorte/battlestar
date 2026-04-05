@@ -11,8 +11,10 @@ describe('Harvest and Bonus Spice', () => {
     game.run()
 
     // Dennis reveals first (can't go to yellow space with these hand cards easily)
-    // Actually, dennis has no yellow card in hand with this seed.
-    // Let's skip dennis and have micah harvest.
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
+
+    // Scott reveals
     t.choose(game, 'Reveal Turn')
     t.choose(game, 'Pass')
 
@@ -33,7 +35,9 @@ describe('Harvest and Bonus Spice', () => {
     const game = t.fixture()
     game.run()
 
-    // Round 1: both reveal immediately — no agents on any maker spaces
+    // Round 1: all reveal immediately — no agents on any maker spaces
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
     t.choose(game, 'Reveal Turn')
     t.choose(game, 'Pass')
     t.choose(game, 'Reveal Turn')

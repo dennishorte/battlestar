@@ -35,7 +35,7 @@ function DuneFactory(settings, viewerName) {
   const data = BaseFactory(settings)
 
   data.settings.numPlayers = settings.numPlayers || 2
-  data.settings.useCHOAM = settings.useCHOAM || false
+  data.settings.useCHOAM = true
   data.settings.useRiseOfIx = settings.useRiseOfIx || false
   data.settings.useImmortality = settings.useImmortality || false
   data.settings.useBloodlines = settings.useBloodlines || false
@@ -50,7 +50,7 @@ function factoryFromLobby(lobby) {
     players: lobby.users,
     seed: lobby.seed,
     numPlayers: lobby.users.length,
-    useCHOAM: lobby.options?.useCHOAM || false,
+    useCHOAM: true,
     useRiseOfIx: lobby.options?.useRiseOfIx || false,
     useImmortality: lobby.options?.useImmortality || false,
     useBloodlines: lobby.options?.useBloodlines || false,
@@ -181,10 +181,8 @@ Dune.prototype.initializeZones = function() {
 Dune.prototype.initializeCards = function() {
   deckEngine.initializeCards(this)
 
-  if (this.settings.useCHOAM) {
-    const choam = require('./systems/choam.js')
-    choam.initializeContracts(this)
-  }
+  const choam = require('./systems/choam.js')
+  choam.initializeContracts(this)
 }
 
 Dune.prototype.initializePlayers = function() {
