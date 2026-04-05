@@ -6,6 +6,16 @@
       <input
         class="form-check-input"
         type="checkbox"
+        v-model="models.useBaseGameCards"
+        @change="optionsChanged"
+      />
+      <label class="form-check-label">Base Game Imperium Cards</label>
+    </div>
+
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="checkbox"
         v-model="models.useRiseOfIx"
         @change="optionsChanged"
         disabled
@@ -47,6 +57,7 @@ export default {
   data() {
     return {
       models: {
+        useBaseGameCards: true,
         useRiseOfIx: false,
         useImmortality: false,
         useBloodlines: false,
@@ -77,6 +88,7 @@ export default {
 
     optionsChanged() {
       this.lobby.options = {
+        useBaseGameCards: this.models.useBaseGameCards,
         useRiseOfIx: this.models.useRiseOfIx,
         useImmortality: this.models.useImmortality,
         useBloodlines: this.models.useBloodlines,
@@ -87,6 +99,7 @@ export default {
 
   created() {
     if (this.lobby.options) {
+      this.models.useBaseGameCards = this.lobby.options.useBaseGameCards !== false
       this.models.useRiseOfIx = Boolean(this.lobby.options.useRiseOfIx)
       this.models.useImmortality = Boolean(this.lobby.options.useImmortality)
       this.models.useBloodlines = Boolean(this.lobby.options.useBloodlines)

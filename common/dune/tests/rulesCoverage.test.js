@@ -242,6 +242,27 @@ describe('CHOAM additional imperium cards', () => {
 })
 
 
+describe('Base game imperium cards setting', () => {
+
+  test('base game cards included by default', () => {
+    const res = require('../res/index.js')
+    const cards = res.getImperiumCards({})
+    const baseCards = cards.filter(c => c.compatibility === 'All')
+    expect(baseCards.length).toBeGreaterThan(0)
+  })
+
+  test('base game cards excluded when useBaseGameCards is false', () => {
+    const res = require('../res/index.js')
+    const cards = res.getImperiumCards({ useBaseGameCards: false })
+    const baseCards = cards.filter(c => c.compatibility === 'All')
+    expect(baseCards.length).toBe(0)
+    // Uprising-specific cards still present
+    const uprisingCards = cards.filter(c => c.compatibility === 'Uprising')
+    expect(uprisingCards.length).toBeGreaterThan(0)
+  })
+})
+
+
 describe('Endgame intrigue VP affects final winner determination', () => {
 
   test('endgame intrigue VP is counted in final scoring', () => {

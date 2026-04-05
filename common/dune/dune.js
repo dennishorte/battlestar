@@ -36,6 +36,7 @@ function DuneFactory(settings, viewerName) {
 
   data.settings.numPlayers = settings.numPlayers || 2
   data.settings.useCHOAM = true
+  data.settings.useBaseGameCards = settings.useBaseGameCards !== false
   data.settings.useRiseOfIx = settings.useRiseOfIx || false
   data.settings.useImmortality = settings.useImmortality || false
   data.settings.useBloodlines = settings.useBloodlines || false
@@ -51,6 +52,7 @@ function factoryFromLobby(lobby) {
     seed: lobby.seed,
     numPlayers: lobby.users.length,
     useCHOAM: true,
+    useBaseGameCards: lobby.options?.useBaseGameCards !== false,
     useRiseOfIx: lobby.options?.useRiseOfIx || false,
     useImmortality: lobby.options?.useImmortality || false,
     useBloodlines: lobby.options?.useBloodlines || false,

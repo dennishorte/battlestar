@@ -41,7 +41,11 @@ module.exports = {
   filterByCompatibility,
 
   getImperiumCards(settings) {
-    return filterByCompatibility(cards.imperiumCards, settings)
+    const valid = getValidCompatibilities(settings)
+    if (settings.useBaseGameCards === false) {
+      valid.delete('All')
+    }
+    return cards.imperiumCards.filter(item => valid.has(item.compatibility))
   },
 
   getIntrigueCards(settings) {
