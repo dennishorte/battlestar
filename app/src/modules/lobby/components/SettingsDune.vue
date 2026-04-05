@@ -1,5 +1,7 @@
 <template>
   <div class="settings-dune">
+    <div v-if="playerError" class="validation-error">{{ playerError }}</div>
+
     Modules
 
     <div class="form-check">
@@ -56,6 +58,7 @@ export default {
 
   data() {
     return {
+      playerError: '',
       models: {
         useBaseGameCards: true,
         useRiseOfIx: false,
@@ -82,7 +85,14 @@ export default {
 
   methods: {
     updateValid() {
-      this.lobby.valid = this.playerCount >= 3 && this.playerCount <= 4
+      if (this.playerCount < 3 || this.playerCount > 4) {
+        this.playerError = 'Dune Imperium requires 3-4 players'
+        this.lobby.valid = false
+      }
+      else {
+        this.playerError = ''
+        this.lobby.valid = true
+      }
       this.save()
     },
 
@@ -111,3 +121,11 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.validation-error {
+  color: #d32f2f;
+  font-size: .85em;
+  margin-bottom: .5em;
+}
+</style>
