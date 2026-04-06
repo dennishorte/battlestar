@@ -35,7 +35,7 @@ export default {
 
   computed: {
     currentPlayer() {
-      return this.game.players.byName(this.actor.name)
+      return this.game.players.byName(this.ui?.selectedPlayerName || this.actor.name)
     },
 
     waitingRequest() {
@@ -60,7 +60,7 @@ export default {
       }
 
       const response = {
-        actor: this.actor.name,
+        actor: this.currentPlayer.name,
         title: this.waitingRequest.title,
         selection: {
           action: 'anytime-action',

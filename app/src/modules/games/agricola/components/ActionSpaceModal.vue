@@ -390,7 +390,7 @@ export default {
     },
 
     waitingRequest() {
-      return this.game.getWaiting(this.game.players.byName(this.actor.name))
+      return this.game.getWaiting(this.game.players.byName(this.ui?.selectedPlayerName || this.actor.name))
     },
 
     isPlayerTurn() {

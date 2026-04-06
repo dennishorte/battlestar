@@ -115,7 +115,8 @@ System messages appear in the game log as centered, gray, italic text. They cann
 1. **Provide/Inject**: GameBase provides `actor`, `bus`, `game` to all child components
 2. **Event Bus (Mitt)**: Cross-component communication within a game
 3. **Concurrent Play**: Client reloads from server if state diverges after action
-4. **Auto-imported Components**: Bootstrap Vue components via unplugin-vue-components
+4. **Spectator proxy input**: Any player can submit actions for another via WaitingPanel tabs. Standard OptionSelector choices work automatically. Games with custom input UIs (action-type handlers, bus submissions, modals) must track `selectedPlayerName` and resolve actor accordingly. See [frontend integration guide](new-game-guide/08-frontend-integration.md#spectatorproxy-input).
+5. **Auto-imported Components**: Bootstrap Vue components via unplugin-vue-components
 
 ## Dependencies
 

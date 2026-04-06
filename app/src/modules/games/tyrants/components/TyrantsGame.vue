@@ -135,6 +135,8 @@ export default {
         selectableUnits: [],
         rotationMode: false,
         pendingRotations: {},
+        // Tracks which player's tab is selected in WaitingPanel (null = self)
+        selectedPlayerName: null,
       },
     }
   },
@@ -233,6 +235,10 @@ export default {
       }
     },
 
+    resolvedActorName() {
+      return this.ui.selectedPlayerName || this.actor.name
+    },
+
     optionSelector() {
       if (this.game.state.initializationComplete) {
         const player = this.game.players.byName(this.actor.name)
@@ -242,6 +248,17 @@ export default {
       }
 
       return undefined
+    },
+
+    selectedWaitingRequest() {
+      if (!this.game.state.initializationComplete) {
+        return null
+      }
+      const player = this.game.players.byName(this.resolvedActorName)
+      if (!player || !this.game.checkPlayerHasActionWaiting(player)) {
+        return null
+      }
+      return this.game.getWaiting(player)
     },
 
     orderedPlayers() {
@@ -284,7 +301,7 @@ export default {
     async clickLocation(loc) {
       if (this.canPlaceTroopAtLocation(loc)) {
         this.game.respondToInputRequest({
-          actor: this.actor.name,
+          actor: this.resolvedActorName,
           title: '__ALT_ACTION__',
           selection: [{
             action: 'place-troop-with-power',
@@ -321,6 +338,8 @@ export default {
     },
 
     onWaitingPlayerSelected(playerName) {
+      this.ui.selectedPlayerName = playerName
+
       // Enter rotation mode when viewing another player's Rotate Hex Tiles action
       if (playerName === this.actor.name) {
         // Switching back to own tab — exit spectator rotation if active
@@ -450,7 +469,7 @@ export default {
         event.stopPropagation()
         const ownerName = troopOwner ? troopOwner.name : 'neutral'
         this.game.respondToInputRequest({
-          actor: this.actor.name,
+          actor: this.resolvedActorName,
           title: '__ALT_ACTION__',
           selection: [{
             action: 'assassinate-with-power',
@@ -489,7 +508,7 @@ export default {
       if (this.canReturnSpy()) {
         event.stopPropagation()
         this.game.respondToInputRequest({
-          actor: this.actor.name,
+          actor: this.resolvedActorName,
           title: '__ALT_ACTION__',
           selection: [{
             action: 'return-spy-with-power',
@@ -533,7 +552,7 @@ export default {
       // Direct location name match
       if (selector.choices.some(c => typeof c === 'string' && c === locName)) {
         return {
-          actor: this.actor.name,
+          actor: this.resolvedActorName,
           title: selector.title,
           selection: [locName],
         }
@@ -546,7 +565,7 @@ export default {
       )
       if (prefixMatches.length === 1) {
         return {
-          actor: this.actor.name,
+          actor: this.resolvedActorName,
           title: selector.title,
           selection: [prefixMatches[0]],
         }
@@ -563,14 +582,14 @@ export default {
 
         if (hasOwnSpy && returnSpyChoice) {
           return {
-            actor: this.actor.name,
+            actor: this.resolvedActorName,
             title: selector.title,
             selection: [returnSpyChoice],
           }
         }
         else if (!hasOwnSpy && placeSpyChoice) {
           return {
-            actor: this.actor.name,
+            actor: this.resolvedActorName,
             title: selector.title,
             selection: [placeSpyChoice],
           }
@@ -599,7 +618,7 @@ export default {
       // Flat choices (e.g. aChooseAndAssassinate, aChooseAndSupplant)
       if (selector.choices.some(c => typeof c === 'string' && c === choiceStr)) {
         return {
-          actor: this.actor.name,
+          actor: this.resolvedActorName,
           title: selector.title,
           selection: [choiceStr],
         }
@@ -609,7 +628,7 @@ export default {
       const troopGroup = selector.choices.find(c => c.title === 'troop')
       if (troopGroup && troopGroup.choices.includes(choiceStr)) {
         return {
-          actor: this.actor.name,
+          actor: this.resolvedActorName,
           title: selector.title,
           selection: [{
             title: 'troop',
@@ -635,7 +654,7 @@ export default {
       const spyGroup = selector.choices.find(c => c.title === 'spy')
       if (spyGroup && spyGroup.choices.includes(choiceStr)) {
         return {
-          actor: this.actor.name,
+          actor: this.resolvedActorName,
           title: selector.title,
           selection: [{
             title: 'spy',

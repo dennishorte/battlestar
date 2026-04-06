@@ -176,12 +176,16 @@ export default {
   },
 
   computed: {
+    resolvedActorName() {
+      return this.ui.selectedPlayerName || this.actor.name
+    },
+
     waitingRequest() {
-      const viewingPlayer = this.game.players.byName(this.actor.name)
-      if (!viewingPlayer) {
+      const player = this.game.players.byName(this.resolvedActorName)
+      if (!player) {
         return null
       }
-      return this.game.getWaiting(viewingPlayer)
+      return this.game.getWaiting(player)
     },
 
     isActive() {
@@ -201,7 +205,7 @@ export default {
     },
 
     player() {
-      return this.game.players.byName(this.actor.name)
+      return this.game.players.byName(this.resolvedActorName)
     },
 
     locationMap() {
@@ -721,7 +725,7 @@ export default {
       }
 
       this.bus.emit('submit-action', {
-        actor: this.actor.name,
+        actor: this.resolvedActorName,
         action: 'animal-placement',
         placements,
         removals,

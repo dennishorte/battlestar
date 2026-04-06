@@ -251,6 +251,9 @@ export default {
       this.scarredCard = hasUpdates ? updated : null
     },
 
+    // Note: Proxy input is intentionally not supported for card drafting.
+    // Concurrent drafting shows private packs — proxy-drafting would expose hidden state.
+    // Standard WaitingPanel choices still work for non-draft decisions.
     async chooseCard(card) {
       await this.$store.dispatch('game/submitAction', {
         actor: this.actor.name,

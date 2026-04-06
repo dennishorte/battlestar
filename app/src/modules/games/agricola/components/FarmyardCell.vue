@@ -87,32 +87,32 @@ export default {
   computed: {
     // Check if fencing mode is active and this is the viewing player's board
     isFencingActive() {
-      return this.ui.fencing?.active && this.player.name === this.actor.name
+      return this.ui.fencing?.active && this.player.name === (this.ui.selectedPlayerName || this.actor.name)
     },
 
     // Check if plowing mode is active and this is the viewing player's board
     isPlowingActive() {
-      return this.ui.plowing?.active && this.player.name === this.actor.name
+      return this.ui.plowing?.active && this.player.name === (this.ui.selectedPlayerName || this.actor.name)
     },
 
     // Check if room building mode is active and this is the viewing player's board
     isBuildingRoomActive() {
-      return this.ui.buildingRoom?.active && this.player.name === this.actor.name
+      return this.ui.buildingRoom?.active && this.player.name === (this.ui.selectedPlayerName || this.actor.name)
     },
 
     // Check if stable building mode is active and this is the viewing player's board
     isBuildingStableActive() {
-      return this.ui.buildingStable?.active && this.player.name === this.actor.name
+      return this.ui.buildingStable?.active && this.player.name === (this.ui.selectedPlayerName || this.actor.name)
     },
 
     // Check if sowing mode is active and this is the viewing player's board
     isSowingActive() {
-      return this.ui.sowing?.active && this.player.name === this.actor.name
+      return this.ui.sowing?.active && this.player.name === (this.ui.selectedPlayerName || this.actor.name)
     },
 
     // Check if animal placement mode is active and this is the viewing player's board
     isAnimalPlacementActive() {
-      return this.ui.animalPlacement?.active && this.player.name === this.actor.name
+      return this.ui.animalPlacement?.active && this.player.name === (this.ui.selectedPlayerName || this.actor.name)
     },
 
     // Check if this cell is a valid animal placement target
@@ -465,7 +465,7 @@ export default {
       if (this.canPlow) {
         // Send a plow action directly to the game
         this.bus.emit('submit-action', {
-          actor: this.actor.name,
+          actor: this.player.name,
           action: 'plow-space',
           row: this.row,
           col: this.col,
@@ -477,7 +477,7 @@ export default {
       if (this.canBuildRoom) {
         // Send a build-room action directly to the game
         this.bus.emit('submit-action', {
-          actor: this.actor.name,
+          actor: this.player.name,
           action: 'build-room',
           row: this.row,
           col: this.col,
@@ -489,7 +489,7 @@ export default {
       if (this.canBuildStable) {
         // Send a build-stable action directly to the game
         this.bus.emit('submit-action', {
-          actor: this.actor.name,
+          actor: this.player.name,
           action: 'build-stable',
           row: this.row,
           col: this.col,
@@ -505,7 +505,7 @@ export default {
         // If only one option available, sow directly
         if (canSowGrain && !canSowVeg) {
           this.bus.emit('submit-action', {
-            actor: this.actor.name,
+            actor: this.player.name,
             action: 'sow-field',
             row: this.row,
             col: this.col,
@@ -516,7 +516,7 @@ export default {
 
         if (canSowVeg && !canSowGrain) {
           this.bus.emit('submit-action', {
-            actor: this.actor.name,
+            actor: this.player.name,
             action: 'sow-field',
             row: this.row,
             col: this.col,

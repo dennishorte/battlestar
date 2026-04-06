@@ -150,6 +150,67 @@ See [action-type-responses.md](../../common/docs/action-type-responses.md) for t
 
 ---
 
+## Spectator/Proxy Input
+
+Any player can submit actions on behalf of another player by switching to their tab in WaitingPanel. Standard `OptionSelector` choices work automatically (WaitingChoice uses `owner.name` as actor). But if your game has **custom input UI** — action-type handlers, bus-based board interactions, or modals — you must explicitly support this.
+
+### The Pattern
+
+The `waiting-player-selected` bus event fires when a user clicks another player's tab. Your game component should:
+
+1. **Track `selectedPlayerName`** as reactive state (on the `ui` object so sub-components can access it)
+2. **Listen for the bus event** in `mounted()`/`beforeUnmount()`
+3. **Resolve the acting player** as `selectedPlayerName || actor.name` everywhere you currently use `actor.name` for submissions or player-specific UI state
+
+```javascript
+// In your game component's data:
+ui: {
+  selectedPlayerName: null,
+  // ...other ui state
+}
+
+// Computed helper:
+resolvedActorName() {
+  return this.ui.selectedPlayerName || this.actor.name
+}
+
+// Bus listener:
+onWaitingPlayerSelected(name) {
+  this.ui.selectedPlayerName = name
+}
+```
+
+### Where to Use `resolvedActorName`
+
+- All `respondToInputRequest()` calls: `actor: this.resolvedActorName`
+- All `bus.emit('submit-action', ...)` calls: `actor: this.resolvedActorName`
+- `handleSubmitAction()`: resolve waiting request for the acting player, not just the viewer
+- `getActionTypeHandler(request)`: use `request.actor` for submission (it's already the correct player)
+
+### Where to Keep `actor.name`
+
+- `optionSelector` computed (viewer's own waiting request)
+- `orderedPlayers` computed (player ordering relative to viewer)
+- Ownership checks like "is this my turn?" (comparing against `actor.name`)
+
+### Sub-Component Checklist
+
+Sub-components that gate interactive modes (e.g., "only show clickable board on the acting player's board") should check against `ui.selectedPlayerName || actor.name`, not just `actor.name`:
+
+```javascript
+// Before (only works for the viewer):
+isActive() { return this.player.name === this.actor.name }
+
+// After (works for spectator proxy input):
+isActive() { return this.player.name === (this.ui.selectedPlayerName || this.actor.name) }
+```
+
+### Reference Implementation
+
+See `TwilightGame.vue` for the canonical implementation with `selectedPlayerName`, `selectedWaitingRequest`, and per-component `playerName` props passed to action sub-components.
+
+---
+
 ## Game Registration
 
 To make the frontend aware of your game:

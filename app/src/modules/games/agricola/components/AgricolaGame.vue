@@ -184,6 +184,8 @@ export default {
           active: false,
           validCells: [],
         },
+        // Tracks which player's tab is selected in WaitingPanel (null = self)
+        selectedPlayerName: null,
       },
       // Crop picker state
       cropPicker: {
@@ -208,6 +210,10 @@ export default {
       return this.game.players.startingWith(viewingPlayer)
     },
 
+    resolvedActorName() {
+      return this.ui.selectedPlayerName || this.actor.name
+    },
+
     // Get the current waiting request for the viewing player
     waitingRequest() {
       const viewingPlayer = this.game.players.byName(this.actor.name)
@@ -215,6 +221,15 @@ export default {
         return null
       }
       return this.game.getWaiting(viewingPlayer)
+    },
+
+    // Get the waiting request for the selected player (may differ from viewer)
+    selectedWaitingRequest() {
+      const player = this.game.players.byName(this.resolvedActorName)
+      if (!player) {
+        return null
+      }
+      return this.game.getWaiting(player)
     },
 
     // Check if we're in a fencing action
@@ -227,9 +242,9 @@ export default {
       return title.includes('pasture') || title.includes('spaces selected')
     },
 
-    // Get current player for validation
+    // Get current player for validation (resolved to selected player)
     currentPlayer() {
-      return this.game.players.byName(this.actor.name)
+      return this.game.players.byName(this.resolvedActorName)
     },
   },
 
@@ -573,7 +588,7 @@ export default {
 
       // Submit the pasture selection
       this.bus.emit('submit-action', {
-        actor: this.actor.name,
+        actor: this.resolvedActorName,
         action: 'build-pasture',
         spaces: [...spaces],
       })
@@ -585,7 +600,7 @@ export default {
     cancelFencing() {
       // Submit empty selection to cancel
       this.bus.emit('submit-action', {
-        actor: this.actor.name,
+        actor: this.resolvedActorName,
         action: 'build-pasture',
         spaces: [],
       })
@@ -608,7 +623,7 @@ export default {
     selectCrop(cropType) {
       // Submit the sow action with the selected crop
       this.bus.emit('submit-action', {
-        actor: this.actor.name,
+        actor: this.resolvedActorName,
         action: 'sow-field',
         row: this.cropPicker.row,
         col: this.cropPicker.col,
@@ -617,9 +632,15 @@ export default {
       this.closeCropPicker()
     },
 
+    onWaitingPlayerSelected(name) {
+      this.ui.selectedPlayerName = name
+    },
+
     async handleSubmitAction(actionPayload) {
-      // Verify the action is for the current waiting request
-      const waiting = this.waitingRequest
+      // Resolve waiting request for the acting player (may differ from viewer)
+      const actorName = actionPayload.actor || this.resolvedActorName
+      const player = this.game.players.byName(actorName)
+      const waiting = player ? this.game.getWaiting(player) : null
       if (!waiting) {
         console.warn('No waiting request for action:', actionPayload)
         return
@@ -657,12 +678,15 @@ export default {
     this.bus.on('show-crop-picker', this.showCropPicker)
     // Listen for fence space toggles
     this.bus.on('toggle-fence-space', this.toggleFenceSpace)
+    // Listen for player tab switches (spectator proxy input)
+    this.bus.on('waiting-player-selected', this.onWaitingPlayerSelected)
   },
 
   beforeUnmount() {
     this.bus.off('submit-action', this.handleSubmitAction)
     this.bus.off('show-crop-picker', this.showCropPicker)
     this.bus.off('toggle-fence-space', this.toggleFenceSpace)
+    this.bus.off('waiting-player-selected', this.onWaitingPlayerSelected)
   },
 }
 </script>
