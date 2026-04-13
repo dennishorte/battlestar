@@ -13,39 +13,50 @@ module.exports = {
   },
   onAction(game, player) {
     const card = this
-    const buildingSpaces = ['take-wood', 'take-clay', 'take-reed', 'take-stone']
-    const available = []
-    for (const spaceId of buildingSpaces) {
-      const space = game.state.actionSpaces[spaceId]
-      if (space && space.accumulated >= 4) {
-        const resource = spaceId.replace('take-', '')
-        available.push(`Take 1 ${resource} (${space.accumulated} available)`)
+    const buildingResources = ['wood', 'clay', 'reed', 'stone']
+    const spaces = []
+
+    for (const actionId of game.state.activeActions) {
+      const action = game.getActionById(actionId)
+      if (!action || !action.accumulates) {
+        continue
+      }
+      const actionState = game.state.actionSpaces[actionId]
+      if (!actionState || actionState.accumulated < 4) {
+        continue
+      }
+      for (const resource of Object.keys(action.accumulates)) {
+        if (buildingResources.includes(resource)) {
+          spaces.push({ actionId, name: action.name, resource })
+        }
       }
     }
 
-    if (available.length === 0) {
+    if (spaces.length === 0) {
       return
     }
 
-    available.push('Skip')
-    const selection = game.actions.choose(player, available, {
+    const choices = spaces.map(s => {
+      const acc = game.state.actionSpaces[s.actionId].accumulated
+      return `Take 1 ${s.resource} from ${s.name} (${acc} available)`
+    })
+    choices.push('Skip')
+
+    const selection = game.actions.choose(player, choices, {
       title: `${card.name}: Take 1 building resource?`,
       min: 1,
       max: 1,
     })
 
     if (selection[0] !== 'Skip') {
-      const match = selection[0].match(/Take 1 (\w+)/)
-      if (match) {
-        const resource = match[1]
-        const spaceId = `take-${resource}`
-        game.state.actionSpaces[spaceId].accumulated -= 1
-        player.addResource(resource, 1)
-        game.log.add({
-          template: '{player} takes 1 {resource}',
-          args: { player, resource },
-        })
-      }
+      const idx = choices.indexOf(selection[0])
+      const space = spaces[idx]
+      game.state.actionSpaces[space.actionId].accumulated -= 1
+      player.addResource(space.resource, 1)
+      game.log.add({
+        template: '{player} takes 1 {resource}',
+        args: { player, resource: space.resource },
+      })
     }
   },
 }

@@ -26,7 +26,7 @@ describe('Work Certificate', () => {
     // Round 2: Forest now has 6 wood (3 + 3)
     // Dennis takes Day Laborer → onAction fires → choose to take 1 wood from Forest
     t.choose(game, 'Day Laborer')
-    t.choose(game, 'Take 1 wood (6 available)')
+    t.choose(game, 'Take 1 wood from Forest (6 available)')
 
     t.testBoard(game, {
       dennis: {
@@ -37,6 +37,43 @@ describe('Work Certificate', () => {
         minorImprovements: ['work-certificate-a082'],
       },
     })
+  })
+
+  test('can choose between multiple spaces with same resource', () => {
+    const game = t.fixture({ numPlayers: 3 })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['work-certificate-a082'],
+        occupations: ['test-occupation-1', 'test-occupation-2', 'test-occupation-3'],
+      },
+      actionSpaces: [
+        'Day Laborer',
+        { ref: 'Clay Pit', accumulated: 5 },
+      ],
+    })
+    game.testSetBreakpoint('replenish-complete', (g) => {
+      if (g.state.actionSpaces['hollow']) {
+        g.state.actionSpaces['hollow'].accumulated = 4
+      }
+    })
+    game.run()
+
+    t.choose(game, 'Day Laborer')
+    t.choose(game, 'Take 1 clay from Hollow (4 available)')
+
+    t.testBoard(game, {
+      dennis: {
+        food: 2,
+        clay: 1,
+        occupations: ['test-occupation-1', 'test-occupation-2', 'test-occupation-3'],
+        minorImprovements: ['work-certificate-a082'],
+      },
+    })
+
+    // Verify Hollow was decremented, not Clay Pit
+    expect(game.state.actionSpaces['hollow'].accumulated).toBe(3)
+    expect(game.state.actionSpaces['take-clay'].accumulated).toBe(5)
   })
 
   test('can skip the work certificate offer', () => {
