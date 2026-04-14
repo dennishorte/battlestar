@@ -7,6 +7,7 @@
         <tr class="table-head">
           <th>game</th>
           <th>name</th>
+          <th>date</th>
         </tr>
       </thead>
 
@@ -22,6 +23,7 @@
                 vs. {{ opponentNames(game) }}
               </div>
             </td>
+            <td>{{ formatDate(game._id) }}</td>
           </tr>
         </template>
       </tbody>
@@ -50,7 +52,12 @@ export default {
         killed: false,
       })
 
-      this.drafts = games
+      this.drafts = games.sort((a, b) => b._id.localeCompare(a._id))
+    },
+
+    formatDate(objectId) {
+      const timestamp = parseInt(objectId.substring(0, 8), 16) * 1000
+      return new Date(timestamp).toLocaleDateString()
     },
 
     gameKind(data) {
