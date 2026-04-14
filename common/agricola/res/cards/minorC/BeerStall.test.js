@@ -2,7 +2,7 @@ const t = require('../../../testutil_v2.js')
 
 describe('Beer Stall', () => {
   test('exchange grain for food based on empty unfenced stables', () => {
-    const game = t.fixture({ cardSets: ['minorC', 'minorImprovementA', 'test'] })
+    const game = t.fixture({ cardSets: ['minorC', 'minorImprovementA', 'test'], version: 7 })
     t.setBoard(game, {
       round: 4,
       firstPlayer: 'dennis',
@@ -26,8 +26,10 @@ describe('Beer Stall', () => {
     t.choose(game, 'Grain Seeds')   // dennis: +1 grain → 3
     t.choose(game, 'Clay Pit')      // micah
 
-    // Harvest: feeding phase → Beer Stall triggers
-    t.choose(game, 'Exchange 2 grain for 10 food')
+    // Harvest: feeding phase → Beer Stall available in conversion loop
+    t.choose(game, 'Use Beer Stall: convert grain to 5 food')
+    t.choose(game, 'Use Beer Stall: convert grain to 5 food')
+    t.choose(game, 'Feed family')
 
     // food: 4 + 2 (DL) + 10 (Beer Stall) = 16 - 4 (feed) = 12
     // grain: 2 + 1 (Grain Seeds) - 2 (Beer Stall) = 1
