@@ -270,6 +270,16 @@ Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
 Agricola.prototype.getAnytimeActions = function(player) {
   const options = []
 
+  // Organize farmyard (always available if player has animals)
+  const totalAnimals = player.getTotalAnimals('sheep') + player.getTotalAnimals('boar') + player.getTotalAnimals('cattle')
+  if (totalAnimals > 0) {
+    options.push({
+      type: 'organize-farmyard',
+      description: 'Organize Farmyard',
+      passive: true,
+    })
+  }
+
   // Cooking conversions (requires Fireplace or Cooking Hearth)
   if (player.hasCookingAbility()) {
     const imp = player.getCookingImprovement()
@@ -463,6 +473,10 @@ Agricola.prototype.getAnytimeActions = function(player) {
 }
 
 Agricola.prototype.executeAnytimeAction = function(player, action) {
+  if (action.type === 'organize-farmyard') {
+    this.actions.promptAnimalReorganization(player)
+    return
+  }
   if (action.type === 'crop-move') {
     this.executeAnytimeCropMove(player, action)
     return

@@ -23,7 +23,7 @@ Agricola.prototype.feedingPhase = function() {
     // give them a chance to use anytime actions before feeding.
     // Only for v5 and below - v6 handles this in allowFoodConversion.
     if (this.settings.version < 6) {
-      const hasAnytimeActions = this.getAnytimeActions(player).length > 0
+      const hasAnytimeActions = this.getAnytimeActions(player).some(a => !a.passive)
       if (hasAnytimeActions && player.food >= required) {
         this.actions.choose(player, ['Feed family'], {
           title: `Feed family (${player.food}/${required} food)`,
@@ -92,6 +92,15 @@ Agricola.prototype.allowFoodConversion = function(player, required) {
         }
       }
 
+      // Organize farmyard (move animals between locations)
+      const totalAnimals = player.getTotalAnimals('sheep') + player.getTotalAnimals('boar') + player.getTotalAnimals('cattle')
+      if (totalAnimals > 0) {
+        options.push({
+          type: 'organize-farmyard',
+          description: 'Organize Farmyard',
+        })
+      }
+
       return options
     }
 
@@ -142,9 +151,14 @@ Agricola.prototype.allowFoodConversion = function(player, required) {
     const currentOptions = getOptions()
     const selectedOption = currentOptions.find(opt => opt.description === choice)
     if (selectedOption) {
-      this.executeAnytimeFoodConversion(player, selectedOption)
-      if (selectedOption.type === 'craft') {
-        craftUsage[selectedOption.improvementId] = (craftUsage[selectedOption.improvementId] || 0) + 1
+      if (selectedOption.type === 'organize-farmyard') {
+        this.actions.promptAnimalReorganization(player)
+      }
+      else {
+        this.executeAnytimeFoodConversion(player, selectedOption)
+        if (selectedOption.type === 'craft') {
+          craftUsage[selectedOption.improvementId] = (craftUsage[selectedOption.improvementId] || 0) + 1
+        }
       }
     }
   }

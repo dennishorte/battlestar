@@ -145,10 +145,11 @@ class AgricolaActionManager extends BaseActionManager {
       const anytimeActions = this.game.getAnytimeActions(player)
       const hasAnytime = anytimeActions.length > 0
 
+      const hasActiveAnytime = anytimeActions.some(a => !a.passive)
       const result = super.choose(player, choices, {
         ...opts,
         anytimeActions: hasAnytime ? anytimeActions : undefined,
-        noAutoRespond: opts.noAutoRespond || hasAnytime || undefined,
+        noAutoRespond: opts.noAutoRespond || hasActiveAnytime || undefined,
       })
 
       if (result && result.action === 'anytime-action') {
