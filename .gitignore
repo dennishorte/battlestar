@@ -8,6 +8,7 @@ app/src/assets/version.js
 ik*
 .DS_Store
 .env
+.env.*
 
 common_dist
 .claude
