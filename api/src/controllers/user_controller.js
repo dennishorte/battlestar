@@ -208,7 +208,12 @@ export const getUserGames = async (req, res, next) => {
     }
 
     if (req.body.kind) {
-      filters['settings.game'] = req.body.kind
+      if (Array.isArray(req.body.kind)) {
+        filters['settings.game'] = { $in: req.body.kind }
+      }
+      else {
+        filters['settings.game'] = req.body.kind
+      }
     }
 
     if (req.body.killed === false) {

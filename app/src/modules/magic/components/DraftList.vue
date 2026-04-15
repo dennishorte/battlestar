@@ -47,7 +47,7 @@ export default {
     async fetchDrafts() {
       const { games } = await this.$post('/api/user/games', {
         userId: this.$store.state.auth.user._id,
-        kind: 'CubeDraft',
+        kind: ['CubeDraft', 'Cube Draft', 'Set Draft'],
         state: 'all',
         killed: false,
       })
