@@ -12,9 +12,9 @@ describe('Large Pottery', () => {
     game.run()
 
     const dennis = game.players.byName('dennis')
-    // getBonusPoints includes vps (3) + exchange bonus
-    // 3 clay → 1 bonus point → total 4
-    expect(dennis.getBonusPoints()).toBe(4)
+    // vps (3) are now in getCardPoints; getBonusPoints holds exchange only.
+    expect(dennis.getCardPoints()).toBe(3)
+    expect(dennis.getBonusPoints()).toBe(1)
   })
 
   test('7 clay → 4 bonus points', () => {
@@ -28,8 +28,8 @@ describe('Large Pottery', () => {
     game.run()
 
     const dennis = game.players.byName('dennis')
-    // 7 clay → 4 bonus points + 3 vps = 7
-    expect(dennis.getBonusPoints()).toBe(7)
+    expect(dennis.getCardPoints()).toBe(3)
+    expect(dennis.getBonusPoints()).toBe(4)
   })
 
   test('2 clay → 0 bonus points', () => {
@@ -43,8 +43,8 @@ describe('Large Pottery', () => {
     game.run()
 
     const dennis = game.players.byName('dennis')
-    // 2 clay → 0 bonus points + 3 vps = 3
-    expect(dennis.getBonusPoints()).toBe(3)
+    expect(dennis.getCardPoints()).toBe(3)
+    expect(dennis.getBonusPoints()).toBe(0)
   })
 
   test('combined with Pottery: 7 clay auto-optimizes to LargePottery alone (4 VP)', () => {
@@ -59,10 +59,9 @@ describe('Large Pottery', () => {
     game.run()
 
     const dennis = game.players.byName('dennis')
-    // Exchange: all 7 clay on LargePottery = 4 VP (beats Pottery 3 VP or any split).
-    // getBonusPoints = 3 (LargePottery vps) + 4 (exchange) = 7.
-    // (Pottery's 2 victoryPoints go through getCardPoints, not getBonusPoints.)
-    expect(dennis.getBonusPoints()).toBe(7)
+    // Pottery (2) + LargePottery vps (3) in cardPoints. Exchange: 7 clay on LargePottery = 4 VP.
+    expect(dennis.getCardPoints()).toBe(5)
+    expect(dennis.getBonusPoints()).toBe(4)
   })
 
   test('combined with Pottery: 10 clay splits 3+7 for 5 VP', () => {
@@ -78,8 +77,8 @@ describe('Large Pottery', () => {
 
     const dennis = game.players.byName('dennis')
     // Optimal: 3 → Pottery (1 VP) + 7 → LargePottery (4 VP) = 5 VP
-    // getBonusPoints = 3 (LargePottery vps) + 5 (exchange) = 8
-    expect(dennis.getBonusPoints()).toBe(8)
+    expect(dennis.getCardPoints()).toBe(5)
+    expect(dennis.getBonusPoints()).toBe(5)
   })
 
   test('combined with Pottery: 12 clay splits 5+7 for 6 VP', () => {
@@ -95,11 +94,11 @@ describe('Large Pottery', () => {
 
     const dennis = game.players.byName('dennis')
     // Optimal: 5 → Pottery (2 VP) + 7 → LargePottery (4 VP) = 6 VP
-    // getBonusPoints = 3 + 6 = 9
-    expect(dennis.getBonusPoints()).toBe(9)
+    expect(dennis.getCardPoints()).toBe(5)
+    expect(dennis.getBonusPoints()).toBe(6)
   })
 
-  test('getBonusPointsBreakdown lists Pottery and Large Pottery separately', () => {
+  test('breakdowns split base VP into cardPoints and exchange into bonusPoints', () => {
     const game = t.fixture({ cardSets: ['minorD', 'test'] })
     t.setBoard(game, {
       dennis: {
@@ -111,14 +110,20 @@ describe('Large Pottery', () => {
     game.run()
 
     const dennis = game.players.byName('dennis')
-    const breakdown = dennis.getBonusPointsBreakdown()
-    // Optimal 10-clay split: Pottery gets 3 (1 VP), Large Pottery gets 7 (4 VP from exchange + 3 vps).
-    const byLabel = Object.fromEntries(breakdown.map(e => [e.label, e.points]))
-    expect(byLabel['Pottery']).toBe(1)
-    expect(byLabel['Large Pottery']).toBe(7)
-    // Sum matches getBonusPoints
-    const sum = breakdown.reduce((a, e) => a + e.points, 0)
-    expect(sum).toBe(dennis.getBonusPoints())
+    // Optimal 10-clay split: Pottery gets 3 (1 VP), Large Pottery gets 7 (4 VP from exchange).
+    const cardBreakdown = dennis.getCardPointsBreakdown()
+    const cardByLabel = Object.fromEntries(cardBreakdown.map(e => [e.label, e.points]))
+    expect(cardByLabel['Pottery']).toBe(2)
+    expect(cardByLabel['Large Pottery']).toBe(3)
+    const cardSum = cardBreakdown.reduce((a, e) => a + e.points, 0)
+    expect(cardSum).toBe(dennis.getCardPoints())
+
+    const bonusBreakdown = dennis.getBonusPointsBreakdown()
+    const bonusByLabel = Object.fromEntries(bonusBreakdown.map(e => [e.label, e.points]))
+    expect(bonusByLabel['Pottery']).toBe(1)
+    expect(bonusByLabel['Large Pottery']).toBe(4)
+    const bonusSum = bonusBreakdown.reduce((a, e) => a + e.points, 0)
+    expect(bonusSum).toBe(dennis.getBonusPoints())
   })
 
   test('endGame commits exchange: deducts clay and locks in bonus', () => {

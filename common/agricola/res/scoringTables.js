@@ -229,6 +229,7 @@ function getScoreBreakdown(playerState) {
       points: scoreBeggingCards(playerState.beggingCards || 0),
     },
     cardPoints: playerState.cardPoints || 0,
+    cardPointsBreakdown: playerState.cardPointsBreakdown || [],
     bonusPoints: playerState.bonusPoints || 0,
     bonusPointsBreakdown: playerState.bonusPointsBreakdown || [],
     total: calculateTotalScore(playerState),

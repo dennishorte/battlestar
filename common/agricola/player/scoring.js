@@ -50,6 +50,7 @@ AgricolaPlayer.prototype.getScoreState = function() {
     fencedStables: this.getFencedStableCount(),
     beggingCards: this.beggingCards,
     cardPoints: this.getCardPoints(),
+    cardPointsBreakdown: this.getCardPointsBreakdown(),
     bonusPoints: this.getBonusPoints(),
     bonusPointsBreakdown: this.getBonusPointsBreakdown(),
   }
@@ -63,7 +64,33 @@ AgricolaPlayer.prototype.getCardPoints = function() {
       points += imp.victoryPoints || 0
     }
   }
+  for (const id of this.playedMinorImprovements) {
+    const card = this.cards.byId(id)
+    if (card && card.vps) {
+      points += card.vps
+    }
+  }
   return points
+}
+
+// Per-card breakdown of the printed base VP on majors and minors.
+// Sum of entry.points equals getCardPoints().
+AgricolaPlayer.prototype.getCardPointsBreakdown = function() {
+  const entries = []
+  for (const id of this.majorImprovements) {
+    const card = this.cards.byId(id)
+    if (card && card.victoryPoints) {
+      entries.push({ label: card.name, points: card.victoryPoints })
+    }
+  }
+  for (const id of this.playedMinorImprovements) {
+    const card = this.cards.byId(id)
+    if (card && card.vps) {
+      entries.push({ label: card.name, points: card.vps })
+    }
+  }
+  entries.sort((a, b) => b.points - a.points)
+  return entries
 }
 
 AgricolaPlayer.prototype.getBonusPoints = function() {
@@ -77,14 +104,11 @@ AgricolaPlayer.prototype.getBonusPoints = function() {
     }
   }
 
-  // Bonus from minor improvements
+  // Bonus from minor improvements with getEndGamePoints hook
   for (const id of this.playedMinorImprovements) {
     const card = this.cards.byId(id)
     if (card && card.hasHook('getEndGamePoints')) {
       points += card.callHook('getEndGamePoints', this, this.game)
-    }
-    if (card && card.vps) {
-      points += card.vps
     }
   }
 
@@ -154,17 +178,9 @@ AgricolaPlayer.prototype.getBonusPointsBreakdown = function() {
   }
   for (const id of this.playedMinorImprovements) {
     const card = this.cards.byId(id)
-    if (!card) {
-      continue
+    if (card && card.hasHook('getEndGamePoints')) {
+      push(card.name, card.callHook('getEndGamePoints', this, this.game))
     }
-    let pts = 0
-    if (card.hasHook('getEndGamePoints')) {
-      pts += card.callHook('getEndGamePoints', this, this.game)
-    }
-    if (card.vps) {
-      pts += card.vps
-    }
-    push(card.name, pts)
   }
   for (const id of this.playedOccupations) {
     const card = this.cards.byId(id)

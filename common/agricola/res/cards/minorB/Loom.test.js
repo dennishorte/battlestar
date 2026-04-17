@@ -63,8 +63,9 @@ describe('Loom', () => {
     game.run()
 
     const dennis = game.players.byName('dennis')
-    // getBonusPoints includes vps (1) + getEndGamePoints (floor(7/3) = 2) = 3
-    expect(dennis.getBonusPoints()).toBe(3)
+    // vps (1) in cardPoints; getEndGamePoints (floor(7/3) = 2) in bonusPoints.
+    expect(dennis.getCardPoints()).toBe(1)
+    expect(dennis.getBonusPoints()).toBe(2)
   })
 
   test('gives 1 food with 1 sheep, 3 food with 7 sheep', () => {

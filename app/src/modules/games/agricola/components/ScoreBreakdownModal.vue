@@ -77,7 +77,18 @@
             <tr v-if="breakdown.cardPoints">
               <td class="category">🃏 Card Points</td>
               <td class="count"/>
-              <td class="pts positive">{{ formatPoints(breakdown.cardPoints) }}</td>
+              <td class="pts" :class="getPointsClass(breakdown.cardPoints)">
+                {{ formatPoints(breakdown.cardPoints) }}
+              </td>
+            </tr>
+            <tr v-for="entry in breakdown.cardPointsBreakdown"
+                :key="`card-${entry.label}`"
+                class="bonus-sub">
+              <td class="category sub">↳ {{ entry.label }}</td>
+              <td class="count"/>
+              <td class="pts" :class="getPointsClass(entry.points)">
+                {{ formatPoints(entry.points) }}
+              </td>
             </tr>
             <tr v-if="breakdown.bonusPoints">
               <td class="category">⭐ Bonus Points</td>
@@ -87,7 +98,7 @@
               </td>
             </tr>
             <tr v-for="entry in breakdown.bonusPointsBreakdown"
-                :key="entry.label"
+                :key="`bonus-${entry.label}`"
                 class="bonus-sub">
               <td class="category sub">↳ {{ entry.label }}</td>
               <td class="count"/>
