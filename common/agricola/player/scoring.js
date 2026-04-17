@@ -109,6 +109,14 @@ AgricolaPlayer.prototype.getBonusPoints = function() {
     }
   }
 
+  // End-game resource→VP exchanges (Pottery, Joinery, Basketmaker's Workshop, Large Pottery).
+  // Computed on-the-fly for UI previews. Once endGame() commits the exchange,
+  // the spent resources are removed and the bonus is baked into this.bonusPoints,
+  // so this computation naturally yields 0.
+  if (!this._endGameExchangeApplied) {
+    const exchange = this.computeEndGameExchanges()
+    points += exchange.bonus
+  }
 
   return points
 }

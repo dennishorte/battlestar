@@ -37,6 +37,26 @@ Agricola.prototype.endGame = function() {
     }
   }
 
+  // Commit end-game resource→VP exchanges (auto-optimized).
+  // Must run before getScoreBreakdown so deducted resources aren't available
+  // for other end-game calculations (tie-breaker by building resources).
+  for (const player of this.players.all()) {
+    const exchange = player.computeEndGameExchanges()
+    for (const [resource, amount] of Object.entries(exchange.spent)) {
+      player.removeResource(resource, amount)
+    }
+    if (exchange.bonus > 0) {
+      player.addBonusPoints(exchange.bonus)
+    }
+    for (const entry of exchange.perCard) {
+      this.log.add({
+        template: `{player} spends ${entry.cost} ${entry.resource} on ${entry.cardName} for +${entry.vp} bonus ${entry.vp === 1 ? 'point' : 'points'}`,
+        args: { player },
+      })
+    }
+    player._endGameExchangeApplied = true
+  }
+
   // Collect scores and remaining resources for all players
   const playerResults = []
 

@@ -14,17 +14,12 @@ module.exports = {
     food: 3,
     limit: 1,
   },
-  getEndGamePoints(player) {
-    const count = player.reed || 0
-    if (count >= 5) {
-      return 3
-    }
-    if (count >= 4) {
-      return 2
-    }
-    if (count >= 2) {
-      return 1
-    }
-    return 0
+  endGameExchange: {
+    resource: 'reed',
+    tiers: [
+      { cost: 2, vp: 1 },
+      { cost: 4, vp: 2 },
+      { cost: 5, vp: 3 },
+    ],
   },
 }

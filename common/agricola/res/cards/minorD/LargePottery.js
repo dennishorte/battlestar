@@ -14,20 +14,13 @@ module.exports = {
   anytimeConversions: [
     { from: "clay", to: "food", rate: 2 },
   ],
-  getEndGamePoints(player) {
-    const clay = player.clay
-    if (clay >= 7) {
-      return 4
-    }
-    if (clay >= 6) {
-      return 3
-    }
-    if (clay >= 5) {
-      return 2
-    }
-    if (clay >= 3) {
-      return 1
-    }
-    return 0
+  endGameExchange: {
+    resource: 'clay',
+    tiers: [
+      { cost: 3, vp: 1 },
+      { cost: 5, vp: 2 },
+      { cost: 6, vp: 3 },
+      { cost: 7, vp: 4 },
+    ],
   },
 }

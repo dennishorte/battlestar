@@ -14,17 +14,12 @@ module.exports = {
     food: 2,
     limit: 1,
   },
-  getEndGamePoints(player) {
-    const count = player.clay || 0
-    if (count >= 7) {
-      return 3
-    }
-    if (count >= 5) {
-      return 2
-    }
-    if (count >= 3) {
-      return 1
-    }
-    return 0
+  endGameExchange: {
+    resource: 'clay',
+    tiers: [
+      { cost: 3, vp: 1 },
+      { cost: 5, vp: 2 },
+      { cost: 7, vp: 3 },
+    ],
   },
 }
