@@ -113,7 +113,7 @@ AgricolaActionManager.prototype.offerBuyBonusPoint = function(player, card, food
   })
   if (selection[0] !== 'Skip') {
     player.payCost({ food: foodCost })
-    player.addBonusPoints(1)
+    player.addBonusPoints(1, card.name)
     this.log.add({
       template: '{player} buys 1 bonus point for {cost} food via {card}',
       args: { player, cost: foodCost, card },

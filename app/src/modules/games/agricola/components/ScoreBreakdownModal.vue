@@ -82,7 +82,18 @@
             <tr v-if="breakdown.bonusPoints">
               <td class="category">⭐ Bonus Points</td>
               <td class="count"/>
-              <td class="pts positive">{{ formatPoints(breakdown.bonusPoints) }}</td>
+              <td class="pts" :class="getPointsClass(breakdown.bonusPoints)">
+                {{ formatPoints(breakdown.bonusPoints) }}
+              </td>
+            </tr>
+            <tr v-for="entry in breakdown.bonusPointsBreakdown"
+                :key="entry.label"
+                class="bonus-sub">
+              <td class="category sub">↳ {{ entry.label }}</td>
+              <td class="count"/>
+              <td class="pts" :class="getPointsClass(entry.points)">
+                {{ formatPoints(entry.points) }}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -397,6 +408,18 @@ export default {
 
 .fixed-table tr.negative {
   background-color: #fff8f8;
+}
+
+.fixed-table tr.bonus-sub td {
+  border-top: none;
+  font-size: .82em;
+  color: #555;
+  padding-top: .15em;
+  padding-bottom: .15em;
+}
+
+.fixed-table .category.sub {
+  padding-left: 2em;
 }
 
 .total-section {

@@ -230,6 +230,7 @@ function getScoreBreakdown(playerState) {
     },
     cardPoints: playerState.cardPoints || 0,
     bonusPoints: playerState.bonusPoints || 0,
+    bonusPointsBreakdown: playerState.bonusPointsBreakdown || [],
     total: calculateTotalScore(playerState),
   }
 }

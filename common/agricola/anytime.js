@@ -514,7 +514,7 @@ Agricola.prototype.executeAnytimeCardExchange = function(player, action) {
   }
   // Handle bonus points (e.g., Kettle)
   if (action.bonusPoints) {
-    player.addBonusPoints(action.bonusPoints)
+    player.addBonusPoints(action.bonusPoints, action.cardName)
   }
   this.log.add({
     template: '{player} uses {card}: {exchange}',

@@ -61,7 +61,16 @@ class AgricolaCard extends BaseCard {
 
   callHook(hookName, ...args) {
     if (typeof this.definition[hookName] === 'function') {
-      return this.definition[hookName](...args)
+      if (!this.game._hookCardStack) {
+        this.game._hookCardStack = []
+      }
+      this.game._hookCardStack.push(this)
+      try {
+        return this.definition[hookName](...args)
+      }
+      finally {
+        this.game._hookCardStack.pop()
+      }
     }
     return undefined
   }

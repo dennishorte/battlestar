@@ -99,6 +99,28 @@ describe('Large Pottery', () => {
     expect(dennis.getBonusPoints()).toBe(9)
   })
 
+  test('getBonusPointsBreakdown lists Pottery and Large Pottery separately', () => {
+    const game = t.fixture({ cardSets: ['minorD', 'test'] })
+    t.setBoard(game, {
+      dennis: {
+        majorImprovements: ['pottery'],
+        minorImprovements: ['large-pottery-d060'],
+        clay: 10,
+      },
+    })
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    const breakdown = dennis.getBonusPointsBreakdown()
+    // Optimal 10-clay split: Pottery gets 3 (1 VP), Large Pottery gets 7 (4 VP from exchange + 3 vps).
+    const byLabel = Object.fromEntries(breakdown.map(e => [e.label, e.points]))
+    expect(byLabel['Pottery']).toBe(1)
+    expect(byLabel['Large Pottery']).toBe(7)
+    // Sum matches getBonusPoints
+    const sum = breakdown.reduce((a, e) => a + e.points, 0)
+    expect(sum).toBe(dennis.getBonusPoints())
+  })
+
   test('endGame commits exchange: deducts clay and locks in bonus', () => {
     const game = t.fixture({ cardSets: ['minorD', 'test'] })
     t.setBoard(game, {

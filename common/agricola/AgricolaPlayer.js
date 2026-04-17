@@ -145,6 +145,8 @@ class AgricolaPlayer extends BasePlayer {
 
     // Bonus points from cards
     this.bonusPoints = 0
+    // Per-source log of bonus-point contributions (for score breakdown UI)
+    this._bonusPointsLog = {}
 
     // Initialize farmyard grid (3 rows x 5 columns)
     this.initializeFarmyard()
@@ -190,10 +192,16 @@ class AgricolaPlayer extends BasePlayer {
     })
   }
 
-  addBonusPoints(amount) {
+  addBonusPoints(amount, label) {
     this._withResourceWrite(() => {
       this.bonusPoints += amount
     })
+    if (!this._bonusPointsLog) {
+      this._bonusPointsLog = {}
+    }
+    const stack = this.game && this.game._hookCardStack
+    const source = label || (stack && stack.length > 0 ? stack[stack.length - 1].name : 'Other')
+    this._bonusPointsLog[source] = (this._bonusPointsLog[source] || 0) + amount
   }
 
   // ---------------------------------------------------------------------------

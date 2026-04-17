@@ -51,6 +51,7 @@ AgricolaPlayer.prototype.getScoreState = function() {
     beggingCards: this.beggingCards,
     cardPoints: this.getCardPoints(),
     bonusPoints: this.getBonusPoints(),
+    bonusPointsBreakdown: this.getBonusPointsBreakdown(),
   }
 }
 
@@ -119,6 +120,85 @@ AgricolaPlayer.prototype.getBonusPoints = function() {
   }
 
   return points
+}
+
+// Per-source breakdown of bonus points for the score display. Sum of entry.points
+// equals getBonusPoints(). Combines committed bonus (tracked by card name via the
+// hook stack in addBonusPoints) with live-computed end-game contributions.
+AgricolaPlayer.prototype.getBonusPointsBreakdown = function() {
+  const byLabel = {}
+  const push = (label, points) => {
+    if (!points) {
+      return
+    }
+    byLabel[label] = (byLabel[label] || 0) + points
+  }
+
+  // Committed bonus (addBonusPoints calls with labels via hook stack or explicit)
+  for (const [label, amount] of Object.entries(this._bonusPointsLog || {})) {
+    push(label, amount)
+  }
+  // Reconcile any committed bonusPoints not present in the log
+  const logSum = Object.values(this._bonusPointsLog || {}).reduce((a, b) => a + b, 0)
+  const uncategorized = (this.bonusPoints || 0) - logSum
+  if (uncategorized !== 0) {
+    push('Other', uncategorized)
+  }
+
+  // Per-card getEndGamePoints (never committed — computed live)
+  for (const id of this.majorImprovements) {
+    const card = this.cards.byId(id)
+    if (card && card.hasHook('getEndGamePoints')) {
+      push(card.name, card.callHook('getEndGamePoints', this, this.game))
+    }
+  }
+  for (const id of this.playedMinorImprovements) {
+    const card = this.cards.byId(id)
+    if (!card) {
+      continue
+    }
+    let pts = 0
+    if (card.hasHook('getEndGamePoints')) {
+      pts += card.callHook('getEndGamePoints', this, this.game)
+    }
+    if (card.vps) {
+      pts += card.vps
+    }
+    push(card.name, pts)
+  }
+  for (const id of this.playedOccupations) {
+    const card = this.cards.byId(id)
+    if (card && card.hasHook('getEndGamePoints')) {
+      push(card.name, card.callHook('getEndGamePoints', this, this.game))
+    }
+  }
+
+  // All-players hooks: committed to log during endGame; otherwise live
+  if (!this._endGameAllPlayersBonusApplied) {
+    for (const player of this.game.players.all()) {
+      for (const id of [...player.playedOccupations, ...player.playedMinorImprovements]) {
+        const card = this.cards.byId(id)
+        if (card && card.hasHook('getEndGamePointsAllPlayers')) {
+          const bonuses = card.callHook('getEndGamePointsAllPlayers', this.game)
+          push(card.name, bonuses[this.name] || 0)
+        }
+      }
+    }
+  }
+
+  // End-game exchanges: committed to log during endGame; otherwise live
+  if (!this._endGameExchangeApplied) {
+    const exchange = this.computeEndGameExchanges()
+    for (const entry of exchange.perCard) {
+      push(entry.cardName, entry.vp)
+    }
+  }
+
+  const entries = Object.entries(byLabel)
+    .filter(([, points]) => points !== 0)
+    .map(([label, points]) => ({ label, points }))
+  entries.sort((a, b) => b.points - a.points)
+  return entries
 }
 
 // Get count of all improvements (major + minor)

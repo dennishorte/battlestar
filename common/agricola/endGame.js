@@ -15,7 +15,7 @@ Agricola.prototype.endGame = function() {
           for (const [playerName, points] of Object.entries(bonuses)) {
             const p = this.players.byName(playerName)
             if (p && points) {
-              p.addBonusPoints(points)
+              p.addBonusPoints(points, card.name)
             }
           }
         }
@@ -45,10 +45,8 @@ Agricola.prototype.endGame = function() {
     for (const [resource, amount] of Object.entries(exchange.spent)) {
       player.removeResource(resource, amount)
     }
-    if (exchange.bonus > 0) {
-      player.addBonusPoints(exchange.bonus)
-    }
     for (const entry of exchange.perCard) {
+      player.addBonusPoints(entry.vp, entry.cardName)
       this.log.add({
         template: `{player} spends ${entry.cost} ${entry.resource} on ${entry.cardName} for +${entry.vp} bonus ${entry.vp === 1 ? 'point' : 'points'}`,
         args: { player },
