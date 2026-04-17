@@ -58,12 +58,14 @@ async function _loadItemWithLockById(itemType, req, res, next) {
       lock.acquire(lockKey, () => {
         return new Promise((releaseLock) => {
           res.locals.unlock = releaseLock
-          res.on('finish', () => {
+          const release = () => {
             if (!res.locals.lockReleased) {
               res.locals.lockReleased = true
               releaseLock()
             }
-          })
+          }
+          res.on('finish', release)
+          res.on('close', release)
           resolveMiddleware()
         })
       }).catch(rejectMiddleware)
