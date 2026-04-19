@@ -14,17 +14,21 @@ module.exports = {
       if (cards && cards.length > 0) {
         const age = cards[0].getAge()
 
-        const scored = [
-          game.actions.drawAndScore(player, age),
-          game.actions.drawAndScore(player, age),
-          game.actions.drawAndScore(player, age),
-        ]
+        const drawnAges = []
+        for (let i = 0; i < 3; i++) {
+          const drawn = game.actions.draw(player, { age })
+          if (drawn) {
+            drawnAges.push(drawn.getAge())
+            game.actions.score(player, drawn)
+          }
+        }
 
-        const scoredAges = scored.map(card => card.getAge()).sort((l, r) => r - l)
-        const scoredAgesMatchAge = scoredAges.every(other => other === age)
-        if (!scoredAgesMatchAge) {
-          const highestAge = scoredAges[0]
-          game.actions.junkDeck(player, highestAge)
+        if (drawnAges.length > 0) {
+          const sortedAges = [...drawnAges].sort((l, r) => r - l)
+          const scoredAgesMatchAge = drawnAges.every(other => other === age)
+          if (!scoredAgesMatchAge) {
+            game.actions.junkDeck(player, sortedAges[0])
+          }
         }
       }
     }

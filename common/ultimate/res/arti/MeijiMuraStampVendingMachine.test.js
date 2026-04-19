@@ -31,6 +31,28 @@ describe("Meiji-Mura Stamp Vending Machine", () => {
     })
   })
 
+  test('dogma: Erwin Rommel karma redirects scoring without crashing', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs', 'arti'] })
+    t.setBoard(game, {
+      dennis: {
+        artifact: ['Meiji-Mura Stamp Vending Machine'],
+        red: ['Erwin Rommel'],
+        hand: ['Gunpowder'],
+      },
+      decks: {
+        base: {
+          4: ['Reformation', 'Experimentation', 'Enterprise'],
+        },
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, 'dogma')
+
+    t.testIsFirstAction(request)
+  })
+
   test('dogma: not all the same value', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
