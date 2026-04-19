@@ -599,6 +599,12 @@ class UltimateActionManager extends BaseActionManager {
   })
 
   junk = UltimateActionManager.insteadKarmaWrapper('junk', (player, card) => {
+    // Museum cards aren't really cards — they belong to the achievements area and
+    // should be returned there rather than junked.
+    if (card.isMuseum) {
+      return this.return(player, card)
+    }
+
     this.log.add({
       template: '{player} junks {card}',
       args: { player, card }
