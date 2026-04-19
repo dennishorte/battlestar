@@ -219,15 +219,30 @@ export default {
       const available = this.player.getAvailableWorkers()
       const familySize = this.player.getFamilySize()
       const newbornCount = this.player.getNewbornsReturningHome()
+      const permitCount = this.pendingWorkPermitCount
 
+      let base
       if (newbornCount > 0) {
-        // Show available workers out of workers that can work, plus newborns
         const workersThatCanWork = familySize - newbornCount
-        return `${available}/${workersThatCanWork} + ${newbornCount}`
+        base = `${available}/${workersThatCanWork} + ${newbornCount}`
+      }
+      else {
+        base = `${available}/${familySize}`
       }
 
-      // No newborns, show standard format
-      return `${available}/${familySize}`
+      if (permitCount > 0) {
+        const suffix = Array(permitCount).fill('+👤').join(' ')
+        return `${base} ${suffix}`
+      }
+      return base
+    },
+
+    pendingWorkPermitCount() {
+      const entries = this.game.state.workPermitWorkers || []
+      const currentRound = this.game.state.round
+      return entries.filter(
+        e => e.playerName === this.player.name && e.round === currentRound
+      ).length
     },
 
     // Fencing status computed properties
@@ -329,6 +344,24 @@ export default {
             })
           }
         }
+      }
+
+      // Scheduled workers (Work Permit)
+      const workPermitWorkers = state.workPermitWorkers || []
+      for (const entry of workPermitWorkers) {
+        if (entry.playerName !== playerName) {
+          continue
+        }
+        if (entry.round < currentRound) {
+          continue
+        }
+        items.push({
+          round: entry.round,
+          type: 'workPermitWorker',
+          icon: '👤',
+          label: 'worker',
+          amount: 1,
+        })
       }
 
       // Sort by round
