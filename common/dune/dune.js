@@ -220,7 +220,10 @@ Dune.prototype.initializeObjectives = function() {
 
   // Deal one to each player
   let firstPlayerName = null
-  for (const player of this.players.all()) {
+  let firstPlayerIndex = null
+  const allPlayers = this.players.all()
+  for (let i = 0; i < allPlayers.length; i++) {
+    const player = allPlayers[i]
     const card = available.pop()
     if (!card) {
       break
@@ -234,12 +237,14 @@ Dune.prototype.initializeObjectives = function() {
 
     if (card.isFirstPlayer) {
       firstPlayerName = player.name
+      firstPlayerIndex = i
     }
   }
 
   // Set first player
   if (firstPlayerName) {
     this.state.firstPlayer = firstPlayerName
+    this.state.firstPlayerIndex = firstPlayerIndex
     this.log.add({
       template: '{player} is the First Player',
       args: { player: this.players.byName(firstPlayerName) },

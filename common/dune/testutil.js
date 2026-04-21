@@ -55,6 +55,13 @@ TestUtil.fixture = function(options = {}) {
       }
     })
 
+    // Force viewer-first turn order so tests don't depend on which player
+    // happens to draw the Desert Mouse with a given seed. Tests that care
+    // about first-player behavior pass `preserveFirstPlayer: true`.
+    if (!options.preserveFirstPlayer) {
+      game.state.firstPlayerIndex = 0
+    }
+
     // Sort decks into canonical order so tests are deterministic regardless of
     // card pool size changes (which shift seeded RNG consumption).
     // Starting hand (first 5): Dagger, Dune, Diplomacy, CA, Reconnaissance = 5 persuasion, 1 sword
