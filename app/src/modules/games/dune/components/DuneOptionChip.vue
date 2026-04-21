@@ -32,6 +32,10 @@
                    :key="li"
                    :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
             </div>
+            <div v-if="isFeyd" class="field">
+              <span class="label">Training Track:</span>
+              <DuneFeydTrack :current-position="feydPosition || 'start'" />
+            </div>
           </template>
           <template v-else-if="boardSpace">
             <div class="field" v-if="boardSpace.cost">
@@ -62,16 +66,28 @@
 <script>
 import DuneCard from './DuneCard.vue'
 import DuneFactionIcon from './DuneFactionIcon.vue'
+import DuneFeydTrack from './DuneFeydTrack.vue'
 import { textLines, cardDetail, cardChipClass } from '../cardUtil.js'
 
 const factionIds = new Set(['emperor', 'guild', 'bene-gesserit', 'fremen'])
+
+const FEYD_NODE_LABELS = {
+  start: 'Start',
+  A: 'A: Pay 1 Solari → Trash',
+  B: 'B: Spy',
+  C: 'C: Trash',
+  D: 'D: Trash',
+  E: 'E: Spy',
+  F: 'F: +2 Spice',
+  finish: 'Finish: +1 Troop + Spy',
+}
 
 export default {
   name: 'DuneOptionChip',
 
   inheritAttrs: false,
 
-  components: { DuneCard, DuneFactionIcon },
+  components: { DuneCard, DuneFactionIcon, DuneFeydTrack },
 
   props: {
     name: { type: String, required: true },
@@ -79,6 +95,7 @@ export default {
     leader: { type: Object, default: null },
     boardSpace: { type: Object, default: null },
     subtitle: { type: String, default: null },
+    feydPosition: { type: String, default: null },
   },
 
   data() {
@@ -120,11 +137,18 @@ export default {
   },
 
   computed: {
+    isFeyd() {
+      return this.leader?.name === 'Feyd-Rautha Harkonnen'
+    },
+
     subtitleLines() {
-      if (!this.subtitle) {
-        return []
+      const lines = this.subtitle
+        ? this.subtitle.split('\n').map(l => l.trim()).filter(Boolean)
+        : []
+      if (this.isFeyd && this.feydPosition) {
+        lines.push(`Training: ${FEYD_NODE_LABELS[this.feydPosition] || this.feydPosition}`)
       }
-      return this.subtitle.split('\n').map(l => l.trim()).filter(Boolean)
+      return lines
     },
 
     spaceIcon() {

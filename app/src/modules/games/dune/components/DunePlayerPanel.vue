@@ -9,6 +9,7 @@
         <DuneOptionChip v-if="leader"
                         :name="leader.name"
                         :leader="leader"
+                        :feyd-position="feydPosition"
                         class="leader-chip" />
       </div>
       <span class="objective" v-if="objective" :title="objective.name">
@@ -117,6 +118,10 @@ export default {
 
     objective() {
       return this.game.state.objectives[this.player.name] || null
+    },
+
+    feydPosition() {
+      return this.game.state.feydTrack?.[this.player.name] || null
     },
   },
 
