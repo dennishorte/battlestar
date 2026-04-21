@@ -36,6 +36,7 @@
       </div>
     </div>
 
+    <DuneRulesModal />
     <DebugModal />
 
     <teleport to="body">
@@ -66,6 +67,7 @@ import DuneFactionTrack from './DuneFactionTrack.vue'
 import DuneContractMarket from './DuneContractMarket.vue'
 import DuneActionSpaces from './DuneActionSpaces.vue'
 import DuneOptionChip from './DuneOptionChip.vue'
+import DuneRulesModal from './modals/DuneRulesModal.vue'
 
 
 export default {
@@ -81,6 +83,7 @@ export default {
     DuneFactionTrack,
     DuneImperiumRow,
     DunePlayerPanel,
+    DuneRulesModal,
     GameLogDune,
     GameMenu,
     WaitingPanel,
@@ -92,7 +95,9 @@ export default {
     return {
       ui: {
         fn: {},
-        modals: {},
+        modals: {
+          rulesReference: { filter: null },
+        },
       },
     }
   },
@@ -112,7 +117,7 @@ export default {
 
   methods: {
     openRules() {
-      window.open('https://www.direwolfdigital.com/wp-content/uploads/2024/07/Dune-Imperium-Uprising-Rules.pdf')
+      this.$modal('dune-rules-reference').show()
     },
   },
 

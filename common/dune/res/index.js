@@ -3,6 +3,7 @@ const observationPosts = require('./observationPosts')
 const constants = require('./constants')
 const cards = require('./cards/index')
 const leaderData = require('./leaders/index')
+const livingRules = require('./livingRules')
 
 /**
  * Returns the set of compatibility values that are valid for the given settings.
@@ -84,4 +85,6 @@ module.exports = {
   getSardaukarCards(settings) {
     return filterByCompatibility(cards.sardaukarCards, settings)
   },
+
+  ...livingRules,
 }
