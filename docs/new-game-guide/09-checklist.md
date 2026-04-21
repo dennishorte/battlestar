@@ -47,6 +47,7 @@ A step-by-step checklist for implementing a new game. Each item links to the rel
 - [ ] Create `testutil.js` with `fixture()`, `setBoard()`, `testBoard()`
 - [ ] Write and pass the first test: game creates and runs without error
 - [ ] Create game architecture doc at `docs/games/<game>.md`
+- [ ] Add game directory to `.husky/pre-commit` game loop so commits trigger scoped tests
 
 ---
 
@@ -120,6 +121,18 @@ A step-by-step checklist for implementing a new game. Each item links to the rel
 - [ ] Board interactions (clickable elements for action-type selectors)
 - [ ] Register game in the app router and game list
 - [ ] Lobby options component (player count, expansions, etc.)
+
+---
+
+## Phase 6b: Data Page
+
+- [ ] Create data page component in `app/src/modules/data/components/` ([Section 10](10-data-page.md))
+  - [ ] Tabs for each card/data type
+  - [ ] Search filter across all text fields
+  - [ ] Source/expansion filter
+  - [ ] Sortable columns
+- [ ] Register route in `app/src/modules/data/router.js`
+- [ ] Add link in `GameData.vue` data hub
 
 ---
 

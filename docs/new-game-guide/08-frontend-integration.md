@@ -10,17 +10,13 @@ Each game lives in its own module directory:
 
 ```
 app/src/modules/games/<game>/
-├── index.js                  Route registration
-├── <Game>Game.vue            Main game view (layout, panels)
-├── <Game>Board.vue           Board/play area component
-├── <Game>PlayerPanel.vue     Player status display
-├── <Game>Log.vue             Game-specific log rendering
-├── components/               Sub-components (cards, tokens, dialogs)
-│   ├── <Game>Card.vue
-│   ├── <Game>ActionPanel.vue
-│   └── ...
-└── composables/              Game-specific composables
-    └── use<Game>State.js
+├── components/
+│   ├── <Game>Game.vue            Main game view (layout, panels)
+│   ├── GameLog<Game>.vue         Game-specific log rendering
+│   ├── <Game>PlayerPanel.vue     Player status display
+│   ├── <Game>Card.vue            Card rendering
+│   └── ...                       Sub-components (board, modals, etc.)
+└── (no index.js needed — registration is in GameBase.vue)
 ```
 
 ### Shared Infrastructure
@@ -29,124 +25,284 @@ All games share common components and infrastructure in `app/src/modules/games/c
 
 | Component/Composable | Purpose |
 |----------------------|---------|
-| `GameLog.vue` | Base log rendering with token parsing |
-| `useLogTokenizer.js` | Parses `player(...)`, `card(...)` tokens into Vue components |
+| `GameLog.vue` | Base log rendering with token parsing, nesting, visibility |
+| `useGameLog.js` / `useLogTokenizer.js` | Provide/inject pattern for game-specific log styling |
 | `CardName.vue` | Renders card names as interactive chips |
 | `PlayerName.vue` | Renders player names with colors |
+| `GameLogText.vue` | Parses tokenized log text into Vue components |
+| `WaitingPanel.vue` | Tabbed per-player choice UI using `checkPlayerHasActionWaiting` |
+| `WaitingChoice.vue` | Renders selector choices as dropdown/buttons |
+| `OptionSelector.vue` | Recursive UI for nested game choice prompts |
+| `GameMenu.vue` | Hamburger menu for game-specific actions (rules, scores, etc.) |
+| `ChatInput.vue` | In-game chat |
+| `BugReportModal.vue` | Bug report dialog (available when game is paused) |
+| `SavingOverlay.vue` | Save progress indicator |
+| `DebugModal.vue` | Dev tool for inspecting game state |
 | `store.js` | Vuex store module for game state management |
 
 Don't rebuild these -- extend them with game-specific overrides.
 
 ---
 
-## Required Components
+## Registration Steps
 
-### Main Game View
+Three files must be modified to register a new game:
 
-The top-level component that assembles the game layout:
+### 1. GameBase.vue (`app/src/components/GameBase.vue`)
+
+Add the game component to the template and script:
+
+```vue
+<!-- In template, add alongside other games -->
+<DuneGame v-else-if="gameType === 'Dune Imperium: Uprising'" />
+
+<!-- In script -->
+import DuneGame from '@/modules/games/dune/components/DuneGame.vue'
+
+// In components:
+DuneGame,
+```
+
+The `gameType` string must exactly match `settings.game` from the factory (e.g., `'Dune Imperium: Uprising'`).
+
+### 2. LobbySettings.vue (`app/src/modules/lobby/components/LobbySettings.vue`)
+
+Add the game name to the `gameNames` array and conditionally render a settings component:
+
+```vue
+<!-- In template -->
+<SettingsDune v-if="lobby.game === 'Dune Imperium: Uprising'" />
+
+<!-- In script -->
+import SettingsDune from './SettingsDune.vue'
+// Add to components: { ... }
+// Add to gameNames array: 'Dune Imperium: Uprising'
+```
+
+### 3. Lobby Settings Component (optional)
+
+If the game has options (expansions, player count variants, etc.), create `SettingsDune.vue` in the lobby module. It receives `lobby` and `save` via inject, modifies `lobby.options`, and calls `save()`. Set `lobby.valid` to control when the Start button is enabled.
+
+---
+
+## Provide/Inject Chain
+
+The frontend uses Vue 3's provide/inject for game state propagation:
+
+```
+GameBase.vue
+  provides: actor, bus (mitt event emitter), game (computed ref)
+    └── <Game>Game.vue
+          provides: ui (reactive object with fn, modals, selectable state)
+            └── All child components
+```
+
+Every game component has access to these via `inject: ['actor', 'bus', 'game']`. The main game component additionally provides a `ui` object for game-specific interactive state.
+
+### The `ui` Pattern
+
+The main game component creates a reactive `ui` object and provides it to children:
+
+```javascript
+data() {
+  return {
+    ui: {
+      fn: {
+        // Functions children can call (click handlers, etc.)
+        clickSpace: this.clickSpace,
+        getActionTypeHandler: this.getActionTypeHandler,
+      },
+      modals: {
+        // Shared modal state
+        cardViewer: { cardId: '' },
+      },
+      selectable: [],       // Board elements highlighted as valid targets
+    },
+  }
+},
+
+provide() {
+  return { ui: this.ui }
+},
+```
+
+Children inject `ui` and use `ui.fn.*` for interactions, `ui.selectable` to highlight valid targets, etc.
+
+---
+
+## Game-Specific Log Component
+
+The log rendering pipeline uses provide/inject via `useGameLogProvider`:
 
 ```vue
 <template>
-  <div class="game-container">
-    <GameBoard />
-    <GameLog />
-    <PlayerPanel v-for="player in players" :key="player.name" :player="player" />
-    <ActionPanel v-if="isMyTurn" />
-  </div>
+  <GameLog id="gamelog" />
 </template>
+
+<script setup>
+import { inject } from 'vue'
+import GameLog from '@/modules/games/common/components/log/GameLog.vue'
+import { useGameLogProvider } from '@/modules/games/common/composables/useGameLog'
+
+const game = inject('game')
+
+// Optional: handle card clicks in log
+function cardClick(card) { /* open card viewer modal */ }
+
+// Style card names based on type
+function cardStyles(card) { return {} }
+
+// Map player names to colors for chat
+function chatColors() {
+  const output = {}
+  for (const player of game.value.players.all()) {
+    output[player.name] = player.color
+  }
+  return output
+}
+
+// Add CSS classes to log lines based on event type
+function lineClasses(line) {
+  const classes = [`indent-${line.indent}`]
+  if (line.event === 'round-start') classes.push('phase-header')
+  if (line.classes?.includes('player-turn')) classes.push('player-turn')
+  return classes
+}
+
+// Dynamic styles (e.g., player color backgrounds for turn headers)
+function lineStyles(line) {
+  if (line.classes?.includes('player-turn')) {
+    const player = game.value.players.byName(line.args.player.value)
+    return { 'background-color': player.color }
+  }
+}
+
+// Player name chip styles
+function playerStyles(player) {
+  return { 'background-color': player.color }
+}
+
+// Register all hooks — GameLog.vue picks these up via inject
+useGameLogProvider({
+  cardClick,
+  cardStyles,
+  chatColors,
+  lineClasses,
+  lineStyles,
+  playerStyles,
+})
+</script>
 ```
 
-This component reads from the Vuex store and passes data to children.
+The `convertArg` hook is also available for custom log argument rendering (return a string to replace the default, or `undefined` to use default).
 
-### Game-Specific Log Component
+### Log Line Properties
 
-Override the shared `GameLog.vue` to add game-specific styling:
+Each log line passed to `lineClasses`/`lineStyles` has:
+- `text` — rendered message string with tokens like `card(...)`, `player(...)`
+- `classes` — array of CSS classes from the backend log entry
+- `args` — enriched arg objects from `BaseLogManager` handlers
+- `indent` — nesting level (0 = top-level)
+- `event` — event name from the log entry (e.g., `'round-start'`, `'play-card'`)
+
+### Custom Arg Handlers
+
+The backend `DuneLogManager` registers handlers for arg name patterns. These enrich log args with `value` and `classes`:
 
 ```javascript
-// In your game's log component
-export default {
-  methods: {
-    cardClasses(cardId) {
-      const card = this.game.cards.byId(cardId)
-      return [`card-type-${card.type}`]  // e.g., card-type-action, card-type-unit
-    },
-    lineClasses(entry) {
-      if (entry.event === 'combat') return ['combat-line']
-      return []
-    },
-  },
-}
+// DuneLogManager registers:
+'card*'       -> { value: card.name, classes: ['card-name'] }
+'faction*'    -> { value: faction, classes: ['faction-name'] }
+'resource*'   -> { value: resource, classes: ['resource-name'] }
+'boardSpace*' -> { value: space.name, classes: ['board-space-name'] }
+'leader*'     -> { value: leader.name, classes: ['leader-name'] }
 ```
 
-The frontend rendering pipeline for logs:
-1. Backend `BaseLogManager._enrichLogArgs()` matches arg keys to handlers
-2. Frontend `GameLog.vue:convertLogMessage()` maps enriched args to tokens
-3. Frontend `useLogTokenizer.js` parses tokens into Vue components
-4. Game-specific log component provides `cardClasses()` for type-specific styling
+The frontend `GameLogText.vue` renders these as styled inline spans. Use `:deep()` selectors in the game log component to style them.
 
 ---
 
 ## Vuex Store Integration
 
-Game state is managed through the shared Vuex store module. The store handles:
+The shared store (`app/src/modules/games/common/store.js`) handles all game state management. Your game components read from it — you don't need a game-specific store.
 
-- Fetching game state from the API
-- Submitting player responses
-- Tracking the current input request (what the game is waiting for)
-- Managing undo
-
-Your game component reads from the store:
+### Reading Game State
 
 ```javascript
+// Via inject (preferred in most components)
+inject: ['actor', 'game'],
+
 computed: {
-  game() { return this.$store.getters['game/game'] },
-  waiting() { return this.$store.getters['game/waiting'] },
-  isMyTurn() { return this.waiting?.selectors?.some(s => s.actor === this.myName) },
-  currentChoices() { return this.waiting?.selectors?.[0]?.choices || [] },
-}
-```
+  // Player ordering: current viewer first
+  orderedPlayers() {
+    const viewer = this.game.players.byName(this.actor.name)
+    return this.game.players.startingWith(viewer)
+  },
 
----
-
-## Action-Type UI
-
-For games with spatial board interactions (clicking on a board), implement the dual-input pattern:
-
-1. The selector has `allowsAction: 'action-name'` plus enumerated `choices` as fallback
-2. The board component renders clickable elements for valid targets
-3. On click, submit an action-type response: `{ action: 'action-name', ...data }`
-4. The dropdown fallback is always available for accessibility
-
-```vue
-<!-- Board component with clickable spaces -->
-<template>
-  <div class="board">
-    <div
-      v-for="space in validSpaces"
-      :key="space.id"
-      class="space"
-      :class="{ clickable: isValidTarget(space) }"
-      @click="selectSpace(space)"
-    />
-  </div>
-</template>
-
-<script>
-export default {
-  methods: {
-    selectSpace(space) {
-      this.$store.dispatch('game/submitAction', {
-        action: 'select-space',
-        row: space.row,
-        col: space.col,
-      })
-    },
+  // Check if current player has a pending choice
+  optionSelector() {
+    if (this.game.state.initializationComplete) {
+      const player = this.game.players.byName(this.actor.name)
+      if (this.game.checkPlayerHasActionWaiting(player)) {
+        return this.game.getWaiting(player)
+      }
+    }
+    return undefined
   },
 }
-</script>
 ```
 
-See [action-type-responses.md](../../common/docs/action-type-responses.md) for the full specification.
+### Submitting Actions
+
+Two patterns for submitting player choices:
+
+**Pattern 1: Let WaitingPanel handle it (default)**
+
+Just include `<WaitingPanel />` in your game layout. It renders the choice UI and handles submission automatically via `OptionSelector` → `WaitingChoice`.
+
+**Pattern 2: Board-click actions (action-type responses)**
+
+For spatial interactions (clicking board spaces, tokens, etc.):
+
+```javascript
+methods: {
+  clickBoardSpace(space) {
+    // Direct response to input request
+    this.game.respondToInputRequest({
+      actor: this.actor.name,
+      title: selectorTitle,
+      selection: [spaceName],
+    })
+    this.$store.dispatch('game/save')
+  },
+}
+```
+
+For action-type responses (dual-input pattern):
+
+```javascript
+this.game.respondToInputRequest({
+  actor: this.actor.name,
+  title: '__ALT_ACTION__',
+  selection: [{
+    action: 'action-name',
+    ...actionData,
+  }]
+})
+this.$store.dispatch('game/save')
+```
+
+### Accessing Zones and Cards
+
+```javascript
+// Zone contents
+game.zones.byId('common.imperiumRow').cardlist()   // Array of card objects
+game.zones.byId(`${playerName}.hand`).cardlist()   // Player's hand
+
+// Cards by player and zone shorthand (if CardManager supports it)
+game.cards.byPlayer(player, 'hand')
+game.cards.byPlayer(player, 'played')
+```
 
 ---
 
@@ -211,24 +367,87 @@ See `TwilightGame.vue` for the canonical implementation with `selectedPlayerName
 
 ---
 
-## Game Registration
+## Main Game Component Pattern
 
-To make the frontend aware of your game:
+The top-level component assembles the layout, manages interactive UI state, and watches for selector changes:
 
-1. **Route**: Add a route in your game's `index.js` that maps the game URL to your main component
-2. **Game list**: Add the game to the game selection UI so players can create lobbies
-3. **Game options**: If your game has settings (player count, expansions, card sets), create a lobby options component
+```vue
+<template>
+  <div class="my-game">
+    <div class="container-fluid">
+      <div class="row flex-nowrap main-row">
 
-Follow the pattern of existing games in `app/src/modules/games/` for the exact registration mechanism.
+        <!-- Column 1: Log -->
+        <div class="col history-column">
+          <GameMenu>
+            <DropdownButton @click="openRules">rules</DropdownButton>
+          </GameMenu>
+          <GameLogMyGame />
+        </div>
+
+        <!-- Column 2: Board / Market / Choices -->
+        <div class="col game-column">
+          <!-- Game-specific board components -->
+          <WaitingPanel />
+        </div>
+
+        <!-- Column 3: Player panels -->
+        <div class="col game-column">
+          <PlayerPanel v-for="player in orderedPlayers" :key="player.name" :player="player" />
+        </div>
+
+      </div>
+    </div>
+
+    <DebugModal />
+  </div>
+</template>
+```
+
+Key patterns from existing games:
+- **Column layout**: history (log) | game area (board + choices) | player panels
+- **WaitingPanel**: placed in the game column, handles all standard choice UI
+- **GameMenu**: hamburger menu with rules link, score display, etc.
+- **DebugModal**: always included for development
+
+---
+
+## Highlighting Valid Targets
+
+When the game presents a choice, highlight valid targets on the board by watching the selector:
+
+```javascript
+watch: {
+  optionSelector: {
+    immediate: true,
+    handler(selector) {
+      if (selector) {
+        // Extract valid target names from choices
+        this.ui.selectable = selector.choices
+          .filter(c => typeof c === 'string')
+          .map(c => c)
+      } else {
+        this.ui.selectable = []
+      }
+    },
+  },
+},
+```
+
+Board components read `ui.selectable` to apply CSS classes:
+
+```vue
+<div :class="{ clickable: ui.selectable.includes(space.id) }" @click="ui.fn.clickSpace(space)">
+```
 
 ---
 
 ## Development Workflow
 
-1. **Engine first**: Get the game working fully in tests before touching the frontend
-2. **Log view first**: The log component is the easiest to build and immediately useful for debugging
-3. **Read-only board**: Render the game state without interactions
-4. **Choice UI**: Wire up the choice dropdown (works with the shared infrastructure out of the box)
+1. **Log view first**: The log component is the easiest to build and immediately useful for debugging
+2. **Read-only board**: Render the game state without interactions
+3. **Choice UI**: Wire up `WaitingPanel` — works with shared infrastructure out of the box
+4. **Player panels**: Show resources, hand (for viewer), played cards
 5. **Board interactions**: Add clickable elements for action-type selectors
 6. **Polish**: Animations, tooltips, card hover previews
 

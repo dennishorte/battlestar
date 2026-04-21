@@ -530,6 +530,13 @@ export default {
   overflow-y: hidden;
   background: #1a1a2e;
   color: #e0e0e0;
+
+  --waiting-bg: #2a2a4e;
+  --waiting-active-bg: #3a3a5e;
+  --waiting-border-color: #4a4a6e;
+  --waiting-color: #c8c8e0;
+  --waiting-tab-color: #a0a0c0;
+  --waiting-tab-active-color: #e0e0f0;
 }
 
 .main-row {
@@ -585,12 +592,6 @@ export default {
 .toolbar {
   padding: .25em .5em;
   border-bottom: 1px solid #dee2e6;
-}
-
-/* Override common component styles */
-.twilight :deep(.waiting-panel) {
-  background: #f8f9fa;
-  color: #333;
 }
 
 .twilight :deep(.waiting-panel .tab-content .active) {

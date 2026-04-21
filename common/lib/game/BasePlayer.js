@@ -23,8 +23,8 @@ class BasePlayer {
     this.counters[name] = count
   }
 
-  decrementCounter(name, count=1) {
-    this.incrementCounter(name, -count)
+  decrementCounter(name, count=1, opts={}) {
+    this.incrementCounter(name, -count, opts)
   }
 
   getCounter(name) {

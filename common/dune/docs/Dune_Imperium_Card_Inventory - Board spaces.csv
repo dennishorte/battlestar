@@ -1,0 +1,25 @@
+Name,Color/Faction,Behind Shield Wall,control marker,conflict mark,spies,requirements,cost,maker space,effect
+Arakeen,blue,TRUE,1 solari,TRUE,A,-,-,-,Gain 1 troop. Draw a card.
+Spice Refinery,blue,TRUE,1 solari,TRUE,"A, B",-,-,-,Gain 2 solari OR pay 1 spice -> gain 4 solari.
+Research Station,blue,-,-,TRUE,"B, C",-,2 water,-,Gain 2 troops. Draw 2 cards.
+Sietch Tabr,blue,-,-,TRUE,C,2 Fremen,-,-,(Gain a maker hook. Gain 1 troop. Gain 1 water.) or (Gain 1 water. Break the shield wall.)
+Imperial Basin,yellow,TRUE,1 spice,TRUE,D,-,-,TRUE,Gain 1 spice. Gain bonus spice.
+Hagga Basin,yellow,-,-,TRUE,E,-,1 water,TRUE,(Gain 2 space or maker hook : Get a sandworm). Gain bonus spice.
+Deep Desert,yellow,-,-,TRUE,F,-,3 water,TRUE,(Gain 4 space or maker hook : Get 2 sandworms). Gain bonus spice.
+Accept Contract,yellow,-,-,FALSE,G,-,-,,Take a contract. Draw a card.
+Shipping,yellow,-,-,FALSE,G,2 Spacing Guild,3 spice,,Gain 5 solari. Gain 1 influence with one faction.
+High Council,green,-,-,FALSE,H,-,5 solari,,"1st time: Gain a seat on the high council
+2nd time+: Gain 2 spice. Draw 1 intrigue card. Gain 3 troops."
+Imperial Privilege,green,-,-,FALSE,H,2 Emperor,3 solari,,Trash an intrigue card -> Draw an intrigue card. Return one of your agents. Draw a card.
+Sword Master,green,-,-,FALSE,H,-,"8 solari (for first player to use)
+6 solari (after the first player)",,Gain your third agent.
+Assembly Hall,green,-,-,FALSE,I,-,-,,Draw an intrigue card. Gain 1 persuasion during the reveal phase.
+Gather Support,green,-,-,FALSE,I,-,-,,Gain 2 troops or pay 2 solari -> gain 2 troops and 1 water.
+Sardukar,emperor,-,-,FALSE,J,-,4 spice,,Draw an intrigue card. Gain 4 troops.
+Dutiful Service,emperor,-,-,FALSE,J,-,-,,Take a contract.
+Heighliner,spacing guild,-,-,TRUE,K,-,5 spice,,Gain 5 troops.
+Deliver Supplies,spacing guild,-,-,FALSE,K,-,-,,Gain 1 water.
+Espionage,bene gesserit,-,-,FALSE,L,-,1 spice,,Draw a card. Place a spy.
+Secrets,bene gesserit,-,-,FALSE,L,-,-,,Draw 1 intrigue card. Steal a random intrigue card from each other player with 4 or more intrigue cards.
+Desert Tactics,fremen,-,-,TRUE,M,-,1 water,,Gain 1 troop. Trash a card.
+Fremkit,fremen,-,-,TRUE,M,-,-,,Draw a card.

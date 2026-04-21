@@ -1,0 +1,41 @@
+const t = require('../testutil')
+
+describe('CHOAM Contract Completion', () => {
+
+  test('board-space contract completes when visiting the named space', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { contracts: ['Deliver Supplies'] },
+    })
+    game.run()
+
+    t.choose(game, 'Agent Turn.Diplomacy')
+    t.choose(game, 'Deliver Supplies')
+
+    const completed = game.zones.byId('dennis.contractsCompleted')
+    expect(completed.cardlist().length).toBe(1)
+  })
+
+  test('Accept Contract space gives contract + draw 1', () => {
+    const game = t.fixture()
+    game.run()
+
+    // Dennis reveals, scott reveals, then micah visits Accept Contract
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
+
+    // Micah: Dune TDP (yellow) → Accept Contract
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
+    t.choose(game, 'Accept Contract')
+
+    // Should be offered contract choice from market
+    const choices = t.currentChoices(game)
+    expect(choices.length).toBeGreaterThan(0)
+    t.choose(game, choices[0])
+
+    const micahContracts = game.zones.byId('micah.contracts')
+    expect(micahContracts.cardlist().length).toBe(1)
+  })
+})

@@ -1,5 +1,6 @@
 import AgricolaCards from './components/AgricolaCards.vue'
 import AgricolaResults from './components/AgricolaResults.vue'
+import DuneCards from './components/DuneCards.vue'
 import GameData from './components/GameData.vue'
 import HexTileDetail from './components/HexTileDetail.vue'
 import HexTilesViewer from './components/HexTilesViewer.vue'
@@ -20,6 +21,12 @@ export default [
     name: 'Agricola Cards',
     title: 'Agricola Cards',
     component: AgricolaCards,
+  },
+  {
+    path: '/data/dune/cards',
+    name: 'Dune Cards',
+    title: 'Dune Cards',
+    component: DuneCards,
   },
   {
     path: '/data/agricola/results',

@@ -1,0 +1,17 @@
+Card Name,Source,Compatibility,Count per Player,Green Access,Purple Access,Yellow Access,Emperor Access,Spacing Guild Access,Bene Gesserit Access,Fremen Access,Agent Ability,Reveal Persuation,Reveal Swords,Reveal Ability
+"Convincing Argument
+",Base,All,2,,,,,,,,,2,,
+"Dagger
+",Base,All,2,X,,,,,,,,,1,
+"Diplomacy
+",Base,All,1,,,,X,X,X,X,,1,,
+"Dune, The Desert Planet
+",Base,All,2,,,X,,,,,,1,,
+"Reconnaissance
+",Base,All,1,,X,,,,,,,1,,
+"Seek Allies
+",Base,All,1,,,,X,X,X,X,Trash this card,,,
+"Signet Ring
+",Base,All,1,X,X,X,,,,,Signet Ring,1,,
+Control the Spice,Rise of Ix,All,1,,,X,,,,,"1 Spice --> Trash a card, +1 Troop",1,,+1 Spice
+Experimentation,Immortality,Immortality,2,,,,,,,,+1 Research,,,+1 Specimen

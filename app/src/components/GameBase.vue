@@ -29,6 +29,7 @@
     <UltimateGame v-else-if="gameType === 'Innovation: Ultimate'" />
     <TwilightGame v-else-if="gameType === 'Twilight Imperium'" />
     <TyrantsGame v-else-if="gameType === 'Tyrants of the Underdark'" />
+    <DuneGame v-else-if="gameType === 'Dune Imperium: Uprising'" />
 
     <div v-else>
       error, unknown game type: {{ gameType }}
@@ -50,6 +51,7 @@ import UltimateGame from '@/modules/games/ultimate/components/UltimateGame.vue'
 import MtgGame from '@/modules/games/magic/components/MtgGame.vue'
 import TwilightGame from '@/modules/games/twilight/components/TwilightGame.vue'
 import TyrantsGame from '@/modules/games/tyrants/components/TyrantsGame.vue'
+import DuneGame from '@/modules/games/dune/components/DuneGame.vue'
 
 import BugReportModal from '@/modules/games/common/components/BugReportModal.vue'
 import SavingOverlay from '@/modules/games/common/components/SavingOverlay.vue'
@@ -62,6 +64,7 @@ export default {
     AgricolaGame,
     BugReportModal,
     CubeDraft,
+    DuneGame,
     MtgGame,
     TwilightGame,
     TyrantsGame,
