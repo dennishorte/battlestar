@@ -55,6 +55,13 @@
       <div class="section-label">Revealed</div>
       <DuneCard v-for="card in revealedCards" :key="card.id" :card="card" />
     </div>
+
+    <div class="reserved" v-if="reservedCard">
+      <div class="section-label">
+        Reserved <span class="reserved-badge">Manipulate · -1 Persuasion</span>
+      </div>
+      <DuneCard :card="reservedCard" />
+    </div>
   </div>
 </template>
 
@@ -122,6 +129,15 @@ export default {
 
     feydPosition() {
       return this.game.state.feydTrack?.[this.player.name] || null
+    },
+
+    reservedCard() {
+      const reservation = this.game.state.helenaReserved
+      if (!reservation || reservation.player !== this.player.name) {
+        return null
+      }
+      const cards = this.game.zones.byId('common.helenaReserved').cardlist()
+      return cards[0] || null
     },
   },
 
@@ -231,10 +247,22 @@ export default {
   padding: .2em .5em 0;
 }
 
-.hand, .played, .revealed {
+.hand, .played, .revealed, .reserved {
   padding: 0 .3em .3em;
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+.reserved-badge {
+  display: inline-block;
+  margin-left: .35em;
+  padding: .05em .35em;
+  border-radius: .2em;
+  background-color: #6a3d8a;
+  color: white;
+  font-size: .9em;
+  font-weight: 600;
+  text-transform: none;
 }
 </style>

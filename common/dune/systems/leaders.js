@@ -219,6 +219,13 @@ function resolveSignetRing(game, player, resolveEffectFn) {
     return
   }
 
+  // Helena Richese: Manipulate — remove an Imperium Row card, -1 persuasion to acquire
+  if (leader.name === 'Helena Richese') {
+    const leaderAbilities = require('./leaderAbilities.js')
+    leaderAbilities.resolveHelenaManipulate(game, player)
+    return
+  }
+
   // Liet Kynes: Judge of the Change — reward based on space icon sent to this turn
   if (leader.name === 'Liet Kynes') {
     const icon = game.state.turnTracking?.spaceIcon

@@ -347,7 +347,7 @@ function acquireCardsPhase(game, player) {
       break
     }
 
-    const acquirableCards = getAcquirableCards(game, budget)
+    const acquirableCards = getAcquirableCards(game, player, budget)
     if (acquirableCards.length === 0) {
       break
     }
@@ -365,12 +365,23 @@ function acquireCardsPhase(game, player) {
 
     const card = acquirableCards.find(c => c.name === choice)
     if (card) {
+      const effectiveCost = acquireCost(game, player, card)
+
       // Pay with persuasion (or solari if Price is Not Object active)
       if (game.state.turnTracking?.acquireWithSolari) {
-        player.decrementCounter('solari', card.persuasionCost, { silent: true })
+        player.decrementCounter('solari', effectiveCost, { silent: true })
       }
       else {
-        player.decrementCounter('persuasion', card.persuasionCost, { silent: true })
+        player.decrementCounter('persuasion', effectiveCost, { silent: true })
+      }
+
+      // If this was the Helena-reserved card, clear the reservation
+      if (isHelenaReserved(game, player, card)) {
+        game.log.add({
+          template: '{player}: acquires reserved {card} at -1 Persuasion (Manipulate)',
+          args: { player, card },
+        })
+        game.state.helenaReserved = null
       }
 
       // Acquire to top of deck or discard pile
@@ -412,7 +423,7 @@ function acquireCardsPhase(game, player) {
 /**
  * Get all cards the player can acquire given their current persuasion.
  */
-function getAcquirableCards(game, persuasion) {
+function getAcquirableCards(game, player, persuasion) {
   const cards = []
 
   // Imperium Row
@@ -437,7 +448,36 @@ function getAcquirableCards(game, persuasion) {
     cards.push(tsmfCards[0])
   }
 
+  // Helena Richese: reserved card available at -1 persuasion to reserving player only
+  const reservedZone = game.zones.byId('common.helenaReserved')
+  const reservedCards = reservedZone.cardlist()
+  if (reservedCards.length > 0 && game.state.helenaReserved?.player === player.name) {
+    const reserved = reservedCards[0]
+    if (acquireCost(game, player, reserved) <= persuasion) {
+      cards.push(reserved)
+    }
+  }
+
   return cards
+}
+
+/**
+ * Effective persuasion cost for a card, after discounts.
+ */
+function acquireCost(game, player, card) {
+  let cost = card.persuasionCost || 0
+  if (isHelenaReserved(game, player, card)) {
+    cost = Math.max(0, cost - 1)
+  }
+  return cost
+}
+
+function isHelenaReserved(game, player, card) {
+  if (!game.state.helenaReserved || game.state.helenaReserved.player !== player.name) {
+    return false
+  }
+  const reservedZone = game.zones.byId('common.helenaReserved')
+  return reservedZone.cardlist().some(c => c.id === card.id)
 }
 
 /**

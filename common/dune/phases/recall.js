@@ -37,6 +37,23 @@ function recallPhase(game) {
   game.state.blockedSpaces = []
   game.state.tsmfDiscount = 0
 
+  // Helena Richese: expire reservation — trash any unclaimed reserved card
+  if (game.state.helenaReserved) {
+    const reservedZone = game.zones.byId('common.helenaReserved')
+    const reservedCards = reservedZone.cardlist()
+    if (reservedCards.length > 0) {
+      const trash = game.zones.byId('common.trash')
+      for (const card of [...reservedCards]) {
+        card.moveTo(trash)
+        game.log.add({
+          template: 'Reserved {card} was not acquired — trashed',
+          args: { card },
+        })
+      }
+    }
+    game.state.helenaReserved = null
+  }
+
   // Pass first player clockwise
   const allPlayers = game.players.all()
   game.state.firstPlayerIndex = (game.state.firstPlayerIndex + 1) % allPlayers.length

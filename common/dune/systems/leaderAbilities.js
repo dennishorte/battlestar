@@ -447,6 +447,46 @@ function resolveFeydTraining(game, player, resolveEffectFn) {
 }
 
 /**
+ * Resolve Helena Richese Signet Ring: Manipulate.
+ * Remove a card from the Imperium Row. This player may acquire it for
+ * 1 Persuasion less during their Reveal turn this round; otherwise it is
+ * trashed during Recall.
+ */
+function resolveHelenaManipulate(game, player) {
+  const rowZone = game.zones.byId('common.imperiumRow')
+  const rowCards = rowZone.cardlist()
+  if (rowCards.length === 0) {
+    return
+  }
+
+  const choices = ['Pass', ...rowCards.map(c => c.name)]
+  const [choice] = game.actions.choose(player, choices, {
+    title: 'Manipulate: Remove a card from the Imperium Row',
+  })
+  if (choice === 'Pass') {
+    return
+  }
+
+  const card = rowCards.find(c => c.name === choice)
+  if (!card) {
+    return
+  }
+
+  const reservedZone = game.zones.byId('common.helenaReserved')
+  card.moveTo(reservedZone)
+  game.state.helenaReserved = {
+    player: player.name,
+    round: game.state.round,
+  }
+  deckEngine.refillImperiumRow(game)
+
+  game.log.add({
+    template: '{player}: Manipulate — reserves {card} (-1 Persuasion to acquire this round)',
+    args: { player, card: card.name },
+  })
+}
+
+/**
  * Hook: called after agent is placed on a board space and effects are resolved.
  * Used for Lady Jessica / Reverend Mother abilities.
  */
@@ -520,5 +560,6 @@ module.exports = {
   onOpponentVisitsMakerSpace,
   onGainSolari,
   resolveFeydTraining,
+  resolveHelenaManipulate,
   onAgentPlaced,
 }

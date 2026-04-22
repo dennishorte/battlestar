@@ -239,4 +239,70 @@ describe('Leader Abilities', () => {
     expect(rabban).toBeDefined()
     expect(rabban.startingEffect).toBeDefined()
   })
+
+  test('Helena Richese Signet Ring reserves an Imperium Row card', () => {
+    const leaderData = require('../res/leaders/index.js')
+    const helena = leaderData.find(l => l.name === 'Helena Richese')
+    const game = t.fixture()
+    t.setBoard(game, { leaders: { dennis: helena } })
+    game.run()
+
+    const hand = game.zones.byId('dennis.hand').cardlist()
+    const signet = hand.find(c => c.name === 'Signet Ring')
+    if (!signet) {
+      return
+    }
+
+    const rowBefore = game.zones.byId('common.imperiumRow').cardlist().map(c => c.name)
+    const targetName = rowBefore[0]
+
+    t.choose(game, 'Agent Turn.Signet Ring')
+    t.choose(game, 'Arrakeen')
+    t.choose(game, 'Signet Ring')
+    t.choose(game, targetName)
+
+    const reserved = game.zones.byId('common.helenaReserved').cardlist()
+    expect(reserved).toHaveLength(1)
+    expect(reserved[0].name).toBe(targetName)
+    expect(game.state.helenaReserved).toEqual({ player: 'dennis', round: 1 })
+    expect(game.zones.byId('common.imperiumRow').cardlist()).toHaveLength(5)
+  })
+
+  test('Helena reserved card expires (trashed) at Recall if not acquired', () => {
+    const leaderData = require('../res/leaders/index.js')
+    const helena = leaderData.find(l => l.name === 'Helena Richese')
+    const game = t.fixture()
+    t.setBoard(game, { leaders: { dennis: helena } })
+    game.run()
+
+    const hand = game.zones.byId('dennis.hand').cardlist()
+    if (!hand.find(c => c.name === 'Signet Ring')) {
+      return
+    }
+
+    const rowBefore = game.zones.byId('common.imperiumRow').cardlist().map(c => c.name)
+    const targetName = rowBefore[0]
+
+    t.choose(game, 'Agent Turn.Signet Ring')
+    t.choose(game, 'Arrakeen')
+    t.choose(game, 'Signet Ring')
+    t.choose(game, targetName)
+
+    // Fast-forward: pass through remaining agent turns and reveals for all players
+    // until Recall clears the reservation. Easier: advance by having everyone reveal.
+    while (game.state.helenaReserved) {
+      const choices = t.currentChoices(game)
+      if (choices.length === 0) {
+        break
+      }
+      const pick = choices.find(c => /Reveal Turn/i.test(c)) || choices[0]
+      t.choose(game, pick)
+    }
+
+    expect(game.state.helenaReserved).toBeNull()
+    const reservedCards = game.zones.byId('common.helenaReserved').cardlist()
+    expect(reservedCards).toHaveLength(0)
+    const trashNames = game.zones.byId('common.trash').cardlist().map(c => c.name)
+    expect(trashNames).toContain(targetName)
+  })
 })

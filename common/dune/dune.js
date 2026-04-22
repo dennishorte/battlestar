@@ -93,6 +93,10 @@ Dune.prototype._reset = function() {
   this.state.objectives = {}
   this.state.firstPlayer = null
 
+  // Helena Richese Signet Ring: card removed from Imperium Row, available to
+  // reserving player for -1 persuasion this round.
+  this.state.helenaReserved = null
+
   // Faction alliances: { factionId: playerName | null }
   this.state.alliances = {
     emperor: null,
@@ -166,6 +170,7 @@ Dune.prototype.initializeZones = function() {
   z('common.trash', 'Trash', 'hidden')
   z('common.contractDeck', 'Contract Deck', 'hidden')
   z('common.contractMarket', 'Contract Market', 'public')
+  z('common.helenaReserved', 'Reserved (Manipulate)', 'public')
 
   // Per-player zones
   for (const player of this.players.all()) {
