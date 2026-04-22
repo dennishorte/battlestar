@@ -12,7 +12,7 @@ describe('CHOAM Edge Cases', () => {
 
   test('same-turn contract restriction: board-space contracts reference valid spaces', () => {
     // Per rules: "must wait until future turn to complete"
-    const contracts = require('../res/cards/contracts.js')
+    const contracts = require('../res/cards/contracts')
     const boardSpaces = require('../res/boardSpaces.js')
     const spaceIds = boardSpaces.map(s => s.id)
 

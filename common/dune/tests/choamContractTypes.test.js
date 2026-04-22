@@ -3,7 +3,7 @@ const t = require('../testutil')
 describe('CHOAM Contract Types', () => {
 
   test('contract data includes immediate, harvest, and board-space types', () => {
-    const contracts = require('../res/cards/contracts.js')
+    const contracts = require('../res/cards/contracts')
     const names = contracts.map(c => c.name)
 
     // Should have immediate contracts
