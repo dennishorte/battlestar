@@ -36,7 +36,7 @@ describe('Sandworm Reward Doubling', () => {
   })
 
   test('control rewards are not doubled (type exclusion)', () => {
-    const conflictCards = require('../res/cards/conflict.js')
+    const conflictCards = require('../res/cards/conflict')
     const allRewards = conflictCards.flatMap(c =>
       [c.rewards?.first, c.rewards?.second, c.rewards?.third].filter(Boolean)
     )
@@ -45,7 +45,7 @@ describe('Sandworm Reward Doubling', () => {
   })
 
   test('VP rewards can be doubled (type not excluded)', () => {
-    const conflictCards = require('../res/cards/conflict.js')
+    const conflictCards = require('../res/cards/conflict')
     const allRewards = conflictCards.flatMap(c =>
       [c.rewards?.first, c.rewards?.second, c.rewards?.third].filter(Boolean)
     )
@@ -54,7 +54,7 @@ describe('Sandworm Reward Doubling', () => {
   })
 
   test('influence rewards can be doubled (type not excluded)', () => {
-    const conflictCards = require('../res/cards/conflict.js')
+    const conflictCards = require('../res/cards/conflict')
     const allRewards = conflictCards.flatMap(c =>
       [c.rewards?.first, c.rewards?.second, c.rewards?.third].filter(Boolean)
     )

@@ -9,7 +9,7 @@ describe('Battle Icons', () => {
   })
 
   test('conflict cards have battle icons defined', () => {
-    const conflictCards = require('../res/cards/conflict.js')
+    const conflictCards = require('../res/cards/conflict')
     const withIcons = conflictCards.filter(c => c.battleIcon)
     expect(withIcons.length).toBeGreaterThan(0)
 
@@ -20,7 +20,7 @@ describe('Battle Icons', () => {
   })
 
   test('conflict card rewards include VP and control types', () => {
-    const conflictCards = require('../res/cards/conflict.js')
+    const conflictCards = require('../res/cards/conflict')
 
     const allRewards = conflictCards.flatMap(c =>
       [c.rewards?.first, c.rewards?.second, c.rewards?.third].filter(Boolean)
