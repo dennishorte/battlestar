@@ -548,6 +548,12 @@ function deployUnits(game, player) {
     return
   }
 
+  // Shaddam Corrino IV's "Emperor of the Known Universe" locks deployment for
+  // the rest of the turn.
+  if (game.state.turnTracking?.shaddamNoDeploy) {
+    return
+  }
+
   // Per rules: deploy any/all troops recruited this turn + up to 2 from pre-existing garrison
   const garrisonAtStart = game.state.turnTracking?.garrisonAtTurnStart ?? garrisoned
   const recruited = Math.max(0, garrisoned - garrisonAtStart)

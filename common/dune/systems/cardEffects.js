@@ -414,7 +414,7 @@ function parseSingleAbility(text) {
     return { type: 'gain', resource: 'water', amount: parseInt(waterMatch[1]) }
   }
 
-  // "Draw N card(s)" / "Draw a card" / "Draw one/two/three cards"
+  // "Draw N card(s)" / "Draw a card" / "Draw one/two/three cards" / "+N Draw(s)"
   const drawMatch = text.match(/^Draw\s+(\d+)\s+cards?$/i)
   if (drawMatch) {
     return { type: 'draw', amount: parseInt(drawMatch[1]) }
@@ -426,6 +426,10 @@ function parseSingleAbility(text) {
   if (drawWordMatch) {
     const wordMap = { one: 1, two: 2, three: 3 }
     return { type: 'draw', amount: wordMap[drawWordMatch[1].toLowerCase()] }
+  }
+  const drawShortMatch = text.match(/^\+(\d+)\s+Draws?$/i)
+  if (drawShortMatch) {
+    return { type: 'draw', amount: parseInt(drawShortMatch[1]) }
   }
 
   // "+N Intrigue card(s)" / "+N Intrigue" / "Get N Intrigue Card"

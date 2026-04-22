@@ -145,8 +145,38 @@ function recallSpyAt(game, player, spaceId) {
   return post
 }
 
+/**
+ * Place a spy on a specific observation post, bypassing the interactive
+ * chooser. Used by abilities that dictate the post (e.g. Lady Margot Fenring,
+ * Staban Tuek).
+ */
+function placeSpyAt(game, player, postId) {
+  if (player.spiesInSupply <= 0) {
+    return false
+  }
+  const post = observationPosts.find(p => p.id === postId)
+  if (!post) {
+    return false
+  }
+  const occupants = game.state.spyPosts[post.id] || []
+  if (occupants.includes(player.name)) {
+    return false
+  }
+  player.decrementCounter('spiesInSupply', 1, { silent: true })
+  if (!game.state.spyPosts[post.id]) {
+    game.state.spyPosts[post.id] = []
+  }
+  game.state.spyPosts[post.id].push(player.name)
+  game.log.add({
+    template: '{player} places a Spy on Post {postId}',
+    args: { player, postId: post.id },
+  })
+  return true
+}
+
 module.exports = {
   placeSpy,
+  placeSpyAt,
   recallSpy,
   recallSpyAt,
   getSpyConnectedSpaces,

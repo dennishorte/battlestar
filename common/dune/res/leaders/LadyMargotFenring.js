@@ -34,26 +34,29 @@ module.exports = {
     const observationPosts = require('../observationPosts.js')
     const boardSpaces = require('../boardSpaces.js')
 
-    const purpleSpaces = boardSpaces.filter(s => s.icon === 'purple')
-    const purpleSpaceIds = new Set(purpleSpaces.map(s => s.id))
-    const purplePosts = observationPosts.filter(p => purpleSpaceIds.has(p.spaceId))
+    const purpleSpaceIds = new Set(
+      boardSpaces.filter(s => s.icon === 'purple').map(s => s.id)
+    )
+    const purplePosts = observationPosts.filter(post =>
+      post.spaces.some(id => purpleSpaceIds.has(id))
+      && !(game.state.spyPosts[post.id] || []).includes(player.name)
+    )
 
-    if (purplePosts.length === 0) {
+    if (purplePosts.length === 0 || player.spiesInSupply <= 0) {
       return
     }
 
-    const choices = purplePosts.map(p => {
-      const space = boardSpaces.find(s => s.id === p.spaceId)
-      return space?.name || p.id
+    const labels = purplePosts.map(post => {
+      const spaceNames = post.spaces.map(id => {
+        const space = boardSpaces.find(s => s.id === id)
+        return space ? space.name : id
+      })
+      return `Post ${post.id} (${spaceNames.join(', ')})`
     })
-    const [spaceName] = game.actions.choose(player, choices, {
-      title: 'Arrakis Informant: Place Spy on which purple space?',
+    const [pick] = game.actions.choose(player, labels, {
+      title: 'Arrakis Informant: Place Spy on which purple post?',
     })
-    const post = purplePosts[choices.indexOf(spaceName)]
+    const post = purplePosts[labels.indexOf(pick)]
     spies.placeSpyAt(game, player, post.id)
-    game.log.add({
-      template: '{player}: Arrakis Informant — places Spy on {space}',
-      args: { player, space: spaceName },
-    })
   },
 }

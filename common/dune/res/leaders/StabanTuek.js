@@ -45,28 +45,38 @@ module.exports = {
     const boardSpaces = require('../boardSpaces.js')
     const constants = require('../constants.js')
 
-    const postOptions = observationPosts.map(post => {
-      const space = boardSpaces.find(s => s.id === post.spaceId)
-      return { post, space }
-    }).filter(({ space }) => space)
-
-    if (postOptions.length === 0) {
+    if (player.spiesInSupply <= 0) {
       return
     }
 
-    const choices = postOptions.map(({ space }) => `${space.name} (${space.icon})`)
-    const [pick] = game.actions.choose(player, choices, {
-      title: 'Unseen Network: Place Spy on which space?',
+    const availablePosts = observationPosts.filter(post =>
+      !(game.state.spyPosts[post.id] || []).includes(player.name)
+    )
+    if (availablePosts.length === 0) {
+      return
+    }
+
+    const labels = availablePosts.map(post => {
+      const spaceNames = post.spaces.map(id => {
+        const space = boardSpaces.find(s => s.id === id)
+        return space ? space.name : id
+      })
+      return `Post ${post.id} (${spaceNames.join(', ')})`
     })
-    const { post, space } = postOptions[choices.indexOf(pick)]
+    const [pick] = game.actions.choose(player, labels, {
+      title: 'Unseen Network: Place Spy on which post?',
+    })
+    const post = availablePosts[labels.indexOf(pick)]
     spies.placeSpyAt(game, player, post.id)
-    game.log.add({
-      template: '{player}: Unseen Network — +1 Spy on {space}',
-      args: { player, space: space.name },
-    })
+
+    // The post's connected spaces determine bonus eligibility.
+    const connectedSpaces = post.spaces
+      .map(id => boardSpaces.find(s => s.id === id))
+      .filter(Boolean)
+    const icons = new Set(connectedSpaces.map(s => s.icon))
 
     game.log.indent()
-    if (space.icon === 'green' && player.spice >= 1) {
+    if (icons.has('green') && player.spice >= 1) {
       const [tradeChoice] = game.actions.choose(player, ['Pass', 'Trade 1 Spice → 3 Solari'], {
         title: 'Unseen Network: Green bonus',
       })
@@ -79,7 +89,8 @@ module.exports = {
         })
       }
     }
-    if (constants.FACTIONS.includes(space.icon) && player.solari >= 2) {
+    const hasFactionSpace = connectedSpaces.some(s => constants.FACTIONS.includes(s.icon))
+    if (hasFactionSpace && player.solari >= 2) {
       const [tradeChoice] = game.actions.choose(player, ['Pass', 'Trade 2 Solari → 1 Intrigue'], {
         title: 'Unseen Network: Faction bonus',
       })
