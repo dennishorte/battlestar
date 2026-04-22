@@ -51,10 +51,35 @@ There are two approaches to card state:
 
 | Approach | How it works | Used by |
 |----------|-------------|---------|
-| **Definition wrapping** | Card instance wraps a definition object; hooks live on the definition | Agricola |
+| **Definition wrapping** | Card instance wraps a definition object; hooks live on the definition | Agricola, Dune |
 | **State on game.state** | Cards are thin; complex state lives in `game.state` keyed by card/player | Twilight Imperium |
 
 Definition wrapping works well when each card has unique behavior (hundreds of unique cards). State-on-game.state works well when cards are simpler but game state is complex.
+
+### Co-locate Hooks With Data
+
+Each card file owns both its data fields and any hook methods that fire because of that card. Avoid the pattern of a separate `cardImplementations.js` keyed by card name — it splits the mental model across two files, and any name collision (which is common once you have multiple expansions) silently shadows or overwrites the wrong card. The Dune leader migration moved every hook into the leader's own file and reduced the dispatcher to a one-line lookup.
+
+```javascript
+// res/leaders/PaulAtreides.js
+module.exports = {
+  name: 'Paul Atreides',
+  source: 'Base',
+  compatibility: 'All',
+  leaderAbility: 'Prescience\nYou may look at the top card of your deck at any time.',
+  signetRingAbility: 'Discipline\n· Draw 1 card',
+
+  onAgentTurnStart(game, player) {
+    const top = game.zones.byId(`${player.name}.deck`).cardlist()[0]
+    if (top) {
+      game.log.add({ template: '{player}: Prescience — top of deck is {card}',
+                     args: { player, card: top.name } })
+    }
+  },
+}
+```
+
+When two cards genuinely share an effect (not just a name), extract the implementation into a small shared module and `require` it from each card file. Don't try to dedupe by string-keyed lookup; dedupe at the JavaScript module level so each card file still declares which behavior it uses.
 
 ---
 
@@ -123,6 +148,22 @@ MyGame.prototype.callCardHook = function(player, hookName, ...args) {
 ```
 
 For games with many cards, use the `matches_` gating convention (see [Logging Design](05-logging-design.md#the-trigger-logging-convention)) to avoid noisy trigger logging.
+
+### Keep Dispatchers Shallow
+
+Once hooks live on the definitions, the system that "knows about cards" should be tiny — a single generic `callHook(target, name, ...args)` is usually enough. Avoid one-function-per-hook wrappers; they grow into a parallel taxonomy that drifts from the actual hook names on cards.
+
+```javascript
+// systems/leaders.js (Dune)
+function callHook(game, player, name, ...args) {
+  const leader = getLeader(game, player)
+  return leader && typeof leader[name] === 'function'
+    ? leader[name](game, player, ...args)
+    : undefined
+}
+```
+
+Callsites become `leaders.callHook(game, player, 'onRevealTurn')`. New hooks don't require changes to the dispatcher — they're added by the cards that need them.
 
 ---
 

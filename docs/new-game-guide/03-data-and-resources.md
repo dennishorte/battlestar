@@ -79,10 +79,19 @@ module.exports = {
 
 | Strategy | When to use | Example |
 |----------|-------------|---------|
-| By card type | Cards have distinct types with different hooks | Agricola: `major/`, `minorA/`, `occupationA/` |
-| By expansion | Expansions add cards of all types | Card sets A, B, C, etc. |
-| By category | Cards are homogeneous but numerous | Twilight: `actionCards.js`, `agendaCards.js` |
-| Single file | Few total cards | Tyrants: all cards in `cards/index.js` |
+| One file per card | The default — works for any card pool. | Agricola: `major/`, `minorA/`, `occupationA/`. Dune: leader files in `res/leaders/`. |
+| By card type | Pools >50 cards split per file naturally. | Agricola occupations grouped by deck. |
+| By type **and** source | Hundreds of cards spanning multiple expansions. | Dune: `res/cards/imperium/<source>/<id>.js` (`base/`, `uprising/`, `bloodlines/`, …). |
+| By category | Cards are homogeneous but numerous. | Twilight: `actionCards.js`, `agendaCards.js`. |
+| Single file | Total cards <30 and unlikely to grow. | Tyrants: all cards in `cards/index.js`. |
+
+**Default to one-file-per-card.** Bulk arrays (`const cards = [ {...}, {...}, ... ]`) become unmaintainable around ~50 entries: diffs are noisy, name collisions are invisible, and ability code drifts away from the card it belongs to. The leader migration in Dune demonstrated the win.
+
+### File Naming and Lookup
+
+- **Name files after the card's `id`, not its display `name`.** Many games legitimately reuse names (Dune's two `Sardaukar` cards, several `Skirmish` conflicts). The id is unique and stable, so it works as both a filename and an import key without disambiguation.
+- **Always fetch cards by id.** Cards often appear in the deck multiple times (`count` field), and shared display names mean `findByName` returns ambiguous results. Build a `byId` index and require all consumers to go through it.
+- **Aggregator stays array-typed** — the per-folder `index.js` re-exports the same arrays consumers used before (`imperiumCards`, `intrigueCards`, …) so the migration doesn't ripple into callers.
 
 ### Card Set Registration
 
@@ -96,6 +105,41 @@ data.settings.cardSets = settings.cardSets || res.getCardSetIds()
 const cards = this.res.getCards(this.settings.cardSets)
 cards.forEach(card => this.cards.register(new GameCard(this, card)))
 ```
+
+### Compatibility / Source Filtering for Expansions
+
+Games with expansions usually need to mix-and-match content per lobby. Use a two-axis filter — the card's `source` (which product it shipped in) and its `compatibility` (which game configurations the card works in):
+
+```javascript
+// res/index.js
+const SOURCE_TO_SETTING = {
+  'Base':       'useBaseGameCards',
+  'Rise of Ix': 'useRiseOfIx',
+  'Immortality':'useImmortality',
+  'Bloodlines': 'useBloodlines',
+  'Promo':      'usePromo',
+}
+
+function isSourceActive(source, settings) {
+  if (source === 'Uprising') return true   // current edition, always on
+  const key = SOURCE_TO_SETTING[source]
+  return Boolean(key && settings[key])
+}
+
+function isIncluded(item, settings) {
+  if (item.compatibility !== 'All' && item.compatibility !== 'Uprising') {
+    return false
+  }
+  return isSourceActive(item.source, settings)
+}
+```
+
+A card is included **only** if its compatibility names a configuration the game supports *and* its source has been opted into. Two common mistakes to avoid:
+
+- Filtering on compatibility alone — `compatibility: 'All'` cards from later expansions leak into base games.
+- Filtering on source alone — cards may ship in an expansion but only legally play in newer editions.
+
+Add a settings flag for every source value, including promotional/preview cards (`usePromo`). Default new flags to `false`; default the current-edition flag to `true`.
 
 ### Test Cards
 
