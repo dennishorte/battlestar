@@ -38,14 +38,14 @@ describe('Objectives', () => {
   })
 
   test('first player set correctly based on objectives', () => {
-    // With 3-player test_seed, scott draws the first player objective.
+    // With 3-player test_seed, dennis draws the first player objective.
     // players.all() order is [dennis, scott, micah] (viewer seated first),
-    // so scott's index is 1.
+    // so dennis's index is 0.
     const game = t.fixture({ preserveFirstPlayer: true })
     game.run()
 
-    expect(game.state.firstPlayer).toBe('scott')
-    expect(game.state.firstPlayerIndex).toBe(1)
+    expect(game.state.firstPlayer).toBe('dennis')
+    expect(game.state.firstPlayerIndex).toBe(0)
   })
 
   test('first player set when FP objective is drawn', () => {

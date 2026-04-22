@@ -18,18 +18,8 @@ function selectLeaders(game) {
     return
   }
 
-  const leaderData = require('../res/leaders/index.js')
-
-  // Filter leaders by compatibility
-  let available = leaderData.filter(l => {
-    if (l.compatibility === 'All') {
-      return true
-    }
-    if (l.compatibility === 'Uprising') {
-      return true
-    }
-    return false
-  })
+  const res = require('../res/index.js')
+  const available = res.getLeaders(game.settings)
 
   // Shuffle
   const shuffled = [...available]

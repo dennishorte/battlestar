@@ -5,31 +5,47 @@ const cards = require('./cards/index')
 const leaderData = require('./leaders/index')
 const livingRules = require('./livingRules')
 
-/**
- * Returns the set of compatibility values that are valid for the given settings.
- */
-function getValidCompatibilities(settings) {
-  const valid = new Set(['All', 'Uprising', 'Contracts (Uprising)'])
-  if (settings.useRiseOfIx) {
-    valid.add('Rise of Ix')
-    valid.add('Shipping (Rise of Ix)')
-    valid.add('Tech (Rise of Ix)')
-  }
-  if (settings.useImmortality) {
-    valid.add('Immortality')
-  }
-  if (settings.useBloodlines) {
-    valid.add('Bloodlines')
-  }
-  return valid
+const SOURCE_TO_SETTING = {
+  'Base': 'useBaseGameCards',
+  'Rise of Ix': 'useRiseOfIx',
+  'Immortality': 'useImmortality',
+  'Bloodlines': 'useBloodlines',
 }
 
 /**
- * Filter cards by compatibility with current game settings.
+ * A source is active if it is 'Uprising' or the corresponding setting flag
+ * is true. 'Uprising' is the current game line and always active.
  */
+function isSourceActive(source, settings) {
+  if (source === 'Uprising') {
+    return true
+  }
+  const key = SOURCE_TO_SETTING[source]
+  if (!key) {
+    return false
+  }
+  return Boolean(settings[key])
+}
+
+/**
+ * A card is included iff:
+ *   - compatibility is 'All' or 'Uprising' (the only variants the Uprising
+ *     game engine actually supports), AND
+ *   - its source is 'Uprising' or the source is enabled in settings
+ *
+ * Items without source/compatibility fields (e.g. sardaukar, objectives)
+ * should not pass through this filter — callers for those collections
+ * handle selection themselves.
+ */
+function isIncluded(item, settings) {
+  if (item.compatibility !== 'All' && item.compatibility !== 'Uprising') {
+    return false
+  }
+  return isSourceActive(item.source, settings)
+}
+
 function filterByCompatibility(items, settings) {
-  const valid = getValidCompatibilities(settings)
-  return items.filter(item => valid.has(item.compatibility))
+  return items.filter(item => isIncluded(item, settings))
 }
 
 module.exports = {
@@ -38,15 +54,12 @@ module.exports = {
   constants,
   cards,
   leaderData,
-  getValidCompatibilities,
+  isSourceActive,
+  isIncluded,
   filterByCompatibility,
 
   getImperiumCards(settings) {
-    const valid = getValidCompatibilities(settings)
-    if (settings.useBaseGameCards === false) {
-      valid.delete('All')
-    }
-    return cards.imperiumCards.filter(item => valid.has(item.compatibility))
+    return cards.imperiumCards.filter(item => isIncluded(item, settings))
   },
 
   getIntrigueCards(settings) {
@@ -66,7 +79,6 @@ module.exports = {
   },
 
   getContractCards() {
-    // Contracts don't use compatibility — filtered by riseOfIxSpecific in choam.js
     return cards.contractCards
   },
 

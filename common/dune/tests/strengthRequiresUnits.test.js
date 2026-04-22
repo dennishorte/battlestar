@@ -9,7 +9,10 @@ describe('Strength Requires Units', () => {
     // Dennis plays Dagger (green) to Assembly Hall (non-combat, green space)
     t.choose(game, 'Agent Turn.Dagger')
     t.choose(game, 'Assembly Hall')
-    t.choose(game, 'Pass') // pass on plot intrigue (Assembly Hall draws intrigue)
+    // Assembly Hall draws an intrigue; only prompt to Plot if that card has one
+    if (t.currentChoices(game).includes('Pass')) {
+      t.choose(game, 'Pass')
+    }
 
     // Scott reveals
     t.choose(game, 'Reveal Turn')

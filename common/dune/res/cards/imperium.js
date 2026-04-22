@@ -4,7 +4,7 @@ const imperiumCards = [
   {
     name: 'CHOAM Demands',
     source: 'Bloodlines',
-    compatibility: 'Contracts (Uprising)',
+    compatibility: 'Uprising',
     count: 1,
     persuasionCost: 6,
     acquisitionBonus: null,
@@ -33,7 +33,7 @@ const imperiumCards = [
   {
     name: 'Corrupt Bureaucrat',
     source: 'Bloodlines',
-    compatibility: 'Contracts (Uprising)',
+    compatibility: 'Uprising',
     count: 1,
     persuasionCost: 4,
     acquisitionBonus: null,
@@ -62,7 +62,7 @@ const imperiumCards = [
   {
     name: 'Delivery Logistics',
     source: 'Bloodlines',
-    compatibility: 'Contracts (Uprising)',
+    compatibility: 'Uprising',
     count: 2,
     persuasionCost: 2,
     acquisitionBonus: null,
@@ -91,7 +91,7 @@ const imperiumCards = [
   {
     name: 'Mercantile Affairs',
     source: 'Bloodlines',
-    compatibility: 'Contracts (Uprising)',
+    compatibility: 'Uprising',
     count: 1,
     persuasionCost: 5,
     acquisitionBonus: '+1 Contract',
@@ -120,7 +120,7 @@ const imperiumCards = [
   {
     name: 'Cargo Runner',
     source: 'Uprising',
-    compatibility: 'Contracts (Uprising)',
+    compatibility: 'Uprising',
     count: 1,
     persuasionCost: 3,
     acquisitionBonus: null,
@@ -149,7 +149,7 @@ const imperiumCards = [
   {
     name: 'Delivery Agreement',
     source: 'Uprising',
-    compatibility: 'Contracts (Uprising)',
+    compatibility: 'Uprising',
     count: 1,
     persuasionCost: 5,
     acquisitionBonus: null,
@@ -178,7 +178,7 @@ const imperiumCards = [
   {
     name: 'Interstellar Trade',
     source: 'Uprising',
-    compatibility: 'Contracts (Uprising)',
+    compatibility: 'Uprising',
     count: 1,
     persuasionCost: 7,
     acquisitionBonus: '+1 Contract',
@@ -207,7 +207,7 @@ const imperiumCards = [
   {
     name: 'Priority Contracts',
     source: 'Uprising',
-    compatibility: 'Contracts (Uprising)',
+    compatibility: 'Uprising',
     count: 1,
     persuasionCost: 6,
     acquisitionBonus: null,

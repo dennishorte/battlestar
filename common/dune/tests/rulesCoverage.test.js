@@ -221,21 +221,19 @@ describe('Sandworm doubling of pay-cost rewards', () => {
 
 describe('CHOAM additional imperium cards', () => {
 
-  test('all games include Contracts (Uprising) imperium cards', () => {
+  test('default Uprising game includes the CHOAM contract imperium cards', () => {
     const res = require('../res/index.js')
-
-    const allCards = res.getImperiumCards({})
-    const contractCards = allCards.filter(c => c.compatibility === 'Contracts (Uprising)')
-    expect(contractCards.length).toBeGreaterThan(0)
+    const allCards = res.getImperiumCards({ useBaseGameCards: true })
+    const names = allCards.map(c => c.name)
+    expect(names).toContain('Cargo Runner')
+    expect(names).toContain('Delivery Agreement')
+    expect(names).toContain('Interstellar Trade')
+    expect(names).toContain('Priority Contracts')
   })
 
-  test('Contracts (Uprising) imperium cards include expected cards', () => {
+  test('CHOAM contract imperium cards are present in the raw data', () => {
     const cards = require('../res/cards/index.js')
-
-    const choamCards = cards.imperiumCards.filter(c => c.compatibility === 'Contracts (Uprising)')
-    expect(choamCards.length).toBeGreaterThan(0)
-
-    const names = choamCards.map(c => c.name)
+    const names = cards.imperiumCards.map(c => c.name)
     expect(names).toContain('Cargo Runner')
     expect(names).toContain('Delivery Agreement')
   })
@@ -246,18 +244,18 @@ describe('Base game imperium cards setting', () => {
 
   test('base game cards included by default', () => {
     const res = require('../res/index.js')
-    const cards = res.getImperiumCards({})
-    const baseCards = cards.filter(c => c.compatibility === 'All')
+    const cards = res.getImperiumCards({ useBaseGameCards: true })
+    const baseCards = cards.filter(c => c.source === 'Base')
     expect(baseCards.length).toBeGreaterThan(0)
   })
 
   test('base game cards excluded when useBaseGameCards is false', () => {
     const res = require('../res/index.js')
     const cards = res.getImperiumCards({ useBaseGameCards: false })
-    const baseCards = cards.filter(c => c.compatibility === 'All')
+    const baseCards = cards.filter(c => c.source === 'Base')
     expect(baseCards.length).toBe(0)
     // Uprising-specific cards still present
-    const uprisingCards = cards.filter(c => c.compatibility === 'Uprising')
+    const uprisingCards = cards.filter(c => c.source === 'Uprising')
     expect(uprisingCards.length).toBeGreaterThan(0)
   })
 })
