@@ -1,7 +1,7 @@
 describe('Battle Icons', () => {
 
   test('objectives have valid battle icons', () => {
-    const objectives = require('../res/cards/objectives.js')
+    const objectives = require('../res/cards/objectives')
     const validIcons = ['crysknife', 'desert-mouse', 'ornithopter']
     for (const obj of objectives) {
       expect(validIcons).toContain(obj.battleIcon)
