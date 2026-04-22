@@ -10,6 +10,7 @@ const SOURCE_TO_SETTING = {
   'Rise of Ix': 'useRiseOfIx',
   'Immortality': 'useImmortality',
   'Bloodlines': 'useBloodlines',
+  'Promo': 'usePromo',
 }
 
 /**

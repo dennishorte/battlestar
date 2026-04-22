@@ -40,6 +40,7 @@ function DuneFactory(settings, viewerName) {
   data.settings.useRiseOfIx = settings.useRiseOfIx || false
   data.settings.useImmortality = settings.useImmortality || false
   data.settings.useBloodlines = settings.useBloodlines || false
+  data.settings.usePromo = settings.usePromo || false
 
   return new Dune(data, viewerName)
 }
@@ -56,6 +57,7 @@ function factoryFromLobby(lobby) {
     useRiseOfIx: lobby.options?.useRiseOfIx || false,
     useImmortality: lobby.options?.useImmortality || false,
     useBloodlines: lobby.options?.useBloodlines || false,
+    usePromo: lobby.options?.usePromo || false,
   })
 }
 
