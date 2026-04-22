@@ -202,7 +202,7 @@ Dune.prototype.initializePlayers = function() {
 }
 
 Dune.prototype.initializeObjectives = function() {
-  const objectiveCards = require('./res/cards/objectives.js')
+  const objectiveCards = require('./res/cards/objectives')
   const numPlayers = this.settings.numPlayers
 
   // Filter by player count
