@@ -72,14 +72,14 @@ one file per card, following the leader pattern (`res/leaders/<Name>.js` +
 ## Progress log
 
 - [x] Phase 1 — plan written
-- [ ] Phase 2 — objectives
-- [ ] Phase 3 — starter
-- [ ] Phase 4 — reserve
-- [ ] Phase 5 — sardaukar
-- [ ] Phase 6 — contracts
-- [ ] Phase 7 — conflict
-- [ ] Phase 8 — tech
-- [ ] Phase 9 — tleilax
+- [x] Phase 2 — objectives (agent worktree, merged)
+- [x] Phase 3 — starter (agent worktree, merged)
+- [x] Phase 4 — reserve (agent worktree, merged; ids generated)
+- [x] Phase 5 — sardaukar (agent worktree, merged; source/compat normalised to Bloodlines)
+- [x] Phase 6 — contracts (agent worktree, merged; ids generated, compat='Uprising')
+- [x] Phase 7 — conflict (agent worktree, merged)
+- [x] Phase 8 — tech (agent worktree, merged; ids generated)
+- [x] Phase 9 — tleilax (agent worktree, merged; ids generated, compat='All')
 - [ ] Phase 10 — intrigue
 - [ ] Phase 11 — imperium/base
 - [ ] Phase 12 — imperium/uprising
@@ -87,6 +87,14 @@ one file per card, following the leader pattern (`res/leaders/<Name>.js` +
 - [ ] Phase 14 — imperium/riseOfIx
 - [ ] Phase 15 — imperium/immortality
 - [ ] Phase 16 — delete cardImplementations.js
+
+### Phase 2–9 outcome
+
+- 8 parallel worktree agents ran, each splitting one card type.
+- All merged cleanly back to main (one real text conflict in `tests/battleIcons.test.js` between phase 2 and phase 7 was auto-resolved — both agents made the same "drop `.js` extension" edit).
+- Full Dune test suite: **240 suites / 505 tests passing** (up from 89 suites / 349 tests).
+- Worktrees deleted after merge; Jest was previously picking up test files inside the worktrees and inflating counts.
+- Pre-commit `npm run lint:fix` hook failed inside every worktree because the worktrees had no `common/node_modules` — each agent committed with `--no-verify`. Main-branch merges ran with the hook live and it passed. If we run more worktree agents, we need to either `npm install` inside each worktree or symlink `node_modules` from main first.
 
 ## Subagent delegation
 
