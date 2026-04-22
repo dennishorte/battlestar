@@ -44,7 +44,7 @@ describe('Battle Icon Matching', () => {
 
   test('wild battle icon matches any other icon', () => {
     // Verify wild icon exists in conflict card data
-    const conflictCards = require('../res/cards/conflict.js')
+    const conflictCards = require('../res/cards/conflict')
     const wildCards = conflictCards.filter(c => c.battleIcon === 'wild')
     // Wild icons should exist in the card set
     expect(wildCards.length).toBeGreaterThanOrEqual(0)

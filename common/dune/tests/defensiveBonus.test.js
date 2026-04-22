@@ -17,7 +17,7 @@ describe('Defensive Bonus', () => {
   })
 
   test('conflict cards with locations are defined', () => {
-    const conflictCards = require('../res/cards/conflict.js')
+    const conflictCards = require('../res/cards/conflict')
     const withLocation = conflictCards.filter(c => c.location)
     expect(withLocation.length).toBeGreaterThan(0)
 

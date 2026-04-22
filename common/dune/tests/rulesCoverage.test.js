@@ -185,7 +185,7 @@ describe('Gather Intelligence timing', () => {
 describe('4-player tie for first: remaining compete for 3rd', () => {
 
   test('conflict rewards define first, second, and third place', () => {
-    const conflictCards = require('../res/cards/conflict.js')
+    const conflictCards = require('../res/cards/conflict')
     const tier2 = conflictCards.filter(c => c.tier === 2)
 
     // Tier 2 conflicts should have third place rewards for 4p games
@@ -194,7 +194,7 @@ describe('4-player tie for first: remaining compete for 3rd', () => {
   })
 
   test('tier 3 conflict cards have rewards for multiple placements', () => {
-    const conflictCards = require('../res/cards/conflict.js')
+    const conflictCards = require('../res/cards/conflict')
     const tier3 = conflictCards.filter(c => c.tier === 3)
 
     for (const card of tier3) {
@@ -208,7 +208,7 @@ describe('4-player tie for first: remaining compete for 3rd', () => {
 describe('Sandworm doubling of pay-cost rewards', () => {
 
   test('conflict rewards include choice-type patterns (OR rewards)', () => {
-    const conflictCards = require('../res/cards/conflict.js')
+    const conflictCards = require('../res/cards/conflict')
     const allRewards = conflictCards.flatMap(c =>
       [c.rewards?.first, c.rewards?.second, c.rewards?.third].filter(Boolean)
     )
