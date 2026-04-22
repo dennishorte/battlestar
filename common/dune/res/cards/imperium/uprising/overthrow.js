@@ -1,0 +1,37 @@
+'use strict'
+
+module.exports = {
+  id: "overthrow",
+  name: "Overthrow",
+  source: "Uprising",
+  compatibility: "All",
+  count: 1,
+  persuasionCost: 8,
+  acquisitionBonus: "+1 Intrigue card",
+  passiveAbility: null,
+  agentIcons: [],
+  factionAccess: [
+    "emperor",
+    "guild",
+    "bene-gesserit",
+    "fremen"
+  ],
+  spyAccess: false,
+  agentAbility: "Gain two influence instead of one",
+  revealPersuasion: 2,
+  revealSwords: 2,
+  revealAbility: "+1 Troop",
+  factionAffiliation: null,
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

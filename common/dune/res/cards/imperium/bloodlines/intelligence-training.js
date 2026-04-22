@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "intelligence-training",
+  name: "Intelligence Training",
+  source: "Bloodlines",
+  compatibility: "Uprising",
+  count: 2,
+  persuasionCost: 3,
+  acquisitionBonus: "+1 Spy",
+  passiveAbility: null,
+  agentIcons: [
+    "green",
+    "purple"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: null,
+  revealPersuasion: 1,
+  revealSwords: 1,
+  revealAbility: "If you have 6+ Persuasion: +1 Spy",
+  factionAffiliation: "emperor",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: true,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

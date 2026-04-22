@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "sietch-reverend-mother",
+  name: "Sietch Reverend Mother",
+  source: "Base",
+  compatibility: "All",
+  count: 1,
+  persuasionCost: 4,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [],
+  factionAccess: [
+    "bene-gesserit",
+    "fremen"
+  ],
+  spyAccess: false,
+  agentAbility: "Trash a card",
+  revealPersuasion: 0,
+  revealSwords: 0,
+  revealAbility: "Fremen Bond:\n· +3 Persuation\n· +1 Spice",
+  factionAffiliation: "bene-gesserit",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

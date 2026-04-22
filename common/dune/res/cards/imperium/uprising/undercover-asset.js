@@ -1,0 +1,36 @@
+'use strict'
+
+module.exports = {
+  id: "undercover-asset",
+  name: "Undercover Asset",
+  source: "Uprising",
+  compatibility: "Uprising",
+  count: 1,
+  persuasionCost: 2,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "green",
+    "purple",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: true,
+  agentAbility: "Ignore Influence requirements on board spaces when sending an Agent this turn",
+  revealPersuasion: 0,
+  revealSwords: 0,
+  revealAbility: "· +1 Spy\n  OR\n· +2 Daggers",
+  factionAffiliation: "emperor",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: true,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

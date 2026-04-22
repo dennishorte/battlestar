@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "ruthless-leadership",
+  name: "Ruthless Leadership",
+  source: "Promo",
+  compatibility: "Bloodlines",
+  count: 1,
+  persuasionCost: 4,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "purple",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "If you have 1+ Sardaukar Commanders in the Conflict:\n· You may Trash two cards",
+  revealPersuasion: 1,
+  revealSwords: 1,
+  revealAbility: "If you have 6+ Persuasion:\n· Deploy troops",
+  factionAffiliation: "emperor",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: true,
+}

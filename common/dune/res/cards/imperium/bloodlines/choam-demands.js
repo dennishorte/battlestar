@@ -1,0 +1,36 @@
+'use strict'
+
+module.exports = {
+  id: "choam-demands",
+  name: "CHOAM Demands",
+  source: "Bloodlines",
+  compatibility: "Uprising",
+  count: 1,
+  persuasionCost: 6,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "green",
+    "purple",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "Complete one of your contracts",
+  revealPersuasion: 0,
+  revealSwords: 0,
+  revealAbility: "If you have completed 4+ Contracts:\n· Trash this card → +1 Influence with every Faction",
+  factionAffiliation: "guild",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: true,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

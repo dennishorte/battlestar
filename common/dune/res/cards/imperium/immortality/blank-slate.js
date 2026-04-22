@@ -1,0 +1,36 @@
+'use strict'
+
+module.exports = {
+  id: "blank-slate",
+  name: "Blank Slate",
+  source: "Immortality",
+  compatibility: "Immortality",
+  count: 1,
+  persuasionCost: 1,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "green",
+    "purple",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "If grafted, this has access to all factions",
+  revealPersuasion: 1,
+  revealSwords: 0,
+  revealAbility: null,
+  factionAffiliation: null,
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: true,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

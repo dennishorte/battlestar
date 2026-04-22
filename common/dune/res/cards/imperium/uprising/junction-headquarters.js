@@ -1,0 +1,36 @@
+'use strict'
+
+module.exports = {
+  id: "junction-headquarters",
+  name: "Junction Headquarters",
+  source: "Uprising",
+  compatibility: "All",
+  count: 1,
+  persuasionCost: 6,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "green",
+    "purple",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "With 2 Spacing Guild Influence:\n· Trash an intrigue card and spend two spice → +1 Victory Point",
+  revealPersuasion: 1,
+  revealSwords: 0,
+  revealAbility: "· +1 Water\n· +1 Troop",
+  factionAffiliation: "guild",
+  vpsAvailable: 9,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

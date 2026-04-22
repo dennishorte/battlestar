@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "weirding-woman",
+  name: "Weirding Woman",
+  source: "Uprising",
+  compatibility: "All",
+  count: 2,
+  persuasionCost: 1,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "purple",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "If you have another Bene Gesserit card in play:\n· Return this card from play to your hand",
+  revealPersuasion: 1,
+  revealSwords: 1,
+  revealAbility: null,
+  factionAffiliation: "bene-gesserit",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

@@ -1,0 +1,36 @@
+'use strict'
+
+module.exports = {
+  id: "interstellar-trade",
+  name: "Interstellar Trade",
+  source: "Uprising",
+  compatibility: "Uprising",
+  count: 1,
+  persuasionCost: 7,
+  acquisitionBonus: "+1 Contract",
+  passiveAbility: null,
+  agentIcons: [
+    "green",
+    "purple",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "+1 Influence with a Faction",
+  revealPersuasion: 0,
+  revealSwords: 0,
+  revealAbility: "+1 Persuasion for each Contract you have completed",
+  factionAffiliation: "guild",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: true,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

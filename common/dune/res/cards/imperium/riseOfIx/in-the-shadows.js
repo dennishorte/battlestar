@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "in-the-shadows",
+  name: "In the Shadows",
+  source: "Rise of Ix",
+  compatibility: "All",
+  count: 2,
+  persuasionCost: 2,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "green",
+    "purple"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "With 2 Bene Infl.: Discard a card → +1 Infl. with:\n· Emperor\n  OR\n· Spacing Guild\n  OR\n· Fremen",
+  revealPersuasion: 0,
+  revealSwords: 0,
+  revealAbility: "+1 Bene Gesserit Influence",
+  factionAffiliation: "bene-gesserit",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: true,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

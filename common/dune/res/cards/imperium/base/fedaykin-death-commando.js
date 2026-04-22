@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "fedaykin-death-commando",
+  name: "Fedaykin Death Commando",
+  source: "Base",
+  compatibility: "All",
+  count: 2,
+  persuasionCost: 3,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "purple",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "Trash a card",
+  revealPersuasion: 1,
+  revealSwords: 0,
+  revealAbility: "Fremen bond: +3 Swords",
+  factionAffiliation: "fremen",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

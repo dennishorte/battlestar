@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "scout",
+  name: "Scout",
+  source: "Base",
+  compatibility: "All",
+  count: 2,
+  persuasionCost: 1,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "purple",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: null,
+  revealPersuasion: 1,
+  revealSwords: 1,
+  revealAbility: "Retreat up to 2 Troops from Conflict",
+  factionAffiliation: null,
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "arrakis-observer",
+  name: "Arrakis Observer",
+  source: "Bloodlines",
+  compatibility: "Uprising",
+  count: 1,
+  persuasionCost: 3,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "purple",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "Discard a card → +1 Spy with Deep Cover\nIf you discarded a Spacing Guild card:\n· +2 Spice",
+  revealPersuasion: 1,
+  revealSwords: 0,
+  revealAbility: "Recall a Spy → +3 Swords",
+  factionAffiliation: "guild",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: true,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

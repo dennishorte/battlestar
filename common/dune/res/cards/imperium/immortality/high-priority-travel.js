@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "high-priority-travel",
+  name: "High Priority Travel",
+  source: "Immortality",
+  compatibility: "All",
+  count: 2,
+  persuasionCost: 1,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "green",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "With 2 Influence with Spacing Guild:\n· Draw a card\n  OR\n· Turn space into a Combat space",
+  revealPersuasion: 1,
+  revealSwords: 0,
+  revealAbility: "+1 Solari",
+  factionAffiliation: "guild",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "bene-tleilax-lab",
+  name: "Bene Tleilax Lab",
+  source: "Immortality",
+  compatibility: "Immortality",
+  count: 1,
+  persuasionCost: 2,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "purple",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "+1 Specimen",
+  revealPersuasion: 1,
+  revealSwords: 0,
+  revealAbility: "If at 1 DNA:\n· +1 Spice",
+  factionAffiliation: null,
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: true,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "tleilaxu-master",
+  name: "Tleilaxu Master",
+  source: "Immortality",
+  compatibility: "Immortality",
+  count: 2,
+  persuasionCost: 5,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "green",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "If at 1 DNA:\n· You may acquire a card that costs 6 Persuasion or less\nIf at 2 DNA:\n· Put that card in your hand",
+  revealPersuasion: 1,
+  revealSwords: 0,
+  revealAbility: "+2 Research",
+  factionAffiliation: null,
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: true,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

@@ -1,0 +1,36 @@
+'use strict'
+
+module.exports = {
+  id: "possible-futures",
+  name: "Possible Futures",
+  source: "Bloodlines",
+  compatibility: "All",
+  count: 1,
+  persuasionCost: 8,
+  acquisitionBonus: "+1 Water",
+  passiveAbility: null,
+  agentIcons: [
+    "green",
+    "purple",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "· +1 Influence with any Faction\n  OR\n· +2 Troops\nIf you have another Bene Gesserit card in play, get both",
+  revealPersuasion: 2,
+  revealSwords: 0,
+  revealAbility: "+1 Water",
+  factionAffiliation: "bene-gesserit",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

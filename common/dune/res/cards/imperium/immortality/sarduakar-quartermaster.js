@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "sarduakar-quartermaster",
+  name: "Sarduakar Quartermaster",
+  source: "Immortality",
+  compatibility: "Immortality",
+  count: 1,
+  persuasionCost: 2,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "green",
+    "purple"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "If grafted:\n· +1 Troop\n· Draw a Card",
+  revealPersuasion: 1,
+  revealSwords: 2,
+  revealAbility: null,
+  factionAffiliation: "emperor",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: true,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

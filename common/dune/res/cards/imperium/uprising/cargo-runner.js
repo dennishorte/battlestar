@@ -1,0 +1,36 @@
+'use strict'
+
+module.exports = {
+  id: "cargo-runner",
+  name: "Cargo Runner",
+  source: "Uprising",
+  compatibility: "Uprising",
+  count: 1,
+  persuasionCost: 3,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "green",
+    "purple",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "If you have completed 2+ contracts:\n· Draw a card\nIf you have completed 4+ contracts:\n· Draw a card",
+  revealPersuasion: 1,
+  revealSwords: 0,
+  revealAbility: null,
+  factionAffiliation: "guild",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: true,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

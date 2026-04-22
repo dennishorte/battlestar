@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "maula-pistol",
+  name: "Maula Pistol",
+  source: "Uprising",
+  compatibility: "All",
+  count: 2,
+  persuasionCost: 3,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "purple",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "Draw a card",
+  revealPersuasion: 1,
+  revealSwords: 1,
+  revealAbility: null,
+  factionAffiliation: "fremen",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

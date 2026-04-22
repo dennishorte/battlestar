@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "elite-forces",
+  name: "Elite Forces",
+  source: "Bloodlines",
+  compatibility: "All",
+  count: 1,
+  persuasionCost: 3,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [],
+  factionAccess: [
+    "emperor",
+    "guild"
+  ],
+  spyAccess: false,
+  agentAbility: "You may trash a card from your hand\nIf you trash an Emperor card:\n· +1 Intrigue\n· +1 Troop\n· Deploy troops",
+  revealPersuasion: 1,
+  revealSwords: 1,
+  revealAbility: null,
+  factionAffiliation: "emperor",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

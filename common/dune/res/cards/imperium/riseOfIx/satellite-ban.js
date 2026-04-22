@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "satellite-ban",
+  name: "Satellite Ban",
+  source: "Rise of Ix",
+  compatibility: "All",
+  count: 1,
+  persuasionCost: 5,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [],
+  factionAccess: [
+    "guild",
+    "fremen"
+  ],
+  spyAccess: false,
+  agentAbility: "Discard a card →\n· +1 Spice\n· +1 Water",
+  revealPersuasion: 1,
+  revealSwords: 0,
+  revealAbility: "Retreat up to 2 Troops from Conflict",
+  factionAffiliation: "guild",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

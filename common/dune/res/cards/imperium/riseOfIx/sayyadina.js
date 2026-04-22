@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "sayyadina",
+  name: "Sayyadina",
+  source: "Rise of Ix",
+  compatibility: "All",
+  count: 1,
+  persuasionCost: 3,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [],
+  factionAccess: [
+    "bene-gesserit",
+    "fremen"
+  ],
+  spyAccess: false,
+  agentAbility: "Pay 3 Water --> +1 Victory Point",
+  revealPersuasion: 0,
+  revealSwords: 0,
+  revealAbility: "Fremen Bond: +3 Persuation",
+  factionAffiliation: "bene-gesserit",
+  vpsAvailable: 9,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

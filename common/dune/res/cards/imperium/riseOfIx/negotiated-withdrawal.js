@@ -1,0 +1,36 @@
+'use strict'
+
+module.exports = {
+  id: "negotiated-withdrawal",
+  name: "Negotiated Withdrawal",
+  source: "Rise of Ix",
+  compatibility: "All",
+  count: 2,
+  persuasionCost: 4,
+  acquisitionBonus: "+1 Troop",
+  passiveAbility: null,
+  agentIcons: [
+    "green",
+    "purple",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: null,
+  revealPersuasion: 2,
+  revealSwords: 0,
+  revealAbility: "Retreat 3 of your Units --> +1 Influence",
+  factionAffiliation: null,
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

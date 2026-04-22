@@ -1,0 +1,37 @@
+'use strict'
+
+module.exports = {
+  id: "treacherous-maneuver",
+  name: "Treacherous Maneuver",
+  source: "Uprising",
+  compatibility: "All",
+  count: 1,
+  persuasionCost: 5,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [],
+  factionAccess: [
+    "emperor",
+    "guild",
+    "bene-gesserit",
+    "fremen"
+  ],
+  spyAccess: false,
+  agentAbility: "Trash this card and an Emperor card from your hand → Gain two Influence instead of one",
+  revealPersuasion: 1,
+  revealSwords: 0,
+  revealAbility: "+1 Intrigue card",
+  factionAffiliation: "emperor",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

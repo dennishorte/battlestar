@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "spice-trader",
+  name: "Spice Trader",
+  source: "Rise of Ix",
+  compatibility: "All",
+  count: 1,
+  persuasionCost: 4,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "purple",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "With 2 Fremen Influence:\n· Discard a card → +2 Spice",
+  revealPersuasion: 2,
+  revealSwords: 1,
+  revealAbility: null,
+  factionAffiliation: "fremen",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

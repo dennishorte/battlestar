@@ -1,0 +1,36 @@
+'use strict'
+
+module.exports = {
+  id: "double-agent",
+  name: "Double Agent",
+  source: "Uprising",
+  compatibility: "Uprising",
+  count: 2,
+  persuasionCost: 3,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "green",
+    "purple",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "+1 Spy on the board space your sent an Agent to this turn. You may place this Spy ont he same observation post as another player's Spy",
+  revealPersuasion: 1,
+  revealSwords: 1,
+  revealAbility: null,
+  factionAffiliation: null,
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: true,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

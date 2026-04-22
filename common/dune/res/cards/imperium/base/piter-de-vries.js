@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "piter-de-vries",
+  name: "Piter De Vries",
+  source: "Base",
+  compatibility: "All",
+  count: 1,
+  persuasionCost: 5,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "green",
+    "purple"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "Draw 1 Intrigue card",
+  revealPersuasion: 3,
+  revealSwords: 1,
+  revealAbility: null,
+  factionAffiliation: null,
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

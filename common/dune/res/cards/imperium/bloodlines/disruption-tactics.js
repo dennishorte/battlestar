@@ -1,0 +1,36 @@
+'use strict'
+
+module.exports = {
+  id: "disruption-tactics",
+  name: "Disruption Tactics",
+  source: "Bloodlines",
+  compatibility: "All",
+  count: 1,
+  persuasionCost: 2,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "yellow"
+  ],
+  factionAccess: [
+    "fremen"
+  ],
+  spyAccess: false,
+  agentAbility: "Force an enemy troop to retreat",
+  revealPersuasion: 1,
+  revealSwords: 0,
+  revealAbility: "Trash this card → Deploy troops",
+  factionAffiliation: "fremen",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

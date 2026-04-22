@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "reverend-mother-mohiam",
+  name: "Reverend Mother Mohiam",
+  source: "Base",
+  compatibility: "All",
+  count: 1,
+  persuasionCost: 6,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [],
+  factionAccess: [
+    "emperor",
+    "bene-gesserit"
+  ],
+  spyAccess: false,
+  agentAbility: "With another Bene Gesserit card in play:\n· Each opponent discards 2 cards",
+  revealPersuasion: 2,
+  revealSwords: 0,
+  revealAbility: "+2 Spice",
+  factionAffiliation: "emperor",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

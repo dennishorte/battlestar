@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "shifting-allegiances",
+  name: "Shifting Allegiances",
+  source: "Base",
+  compatibility: "All",
+  count: 2,
+  persuasionCost: 3,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "green",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "Pay 1 Influence and 2 Spice:\n· +2 other Influence",
+  revealPersuasion: 2,
+  revealSwords: 0,
+  revealAbility: null,
+  factionAffiliation: null,
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "gun-thopter",
+  name: "Gun Thopter",
+  source: "Base",
+  compatibility: "All",
+  count: 2,
+  persuasionCost: 4,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "purple",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "Each opponent loses 1 Garrisoned Troop",
+  revealPersuasion: 0,
+  revealSwords: 3,
+  revealAbility: "You may deploy a troop from your Garrison to the Conflict",
+  factionAffiliation: null,
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

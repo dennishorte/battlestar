@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "worm-riders",
+  name: "Worm Riders",
+  source: "Base",
+  compatibility: "All",
+  count: 2,
+  persuasionCost: 6,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "purple",
+    "yellow"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "+2 Spice",
+  revealPersuasion: 0,
+  revealSwords: 0,
+  revealAbility: "Having 2 Fremen Influence:\n· +4 Swords\nHaving Fremen Alliance:\n· +2 Swords",
+  factionAffiliation: "fremen",
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: false,
+  hasGrafting: false,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}

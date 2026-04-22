@@ -1,0 +1,35 @@
+'use strict'
+
+module.exports = {
+  id: "dissecting-kit",
+  name: "Dissecting Kit",
+  source: "Immortality",
+  compatibility: "Immortality",
+  count: 2,
+  persuasionCost: 2,
+  acquisitionBonus: null,
+  passiveAbility: null,
+  agentIcons: [
+    "green",
+    "purple"
+  ],
+  factionAccess: [],
+  spyAccess: false,
+  agentAbility: "Trash the other grafted card -> +1 Specimen",
+  revealPersuasion: 1,
+  revealSwords: 0,
+  revealAbility: "If at 1 DNA:\n· +1 Beetle",
+  factionAffiliation: null,
+  vpsAvailable: 0,
+  hasTech: false,
+  hasShipping: false,
+  hasUnload: false,
+  hasInfiltration: false,
+  hasResearch: true,
+  hasGrafting: true,
+  hasSpies: false,
+  hasSandworms: false,
+  hasContracts: false,
+  hasBattleIcons: false,
+  hasSardaukar: false,
+}
