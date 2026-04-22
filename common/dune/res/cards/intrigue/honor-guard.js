@@ -16,7 +16,16 @@ module.exports = {
   hasSardaukar: true,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "· +1 Troop\n· Recruiting a Sardaukar Commander (including when you acquire one) costs you 1 Solari less this turn",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    // +1 Troop (Sardaukar Commander discount is Bloodlines — skip)
+    const recruit = Math.min(1, player.troopsInSupply)
+    if (recruit > 0) {
+      player.decrementCounter('troopsInSupply', recruit, { silent: true })
+      player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+    }
+  },
+
 }

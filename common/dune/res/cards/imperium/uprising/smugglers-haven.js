@@ -33,4 +33,18 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player) {
+    // Pay 4 Spice -> +1 VP
+    if (player.spice >= 4) {
+      const choices = ['Pass', 'Pay 4 Spice for +1 Victory Point']
+      const [choice] = game.actions.choose(player, choices, { title: 'Smuggler\'s Haven' })
+      if (choice !== 'Pass') {
+        player.decrementCounter('spice', 4, { silent: true })
+        player.incrementCounter('vp', 1, { silent: true })
+        game.log.add({ template: '{player} gains 1 Victory Point', args: { player } })
+      }
+    }
+  },
+
 }

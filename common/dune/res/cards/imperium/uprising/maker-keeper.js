@@ -31,4 +31,17 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player) {
+    // With 2 BG Influence: +1 Water. With 2 Fremen Influence: +1 Spice.
+    if (player.getInfluence('bene-gesserit') >= 2) {
+      player.incrementCounter('water', 1, { silent: true })
+      game.log.add({ template: '{player}: +1 Water (BG Influence)', args: { player } })
+    }
+    if (player.getInfluence('fremen') >= 2) {
+      player.incrementCounter('spice', 1, { silent: true })
+      game.log.add({ template: '{player}: +1 Spice (Fremen Influence)', args: { player } })
+    }
+  },
+
 }

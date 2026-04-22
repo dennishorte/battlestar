@@ -1,5 +1,6 @@
 'use strict'
 
+const deckEngine = require('../../../../systems/deckEngine.js')
 module.exports = {
   id: "engineered-miracle",
   name: "Engineered Miracle",
@@ -33,4 +34,16 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  revealEffect(game, player, card) {
+    if (player.getCounter('persuasion') >= 6) {
+      const choices = ['Pass', 'Trash this card to acquire from Imperium Row']
+      const [choice] = game.actions.choose(player, choices, { title: 'Engineered Miracle' })
+      if (choice !== 'Pass') {
+        deckEngine.trashCard(game, card)
+        game.log.add({ template: '{player}: Acquires from Imperium Row (special)', args: { player }, event: 'memo' })
+      }
+    }
+  },
+
 }

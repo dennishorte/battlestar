@@ -1,5 +1,8 @@
 'use strict'
 
+const constants = require('../../constants.js')
+const { addStrength } = require('../../../systems/strengthBreakdown.js')
+
 module.exports = {
   id: "cannon-turrets",
   name: "Cannon Turrets",
@@ -17,6 +20,12 @@ module.exports = {
   isTwisted: false,
   vpsAvailable: 0,
   plotEffect: null,
-  combatEffect: "· +2 Swords\n· Each opponent retreats one Dreadnought",
   endgameEffect: null,
+
+  combatEffect(game, player) {
+    // +2 Swords; Each opponent retreats one Dreadnought (expansion)
+    addStrength(game, player, 'intrigue', 'Cannon Turrets', 2 * constants.SWORD_STRENGTH)
+    game.log.add({ template: '{player}: +2 Swords (Dreadnought retreat is expansion)', args: { player } })
+  },
+
 }

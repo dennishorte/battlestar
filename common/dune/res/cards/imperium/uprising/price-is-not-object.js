@@ -32,4 +32,12 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game) {
+    // You may acquire a card using Solari instead of Persuasion this round
+    if (game.state.turnTracking) {
+      game.state.turnTracking.acquireWithSolari = true
+    }
+  },
+
 }

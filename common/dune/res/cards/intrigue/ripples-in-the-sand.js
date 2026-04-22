@@ -1,5 +1,9 @@
 'use strict'
 
+const deckEngine = require('../../../systems/deckEngine.js')
+const constants = require('../../constants.js')
+const { addStrength } = require('../../../systems/strengthBreakdown.js')
+
 module.exports = {
   id: "ripples-in-the-sand",
   name: "Ripples in the Sand",
@@ -17,6 +21,18 @@ module.exports = {
   isTwisted: false,
   vpsAvailable: 0,
   plotEffect: null,
-  combatEffect: "· +3 Swords\nIf you have 1+ Sandworm in the Conflict:\n· +1 Intrigue card",
   endgameEffect: null,
+
+  combatEffect(game, player) {
+    addStrength(game, player, 'intrigue', 'Ripples in the Sand', 3 * constants.SWORD_STRENGTH)
+    const sandworms = game.state.conflict.deployedSandworms[player.name] || 0
+    if (sandworms > 0) {
+      deckEngine.drawIntrigueCard(game, player, 1)
+      game.log.add({ template: '{player}: +3 Swords, +1 Intrigue (Sandworm)', args: { player } })
+    }
+    else {
+      game.log.add({ template: '{player}: +3 Swords', args: { player } })
+    }
+  },
+
 }

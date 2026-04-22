@@ -1,5 +1,6 @@
 'use strict'
 
+const factions = require('../../../../systems/factions.js')
 module.exports = {
   id: "firm-grip",
   name: "Firm Grip",
@@ -33,4 +34,20 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player) {
+    // Pay 2 Solari: +1 Influence with: Spacing Guild OR Bene Gesserit OR Fremen
+    if (player.solari >= 2) {
+      const factionChoices = ['Pass', 'Spacing Guild', 'Bene Gesserit', 'Fremen']
+      const [choice] = game.actions.choose(player, factionChoices, {
+        title: 'Firm Grip: Pay 2 Solari for +1 Influence? (choose faction)',
+      })
+      if (choice !== 'Pass') {
+        player.decrementCounter('solari', 2, { silent: true })
+        const { normalizeFaction } = require('./cardEffects.js')
+        factions.gainInfluence(game, player, normalizeFaction(choice))
+      }
+    }
+  },
+
 }

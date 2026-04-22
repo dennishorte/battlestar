@@ -33,4 +33,12 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game) {
+    // The next BG card you play this round has all Agent icons and added: Draw a card
+    if (game.state.turnTracking) {
+      game.state.turnTracking.nextBGCardAllIcons = true
+    }
+  },
+
 }

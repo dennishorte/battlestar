@@ -16,7 +16,13 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: true,
   vpsAvailable: 0,
-  plotEffect: "At the start of yoru turn:\n· Pass your turn",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game) {
+    if (game.state.turnTracking) {
+      game.state.turnTracking.passedTurn = true
+    }
+  },
+
 }

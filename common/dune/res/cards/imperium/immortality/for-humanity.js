@@ -1,5 +1,7 @@
 'use strict'
 
+const factions = require('../../../../systems/factions.js')
+const constants = require('../../../constants.js')
 module.exports = {
   id: "for-humanity",
   name: "For Humanity",
@@ -34,4 +36,20 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  revealEffect(game, player) {
+    if (game.state.alliances['bene-gesserit'] === player.name) {
+      const loseFactions = constants.FACTIONS.filter(f => player.getInfluence(f) >= 2)
+      if (loseFactions.length > 0) {
+        const choices = ['Pass', ...loseFactions]
+        const [choice] = game.actions.choose(player, choices, { title: 'Lose 2 Influence for +1 VP?' })
+        if (choice !== 'Pass') {
+          factions.loseInfluence(game, player, choice, 2)
+          player.incrementCounter('vp', 1, { silent: true })
+          game.log.add({ template: '{player}: +1 VP', args: { player } })
+        }
+      }
+    }
+  },
+
 }

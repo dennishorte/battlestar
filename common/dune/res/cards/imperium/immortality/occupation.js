@@ -1,5 +1,6 @@
 'use strict'
 
+const deckEngine = require('../../../../systems/deckEngine.js')
 module.exports = {
   id: "occupation",
   name: "Occupation",
@@ -37,4 +38,14 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player) {
+    // Draw a card AND Turn space into a Combat space
+    deckEngine.drawCards(game, player, 1)
+    // Mark current space as combat for this turn
+    if (game.state.turnTracking) {
+      game.state.turnTracking.spaceIsCombat = true
+    }
+  },
+
 }

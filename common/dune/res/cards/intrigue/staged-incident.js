@@ -17,6 +17,16 @@ module.exports = {
   isTwisted: false,
   vpsAvailable: 1,
   plotEffect: null,
-  combatEffect: "Lose 3 of your troops in the Conflict:\n· +1 Victory Point\n(If you remove 3 of your troops after playing this card, you gain 1 VP)",
   endgameEffect: null,
+
+  combatEffect(game, player) {
+    const deployed = game.state.conflict.deployedTroops[player.name] || 0
+    if (deployed >= 3) {
+      game.state.conflict.deployedTroops[player.name] -= 3
+      player.incrementCounter('troopsInSupply', 3, { silent: true })
+      player.incrementCounter('vp', 1, { silent: true })
+      game.log.add({ template: '{player}: Loses 3 troops, +1 VP', args: { player } })
+    }
+  },
+
 }

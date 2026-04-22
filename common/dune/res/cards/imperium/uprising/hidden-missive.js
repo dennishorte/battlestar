@@ -1,5 +1,6 @@
 'use strict'
 
+const deckEngine = require('../../../../systems/deckEngine.js')
 module.exports = {
   id: "hidden-missive",
   name: "Hidden Missive",
@@ -31,4 +32,18 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player) {
+    // With 2 BG Influence: +1 Troop & Draw a card
+    if (player.getInfluence('bene-gesserit') >= 2) {
+      const recruit = Math.min(1, player.troopsInSupply)
+      if (recruit > 0) {
+        player.decrementCounter('troopsInSupply', recruit, { silent: true })
+        player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+      }
+      deckEngine.drawCards(game, player, 1)
+      game.log.add({ template: '{player}: +1 Troop, Draw 1 card', args: { player } })
+    }
+  },
+
 }

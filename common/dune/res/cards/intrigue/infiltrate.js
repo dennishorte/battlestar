@@ -16,7 +16,13 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "Enemy Agents don't block your next Agent at board spaces this turn",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game) {
+    if (game.state.turnTracking) {
+      game.state.turnTracking.ignoreOccupancy = true
+    }
+  },
+
 }

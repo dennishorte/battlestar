@@ -16,7 +16,12 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "Discard a card:\n· Buy Tech at a 1 Spice discount\n  OR\nIf you have 3+ Tech tiles:\n· Gain an Influence point with two different Factions",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    // Discard -> Buy Tech (expansion) OR 3+ Tech -> Influence (expansion)
+    game.log.add({ template: '{player}: Rapid Engineering — Tech not available (expansion)', args: { player }, event: 'memo' })
+  },
+
 }

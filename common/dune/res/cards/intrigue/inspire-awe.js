@@ -16,7 +16,18 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "· Acquire a card that costs 3 Persuasion or less\nIf you have 1+ Sandworms in the Conflict:\n· Put that card in your hand",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    // Acquire card costing 3 or less; if sandworm, put on top of deck
+    player.incrementCounter('persuasion', 3, { silent: true })
+    const sandworms = game.state.conflict.deployedSandworms[player.name] || 0
+    if (sandworms > 0) {
+      if (game.state.turnTracking) {
+        game.state.turnTracking.acquireToTopOfDeck = true
+      }
+    }
+  },
+
 }

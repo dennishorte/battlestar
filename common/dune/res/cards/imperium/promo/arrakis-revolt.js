@@ -31,4 +31,21 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player) {
+    // Maker Hooks: 2 Spice -> Destroy Shield Wall & Deploy a Worm
+    if (game.state.makerHooks?.[player.name] && player.spice >= 2) {
+      const choices = ['Pass', 'Pay 2 Spice: Destroy Shield Wall & Deploy Sandworm']
+      const [choice] = game.actions.choose(player, choices, { title: 'Arrakis Revolt' })
+      if (choice !== 'Pass') {
+        player.decrementCounter('spice', 2, { silent: true })
+        game.state.shieldWall = false
+        game.log.add({ template: '{player} destroys the Shield Wall!', args: { player } })
+        game.state.conflict.deployedSandworms[player.name] =
+          (game.state.conflict.deployedSandworms[player.name] || 0) + 1
+        game.log.add({ template: '{player} deploys a Sandworm', args: { player } })
+      }
+    }
+  },
+
 }

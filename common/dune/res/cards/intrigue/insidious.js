@@ -16,7 +16,24 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: true,
   vpsAvailable: 0,
-  plotEffect: "Give an opponent an Intrigue card from your hand:\n· +1 Spice\nIf you gave them a non-Twisted Intrigue card:\n· +1 Spice",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    // Give an opponent an Intrigue card -> +1 Spice (or +2 if non-Twisted)
+    const intrigueZone = game.zones.byId(`${player.name}.intrigue`)
+    const cards = intrigueZone.cardlist()
+    if (cards.length > 0) {
+      const cardChoices = cards.map(c => c.name)
+      const [cardChoice] = game.actions.choose(player, cardChoices, { title: 'Give which Intrigue card?' })
+      const card = cards.find(c => c.name === cardChoice)
+      const opponents = game.players.all().filter(p => p.name !== player.name)
+      const [opponentName] = game.actions.choose(player, opponents.map(p => p.name), { title: 'Give to which opponent?' })
+      const oppIntrigue = game.zones.byId(`${opponentName}.intrigue`)
+      card.moveTo(oppIntrigue)
+      player.incrementCounter('spice', 1, { silent: true })
+      game.log.add({ template: '{player}: Gives Intrigue to {opponent}, +1 Spice', args: { player, opponent: opponentName } })
+    }
+  },
+
 }

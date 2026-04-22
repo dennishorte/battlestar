@@ -1,5 +1,8 @@
 'use strict'
 
+const constants = require('../../constants.js')
+const { addStrength } = require('../../../systems/strengthBreakdown.js')
+
 module.exports = {
   id: "impress",
   name: "Impress",
@@ -17,6 +20,13 @@ module.exports = {
   isTwisted: false,
   vpsAvailable: 0,
   plotEffect: null,
-  combatEffect: "· +2 Swords\n· Acquire a card that costs 3 Persuasion or less",
   endgameEffect: null,
+
+  combatEffect(game, player) {
+    addStrength(game, player, 'intrigue', 'Impress', 2 * constants.SWORD_STRENGTH)
+    // Acquire a card costing 3 or less — modifier
+    player.incrementCounter('persuasion', 3, { silent: true })
+    game.log.add({ template: '{player}: +2 Swords, +3 Persuasion for acquire', args: { player } })
+  },
+
 }

@@ -31,4 +31,23 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game) {
+    // Heighliner costs 2 Spice less this turn — modifier
+    if (game.state.turnTracking) {
+      game.state.turnTracking.heighlinerDiscount = 2
+    }
+  },
+
+  revealEffect(game, player) {
+    player.incrementCounter('water', 1, { silent: true })
+    if (game.state.alliances.guild === player.name) {
+      player.incrementCounter('spice', 3, { silent: true })
+      game.log.add({ template: '{player}: +1 Water, +3 Spice (Guild Alliance)', args: { player } })
+    }
+    else {
+      game.log.add({ template: '{player}: +1 Water', args: { player } })
+    }
+  },
+
 }

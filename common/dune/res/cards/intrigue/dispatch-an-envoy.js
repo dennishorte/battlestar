@@ -16,7 +16,14 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "The card you play this turn has the following icons:\n· Emperor, Spacing Guild, Bene Gesserit and Fremen board spaces",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game) {
+    // Card gets all faction icons this turn
+    if (game.state.turnTracking) {
+      game.state.turnTracking.allFactionIcons = true
+    }
+  },
+
 }

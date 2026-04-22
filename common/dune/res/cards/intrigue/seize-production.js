@@ -16,7 +16,14 @@ module.exports = {
   hasSardaukar: true,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "· +2 Solari\n  OR\nIf you have 1+ Sardaukar Commanders in the Conflict:\n· +2 Spice",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    // +2 Solari OR if Sardaukar Commanders in Conflict: +2 Spice
+    // Sardaukar Commanders are Bloodlines expansion — just give +2 Solari for now
+    player.incrementCounter('solari', 2, { silent: true })
+    game.log.add({ template: '{player}: +2 Solari', args: { player } })
+  },
+
 }

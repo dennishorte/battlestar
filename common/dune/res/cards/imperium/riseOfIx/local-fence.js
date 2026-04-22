@@ -31,4 +31,26 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player) {
+    // Pay 2 Spice -> +5 Solari OR Pay 5 Solari -> +4 Spice
+    const choices = []
+    if (player.spice >= 2) {
+      choices.push('Pay 2 Spice for 5 Solari')
+    }
+    if (player.solari >= 5) {
+      choices.push('Pay 5 Solari for 4 Spice')
+    }
+    choices.push('Pass')
+    const [choice] = game.actions.choose(player, choices, { title: 'Local Fence' })
+    if (choice.includes('2 Spice')) {
+      player.decrementCounter('spice', 2, { silent: true })
+      player.incrementCounter('solari', 5, { silent: true })
+    }
+    else if (choice.includes('5 Solari')) {
+      player.decrementCounter('solari', 5, { silent: true })
+      player.incrementCounter('spice', 4, { silent: true })
+    }
+  },
+
 }

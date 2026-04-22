@@ -34,4 +34,19 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player) {
+    // Signet Ring — this triggers the leader's signet ring ability
+    const leaders = require('./leaders.js')
+    const { resolveEffect: re } = require('../phases/playerTurns.js')
+    leaders.resolveSignetRing(game, player, re)
+  },
+
+  revealEffect(game, player) {
+    if (game.state.turnTracking) {
+      game.state.turnTracking.freeAcquire5 = true
+    }
+    game.log.add({ template: '{player}: May acquire a card costing 5 or less', args: { player }, event: 'memo' })
+  },
+
 }

@@ -16,7 +16,14 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "When you deploy 3+ units to the Conflict in a single turn:\n· Reveal three contracts from the bank. Take one and trash the other two",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game) {
+    // When deploy 3+ units: Reveal 3 contracts, take 1 (triggered effect)
+    if (game.state.turnTracking) {
+      game.state.turnTracking.coerciveNegotiation = true
+    }
+  },
+
 }

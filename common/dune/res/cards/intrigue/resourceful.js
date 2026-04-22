@@ -16,7 +16,13 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: true,
   vpsAvailable: 0,
-  plotEffect: "The card you play this turn has the following icons:\n· Green, Purple, Yellow",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game) {
+    if (game.state.turnTracking) {
+      game.state.turnTracking.allIcons = true
+    }
+  },
+
 }

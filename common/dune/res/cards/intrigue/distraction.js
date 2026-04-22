@@ -16,7 +16,14 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "When you deploy 3+ units to the Conflict in a single turn:\n· +1 Spy. You may place this Spy on the same observation post as another player's Spy",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game) {
+    // When deploy 3+ units: +1 Spy
+    if (game.state.turnTracking) {
+      game.state.turnTracking.distraction = true
+    }
+  },
+
 }

@@ -29,4 +29,37 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  revealEffect(game, player, card, allRevealedCards) {
+    const recruit = Math.min(1, player.troopsInSupply)
+    if (recruit > 0) {
+      player.decrementCounter('troopsInSupply', recruit, { silent: true })
+      player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+    }
+    const hasFremen = allRevealedCards.some(c =>
+      c !== card && c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('fremen')
+    )
+    if (hasFremen) {
+      const choices = ['Pass']
+      if (player.troopsInGarrison > 0) {
+        choices.push('Deploy 1 troop')
+      }
+      const deployed = game.state.conflict.deployedTroops[player.name] || 0
+      if (deployed > 0) {
+        choices.push('Retreat 1 troop')
+      }
+      if (choices.length > 1) {
+        const [choice] = game.actions.choose(player, choices, { title: 'Fremen Bond' })
+        if (choice.includes('Deploy')) {
+          player.decrementCounter('troopsInGarrison', 1, { silent: true })
+          game.state.conflict.deployedTroops[player.name] = (game.state.conflict.deployedTroops[player.name] || 0) + 1
+        }
+        else if (choice.includes('Retreat')) {
+          game.state.conflict.deployedTroops[player.name]--
+          player.incrementCounter('troopsInSupply', 1, { silent: true })
+        }
+      }
+    }
+  },
+
 }

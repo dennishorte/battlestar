@@ -31,4 +31,9 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect() {
+    // "When this card is trashed: Get 1 Intrigue Card" — passive trigger, handled when trashed
+  },
+
 }

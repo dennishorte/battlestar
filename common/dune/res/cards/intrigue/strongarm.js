@@ -1,5 +1,7 @@
 'use strict'
 
+const factions = require('../../../systems/factions.js')
+const constants = require('../../constants.js')
 module.exports = {
   id: "strongarm",
   name: "Strongarm",
@@ -16,7 +18,15 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "Loose a Troop:\n· Gain one Influence with a Faction whose board space you sent an Agent to this turn",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    if (player.troopsInGarrison > 0) {
+      player.decrementCounter('troopsInGarrison', 1, { silent: true })
+      const [faction] = game.actions.choose(player, constants.FACTIONS, { title: '+1 Influence' })
+      factions.gainInfluence(game, player, faction)
+    }
+  },
+
 }

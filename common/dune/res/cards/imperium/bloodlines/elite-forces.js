@@ -1,5 +1,6 @@
 'use strict'
 
+const deckEngine = require('../../../../systems/deckEngine.js')
 module.exports = {
   id: "elite-forces",
   name: "Elite Forces",
@@ -32,4 +33,31 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player) {
+    // You may trash a card from hand. If Emperor card: +1 Intrigue, +1 Troop, Deploy troops.
+    const handZone = game.zones.byId(`${player.name}.hand`)
+    const handCards = handZone.cardlist()
+    if (handCards.length > 0) {
+      const choices = ['Pass', ...handCards.map(c => c.name)]
+      const [choice] = game.actions.choose(player, choices, { title: 'Trash a card?' })
+      if (choice !== 'Pass') {
+        const card = handCards.find(c => c.name === choice)
+        if (card) {
+          const isEmperor = card.factionAffiliation && card.factionAffiliation.toLowerCase().includes('emperor')
+          deckEngine.trashCard(game, card)
+          if (isEmperor) {
+            deckEngine.drawIntrigueCard(game, player, 1)
+            const recruit = Math.min(1, player.troopsInSupply)
+            if (recruit > 0) {
+              player.decrementCounter('troopsInSupply', recruit, { silent: true })
+              player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+            }
+            game.log.add({ template: '{player}: Emperor synergy — +1 Intrigue, +1 Troop', args: { player } })
+          }
+        }
+      }
+    }
+  },
+
 }

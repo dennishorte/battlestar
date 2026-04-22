@@ -16,7 +16,12 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "Pay 1 Spice:\n· Take the Mentat from its designated space in the Landsraad",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    // Pay 1 Spice -> Take Mentat (expansion) — stub
+    game.log.add({ template: '{player}: Calculated Hire — Mentat not available (expansion)', args: { player }, event: 'memo' })
+  },
+
 }

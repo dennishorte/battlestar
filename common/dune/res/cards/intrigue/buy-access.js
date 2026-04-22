@@ -1,5 +1,7 @@
 'use strict'
 
+const factions = require('../../../systems/factions.js')
+const constants = require('../../constants.js')
 module.exports = {
   id: "buy-access",
   name: "Buy Access",
@@ -16,7 +18,17 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "Pay 5 Solari:\n· +1 Influence in 2 Factions of your choice",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    if (player.solari >= 5) {
+      player.decrementCounter('solari', 5, { silent: true })
+      for (let i = 0; i < 2; i++) {
+        const [faction] = game.actions.choose(player, constants.FACTIONS, { title: `+1 Influence (${i + 1}/2)` })
+        factions.gainInfluence(game, player, faction)
+      }
+    }
+  },
+
 }

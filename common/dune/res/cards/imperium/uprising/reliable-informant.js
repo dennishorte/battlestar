@@ -1,5 +1,6 @@
 'use strict'
 
+const spies = require('../../../../systems/spies.js')
 module.exports = {
   id: "reliable-informant",
   name: "Reliable Informant",
@@ -29,4 +30,10 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player) {
+    // Deploy a Spy on Emperor/BG/Fremen Observation Post
+    spies.placeSpy(game, player)
+  },
+
 }

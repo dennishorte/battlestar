@@ -34,4 +34,12 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  revealEffect(game) {
+    if (!game.state.tsmfDiscount) {
+      game.state.tsmfDiscount = 0
+    }
+    game.state.tsmfDiscount += 3
+  },
+
 }

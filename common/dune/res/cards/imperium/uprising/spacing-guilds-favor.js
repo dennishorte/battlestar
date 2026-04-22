@@ -1,5 +1,7 @@
 'use strict'
 
+const factions = require('../../../../systems/factions.js')
+const constants = require('../../../constants.js')
 module.exports = {
   id: "spacing-guilds-favor",
   name: "Spacing Guild's Favor",
@@ -29,4 +31,17 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  revealEffect(game, player) {
+    if (player.spice >= 3) {
+      const choices = ['Pass', 'Pay 3 Spice for +1 Influence']
+      const [choice] = game.actions.choose(player, choices, { title: "Spacing Guild's Favor" })
+      if (choice !== 'Pass') {
+        player.decrementCounter('spice', 3, { silent: true })
+        const [faction] = game.actions.choose(player, constants.FACTIONS, { title: '+1 Influence with:' })
+        factions.gainInfluence(game, player, faction)
+      }
+    }
+  },
+
 }

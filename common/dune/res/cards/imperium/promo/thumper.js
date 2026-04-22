@@ -31,4 +31,12 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game) {
+    // Double the bonus spice you harvest with this Agent
+    if (game.state.turnTracking) {
+      game.state.turnTracking.doubleBonusHarvest = true
+    }
+  },
+
 }

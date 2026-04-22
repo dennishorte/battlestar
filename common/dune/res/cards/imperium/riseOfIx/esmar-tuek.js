@@ -1,5 +1,7 @@
 'use strict'
 
+const deckEngine = require('../../../../systems/deckEngine.js')
+const factions = require('../../../../systems/factions.js')
 module.exports = {
   id: "esmar-tuek",
   name: "Esmar Tuek",
@@ -32,4 +34,18 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player) {
+    // Pay 1 Spice -> +1 BG Influence and Draw 1 card
+    if (player.spice >= 1) {
+      const choices = ['Pass', 'Pay 1 Spice for +1 BG Influence and Draw 1 card']
+      const [choice] = game.actions.choose(player, choices, { title: 'Esmar Tuek' })
+      if (choice !== 'Pass') {
+        player.decrementCounter('spice', 1, { silent: true })
+        factions.gainInfluence(game, player, 'bene-gesserit')
+        deckEngine.drawCards(game, player, 1)
+      }
+    }
+  },
+
 }

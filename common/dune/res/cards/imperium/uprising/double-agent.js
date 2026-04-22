@@ -1,5 +1,6 @@
 'use strict'
 
+const spies = require('../../../../systems/spies.js')
 module.exports = {
   id: "double-agent",
   name: "Double Agent",
@@ -33,4 +34,10 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player) {
+    // +1 Spy on the board space you sent an Agent to this turn
+    spies.placeSpy(game, player)
+  },
+
 }

@@ -29,4 +29,9 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect() {
+    // "When trashed by another card or effect: +4 Solari" — passive trigger, handled when trashed
+  },
+
 }

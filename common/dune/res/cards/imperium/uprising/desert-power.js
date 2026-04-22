@@ -31,4 +31,23 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  revealEffect(game, player) {
+    const hasMaker = game.state.makerHooks?.[player.name]
+    const choices = ['+2 Persuasion']
+    if (hasMaker && player.water >= 1) {
+      choices.push('Pay 1 Water for 1 Sandworm')
+    }
+    const [choice] = game.actions.choose(player, choices, { title: 'Desert Power' })
+    if (choice.includes('Persuasion')) {
+      player.incrementCounter('persuasion', 2, { silent: true })
+    }
+    else {
+      player.decrementCounter('water', 1, { silent: true })
+      game.state.conflict.deployedSandworms[player.name] =
+        (game.state.conflict.deployedSandworms[player.name] || 0) + 1
+      game.log.add({ template: '{player}: deploys 1 Sandworm', args: { player } })
+    }
+  },
+
 }

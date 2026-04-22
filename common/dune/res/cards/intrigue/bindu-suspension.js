@@ -16,7 +16,14 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "At the start of your turn:\n· Draw a card, you may pass your turn instead of taking an Agent or Reveal turn",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game) {
+    // At start of turn: draw a card, may pass turn
+    if (game.state.turnTracking) {
+      game.state.turnTracking.binduSuspension = true
+    }
+  },
+
 }

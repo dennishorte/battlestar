@@ -16,7 +16,12 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "Pay 1 Spice:\n· Move Freighter once",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    // Pay 1 Spice -> Move Freighter (expansion) — stub
+    game.log.add({ template: '{player}: Expedite — Freighter not available (expansion)', args: { player }, event: 'memo' })
+  },
+
 }

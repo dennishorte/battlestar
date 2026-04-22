@@ -33,4 +33,12 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game) {
+    // You may deploy any troops you recruit this turn to the conflict.
+    if (game.state.turnTracking) {
+      game.state.turnTracking.recruitToConflict = true
+    }
+  },
+
 }

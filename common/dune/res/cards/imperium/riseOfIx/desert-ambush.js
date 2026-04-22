@@ -31,4 +31,12 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game) {
+    // For each troop you deploy this turn, force an enemy unit to retreat
+    if (game.state.turnTracking) {
+      game.state.turnTracking.forceRetreatOnDeploy = true
+    }
+  },
+
 }

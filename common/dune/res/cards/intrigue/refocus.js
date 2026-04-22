@@ -1,5 +1,6 @@
 'use strict'
 
+const deckEngine = require('../../../systems/deckEngine.js')
 module.exports = {
   id: "refocus",
   name: "Refocus",
@@ -16,7 +17,18 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "Shuffle your discard pile into your deck:\n· Draw 1 card",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    const discardZone = game.zones.byId(`${player.name}.discard`)
+    const deckZone = game.zones.byId(`${player.name}.deck`)
+    for (const card of discardZone.cardlist()) {
+      card.moveTo(deckZone)
+    }
+    deckZone.shuffle(game.random)
+    deckEngine.drawCards(game, player, 1)
+    game.log.add({ template: '{player}: Shuffles discard into deck, draws 1', args: { player } })
+  },
+
 }

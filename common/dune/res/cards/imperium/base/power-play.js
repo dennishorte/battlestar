@@ -1,5 +1,6 @@
 'use strict'
 
+const deckEngine = require('../../../../systems/deckEngine.js')
 module.exports = {
   id: "power-play",
   name: "Power Play",
@@ -34,4 +35,14 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player, card) {
+    // +2 Influence instead of +1 Influence and Trash this card
+    // The "instead of +1" modifies the faction space influence gain
+    if (game.state.turnTracking) {
+      game.state.turnTracking.extraInfluence = true
+    }
+    deckEngine.trashCard(game, card)
+  },
+
 }

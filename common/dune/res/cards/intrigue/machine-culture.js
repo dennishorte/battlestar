@@ -16,7 +16,16 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 1,
-  plotEffect: "Acquire Tech",
   combatEffect: null,
-  endgameEffect: "If you have 3+ Tech tiles:\n· +1 Victory Point",
+
+  plotEffect(game, player) {
+    // Acquire Tech (expansion) — stub
+    game.log.add({ template: '{player}: Machine Culture — Tech not available (expansion)', args: { player }, event: 'memo' })
+  },
+
+  endgameEffect(game, player) {
+    // 3+ Tech tiles -> +1 VP (expansion) — stub
+    game.log.add({ template: '{player}: Machine Culture — Tech tiles not tracked (expansion)', args: { player }, event: 'memo' })
+  },
+
 }

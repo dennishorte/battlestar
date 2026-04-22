@@ -16,7 +16,13 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "During your Reveal turn this round, whenever you acquire a card:\n· +1 Troop",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game) {
+    if (game.state.turnTracking) {
+      game.state.turnTracking.troopOnAcquire = true
+    }
+  },
+
 }

@@ -16,7 +16,12 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "When you deploy 4+ units to the Conflict in a single turn:\n· Move Freighter once",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    // When deploy 4+ units: Move Freighter (expansion) — stub
+    game.log.add({ template: '{player}: Diversion — Freighter not available (expansion)', args: { player }, event: 'memo' })
+  },
+
 }

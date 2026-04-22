@@ -1,5 +1,6 @@
 'use strict'
 
+const deckEngine = require('../../../systems/deckEngine.js')
 module.exports = {
   id: "poison-snooper",
   name: "Poison Snooper",
@@ -16,7 +17,24 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "Look at the top card of your deck, Draw or Trash it",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    const deckZone = game.zones.byId(`${player.name}.deck`)
+    const topCards = deckZone.cardlist()
+    if (topCards.length > 0) {
+      const topCard = topCards[0]
+      const choices = [`Draw ${topCard.name}`, `Trash ${topCard.name}`]
+      const [choice] = game.actions.choose(player, choices, { title: 'Poison Snooper: Top card' })
+      if (choice.includes('Draw')) {
+        const handZone = game.zones.byId(`${player.name}.hand`)
+        topCard.moveTo(handZone)
+      }
+      else {
+        deckEngine.trashCard(game, topCard)
+      }
+    }
+  },
+
 }

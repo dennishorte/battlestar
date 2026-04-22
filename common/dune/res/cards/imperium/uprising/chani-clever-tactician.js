@@ -1,5 +1,8 @@
 'use strict'
 
+const constants = require('../../../constants.js')
+const { addStrength } = require('../../../../systems/strengthBreakdown.js')
+
 module.exports = {
   id: "chani-clever-tactician",
   name: "Chani, Clever Tactician",
@@ -34,4 +37,25 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  revealEffect(game, player, card, allRevealedCards) {
+    const deployed = game.state.conflict.deployedTroops[player.name] || 0
+    if (deployed >= 2) {
+      const choices = ['Pass', 'Retreat 2 troops for +4 Swords']
+      const [choice] = game.actions.choose(player, choices, { title: 'Chani' })
+      if (choice !== 'Pass') {
+        game.state.conflict.deployedTroops[player.name] -= 2
+        player.incrementCounter('troopsInSupply', 2, { silent: true })
+        addStrength(game, player, 'card', 'Chani, Clever Tactician', 4 * constants.SWORD_STRENGTH)
+      }
+    }
+    const hasFremen = allRevealedCards.some(c =>
+      c !== card && c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('fremen')
+    )
+    if (hasFremen) {
+      player.incrementCounter('persuasion', 2, { silent: true })
+      game.log.add({ template: '{player}: Fremen Bond — +2 Persuasion', args: { player } })
+    }
+  },
+
 }

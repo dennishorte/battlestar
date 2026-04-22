@@ -16,7 +16,25 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "Spend 1 Spice:\n· +1 Troop and Combat space",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    if (player.spice >= 1) {
+      const choices = ['Pass', 'Spend 1 Spice for +1 Troop and Combat space']
+      const [choice] = game.actions.choose(player, choices, { title: 'Adaptive Tactics' })
+      if (choice !== 'Pass') {
+        player.decrementCounter('spice', 1, { silent: true })
+        const recruit = Math.min(1, player.troopsInSupply)
+        if (recruit > 0) {
+          player.decrementCounter('troopsInSupply', recruit, { silent: true })
+          player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+        }
+        if (game.state.turnTracking) {
+          game.state.turnTracking.spaceIsCombat = true
+        }
+      }
+    }
+  },
+
 }

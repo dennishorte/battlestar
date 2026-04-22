@@ -29,4 +29,11 @@ module.exports = {
   hasContracts: true,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player) {
+    // This card has the Agent icons shown on all your incomplete contracts — passive access modifier
+    // The access is handled by the card's icon system; log it
+    game.log.add({ template: '{player}: Delivery Logistics — Agent icons match incomplete contracts', args: { player }, event: 'memo' })
+  },
+
 }

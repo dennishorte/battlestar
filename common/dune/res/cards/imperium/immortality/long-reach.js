@@ -1,5 +1,7 @@
 'use strict'
 
+const factions = require('../../../../systems/factions.js')
+const constants = require('../../../constants.js')
 module.exports = {
   id: "long-reach",
   name: "Long Reach",
@@ -29,4 +31,21 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player) {
+    // If you have another BG card in play: this card gets all access. +1 Influence with 2 Factions.
+    const playedZone = game.zones.byId(`${player.name}.played`)
+    const hasBG = playedZone.cardlist().some(c =>
+      c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('bene gesserit')
+    )
+    if (hasBG) {
+      for (let i = 0; i < 2; i++) {
+        const [faction] = game.actions.choose(player, constants.FACTIONS, {
+          title: `+1 Influence (${i + 1} of 2)`,
+        })
+        factions.gainInfluence(game, player, faction)
+      }
+    }
+  },
+
 }

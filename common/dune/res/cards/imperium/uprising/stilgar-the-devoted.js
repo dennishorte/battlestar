@@ -34,4 +34,16 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  revealEffect(game, player, card, allRevealedCards) {
+    const fremenCount = allRevealedCards.filter(c =>
+      c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('fremen')
+    ).length
+    const total = fremenCount * 2
+    if (total > 0) {
+      player.incrementCounter('persuasion', total, { silent: true })
+      game.log.add({ template: '{player}: +{total} Persuasion ({count} Fremen)', args: { player, total, count: fremenCount } })
+    }
+  },
+
 }

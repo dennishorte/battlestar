@@ -17,6 +17,26 @@ module.exports = {
   isTwisted: false,
   vpsAvailable: 0,
   plotEffect: null,
-  combatEffect: "Retreat 1 or 2 of your Troops:\n· +1 Contract",
   endgameEffect: null,
+
+  combatEffect(game, player) {
+    const deployed = game.state.conflict.deployedTroops[player.name] || 0
+    const retreatMax = Math.min(2, deployed)
+    if (retreatMax > 0) {
+      const choices = []
+      for (let i = 1; i <= retreatMax; i++) {
+        choices.push(`Retreat ${i}`)
+      }
+      choices.push('Pass')
+      const [choice] = game.actions.choose(player, choices, { title: 'Retreat for +1 Contract?' })
+      if (choice !== 'Pass') {
+        const count = parseInt(choice.match(/\d+/)[0])
+        game.state.conflict.deployedTroops[player.name] -= count
+        player.incrementCounter('troopsInSupply', count, { silent: true })
+        const choam = require('./choam.js')
+        choam.takeContract(game, player)
+      }
+    }
+  },
+
 }

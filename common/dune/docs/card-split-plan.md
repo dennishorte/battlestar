@@ -80,13 +80,28 @@ one file per card, following the leader pattern (`res/leaders/<Name>.js` +
 - [x] Phase 7 — conflict (agent worktree, merged)
 - [x] Phase 8 — tech (agent worktree, merged; ids generated)
 - [x] Phase 9 — tleilax (agent worktree, merged; ids generated, compat='All')
-- [ ] Phase 10 — intrigue
-- [ ] Phase 11 — imperium/base
-- [ ] Phase 12 — imperium/uprising
-- [ ] Phase 13 — imperium/bloodlines
-- [ ] Phase 14 — imperium/riseOfIx
-- [ ] Phase 15 — imperium/immortality
-- [ ] Phase 16 — delete cardImplementations.js
+- [x] Phase 10 — intrigue (131 cards, script-driven data split)
+- [x] Phase 11-15 — imperium (185 cards across base/uprising/bloodlines/riseOfIx/immortality/promo subfolders, one commit)
+- [x] Phase 16 — effect migration + `cardImplementations.js` deleted
+
+### Phase 10–16 outcome
+
+- After two agent timeouts (600s watchdog fire) on intrigue and imperium, we
+  switched from subagents to a local Node script for the mechanical
+  transform. Much faster and deterministic. Scripts live in `/tmp` as
+  one-offs; they were not added to the repo.
+- 316 card files created (131 intrigue flat + 185 imperium by source).
+- 149 effect methods migrated out of `systems/cardImplementations.js` into
+  the matching card files, identified by card id (handled one name
+  collision: "Crysknife" exists both as an intrigue and an imperium card,
+  the endgameEffect override belonged to the intrigue one by shape).
+- Callers in `phases/playerTurns.js`, `phases/combat.js`,
+  `phases/recall.js` now look for the effect as a method on the card
+  definition (`typeof card.definition.plotEffect === 'function'`) and
+  fall back to the existing string-parsing path otherwise.
+- `systems/cardImplementations.js` deleted.
+- Full suite: **556 suites / 821 tests passing**, lint clean (no
+  `--no-verify` bypass on this commit).
 
 ### Phase 2–9 outcome
 

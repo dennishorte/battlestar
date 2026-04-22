@@ -1,5 +1,7 @@
 'use strict'
 
+const factions = require('../../../../systems/factions.js')
+const constants = require('../../../constants.js')
 module.exports = {
   id: "captured-mentat",
   name: "Captured Mentat",
@@ -32,4 +34,20 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  revealEffect(game, player) {
+    const loseFactions = constants.FACTIONS.filter(f => player.getInfluence(f) > 0)
+    if (loseFactions.length > 0) {
+      const choices = ['Pass', ...loseFactions.map(f => `Lose 1 ${f}`)]
+      const [choice] = game.actions.choose(player, choices, { title: 'Swap influence?' })
+      if (choice !== 'Pass') {
+        const loseFaction = loseFactions.find(f => choice.includes(f))
+        factions.loseInfluence(game, player, loseFaction, 1)
+        const gainFactions = constants.FACTIONS.filter(f => f !== loseFaction)
+        const [gf] = game.actions.choose(player, gainFactions, { title: '+1 Influence with:' })
+        factions.gainInfluence(game, player, gf)
+      }
+    }
+  },
+
 }

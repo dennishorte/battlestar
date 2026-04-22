@@ -1,5 +1,6 @@
 'use strict'
 
+const deckEngine = require('../../../systems/deckEngine.js')
 module.exports = {
   id: "unnatural",
   name: "Unnatural",
@@ -16,7 +17,28 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: true,
   vpsAvailable: 0,
-  plotEffect: "Trash an Intrigue card:\n· +1 Intrigue card\nIf you trashed a non-Twisted Intrigue card:\n· +1 Troop",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    const intrigueZone = game.zones.byId(`${player.name}.intrigue`)
+    const cards = intrigueZone.cardlist()
+    if (cards.length > 0) {
+      const choices = ['Pass', ...cards.map(c => c.name)]
+      const [choice] = game.actions.choose(player, choices, { title: 'Trash an Intrigue card?' })
+      if (choice !== 'Pass') {
+        const card = cards.find(c => c.name === choice)
+        if (card) {
+          deckEngine.trashCard(game, card)
+          deckEngine.drawIntrigueCard(game, player, 1)
+          const recruit = Math.min(1, player.troopsInSupply)
+          if (recruit > 0) {
+            player.decrementCounter('troopsInSupply', recruit, { silent: true })
+            player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+          }
+        }
+      }
+    }
+  },
+
 }

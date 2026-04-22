@@ -33,4 +33,16 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player, card) {
+    // +1 Water AND If you have the Fremen Alliance: Return this card from play to hand.
+    player.incrementCounter('water', 1, { silent: true })
+    game.log.add({ template: '{player} gains 1 Water', args: { player } })
+    if (game.state.alliances.fremen === player.name) {
+      const handZone = game.zones.byId(`${player.name}.hand`)
+      card.moveTo(handZone)
+      game.log.add({ template: '{player} returns {card} to hand (Fremen Alliance)', args: { player, card: card.name } })
+    }
+  },
+
 }

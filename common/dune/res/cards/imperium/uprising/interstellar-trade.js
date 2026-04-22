@@ -33,4 +33,14 @@ module.exports = {
   hasContracts: true,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  revealEffect(game, player) {
+    const choam = require('./choam.js')
+    const count = choam.getCompletedContractCount(game, player)
+    if (count > 0) {
+      player.incrementCounter('persuasion', count, { silent: true })
+      game.log.add({ template: '{player}: +{count} Persuasion ({count} contracts)', args: { player, count } })
+    }
+  },
+
 }

@@ -16,7 +16,12 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "· Remove and replace a card in the Imperium Row\n· During your Reveal turn this round, you may acquire the removed card for 1 less Persuasion",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    // Remove and replace a card in Imperium Row — complex market manipulation
+    game.log.add({ template: '{player}: Manipulate — Imperium Row manipulation', args: { player }, event: 'memo' })
+  },
+
 }

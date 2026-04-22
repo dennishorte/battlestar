@@ -16,7 +16,14 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "· Draw a card\n  OR\n· The card you play this turn has the Emperor icon",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game) {
+    if (game.state.turnTracking) {
+      game.state.turnTracking.hasEmperorIcon = true
+    }
+    game.log.add({ template: 'Card gains Emperor icon this turn', event: 'memo' })
+  },
+
 }

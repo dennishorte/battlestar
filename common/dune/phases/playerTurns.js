@@ -623,11 +623,9 @@ function resolveCardAgentAbility(game, player, card) {
     return
   }
 
-  // Check for card-specific implementation function
-  const { getImplementation } = require('../systems/cardImplementations.js')
-  const impl = getImplementation(card.name)
-  if (impl && impl.agentEffect) {
-    impl.agentEffect(game, player, card)
+  // Per-card agentEffect method lives on the card definition.
+  if (typeof card.definition?.agentEffect === 'function') {
+    card.definition.agentEffect(game, player, card)
     return
   }
 
@@ -682,11 +680,8 @@ function resolveCardRevealAbility(game, player, card, allRevealedCards) {
     return
   }
 
-  // Check for card-specific implementation function
-  const { getImplementation: getRevealImpl } = require('../systems/cardImplementations.js')
-  const revealImpl = getRevealImpl(card.name)
-  if (revealImpl && revealImpl.revealEffect) {
-    revealImpl.revealEffect(game, player, card, allRevealedCards)
+  if (typeof card.definition?.revealEffect === 'function') {
+    card.definition.revealEffect(game, player, card, allRevealedCards)
     return
   }
 
@@ -1543,17 +1538,15 @@ function offerPlotIntrigue(game, player) {
       args: { player, card: card.name },
     })
 
-    // Try implementation function, then parser
-    const { getImplementation: getPlotImpl } = require('../systems/cardImplementations.js')
-    const plotImpl = getPlotImpl(card.name)
-    if (plotImpl && plotImpl.plotEffect) {
+    const plotEffect = card.definition.plotEffect
+    if (typeof plotEffect === 'function') {
       game.log.indent()
-      plotImpl.plotEffect(game, player, card)
+      plotEffect(game, player, card)
       game.log.outdent()
       continue
     }
 
-    const effectText = card.definition.plotEffect
+    const effectText = plotEffect
     const effects = parseAgentAbility(effectText)
     if (effects) {
       game.log.indent()

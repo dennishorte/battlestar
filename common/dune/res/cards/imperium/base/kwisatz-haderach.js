@@ -1,5 +1,6 @@
 'use strict'
 
+const deckEngine = require('../../../../systems/deckEngine.js')
 module.exports = {
   id: "kwisatz-haderach",
   name: "Kwisatz Haderach",
@@ -38,4 +39,12 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player) {
+    // Send one of your agents from anywhere to any board space and Draw 1 card
+    // This is a very unique effect — the agent placement is the card's primary action
+    deckEngine.drawCards(game, player, 1)
+    game.log.add({ template: '{player}: Kwisatz Haderach — draws 1 card (agent send handled by game flow)', args: { player }, event: 'memo' })
+  },
+
 }

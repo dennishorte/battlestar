@@ -32,4 +32,12 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game) {
+    // You may take another turn immediately after this one
+    if (game.state.turnTracking) {
+      game.state.turnTracking.extraTurn = true
+    }
+  },
+
 }

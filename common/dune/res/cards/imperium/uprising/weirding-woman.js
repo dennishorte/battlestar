@@ -32,4 +32,21 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player, card) {
+    // If you have another BG card in play, return this card from play to your hand
+    const playedZone = game.zones.byId(`${player.name}.played`)
+    const hasBG = playedZone.cardlist().some(c =>
+      c !== card && c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('bene gesserit')
+    )
+    if (hasBG) {
+      const handZone = game.zones.byId(`${player.name}.hand`)
+      card.moveTo(handZone)
+      game.log.add({
+        template: '{player} returns {card} to hand (Bene Gesserit synergy)',
+        args: { player, card: card.name },
+      })
+    }
+  },
+
 }

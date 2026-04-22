@@ -16,7 +16,16 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "Pay 3 Solari:\n· +1 Dreadnought",
-  combatEffect: "If you have 3+ Tech tiles:\n· +4 Swords",
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    // Pay 3 Solari -> +1 Dreadnought (expansion) — stub: log
+    game.log.add({ template: '{player}: Advanced Weaponry — Dreadnought not available (expansion)', args: { player }, event: 'memo' })
+  },
+
+  combatEffect(game, player) {
+    // Tech tiles condition (expansion) — stub
+    game.log.add({ template: '{player}: Advanced Weaponry — Tech tiles not tracked (expansion)', args: { player }, event: 'memo' })
+  },
+
 }

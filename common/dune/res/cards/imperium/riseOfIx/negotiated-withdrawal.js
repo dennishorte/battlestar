@@ -1,5 +1,7 @@
 'use strict'
 
+const factions = require('../../../../systems/factions.js')
+const constants = require('../../../constants.js')
 module.exports = {
   id: "negotiated-withdrawal",
   name: "Negotiated Withdrawal",
@@ -33,4 +35,19 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  revealEffect(game, player) {
+    const deployed = game.state.conflict.deployedTroops[player.name] || 0
+    if (deployed >= 3) {
+      const choices = ['Pass', 'Retreat 3 troops for +1 Influence']
+      const [choice] = game.actions.choose(player, choices, { title: 'Negotiated Withdrawal' })
+      if (choice !== 'Pass') {
+        game.state.conflict.deployedTroops[player.name] -= 3
+        player.incrementCounter('troopsInSupply', 3, { silent: true })
+        const [faction] = game.actions.choose(player, constants.FACTIONS, { title: '+1 Influence with:' })
+        factions.gainInfluence(game, player, faction)
+      }
+    }
+  },
+
 }

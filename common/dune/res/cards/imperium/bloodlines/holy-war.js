@@ -35,4 +35,19 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  revealEffect(game, player, card, allRevealedCards) {
+    const recruit = Math.min(1, player.troopsInSupply)
+    if (recruit > 0) {
+      player.decrementCounter('troopsInSupply', recruit, { silent: true })
+      player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+    }
+    const hasFremen = allRevealedCards.some(c =>
+      c !== card && c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('fremen')
+    )
+    if (hasFremen) {
+      game.log.add({ template: '{player}: Fremen Bond — may deploy troops', args: { player }, event: 'memo' })
+    }
+  },
+
 }

@@ -17,6 +17,12 @@ module.exports = {
   isTwisted: false,
   vpsAvailable: 0,
   plotEffect: null,
-  combatEffect: "When you win a Conflict:\n· +3 Spice\n(You may play this card after Resolving Combat)",
   endgameEffect: null,
+
+  combatEffect(game) {
+    if (game.state.turnTracking) {
+      game.state.turnTracking.toTheVictor = true
+    }
+  },
+
 }

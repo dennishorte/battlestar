@@ -16,7 +16,19 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "· +1 Troop\nIf you have 3 Influence with the Emperor:\n· +3 Solari",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    const recruit = Math.min(1, player.troopsInSupply)
+    if (recruit > 0) {
+      player.decrementCounter('troopsInSupply', recruit, { silent: true })
+      player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+    }
+    if (player.getInfluence('emperor') >= 3) {
+      player.incrementCounter('solari', 3, { silent: true })
+      game.log.add({ template: '{player}: Emperor synergy — +3 Solari', args: { player } })
+    }
+  },
+
 }

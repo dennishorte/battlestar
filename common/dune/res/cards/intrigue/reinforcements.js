@@ -16,7 +16,22 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "Pay 3 Solari:\n· +3 Troops\nIf it's your Reveal turn:\n· You may deploy any of these troops to the Conflict",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    if (player.solari >= 3) {
+      const choices = ['Pass', 'Pay 3 Solari for +3 Troops']
+      const [choice] = game.actions.choose(player, choices, { title: 'Reinforcements' })
+      if (choice !== 'Pass') {
+        player.decrementCounter('solari', 3, { silent: true })
+        const recruit = Math.min(3, player.troopsInSupply)
+        if (recruit > 0) {
+          player.decrementCounter('troopsInSupply', recruit, { silent: true })
+          player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+        }
+      }
+    }
+  },
+
 }

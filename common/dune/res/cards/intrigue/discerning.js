@@ -1,5 +1,7 @@
 'use strict'
 
+const deckEngine = require('../../../systems/deckEngine.js')
+const constants = require('../../constants.js')
 module.exports = {
   id: "discerning",
   name: "Discerning",
@@ -16,7 +18,24 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: true,
   vpsAvailable: 0,
-  plotEffect: "· Discard a card to Draw a card\n  OR\nIf you have an alliance:\n· Draw a card",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    const handZone = game.zones.byId(`${player.name}.hand`)
+    const hasAlliance = constants.FACTIONS.some(f => game.state.alliances[f] === player.name)
+    if (hasAlliance) {
+      deckEngine.drawCards(game, player, 1)
+    }
+    else if (handZone.cardlist().length > 0) {
+      const cards = handZone.cardlist()
+      const [choice] = game.actions.choose(player, cards.map(c => c.name), { title: 'Discard a card to draw' })
+      const card = cards.find(c => c.name === choice)
+      if (card) {
+        deckEngine.discardCard(game, player, card)
+        deckEngine.drawCards(game, player, 1)
+      }
+    }
+  },
+
 }

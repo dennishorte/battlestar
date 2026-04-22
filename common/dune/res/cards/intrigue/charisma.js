@@ -16,7 +16,12 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "Gain 2 Persuation during your Reveal turn this round",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    player.incrementCounter('persuasion', 2, { silent: true })
+    game.log.add({ template: '{player}: +2 Persuasion this Reveal turn', args: { player } })
+  },
+
 }

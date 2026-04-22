@@ -1,5 +1,7 @@
 'use strict'
 
+const factions = require('../../../../systems/factions.js')
+const constants = require('../../../constants.js')
 module.exports = {
   id: "possible-futures",
   name: "Possible Futures",
@@ -33,4 +35,44 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player) {
+    // +1 Influence with any Faction OR +2 Troops. If you have another BG card in play, get both.
+    const playedZone = game.zones.byId(`${player.name}.played`)
+    const hasBG = playedZone.cardlist().some(c =>
+      c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('bene gesserit')
+    )
+    if (hasBG) {
+      // Get both
+      const [faction] = game.actions.choose(player, constants.FACTIONS, {
+        title: 'Choose faction for +1 Influence',
+      })
+      factions.gainInfluence(game, player, faction)
+      const recruit = Math.min(2, player.troopsInSupply)
+      if (recruit > 0) {
+        player.decrementCounter('troopsInSupply', recruit, { silent: true })
+        player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+        game.log.add({ template: '{player} recruits {count} troop(s)', args: { player, count: recruit } })
+      }
+    }
+    else {
+      const choices = ['+1 Influence with any Faction', '+2 Troops']
+      const [choice] = game.actions.choose(player, choices, { title: 'Choose one' })
+      if (choice.includes('Influence')) {
+        const [faction] = game.actions.choose(player, constants.FACTIONS, {
+          title: 'Choose faction for +1 Influence',
+        })
+        factions.gainInfluence(game, player, faction)
+      }
+      else {
+        const recruit = Math.min(2, player.troopsInSupply)
+        if (recruit > 0) {
+          player.decrementCounter('troopsInSupply', recruit, { silent: true })
+          player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+          game.log.add({ template: '{player} recruits {count} troop(s)', args: { player, count: recruit } })
+        }
+      }
+    }
+  },
+
 }

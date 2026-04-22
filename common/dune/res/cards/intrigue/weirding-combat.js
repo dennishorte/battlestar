@@ -1,5 +1,8 @@
 'use strict'
 
+const constants = require('../../constants.js')
+const { addStrength } = require('../../../systems/strengthBreakdown.js')
+
 module.exports = {
   id: "weirding-combat",
   name: "Weirding Combat",
@@ -17,6 +20,15 @@ module.exports = {
   isTwisted: false,
   vpsAvailable: 0,
   plotEffect: null,
-  combatEffect: "· +3 Swords\nIf 3 Influence with Bene Gesserit:\n· +2 Swords",
   endgameEffect: null,
+
+  combatEffect(game, player) {
+    let swords = 3
+    if (player.getInfluence('bene-gesserit') >= 3) {
+      swords += 2
+    }
+    addStrength(game, player, 'intrigue', 'Weirding Combat', swords * constants.SWORD_STRENGTH)
+    game.log.add({ template: '{player}: +{count} Swords', args: { player, count: swords } })
+  },
+
 }

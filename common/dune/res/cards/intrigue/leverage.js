@@ -16,7 +16,17 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "If you gained Spice this turn:\n· +1 Contract\n· +1 Solari",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffect(game, player) {
+    const gained = game.state.turnTracking?.spiceGained || 0
+    if (gained > 0) {
+      const choam = require('./choam.js')
+      choam.takeContract(game, player)
+      player.incrementCounter('solari', 1, { silent: true })
+      game.log.add({ template: '{player}: +1 Contract, +1 Solari', args: { player } })
+    }
+  },
+
 }
