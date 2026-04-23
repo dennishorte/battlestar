@@ -23,7 +23,7 @@ module.exports = {
 
   plotEffect(game, player) {
     // Recall Spy -> Trash + Draw OR Ignore Influence requirements
-    const observationPosts = require('../res/observationPosts.js')
+    const observationPosts = require('../../observationPosts.js')
     const hasSpy = observationPosts.some(p => (game.state.spyPosts[p.id] || []).includes(player.name))
     const choices = []
     if (hasSpy) {

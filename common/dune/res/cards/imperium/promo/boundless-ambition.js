@@ -37,8 +37,8 @@ module.exports = {
 
   agentEffect(game, player) {
     // Signet Ring — this triggers the leader's signet ring ability
-    const leaders = require('./leaders.js')
-    const { resolveEffect: re } = require('../phases/playerTurns.js')
+    const leaders = require('../../../../systems/leaders.js')
+    const { resolveEffect: re } = require('../../../../phases/playerTurns.js')
     leaders.resolveSignetRing(game, player, re)
   },
 

@@ -35,7 +35,7 @@ module.exports = {
 
   agentEffect(game, player) {
     // Block 1 board space for Opponents this round
-    const boardSpacesData = require('../res/boardSpaces.js')
+    const boardSpacesData = require('../../../boardSpaces.js')
     const spaceChoices = boardSpacesData.map(s => s.name)
     const [choice] = game.actions.choose(player, spaceChoices, { title: 'Block a board space' })
     const space = boardSpacesData.find(s => s.name === choice)

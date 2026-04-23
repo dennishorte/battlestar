@@ -44,7 +44,7 @@ module.exports = {
       })
       if (choice !== 'Pass') {
         player.decrementCounter('solari', 2, { silent: true })
-        const { normalizeFaction } = require('./cardEffects.js')
+        const { normalizeFaction } = require('../../../../systems/cardEffects.js')
         factions.gainInfluence(game, player, normalizeFaction(choice))
       }
     }

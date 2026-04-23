@@ -25,7 +25,7 @@ module.exports = {
 
   combatEffect(game, player) {
     addStrength(game, player, 'intrigue', 'Find Weakness', 2 * constants.SWORD_STRENGTH)
-    const observationPosts = require('../res/observationPosts.js')
+    const observationPosts = require('../../observationPosts.js')
     const hasSpy = observationPosts.some(p => (game.state.spyPosts[p.id] || []).includes(player.name))
     if (hasSpy) {
       spies.recallSpy(game, player)

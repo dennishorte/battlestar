@@ -22,7 +22,7 @@ module.exports = {
 
   plotEffect(game, player) {
     const choices = ['Place 1 Spy']
-    const observationPosts = require('../res/observationPosts.js')
+    const observationPosts = require('../../observationPosts.js')
     const hasSpy = observationPosts.some(p => (game.state.spyPosts[p.id] || []).includes(player.name))
     if (hasSpy) {
       choices.push('Recall Spy -> Blow Shield Wall + 2 Spice')

@@ -27,7 +27,7 @@ module.exports = {
       if (choice !== 'Pass') {
         player.decrementCounter('spice', 2, { silent: true })
         // Gain influence with each faction that has at least one of your agents
-        const boardSpacesData = require('../res/boardSpaces.js')
+        const boardSpacesData = require('../../boardSpaces.js')
         const factionSet = new Set()
         for (const space of boardSpacesData) {
           if (game.state.boardSpaces[space.id] === player.name && space.faction) {

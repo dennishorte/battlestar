@@ -22,7 +22,7 @@ module.exports = {
   plotEffect(game, player) {
     const gained = game.state.turnTracking?.spiceGained || 0
     if (gained > 0) {
-      const choam = require('./choam.js')
+      const choam = require('../../../systems/choam.js')
       choam.takeContract(game, player)
       player.incrementCounter('solari', 1, { silent: true })
       game.log.add({ template: '{player}: +1 Contract, +1 Solari', args: { player } })

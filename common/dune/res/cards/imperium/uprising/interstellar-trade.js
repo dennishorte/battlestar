@@ -35,7 +35,7 @@ module.exports = {
   hasSardaukar: false,
 
   revealEffect(game, player) {
-    const choam = require('./choam.js')
+    const choam = require('../../../../systems/choam.js')
     const count = choam.getCompletedContractCount(game, player)
     if (count > 0) {
       player.incrementCounter('persuasion', count, { silent: true })

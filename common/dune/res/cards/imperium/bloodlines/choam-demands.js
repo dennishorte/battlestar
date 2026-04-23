@@ -38,7 +38,7 @@ module.exports = {
   hasSardaukar: false,
 
   revealEffect(game, player, card) {
-    const choam = require('./choam.js')
+    const choam = require('../../../../systems/choam.js')
     if (choam.getCompletedContractCount(game, player) >= 4) {
       const choices = ['Pass', 'Trash this card for +1 Influence with every Faction']
       const [choice] = game.actions.choose(player, choices, { title: 'CHOAM Demands' })

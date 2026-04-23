@@ -33,7 +33,7 @@ module.exports = {
         const count = parseInt(choice.match(/\d+/)[0])
         game.state.conflict.deployedTroops[player.name] -= count
         player.incrementCounter('troopsInSupply', count, { silent: true })
-        const choam = require('./choam.js')
+        const choam = require('../../../systems/choam.js')
         choam.takeContract(game, player)
       }
     }
