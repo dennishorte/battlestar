@@ -15,4 +15,5 @@ module.exports = {
   revealPersuasion: 2,
   revealSwords: 0,
   revealAbility: null,
+  factionAffiliation: 'bene-gesserit',
 }

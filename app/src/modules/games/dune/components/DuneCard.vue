@@ -14,6 +14,12 @@
       <span class="card-name">{{ def.name }}</span>
       <span class="card-cost" v-if="costLabel">{{ costLabel }}</span>
     </div>
+    <div class="card-affiliation"
+         v-if="affiliation"
+         :class="`affiliation-${affiliation.id}`">
+      <DuneFactionIcon :faction="affiliation.id" size=".9em" />
+      {{ affiliation.label }}
+    </div>
     <div class="card-effects" v-if="sections.length">
       <div v-for="(section, i) in sections"
            :key="i"
@@ -34,6 +40,13 @@ import DuneFactionIcon from './DuneFactionIcon.vue'
 import { textLines, cardType, cardSections } from '../cardUtil.js'
 
 const shapeMap = { green: 'pentagon', purple: 'circle', yellow: 'triangle' }
+
+const factionLabels = {
+  emperor: 'Emperor',
+  guild: 'Spacing Guild',
+  'bene-gesserit': 'Bene Gesserit',
+  fremen: 'Fremen',
+}
 
 export default {
   name: 'DuneCard',
@@ -67,6 +80,14 @@ export default {
         icons.push({ type: faction, faction: true })
       }
       return icons
+    },
+
+    affiliation() {
+      const id = this.def.factionAffiliation
+      if (!id) {
+        return null
+      }
+      return { id, label: factionLabels[id] || id }
     },
 
     costLabel() {
@@ -126,6 +147,29 @@ export default {
 .card-icons {
   display: inline-flex;
   gap: 2px;
+}
+
+.card-affiliation {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 3px;
+  margin-top: .15em;
+  padding: 0 .4em;
+  border-radius: .6em;
+  font-size: .75em;
+  font-weight: 500;
+  line-height: 1.5;
+  color: white;
+}
+
+.affiliation-emperor { background-color: #d03030; }
+.affiliation-guild { background-color: #e08828; }
+.affiliation-bene-gesserit { background-color: #8855cc; }
+.affiliation-fremen { background-color: #3088cc; }
+
+.card-affiliation .faction-icon {
+  color: white;
 }
 
 .icon {

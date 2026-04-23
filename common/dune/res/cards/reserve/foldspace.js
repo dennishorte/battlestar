@@ -15,4 +15,5 @@ module.exports = {
   revealPersuasion: 0,
   revealSwords: 0,
   revealAbility: null,
+  factionAffiliation: null,
 }
