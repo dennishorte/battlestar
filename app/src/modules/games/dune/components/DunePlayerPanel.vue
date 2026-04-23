@@ -35,7 +35,8 @@
       <div class="deck-info">
         <span>deck: {{ deckCount }}</span>
         <span>discard: {{ discardCount }}</span>
-        <span>intrigue: {{ intrigueCount }}</span>
+        <span :class="{ clickable: isViewer }" @click="openIntrigue">intrigue: {{ intrigueCount }}</span>
+        <span class="clickable" @click="openContracts">contracts: {{ contractsCount }}</span>
         <span v-if="player.strength > 0">strength: {{ player.strength }}</span>
         <span v-if="player.hasHighCouncil">high council</span>
       </div>
@@ -75,7 +76,7 @@ export default {
 
   components: { DuneCard, DuneOptionChip },
 
-  inject: ['actor', 'game'],
+  inject: ['actor', 'game', 'ui'],
 
   props: {
     player: {
@@ -119,6 +120,10 @@ export default {
       return this.game.zones.byId(`${this.player.name}.intrigue`).cardlist().length
     },
 
+    contractsCount() {
+      return this.game.zones.byId(`${this.player.name}.contracts`).cardlist().length
+    },
+
     leader() {
       return this.game.state.leaders[this.player.name] || null
     },
@@ -142,6 +147,27 @@ export default {
   },
 
   methods: {
+    openIntrigue() {
+      if (!this.isViewer) {
+        return
+      }
+      const cards = this.game.zones.byId(`${this.player.name}.intrigue`).cardlist()
+        .sort((l, r) => l.name.localeCompare(r.name))
+      this.ui.modals.cardList = {
+        title: `${this.player.name} — Intrigue`,
+        cards,
+      }
+    },
+
+    openContracts() {
+      const cards = this.game.zones.byId(`${this.player.name}.contracts`).cardlist()
+        .sort((l, r) => l.name.localeCompare(r.name))
+      this.ui.modals.cardList = {
+        title: `${this.player.name} — Contracts`,
+        cards,
+      }
+    },
+
     battleIconLabel(icon) {
       const labels = {
         'desert-mouse': '🐭',
@@ -235,9 +261,20 @@ export default {
 
 .deck-info {
   display: flex;
+  flex-wrap: wrap;
   gap: .5em;
   font-size: .8em;
   color: #8a7a68;
+}
+
+.deck-info .clickable {
+  cursor: pointer;
+  color: #6a5010;
+  text-decoration: underline dotted;
+}
+
+.deck-info .clickable:hover {
+  color: #2c2416;
 }
 
 .section-label {

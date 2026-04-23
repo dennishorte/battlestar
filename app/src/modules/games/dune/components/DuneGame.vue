@@ -45,6 +45,16 @@
           <DuneCard :card="ui.modals.cardViewer" class="modal-card" />
         </div>
       </div>
+      <div v-if="ui.modals.cardList" class="dune-modal-backdrop" @click="ui.modals.cardList = null">
+        <div class="dune-modal card-list-modal" @click.stop>
+          <div class="modal-title">{{ ui.modals.cardList.title }}</div>
+          <div v-if="ui.modals.cardList.cards.length === 0" class="modal-empty">none</div>
+          <DuneCard v-for="card in ui.modals.cardList.cards"
+                    :key="card.id || card.name"
+                    :card="card"
+                    class="modal-card" />
+        </div>
+      </div>
     </teleport>
   </div>
 </template>
@@ -97,6 +107,8 @@ export default {
         fn: {},
         modals: {
           rulesReference: { filter: null },
+          cardViewer: null,
+          cardList: null,
         },
       },
     }
@@ -321,5 +333,35 @@ export default {
   border: none;
   font-size: 1em;
   padding: .6em .8em;
+}
+
+.card-list-modal {
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: .75em;
+  display: flex;
+  flex-direction: column;
+  gap: .35em;
+}
+
+.card-list-modal .modal-card {
+  border: 1px solid #d4c8a8;
+  font-size: .9em;
+  padding: .4em .6em;
+}
+
+.modal-title {
+  font-weight: 600;
+  font-size: 1.05em;
+  padding: 0 .25em .25em;
+  border-bottom: 1px solid #e0d8c4;
+  color: #2c2416;
+}
+
+.modal-empty {
+  color: #8a7a68;
+  font-style: italic;
+  padding: .5em .25em;
 }
 </style>
