@@ -20,6 +20,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Recall a Spy → Trash a card and Draw a card OR Ignore Influence requirements on board spaces when sending an Agent this turn",
 
   plotEffect(game, player) {
     // Recall Spy -> Trash + Draw OR Ignore Influence requirements

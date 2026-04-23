@@ -19,6 +19,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Each opponent spying on the board space where you sent an Agent this turn must move that Spy. Then you place a Spy on that Space",
 
   plotEffect(game, player) {
     // Move opponent spies from your space, then place your spy there

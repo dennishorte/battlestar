@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "During your Reveal turn this round, whenever you acquire a card: +1 Troop",
 
   plotEffect(game) {
     if (game.state.turnTracking) {

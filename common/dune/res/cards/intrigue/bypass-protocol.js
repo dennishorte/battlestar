@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "· Acquire a card that costs 3 Persuasion or less\n  OR\n· Pay 2 Spice → Acquire a card that costs 5 Persuasion to the top of your deck",
 
   plotEffect(game, player) {
     // Acquire card costing 3 or less, OR pay 2 Spice for card costing 5 or less

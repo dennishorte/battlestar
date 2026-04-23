@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "The card you play this turn has the following icons: Green, Purple, Yellow",
 
   plotEffect(game) {
     if (game.state.turnTracking) {

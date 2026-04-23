@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Spend 1 Spice → +1 Troop and Combat space",
 
   plotEffect(game, player) {
     if (player.spice >= 1) {

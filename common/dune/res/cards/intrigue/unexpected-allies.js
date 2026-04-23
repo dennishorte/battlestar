@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Pay 2 Water → Blow the Shield Wall and +1 Sandworm",
 
   plotEffect(game, player) {
     if (player.water >= 2) {

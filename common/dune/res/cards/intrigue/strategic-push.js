@@ -21,6 +21,7 @@ module.exports = {
   vpsAvailable: 0,
   plotEffect: null,
   endgameEffect: null,
+  combatText: "+2 Swords; If you win this Conflict: +2 Solari",
 
   combatEffect(game, player) {
     addStrength(game, player, 'intrigue', 'Strategic Push', 2 * constants.SWORD_STRENGTH)

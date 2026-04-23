@@ -19,6 +19,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Trash an Intrigue card → +1 Intrigue card. If you trashed a non-Twisted Intrigue card: +1 Troop",
 
   plotEffect(game, player) {
     const intrigueZone = game.zones.byId(`${player.name}.intrigue`)

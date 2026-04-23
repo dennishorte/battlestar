@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  combatText: "+1 Troop. Recruiting a Sardaukar Commander (including when you acquire one) costs you 1 Solari less this turn",
 
   plotEffect(game, player) {
     // +1 Troop (Sardaukar Commander discount is Bloodlines — skip)

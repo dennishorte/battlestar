@@ -19,6 +19,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Pay 2 Spice → +3 Troops; If you have 3 Influence with the Spacing Guild, Draw a card",
 
   plotEffect(game, player) {
     if (player.spice >= 2) {

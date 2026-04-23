@@ -20,6 +20,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Lose three of your troops → Gain one Influence with a Faction where an opponent has more Influence than you",
 
   plotEffect(game, player) {
     if (player.troopsInGarrison >= 3) {

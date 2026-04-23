@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 2,
   plotEffect: null,
   combatEffect: null,
+  endgameText: "· If you have at least 2 \"The Spice Must Flow\": +1 Victory Point\n· If you have more \"The Spice Must Flow\" than each opponent: +1 Victory Point",
 
   endgameEffect(game, player) {
     // Count TSMF cards

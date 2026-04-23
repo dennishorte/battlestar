@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Pay 1 Spice → Take the Mentat from its designated space in the Landsraad",
 
   plotEffect(game, player) {
     // Pay 1 Spice -> Take Mentat (expansion) — stub

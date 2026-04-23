@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Give an opponent an Intrigue card from your hand → +1 Spice. If you gave them a non-Twisted Intrigue card: +1 Spice",
 
   plotEffect(game, player) {
     // Give an opponent an Intrigue card -> +1 Spice (or +2 if non-Twisted)

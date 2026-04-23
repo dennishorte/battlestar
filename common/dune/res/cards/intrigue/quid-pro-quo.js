@@ -19,6 +19,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Pay 2 Spice → Gain one Influence with each Faction that has at least one of your Agents on its board spaces",
 
   plotEffect(game, player) {
     if (player.spice >= 2) {

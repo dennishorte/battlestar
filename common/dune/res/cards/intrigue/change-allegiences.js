@@ -20,6 +20,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "· Lose 1 Influence → +1 Influence\n· Pay 3 Spice → +1 Influence",
 
   plotEffect(game, player) {
     // Lose 1 Influence -> +1 Influence; Pay 3 Spice -> +1 Influence

@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "If you gained Spice this turn: +1 Contract and +1 Solari",
 
   plotEffect(game, player) {
     const gained = game.state.turnTracking?.spiceGained || 0

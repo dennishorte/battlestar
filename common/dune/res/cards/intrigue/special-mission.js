@@ -19,6 +19,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Place 1 Spy on a Purple space OR Recall one Spy → Blow the Shield Wall and +2 Spice",
 
   plotEffect(game, player) {
     const choices = ['Place 1 Spy']

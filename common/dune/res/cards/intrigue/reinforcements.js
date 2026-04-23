@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Pay 3 Solari → +3 Troops, if it's your Reveal turn, you may deploy any of these troops to the Conflict",
 
   plotEffect(game, player) {
     if (player.solari >= 3) {

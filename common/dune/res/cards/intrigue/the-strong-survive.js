@@ -19,6 +19,7 @@ module.exports = {
   vpsAvailable: 0,
   plotEffect: null,
   endgameEffect: null,
+  combatText: "+3 Troops OR Retreat one of your troops → Trash a card",
 
   combatEffect(game, player) {
     const choices = ['+3 Troops']

@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Acquire a card that costs 3 Persuasion or less; if you have one or more Sandworms in the Conflict, put that card in your hand",
 
   plotEffect(game, player) {
     // Acquire card costing 3 or less; if sandworm, put on top of deck

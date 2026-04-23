@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Discard a card → Buy Tech at a 1 Spice discount OR If you have 3+ Tech tiles, gain an Influence point with two different Factions",
 
   plotEffect(game, player) {
     // Discard -> Buy Tech (expansion) OR 3+ Tech -> Influence (expansion)

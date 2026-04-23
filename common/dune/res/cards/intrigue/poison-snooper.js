@@ -19,6 +19,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Look at the top card of your deck, Draw or Trash it",
 
   plotEffect(game, player) {
     const deckZone = game.zones.byId(`${player.name}.deck`)

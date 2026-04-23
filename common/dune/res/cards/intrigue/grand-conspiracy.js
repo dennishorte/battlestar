@@ -19,6 +19,7 @@ module.exports = {
   vpsAvailable: 2,
   plotEffect: null,
   combatEffect: null,
+  endgameText: "2 Dreadnoughts, 1+ The Spice Must Flow, 4+ Influence on 2+ Influence tracks, A seat on the High Council; If you have any three: +1 Victory Point; If you have all four: +2 Victory Points",
 
   endgameEffect(game, player) {
     // Complex multi-condition check (Dreadnoughts, TSMF, Influence, High Council)

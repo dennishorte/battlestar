@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Pay 1 Solari → An opponent of your choice loses one troop in the Conflict and you deploy one troop from your supply to the Conflict",
 
   plotEffect(game, player) {
     if (player.solari >= 1) {

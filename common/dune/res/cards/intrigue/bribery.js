@@ -20,6 +20,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Pay 2 Solari → +1 Influence",
 
   plotEffect(game, player) {
     if (player.solari >= 2) {

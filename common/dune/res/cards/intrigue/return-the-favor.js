@@ -21,6 +21,7 @@ module.exports = {
   vpsAvailable: 0,
   plotEffect: null,
   endgameEffect: null,
+  combatText: "+1 Sword. For each Faction where you have 2+ Influence: +1 Sword",
 
   combatEffect(game, player) {
     let swords = 1

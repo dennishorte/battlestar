@@ -22,6 +22,7 @@ module.exports = {
   vpsAvailable: 0,
   plotEffect: null,
   endgameEffect: null,
+  combatText: "+2 Swords; Recall 1 Spy → +3 Swords",
 
   combatEffect(game, player) {
     addStrength(game, player, 'intrigue', 'Find Weakness', 2 * constants.SWORD_STRENGTH)

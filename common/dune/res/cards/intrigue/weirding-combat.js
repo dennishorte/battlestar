@@ -21,6 +21,7 @@ module.exports = {
   vpsAvailable: 0,
   plotEffect: null,
   endgameEffect: null,
+  combatText: "+3 Swords; if 3 Influence with Bene Gesserit, +2 Swords",
 
   combatEffect(game, player) {
     let swords = 3

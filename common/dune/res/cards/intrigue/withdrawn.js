@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "At the start of your turn: Pass your turn",
 
   plotEffect(game) {
     if (game.state.turnTracking) {

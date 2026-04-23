@@ -21,6 +21,7 @@ module.exports = {
   vpsAvailable: 0,
   plotEffect: null,
   endgameEffect: null,
+  combatText: "+2 Swords and Acquire a card that costs 3 Persuasion or less",
 
   combatEffect(game, player) {
     addStrength(game, player, 'intrigue', 'Impress', 2 * constants.SWORD_STRENGTH)

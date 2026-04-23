@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Gain 1 Persuasion during your Reveal turn this round.\nYou may put cards you acquire on top of your deck",
 
   plotEffect(game, player) {
     player.incrementCounter('persuasion', 1, { silent: true })

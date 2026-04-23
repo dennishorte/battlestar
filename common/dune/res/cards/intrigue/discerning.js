@@ -20,6 +20,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Discard a card to Draw a card OR If you have an alliance: Draw a card",
 
   plotEffect(game, player) {
     const handZone = game.zones.byId(`${player.name}.hand`)

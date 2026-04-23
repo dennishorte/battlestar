@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 1,
   plotEffect: null,
   combatEffect: "+3 Swords",
+  endgameText: "Flip two of your face-up Conflict cards → +1 Victory Point",
 
   endgameEffect(game, player) {
     // Flip two conflict cards -> +1 VP

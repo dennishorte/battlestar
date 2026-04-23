@@ -17,6 +17,8 @@ module.exports = {
   isTwisted: false,
   vpsAvailable: 0,
   endgameEffect: null,
+  plotText: "Pay 3 Solari → +1 Dreadnought",
+  combatText: "If you have three or more Tech tiles: +4 Swords",
 
   plotEffect(game, player) {
     // Pay 3 Solari -> +1 Dreadnought (expansion) — stub: log

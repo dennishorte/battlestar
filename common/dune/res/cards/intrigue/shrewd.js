@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   plotEffect: null,
   endgameEffect: null,
+  combatText: "Lose one of your troops in the Conflict → +1 Spice",
 
   combatEffect(game, player) {
     const deployed = game.state.conflict.deployedTroops[player.name] || 0

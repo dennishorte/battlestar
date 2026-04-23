@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "+1 Troop, and if you have 3 Influence with the Emperor: +3 Solari",
 
   plotEffect(game, player) {
     const recruit = Math.min(1, player.troopsInSupply)

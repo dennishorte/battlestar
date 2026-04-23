@@ -17,6 +17,8 @@ module.exports = {
   isTwisted: false,
   vpsAvailable: 1,
   plotEffect: null,
+  combatText: "Retreat 1+ troops → Buy Tech at a 1 Spice discount",
+  endgameText: "If you have three or more Tech tiles: +1 Victory Point",
 
   combatEffect(game, player) {
     // Retreat troops -> Buy Tech (expansion) — stub

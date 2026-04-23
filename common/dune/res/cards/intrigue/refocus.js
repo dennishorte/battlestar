@@ -19,6 +19,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Shuffle your discard pile into your deck, then: Draw 1 card",
 
   plotEffect(game, player) {
     const discardZone = game.zones.byId(`${player.name}.discard`)

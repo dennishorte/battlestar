@@ -20,6 +20,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Lose a Troop → Gain one Influence with a Faction whose board space you sent an Agent to this turn",
 
   plotEffect(game, player) {
     if (player.troopsInGarrison > 0) {

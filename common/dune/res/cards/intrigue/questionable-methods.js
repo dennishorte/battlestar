@@ -22,6 +22,7 @@ module.exports = {
   vpsAvailable: 0,
   plotEffect: null,
   endgameEffect: null,
+  combatText: "+1 Sword; Lose 1 Influence → +4 Swords",
 
   combatEffect(game, player) {
     addStrength(game, player, 'intrigue', 'Questionable Methods', 1 * constants.SWORD_STRENGTH)

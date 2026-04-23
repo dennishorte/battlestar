@@ -19,6 +19,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Trash a card from your hand OR Deploy up to 2 troops from your garrison to the Conflict",
 
   plotEffect(game, player) {
     const choices = []

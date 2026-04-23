@@ -22,6 +22,8 @@ module.exports = {
   isTwisted: false,
   vpsAvailable: 0,
   endgameEffect: null,
+  plotText: "Lose 1 Influence with any Faction → Gain 1 Influence with any Faction",
+  combatText: "Trash a card from your discard pile that costs 1+ Persuasion → +4 Swords",
 
   plotEffect(game, player) {
     const loseFactions = constants.FACTIONS.filter(f => player.getInfluence(f) > 0)

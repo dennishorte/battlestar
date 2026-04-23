@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 1,
   plotEffect: null,
   combatEffect: null,
+  endgameText: "If you have at least two The Spice Must Flow, +1 Victory Point and +2 Spice",
 
   endgameEffect(game, player) {
     const allZones = [

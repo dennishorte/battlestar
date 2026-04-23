@@ -19,6 +19,7 @@ module.exports = {
   vpsAvailable: 0,
   plotEffect: null,
   endgameEffect: null,
+  combatText: "Retreat 1 or 2 of your Troops → +1 Spy",
 
   combatEffect(game, player) {
     const deployed = game.state.conflict.deployedTroops[player.name] || 0

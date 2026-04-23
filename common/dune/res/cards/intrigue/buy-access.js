@@ -20,6 +20,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Pay 5 Solari → +1 Influence in 2 Factions of your choice",
 
   plotEffect(game, player) {
     if (player.solari >= 5) {

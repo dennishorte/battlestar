@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  combatText: "+2 Solari OR If you have 1+ Sardaukar Commanders in the Conflict: +2 Spice",
 
   plotEffect(game, player) {
     // +2 Solari OR if Sardaukar Commanders in Conflict: +2 Spice

@@ -19,6 +19,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Draw a card; If you have 2+ Spies on the board: Draw a card",
 
   plotEffect(game, player) {
     deckEngine.drawCards(game, player, 1)

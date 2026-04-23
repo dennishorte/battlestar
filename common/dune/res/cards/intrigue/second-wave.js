@@ -21,6 +21,7 @@ module.exports = {
   vpsAvailable: 0,
   plotEffect: null,
   endgameEffect: null,
+  combatText: "+2 Swords, Deploy up to two units from your garrison to the Conflict",
 
   combatEffect(game, player) {
     addStrength(game, player, 'intrigue', 'Second Wave', 2 * constants.SWORD_STRENGTH)

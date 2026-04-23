@@ -2,11 +2,21 @@
  * Shared utilities for Dune card rendering.
  */
 
+function intrigueText(text, effect) {
+  if (typeof text === 'string' && text) {
+    return text
+  }
+  if (typeof effect === 'string' && effect) {
+    return effect
+  }
+  return null
+}
+
 /**
  * Split multiline ability text into formatted lines.
  */
 export function textLines(text) {
-  if (!text) {
+  if (typeof text !== 'string' || !text) {
     return []
   }
   return text.split('\n').filter(l => l.trim())
@@ -90,14 +100,17 @@ export function cardSections(card) {
     }
   }
   else if (type === 'intrigue') {
-    if (card.plotEffect) {
-      sections.push({ label: 'Plot', text: card.plotEffect })
+    const plot = intrigueText(card.plotText, card.plotEffect)
+    if (plot) {
+      sections.push({ label: 'Plot', text: plot })
     }
-    if (card.combatEffect) {
-      sections.push({ label: 'Combat', text: card.combatEffect })
+    const combat = intrigueText(card.combatText, card.combatEffect)
+    if (combat) {
+      sections.push({ label: 'Combat', text: combat })
     }
-    if (card.endgameEffect) {
-      sections.push({ label: 'Endgame', text: card.endgameEffect })
+    const endgame = intrigueText(card.endgameText, card.endgameEffect)
+    if (endgame) {
+      sections.push({ label: 'Endgame', text: endgame })
     }
   }
   else if (type === 'contract') {
@@ -129,13 +142,13 @@ export function cardDetail(card) {
     return `Tier ${card.tier}`
   }
   if (type === 'intrigue') {
-    if (card.plotEffect) {
+    if (intrigueText(card.plotText, card.plotEffect)) {
       return 'Plot'
     }
-    if (card.combatEffect) {
+    if (intrigueText(card.combatText, card.combatEffect)) {
       return 'Combat'
     }
-    if (card.endgameEffect) {
+    if (intrigueText(card.endgameText, card.endgameEffect)) {
       return 'Endgame'
     }
     return ''

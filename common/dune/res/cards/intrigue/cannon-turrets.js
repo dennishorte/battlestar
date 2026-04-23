@@ -21,6 +21,7 @@ module.exports = {
   vpsAvailable: 0,
   plotEffect: null,
   endgameEffect: null,
+  combatText: "+2 Swords; Each opponent retreats one Dreadnought",
 
   combatEffect(game, player) {
     // +2 Swords; Each opponent retreats one Dreadnought (expansion)

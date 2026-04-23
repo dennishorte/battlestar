@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Draw a card OR The card you play this turn has the Emperor icon",
 
   plotEffect(game) {
     if (game.state.turnTracking) {

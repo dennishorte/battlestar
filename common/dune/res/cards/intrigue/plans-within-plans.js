@@ -19,6 +19,7 @@ module.exports = {
   vpsAvailable: 2,
   plotEffect: null,
   combatEffect: null,
+  endgameText: "· Having 3 Influence (or more) on 3 Factions tracks: +1 Victory Point\n  OR\n· Having 3 Influence (or more) on four Faction tracks: +2 Victory Points",
 
   endgameEffect(game, player) {
     // Having 3+ Influence on 3 Factions: +1 VP OR 3+ on all 4: +2 VP

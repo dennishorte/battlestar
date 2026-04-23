@@ -19,6 +19,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: "+1 Sword",
   endgameEffect: null,
+  plotText: "Look at the top card of your deck. You may put it back, discard it, or spend 1 Solari to draw it",
 
   plotEffect(game, player) {
     const deckZone = game.zones.byId(`${player.name}.deck`)

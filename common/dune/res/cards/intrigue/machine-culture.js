@@ -17,6 +17,8 @@ module.exports = {
   isTwisted: false,
   vpsAvailable: 1,
   combatEffect: null,
+  plotText: "Acquire Tech",
+  endgameText: "If you have three or more Tech tiles: +1 Victory Point",
 
   plotEffect(game, player) {
     // Acquire Tech (expansion) — stub

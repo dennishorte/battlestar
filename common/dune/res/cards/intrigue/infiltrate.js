@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Enemy Agents don't block your next Agent at board spaces this turn",
 
   plotEffect(game) {
     if (game.state.turnTracking) {

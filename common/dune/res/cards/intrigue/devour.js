@@ -22,6 +22,7 @@ module.exports = {
   vpsAvailable: 0,
   plotEffect: null,
   endgameEffect: null,
+  combatText: "+2 Swords; If you have 1+ Sandworm in the Conflict: +2 Swords and Trash a card",
 
   combatEffect(game, player) {
     addStrength(game, player, 'intrigue', 'Devour', 2 * constants.SWORD_STRENGTH)

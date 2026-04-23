@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "When you deploy three or more units to the Conflict in a single turn: Reveal three contracts from the bank. Take one and trash the other two",
 
   plotEffect(game) {
     // When deploy 3+ units: Reveal 3 contracts, take 1 (triggered effect)

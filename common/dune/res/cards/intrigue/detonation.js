@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Blow the Shield Wall OR Deploy up to 4 Troops from your garrison to the Conflict",
 
   plotEffect(game, player) {
     const choices = []

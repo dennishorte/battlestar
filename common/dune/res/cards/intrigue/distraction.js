@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "When you deploy 3+ units to the Conflict in a single turn: +1 Spy. You may place this Spy on the same observation post as another player's Spy",
 
   plotEffect(game) {
     // When deploy 3+ units: +1 Spy

@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "For each type of unit you have in the Conflict: +1 Solari",
 
   plotEffect(game, player) {
     let types = 0

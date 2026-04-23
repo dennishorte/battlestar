@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "When you deploy four or more units to the Conflict in a single turn: Move Freighter once",
 
   plotEffect(game, player) {
     // When deploy 4+ units: Move Freighter (expansion) — stub

@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 1,
   plotEffect: "+1 Spice",
   combatEffect: null,
+  endgameText: "Flip one of your face-up Crysknife or ? Conflict cards → +1 Victory Point",
 
   endgameEffect(game, player) {
     // Flip a crysknife/wild conflict card -> +1 VP

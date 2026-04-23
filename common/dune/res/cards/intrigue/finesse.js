@@ -20,6 +20,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: "+2 Swords",
   endgameEffect: null,
+  plotText: "Lose one Influence → Gain one Influence",
 
   plotEffect(game, player) {
     const loseFactions = constants.FACTIONS.filter(f => player.getInfluence(f) > 0)

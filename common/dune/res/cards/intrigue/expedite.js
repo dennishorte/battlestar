@@ -18,6 +18,7 @@ module.exports = {
   vpsAvailable: 0,
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Pay 1 Spice → Move Freighter once",
 
   plotEffect(game, player) {
     // Pay 1 Spice -> Move Freighter (expansion) — stub
