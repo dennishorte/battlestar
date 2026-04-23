@@ -2,17 +2,14 @@ const t = require('../testutil')
 
 describe('Plot Intrigue Cards', () => {
 
-  test('plot intrigue offered at start of agent turn', () => {
+  test('plot intrigue offered at start of turn, before agent/reveal choice', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { intrigue: ['Windfall'] },
     })
     game.run()
 
-    // Dennis takes agent turn with Dagger
-    t.choose(game, 'Agent Turn.Dagger')
-
-    // Plot intrigue is offered after turn+card selection
+    // Plot intrigue is offered BEFORE the Agent/Reveal choice.
     const choices = t.currentChoices(game)
     expect(choices).toContain('Windfall')
     expect(choices).toContain('Pass')
@@ -26,23 +23,29 @@ describe('Plot Intrigue Cards', () => {
     // Intrigue zone should be empty
     const intrigueZone = game.zones.byId('dennis.intrigue')
     expect(intrigueZone.cardlist().length).toBe(0)
+
+    // Now the agent-turn choice appears.
+    const nextChoices = t.currentChoices(game)
+    expect(nextChoices.some(c => c === 'Reveal Turn' || c.startsWith?.('Agent Turn'))).toBe(true)
   })
 
-  test('can pass on plot intrigue and proceed with agent turn', () => {
+  test('pass on plot intrigue and proceed with agent turn', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { intrigue: ['Windfall'] },
     })
     game.run()
 
-    t.choose(game, 'Agent Turn.Dagger')
-
-    // Pass on plot intrigue
+    // Pass on plot intrigue at start of turn
     t.choose(game, 'Pass')
 
-    // Should now be at board space choice
+    // Then choose Agent Turn.Dagger
+    t.choose(game, 'Agent Turn.Dagger')
+
+    // Should now be at board space choice — plot is NOT offered mid-action
     const choices = t.currentChoices(game)
     expect(choices).toContain('Assembly Hall')
+    expect(choices).not.toContain('Windfall')
 
     const player = game.players.byName('dennis')
     expect(player.solari).toBe(0)
@@ -52,19 +55,16 @@ describe('Plot Intrigue Cards', () => {
     expect(intrigueZone.cardlist().length).toBe(1)
   })
 
-  test('plot intrigue offered during reveal turn', () => {
+  test('plot intrigue offered at start of reveal turn, before the Reveal choice', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { water: 1, intrigue: ['Water Peddlers Union'] },
     })
     game.run()
 
-    t.choose(game, 'Reveal Turn')
-
-    // Plot intrigue offered at start of reveal
+    // Plot intrigue offered BEFORE picking Reveal Turn.
     const choices = t.currentChoices(game)
-    const hasWPU = choices.includes('Water Peddlers Union')
-    expect(hasWPU).toBe(true)
+    expect(choices).toContain('Water Peddlers Union')
 
     t.choose(game, 'Water Peddlers Union')
 

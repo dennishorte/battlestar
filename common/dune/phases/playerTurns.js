@@ -44,8 +44,26 @@ function playerTurnsPhase(game) {
         args: { player },
       })
 
+      // Initialize per-turn tracking state up front so Plot Intrigue at
+      // start of turn reads sensible defaults (recalledSpy: false, etc.).
+      game.state.turnTracking = {
+        recalledSpy: false,
+        completedContract: false,
+        spiceGained: 0,
+        sentToMakerSpace: false,
+        sentToFactionSpace: false,
+        spaceIcon: null,
+        garrisonAtTurnStart: player.troopsInGarrison,
+      }
+
+      // Plot Intrigue may only be played at the start or end of the player's
+      // turn, never mid-action. Offer it here, before the player commits to
+      // an Agent Turn card or to a Reveal Turn.
+      offerPlotIntrigue(game, player)
+
       if (player.availableAgents > 0) {
-        // Build playable card list for nested Agent Turn choice
+        // Build playable card list for nested Agent Turn choice (after any
+        // plot intrigue has resolved, which may have added cards).
         const handZone = game.zones.byId(`${player.name}.hand`)
         const handCards = handZone.cardlist()
         const playableCards = handCards.filter(c => c.agentIcons.length > 0 || c.factionAccess.length > 0 || c.spyAccess)
@@ -85,22 +103,12 @@ function playerTurnsPhase(game) {
 function agentTurn(game, player, card) {
   game.log.indent()
 
-  // Initialize turn tracking for conditional card abilities
-  game.state.turnTracking = {
-    recalledSpy: false,
-    completedContract: false,
-    spiceGained: 0,
-    sentToMakerSpace: false,
-    sentToFactionSpace: false,
-    spaceIcon: null,
-    garrisonAtTurnStart: player.troopsInGarrison,
-  }
+  // turnTracking is initialized by playerTurnsPhase; Plot Intrigue has
+  // already been offered at the start of the turn, before the player
+  // committed to this card.
 
   // Leader start-of-turn hook
   leaderAbilities.onAgentTurnStart(game, player)
-
-  // Offer Plot Intrigue at start of turn
-  offerPlotIntrigue(game, player)
 
   // Step 2: Choose a board space
   const boardSpaces = getBoardSpaces()
@@ -264,8 +272,8 @@ function revealTurn(game, player) {
   })
   game.log.indent()
 
-  // Offer Plot Intrigue at start of turn
-  offerPlotIntrigue(game, player)
+  // Plot Intrigue already offered by playerTurnsPhase before the
+  // turn-type choice.
 
   // Step 1: Reveal all remaining hand cards
   const revealedCards = deckEngine.revealHand(game, player)
