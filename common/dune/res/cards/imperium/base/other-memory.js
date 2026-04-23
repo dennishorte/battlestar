@@ -61,7 +61,7 @@ module.exports = {
         card.moveTo(handZone)
         game.log.add({
           template: '{player} takes {card} from discard to hand',
-          args: { player, card: card.name },
+          args: { player, card },
         })
       }
     }

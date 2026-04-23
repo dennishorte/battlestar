@@ -42,7 +42,7 @@ module.exports = {
     deckEngine.refillImperiumRow(game)
     game.log.add({
       template: '{player}: Manipulate — reserves {card} (-1 Persuasion to acquire this round)',
-      args: { player, card: card.name },
+      args: { player, card },
     })
   },
 }

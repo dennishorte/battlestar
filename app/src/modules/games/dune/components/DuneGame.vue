@@ -243,8 +243,11 @@ export default {
       }
 
       // Canonical path: structured option carries an id (and optionally kind).
-      if (option && typeof option === 'object' && option.id) {
-        const resolved = resolveByKindId(option.kind, option.id)
+      // Prefer defId for lookup — it's the card definition id; `id` is the
+      // per-instance id used for disambiguating selections in the engine.
+      if (option && typeof option === 'object' && (option.defId || option.id)) {
+        const lookupId = option.defId || option.id
+        const resolved = resolveByKindId(option.kind, lookupId)
         if (resolved) {
           if (option.kind === 'leader') {
             return { component: DuneOptionChip, props: { name, leader: resolved } }

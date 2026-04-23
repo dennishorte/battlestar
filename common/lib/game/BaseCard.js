@@ -7,6 +7,10 @@ class BaseCard {
     this.data = data
 
     this.id = data.id || null
+    // Identifier of the underlying card *definition* (as opposed to this specific
+    // instance). Multiple copies of the same card share a defId but each has a
+    // unique this.id. Games that don't distinguish the two can leave this null.
+    this.defId = data.defId || null
     this.owner = null
 
     this.home = null  // Home location (where it returns to)

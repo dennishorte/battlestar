@@ -28,7 +28,7 @@ module.exports = {
         deckEngine.trashCard(game, card)
         game.log.add({
           template: '{player}: Coordination — trashes {card}',
-          args: { player, card: card.name },
+          args: { player, card },
         })
       }
     }

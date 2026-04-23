@@ -73,6 +73,11 @@ class BaseActionManager {
       const choiceObjs = choices
         .map(c => {
           const obj = { title: c.name, id: c.id }
+          if (c.defId) {
+            // Expose the card's definition id so the UI can resolve the
+            // display chip without parsing instance-id conventions.
+            obj.defId = c.defId
+          }
           if (opts.kind) {
             obj.kind = opts.kind
           }

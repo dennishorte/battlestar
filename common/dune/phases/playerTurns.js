@@ -295,7 +295,7 @@ function revealTurn(game, player) {
 
     game.log.add({
       template: '{player} reveals {card}',
-      args: { player, card: card.name },
+      args: { player, card },
     })
     game.log.indent()
 
@@ -364,17 +364,21 @@ function acquireCardsPhase(game, player) {
     }
 
     const resource = useSolari ? 'Solari' : 'Persuasion'
-    const choices = ['Pass', ...acquirableCards.map(c => c.name)]
-    const selected = game.actions.choose(player, choices, {
+    // Use chooseCards so name collisions (e.g. imperium + reserve cards
+    // happening to share a title) resolve by card id rather than by
+    // iteration order. Pass is represented as a sentinel entry so it
+    // mixes cleanly into the card list.
+    const passSentinel = { name: 'Pass', id: '__pass__' }
+    const [chosen] = game.actions.chooseCards(player, [passSentinel, ...acquirableCards], {
       title: `Acquire cards (${budget} ${resource} available)`,
+      kind: 'imperium-card',
     })
-    const choice = selected[0]
 
-    if (choice === 'Pass') {
+    if (!chosen || chosen.id === '__pass__') {
       break
     }
 
-    const card = acquirableCards.find(c => c.name === choice)
+    const card = chosen
     if (card) {
       const effectiveCost = acquireCost(game, player, card)
 
@@ -713,7 +717,7 @@ function resolveCardRevealAbility(game, player, card, allRevealedCards) {
 
     game.log.add({
       template: '{card}: {faction} Bond activates',
-      args: { card: card.name, faction: bondMatch[1] },
+      args: { card, faction: bondMatch[1] },
     })
 
     // Parse the bond effect — handle swords specially
@@ -1550,7 +1554,7 @@ function offerPlotIntrigue(game, player) {
     card.moveTo(discardZone)
     game.log.add({
       template: '{player} plays {card} (Plot)',
-      args: { player, card: card.name },
+      args: { player, card },
     })
 
     const plotEffect = card.definition.plotEffect

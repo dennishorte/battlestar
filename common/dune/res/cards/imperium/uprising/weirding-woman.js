@@ -44,7 +44,7 @@ module.exports = {
       card.moveTo(handZone)
       game.log.add({
         template: '{player} returns {card} to hand (Bene Gesserit synergy)',
-        args: { player, card: card.name },
+        args: { player, card },
       })
     }
   },

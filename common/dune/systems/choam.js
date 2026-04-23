@@ -60,7 +60,7 @@ function initializeContracts(game) {
   for (const cardDef of contractDefs) {
     for (let i = 0; i < (cardDef.count || 1); i++) {
       const id = `contract-${cardIndex++}`
-      const card = new DuneCard(game, { ...cardDef, id, type: 'contract' })
+      const card = new DuneCard(game, { ...cardDef, defId: cardDef.id, id, type: 'contract' })
       game.cards.register(card)
       card.setHome(contractDeckZone)
       contractDeckZone.push(card)

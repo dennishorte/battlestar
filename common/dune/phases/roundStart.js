@@ -26,7 +26,7 @@ function roundStartPhase(game) {
     game.state.conflict.currentCard = card.definition || card
     game.log.add({
       template: 'Conflict card revealed: {card}',
-      args: { card: card.name },
+      args: { card },
       event: 'step',
     })
 

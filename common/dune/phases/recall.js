@@ -147,7 +147,7 @@ function offerEndgameIntrigue(game, player) {
     card.moveTo(discardZone)
     game.log.add({
       template: '{player} plays {card} (Endgame)',
-      args: { player, card: card.name },
+      args: { player, card },
     })
 
     const endgameEffect = card.definition.endgameEffect

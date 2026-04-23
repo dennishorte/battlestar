@@ -178,7 +178,7 @@ function initializeCards(game) {
   for (const cardDef of imperiumCards) {
     for (let i = 0; i < (cardDef.count || 1); i++) {
       const id = `imperium-${cardDef.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${i}`
-      const card = new DuneCard(game, { ...cardDef, id, type: 'imperium' })
+      const card = new DuneCard(game, { ...cardDef, defId: cardDef.id, id, type: 'imperium' })
       game.cards.register(card)
       card.setHome(imperiumDeckZone)
       imperiumDeckZone.push(card)
@@ -192,7 +192,7 @@ function initializeCards(game) {
   for (const cardDef of intrigueCards) {
     for (let i = 0; i < (cardDef.count || 1); i++) {
       const id = `intrigue-${cardDef.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${i}`
-      const card = new DuneCard(game, { ...cardDef, id, type: 'intrigue' })
+      const card = new DuneCard(game, { ...cardDef, defId: cardDef.id, id, type: 'intrigue' })
       game.cards.register(card)
       card.setHome(intrigueDeckZone)
       intrigueDeckZone.push(card)
@@ -216,7 +216,7 @@ function initializeCards(game) {
     const zone = game.zones.byId(zoneName)
     for (let i = 0; i < (cardDef.count || 1); i++) {
       const id = `reserve-${cardDef.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${i}`
-      const card = new DuneCard(game, { ...cardDef, id, type: 'reserve' })
+      const card = new DuneCard(game, { ...cardDef, defId: cardDef.id, id, type: 'reserve' })
       game.cards.register(card)
       card.setHome(zone)
       zone.push(card)
@@ -228,7 +228,7 @@ function initializeCards(game) {
   const conflictCards = require('../res/index.js').getConflictCards(settings)
   const tierI = [], tierII = [], tierIII = []
   for (const cardDef of conflictCards) {
-    const card = new DuneCard(game, { ...cardDef, type: 'conflict' })
+    const card = new DuneCard(game, { ...cardDef, defId: cardDef.id, type: 'conflict' })
     game.cards.register(card)
     card.setHome(conflictDeckZone)
     if (cardDef.tier === 1) {
@@ -265,7 +265,7 @@ function initializeCards(game) {
       const count = cardDef.countPerPlayer || 1
       for (let i = 0; i < count; i++) {
         const id = `starter-${player.name}-${cardDef.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${i}`
-        const card = new DuneCard(game, { ...cardDef, id, type: 'starter' })
+        const card = new DuneCard(game, { ...cardDef, defId: cardDef.id, id, type: 'starter' })
         game.cards.register(card)
         card.setHome(deckZone)
         deckZone.push(card)

@@ -70,7 +70,7 @@ function combatIntrigueRound(game, combatants) {
           card.moveTo(discardZone)
           game.log.add({
             template: '{player} plays {card}',
-            args: { player, card: card.name },
+            args: { player, card },
           })
           game.log.indent()
           const combatEffect = card.definition.combatEffect

@@ -16,7 +16,7 @@ module.exports = {
     if (topCards.length > 0) {
       game.log.add({
         template: '{player}: Prescience — top of deck is {card}',
-        args: { player, card: topCards[0].name },
+        args: { player, card: topCards[0] },
         visibility: [player.name],
         redacted: '{player}: Prescience — looks at the top card of their deck',
       })

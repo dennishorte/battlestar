@@ -244,7 +244,7 @@ Dune.prototype.initializeObjectives = function() {
 
     this.log.add({
       template: '{player} draws objective: {card}',
-      args: { player, card: card.name },
+      args: { player, card },
     })
 
     if (card.isFirstPlayer) {

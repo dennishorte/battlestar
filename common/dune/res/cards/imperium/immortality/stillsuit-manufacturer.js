@@ -41,7 +41,7 @@ module.exports = {
     if (game.state.alliances.fremen === player.name) {
       const handZone = game.zones.byId(`${player.name}.hand`)
       card.moveTo(handZone)
-      game.log.add({ template: '{player} returns {card} to hand (Fremen Alliance)', args: { player, card: card.name } })
+      game.log.add({ template: '{player} returns {card} to hand (Fremen Alliance)', args: { player, card } })
     }
   },
 
