@@ -80,7 +80,11 @@ function _validate(selector, selection, opts) {
 
   const { min, max } = minMax(selector)
 
-  // Test each selection in selection to see if it matches a valid choice in selector
+  // Test each selection in selection to see if it matches a valid choice in selector.
+  // Match precedence: when both sides carry ids, id is canonical (this disambiguates
+  // choices that share a display name — e.g. two cards named "Desert Power").
+  // Otherwise fall back to title matching for backward compatibility with plain-string
+  // choices and legacy responses that only carry titles.
   const unused = [...selector.choices]
   const matched = []
   const unmatched = []
@@ -88,7 +92,11 @@ function _validate(selector, selection, opts) {
   let count = 0
   for (const sel of selection.selection) {
     for (const opt of unused) {
-      if (sel.title === opt.title) {
+      const idsBothPresent = sel.id && opt.id
+      const keyMatch = idsBothPresent
+        ? sel.id === opt.id
+        : sel.title === opt.title
+      if (keyMatch) {
         let match = true
 
         // If the selector selection had sub-choices, this must also validate against those.

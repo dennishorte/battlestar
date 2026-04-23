@@ -65,12 +65,33 @@ class BaseActionManager {
 
   chooseCards(player, choices, opts={}) {
     while (true) {
-      const choiceNames = choices.map(c => c.name).sort()
-      const selection = this.choose(player, choiceNames, opts)
+      // Emit structured choice objects carrying both a display title and a stable id,
+      // so that name collisions between cards (e.g. two "Desert Power" cards from
+      // different decks) resolve deterministically. Responses may still arrive as
+      // bare titles from legacy clients — in that case we fall back to name matching,
+      // which is non-deterministic under collisions but preserves prior behavior.
+      const choiceObjs = choices
+        .map(c => {
+          const obj = { title: c.name, id: c.id }
+          if (opts.kind) {
+            obj.kind = opts.kind
+          }
+          return obj
+        })
+        .sort((a, b) => a.title.localeCompare(b.title))
+      const selection = this.choose(player, choiceObjs, opts)
       const used = []
 
       const selectedCards = selection.map(s => {
-        const card = choices.find(c => c.name === s && !used.some(u => u.id === c.id))
+        const selId = s && typeof s === 'object' ? s.id : null
+        const selTitle = s && typeof s === 'object' ? s.title : s
+        let card = null
+        if (selId) {
+          card = choices.find(c => c.id === selId && !used.some(u => u.id === c.id))
+        }
+        if (!card) {
+          card = choices.find(c => c.name === selTitle && !used.some(u => u.id === c.id))
+        }
         used.push(card)
         return card
       })

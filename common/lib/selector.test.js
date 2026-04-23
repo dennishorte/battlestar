@@ -332,3 +332,82 @@ describe('exclusive', () => {
     expect(validate(selector, { title: 'test', selection: ['one', 'exclusive'] }).valid).toBe(false)
   })
 })
+
+describe('id-based matching', () => {
+  test('choices with ids resolve by id when selection has id', () => {
+    const sel = {
+      title: 'test',
+      choices: [
+        { title: 'Desert Power', id: 'imperium-desert-power' },
+        { title: 'Desert Power', id: 'conflict-desert-power' },
+      ]
+    }
+    expect(validate(sel, {
+      title: 'test',
+      selection: [{ title: 'Desert Power', id: 'conflict-desert-power' }]
+    }).valid).toBe(true)
+    expect(validate(sel, {
+      title: 'test',
+      selection: [{ title: 'Desert Power', id: 'imperium-desert-power' }]
+    }).valid).toBe(true)
+    expect(validate(sel, {
+      title: 'test',
+      selection: [{ title: 'Desert Power', id: 'unknown-id' }]
+    }).valid).toBe(false)
+  })
+
+  test('title selection still matches choices with ids (legacy clients)', () => {
+    const sel = {
+      title: 'test',
+      choices: [
+        { title: 'Card A', id: 'card-a' },
+        { title: 'Card B', id: 'card-b' },
+      ]
+    }
+    expect(validate(sel, {
+      title: 'test',
+      selection: ['Card A']
+    }).valid).toBe(true)
+    expect(validate(sel, {
+      title: 'test',
+      selection: ['Card B']
+    }).valid).toBe(true)
+  })
+
+  test('id selection matches string choices (ignored — id only used when both sides have it)', () => {
+    const sel = {
+      title: 'test',
+      choices: ['Card A', 'Card B']
+    }
+    expect(validate(sel, {
+      title: 'test',
+      selection: [{ title: 'Card A', id: 'some-id' }]
+    }).valid).toBe(true)
+  })
+
+  test('duplicate ids pick different underlying choices', () => {
+    const sel = {
+      title: 'test',
+      choices: [
+        { title: 'Forest', id: 'forest-1' },
+        { title: 'Forest', id: 'forest-2' },
+      ],
+      count: 2,
+    }
+    expect(validate(sel, {
+      title: 'test',
+      selection: [
+        { title: 'Forest', id: 'forest-1' },
+        { title: 'Forest', id: 'forest-2' },
+      ]
+    }).valid).toBe(true)
+
+    expect(validate(sel, {
+      title: 'test',
+      selection: [
+        { title: 'Forest', id: 'forest-1' },
+        { title: 'Forest', id: 'forest-1' },
+      ]
+    }).valid).toBe(false)
+  })
+})

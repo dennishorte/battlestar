@@ -266,6 +266,11 @@ Game.prototype.requestInputAny = function(array) {
  *   - title: {string} - Title/prompt for the selection
  *   - choices: {Array} - Array of available choices. Each choice can be:
  *     * Simple: string, number, or any primitive value
+ *     * Structured: object with { title: string, id?: string, kind?: string, ... }
+ *       — `id` uniquely identifies the choice, disambiguating options that share
+ *         a display title (e.g. two cards both named "Desert Power").
+ *       — `kind` is an optional type tag for the UI layer to render the chip
+ *         against the correct lookup table (e.g. 'imperium-card', 'conflict-card').
  *     * Nested: object with { title: string, choices: Array, min?: number, max?: number, count?: number }
  *   - min?: {number} - Minimum number of selections (default: 1)
  *   - max?: {number} - Maximum number of selections (default: 1)
@@ -276,7 +281,10 @@ Game.prototype.requestInputAny = function(array) {
  *   - actor: {string} - Player name who responded
  *   - title: {string} - Must match the request title
  *   - selection: {Array} - Array of selected values. Each selection can be:
- *     * Simple: string, number, or any primitive value (matches simple choices)
+ *     * Simple: string, number, or any primitive value (matches simple choices by title)
+ *     * Structured: object with { title: string, id?: string } — when present, `id`
+ *       is the canonical match key, so responses remain deterministic across
+ *       choices that share display titles.
  *     * Nested: object with { title: string, selection: Array } (matches nested choices)
  *
  * NESTED STRUCTURE EXAMPLES:
@@ -589,9 +597,13 @@ Game.prototype._tryToAutomaticallyRespond = function(selectors) {
     const { min } = selector.minMax(sel)
 
     if (min >= sel.choices.length) {
-      // Build selection from choices, extracting titles from objects
+      // Build selection from choices. When a structured choice carries an id,
+      // preserve it so replay/validation can disambiguate name collisions.
       const selection = sel.choices.map(choice => {
         if (typeof choice === 'object' && choice.title) {
+          if (choice.id) {
+            return { title: choice.title, id: choice.id }
+          }
           return choice.title
         }
         return choice

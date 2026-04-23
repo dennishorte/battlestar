@@ -132,6 +132,11 @@ export default {
             }
             selectedOptions.push(this.childInfo[title])
           }
+          else if (opt && typeof opt === 'object' && opt.id) {
+            // Carry the choice's id forward so validation/replay can disambiguate
+            // options that share a display title.
+            selectedOptions.push({ title, id: opt.id })
+          }
           else {
             selectedOptions.push(title)
           }

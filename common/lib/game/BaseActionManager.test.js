@@ -381,6 +381,94 @@ describe('BaseActionManager', () => {
         fixture.assertAllResponsesConsumed()
       })
     })
+
+    describe('id-based disambiguation', () => {
+      test('structured selection with id resolves to the exact matching card', () => {
+        const { fixture, actionManager, player1 } = createUniqueFixture()
+
+        // Two cards share a display name but have distinct ids
+        const cards = [
+          { name: 'Desert Power', id: 'imperium-desert-power' },
+          { name: 'Desert Power', id: 'conflict-desert-power' },
+          { name: 'Other', id: 'other' },
+        ]
+
+        // Selection carries an id — the exact card must come back
+        fixture.queueResponse(player1, [
+          { title: 'Desert Power', id: 'conflict-desert-power' }
+        ])
+
+        const result = actionManager.chooseCards(player1, cards, { max: 1 })
+
+        expect(result).toHaveLength(1)
+        expect(result[0]).toBe(cards[1])
+        expect(result[0].id).toBe('conflict-desert-power')
+
+        fixture.assertAllResponsesConsumed()
+      })
+
+      test('title-only selection still resolves (back-compat with legacy clients)', () => {
+        const { fixture, actionManager, player1 } = createUniqueFixture()
+
+        const cards = [
+          { name: 'Desert Power', id: 'imperium-desert-power' },
+          { name: 'Other', id: 'other' },
+        ]
+
+        fixture.queueResponse(player1, ['Desert Power'])
+
+        const result = actionManager.chooseCards(player1, cards, { max: 1 })
+
+        expect(result).toHaveLength(1)
+        expect(result[0].name).toBe('Desert Power')
+
+        fixture.assertAllResponsesConsumed()
+      })
+
+      test('chooseCards emits structured choice objects into the selector', () => {
+        const { actionManager, player1, game } = createUniqueFixture()
+
+        const cards = [
+          { name: 'Card A', id: 'card-a' },
+          { name: 'Card B', id: 'card-b' },
+        ]
+
+        let capturedSelector = null
+        game.requestInputSingle = (selector) => {
+          capturedSelector = selector
+          return ['Card A']
+        }
+
+        actionManager.chooseCards(player1, cards, { max: 1, kind: 'imperium-card' })
+
+        expect(capturedSelector.choices).toEqual([
+          { title: 'Card A', id: 'card-a', kind: 'imperium-card' },
+          { title: 'Card B', id: 'card-b', kind: 'imperium-card' },
+        ])
+      })
+
+      test('selection with mixed id and title entries works in both directions', () => {
+        const { fixture, actionManager, player1 } = createUniqueFixture()
+
+        const cards = [
+          { name: 'Twin', id: 'twin-a' },
+          { name: 'Twin', id: 'twin-b' },
+        ]
+
+        fixture.queueResponse(player1, [
+          { title: 'Twin', id: 'twin-b' },
+          'Twin',
+        ])
+
+        const result = actionManager.chooseCards(player1, cards, { max: 2 })
+
+        expect(result).toHaveLength(2)
+        // First entry resolves by id
+        expect(result[0]).toBe(cards[1])
+        // Second entry falls back to name match and takes the remaining twin
+        expect(result[1]).toBe(cards[0])
+      })
+    })
   })
 
   describe('chooseYesNo()', () => {
