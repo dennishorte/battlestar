@@ -16,7 +16,7 @@ function gainInfluence(game, player, faction, amount = 1) {
 
   // Leader influence hook
   const leaderAbilities = require('./leaderAbilities.js')
-  leaderAbilities.onGainInfluence(game, player, faction, next)
+  leaderAbilities.onGainInfluence(game, player, faction, next, prev)
 
   // Check VP threshold at 2
   if (prev < constants.INFLUENCE_VP_THRESHOLD && next >= constants.INFLUENCE_VP_THRESHOLD) {

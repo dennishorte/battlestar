@@ -34,8 +34,8 @@ function onGainHighCouncil(game, player) {
   callHook(game, player, 'onGainHighCouncil')
 }
 
-function onGainInfluence(game, player, faction, newLevel) {
-  callHook(game, player, 'onGainInfluence', faction, newLevel)
+function onGainInfluence(game, player, faction, newLevel, prev) {
+  callHook(game, player, 'onGainInfluence', faction, newLevel, prev)
 }
 
 function onGainSolari(game, player, amount) {
