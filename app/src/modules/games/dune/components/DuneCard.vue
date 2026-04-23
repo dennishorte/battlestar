@@ -1,18 +1,23 @@
 <template>
   <div class="dune-card" :class="`card-${type}`">
     <div class="card-header-row">
-      <span class="card-icons" v-if="allIcons.length">
-        <template v-for="(icon, i) in allIcons" :key="i">
-          <DuneFactionIcon v-if="icon.faction"
-                           :faction="icon.type"
-                           size=".95em" />
-          <span v-else
-                class="icon"
-                :class="`icon-${icon.type} shape-${icon.shape}`" />
-        </template>
+      <span class="card-icons" v-if="agentIcons.length">
+        <span v-for="(icon, i) in agentIcons"
+              :key="i"
+              class="icon"
+              :class="`icon-${icon.type} shape-${icon.shape}`" />
       </span>
       <span class="card-name">{{ def.name }}</span>
       <span class="card-cost" v-if="costLabel">{{ costLabel }}</span>
+    </div>
+    <div class="card-factions" v-if="factions.length">
+      <span v-for="f in factions"
+            :key="f.id"
+            class="faction-chip"
+            :class="`faction-${f.id}`">
+        <DuneFactionIcon :faction="f.id" size=".9em" />
+        {{ f.label }}
+      </span>
     </div>
     <div class="card-effects" v-if="sections.length">
       <div v-for="(section, i) in sections"
@@ -34,6 +39,13 @@ import DuneFactionIcon from './DuneFactionIcon.vue'
 import { textLines, cardType, cardSections } from '../cardUtil.js'
 
 const shapeMap = { green: 'pentagon', purple: 'circle', yellow: 'triangle' }
+
+const factionLabels = {
+  emperor: 'Emperor',
+  guild: 'Spacing Guild',
+  'bene-gesserit': 'Bene Gesserit',
+  fremen: 'Fremen',
+}
 
 export default {
   name: 'DuneCard',
@@ -58,15 +70,18 @@ export default {
       return cardType(this.def)
     },
 
-    allIcons() {
-      const icons = []
-      for (const icon of this.def.agentIcons || []) {
-        icons.push({ type: icon, shape: shapeMap[icon] || 'circle' })
-      }
-      for (const faction of this.def.factionAccess || []) {
-        icons.push({ type: faction, faction: true })
-      }
-      return icons
+    agentIcons() {
+      return (this.def.agentIcons || []).map(icon => ({
+        type: icon,
+        shape: shapeMap[icon] || 'circle',
+      }))
+    },
+
+    factions() {
+      return (this.def.factionAccess || []).map(id => ({
+        id,
+        label: factionLabels[id] || id,
+      }))
     },
 
     costLabel() {
@@ -127,6 +142,30 @@ export default {
   display: inline-flex;
   gap: 2px;
 }
+
+.card-factions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: .15em;
+}
+
+.faction-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 .4em;
+  border-radius: .6em;
+  font-size: .75em;
+  font-weight: 500;
+  line-height: 1.5;
+  color: white;
+}
+
+.faction-emperor { background-color: #d03030; }
+.faction-guild { background-color: #e08828; }
+.faction-bene-gesserit { background-color: #8855cc; }
+.faction-fremen { background-color: #3088cc; }
 
 .icon {
   display: inline-block;
