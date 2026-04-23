@@ -136,11 +136,14 @@ export default {
   mounted() {
     document.title = this.game.settings.name || 'Dune Imperium: Uprising'
 
-    // Name -> definition lookup. Names can collide across decks (e.g. imperium
-    // "Desert Power" vs conflict "Desert Power"), so scan decks in priority
-    // order and take the first hit. Imperium is by far the most common deck
-    // represented in the option selector; conflict cards are revealed, not
-    // chosen, so they fall last.
+    // Canonical lookup path: resolve by id when a structured choice provides
+    // one (see BaseActionManager.chooseCards). Card ids are globally unique
+    // across Dune decks, so a single flat by-id table is sufficient.
+    //
+    // Name-based lookup remains as a fallback for engine sites that still
+    // emit bare strings; within that fallback, decks are scanned in priority
+    // order so the most commonly selected deck wins collisions (e.g.
+    // imperium "Desert Power" beats conflict "Desert Power").
     const deckPriority = [
       dune.res.cards.imperiumCards,
       dune.res.cards.reserveCards,
@@ -150,21 +153,47 @@ export default {
       dune.res.cards.intrigueCards,
       dune.res.cards.conflictCards,
     ]
+    const cardsById = {}
     const cardsByName = {}
     for (const deck of deckPriority) {
       for (const card of deck) {
+        if (card.id) {
+          cardsById[card.id] = card
+        }
         if (!(card.name in cardsByName)) {
           cardsByName[card.name] = card
         }
       }
     }
     const leadersByName = {}
+    const leadersById = {}
     for (const leader of dune.res.leaderData) {
       leadersByName[leader.name] = leader
+      if (leader.id) {
+        leadersById[leader.id] = leader
+      }
     }
     const spacesByName = {}
+    const spacesById = {}
     for (const space of dune.res.boardSpaces) {
       spacesByName[space.name] = space
+      if (space.id) {
+        spacesById[space.id] = space
+      }
+    }
+
+    const resolveByKindId = (kind, id) => {
+      if (!id) {
+        return null
+      }
+      if (kind === 'leader') {
+        return leadersById[id] || null
+      }
+      if (kind === 'board-space') {
+        return spacesById[id] || null
+      }
+      // Default: card-like. Card ids are unique across all Dune decks.
+      return cardsById[id] || null
     }
 
     function spaceSubtitle(space) {
@@ -213,6 +242,26 @@ export default {
         return null
       }
 
+      // Canonical path: structured option carries an id (and optionally kind).
+      if (option && typeof option === 'object' && option.id) {
+        const resolved = resolveByKindId(option.kind, option.id)
+        if (resolved) {
+          if (option.kind === 'leader') {
+            return { component: DuneOptionChip, props: { name, leader: resolved } }
+          }
+          if (option.kind === 'board-space') {
+            return {
+              component: DuneOptionChip,
+              props: { name, boardSpace: resolved, subtitle: spaceSubtitle(resolved) },
+            }
+          }
+          return { component: DuneOptionChip, props: { name, card: resolved } }
+        }
+      }
+
+      // Fallback: legacy bare-string options resolved by name. The priority-
+      // ordered cardsByName table above picks the most-likely deck when a
+      // name collides across decks.
       const leader = leadersByName[name]
       if (leader) {
         return {
