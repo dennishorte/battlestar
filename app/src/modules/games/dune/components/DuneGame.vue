@@ -136,19 +136,27 @@ export default {
   mounted() {
     document.title = this.game.settings.name || 'Dune Imperium: Uprising'
 
-    // Build name -> definition lookup for cards and leaders
-    const allCards = [
-      ...dune.res.cards.imperiumCards,
-      ...dune.res.cards.intrigueCards,
-      ...dune.res.cards.reserveCards,
-      ...dune.res.cards.starterCards,
-      ...dune.res.cards.contractCards,
-      ...dune.res.cards.techCards,
-      ...dune.res.cards.conflictCards,
+    // Name -> definition lookup. Names can collide across decks (e.g. imperium
+    // "Desert Power" vs conflict "Desert Power"), so scan decks in priority
+    // order and take the first hit. Imperium is by far the most common deck
+    // represented in the option selector; conflict cards are revealed, not
+    // chosen, so they fall last.
+    const deckPriority = [
+      dune.res.cards.imperiumCards,
+      dune.res.cards.reserveCards,
+      dune.res.cards.starterCards,
+      dune.res.cards.contractCards,
+      dune.res.cards.techCards,
+      dune.res.cards.intrigueCards,
+      dune.res.cards.conflictCards,
     ]
     const cardsByName = {}
-    for (const card of allCards) {
-      cardsByName[card.name] = card
+    for (const deck of deckPriority) {
+      for (const card of deck) {
+        if (!(card.name in cardsByName)) {
+          cardsByName[card.name] = card
+        }
+      }
     }
     const leadersByName = {}
     for (const leader of dune.res.leaderData) {

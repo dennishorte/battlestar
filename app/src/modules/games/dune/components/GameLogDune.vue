@@ -11,17 +11,23 @@ import { dune } from 'battlestar-common'
 const game = inject('game')
 const ui = inject('ui')
 
+// Scan decks in priority order so common decks win name collisions
+// (e.g. imperium "Desert Power" over conflict "Desert Power").
 const cardsByName = {}
-for (const card of [
-  ...dune.res.cards.imperiumCards,
-  ...dune.res.cards.intrigueCards,
-  ...dune.res.cards.reserveCards,
-  ...dune.res.cards.starterCards,
-  ...dune.res.cards.contractCards,
-  ...dune.res.cards.techCards,
-  ...dune.res.cards.conflictCards,
+for (const deck of [
+  dune.res.cards.imperiumCards,
+  dune.res.cards.reserveCards,
+  dune.res.cards.starterCards,
+  dune.res.cards.contractCards,
+  dune.res.cards.techCards,
+  dune.res.cards.intrigueCards,
+  dune.res.cards.conflictCards,
 ]) {
-  cardsByName[card.name] = card
+  for (const card of deck) {
+    if (!(card.name in cardsByName)) {
+      cardsByName[card.name] = card
+    }
+  }
 }
 
 function cardClick(card, name) {
