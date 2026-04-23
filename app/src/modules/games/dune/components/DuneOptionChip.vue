@@ -7,6 +7,7 @@
                          size=".85em" />
         <span v-else-if="spaceIcon" class="space-icon" :class="`icon-${spaceIcon}`" />
         <span class="chip-name">{{ name }}</span>
+        <span class="chip-combat" v-if="boardSpace?.isCombatSpace" title="Combat">C</span>
         <span class="chip-detail" v-if="detail">{{ detail }}</span>
       </span>
       <span class="chip-subtitle" v-if="subtitleLines.length">
@@ -280,6 +281,19 @@ export default {
 .chip-detail {
   font-size: .85em;
   color: #8a7a68;
+}
+
+.chip-combat {
+  display: inline-block;
+  width: 1.2em;
+  height: 1.2em;
+  line-height: 1.2em;
+  text-align: center;
+  background-color: #c04040;
+  color: white;
+  border-radius: .15em;
+  font-size: .7em;
+  font-weight: bold;
 }
 
 .chip-subtitle {
