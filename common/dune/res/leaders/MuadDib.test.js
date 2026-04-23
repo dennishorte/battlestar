@@ -8,50 +8,75 @@ describe("Muad'Dib", () => {
     expect(leader.leaderAbility).toContain('Unpredictable Foe')
   })
 
-  test('onRevealTurn draws an intrigue when sandworms are in conflict', () => {
-    const game = t.fixture()
-    t.setBoard(game, { leaders: { dennis: leader } })
-    game.run()
+  describe('Unpredictable Foe', () => {
+    test('draws an Intrigue at reveal turn when sandworms are in conflict', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        leaders: { dennis: leader },
+        dennis: { agents: 0 },
+        conflict: { deployedSandworms: { dennis: 1 } },
+      })
+      game.run()
+      // Acquire prompt is now waiting; intrigue zone is set. Compare against
+      // baseline (no leader, same setup).
+      const baseline = t.fixture()
+      t.setBoard(baseline, { dennis: { agents: 0 } })
+      baseline.run()
+      const intrigueBefore = baseline.zones.byId('dennis.intrigue').cardlist().length
+      expect(game.zones.byId('dennis.intrigue').cardlist().length).toBe(intrigueBefore + 1)
+    })
 
-    const dennis = game.players.byName('dennis')
-    game.state.conflict.deployedSandworms[dennis.name] = 1
-    const before = game.zones.byId('dennis.intrigue').cardlist().length
-    leader.onRevealTurn(game, dennis)
-    const after = game.zones.byId('dennis.intrigue').cardlist().length
-    expect(after).toBe(before + 1)
+    test('draws exactly one Intrigue regardless of sandworm count', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        leaders: { dennis: leader },
+        dennis: { agents: 0 },
+        conflict: { deployedSandworms: { dennis: 3 } },
+      })
+      game.run()
+      // Acquire prompt is now waiting; intrigue zone is set. Compare against
+      // baseline (no leader, same setup).
+      const baseline = t.fixture()
+      t.setBoard(baseline, { dennis: { agents: 0 } })
+      baseline.run()
+      const intrigueBefore = baseline.zones.byId('dennis.intrigue').cardlist().length
+      expect(game.zones.byId('dennis.intrigue').cardlist().length).toBe(intrigueBefore + 1)
+    })
+
+    test('does nothing when no sandworms in conflict', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        leaders: { dennis: leader },
+        dennis: { agents: 0 },
+      })
+      game.run()
+      // Acquire prompt is now waiting; intrigue zone is set. Compare against
+      // baseline (no leader, same setup).
+      const baseline = t.fixture()
+      t.setBoard(baseline, { dennis: { agents: 0 } })
+      baseline.run()
+      const intrigueBefore = baseline.zones.byId('dennis.intrigue').cardlist().length
+      expect(game.zones.byId('dennis.intrigue').cardlist().length).toBe(intrigueBefore)
+    })
   })
 
-  test('onRevealTurn does nothing without sandworms', () => {
-    const game = t.fixture()
-    t.setBoard(game, { leaders: { dennis: leader } })
-    game.run()
+  describe('Lead the Way', () => {
+    test('+1 Draw via signet ring agent turn', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        leaders: { dennis: leader },
+        dennis: { hand: ['Signet Ring'] },
+      })
+      game.run()
 
-    const dennis = game.players.byName('dennis')
-    const before = game.zones.byId('dennis.intrigue').cardlist().length
-    leader.onRevealTurn(game, dennis)
-    const after = game.zones.byId('dennis.intrigue').cardlist().length
-    expect(after).toBe(before)
-  })
+      const handBefore = game.zones.byId('dennis.hand').cardlist().length
 
-  test('Lead the Way signet ring draws 1 card via parseAgentAbility', () => {
-    const game = t.fixture()
-    t.setBoard(game, { leaders: { dennis: leader } })
-    game.run()
+      t.choose(game, 'Agent Turn.Signet Ring')
+      t.choose(game, 'Arrakeen')
+      t.choose(game, 'Signet Ring')
 
-    const hand = game.zones.byId('dennis.hand').cardlist()
-    if (!hand.find(c => c.name === 'Signet Ring')) {
-      return
-    }
-    const handCountBefore = hand.length
-
-    t.choose(game, 'Agent Turn.Signet Ring')
-    t.choose(game, 'Arrakeen')
-    // Effect order choice: resolve signet ring first
-    t.choose(game, 'Signet Ring')
-
-    // Player drew a card from Lead the Way (signet ring resolution moves
-    // the card itself to played; draw adds one). Net: hand same as before
-    // (signet moved out, one card in).
-    expect(game.zones.byId('dennis.hand').cardlist().length).toBe(handCountBefore)
+      // -1 Signet Ring played, +1 from Lead the Way, +1 from Arrakeen = net +1
+      expect(game.zones.byId('dennis.hand').cardlist().length).toBe(handBefore + 1)
+    })
   })
 })

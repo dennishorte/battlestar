@@ -96,7 +96,13 @@ function resolveSignetRing(game, player, resolveEffectFn) {
     return
   }
 
-  const effects = parseAgentAbility(abilityText)
+  // Signet ring text starts with the ability name followed by a newline,
+  // then bullet-prefixed effects. parseAgentAbility expects just the effect
+  // portion, so strip the leading name line.
+  const effectText = abilityText.includes('\n')
+    ? abilityText.split('\n').slice(1).join('\n')
+    : abilityText
+  const effects = parseAgentAbility(effectText)
   if (effects) {
     game.log.indent()
     for (const effect of effects) {

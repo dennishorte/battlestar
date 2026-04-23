@@ -59,6 +59,16 @@ describe('Feature', () => {
 
 ## Common Tests (`common/`)
 
+### Rules
+
+These are non-negotiable for game logic tests in `common/`:
+
+1. **Integration only.** Tests drive the game through its public input/response interface. Never call internal engine methods (e.g. `_getResponse`, `requestInputSingle` directly), never push into `game.responses` or rewind `state.responseIndex`, never invoke leader/card hooks (`leader.onRevealTurn(game, dennis)`, `card.onPlay(...)`) directly. If a hook isn't reachable through normal play, that's a missing primitive in the game's `testutil.js`, not an excuse to bypass.
+2. **No mocks of engine internals.** Don't stub `game.actions.choose`, replace zone methods, or shadow manager prototypes. If a test needs a specific game state, set it via `setBoard`.
+3. **State reaches the engine via `setBoard`.** Every piece of state a test depends on must be settable through `t.setBoard(game, {...})`. If a field isn't supported, add it to the game's `testutil.js` so future tests have a primitive instead of an inline hack.
+4. **Use the `fixture → setBoard → run → choose → testBoard` rhythm.** `t.choose()` consumes the current input request. If a flow needs many `t.choose()` calls in a helper, that's fine — but the helper drives real prompts, not synthetic ones.
+5. **State after `game.run()` is ephemeral.** It rebuilds from `responses[]` on the next `respondToInputRequest`. Mutations made directly on `game.state` after `run()` will be lost. Set state through `setBoard` (which uses breakpoints that re-run on each replay).
+
 ### Core Framework Tests (`lib/`)
 - `game.test.js` - Core game class tests (326 lines)
 - `game/BaseActionManager.test.js` - Action manager

@@ -47,7 +47,11 @@ function setRevealStrength(game, player, swordSources) {
   }
   const total = troopStr + sandwormStr + swordStr
 
-  player.setCounter('strength', total, { silent: true })
+  // Increment rather than set: leader abilities like Devious Strength
+  // (Feyd-Rautha) may have already added to strength earlier in the reveal
+  // turn. roundStart resets strength to 0, so this is equivalent to setting
+  // when called in isolation.
+  player.incrementCounter('strength', total, { silent: true })
 
   if (!game.state.conflict.strengthBreakdown[player.name]) {
     game.state.conflict.strengthBreakdown[player.name] = []

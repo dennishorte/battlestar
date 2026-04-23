@@ -269,6 +269,7 @@ Dune.prototype.mainLoop = function() {
     })
 
     roundStartPhase(this)
+    this._breakpoint('after-round-start')
     playerTurnsPhase(this)
     combatPhase(this)
     makersPhase(this)

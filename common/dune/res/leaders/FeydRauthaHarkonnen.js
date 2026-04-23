@@ -33,25 +33,29 @@ module.exports = {
 
   onRevealTurn(game, player) {
     const spies = require('../../systems/spies.js')
-    const constants = require('../constants.js')
     const observationPosts = require('../observationPosts.js')
-    const playerPosts = observationPosts.filter(post => {
+    const hasSpy = observationPosts.some(post => {
       const occupants = game.state.spyPosts[post.id] || []
       return occupants.includes(player.name)
     })
-    if (playerPosts.length === 0) {
+    if (!hasSpy) {
       return
     }
-    const choices = ['Pass', ...playerPosts.map(p => `Post ${p.id}`)]
-    const [choice] = game.actions.choose(player, choices, {
+    const [choice] = game.actions.choose(player, ['Pass', 'Recall a Spy for +2 Strength'], {
       title: 'Devious Strength: Recall a Spy for +2 Strength?',
     })
     if (choice === 'Pass') {
       return
     }
-    spies.recallSpy(game, player)
+    const recalled = spies.recallSpy(game, player)
+    if (!recalled) {
+      return
+    }
+    // +2 Strength. addStrength increments both counter and breakdown.
+    // setRevealStrength (called after this hook) increments on top, so the
+    // +2 is preserved in the final strength total.
     const { addStrength } = require('../../systems/strengthBreakdown.js')
-    addStrength(game, player, 'leader', 'Devious Strength', 2 * constants.SWORD_STRENGTH)
+    addStrength(game, player, 'leader', 'Devious Strength', 2)
     game.log.add({
       template: '{player}: Devious Strength — recalls Spy for +2 Strength',
       args: { player },

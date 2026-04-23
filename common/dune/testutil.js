@@ -118,64 +118,27 @@ TestUtil.setBoard = function(game, state) {
     })
   }
 
+  // initialization-complete fires before roundStart. Use this for state that
+  // roundStart reads (counters that defensive bonus draws from, influence,
+  // alliances) and for deck reordering that influences the starting hand.
   game.testSetBreakpoint('initialization-complete', (game) => {
-    // Game-level state
-    if (state.round !== undefined) {
-      game.state.round = state.round
-    }
-    if (state.phase !== undefined) {
-      game.state.phase = state.phase
-    }
     if (state.shieldWall !== undefined) {
       game.state.shieldWall = state.shieldWall
     }
     if (state.firstPlayerIndex !== undefined) {
       game.state.firstPlayerIndex = state.firstPlayerIndex
     }
-
     if (state.controlMarkers) {
       Object.assign(game.state.controlMarkers, state.controlMarkers)
     }
-
     if (state.alliances) {
       Object.assign(game.state.alliances, state.alliances)
     }
-
     if (state.bonusSpice) {
       Object.assign(game.state.bonusSpice, state.bonusSpice)
     }
-
-    if (state.spyPosts) {
-      for (const [postId, players] of Object.entries(state.spyPosts)) {
-        game.state.spyPosts[postId] = [...players]
-      }
-    }
-
-    if (state.boardSpaces) {
-      Object.assign(game.state.boardSpaces, state.boardSpaces)
-    }
-
     if (state.makerHooks) {
       Object.assign(game.state.makerHooks, state.makerHooks)
-    }
-
-    // Conflict state
-    if (state.conflict) {
-      const c = state.conflict
-      if (c.deployedTroops) {
-        Object.assign(game.state.conflict.deployedTroops, c.deployedTroops)
-      }
-      if (c.deployedSandworms) {
-        Object.assign(game.state.conflict.deployedSandworms, c.deployedSandworms)
-      }
-      if (c.wonCards) {
-        game.state.conflict.wonCards = c.wonCards
-      }
-    }
-
-    // Objectives (per-player)
-    if (state.objectives) {
-      Object.assign(game.state.objectives, state.objectives)
     }
 
     // Conflict card: put a card matching the filter on top of the conflict deck
@@ -200,13 +163,105 @@ TestUtil.setBoard = function(game, state) {
       }
     }
 
-    // Per-player state
+    // Reorder each player's deck so requested hand cards land at top, ready
+    // for roundStart's HAND_SIZE draw. The cards must already exist in the
+    // player's deck (typically starter cards).
+    for (const playerName of ['dennis', 'micah', 'scott', 'eliya']) {
+      const ps = state[playerName]
+      if (!ps || !ps.hand) {
+        continue
+      }
+      const deck = game.zones.byId(`${playerName}.deck`)
+      for (let i = ps.hand.length - 1; i >= 0; i--) {
+        const cardName = ps.hand[i]
+        const card = deck.cardlist().find(c => c.name === cardName)
+        if (card) {
+          card.moveTo(deck, 0)
+        }
+      }
+    }
+
+    // Counters, influence, intrigue, contracts. roundStart's defensive bonus
+    // reads troopsInSupply/troopsInGarrison, so these must be set first.
     for (const playerName of ['dennis', 'micah', 'scott', 'eliya']) {
       if (state[playerName]) {
         applyPlayerState(game, playerName, state[playerName])
       }
     }
   })
+
+  // after-round-start fires after dealing, after deployedTroops/sandworms/
+  // strength have been zeroed. Use this for state that roundStart resets.
+  game.testSetBreakpoint('after-round-start', (game) => {
+    if (state.round !== undefined) {
+      game.state.round = state.round
+    }
+    if (state.phase !== undefined) {
+      game.state.phase = state.phase
+    }
+    if (state.spyPosts) {
+      for (const [postId, players] of Object.entries(state.spyPosts)) {
+        game.state.spyPosts[postId] = [...players]
+      }
+    }
+    if (state.boardSpaces) {
+      Object.assign(game.state.boardSpaces, state.boardSpaces)
+    }
+
+    // roundStart wipes deployedTroops/deployedSandworms — apply after.
+    if (state.conflict) {
+      const c = state.conflict
+      if (c.deployedTroops) {
+        Object.assign(game.state.conflict.deployedTroops, c.deployedTroops)
+      }
+      if (c.deployedSandworms) {
+        Object.assign(game.state.conflict.deployedSandworms, c.deployedSandworms)
+      }
+      if (c.wonCards) {
+        game.state.conflict.wonCards = c.wonCards
+      }
+    }
+
+    if (state.objectives) {
+      Object.assign(game.state.objectives, state.objectives)
+    }
+
+    // Per-leader state (jessicaMemories, jessicaFlipped, feydTrack).
+    if (state.jessicaMemories) {
+      game.state.jessicaMemories = { ...(game.state.jessicaMemories || {}), ...state.jessicaMemories }
+    }
+    if (state.jessicaFlipped) {
+      game.state.jessicaFlipped = { ...(game.state.jessicaFlipped || {}), ...state.jessicaFlipped }
+    }
+    if (state.feydTrack) {
+      game.state.feydTrack = { ...(game.state.feydTrack || {}), ...state.feydTrack }
+    }
+
+    // Exact-hand override: useful when the deck-reorder hint can't deliver
+    // the right hand (e.g. cards aren't in the player's deck).
+    for (const playerName of ['dennis', 'micah', 'scott', 'eliya']) {
+      const ps = state[playerName]
+      if (!ps || !ps.handExact) {
+        continue
+      }
+      applyHandExact(game, playerName, ps.handExact)
+    }
+  })
+}
+
+
+function applyHandExact(game, name, handExact) {
+  const handZone = game.zones.byId(`${name}.hand`)
+  const deckZone = game.zones.byId(`${name}.deck`)
+  for (const card of [...handZone.cardlist()]) {
+    card.moveTo(deckZone)
+  }
+  for (const cardName of handExact) {
+    const card = deckZone.cardlist().find(c => c.name === cardName)
+    if (card) {
+      card.moveTo(handZone)
+    }
+  }
 }
 
 
@@ -282,6 +337,9 @@ function applyPlayerState(game, name, state) {
       }
     }
   }
+
+  // state.hand and state.handExact are processed in setBoard's breakpoints,
+  // not here.
 }
 
 

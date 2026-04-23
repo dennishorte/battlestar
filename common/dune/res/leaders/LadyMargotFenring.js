@@ -10,18 +10,16 @@ module.exports = {
   signetRingAbility: 'Arrakis Informant\n· +1 Spy on any purple space',
   complexity: 1,
 
-  onGainInfluence(game, player, faction, newLevel) {
-    if (faction !== 'bene-gesserit' || newLevel < 2) {
+  // Per rules.txt: "reach 2" is the upward crossing of the threshold. Fires every
+  // time the player crosses from below 2 to >=2, including after losing and
+  // regaining influence.
+  onGainInfluence(game, player, faction, newLevel, prev) {
+    if (faction !== 'bene-gesserit') {
       return
     }
-    if (!game.state.leaderBonusTriggered) {
-      game.state.leaderBonusTriggered = {}
-    }
-    const key = `${player.name}-Lady Margot Fenring-bene-gesserit`
-    if (game.state.leaderBonusTriggered[key]) {
+    if (prev >= 2 || newLevel < 2) {
       return
     }
-    game.state.leaderBonusTriggered[key] = true
     player.incrementCounter('spice', 2, { silent: true })
     game.log.add({
       template: '{player}: Loyalty — +2 Spice',
