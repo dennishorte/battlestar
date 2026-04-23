@@ -31,6 +31,19 @@ function cardClick(card, name) {
   }
 }
 
+function convertArg(arg, value) {
+  if (arg === 'contract') {
+    return `card(${value.value})`
+  }
+  if (arg === 'space' || arg === 'boardSpace') {
+    return `loc(${value.value})`
+  }
+}
+
+function locClasses() {
+  return ['board-space-name']
+}
+
 function chatColors() {
   const output = {}
   if (!game.value?.players) {
@@ -83,8 +96,10 @@ function playerStyles(player) {
 useGameLogProvider({
   cardClick,
   chatColors,
+  convertArg,
   lineClasses,
   lineStyles,
+  locClasses,
   playerStyles,
 })
 </script>
