@@ -33,6 +33,7 @@
       </div>
 
       <div class="deck-info">
+        <span>hand: {{ handCount }}</span>
         <span>deck: {{ deckCount }}</span>
         <span>discard: {{ discardCount }}</span>
         <span :class="{ clickable: isViewer }" @click="openIntrigue">intrigue: {{ intrigueCount }}</span>
@@ -106,6 +107,10 @@ export default {
 
     revealedCards() {
       return this.game.zones.byId(`${this.player.name}.revealed`).cardlist()
+    },
+
+    handCount() {
+      return this.game.zones.byId(`${this.player.name}.hand`).cardlist().length
     },
 
     deckCount() {
