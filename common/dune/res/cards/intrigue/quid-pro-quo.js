@@ -31,7 +31,7 @@ module.exports = {
         const boardSpacesData = require('../../boardSpaces.js')
         const factionSet = new Set()
         for (const space of boardSpacesData) {
-          if (game.state.boardSpaces[space.id] === player.name && space.faction) {
+          if ((game.state.boardSpaces[space.id] || []).includes(player.name) && space.faction) {
             factionSet.add(space.faction)
           }
         }

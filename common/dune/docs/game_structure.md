@@ -66,7 +66,7 @@ Faction-icon spaces (emperor/guild/bene-gesserit/fremen) are accessed via `facti
 ## Key State Fields
 
 ```
-game.state.boardSpaces        // { spaceId: playerName | null }
+game.state.boardSpaces        // { spaceId: [playerName, ...] } — multiple occupants via infiltration / Helena Richese
 game.state.controlMarkers     // { arrakeen|spice-refinery|imperial-basin: playerName | null }
 game.state.shieldWall         // boolean
 game.state.alliances          // { emperor|guild|bene-gesserit|fremen: playerName | null }

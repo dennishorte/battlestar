@@ -205,7 +205,17 @@ TestUtil.setBoard = function(game, state) {
       }
     }
     if (state.boardSpaces) {
-      Object.assign(game.state.boardSpaces, state.boardSpaces)
+      for (const [spaceId, occupants] of Object.entries(state.boardSpaces)) {
+        if (occupants == null) {
+          game.state.boardSpaces[spaceId] = []
+        }
+        else if (Array.isArray(occupants)) {
+          game.state.boardSpaces[spaceId] = [...occupants]
+        }
+        else {
+          game.state.boardSpaces[spaceId] = [occupants]
+        }
+      }
     }
 
     // roundStart wipes deployedTroops/deployedSandworms — apply after.

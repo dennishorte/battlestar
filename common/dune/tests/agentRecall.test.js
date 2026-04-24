@@ -28,13 +28,13 @@ describe('Agent Recall', () => {
     t.choose(game, 'Assembly Hall')
 
     // Board space should be occupied
-    expect(game.state.boardSpaces['assembly-hall']).toBe('dennis')
+    expect(game.state.boardSpaces['assembly-hall']).toEqual(['dennis'])
 
     // Complete the round
     completeRound(game)
 
     // After recall, all board spaces should be cleared
-    expect(game.state.boardSpaces['assembly-hall']).toBeNull()
+    expect(game.state.boardSpaces['assembly-hall']).toEqual([])
     expect(game.state.round).toBe(2)
   })
 

@@ -72,8 +72,13 @@ Dune.prototype._reset = function() {
   this.state.phase = null
   this.state.firstPlayerIndex = 0
 
-  // Board space occupation: { spaceId: playerName | null }
+  // Board space occupation: { spaceId: playerName[] }
+  // Multiple occupants possible via spy infiltration or leader abilities
+  // (e.g. Helena Richese ignoring occupancy on green/purple).
   this.state.boardSpaces = {}
+  for (const space of res.boardSpaces) {
+    this.state.boardSpaces[space.id] = []
+  }
 
   // Control markers: { locationId: playerName | null }
   this.state.controlMarkers = {

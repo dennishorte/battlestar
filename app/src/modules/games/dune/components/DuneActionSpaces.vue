@@ -26,7 +26,7 @@
           <div v-for="space in group.spaces"
                :key="space.id"
                class="space-entry"
-               :class="{ occupied: game.state.boardSpaces[space.id] }"
+               :class="{ occupied: spaceOccupants(space.id).length > 0 }"
                :data-space-id="space.id">
             <div class="space-row">
               <DuneFactionIcon v-if="isFaction(space.icon)"
@@ -34,8 +34,8 @@
                                size=".85em" />
               <span v-else class="space-icon" :class="`icon-${space.icon}`" />
               <span class="space-name">{{ space.name }}</span>
-              <span class="space-occupant" v-if="game.state.boardSpaces[space.id]">
-                {{ game.state.boardSpaces[space.id] }}
+              <span class="space-occupant" v-if="spaceOccupants(space.id).length > 0">
+                {{ spaceOccupants(space.id).join(', ') }}
               </span>
               <span class="space-cost" v-if="costLabel(space)">{{ costLabel(space) }}</span>
               <span class="space-req" v-if="space.influenceRequirement">
@@ -275,6 +275,18 @@ export default {
 
     isFaction(icon) {
       return factionIds.has(icon)
+    },
+
+    spaceOccupants(spaceId) {
+      const raw = this.game.state.boardSpaces[spaceId]
+      if (!raw) {
+        return []
+      }
+      // Back-compat: legacy state may still hold a single playerName string
+      if (typeof raw === 'string') {
+        return [raw]
+      }
+      return raw
     },
 
     describeEffect(effect) {

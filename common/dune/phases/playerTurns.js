@@ -127,7 +127,7 @@ function agentTurn(game, player, card) {
   const space = validSpaces.find(s => s.name === spaceChoice)
 
   // Spy actions before placing agent
-  const spaceOccupied = !!game.state.boardSpaces[space.id]
+  const spaceOccupied = (game.state.boardSpaces[space.id] || []).length > 0
   const hasSpyOnPost = spies.hasSpyAt(game, player, space.id)
 
   if (spaceOccupied && hasSpyOnPost) {
@@ -158,7 +158,10 @@ function agentTurn(game, player, card) {
 
   // Play the card and place the agent
   deckEngine.playCard(game, player, card)
-  game.state.boardSpaces[space.id] = player.name
+  if (!game.state.boardSpaces[space.id]) {
+    game.state.boardSpaces[space.id] = []
+  }
+  game.state.boardSpaces[space.id].push(player.name)
   player.incrementCounter('agentsPlaced', 1, { silent: true })
 
   game.log.add({
@@ -508,7 +511,7 @@ function canSendAgentTo(game, player, card, space) {
   }
 
   // Space occupancy check — can infiltrate if spy on connected post, leader ignores, or card ignores
-  if (game.state.boardSpaces[space.id]) {
+  if ((game.state.boardSpaces[space.id] || []).length > 0) {
     const cardIgnores = game.state.turnTracking?.ignoreOccupancy
     if (!spies.hasSpyAt(game, player, space.id) && !leaderAbilities.ignoresOccupancy(game, player, space) && !cardIgnores) {
       return false
@@ -538,8 +541,8 @@ function canSendAgentTo(game, player, card, space) {
     }
   }
 
-  // Blocked spaces (The Voice)
-  if (game.state.blockedSpaces?.includes(space.id) && game.state.boardSpaces[space.id] !== player.name) {
+  // Blocked spaces (The Voice) — still allowed if you're already present there
+  if (game.state.blockedSpaces?.includes(space.id) && !(game.state.boardSpaces[space.id] || []).includes(player.name)) {
     return false
   }
 
@@ -1031,7 +1034,7 @@ function resolveEffect(game, player, effect, space, sourceName) {
     case 'recall-agent': {
       // Return one of your agents from the board (freeing the space)
       const occupiedSpaces = Object.entries(game.state.boardSpaces)
-        .filter(([, occupant]) => occupant === player.name)
+        .filter(([, occupants]) => (occupants || []).includes(player.name))
       if (occupiedSpaces.length > 0) {
         const boardSpaces = getBoardSpaces()
         const recallChoices = occupiedSpaces.map(([id]) => {
@@ -1046,7 +1049,11 @@ function resolveEffect(game, player, effect, space, sourceName) {
           return (bs ? bs.name : id) === recallChoice
         })?.[0]
         if (spaceId) {
-          game.state.boardSpaces[spaceId] = null
+          const occupants = game.state.boardSpaces[spaceId]
+          const idx = occupants.indexOf(player.name)
+          if (idx !== -1) {
+            occupants.splice(idx, 1)
+          }
           player.decrementCounter('agentsPlaced', 1, { silent: true })
           game.log.add({
             template: '{player} recalls an Agent from {space}',
@@ -1452,7 +1459,7 @@ function checkCondition(game, player, condition) {
 
     case 'occupying-maker-space': {
       const boardSpacesData = getBoardSpaces()
-      return boardSpacesData.some(s => s.isMakerSpace && game.state.boardSpaces[s.id] === player.name)
+      return boardSpacesData.some(s => s.isMakerSpace && (game.state.boardSpaces[s.id] || []).includes(player.name))
     }
 
     case 'sent-to-maker':
@@ -1478,7 +1485,7 @@ function checkCondition(game, player, condition) {
     case 'agent-on-space': {
       const allSpaces = getBoardSpaces()
       return allSpaces.some(s => {
-        if (game.state.boardSpaces[s.id] !== player.name) {
+        if (!(game.state.boardSpaces[s.id] || []).includes(player.name)) {
           return false
         }
         if (['green', 'purple', 'yellow'].includes(condition.icon)) {

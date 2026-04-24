@@ -30,7 +30,7 @@ function recallPhase(game) {
 
   // Clear board space occupation
   for (const spaceId of Object.keys(game.state.boardSpaces)) {
-    game.state.boardSpaces[spaceId] = null
+    game.state.boardSpaces[spaceId] = []
   }
 
   // Clear round-scoped state
