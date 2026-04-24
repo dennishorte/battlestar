@@ -129,6 +129,23 @@ class MyGameLogManager extends BaseLogManager {
       value: loc.name,
       classes: ['location-name'],
     }))
+
+    // Cards: carry identifiers through so the log UI can open the right
+    // card in the inspector even when two decks share a display name.
+    // `cardId` drives GameLog's card(...) token — when set, CardName.vue
+    // resolves it via game.cards.byId to the full card instance rather
+    // than guessing by name.
+    this.registerHandler('card*', (card) => {
+      if (typeof card === 'string') {
+        return { value: card, classes: ['card-name'] }
+      }
+      return {
+        value: card.name,
+        classes: ['card-name'],
+        cardId: card.id || null,
+        defId: card.defId || card.data?.defId || null,
+      }
+    })
   }
 }
 ```

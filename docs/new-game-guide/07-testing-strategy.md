@@ -144,6 +144,21 @@ TestUtil.choose = function(game, ...selections) {
 }
 ```
 
+`t.choose` accepts several selection forms:
+
+| Form | Use |
+|------|-----|
+| `'Name'` | Match a choice by title. Throws with a candidate list when multiple choices share the title *and* have distinct `defId`s. |
+| `'*37'` | Leading `*` returns the literal — escape hatch for digit-only strings that shouldn't be coerced to numbers. |
+| `'Parent.Child'` | Nested form: pick `Child` inside `Parent`. |
+| `{ id: '...' }` | Disambiguate by stable choice id. |
+| `{ kind: '...', name: '...' }` | Disambiguate by kind + title. |
+| `{ title, selection: [...] }` | Pass a full nested response unchanged. |
+
+The helper is **ambiguity-aware**: if a prompt contains two choices that share a title but have different `defId`s (e.g. an imperium card and a conflict card both named "Desert Power"), `t.choose(game, 'Desert Power')` throws with a candidate list rather than picking one silently. Use the `{id}` or `{kind, name}` form to disambiguate. Multiple *copies* of the same card (same `defId`, different instance ids) remain interchangeable and don't trigger the error.
+
+When a matched choice carries an id, `t.choose` emits a structured `{title, id}` selection automatically so the stored response is stable against future prompts gaining duplicates.
+
 ### action(game, actionName, opts)
 
 For games with board-click interactions:

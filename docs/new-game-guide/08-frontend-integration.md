@@ -252,13 +252,70 @@ computed: {
 }
 ```
 
+### Rendering Choice Chips (`selectorOptionComponent`)
+
+The base `OptionSelector` renders each choice as a plain text label by default. Most games override this to render rich chips — a card thumbnail, a colored faction badge, a board-space tile — by registering a `selectorOptionComponent` function on the shared `ui.fn` object. The shared `OptionName.vue` calls it for every choice and renders whatever Vue component you return.
+
+The function receives a single argument — the choice — and returns either `null` (fall back to plain text) or `{ component, props }`:
+
+```javascript
+// In your game component's mounted()
+mounted() {
+  // Build per-id lookup tables once. defId is the canonical key for cards
+  // because instance ids ('imperium-desert-power-0') differ between copies
+  // but every copy shares the same defId ('desert-power').
+  const cardsById = {}
+  for (const deck of [imperiumCards, conflictCards, ...]) {
+    for (const card of deck) {
+      if (card.id) cardsById[card.id] = card
+    }
+  }
+  const leadersById = Object.fromEntries(leaderData.map(l => [l.id, l]))
+  const spacesById = Object.fromEntries(boardSpaces.map(s => [s.id, s]))
+
+  this.ui.fn.selectorOptionComponent = (option) => {
+    const name = option.title || option
+
+    // Canonical path: structured option carries id (and optionally kind).
+    // Prefer defId — it's the definition id; option.id may be a per-instance
+    // id that doesn't appear in the by-id tables.
+    if (option && typeof option === 'object' && (option.defId || option.id)) {
+      const lookupId = option.defId || option.id
+      if (option.kind === 'leader' && leadersById[lookupId]) {
+        return { component: MyLeaderChip, props: { name, leader: leadersById[lookupId] } }
+      }
+      if (option.kind === 'board-space' && spacesById[lookupId]) {
+        return { component: MySpaceChip, props: { name, space: spacesById[lookupId] } }
+      }
+      if (cardsById[lookupId]) {
+        return { component: MyCardChip, props: { name, card: cardsById[lookupId] } }
+      }
+    }
+
+    // Fallback: bare-string options resolved by name. Keep this around only
+    // until every engine choose-site has been migrated to chooseCards or
+    // structured choices — at which point the fallback can be deleted.
+    if (cardsByName[name]) {
+      return { component: MyCardChip, props: { name, card: cardsByName[name] } }
+    }
+    return null
+  }
+}
+```
+
+**Why prefer `defId` over `id` in the UI**: card *instance* ids are unique per copy (`'imperium-desert-power-0'`, `'-1'`, …) and don't appear in your static `cardsById` table; the *definition* id (`'desert-power'`) does. The engine's structured choice carries both, so the UI looks up by `defId` first and falls back to `id` for things that don't have copies (leaders, spaces, conflict cards whose instance id equals their definition id).
+
+**Why a fallback is needed**: not every engine site emits structured choices yet — `choose(player, [...names])` calls still produce bare strings. Keep the name-based fallback until every choose-site is migrated, then delete it. Logging a `console.warn` from the fallback during dev makes remaining drift visible.
+
+See `app/src/modules/games/dune/components/DuneGame.vue` for a working example, and `docs/common.md` for the choice-protocol reference.
+
 ### Submitting Actions
 
 Two patterns for submitting player choices:
 
 **Pattern 1: Let WaitingPanel handle it (default)**
 
-Just include `<WaitingPanel />` in your game layout. It renders the choice UI and handles submission automatically via `OptionSelector` → `WaitingChoice`.
+Just include `<WaitingPanel />` in your game layout. It renders the choice UI and handles submission automatically via `OptionSelector` → `WaitingChoice`. Structured choice ids (when present) are submitted back as `{title, id}` selections automatically.
 
 **Pattern 2: Board-click actions (action-type responses)**
 

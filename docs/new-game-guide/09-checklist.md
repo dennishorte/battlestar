@@ -21,6 +21,7 @@ A step-by-step checklist for implementing a new game. Each item links to the rel
   - [ ] Design card definition format
   - [ ] Plan `res/` directory structure
   - [ ] Decide card set organization strategy
+  - [ ] Decide whether cards have multiple copies (`count`) or share names across pools — if either applies, plan to set `defId` on instances when they're created
 - [ ] Draft log output for a full round ([Section 5](05-logging-design.md))
   - [ ] Write example log with indentation
   - [ ] Map indent levels to function boundaries
@@ -67,11 +68,13 @@ A step-by-step checklist for implementing a new game. Each item links to the rel
   - [ ] Action selection (choose from available actions)
   - [ ] Action resolution (execute the chosen action)
   - [ ] Turn-end cleanup
+  - [ ] Use `chooseCards` (not `choose` with name strings) for any prompt that selects from card objects — keeps replay deterministic when names collide
 - [ ] Implement end-game condition and scoring
 - [ ] Wire up logging throughout ([Section 5](05-logging-design.md))
   - [ ] Phase/round headers with events
   - [ ] Turn-start and player-action entries
   - [ ] Indentation for action details
+  - [ ] Pass card *objects* (not `card.name`) into log args so the `card*` handler can carry `cardId`/`defId` through for click-to-inspect
 - [ ] Tests for the core loop
   - [ ] Complete round plays through
   - [ ] Turn order is correct
@@ -118,6 +121,7 @@ A step-by-step checklist for implementing a new game. Each item links to the rel
 - [ ] Player panel component
 - [ ] Board/play area component (read-only first)
 - [ ] Choice UI (dropdown selection)
+  - [ ] Register `ui.fn.selectorOptionComponent` to render rich chips for cards/leaders/spaces, resolving by `option.defId` / `option.id` first
 - [ ] Board interactions (clickable elements for action-type selectors)
 - [ ] Register game in the app router and game list
 - [ ] Lobby options component (player count, expansions, etc.)

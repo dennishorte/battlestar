@@ -227,6 +227,75 @@ Everything in the "ephemeral" column is reconstructed identically on each replay
 
 ---
 
+## Player Choices
+
+Use `BaseActionManager`'s choose helpers to request player input. Pick the right helper for what you're choosing:
+
+| Helper | Use for |
+|--------|---------|
+| `choose(player, choices, opts)` | Plain strings, numbers, or fully custom structured choice objects. |
+| `chooseCard(player, cards, opts)` / `chooseCards(player, cards, opts)` | Selecting from an array of card objects. Emits structured choices and resolves selections id-first. |
+| `choosePlayer(player, players, opts)` | Selecting from a list of player objects. |
+| `chooseYesNo(player, title)` | Binary choice. |
+
+### Prefer `chooseCards` for card selection
+
+`chooseCards` takes an array of card objects directly and returns the chosen card objects — no intermediate name-based lookup. Under the hood it emits structured choice objects that carry each card's `id`, `defId`, and an optional `opts.kind` tag, then resolves the response id-first. This means:
+
+- Selections stay deterministic even when two cards in the choice pool share a title.
+- Replay is stable across card renames (ids don't change).
+- The frontend can resolve each option chip to the correct card definition without name guessing.
+
+```javascript
+// GOOD — returns card objects, id-matched
+const [chosen] = this.actions.chooseCards(player, acquirableCards, {
+  title: 'Acquire a card',
+  kind: 'imperium-card',   // optional type tag used by the UI
+})
+
+// ANTI-PATTERN — name-based lookup breaks when names collide
+const names = acquirableCards.map(c => c.name)
+const [name] = this.actions.choose(player, names, { title: 'Acquire a card' })
+const chosen = acquirableCards.find(c => c.name === name)  // silently picks first match
+```
+
+If your prompt needs both card options and a non-card "Pass" entry, mix a sentinel object into the card list:
+
+```javascript
+const PASS = { name: 'Pass', id: '__pass__' }
+const [chosen] = this.actions.chooseCards(player, [PASS, ...acquirableCards], {
+  title: 'Acquire cards',
+  kind: 'imperium-card',
+})
+if (chosen.id === '__pass__') {
+  return
+}
+```
+
+### Structured choices for non-card data
+
+When you need `choose` with custom options (e.g. board spaces, leaders, abilities) and a collision is possible, hand-roll the structured choice objects:
+
+```javascript
+const choices = [
+  { title: 'Arrakeen',    id: 'arrakeen',    kind: 'board-space' },
+  { title: 'Carthag',     id: 'carthag',     kind: 'board-space' },
+  { title: 'Stillsuits',  id: 'stillsuits',  kind: 'imperium-card' },
+]
+const [selected] = this.actions.choose(player, choices, { title: 'Deploy agent' })
+// `selected` is either a bare title string (when the choice had no id) or
+// a `{title, id}` object. `chooseCards` wraps both cases; for raw `choose`,
+// resolve by id when the choice objects carried one.
+```
+
+### Back-compat with plain strings
+
+Plain string choices (`choose(player, ['yes', 'no'])`) remain fully supported. Don't introduce structured choices where they aren't needed — simple yes/no, faction pickers, and action menus with unique titles stay as plain strings. The validator and auto-responder treat both forms transparently.
+
+See `docs/common.md` for the full protocol definition, and [Section 7](07-testing-strategy.md) for how `t.choose` consumes structured choices in tests.
+
+---
+
 ## Player Color Selection
 
 The base `Game` class provides `this.chooseColor(player)` which prompts a player to pick from the available colors (red, orange, yellow, lime, green, blue, indigo, pink). It's idempotent -- if a player already has a color, it returns immediately.

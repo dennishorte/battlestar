@@ -93,6 +93,36 @@ module.exports = {
 - **Always fetch cards by id.** Cards often appear in the deck multiple times (`count` field), and shared display names mean `findByName` returns ambiguous results. Build a `byId` index and require all consumers to go through it.
 - **Aggregator stays array-typed** — the per-folder `index.js` re-exports the same arrays consumers used before (`imperiumCards`, `intrigueCards`, …) so the migration doesn't ripple into callers.
 
+### Instance id vs definition id (`defId`)
+
+When a game creates multiple *copies* of the same card (e.g. shuffling 4× "Scout" into a deck), each live instance must have a unique identifier so `BaseCardManager.register` doesn't collide. The convention is to mint an instance id on construction while keeping the original definition id in a separate `defId` field:
+
+```javascript
+// In deck initialization
+for (const cardDef of imperiumCards) {
+  for (let i = 0; i < (cardDef.count || 1); i++) {
+    const instanceId = `imperium-${cardDef.id}-${i}`
+    const card = new GameCard(game, {
+      ...cardDef,
+      defId: cardDef.id,   // preserve the definition id
+      id: instanceId,      // overrides cardDef.id — must be unique per instance
+      type: 'imperium',
+    })
+    game.cards.register(card)
+    deckZone.push(card)
+  }
+}
+```
+
+`BaseCard` reads `data.defId` during construction and exposes it as `this.defId`. This pair gives you:
+
+- `card.id` — unique per instance. Used by the card registry, zones, and engine-side selection matching (e.g. "which specific copy did the player pick").
+- `card.defId` — stable per definition. Used by UI chips and logs to find the card's display data without parsing instance-id strings.
+
+`BaseActionManager.chooseCards` automatically propagates both fields into the structured choice object, so downstream consumers can disambiguate collisions without any per-game plumbing. Games whose cards don't distinguish instances (no `count`, always unique titles) can leave `defId` unset; it's fully opt-in.
+
+If your game has no card copies, you still benefit from setting `defId` anytime a card *name* might legitimately collide across pools (e.g. an imperium card and a conflict card both named "Desert Power"). It's the discriminator that tells the UI and the test helper that two same-titled choices are semantically distinct things, not interchangeable copies of one thing.
+
 ### Card Set Registration
 
 Card sets allow game creation with configurable content. The factory passes selected sets to the game constructor:
