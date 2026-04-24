@@ -24,16 +24,64 @@ TestCommon.dennis = function(game) {
 }
 
 // Select an option from the input request. (Game.requestInputMany)
+//
+// Accepted selection forms:
+//   - `'Name'` — plain string match against a choice title. When the title
+//     is shared by multiple choices in the current prompt the call throws
+//     with a candidate list rather than silently picking one.
+//   - `'*37'` — leading `*` is an escape hatch: returned as literal
+//     (useful for digit-only strings that shouldn't be coerced to numbers).
+//   - `'Parent.Child'` — dot-separated nested form for sub-selections.
+//   - `{ id: '...' }` — disambiguate by the choice's stable id.
+//   - `{ kind: '...', name: '...' }` — disambiguate by kind + title.
+//   - `{ title, selection: [...] }` — full nested response, passed through.
 TestCommon.choose = function(game, ...selections) {
   const request = game.waiting
   const selector = request.selectors[0]
   const choices = selector.choices || []
-  selections = selections.map(string => {
-    if (typeof string === 'string' && string.startsWith('*')) {
-      return string.slice(1)
+
+  selections = selections.map(input => {
+    // Escape hatch for digit-only strings that shouldn't be coerced.
+    if (typeof input === 'string' && input.startsWith('*')) {
+      return input.slice(1)
     }
 
-    const tokens = (typeof string === 'string' ? string.split('.') : [string])
+    // Structured disambiguation: {id} or {kind, name}.
+    if (input && typeof input === 'object' && !Array.isArray(input)) {
+      const hasSelection = 'selection' in input || 'choices' in input
+      if (!hasSelection && input.id) {
+        const match = choices.find(c => typeof c === 'object' && c.id === input.id)
+        if (!match) {
+          throw new Error(
+            `No choice with id "${input.id}" in prompt "${selector.title}". ` +
+            `Available: ${_formatChoicesForError(choices)}`
+          )
+        }
+        return { title: match.title, id: match.id }
+      }
+      if (!hasSelection && input.kind && input.name) {
+        const matches = choices.filter(c =>
+          typeof c === 'object' && c.kind === input.kind && c.title === input.name
+        )
+        if (matches.length === 0) {
+          throw new Error(
+            `No choice with kind "${input.kind}" and title "${input.name}" in prompt "${selector.title}". ` +
+            `Available: ${_formatChoicesForError(choices)}`
+          )
+        }
+        if (matches.length > 1) {
+          throw new Error(
+            `Kind+name still ambiguous (${matches.length} matches) in prompt "${selector.title}". ` +
+            `Use {id: '...'} instead. Candidates: ${_formatChoicesForError(matches)}`
+          )
+        }
+        const match = matches[0]
+        return match.id ? { title: match.title, id: match.id } : match.title
+      }
+      // Other objects (e.g. full nested {title, selection} form) fall through.
+    }
+
+    const tokens = (typeof input === 'string' ? input.split('.') : [input])
       .map(token => {
         if (util.isDigits(token)) {
           return Number(token)
@@ -44,14 +92,56 @@ TestCommon.choose = function(game, ...selections) {
       })
 
     if (tokens.length === 1) {
-      // Resolve prefix matches: 'Strategic Action' matches 'Strategic Action: leadership'
       const val = tokens[0]
-      if (typeof val === 'string' && !choices.some(c => (c.title || c) === val)) {
-        const prefixMatch = choices.find(c => (c.title || c).startsWith(val + ': '))
-        if (prefixMatch) {
-          return prefixMatch.title || prefixMatch
+
+      if (typeof val === 'string') {
+        const exactMatches = choices.filter(c => (c.title || c) === val)
+        // Ambiguity detection fires only when the matches are provably
+        // *semantically distinct* — meaning they carry different defIds. Two
+        // cards with different defIds are different things even if they
+        // share a title (e.g. imperium vs conflict "Desert Power"). Multiple
+        // instances of the *same* card (same defId, different instance ids)
+        // are interchangeable and pick-first is correct. Games that don't
+        // populate defId opt out of this check entirely, preserving prior
+        // behavior.
+        if (exactMatches.length > 1) {
+          const distinctDefIds = new Set()
+          for (const c of exactMatches) {
+            if (typeof c === 'object' && c.defId) {
+              distinctDefIds.add(c.defId)
+            }
+          }
+          if (distinctDefIds.size >= 2) {
+            throw new Error(
+              `Choice "${val}" is ambiguous in prompt "${selector.title}": ` +
+              `${exactMatches.length} options share this title and represent ` +
+              `semantically distinct cards. Disambiguate with ` +
+              `t.choose(game, { id: '<id>' }) or ` +
+              `t.choose(game, { kind: '<kind>', name: '${val}' }). ` +
+              `Candidates: ${_formatChoicesForError(exactMatches)}`
+            )
+          }
         }
+        if (exactMatches.length === 1) {
+          const match = exactMatches[0]
+          // Emit structured selection when the choice has an id, so replay
+          // stays collision-safe even if the prompt later gains duplicates.
+          if (typeof match === 'object' && match.id) {
+            return { title: match.title, id: match.id }
+          }
+          return val
+        }
+        // No exact match — try prefix match (legacy behavior):
+        // e.g. 'Strategic Action' matches 'Strategic Action: leadership'.
+        const prefixMatches = choices.filter(c => (c.title || c).startsWith(val + ': '))
+        if (prefixMatches.length === 1) {
+          const match = prefixMatches[0]
+          return match.title || match
+        }
+        // Zero or many prefix matches: fall through and return val unchanged
+        // so the downstream validator reports the real mismatch.
       }
+
       return val
     }
     else if (tokens.length === 2) {
@@ -61,7 +151,7 @@ TestCommon.choose = function(game, ...selections) {
       }
     }
     else {
-      throw new Error(`Selection is too deep: ${string}`)
+      throw new Error(`Selection is too deep: ${input}`)
     }
   })
 
@@ -70,6 +160,22 @@ TestCommon.choose = function(game, ...selections) {
     title: selector.title,
     selection: selections,
   })
+}
+
+function _formatChoicesForError(choices) {
+  return choices.map(c => {
+    if (typeof c === 'string') {
+      return `"${c}"`
+    }
+    const parts = [`title="${c.title}"`]
+    if (c.id) {
+      parts.push(`id=${c.id}`)
+    }
+    if (c.kind) {
+      parts.push(`kind=${c.kind}`)
+    }
+    return `{${parts.join(', ')}}`
+  }).join(', ')
 }
 
 // Perform the specified action, which is from an "any" input request. (Game.requestInputAny)
