@@ -117,7 +117,7 @@ Shared helpers used by all game test utils:
 
 | Method | Purpose |
 |--------|---------|
-| `choose(game, ...selections)` | Select from input request |
+| `choose(game, ...selections)` | Select from input request (see *Selection forms* below) |
 | `do(game, action)` | Perform action from "any" request |
 | `testChoices(request, expected, min?, max?)` | Verify available choices |
 | `testActionChoices(request, action, expected)` | Verify action choices |
@@ -125,6 +125,22 @@ Shared helpers used by all game test utils:
 | `testNotGameOver(request)` | Verify game continues |
 | `dumpLog(game)` | Print game log |
 | `dumpZones(root)` | Print zone structure |
+
+#### Selection forms accepted by `t.choose`
+
+| Form | Use |
+|------|-----|
+| `'Name'` | Match a choice by title. Throws if multiple choices share the title and have distinct `defId`s — disambiguate with one of the forms below. |
+| `'*37'` | Leading `*` returns the literal (escape hatch for digit-only strings). |
+| `'Parent.Child'` | Nested form for sub-selections. |
+| `{ id: '...' }` | Disambiguate by the choice's stable id. |
+| `{ kind: '...', name: '...' }` | Disambiguate by kind + title. |
+| `{ title, selection: [...] }` | Pass a full nested response through unchanged. |
+
+When a matched choice carries an `id`, `t.choose` emits a structured
+`{title, id}` selection rather than the bare title — this keeps the
+test's recorded response collision-safe even if the prompt later gains
+duplicate titles.
 
 ### Game-Specific Test Utils
 

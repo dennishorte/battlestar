@@ -143,6 +143,33 @@ JavaScript Proxy that intercepts property access on managers, redirecting reads 
 - `validate(selector, selection)` - Validate response against request
 - Supports nested selectors for multi-stage choices
 
+### Choice identity (structured choices)
+
+Choices may be plain strings (e.g. `'Pass'`, `'yes'`) or structured objects:
+
+```js
+{ title, id?, defId?, kind?, ... }
+```
+
+- `title` — required display name.
+- `id` — stable identifier of *this* choice. When the same prompt could
+  contain duplicate display titles (e.g. two cards both named "Desert
+  Power"), the `id` is the canonical match key.
+- `defId` — identifier of the underlying *definition*, distinct from
+  per-instance `id`. Used by the UI layer to look up display data.
+- `kind` — optional type tag (e.g. `'imperium-card'`, `'leader'`,
+  `'board-space'`) used by per-game UI dispatchers.
+
+Validator behavior: when both the selection entry and the matching choice
+carry an `id`, match is by id. Otherwise match is by title. This keeps
+plain-string choice protocols fully back-compatible while letting newer
+code escape name collisions.
+
+`BaseActionManager.chooseCards` automatically emits `{title, id, defId?, kind?}`
+choices when the cards have these fields, and resolves selections
+id-first. Card classes can populate `defId` via constructor data; see
+`BaseCard`.
+
 ## Transition Factories (`lib/transitionFactory.js`)
 
 State machine helpers for complex game phases:
