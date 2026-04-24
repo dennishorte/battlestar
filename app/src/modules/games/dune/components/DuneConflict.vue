@@ -28,7 +28,15 @@
            @click="toggleExpand(entry.name)">
         <div class="combatant-header">
           <span class="combatant-name">{{ entry.name }}</span>
-          <span class="combatant-strength">{{ entry.strength }}</span>
+          <span class="combatant-units">
+            <span v-if="entry.troops" class="unit-count">{{ entry.troops }}&nbsp;troop{{ entry.troops === 1 ? '' : 's' }}</span>
+            <span v-if="entry.sandworms" class="unit-count">{{ entry.sandworms }}&nbsp;sandworm{{ entry.sandworms === 1 ? '' : 's' }}</span>
+          </span>
+          <span class="combatant-strength"
+                :class="{ 'strength-pending': entry.pending }"
+                :title="entry.pending ? 'Provisional strength (player has not revealed yet)' : 'Current strength'">
+            {{ entry.strength }}{{ entry.pending ? '*' : '' }}
+          </span>
           <span class="expand-icon" v-if="entry.breakdown.length > 1">
             {{ expanded[entry.name] ? '▾' : '▸' }}
           </span>
@@ -80,6 +88,9 @@ export default {
       const breakdown = this.game.state.conflict.strengthBreakdown || {}
       const players = this.game.players.all()
 
+      const TROOP_STRENGTH = 2
+      const SANDWORM_STRENGTH = 3
+
       const result = []
       for (const player of players) {
         const t = troops[player.name] || 0
@@ -87,9 +98,14 @@ export default {
         if (t + s === 0 && player.strength === 0) {
           continue
         }
+        const preview = t * TROOP_STRENGTH + s * SANDWORM_STRENGTH
+        const pending = player.strength === 0 && preview > 0
         result.push({
           name: player.name,
-          strength: player.strength,
+          troops: t,
+          sandworms: s,
+          strength: pending ? preview : player.strength,
+          pending,
           breakdown: breakdown[player.name] || [],
         })
       }
@@ -229,10 +245,28 @@ export default {
   flex: 1;
 }
 
+.combatant-units {
+  display: flex;
+  gap: .4em;
+  font-size: .8em;
+  color: #6a5a48;
+}
+
+.unit-count {
+  white-space: nowrap;
+}
+
 .combatant-strength {
   font-weight: bold;
   color: #c04040;
   font-size: 1.1em;
+  min-width: 1.5em;
+  text-align: right;
+}
+
+.strength-pending {
+  color: #8a7a68;
+  font-style: italic;
 }
 
 .expand-icon {
