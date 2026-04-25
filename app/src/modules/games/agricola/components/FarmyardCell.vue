@@ -33,7 +33,7 @@
       <!-- Unfenced stable with animal -->
       <template v-else-if="unfencedStableAnimal">
         <span class="cell-icon">{{ unfencedStableAnimalIcon }}</span>
-        <span class="animal-count">1</span>
+        <span class="animal-count">{{ effectiveStableAnimalCount }}</span>
       </template>
 
       <!-- Empty -->
@@ -366,6 +366,17 @@ export default {
         }
       }
       return this.cell.animal
+    },
+
+    effectiveStableAnimalCount() {
+      if (this.animalOverrides) {
+        const key = `stable-${this.row}-${this.col}`
+        const override = this.animalOverrides.stables?.[key]
+        if (override) {
+          return override.animalCount ?? (override.animalType ? 1 : 0)
+        }
+      }
+      return this.cell.animalCount || (this.cell.animal ? 1 : 0)
     },
 
     pastureAnimals() {

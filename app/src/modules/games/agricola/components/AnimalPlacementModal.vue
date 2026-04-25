@@ -239,7 +239,7 @@ export default {
           overrides.pastures[locId] = { animalType, animalCount: totalCount }
         }
         else if (locId.startsWith('stable-')) {
-          overrides.stables[locId] = { animalType }
+          overrides.stables[locId] = { animalType, animalCount: totalCount }
         }
       }
 
