@@ -547,9 +547,13 @@ AgricolaPlayer.prototype.removeAnimals = function(animalType, count) {
     if (!this.getPastureAtSpace(stable.row, stable.col)) {
       const space = this.getSpace(stable.row, stable.col)
       if (space.animal === animalType) {
-        space.animal = null
-        space.animalCount = 0
-        remaining--
+        const onSpace = space.animalCount || 1
+        const toRemove = Math.min(remaining, onSpace)
+        space.animalCount = onSpace - toRemove
+        remaining -= toRemove
+        if (space.animalCount === 0) {
+          space.animal = null
+        }
       }
     }
   }

@@ -124,6 +124,37 @@ describe('Stable Master', () => {
     })
   })
 
+  test('removing 1 sheep from a 3-sheep stable leaves 2', () => {
+    const game = t.fixture({ cardSets: ['occupationC', 'test'] })
+    t.setBoard(game, {
+      actionSpaces: [{ ref: 'Sheep Market', accumulated: 3 }],
+      firstPlayer: 'dennis',
+      dennis: {
+        occupations: ['stable-master-c089'],
+        farmyard: {
+          stables: [{ row: 0, col: 2 }],
+        },
+      },
+      micah: { food: 10 },
+    })
+    game.run()
+
+    t.choose(game, 'Sheep Market')
+
+    let dennis = game.players.byName('dennis')
+    const space = dennis.getSpace(0, 2)
+    expect(space.animal).toBe('sheep')
+    expect(space.animalCount).toBe(3)
+
+    dennis.removeAnimals('sheep', 1)
+
+    dennis = game.players.byName('dennis')
+    expect(dennis.getTotalAnimals('sheep')).toBe(2)
+    const after = dennis.getSpace(0, 2)
+    expect(after.animal).toBe('sheep')
+    expect(after.animalCount).toBe(2)
+  })
+
   test('no stable offer when no wood', () => {
     const game = t.fixture({ cardSets: ['occupationC', 'test'] })
     t.setBoard(game, {
