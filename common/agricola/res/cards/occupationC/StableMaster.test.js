@@ -82,6 +82,48 @@ describe('Stable Master', () => {
     })
   })
 
+  test('only one of multiple unfenced stables gets the +2 bonus', () => {
+    const game = t.fixture({ cardSets: ['occupationC', 'test'] })
+    t.setBoard(game, {
+      actionSpaces: [{ ref: 'Sheep Market', accumulated: 5 }],
+      firstPlayer: 'dennis',
+      dennis: {
+        occupations: ['stable-master-c089'],
+        farmyard: {
+          stables: [
+            { row: 0, col: 2 },
+            { row: 1, col: 2 },
+            { row: 2, col: 2 },
+          ],
+        },
+      },
+      micah: { food: 10 },
+    })
+    game.run()
+
+    // Stable capacity: 3 (bonus) + 1 + 1 = 5, not 3 * 3 = 9.
+    const dennis = game.players.byName('dennis')
+    expect(dennis.getUnfencedStableCapacity()).toBe(5)
+    // Total adds the 1-slot house: 5 stables + 1 house = 6.
+    expect(dennis.getTotalAnimalCapacity('sheep')).toBe(6)
+
+    t.choose(game, 'Sheep Market')
+
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['stable-master-c089'],
+        animals: { sheep: 5 },
+        farmyard: {
+          stables: [
+            { row: 0, col: 2 },
+            { row: 1, col: 2 },
+            { row: 2, col: 2 },
+          ],
+        },
+      },
+    })
+  })
+
   test('no stable offer when no wood', () => {
     const game = t.fixture({ cardSets: ['occupationC', 'test'] })
     t.setBoard(game, {

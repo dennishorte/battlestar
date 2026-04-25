@@ -162,23 +162,21 @@ AgricolaPlayer.prototype.getFullPastureCount = function() {
   return count
 }
 
-AgricolaPlayer.prototype.getModifiedUnfencedStableCapacity = function() {
+AgricolaPlayer.prototype.getModifiedUnfencedStableCapacity = function(stable) {
   let capacity = 1
   for (const card of this.getActiveCards()) {
     if (card.hasHook('modifyStableCapacity')) {
-      capacity = card.callHook('modifyStableCapacity', this.game, this, capacity, false)
+      capacity = card.callHook('modifyStableCapacity', this.game, this, capacity, false, stable)
     }
   }
   return capacity
 }
 
 AgricolaPlayer.prototype.getUnfencedStableCapacity = function() {
-  // Each unfenced stable can hold animals (base 1, modifiable by cards)
-  const perStable = this.getModifiedUnfencedStableCapacity()
   let capacity = 0
   for (const stable of this.getStableSpaces()) {
     if (!this.getPastureAtSpace(stable.row, stable.col)) {
-      capacity += perStable
+      capacity += this.getModifiedUnfencedStableCapacity(stable)
     }
   }
   return capacity
@@ -212,12 +210,11 @@ AgricolaPlayer.prototype.getTotalAnimalCapacity = function(animalType) {
   }
 
   // Unfenced stables - only count if empty or same type
-  const perStable = this.getModifiedUnfencedStableCapacity()
   for (const stable of this.getStableSpaces()) {
     if (!this.getPastureAtSpace(stable.row, stable.col)) {
       const space = this.getSpace(stable.row, stable.col)
       if (!space.animal || space.animal === animalType) {
-        capacity += perStable
+        capacity += this.getModifiedUnfencedStableCapacity(stable)
       }
     }
   }
@@ -309,7 +306,6 @@ AgricolaPlayer.prototype.getAnimalPlacementLocations = function() {
   }
 
   // Unfenced stables
-  const stableMax = this.getModifiedUnfencedStableCapacity()
   for (const stable of this.getStableSpaces()) {
     if (!this.getPastureAtSpace(stable.row, stable.col)) {
       const space = this.getSpace(stable.row, stable.col)
@@ -320,7 +316,7 @@ AgricolaPlayer.prototype.getAnimalPlacementLocations = function() {
         space: { row: stable.row, col: stable.col },
         currentAnimalType: space.animal || null,
         currentCount: space.animalCount || (space.animal ? 1 : 0),
-        maxCapacity: stableMax,
+        maxCapacity: this.getModifiedUnfencedStableCapacity(stable),
       })
     }
   }
@@ -459,7 +455,6 @@ AgricolaPlayer.prototype.placeAnimals = function(animalType, count) {
   }
 
   // Then try unfenced stables
-  const unfencedStableMax = this.getModifiedUnfencedStableCapacity()
   for (const stable of this.getStableSpaces()) {
     if (remaining <= 0) {
       break
@@ -467,7 +462,7 @@ AgricolaPlayer.prototype.placeAnimals = function(animalType, count) {
     if (!this.getPastureAtSpace(stable.row, stable.col)) {
       const space = this.getSpace(stable.row, stable.col)
       const currentCount = space.animalCount || (space.animal ? 1 : 0)
-      const canAdd = unfencedStableMax - currentCount
+      const canAdd = this.getModifiedUnfencedStableCapacity(stable) - currentCount
       if (canAdd > 0 && (!space.animal || space.animal === animalType)) {
         const toAdd = Math.min(remaining, canAdd)
         space.animal = animalType
