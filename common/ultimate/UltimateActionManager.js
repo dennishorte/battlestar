@@ -540,15 +540,16 @@ class UltimateActionManager extends BaseActionManager {
     })[0]
 
     if (chosen === 'dig') {
-      const card = this.actions.draw(player, { age, exp: 'arti' })
-      if (card) {
-        this.log.add({
-          template: '{player} digs {card}',
-          args: { player, card },
-        })
-        card.moveTo(this.zones.byPlayer(player, 'artifact'))
-        this.acted(player)
-      }
+      // Dig pulls directly from the arti deck for this age — no cascade to
+      // higher ages or to the base deck. The empty check above ensures the
+      // deck has cards.
+      const card = this.zones.byDeck('arti', age).peek()
+      this.log.add({
+        template: '{player} digs {card}',
+        args: { player, card },
+      })
+      card.moveTo(this.zones.byPlayer(player, 'artifact'))
+      this.acted(player)
     }
     else if (chosen.title === 'seize') {
       const cardName = chosen.selection[0]

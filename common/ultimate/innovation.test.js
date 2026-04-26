@@ -1578,6 +1578,87 @@ describe('Innovation', () => {
 
       })
 
+      test('no dig when arti deck for that age is empty', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+        t.setBoard(game, {
+          dennis: {
+            green: ['Mapmaking'],
+            hand: ['Sailing'],
+          },
+          decksExact: {
+            arti: {
+              2: [],
+            },
+          },
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, 'Meld.Sailing')
+
+        t.testBoard(game, {
+          dennis: {
+            green: ['Sailing', 'Mapmaking'],
+          },
+        })
+      })
+
+      test('dig pulls from arti deck even when base deck for that age is empty', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+        t.setBoard(game, {
+          dennis: {
+            green: ['Mapmaking'],
+            hand: ['Sailing'],
+          },
+          decks: {
+            arti: {
+              2: ['Holy Grail'],
+            },
+          },
+          decksExact: {
+            base: {
+              2: [],
+            },
+          },
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, 'Meld.Sailing')
+
+        t.testBoard(game, {
+          dennis: {
+            artifact: ['Holy Grail'],
+            green: ['Sailing', 'Mapmaking'],
+          },
+        })
+      })
+
+      test('no dig when arti deck empty, even if base deck for that age is also empty', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+        t.setBoard(game, {
+          dennis: {
+            green: ['Mapmaking'],
+            hand: ['Sailing'],
+          },
+          decksExact: {
+            base: {
+              2: [],
+            },
+            arti: {
+              2: [],
+            },
+          },
+        })
+
+        const request1 = game.run()
+        const request2 = t.choose(game, 'Meld.Sailing')
+
+        t.testBoard(game, {
+          dennis: {
+            green: ['Sailing', 'Mapmaking'],
+          },
+        })
+      })
+
       test('higher age (no trigger)', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
         t.setBoard(game, {
