@@ -1602,7 +1602,7 @@ describe('Innovation', () => {
         })
       })
 
-      test('dig pulls from arti deck even when base deck for that age is empty', () => {
+      test('dig cascades up when base deck for that age is empty', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
         t.setBoard(game, {
           dennis: {
@@ -1611,7 +1611,7 @@ describe('Innovation', () => {
           },
           decks: {
             arti: {
-              2: ['Holy Grail'],
+              3: ['Excalibur'],
             },
           },
           decksExact: {
@@ -1626,13 +1626,13 @@ describe('Innovation', () => {
 
         t.testBoard(game, {
           dennis: {
-            artifact: ['Holy Grail'],
+            artifact: ['Excalibur'],
             green: ['Sailing', 'Mapmaking'],
           },
         })
       })
 
-      test('no dig when arti deck empty, even if base deck for that age is also empty', () => {
+      test('no dig when cascade lands on an empty arti deck', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
         t.setBoard(game, {
           dennis: {
@@ -1644,7 +1644,7 @@ describe('Innovation', () => {
               2: [],
             },
             arti: {
-              2: [],
+              3: [],
             },
           },
         })

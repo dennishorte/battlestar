@@ -499,6 +499,15 @@ class UltimateActionManager extends BaseActionManager {
   digArtifact(player, age) {
     const choices = []
 
+    // Per the rules: skip empty ages "as if drawing", which keys off the
+    // base deck. Then take from the arti deck at the resulting age, or
+    // skip the dig if that arti deck is empty (or above max age).
+    const maxAge = this.game.getMaxAge()
+    let digAge = age
+    while (digAge <= maxAge && this.cards.byDeck('base', digAge).length === 0) {
+      digAge++
+    }
+
     // Dig options
     if (this.cards.byPlayer(player, 'artifact').length > 0) {
       this.log.add({
@@ -506,16 +515,17 @@ class UltimateActionManager extends BaseActionManager {
         args: { player }
       })
     }
-    else if (this.cards.byDeck('arti', age).length === 0) {
+    else if (digAge > maxAge || this.cards.byDeck('arti', digAge).length === 0) {
       this.log.add({
-        template: `Artifacts deck for age ${age} is empty.`
+        template: `Artifacts deck for age ${digAge} is empty.`
       })
     }
     else {
       choices.push('dig')
     }
 
-    // Seize options
+    // Seize options use the original age — that's the value of the
+    // covered-up card that triggered the dig event.
     const canSeize = this
       .players
       .other(player)
@@ -540,10 +550,7 @@ class UltimateActionManager extends BaseActionManager {
     })[0]
 
     if (chosen === 'dig') {
-      // Dig pulls directly from the arti deck for this age — no cascade to
-      // higher ages or to the base deck. The empty check above ensures the
-      // deck has cards.
-      const card = this.zones.byDeck('arti', age).peek()
+      const card = this.zones.byDeck('arti', digAge).peek()
       this.log.add({
         template: '{player} digs {card}',
         args: { player, card },
