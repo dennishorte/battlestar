@@ -58,11 +58,11 @@
       <DuneCard v-for="card in revealedCards" :key="card.id" :card="card" />
     </div>
 
-    <div class="reserved" v-if="reservedCard">
+    <div class="reserved" v-if="reservedCards.length > 0">
       <div class="section-label">
         Reserved <span class="reserved-badge">Manipulate · -1 Persuasion</span>
       </div>
-      <DuneCard :card="reservedCard" />
+      <DuneCard v-for="card in reservedCards" :key="card.id" :card="card" />
     </div>
   </div>
 </template>
@@ -141,13 +141,19 @@ export default {
       return this.game.state.feydTrack?.[this.player.name] || null
     },
 
-    reservedCard() {
-      const reservation = this.game.state.helenaReserved
-      if (!reservation || reservation.player !== this.player.name) {
-        return null
+    reservedCards() {
+      const reservations = this.game.state.reservedCards || []
+      const myCardIds = new Set(
+        reservations
+          .filter(r => r.player === this.player.name)
+          .map(r => r.cardId)
+      )
+      if (myCardIds.size === 0) {
+        return []
       }
-      const cards = this.game.zones.byId('common.helenaReserved').cardlist()
-      return cards[0] || null
+      return this.game.zones.byId('common.reservedCards')
+        .cardlist()
+        .filter(c => myCardIds.has(c.id))
     },
   },
 

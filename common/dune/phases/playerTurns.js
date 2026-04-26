@@ -390,13 +390,15 @@ function acquireCardsPhase(game, player) {
         player.decrementCounter('persuasion', effectiveCost, { silent: true })
       }
 
-      // If this was the Helena-reserved card, clear the reservation
-      if (isHelenaReserved(game, player, card)) {
+      // If this was a reserved card, clear that reservation entry
+      if (isReservedFor(game, player, card)) {
         game.log.add({
           template: '{player}: acquires reserved {card} at -1 Persuasion (Manipulate)',
           args: { player, card },
         })
-        game.state.helenaReserved = null
+        game.state.reservedCards = game.state.reservedCards.filter(
+          entry => !(entry.player === player.name && entry.cardId === card.id)
+        )
       }
 
       // Acquire to top of deck or discard pile
@@ -463,11 +465,13 @@ function getAcquirableCards(game, player, persuasion) {
     cards.push(tsmfCards[0])
   }
 
-  // Helena Richese: reserved card available at -1 persuasion to reserving player only
-  const reservedZone = game.zones.byId('common.helenaReserved')
-  const reservedCards = reservedZone.cardlist()
-  if (reservedCards.length > 0 && game.state.helenaReserved?.player === player.name) {
-    const reserved = reservedCards[0]
+  // Reserved cards (Helena signet, Manipulate plot): -1 persuasion for the
+  // reserving player only. Multiple reservations can be active simultaneously.
+  const reservedZone = game.zones.byId('common.reservedCards')
+  for (const reserved of reservedZone.cardlist()) {
+    if (!isReservedFor(game, player, reserved)) {
+      continue
+    }
     if (acquireCost(game, player, reserved) <= persuasion) {
       cards.push(reserved)
     }
@@ -481,18 +485,16 @@ function getAcquirableCards(game, player, persuasion) {
  */
 function acquireCost(game, player, card) {
   let cost = card.persuasionCost || 0
-  if (isHelenaReserved(game, player, card)) {
+  if (isReservedFor(game, player, card)) {
     cost = Math.max(0, cost - 1)
   }
   return cost
 }
 
-function isHelenaReserved(game, player, card) {
-  if (!game.state.helenaReserved || game.state.helenaReserved.player !== player.name) {
-    return false
-  }
-  const reservedZone = game.zones.byId('common.helenaReserved')
-  return reservedZone.cardlist().some(c => c.id === card.id)
+function isReservedFor(game, player, card) {
+  return game.state.reservedCards.some(
+    entry => entry.player === player.name && entry.cardId === card.id
+  )
 }
 
 /**

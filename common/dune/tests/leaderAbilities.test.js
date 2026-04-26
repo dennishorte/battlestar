@@ -261,10 +261,12 @@ describe('Leader Abilities', () => {
     t.choose(game, 'Signet Ring')
     t.choose(game, targetName)
 
-    const reserved = game.zones.byId('common.helenaReserved').cardlist()
+    const reserved = game.zones.byId('common.reservedCards').cardlist()
     expect(reserved).toHaveLength(1)
     expect(reserved[0].name).toBe(targetName)
-    expect(game.state.helenaReserved).toEqual({ player: 'dennis', round: 1 })
+    expect(game.state.reservedCards).toHaveLength(1)
+    expect(game.state.reservedCards[0]).toMatchObject({ player: 'dennis', round: 1 })
+    expect(game.state.reservedCards[0].cardId).toBe(reserved[0].id)
     expect(game.zones.byId('common.imperiumRow').cardlist()).toHaveLength(5)
   })
 
@@ -290,7 +292,7 @@ describe('Leader Abilities', () => {
 
     // Fast-forward: pass through remaining agent turns and reveals for all players
     // until Recall clears the reservation. Easier: advance by having everyone reveal.
-    while (game.state.helenaReserved) {
+    while (game.state.reservedCards.length > 0) {
       const choices = t.currentChoices(game)
       if (choices.length === 0) {
         break
@@ -299,8 +301,8 @@ describe('Leader Abilities', () => {
       t.choose(game, pick)
     }
 
-    expect(game.state.helenaReserved).toBeNull()
-    const reservedCards = game.zones.byId('common.helenaReserved').cardlist()
+    expect(game.state.reservedCards).toEqual([])
+    const reservedCards = game.zones.byId('common.reservedCards').cardlist()
     expect(reservedCards).toHaveLength(0)
     const trashNames = game.zones.byId('common.trash').cardlist().map(c => c.name)
     expect(trashNames).toContain(targetName)

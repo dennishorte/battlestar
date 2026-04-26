@@ -33,12 +33,13 @@ module.exports = {
     if (!card) {
       return
     }
-    const reservedZone = game.zones.byId('common.helenaReserved')
+    const reservedZone = game.zones.byId('common.reservedCards')
     card.moveTo(reservedZone)
-    game.state.helenaReserved = {
+    game.state.reservedCards.push({
       player: player.name,
       round: game.state.round,
-    }
+      cardId: card.id,
+    })
     deckEngine.refillImperiumRow(game)
     game.log.add({
       template: '{player}: Manipulate — reserves {card} (-1 Persuasion to acquire this round)',

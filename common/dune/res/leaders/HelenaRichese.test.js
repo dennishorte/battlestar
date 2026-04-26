@@ -32,7 +32,7 @@ describe('Helena Richese', () => {
     t.choose(game, 'Signet Ring')
     t.choose(game, targetName)
 
-    const reserved = game.zones.byId('common.helenaReserved').cardlist()
+    const reserved = game.zones.byId('common.reservedCards').cardlist()
     expect(reserved).toHaveLength(1)
     expect(reserved[0].name).toBe(targetName)
   })
