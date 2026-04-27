@@ -34,6 +34,9 @@
                 <template v-else-if="babyState[type] === 'placed'">
                   Will be born at {{ getLocName(babyLocation[type]) }} (click to move)
                 </template>
+                <template v-else-if="!hasRoomForBaby(type)">
+                  Will be released — no farmyard space
+                </template>
                 <template v-else>
                   Click to place
                 </template>
@@ -182,11 +185,16 @@
         <strong>Summary:</strong>
         <template v-if="isBreeding">
           <span class="breeding-summary">
-            Breeds:
             <template v-if="bornBabyTypes.length > 0">
-              {{ bornBabyTypes.map(t => '+1 ' + t).join(', ') }}
+              Breeds: {{ bornBabyTypes.map(t => '+1 ' + t).join(', ') }}
             </template>
-            <template v-else>none</template>
+            <template v-if="releasedBabyTypes.length > 0">
+              {{ bornBabyTypes.length > 0 ? '· ' : '' }}Releases:
+              {{ releasedBabyTypes.map(t => '1 ' + t).join(', ') }}
+            </template>
+            <template v-if="bornBabyTypes.length === 0 && releasedBabyTypes.length === 0">
+              No breeding
+            </template>
           </span>
         </template>
         <span v-if="totalAdded > 0"> Place {{ totalAdded }}</span>
@@ -318,6 +326,12 @@ export default {
 
     bornBabyTypes() {
       return this.animalTypes.filter(t => this.babyState[t] === 'placed')
+    },
+
+    releasedBabyTypes() {
+      return this.animalTypes.filter(t =>
+        this.babyState[t] === 'pending' && this.isBabyEligible[t]
+      )
     },
 
     player() {
@@ -669,6 +683,10 @@ export default {
       return loc?.name || locId
     },
 
+    hasRoomForBaby(type) {
+      return this.locations.some(loc => this.canPlaceTypeAtState(loc, type))
+    },
+
     resetAll() {
       this.reset()
     },
@@ -988,6 +1006,19 @@ export default {
           else {
             overflow.cook[type] = 0
             overflow.release[type] = count
+          }
+        }
+      }
+
+      // Any eligible-but-unplaced baby is born and released (parents are sufficient but
+      // there's no farmyard slot, or the user chose not to place it).
+      if (this.isBreeding) {
+        for (const type of this.animalTypes) {
+          if (this.babyState[type] === 'pending' && this.isBabyEligible[type]) {
+            overflow.release[type] = (overflow.release[type] || 0) + 1
+            if (overflow.cook[type] === undefined) {
+              overflow.cook[type] = 0
+            }
           }
         }
       }

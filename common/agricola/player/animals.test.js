@@ -314,31 +314,28 @@ describe('animals', () => {
     expect(result.error).toMatch(/Cannot cook babies/)
   })
 
-  test('applyAnimalPlacements validates breeding constraints - parents must remain', () => {
+  test('applyAnimalPlacements: eligible baby with no room is released', () => {
     const game = t.fixture()
     game.run()
 
     const dennis = game.players.byName('dennis')
-    t.addPasture(dennis, [{ row: 1, col: 0 }, { row: 1, col: 1 }], 'sheep', 3)
+    // Pasture is full at 2/2 — sheep can breed (2 parents) but the baby has no slot.
+    t.addPasture(dennis, [{ row: 1, col: 0 }], 'sheep', 2)
 
-    // Accept 1 baby but only place 2 sheep (need 2 parents + 1 baby = 3 placed)
     const result = dennis.applyAnimalPlacements({
-      placements: [
-        { locationId: 'pasture-0', animalType: 'sheep', count: 2 },
-      ],
-      overflow: { release: { sheep: 2 } },
+      placements: [],
+      overflow: { release: { sheep: 1 } },
       incoming: { sheep: 1 },
-      removals: [
-        { locationId: 'pasture-0', animalType: 'sheep', count: 3 },
-      ],
+      removals: [],
       breedingConstraints: {
         requirements: { sheep: 2 },
         acceptedBabies: { sheep: 1 },
       },
     })
 
-    expect(result.success).toBe(false)
-    expect(result.error).toMatch(/Not enough sheep parents/)
+    expect(result.success).toBe(true)
+    // Pasture untouched; baby is released (no longer existed in the system).
+    expect(dennis.getTotalAnimals('sheep')).toBe(2)
   })
 
   test('applyAnimalPlacements: cooking a parent to skip its breeding lets another type place', () => {

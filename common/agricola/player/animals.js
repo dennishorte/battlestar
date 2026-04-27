@@ -868,12 +868,11 @@ AgricolaPlayer.prototype.applyAnimalPlacements = function(plan) {
   const totalReleased = overflow?.release || {}
 
   // Breeding constraint validation (run before accounting so callers see the
-  // most specific error first).
+  // most specific error first). The "are there enough parents?" check lives in the
+  // caller's acceptedBabies computation; here we only need to ensure the pool isn't
+  // being used to cook babies that don't exist.
   if (breedingConstraints) {
-    const { requirements, acceptedBabies } = breedingConstraints
-
     for (const type of res.animalTypes) {
-      const accepted = acceptedBabies[type] || 0
       const cooked = totalCooked[type] || 0
       const removed = totalRemoved[type] || 0
 
@@ -882,21 +881,6 @@ AgricolaPlayer.prototype.applyAnimalPlacements = function(plan) {
         return {
           success: false,
           error: `Cannot cook babies: ${type} cooked(${cooked}) exceeds removed(${removed})`,
-        }
-      }
-
-      // Parents must remain for each accepted baby.
-      // Use total animals in final state (after removals already applied in step 1).
-      if (accepted > 0) {
-        const placed = totalPlaced[type] || 0
-        const currentAfterRemovals = this.getTotalAnimals(type)
-        const finalTotal = currentAfterRemovals + placed
-        const required = requirements[type] || 2
-        if (finalTotal < required + accepted) {
-          return {
-            success: false,
-            error: `Not enough ${type} parents: final total(${finalTotal}) < requirement(${required}) + babies(${accepted})`,
-          }
         }
       }
     }
