@@ -29,22 +29,22 @@ module.exports = {
       }
 
       if (junked.length === 0 || junked.length !== toJunk.length) {
-        const others = game.players.other(player)
-        while (others.length > 0) {
-          const other = game.actions.choosePlayer(player, others)
-          const options = game.util.highestCards(game.cards.tops(other))
+        const remaining = game.players.all()
+        while (remaining.length > 0) {
+          const target = game.actions.choosePlayer(player, remaining)
+          const options = game.util.highestCards(game.cards.tops(target))
           const chosen = game.actions.chooseCard(player, options)
 
-          const removeIndex = others.findIndex(x => x.id === other.id)
-          others.splice(removeIndex, 1)
+          const removeIndex = remaining.findIndex(x => x.id === target.id)
+          remaining.splice(removeIndex, 1)
 
           // Maybe they don't have any cards on their board.
           if (chosen) {
             const toTransfer = game
               .cards
-              .tops(other)
+              .tops(target)
               .filter(card => card.color !== chosen.color)
-            game.actions.transferMany(player, toTransfer, game.zones.byPlayer(other, 'score'))
+            game.actions.transferMany(player, toTransfer, game.zones.byPlayer(target, 'score'))
           }
         }
       }

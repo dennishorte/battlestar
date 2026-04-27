@@ -47,19 +47,54 @@ describe("Sanskrit", () => {
     let request
     request = game.run()
     request = t.choose(game, 'dogma')
+    request = t.choose(game, 'dennis')
     request = t.choose(game, 'Monotheism')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {
       dennis: {
         red: ['Robotics'],
-        green: ['Paper', 'Sailing'],
+        green: ['Sailing'],
+        score: ['Paper'],
         museum: ['Museum 1', "Sanskrit"],
       },
       micah: {
         blue: ['Tools'],
         purple: ['Monotheism'],
         score: ['Archery', 'Mathematics'],
+      }
+    })
+  })
+
+  test('dogma: active player included when score piles empty', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+    t.setBoard(game,  {
+      dennis: {
+        red: ['Robotics'],
+        green: ['Paper', 'Sailing'],
+        blue: ['Tools'],
+        artifact: ["Sanskrit"],
+      },
+      micah: {
+        red: ['Archery'],
+      }
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'dennis')
+
+    t.testIsFirstAction(request)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Robotics'],
+        green: ['Sailing'],
+        score: ['Paper', 'Tools'],
+        museum: ['Museum 1', "Sanskrit"],
+      },
+      micah: {
+        red: ['Archery'],
       }
     })
   })
