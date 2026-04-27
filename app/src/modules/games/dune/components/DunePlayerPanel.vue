@@ -1,10 +1,11 @@
 <template>
   <div class="player-panel">
-    <div class="header" :style="{ 'border-color': player.color }">
+    <div class="header clickable" :style="{ 'border-color': player.color }" @click="openTableau">
       <div class="header-left">
         <div class="header-top-row">
           {{ player.name }}
           <span class="first-player" v-if="isFirstPlayer" title="First Player">1st</span>
+          <i class="bi bi-card-list tableau-icon" title="View tableau" />
         </div>
         <DuneOptionChip v-if="leader"
                         :name="leader.name"
@@ -158,6 +159,10 @@ export default {
   },
 
   methods: {
+    openTableau() {
+      this.ui.modals.tableau = { player: this.player }
+    },
+
     openIntrigue() {
       if (!this.isViewer) {
         return
@@ -210,6 +215,20 @@ export default {
   font-weight: bold;
   color: #2c2416;
   border-bottom: 3px solid;
+}
+
+.header.clickable {
+  cursor: pointer;
+}
+
+.header.clickable:hover .tableau-icon {
+  color: #2c2416;
+}
+
+.tableau-icon {
+  font-size: .85em;
+  color: #8a7a68;
+  margin-left: .15em;
 }
 
 .first-player {

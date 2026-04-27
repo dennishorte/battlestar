@@ -37,6 +37,7 @@
     </div>
 
     <DuneRulesModal />
+    <DuneTableauModal />
     <DebugModal />
 
     <teleport to="body">
@@ -78,6 +79,7 @@ import DuneContractMarket from './DuneContractMarket.vue'
 import DuneActionSpaces from './DuneActionSpaces.vue'
 import DuneOptionChip from './DuneOptionChip.vue'
 import DuneRulesModal from './modals/DuneRulesModal.vue'
+import DuneTableauModal from './modals/DuneTableauModal.vue'
 
 
 export default {
@@ -94,6 +96,7 @@ export default {
     DuneImperiumRow,
     DunePlayerPanel,
     DuneRulesModal,
+    DuneTableauModal,
     GameLogDune,
     GameMenu,
     WaitingPanel,
@@ -109,6 +112,7 @@ export default {
           rulesReference: { filter: null },
           cardViewer: null,
           cardList: null,
+          tableau: null,
         },
       },
     }
