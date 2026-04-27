@@ -1,13 +1,63 @@
 <template>
   <ModalBase id="agricola-animal-placement" size="lg" :closeable="false">
-    <template #header>Place Animals</template>
+    <template #header>{{ isBreeding ? 'Breeding Phase' : 'Place Animals' }}</template>
 
     <div class="animal-placement-modal" v-if="isActive">
+      <!-- Breeding Section: shown only during the breeding phase. Babies appear here
+           (not in the pool) and dynamically reflect whether enough parents remain. -->
+      <div v-if="isBreeding && hasBreedingBabies" class="breeding-section">
+        <h5>Newborns</h5>
+        <div class="baby-list">
+          <template v-for="type in animalTypes" :key="type">
+            <div
+              v-if="(incoming[type] || 0) > 0"
+              class="baby-row"
+              :class="{
+                eligible: isBabyEligible[type],
+                ineligible: !isBabyEligible[type],
+                placed: babyState[type] === 'placed',
+                selecting: selectingBabyType === type,
+                clickable: isBabyEligible[type],
+              }"
+              @click="handleBabyClick(type)"
+            >
+              <span class="baby-icon">{{ getAnimalEmoji(type) }}</span>
+              <span class="baby-label">+1 {{ type }}</span>
+              <span class="baby-status">
+                <template v-if="!isBabyEligible[type]">
+                  Won't be born — need {{ breedingRequirements[type] || 2 }} {{ type }}
+                  (have {{ finalParentCount[type] }})
+                </template>
+                <template v-else-if="selectingBabyType === type">
+                  Click a location to place
+                </template>
+                <template v-else-if="babyState[type] === 'placed'">
+                  Will be born at {{ getLocName(babyLocation[type]) }} (click to move)
+                </template>
+                <template v-else>
+                  Click to place
+                </template>
+              </span>
+              <button
+                v-if="selectingBabyType === type"
+                class="baby-cancel"
+                @click.stop="cancelBabySelection"
+              >
+                &times;
+              </button>
+            </div>
+          </template>
+        </div>
+      </div>
+
       <!-- Unplaced Pool -->
-      <div class="pool-section" :class="{ selecting: selectingLocation }">
+      <div class="pool-section" :class="{ selecting: selectingLocation }" v-if="poolTotal > 0 || !isBreeding || selectingLocation">
         <h5>
           <template v-if="selectingLocation">
             Select animal for {{ selectingLocation.name }}
+          </template>
+          <template v-else-if="isBreeding">
+            Animals removed from farmyard
           </template>
           <template v-else>
             Animals to Place
@@ -36,7 +86,7 @@
             &times;
           </button>
         </div>
-        <div class="pool-empty" v-if="poolTotal === 0 && !selectingLocation">
+        <div class="pool-empty" v-if="poolTotal === 0 && !selectingLocation && !isBreeding">
           All animals placed
         </div>
       </div>
@@ -130,11 +180,20 @@
       <!-- Summary -->
       <div class="summary valid">
         <strong>Summary:</strong>
+        <template v-if="isBreeding">
+          <span class="breeding-summary">
+            Breeds:
+            <template v-if="bornBabyTypes.length > 0">
+              {{ bornBabyTypes.map(t => '+1 ' + t).join(', ') }}
+            </template>
+            <template v-else>none</template>
+          </span>
+        </template>
         <span v-if="totalAdded > 0"> Place {{ totalAdded }}</span>
         <span v-if="totalMoved > 0">{{ totalAdded > 0 ? ',' : '' }} Move {{ totalMoved }}</span>
         <span v-if="cookCount > 0">, Cook {{ cookCount }} (+{{ estimatedFood }} food)</span>
         <span v-if="releaseCount > 0">, Release {{ releaseCount }}</span>
-        <span v-if="totalAdded === 0 && totalMoved === 0 && poolTotal === 0"> No changes</span>
+        <span v-if="!isBreeding && totalAdded === 0 && totalMoved === 0 && poolTotal === 0"> No changes</span>
       </div>
     </div>
 
@@ -169,6 +228,11 @@ export default {
       animalState: {},      // { locationId: { sheep: n, boar: n, cattle: n } }
       originalState: {},    // snapshot at modal open
       unplacedPool: { sheep: 0, boar: 0, cattle: 0 },
+      // Breeding-mode state. Babies are first-class so the UI can show "won't be born" rather
+      // than dumping them into the same pool as overflow animals.
+      babyState: { sheep: null, boar: null, cattle: null },     // null | 'pending' | 'placed'
+      babyLocation: { sheep: null, boar: null, cattle: null },  // locId where placed
+      selectingBabyType: null,                                  // baby waiting for the user to click a location
       overflowChoice: 'cook',
       selectingLocation: null,
       animalTypes: ['sheep', 'boar', 'cattle'],
@@ -202,6 +266,58 @@ export default {
 
     cookingRates() {
       return this.waitingRequest?.cookingRates || null
+    },
+
+    isBreeding() {
+      return this.waitingRequest?.breeding === true
+    },
+
+    breedingRequirements() {
+      return this.waitingRequest?.breedingRequirements || {}
+    },
+
+    hasBreedingBabies() {
+      return this.animalTypes.some(t => (this.incoming[t] || 0) > 0)
+    },
+
+    // Sum of animals at locations (placed babies are included since they live in animalState).
+    locationTotals() {
+      const totals = { sheep: 0, boar: 0, cattle: 0 }
+      for (const animals of Object.values(this.animalState)) {
+        for (const type of this.animalTypes) {
+          totals[type] += animals[type] || 0
+        }
+      }
+      return totals
+    },
+
+    // Parents available for breeding == placed animals minus any baby already placed.
+    finalParentCount() {
+      const counts = { ...this.locationTotals }
+      for (const type of this.animalTypes) {
+        if (this.babyState[type] === 'placed') {
+          counts[type] -= 1
+        }
+      }
+      return counts
+    },
+
+    isBabyEligible() {
+      const eligible = { sheep: false, boar: false, cattle: false }
+      for (const type of this.animalTypes) {
+        const incoming = this.incoming[type] || 0
+        const required = this.breedingRequirements[type] || 2
+        eligible[type] = incoming > 0 && this.finalParentCount[type] >= required
+      }
+      return eligible
+    },
+
+    hasUnplacedEligibleBaby() {
+      return this.animalTypes.some(t => this.isBabyEligible[t] && this.babyState[t] === 'pending')
+    },
+
+    bornBabyTypes() {
+      return this.animalTypes.filter(t => this.babyState[t] === 'placed')
     },
 
     player() {
@@ -323,11 +439,25 @@ export default {
           this.reset()
           this.$nextTick(() => {
             this.showModal()
+            // Auto-place after initial state is set up.
+            this.reconcileBabies()
           })
         }
         else if (wasActive) {
           this.deactivateAnimalPlacement()
           this.hideModal()
+        }
+      },
+    },
+
+    // Whenever placement state changes, reconcile baby eligibility:
+    //  - Un-place any baby whose parents are no longer sufficient.
+    //  - Auto-place any eligible-pending baby into the first valid spot.
+    animalState: {
+      deep: true,
+      handler() {
+        if (this.isBreeding) {
+          this.reconcileBabies()
         }
       },
     },
@@ -416,14 +546,127 @@ export default {
         this.originalState[loc.id] = { ...state }
       }
 
-      this.unplacedPool = {
-        sheep: this.incoming.sheep || 0,
-        boar: this.incoming.boar || 0,
-        cattle: this.incoming.cattle || 0,
+      this.babyState = { sheep: null, boar: null, cattle: null }
+      this.babyLocation = { sheep: null, boar: null, cattle: null }
+      this.selectingBabyType = null
+
+      if (this.isBreeding) {
+        // In breeding mode, babies are tracked separately; the pool only holds animals the
+        // user removes from a location during the modal session.
+        this.unplacedPool = { sheep: 0, boar: 0, cattle: 0 }
+        for (const type of this.animalTypes) {
+          if ((this.incoming[type] || 0) > 0) {
+            this.babyState[type] = 'pending'
+          }
+        }
+      }
+      else {
+        this.unplacedPool = {
+          sheep: this.incoming.sheep || 0,
+          boar: this.incoming.boar || 0,
+          cattle: this.incoming.cattle || 0,
+        }
       }
 
       this.overflowChoice = 'cook'
       this.selectingLocation = null
+    },
+
+    reconcileBabies() {
+      // First pass: un-place any baby whose parents dropped below the requirement.
+      for (const type of this.animalTypes) {
+        if (this.babyState[type] === 'placed' && !this.isBabyEligible[type]) {
+          const locId = this.babyLocation[type]
+          if (locId && this.animalState[locId] && this.animalState[locId][type] > 0) {
+            this.animalState[locId][type] -= 1
+          }
+          this.babyLocation[type] = null
+          this.babyState[type] = 'pending'
+        }
+      }
+      // Second pass: auto-place any eligible-pending baby into the first valid slot.
+      // Skip a type the user is actively choosing a location for.
+      for (const type of this.animalTypes) {
+        if (this.selectingBabyType === type) {
+          continue
+        }
+        this.tryAutoPlaceBaby(type)
+      }
+    },
+
+    tryAutoPlaceBaby(type) {
+      if (this.babyState[type] !== 'pending') {
+        return
+      }
+      if (!this.isBabyEligible[type]) {
+        return
+      }
+      for (const loc of this.locations) {
+        // canPlaceTypeAtState already enforces capacity, type rules, and perTypeLimits.
+        // Don't gate on maxDropCount here — that's bounded by the pool, but babies live
+        // outside the pool in breeding mode.
+        if (this.canPlaceTypeAtState(loc, type)) {
+          this.animalState[loc.id][type] += 1
+          this.babyState[type] = 'placed'
+          this.babyLocation[type] = loc.id
+          return
+        }
+      }
+    },
+
+    handleBabyClick(type) {
+      if (!this.isBabyEligible[type]) {
+        return
+      }
+
+      // Toggling: if already in select-mode for this baby, cancel.
+      if (this.selectingBabyType === type) {
+        this.selectingBabyType = null
+        return
+      }
+
+      // Set the selecting flag BEFORE mutating animalState so the reconcile watcher
+      // doesn't immediately auto-place the baby back where it was.
+      this.selectingBabyType = type
+      this.selectingLocation = null
+
+      if (this.babyState[type] === 'placed') {
+        const locId = this.babyLocation[type]
+        if (locId && this.animalState[locId] && this.animalState[locId][type] > 0) {
+          this.animalState[locId][type] -= 1
+        }
+        this.babyLocation[type] = null
+        this.babyState[type] = 'pending'
+      }
+    },
+
+    cancelBabySelection() {
+      this.selectingBabyType = null
+      // Re-run reconcile so the baby auto-places back if there's a slot.
+      this.$nextTick(() => this.reconcileBabies())
+    },
+
+    dropBabyAtLocation(loc) {
+      const type = this.selectingBabyType
+      if (!type || !this.isBabyEligible[type]) {
+        return
+      }
+      // Don't gate on maxDropCount — see tryAutoPlaceBaby for why.
+      if (!this.canPlaceTypeAtState(loc, type)) {
+        return
+      }
+      this.animalState[loc.id][type] += 1
+      this.babyState[type] = 'placed'
+      this.babyLocation[type] = loc.id
+      this.selectingBabyType = null
+    },
+
+    getLocName(locId) {
+      if (!locId) {
+        return ''
+      }
+      const loc = this.locations.find(l => l.id === locId)
+      return loc?.name || locId
     },
 
     resetAll() {
@@ -520,6 +763,12 @@ export default {
         return
       }
 
+      // If a baby is waiting for placement, the click commits it.
+      if (this.selectingBabyType) {
+        this.dropBabyAtLocation(loc)
+        return
+      }
+
       const state = this.animalState[loc.id]
       if (!state) {
         return
@@ -570,12 +819,25 @@ export default {
         return
       }
 
-      // Pick up ALL animals from this location at once
+      // Pick up ALL animals from this location at once. If a baby was placed here, treat
+      // one unit of that type as the baby and un-place it (don't move it to the pool —
+      // babies aren't real animals yet, so they can't be cooked or released that way).
       for (const type of this.animalTypes) {
-        if (state[type] > 0) {
-          this.removeFromLocation(loc.id, type, state[type])
+        let count = state[type]
+        if (count <= 0) {
+          continue
+        }
+        if (this.babyState[type] === 'placed' && this.babyLocation[type] === loc.id) {
+          state[type] -= 1
+          this.babyState[type] = 'pending'
+          this.babyLocation[type] = null
+          count -= 1
+        }
+        if (count > 0) {
+          this.removeFromLocation(loc.id, type, count)
         }
       }
+      this.selectingLocation = null
     },
 
     maxDropCount(loc, type) {
@@ -646,6 +908,12 @@ export default {
     },
 
     handleCardClick(loc) {
+      // Card holdings can also be a placement target for a pending baby.
+      if (this.selectingBabyType) {
+        this.dropBabyAtLocation(loc)
+        return
+      }
+
       const state = this.animalState[loc.id]
       if (!state) {
         return
@@ -937,5 +1205,100 @@ export default {
 
 .summary.valid {
   background: #d4edda;
+}
+
+.breeding-section {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: #e7f3ff;
+  border: 1px solid #b6daff;
+  border-radius: 4px;
+}
+
+.baby-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.baby-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background: #fff;
+  transition: all 0.15s ease;
+}
+
+.baby-row.clickable {
+  cursor: pointer;
+}
+
+.baby-row.eligible.placed {
+  background: #d4edda;
+  border-color: #28a745;
+}
+
+.baby-row.eligible:not(.placed) {
+  background: #fff3cd;
+  border-color: #ffc107;
+}
+
+.baby-row.ineligible {
+  background: #f1f3f5;
+  color: #6c757d;
+  opacity: 0.85;
+}
+
+.baby-row.selecting {
+  background: #cce5ff;
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+}
+
+.baby-row.clickable:hover {
+  filter: brightness(0.97);
+}
+
+.baby-icon {
+  font-size: 1.5rem;
+}
+
+.baby-label {
+  font-weight: 600;
+  min-width: 6rem;
+}
+
+.baby-status {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.baby-cancel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid #999;
+  border-radius: 50%;
+  background: #fff;
+  font-size: 1rem;
+  line-height: 1;
+  color: #666;
+  cursor: pointer;
+}
+
+.baby-cancel:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.breeding-summary {
+  font-weight: 500;
+  margin-right: 0.5rem;
 }
 </style>
