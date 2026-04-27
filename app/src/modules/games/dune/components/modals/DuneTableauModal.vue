@@ -1,40 +1,36 @@
 <template>
-  <teleport to="body">
-    <div v-if="player" class="dune-modal-backdrop" @click="close">
-      <div class="dune-modal tableau-modal" @click.stop>
-        <div class="modal-title">
-          {{ player.name }}'s tableau
-          <span class="close-x" @click="close">×</span>
-        </div>
+  <ModalBase id="dune-tableau-modal">
+    <template #header>{{ title }}</template>
 
-        <div class="stats">
-          <span>{{ player.vp }} VP</span>
-          <span>{{ player.solari }} solari</span>
-          <span>{{ player.spice }} spice</span>
-          <span>{{ player.water }} water</span>
-        </div>
-
-        <div class="sections">
-          <TableauSection :title="deckTitle" :cards="deckCards" />
-          <TableauSection v-if="isOwner" title="Hand + Played" :cards="handPlayed" />
-          <TableauSection v-else title="Played" :cards="playedCards" />
-          <TableauSection v-if="revealedCards.length" title="Revealed" :cards="revealedCards" />
-          <TableauSection title="Discard" :cards="discardCards" />
-          <TableauSection :title="intrigueTitle" :cards="intrigueCards" :hidden-count="intrigueHiddenCount" />
-          <TableauSection v-if="contractCards.length" title="Contracts" :cards="contractCards" />
-          <TableauSection v-if="completedContractCards.length"
-                          title="Completed Contracts"
-                          :cards="completedContractCards" />
-        </div>
+    <template v-if="player">
+      <div class="stats">
+        <span>{{ player.vp }} VP</span>
+        <span>{{ player.solari }} solari</span>
+        <span>{{ player.spice }} spice</span>
+        <span>{{ player.water }} water</span>
       </div>
-    </div>
-  </teleport>
+
+      <div class="sections">
+        <TableauSection :title="deckTitle" :cards="deckCards" />
+        <TableauSection v-if="isOwner" title="Hand + Played" :cards="handPlayed" />
+        <TableauSection v-else title="Played" :cards="playedCards" />
+        <TableauSection v-if="revealedCards.length" title="Revealed" :cards="revealedCards" />
+        <TableauSection title="Discard" :cards="discardCards" />
+        <TableauSection :title="intrigueTitle" :cards="intrigueCards" :hidden-count="intrigueHiddenCount" />
+        <TableauSection v-if="contractCards.length" title="Contracts" :cards="contractCards" />
+        <TableauSection v-if="completedContractCards.length"
+                        title="Completed Contracts"
+                        :cards="completedContractCards" />
+      </div>
+    </template>
+  </ModalBase>
 </template>
 
 
 <script>
 import { h } from 'vue'
 import DuneCard from '../DuneCard.vue'
+import ModalBase from '@/components/ModalBase.vue'
 
 const TableauSection = {
   name: 'TableauSection',
@@ -71,13 +67,17 @@ const TableauSection = {
 export default {
   name: 'DuneTableauModal',
 
-  components: { TableauSection },
+  components: { ModalBase, TableauSection },
 
   inject: ['actor', 'game', 'ui'],
 
   computed: {
     player() {
       return this.ui.modals.tableau?.player || null
+    },
+
+    title() {
+      return this.player ? `${this.player.name}'s tableau` : 'Tableau'
     },
 
     isOwner() {
@@ -160,74 +160,19 @@ export default {
       const zone = this.game.zones.byId(`${this.player.name}.${name}`)
       return zone ? zone.cardlist() : []
     },
-
-    close() {
-      this.ui.modals.tableau = null
-    },
   },
 }
 </script>
 
 
 <style scoped>
-.dune-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, .4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.dune-modal {
-  background: white;
-  border-radius: .5em;
-  min-width: 300px;
-  max-width: 450px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, .3);
-}
-
-.tableau-modal {
-  max-width: 560px;
-  max-height: 85vh;
-  overflow-y: auto;
-  padding: .75em;
-  display: flex;
-  flex-direction: column;
-  gap: .5em;
-}
-
-.modal-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 600;
-  font-size: 1.1em;
-  padding: 0 .25em .25em;
-  border-bottom: 1px solid #e0d8c4;
-  color: #2c2416;
-}
-
-.close-x {
-  cursor: pointer;
-  font-size: 1.4em;
-  line-height: 1;
-  color: #8a7a68;
-  padding: 0 .25em;
-}
-
-.close-x:hover {
-  color: #2c2416;
-}
-
 .stats {
   display: flex;
   flex-wrap: wrap;
   gap: .75em;
   font-size: .85em;
   color: #6a5a48;
-  padding: 0 .25em;
+  padding: 0 .25em .5em;
 }
 
 .sections {

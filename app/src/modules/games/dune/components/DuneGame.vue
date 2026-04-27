@@ -36,27 +36,11 @@
       </div>
     </div>
 
+    <DuneCardViewerModal />
+    <DuneCardListModal />
     <DuneRulesModal />
     <DuneTableauModal />
     <DebugModal />
-
-    <teleport to="body">
-      <div v-if="ui.modals.cardViewer" class="dune-modal-backdrop" @click="ui.modals.cardViewer = null">
-        <div class="dune-modal" @click.stop>
-          <DuneCard :card="ui.modals.cardViewer" class="modal-card" />
-        </div>
-      </div>
-      <div v-if="ui.modals.cardList" class="dune-modal-backdrop" @click="ui.modals.cardList = null">
-        <div class="dune-modal card-list-modal" @click.stop>
-          <div class="modal-title">{{ ui.modals.cardList.title }}</div>
-          <div v-if="ui.modals.cardList.cards.length === 0" class="modal-empty">none</div>
-          <DuneCard v-for="card in ui.modals.cardList.cards"
-                    :key="card.id || card.name"
-                    :card="card"
-                    class="modal-card" />
-        </div>
-      </div>
-    </teleport>
   </div>
 </template>
 
@@ -69,7 +53,6 @@ import DebugModal from '@/modules/games/common/components/DebugModal.vue'
 
 import { dune } from 'battlestar-common'
 
-import DuneCard from './DuneCard.vue'
 import GameLogDune from './GameLogDune.vue'
 import DunePlayerPanel from './DunePlayerPanel.vue'
 import DuneImperiumRow from './DuneImperiumRow.vue'
@@ -78,6 +61,8 @@ import DuneFactionTrack from './DuneFactionTrack.vue'
 import DuneContractMarket from './DuneContractMarket.vue'
 import DuneActionSpaces from './DuneActionSpaces.vue'
 import DuneOptionChip from './DuneOptionChip.vue'
+import DuneCardListModal from './modals/DuneCardListModal.vue'
+import DuneCardViewerModal from './modals/DuneCardViewerModal.vue'
 import DuneRulesModal from './modals/DuneRulesModal.vue'
 import DuneTableauModal from './modals/DuneTableauModal.vue'
 
@@ -87,9 +72,10 @@ export default {
 
   components: {
     DebugModal,
-    DuneCard,
     DropdownButton,
     DuneActionSpaces,
+    DuneCardListModal,
+    DuneCardViewerModal,
     DuneConflict,
     DuneContractMarket,
     DuneFactionTrack,
@@ -374,58 +360,4 @@ export default {
   padding-bottom: 3em;
 }
 
-.dune-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, .4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.dune-modal {
-  background: white;
-  border-radius: .5em;
-  min-width: 300px;
-  max-width: 450px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, .3);
-}
-
-.modal-card {
-  margin: 0;
-  border: none;
-  font-size: 1em;
-  padding: .6em .8em;
-}
-
-.card-list-modal {
-  max-width: 500px;
-  max-height: 80vh;
-  overflow-y: auto;
-  padding: .75em;
-  display: flex;
-  flex-direction: column;
-  gap: .35em;
-}
-
-.card-list-modal .modal-card {
-  border: 1px solid #d4c8a8;
-  font-size: .9em;
-  padding: .4em .6em;
-}
-
-.modal-title {
-  font-weight: 600;
-  font-size: 1.05em;
-  padding: 0 .25em .25em;
-  border-bottom: 1px solid #e0d8c4;
-  color: #2c2416;
-}
-
-.modal-empty {
-  color: #8a7a68;
-  font-style: italic;
-  padding: .5em .25em;
-}
 </style>

@@ -161,6 +161,7 @@ export default {
   methods: {
     openTableau() {
       this.ui.modals.tableau = { player: this.player }
+      this.$modal('dune-tableau-modal').show()
     },
 
     openIntrigue() {
@@ -173,6 +174,7 @@ export default {
         title: `${this.player.name} — Intrigue`,
         cards,
       }
+      this.$modal('dune-card-list-modal').show()
     },
 
     openContracts() {
@@ -182,6 +184,7 @@ export default {
         title: `${this.player.name} — Contracts`,
         cards,
       }
+      this.$modal('dune-card-list-modal').show()
     },
 
     battleIconLabel(icon) {

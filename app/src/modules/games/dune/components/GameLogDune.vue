@@ -6,6 +6,7 @@
 import { inject } from 'vue'
 import GameLog from '@/modules/games/common/components/log/GameLog.vue'
 import { useGameLogProvider } from '@/modules/games/common/composables/useGameLog'
+import modalUtil from '@/util/modal.js'
 import { dune } from 'battlestar-common'
 
 const game = inject('game')
@@ -34,6 +35,7 @@ function cardClick(card, name) {
   const def = card?.definition || card?.data || cardsByName[name] || null
   if (def) {
     ui.modals.cardViewer = def
+    modalUtil.getModal('dune-card-viewer-modal')?.show()
   }
 }
 
