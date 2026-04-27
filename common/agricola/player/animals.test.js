@@ -340,4 +340,43 @@ describe('animals', () => {
     expect(result.success).toBe(false)
     expect(result.error).toMatch(/Not enough sheep parents/)
   })
+
+  test('applyAnimalPlacements: cooking a parent to skip its breeding lets another type place', () => {
+    const game = t.gameFixture({
+      dennis: { majorImprovements: ['fireplace-2'] },
+    })
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    // Cattle pasture full at 2/2; sheep split between pet slot and a stable so
+    // they can breed but only into the sheep-occupied stable. Eating the pet
+    // sheep should free the pet slot for the cattle baby and reject the sheep
+    // baby (only 1 sheep parent left).
+    t.addPasture(dennis, [{ row: 1, col: 0 }], 'cattle', 2)
+    dennis.buildStable(2, 0)
+    dennis.placeAnimals('sheep', 1)
+    dennis.housePets.sheep = 1
+
+    expect(dennis.getTotalAnimals('sheep')).toBe(2)
+    expect(dennis.getTotalAnimals('cattle')).toBe(2)
+
+    const result = dennis.applyAnimalPlacements({
+      placements: [
+        { locationId: 'house', animalType: 'cattle', count: 1 },
+      ],
+      overflow: { cook: { sheep: 1 } },
+      incoming: { sheep: 1, cattle: 1 },
+      removals: [
+        { locationId: 'house', animalType: 'sheep', count: 1 },
+      ],
+      breedingConstraints: {
+        requirements: { sheep: 2, cattle: 2 },
+        acceptedBabies: { sheep: 0, boar: 0, cattle: 1 },
+      },
+    })
+
+    expect(result.success).toBe(true)
+    expect(dennis.getTotalAnimals('cattle')).toBe(3)
+    expect(dennis.getTotalAnimals('sheep')).toBe(1)
+  })
 })

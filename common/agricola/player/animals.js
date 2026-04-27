@@ -867,22 +867,8 @@ AgricolaPlayer.prototype.applyAnimalPlacements = function(plan) {
   const totalCooked = overflow?.cook || {}
   const totalReleased = overflow?.release || {}
 
-  for (const animalType of res.animalTypes) {
-    const incomingCount = incoming[animalType] || 0
-    const removed = totalRemoved[animalType] || 0
-    const placed = totalPlaced[animalType] || 0
-    const cooked = totalCooked[animalType] || 0
-    const released = totalReleased[animalType] || 0
-
-    if (removed + incomingCount !== placed + cooked + released) {
-      return {
-        success: false,
-        error: `Must account for all ${animalType}: removed(${removed}) + incoming(${incomingCount}) != placed(${placed}) + cooked(${cooked}) + released(${released})`,
-      }
-    }
-  }
-
-  // Breeding constraint validation
+  // Breeding constraint validation (run before accounting so callers see the
+  // most specific error first).
   if (breedingConstraints) {
     const { requirements, acceptedBabies } = breedingConstraints
 
@@ -912,6 +898,25 @@ AgricolaPlayer.prototype.applyAnimalPlacements = function(plan) {
             error: `Not enough ${type} parents: final total(${finalTotal}) < requirement(${required}) + babies(${accepted})`,
           }
         }
+      }
+    }
+  }
+
+  // Babies rejected by breeding constraints are never born, so they don't need accounting.
+  const acceptedForAccounting = breedingConstraints?.acceptedBabies
+  for (const animalType of res.animalTypes) {
+    const incomingCount = acceptedForAccounting
+      ? (acceptedForAccounting[animalType] || 0)
+      : (incoming[animalType] || 0)
+    const removed = totalRemoved[animalType] || 0
+    const placed = totalPlaced[animalType] || 0
+    const cooked = totalCooked[animalType] || 0
+    const released = totalReleased[animalType] || 0
+
+    if (removed + incomingCount !== placed + cooked + released) {
+      return {
+        success: false,
+        error: `Must account for all ${animalType}: removed(${removed}) + incoming(${incomingCount}) != placed(${placed}) + cooked(${cooked}) + released(${released})`,
       }
     }
   }
