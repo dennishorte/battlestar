@@ -57,6 +57,7 @@ function combatIntrigueRound(game, combatants) {
       const choices = ['Pass', ...combatCards.map(c => c.name)]
       const [choice] = game.actions.choose(player, choices, {
         title: 'Play Combat Intrigue card or Pass',
+        noAutoRespond: (game.settings.version || 1) >= 2,
       })
 
       if (choice === 'Pass') {

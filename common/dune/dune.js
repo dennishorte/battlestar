@@ -34,6 +34,7 @@ util.inherit(Game, Dune)
 function DuneFactory(settings, viewerName) {
   const data = BaseFactory(settings)
 
+  data.settings.version = settings.version || 1
   data.settings.numPlayers = settings.numPlayers || 2
   data.settings.useCHOAM = true
   data.settings.useBaseGameCards = settings.useBaseGameCards !== false
@@ -48,6 +49,7 @@ function DuneFactory(settings, viewerName) {
 function factoryFromLobby(lobby) {
   return DuneFactory({
     game: 'Dune Imperium: Uprising',
+    version: 2,
     name: lobby.name,
     players: lobby.users,
     seed: lobby.seed,

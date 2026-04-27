@@ -73,6 +73,37 @@ describe('Intrigue Cards', () => {
     expect(remaining).not.toContain('Ambush')
   })
 
+  test('combatant with only non-combat intrigues must explicitly pass', () => {
+    // The combat-intrigue prompt does not auto-resolve when Pass is the only
+    // option. Otherwise an observer could deduce that the player holds no
+    // combat-playable intrigues from the absence of a pause.
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { troopsInGarrison: 3, intrigue: ['CHOAM Profits'] },
+    })
+    game.run()
+
+    t.choose(game, 'Agent Turn.Reconnaissance')
+    t.choose(game, 'Arrakeen')
+    t.choose(game, 'Deploy 2 troop(s) from garrison')
+
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
+
+    // Combat phase pauses for dennis with a Pass-only prompt.
+    expect(t.currentChoices(game)).toEqual(['Pass'])
+
+    t.choose(game, 'Pass')
+
+    // Card is not consumed; combat resolved without it.
+    const intrigueZone = game.zones.byId('dennis.intrigue')
+    expect(intrigueZone.cardlist().map(c => c.name)).toContain('CHOAM Profits')
+  })
+
   test('endgame intrigue played at end of game', () => {
     const game = t.fixture()
     t.setBoard(game, {
