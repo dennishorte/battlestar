@@ -32,7 +32,7 @@
               <DuneFactionIcon v-if="isFaction(space.icon)"
                                :faction="space.icon"
                                size=".85em" />
-              <span v-else class="space-icon" :class="`icon-${space.icon}`" />
+              <DuneAgentIcon v-else :type="space.icon" size=".85em" />
               <span class="space-name">{{ space.name }}</span>
               <span class="space-occupant" v-if="spaceOccupants(space.id).length > 0">
                 {{ spaceOccupants(space.id).join(', ') }}
@@ -103,6 +103,7 @@
 
 <script>
 import { dune } from 'battlestar-common'
+import DuneAgentIcon from './DuneAgentIcon.vue'
 import DuneFactionIcon from './DuneFactionIcon.vue'
 
 const boardSpaces = dune.res.boardSpaces
@@ -113,6 +114,7 @@ export default {
   name: 'DuneActionSpaces',
 
   components: {
+    DuneAgentIcon,
     DuneFactionIcon,
   },
 
@@ -516,16 +518,6 @@ export default {
   font-style: italic;
   color: #8a7a68;
 }
-
-.space-icon {
-  display: inline-block;
-  width: .7em;
-  height: .7em;
-}
-
-.icon-purple { background-color: #6a3d8a; border-radius: 50%; }
-.icon-yellow { background-color: #b8860b; clip-path: polygon(50% 0%, 100% 100%, 0% 100%); }
-.icon-green { background-color: #3a7d3a; clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); }
 
 .space-name {
   flex: 1;

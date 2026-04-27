@@ -56,10 +56,10 @@
           <td>{{ card.persuasionCost }}</td>
           <td><span v-if="card.factionAffiliation" class="faction-badge" :class="`faction-${card.factionAffiliation}`">{{ card.factionAffiliation }}</span></td>
           <td class="icons-cell">
-            <span v-for="icon in card.agentIcons"
-                  :key="icon"
-                  class="icon"
-                  :class="[`icon-${icon}`, `shape-${shapeFor(icon)}`]" />
+            <DuneAgentIcon v-for="icon in card.agentIcons"
+                           :key="icon"
+                           :type="icon"
+                           size="17.5px" />
             <span v-for="f in card.factionAccess"
                   :key="f"
                   class="icon icon-sm"
@@ -201,10 +201,10 @@
           <td><strong>{{ card.name }}</strong><span v-if="card.count > 1" class="text-muted"> x{{ card.count }}</span></td>
           <td>{{ card.specimenCost }}</td>
           <td class="icons-cell">
-            <span v-for="icon in card.agentIcons"
-                  :key="icon"
-                  class="icon"
-                  :class="[`icon-${icon}`, `shape-${shapeFor(icon)}`]" />
+            <DuneAgentIcon v-for="icon in card.agentIcons"
+                           :key="icon"
+                           :type="icon"
+                           size="17.5px" />
           </td>
           <td class="ability-cell">{{ card.agentAbility }}</td>
           <td class="ability-cell">{{ revealText(card) }}</td>
@@ -249,10 +249,10 @@
           <td><strong>{{ card.name }}</strong><span v-if="card.count > 1" class="text-muted"> x{{ card.count }}</span></td>
           <td>{{ card.persuasionCost }}</td>
           <td class="icons-cell">
-            <span v-for="icon in card.agentIcons"
-                  :key="icon"
-                  class="icon"
-                  :class="[`icon-${icon}`, `shape-${shapeFor(icon)}`]" />
+            <DuneAgentIcon v-for="icon in card.agentIcons"
+                           :key="icon"
+                           :type="icon"
+                           size="17.5px" />
           </td>
           <td class="ability-cell">{{ card.acquisitionBonus }}</td>
           <td class="ability-cell">{{ card.agentAbility }}</td>
@@ -279,10 +279,10 @@
           <td><strong>{{ card.name }}</strong></td>
           <td>{{ card.countPerPlayer }}</td>
           <td class="icons-cell">
-            <span v-for="icon in card.agentIcons"
-                  :key="icon"
-                  class="icon"
-                  :class="[`icon-${icon}`, `shape-${shapeFor(icon)}`]" />
+            <DuneAgentIcon v-for="icon in card.agentIcons"
+                           :key="icon"
+                           :type="icon"
+                           size="17.5px" />
             <span v-for="f in (card.factionAccess || [])"
                   :key="f"
                   class="icon icon-sm"
@@ -301,6 +301,7 @@
 
 <script>
 import { dune } from 'battlestar-common'
+import DuneAgentIcon from '../../games/dune/components/DuneAgentIcon.vue'
 import GameHeader from '../../../components/GameHeader.vue'
 
 const cardData = dune.res.cards
@@ -309,6 +310,7 @@ export default {
   name: 'DuneCards',
 
   components: {
+    DuneAgentIcon,
     GameHeader,
   },
 
@@ -452,19 +454,6 @@ export default {
       }
       return 'Plot'
     },
-
-    shapeFor(icon) {
-      if (icon === 'green') {
-        return 'pentagon'
-      }
-      if (icon === 'purple') {
-        return 'circle'
-      }
-      if (icon === 'yellow') {
-        return 'triangle'
-      }
-      return 'diamond'
-    },
   },
 }
 </script>
@@ -488,29 +477,13 @@ export default {
   white-space: nowrap;
 }
 
-/* Icon shapes — matches DuneCard.vue */
-.icon {
-  display: inline-block;
-  vertical-align: middle;
+.icons-cell > * {
   margin-right: 2px;
 }
 
-.shape-circle {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-}
-
-.shape-pentagon {
-  width: 15px;
-  height: 14px;
-  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
-}
-
-.shape-triangle {
-  width: 15px;
-  height: 13px;
-  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+.icon {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .shape-diamond {
@@ -524,10 +497,6 @@ export default {
   height: 14px;
 }
 
-/* Icon colors — matches DuneCard.vue */
-.icon-green { background-color: #3a7d3a; }
-.icon-purple { background-color: #6a3d8a; }
-.icon-yellow { background-color: #b8860b; }
 .icon-emperor { background-color: #d03030; }
 .icon-guild { background-color: #e08828; }
 .icon-bene-gesserit { background-color: #8855cc; }

@@ -18,7 +18,7 @@
                   :key="`a-${chip.type}`"
                   class="summary-chip"
                   :title="chip.title">
-              <span class="agent-icon" :class="`icon-${chip.type} shape-${chip.shape}`" />
+              <DuneAgentIcon :type="chip.type" />
               <span class="chip-count">×{{ chip.count }}</span>
             </span>
             <span v-for="chip in factionAccessChips"
@@ -64,11 +64,11 @@
 
 <script>
 import { h } from 'vue'
+import DuneAgentIcon from '../DuneAgentIcon.vue'
 import DuneCard from '../DuneCard.vue'
 import DuneFactionIcon from '../DuneFactionIcon.vue'
 import ModalBase from '@/components/ModalBase.vue'
 
-const SHAPE_BY_AGENT = { green: 'pentagon', purple: 'circle', yellow: 'triangle' }
 const AGENT_ORDER = ['green', 'purple', 'yellow']
 const FACTION_ORDER = ['emperor', 'guild', 'bene-gesserit', 'fremen']
 const FACTION_LABELS = {
@@ -113,7 +113,7 @@ const TableauSection = {
 export default {
   name: 'DuneTableauModal',
 
-  components: { DuneFactionIcon, ModalBase, TableauSection },
+  components: { DuneAgentIcon, DuneFactionIcon, ModalBase, TableauSection },
 
   inject: ['actor', 'game', 'ui'],
 
@@ -225,7 +225,6 @@ export default {
         .filter(t => counts[t])
         .map(t => ({
           type: t,
-          shape: SHAPE_BY_AGENT[t] || 'circle',
           count: counts[t],
           title: `${counts[t]} card${counts[t] === 1 ? '' : 's'} with ${t} agent icon`,
         }))
@@ -337,32 +336,6 @@ export default {
 .chip-count {
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-}
-
-.agent-icon {
-  display: inline-block;
-}
-
-.icon-green { background-color: #3a7d3a; }
-.icon-purple { background-color: #6a3d8a; }
-.icon-yellow { background-color: #b8860b; }
-
-.shape-circle {
-  width: .8em;
-  height: .8em;
-  border-radius: 50%;
-}
-
-.shape-pentagon {
-  width: .9em;
-  height: .85em;
-  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
-}
-
-.shape-triangle {
-  width: .9em;
-  height: .8em;
-  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
 }
 
 .affiliation-chip {

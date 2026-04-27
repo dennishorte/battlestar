@@ -5,7 +5,7 @@
         <DuneFactionIcon v-if="spaceIcon && isFaction(spaceIcon)"
                          :faction="spaceIcon"
                          size=".85em" />
-        <span v-else-if="spaceIcon" class="space-icon" :class="`icon-${spaceIcon}`" />
+        <DuneAgentIcon v-else-if="spaceIcon" :type="spaceIcon" size=".85em" />
         <span class="chip-name">{{ name }}</span>
         <span class="chip-combat" v-if="boardSpace?.isCombatSpace" title="Combat">C</span>
         <span class="chip-detail" v-if="detail">{{ detail }}</span>
@@ -65,6 +65,7 @@
 
 
 <script>
+import DuneAgentIcon from './DuneAgentIcon.vue'
 import DuneCard from './DuneCard.vue'
 import DuneFactionIcon from './DuneFactionIcon.vue'
 import DuneFeydTrack from './DuneFeydTrack.vue'
@@ -88,7 +89,7 @@ export default {
 
   inheritAttrs: false,
 
-  components: { DuneCard, DuneFactionIcon, DuneFeydTrack },
+  components: { DuneAgentIcon, DuneCard, DuneFactionIcon, DuneFeydTrack },
 
   props: {
     name: { type: String, required: true },
@@ -333,15 +334,6 @@ export default {
 .chip-space-guild { border-color: #c07020; }
 .chip-space-bene-gesserit { border-color: #5b3a8a; }
 .chip-space-fremen { border-color: #2a6090; }
-
-.space-icon {
-  display: inline-block;
-  width: .7em;
-  height: .7em;
-}
-.icon-purple { background-color: #6a3d8a; border-radius: 50%; }
-.icon-yellow { background-color: #b8860b; clip-path: polygon(50% 0%, 100% 100%, 0% 100%); }
-.icon-green { background-color: #3a7d3a; clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); }
 
 .dune-modal-backdrop {
   position: fixed;

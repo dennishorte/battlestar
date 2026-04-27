@@ -6,9 +6,7 @@
           <DuneFactionIcon v-if="icon.faction"
                            :faction="icon.type"
                            size=".95em" />
-          <span v-else
-                class="icon"
-                :class="`icon-${icon.type} shape-${icon.shape}`" />
+          <DuneAgentIcon v-else :type="icon.type" />
         </template>
       </span>
       <span class="card-name">{{ def.name }}</span>
@@ -36,10 +34,9 @@
 
 
 <script>
+import DuneAgentIcon from './DuneAgentIcon.vue'
 import DuneFactionIcon from './DuneFactionIcon.vue'
 import { textLines, cardType, cardSections } from '../cardUtil.js'
-
-const shapeMap = { green: 'pentagon', purple: 'circle', yellow: 'triangle' }
 
 const factionLabels = {
   emperor: 'Emperor',
@@ -52,6 +49,7 @@ export default {
   name: 'DuneCard',
 
   components: {
+    DuneAgentIcon,
     DuneFactionIcon,
   },
 
@@ -74,7 +72,7 @@ export default {
     allIcons() {
       const icons = []
       for (const icon of this.def.agentIcons || []) {
-        icons.push({ type: icon, shape: shapeMap[icon] || 'circle' })
+        icons.push({ type: icon })
       }
       for (const faction of this.def.factionAccess || []) {
         icons.push({ type: faction, faction: true })
@@ -171,34 +169,6 @@ export default {
 .card-affiliation .faction-icon {
   color: white;
 }
-
-.icon {
-  display: inline-block;
-}
-
-/* Shapes */
-.shape-circle {
-  width: .8em;
-  height: .8em;
-  border-radius: 50%;
-}
-
-.shape-pentagon {
-  width: .9em;
-  height: .85em;
-  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
-}
-
-.shape-triangle {
-  width: .9em;
-  height: .8em;
-  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-}
-
-/* Colors */
-.icon-green { background-color: #3a7d3a; }
-.icon-purple { background-color: #6a3d8a; }
-.icon-yellow { background-color: #b8860b; }
 
 .card-effects {
   margin-top: .15em;
