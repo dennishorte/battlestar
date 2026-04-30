@@ -13,8 +13,18 @@
                         :feyd-position="feydPosition"
                         class="leader-chip" />
       </div>
-      <span class="objective" v-if="objective" :title="objective.name">
-        {{ battleIconLabel(objective.battleIcon) }}
+      <span class="battle-icons" v-if="objective || wonBattleIcons.length">
+        <span v-if="objective"
+              class="battle-icon objective-icon"
+              :title="`Objective: ${objective.name}`">
+          {{ battleIconLabel(objective.battleIcon) }}
+        </span>
+        <span v-for="(icon, idx) in wonBattleIcons"
+              :key="`won-${idx}`"
+              class="battle-icon won-icon"
+              :title="`Won Conflict: ${icon.cardName}`">
+          {{ battleIconLabel(icon.battleIcon) }}
+        </span>
       </span>
       <span class="vp-badge">{{ player.vp }} VP</span>
     </div>
@@ -138,6 +148,11 @@ export default {
       return this.game.state.objectives[this.player.name] || null
     },
 
+    wonBattleIcons() {
+      const wonCards = this.game.state.conflict?.wonCards?.[this.player.name] || []
+      return wonCards.map(c => ({ battleIcon: c.battleIcon, cardName: c.name }))
+    },
+
     feydPosition() {
       return this.game.state.feydTrack?.[this.player.name] || null
     },
@@ -258,9 +273,21 @@ export default {
   font-size: .8em;
 }
 
-.objective {
-  font-size: 1.1em;
+.battle-icons {
+  display: inline-flex;
+  align-items: center;
+  gap: .15em;
   margin-left: auto;
+  margin-right: .35em;
+}
+
+.battle-icon {
+  font-size: 1.1em;
+  line-height: 1;
+}
+
+.won-icon {
+  opacity: .85;
 }
 
 .vp-badge {
