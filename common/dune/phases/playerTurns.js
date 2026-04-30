@@ -1038,9 +1038,11 @@ function resolveEffect(game, player, effect, space, sourceName) {
     }
 
     case 'recall-agent': {
-      // Return one of your agents from the board (freeing the space)
+      // Return one of your agents from the board (freeing the space).
+      // Exclude the current space — the agent that triggered this effect
+      // cannot recall itself.
       const occupiedSpaces = Object.entries(game.state.boardSpaces)
-        .filter(([, occupants]) => (occupants || []).includes(player.name))
+        .filter(([id, occupants]) => (occupants || []).includes(player.name) && id !== space?.id)
       if (occupiedSpaces.length > 0) {
         const boardSpaces = getBoardSpaces()
         const recallChoices = occupiedSpaces.map(([id]) => {

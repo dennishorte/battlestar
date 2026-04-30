@@ -38,6 +38,37 @@ describe('Agent Recall', () => {
     expect(game.state.round).toBe(2)
   })
 
+  test('Imperial Privilege recall excludes the agent on Imperial Privilege itself', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { influence: { emperor: 2 }, solari: 5 },
+      boardSpaces: { 'assembly-hall': 'dennis', 'gather-support': 'dennis' },
+    })
+    game.run()
+
+    t.choose(game, 'Agent Turn.Dagger')
+    t.choose(game, 'Imperial Privilege')
+
+    const sel = game.waiting.selectors[0]
+    expect(sel.title).toBe('Choose an Agent to recall')
+    expect(sel.choices).toEqual(expect.arrayContaining(['Assembly Hall', 'Gather Support']))
+    expect(sel.choices).not.toContain('Imperial Privilege')
+  })
+
+  test('Imperial Privilege recall is skipped when no other agent is placed', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { influence: { emperor: 2 }, solari: 5 },
+    })
+    game.run()
+
+    t.choose(game, 'Agent Turn.Dagger')
+    t.choose(game, 'Imperial Privilege')
+
+    // Agent on Imperial Privilege is not eligible — recall step is skipped silently.
+    expect(game.state.boardSpaces['imperial-privilege']).toEqual(['dennis'])
+  })
+
   test('chain card acquisitions: acquire, row refills, acquire replacement', () => {
     const game = t.fixture()
     game.run()
