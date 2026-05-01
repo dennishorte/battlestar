@@ -74,6 +74,14 @@ function endGame(game) {
     offerEndgameIntrigue(game, player)
   }
 
+  // Wild battle icons defer their pairing to endgame (Bloodlines rule). After
+  // endgame intrigue cards have had a chance to consume any face-up wilds,
+  // each remaining face-up wild conflict card pairs with another face-up
+  // battle icon card (conflict or objective) for +1 VP per pair.
+  for (const player of game.players.all()) {
+    pairEndgameWildIcons(game, player)
+  }
+
   // Determine winner
   const players = game.players.all()
     .map(p => ({
@@ -175,6 +183,59 @@ function offerEndgameIntrigue(game, player) {
       game.log.outdent()
     }
   }
+}
+
+/**
+ * Pair face-up wild battle icons with face-up cards bearing one of the three
+ * real battle icons (Crysknife, Desert Mouse, Ornithopter) — conflict or
+ * objective. Each pair flips both cards face-down and grants +1 VP. Wild
+ * does not match during combat — its pairing is deferred to here. Two wilds
+ * cannot pair with each other (the rule says "any other battle icon").
+ */
+function pairEndgameWildIcons(game, player) {
+  const wonCards = game.state.conflict.wonCards?.[player.name] || []
+  if (!game.state.conflict.flippedCardIds) {
+    game.state.conflict.flippedCardIds = {}
+  }
+  if (!game.state.conflict.flippedCardIds[player.name]) {
+    game.state.conflict.flippedCardIds[player.name] = []
+  }
+  const flipped = new Set(game.state.conflict.flippedCardIds[player.name])
+  const objective = game.state.objectives?.[player.name]
+
+  const faceUpBattleIcons = () => {
+    const list = []
+    for (const c of wonCards) {
+      if (c.battleIcon && !flipped.has(c.id)) {
+        list.push(c)
+      }
+    }
+    if (objective && objective.battleIcon && !flipped.has(objective.id)) {
+      list.push(objective)
+    }
+    return list
+  }
+
+  while (true) {
+    const faceUp = faceUpBattleIcons()
+    const wild = faceUp.find(c => c.battleIcon === 'wild')
+    if (!wild) {
+      break
+    }
+    const partner = faceUp.find(c => c.battleIcon !== 'wild')
+    if (!partner) {
+      break
+    }
+    flipped.add(wild.id)
+    flipped.add(partner.id)
+    player.incrementCounter('vp', 1, { silent: true })
+    game.log.add({
+      template: '{player} pairs Wild battle icon ({wild}) with {partner}: +1 Victory Point',
+      args: { player, wild, partner },
+    })
+  }
+
+  game.state.conflict.flippedCardIds[player.name] = [...flipped]
 }
 
 module.exports = { recallPhase }

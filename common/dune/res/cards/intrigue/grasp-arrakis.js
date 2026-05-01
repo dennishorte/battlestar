@@ -21,9 +21,13 @@ module.exports = {
   endgameText: "Flip two of your face-up Conflict cards → +1 Victory Point",
 
   endgameEffect(game, player) {
-    // Flip two conflict cards -> +1 VP
     const wonCards = game.state.conflict.wonCards?.[player.name] || []
-    if (wonCards.length >= 2) {
+    const flipped = new Set(game.state.conflict.flippedCardIds?.[player.name] || [])
+    const faceUp = wonCards.filter(c => !flipped.has(c.id))
+    if (faceUp.length >= 2) {
+      flipped.add(faceUp[0].id)
+      flipped.add(faceUp[1].id)
+      game.state.conflict.flippedCardIds[player.name] = [...flipped]
       player.incrementCounter('vp', 1, { silent: true })
       game.log.add({ template: '{player}: Flips 2 conflict cards — +1 VP', args: { player } })
     }

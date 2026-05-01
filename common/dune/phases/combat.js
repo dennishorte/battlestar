@@ -491,34 +491,71 @@ function awardReward(game, player, rewardText) {
 
 /**
  * Move conflict card to winner's collection and check battle icons.
+ *
+ * Rules: when the winner takes the card into their supply, they check for
+ * another face-up Conflict OR Objective card with the same battle icon. If
+ * found, both cards are flipped face-down and the winner gains 1 VP. The
+ * three icons that match are Crysknife, Desert Mouse, and Ornithopter; the
+ * `wild` icon does not match during combat — wild's pairing is deferred to
+ * endgame (see pairEndgameWildIcons in recall.js).
  */
 function moveConflictCardToWinner(game, winner, conflictCard) {
-  // Track won conflict cards per player for battle icon scoring
   if (!game.state.conflict.wonCards) {
     game.state.conflict.wonCards = {}
   }
   if (!game.state.conflict.wonCards[winner.name]) {
     game.state.conflict.wonCards[winner.name] = []
   }
+  if (!game.state.conflict.flippedCardIds) {
+    game.state.conflict.flippedCardIds = {}
+  }
+  if (!game.state.conflict.flippedCardIds[winner.name]) {
+    game.state.conflict.flippedCardIds[winner.name] = []
+  }
   game.state.conflict.wonCards[winner.name].push(conflictCard)
 
-  // Check battle icon pair bonus (+1 VP)
-  if (conflictCard.battleIcon) {
-    const wonCards = game.state.conflict.wonCards[winner.name]
-    const matchingIcons = wonCards.filter(c => c.battleIcon && (
-      c.battleIcon === conflictCard.battleIcon
-      || c.battleIcon === 'wild'
-      || conflictCard.battleIcon === 'wild'
-    ))
-    // A pair means 2 matching icons (including the one just won)
-    if (matchingIcons.length >= 2 && matchingIcons.length % 2 === 0) {
-      winner.incrementCounter('vp', 1, { silent: true })
-      game.log.add({
-        template: '{player} matches battle icons: +1 Victory Point',
-        args: { player: winner },
-      })
+  const icon = conflictCard.battleIcon
+  if (!icon || icon === 'wild') {
+    return
+  }
+
+  const flipped = game.state.conflict.flippedCardIds[winner.name]
+  const partner = findFaceUpMatch(game, winner, conflictCard, icon)
+  if (partner) {
+    flipped.push(conflictCard.id)
+    flipped.push(partner.id)
+    winner.incrementCounter('vp', 1, { silent: true })
+    game.log.add({
+      template: '{player} matches battle icons ({card1} + {card2}): +1 Victory Point',
+      args: { player: winner, card1: conflictCard, card2: partner },
+    })
+  }
+}
+
+/**
+ * Find a face-up conflict or objective card belonging to `winner` whose
+ * battle icon matches `icon`, excluding the just-won `justWon` card. Returns
+ * the matching card definition or null. Wild icons never match.
+ */
+function findFaceUpMatch(game, winner, justWon, icon) {
+  const flipped = new Set(game.state.conflict.flippedCardIds?.[winner.name] || [])
+  const won = game.state.conflict.wonCards?.[winner.name] || []
+  for (const card of won) {
+    if (card === justWon) {
+      continue
+    }
+    if (flipped.has(card.id)) {
+      continue
+    }
+    if (card.battleIcon === icon) {
+      return card
     }
   }
+  const objective = game.state.objectives?.[winner.name]
+  if (objective && !flipped.has(objective.id) && objective.battleIcon === icon) {
+    return objective
+  }
+  return null
 }
 
 /**

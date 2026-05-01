@@ -142,25 +142,43 @@ TestUtil.setBoard = function(game, state) {
       Object.assign(game.state.makerHooks, state.makerHooks)
     }
 
-    // Conflict card: put a card matching the filter on top of the conflict deck
+    // Conflict card: put a card matching the filter on top of the conflict deck.
+    // For id-based selection we move the card from anywhere in the registry —
+    // the deck only contains a sliced subset of conflicts, so id filters need
+    // to reach into the full card pool to be reliable.
     if (state.conflictCard) {
       const deck = game.zones.byId('common.conflictDeck')
-      const cards = deck.cardlist()
       const filter = state.conflictCard
-      const card = cards.find(c => {
-        if (typeof filter === 'string') {
-          return c.name === filter
+      let card = null
+      if (filter.id) {
+        try {
+          card = game.cards.byId(filter.id)
         }
-        if (filter.location) {
-          return c.definition?.location === filter.location
+        catch {
+          card = null
         }
-        if (filter.tier) {
-          return c.definition?.tier === filter.tier
-        }
-        return false
-      })
+      }
+      else {
+        const cards = deck.cardlist()
+        card = cards.find(c => {
+          if (typeof filter === 'string') {
+            return c.name === filter
+          }
+          if (filter.location) {
+            return c.definition?.location === filter.location
+          }
+          if (filter.tier) {
+            return c.definition?.tier === filter.tier
+          }
+          return false
+        })
+      }
       if (card) {
-        card.moveTo(deck, 0)
+        // Use deck.push(card, 0) (rather than card.moveTo) so it works for
+        // cards that were registered but never placed in a zone — only a
+        // sliced subset of conflict cards land in the deck at game init, but
+        // tests may reach for any conflict by id.
+        deck.push(card, 0)
       }
     }
 
@@ -230,6 +248,9 @@ TestUtil.setBoard = function(game, state) {
       }
       if (c.wonCards) {
         game.state.conflict.wonCards = c.wonCards
+      }
+      if (c.flippedCardIds) {
+        game.state.conflict.flippedCardIds = c.flippedCardIds
       }
     }
 

@@ -123,6 +123,7 @@ Dune.prototype._reset = function() {
     cardId: null,
     currentCard: null,     // Card definition for reward parsing
     wonCards: {},           // { playerName: [cardDef, ...] } for battle icon tracking
+    flippedCardIds: {},    // { playerName: [cardId, ...] } face-down conflict/objective cards
     deployedTroops: {},    // { playerName: count }
     deployedSandworms: {}, // { playerName: count }
     strengthBreakdown: {}, // { playerName: [{ source, label, amount }] }

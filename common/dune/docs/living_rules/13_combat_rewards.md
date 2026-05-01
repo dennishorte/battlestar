@@ -15,6 +15,14 @@
 - There are three battle icons: Crysknife, Desert Mouse, and Ornithopter.
 - When you win a Conflict and take that card into your supply, check if you have another face-up Conflict or Objective card in your supply with the same battle icon. If you do, you must flip the matching pair of cards face down and gain 1 Victory Point.
 
+### Wild Battle Icons (Bloodlines)
+
+- A small number of Bloodlines Conflict cards bear a Wild ("?") battle icon instead of one of the three real icons.
+- Wild icons do not trigger a match during combat. Their pairing is deferred to the endgame.
+- At the endgame, after Endgame Intrigue cards have been resolved, each face-up Wild Conflict card pairs with one face-up card bearing one of the three real battle icons (Crysknife, Desert Mouse, or Ornithopter — Conflict or Objective). Each such pair flips both cards face down and grants 1 Victory Point.
+- Wild does not pair with another Wild.
+- The Crysknife / Desert Mouse / Ornithopter Endgame Intrigue cards may flip a Wild Conflict in place of the matching icon (their printed text reads "Crysknife or ?" etc.). A Wild already consumed by such an intrigue is no longer face-up and does not participate in the auto-pair pass.
+
 ### Sandworm Reward Doubling
 
 - When taking rewards, if you have one or more sandworms in the Conflict, double the rewards you take.
