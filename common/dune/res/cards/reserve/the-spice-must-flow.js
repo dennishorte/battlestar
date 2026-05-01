@@ -18,7 +18,7 @@ module.exports = {
   factionAffiliation: 'guild',
 
   onAcquire(game, player) {
-    player.incrementCounter('vp', 1, { silent: true })
+    player.gainVp(1, 'The Spice Must Flow')
     game.log.add({
       template: '{player} gains 1 Victory Point (The Spice Must Flow)',
       args: { player },

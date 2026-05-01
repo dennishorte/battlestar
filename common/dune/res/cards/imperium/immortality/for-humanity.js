@@ -45,7 +45,7 @@ module.exports = {
         const [choice] = game.actions.choose(player, choices, { title: 'Lose 2 Influence for +1 VP?' })
         if (choice !== 'Pass') {
           factions.loseInfluence(game, player, choice, 2)
-          player.incrementCounter('vp', 1, { silent: true })
+          player.gainVp(1, 'For Humanity')
           game.log.add({ template: '{player}: +1 VP', args: { player } })
         }
       }

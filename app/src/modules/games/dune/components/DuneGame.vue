@@ -40,6 +40,7 @@
     <DuneCardListModal />
     <DuneRulesModal />
     <DuneTableauModal />
+    <DuneVpBreakdownModal />
     <DebugModal />
   </div>
 </template>
@@ -65,6 +66,7 @@ import DuneCardListModal from './modals/DuneCardListModal.vue'
 import DuneCardViewerModal from './modals/DuneCardViewerModal.vue'
 import DuneRulesModal from './modals/DuneRulesModal.vue'
 import DuneTableauModal from './modals/DuneTableauModal.vue'
+import DuneVpBreakdownModal from './modals/DuneVpBreakdownModal.vue'
 
 
 export default {
@@ -83,6 +85,7 @@ export default {
     DunePlayerPanel,
     DuneRulesModal,
     DuneTableauModal,
+    DuneVpBreakdownModal,
     GameLogDune,
     GameMenu,
     WaitingPanel,
@@ -99,6 +102,7 @@ export default {
           cardViewer: null,
           cardList: null,
           tableau: null,
+          vpBreakdown: null,
         },
       },
     }

@@ -44,7 +44,7 @@ module.exports = {
     // Dreadnoughts — expansion, skip
     // Any 3 of these: +1 VP; all 5: +3 VP (but we only have 3 non-expansion conditions)
     if (conditions >= 3) {
-      player.incrementCounter('vp', 1, { silent: true })
+      player.gainVp(1, 'Grand Conspiracy (intrigue)')
       game.log.add({ template: '{player}: Grand Conspiracy — +1 VP ({count}/5 conditions)', args: { player, count: conditions } })
     }
   },

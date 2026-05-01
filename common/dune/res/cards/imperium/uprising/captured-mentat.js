@@ -43,8 +43,7 @@ module.exports = {
       if (choice !== 'Pass') {
         const loseFaction = loseFactions.find(f => choice.includes(f))
         factions.loseInfluence(game, player, loseFaction, 1)
-        const gainFactions = constants.FACTIONS.filter(f => f !== loseFaction)
-        const [gf] = game.actions.choose(player, gainFactions, { title: '+1 Influence with:' })
+        const [gf] = game.actions.choose(player, constants.FACTIONS, { title: '+1 Influence with:' })
         factions.gainInfluence(game, player, gf)
       }
     }

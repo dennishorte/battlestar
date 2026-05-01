@@ -25,7 +25,7 @@ module.exports = {
     if (deployed >= 3) {
       game.state.conflict.deployedTroops[player.name] -= 3
       player.incrementCounter('troopsInSupply', 3, { silent: true })
-      player.incrementCounter('vp', 1, { silent: true })
+      player.gainVp(1, 'Staged Incident (intrigue)')
       game.log.add({ template: '{player}: Loses 3 troops, +1 VP', args: { player } })
     }
   },

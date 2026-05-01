@@ -33,7 +33,7 @@ module.exports = {
       tsmfCount += zone.cardlist().filter(c => c.name === 'The Spice Must Flow').length
     }
     if (tsmfCount >= 2) {
-      player.incrementCounter('vp', 1, { silent: true })
+      player.gainVp(1, 'Corner The Market (intrigue)')
       game.log.add({ template: '{player}: +1 VP (2+ TSMF)', args: { player } })
     }
   },

@@ -46,10 +46,9 @@ module.exports = {
           const loseFaction = loseFactions.find(f => choice.includes(f))
           factions.loseInfluence(game, player, loseFaction, 1)
           player.decrementCounter('spice', 2, { silent: true })
-          // Gain +2 influence (choose faction twice)
+          // Gain +2 influence (choose faction twice; same faction allowed for net +1 to regain bonus)
           for (let i = 0; i < 2; i++) {
-            const gainFactions = constants.FACTIONS.filter(f => f !== loseFaction)
-            const [gf] = game.actions.choose(player, gainFactions, {
+            const [gf] = game.actions.choose(player, constants.FACTIONS, {
               title: `Gain Influence (${i + 1} of 2)`,
             })
             factions.gainInfluence(game, player, gf)

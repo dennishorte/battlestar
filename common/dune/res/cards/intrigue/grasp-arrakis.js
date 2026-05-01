@@ -28,7 +28,7 @@ module.exports = {
       flipped.add(faceUp[0].id)
       flipped.add(faceUp[1].id)
       game.state.conflict.flippedCardIds[player.name] = [...flipped]
-      player.incrementCounter('vp', 1, { silent: true })
+      player.gainVp(1, 'Grasp Arrakis (intrigue)')
       game.log.add({ template: '{player}: Flips 2 conflict cards — +1 VP', args: { player } })
     }
   },

@@ -419,13 +419,15 @@ function parseSingleReward(text) {
 /**
  * Award parsed rewards to a player.
  */
-function awardReward(game, player, rewardText) {
+function awardReward(game, player, rewardText, rank) {
   if (!rewardText) {
     return
   }
 
   const hasSandworms = (game.state.conflict.deployedSandworms[player.name] || 0) > 0
   const effects = parseRewardText(rewardText)
+  const conflictName = game.state.conflict.currentCard?.name || 'Conflict'
+  const sourceLabel = rank ? `${conflictName} (${rank})` : conflictName
   game.log.indent()
 
   if (hasSandworms) {
@@ -473,7 +475,7 @@ function awardReward(game, player, rewardText) {
           for (let i = 0; i < effect.spyCount; i++) {
             spies.recallSpy(game, player)
           }
-          player.incrementCounter('vp', effect.vpAmount, { silent: true })
+          player.gainVp(effect.vpAmount, sourceLabel)
           game.log.add({
             template: '{player} gains {amount} Victory Point(s)',
             args: { player, amount: effect.vpAmount },
@@ -482,7 +484,7 @@ function awardReward(game, player, rewardText) {
       }
     }
     else {
-      resolveEffect(game, player, effect, null)
+      resolveEffect(game, player, effect, null, sourceLabel)
     }
   }
 
@@ -524,7 +526,7 @@ function moveConflictCardToWinner(game, winner, conflictCard) {
   if (partner) {
     flipped.push(conflictCard.id)
     flipped.push(partner.id)
-    winner.incrementCounter('vp', 1, { silent: true })
+    winner.gainVp(1, `Battle icons: ${conflictCard.name} + ${partner.name}`)
     game.log.add({
       template: '{player} matches battle icons ({card1} + {card2}): +1 Victory Point',
       args: { player: winner, card1: conflictCard, card2: partner },

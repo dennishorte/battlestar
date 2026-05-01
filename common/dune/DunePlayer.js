@@ -55,6 +55,36 @@ class DunePlayer extends BasePlayer {
     return this.getCounter('vp')
   }
 
+  gainVp(amount, source) {
+    if (amount === 0) {
+      return
+    }
+    this.incrementCounter('vp', amount, { silent: true })
+    this._recordVpEntry(amount, source)
+  }
+
+  loseVp(amount, source) {
+    if (amount === 0) {
+      return
+    }
+    this.decrementCounter('vp', amount, { silent: true })
+    this._recordVpEntry(-amount, source)
+  }
+
+  _recordVpEntry(amount, source) {
+    if (!this.game.state.vpHistory) {
+      this.game.state.vpHistory = {}
+    }
+    if (!this.game.state.vpHistory[this.name]) {
+      this.game.state.vpHistory[this.name] = []
+    }
+    this.game.state.vpHistory[this.name].push({
+      amount,
+      source: source || 'Unknown',
+      round: this.game.state.round || 0,
+    })
+  }
+
   // Agent management
   get availableAgents() {
     const total = this.getCounter('agents') + this.getCounter('hasSwordmaster')

@@ -53,7 +53,7 @@ module.exports = {
           }
         }
         player.decrementCounter('solari', 5, { silent: true })
-        player.incrementCounter('vp', 1, { silent: true })
+        player.gainVp(1, 'Corrinth City')
         game.log.add({ template: '{player} gains 1 Victory Point', args: { player } })
       }
     }

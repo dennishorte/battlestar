@@ -991,7 +991,7 @@ function resolveEffect(game, player, effect, space, sourceName) {
     }
 
     case 'vp':
-      player.incrementCounter('vp', effect.amount, { silent: true })
+      player.gainVp(effect.amount, sourceName || 'Effect')
       game.log.add({
         template: '{player} gains {amount} Victory Point(s)',
         args: { player, amount: effect.amount },

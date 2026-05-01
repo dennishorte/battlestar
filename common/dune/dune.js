@@ -135,6 +135,9 @@ Dune.prototype._reset = function() {
     'hagga-basin': 0,
     'imperial-basin': 0,
   }
+
+  // Per-player VP history: { playerName: [{ amount, source, round }] }
+  this.state.vpHistory = {}
 }
 
 
@@ -206,7 +209,16 @@ Dune.prototype.initializeCards = function() {
 Dune.prototype.initializePlayers = function() {
   for (const player of this.players.all()) {
     player.setCounter('water', constants.STARTING_WATER, { silent: true })
-    player.setCounter('vp', constants.STARTING_VP[this.settings.numPlayers] || 0, { silent: true })
+    const startingVp = constants.STARTING_VP[this.settings.numPlayers] || 0
+    player.setCounter('vp', startingVp, { silent: true })
+    this.state.vpHistory[player.name] = []
+    if (startingVp !== 0) {
+      this.state.vpHistory[player.name].push({
+        amount: startingVp,
+        source: 'Starting VP',
+        round: 0,
+      })
+    }
   }
 }
 

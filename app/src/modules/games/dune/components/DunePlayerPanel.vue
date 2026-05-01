@@ -26,7 +26,7 @@
           {{ battleIconLabel(icon.battleIcon) }}
         </span>
       </span>
-      <span class="vp-badge">{{ player.vp }} VP</span>
+      <span class="vp-badge clickable" title="View VP breakdown" @click.stop="openVpBreakdown">{{ player.vp }} VP</span>
     </div>
 
     <div class="body">
@@ -192,6 +192,11 @@ export default {
       this.$modal('dune-card-list-modal').show()
     },
 
+    openVpBreakdown() {
+      this.ui.modals.vpBreakdown = { player: this.player }
+      this.$modal('dune-vp-breakdown-modal').show()
+    },
+
     openContracts() {
       const cards = this.game.zones.byId(`${this.player.name}.contracts`).cardlist()
         .sort((l, r) => l.name.localeCompare(r.name))
@@ -296,6 +301,14 @@ export default {
   padding: .1em .4em;
   border-radius: .2em;
   font-size: .9em;
+}
+
+.vp-badge.clickable {
+  cursor: pointer;
+}
+
+.vp-badge.clickable:hover {
+  background-color: #a07a18;
 }
 
 .body {
