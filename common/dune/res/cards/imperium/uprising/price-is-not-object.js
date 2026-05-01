@@ -40,4 +40,8 @@ module.exports = {
     }
   },
 
+  onAcquire(game, player, card, { resolveEffect }) {
+    resolveEffect(game, player, { type: 'gain', resource: 'solari', amount: 2 }, null, card.name)
+  },
+
 }

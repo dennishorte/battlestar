@@ -43,4 +43,8 @@ module.exports = {
     }
   },
 
+  onAcquire(game, player, card, { resolveEffect }) {
+    resolveEffect(game, player, { type: 'contract' }, null, card.name)
+  },
+
 }

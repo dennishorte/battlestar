@@ -15,4 +15,8 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
   vpsAvailable: 1,
+
+  onAcquire(game, player, card, { resolveEffect }) {
+    resolveEffect(game, player, { type: 'influence-choice', amount: 1 }, null, card.name)
+  },
 }

@@ -15,4 +15,9 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
   vpsAvailable: 0,
+
+  onAcquire(game, player, card, { resolveEffect }) {
+    const leaders = require('../../../systems/leaders.js')
+    leaders.resolveSignetRing(game, player, resolveEffect)
+  },
 }

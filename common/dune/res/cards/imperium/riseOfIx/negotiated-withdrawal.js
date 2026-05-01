@@ -50,4 +50,8 @@ module.exports = {
     }
   },
 
+  onAcquire(game, player, card, { resolveEffect }) {
+    resolveEffect(game, player, { type: 'troop', amount: 1 }, null, card.name)
+  },
+
 }

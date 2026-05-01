@@ -29,4 +29,8 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  onAcquire(game, player, card, { resolveEffect }) {
+    resolveEffect(game, player, { type: 'gain', resource: 'solari', amount: 2 }, null, card.name)
+  },
 }

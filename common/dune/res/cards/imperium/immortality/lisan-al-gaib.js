@@ -34,4 +34,8 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  onAcquire(game, player, card, { resolveEffect }) {
+    resolveEffect(game, player, { type: 'gain', resource: 'spice', amount: 1 }, null, card.name)
+  },
 }

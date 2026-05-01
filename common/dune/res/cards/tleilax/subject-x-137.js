@@ -29,4 +29,12 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  onAcquire(game, player) {
+    game.log.add({
+      template: '{player}: +1 Beetle (manual)',
+      args: { player },
+      event: 'memo',
+    })
+  },
 }

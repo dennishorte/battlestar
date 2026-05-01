@@ -32,4 +32,8 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  onAcquire(game, player, card, { resolveEffect }) {
+    resolveEffect(game, player, { type: 'spy' }, null, card.name)
+  },
 }

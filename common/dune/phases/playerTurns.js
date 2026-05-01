@@ -422,16 +422,9 @@ function acquireCardsPhase(game, player) {
         }
       }
 
-      // The Spice Must Flow grants +1 VP on acquisition
-      if (card.name === 'The Spice Must Flow') {
-        player.incrementCounter('vp', 1, { silent: true })
-        game.log.add({
-          template: '{player} gains 1 Victory Point (The Spice Must Flow)',
-          args: { player },
-        })
-        // Check contract completion
-        const choamTsmf = require('../systems/choam.js')
-        choamTsmf.checkContractCompletion(game, player, 'acquire-tsmf', {})
+      // Per-card onAcquire hook lives on the card definition.
+      if (typeof card.definition?.onAcquire === 'function') {
+        card.definition.onAcquire(game, player, card, { resolveEffect })
       }
     }
   }

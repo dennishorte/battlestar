@@ -15,4 +15,8 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
   vpsAvailable: 0,
+
+  onAcquire(game, player, card, { resolveEffect }) {
+    resolveEffect(game, player, { type: 'trash-card' }, null, card.name)
+  },
 }

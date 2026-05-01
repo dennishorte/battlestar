@@ -32,4 +32,12 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  onAcquire(game, player) {
+    game.log.add({
+      template: '{player}: +1 Shipping track move (manual)',
+      args: { player },
+      event: 'memo',
+    })
+  },
 }

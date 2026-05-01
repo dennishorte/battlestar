@@ -33,4 +33,8 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  onAcquire(game, player, card, { resolveEffect }) {
+    resolveEffect(game, player, { type: 'influence', faction: 'emperor', amount: 1 }, null, card.name)
+  },
 }

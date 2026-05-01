@@ -29,4 +29,11 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  onAcquire(game, player, card, { resolveEffect }) {
+    const constants = require('../../../constants.js')
+    for (const faction of constants.FACTIONS) {
+      resolveEffect(game, player, { type: 'influence', faction, amount: 1 }, null, card.name)
+    }
+  },
 }

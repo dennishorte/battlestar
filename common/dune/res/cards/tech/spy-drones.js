@@ -15,4 +15,14 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
   vpsAvailable: 0,
+
+  onAcquire(game, player, card, { resolveEffect }) {
+    resolveEffect(game, player, { type: 'spy' }, null, card.name)
+    resolveEffect(game, player, { type: 'spy' }, null, card.name)
+    game.log.add({
+      template: '{player}: Spies have Deep Cover (face-down placement is manual)',
+      args: { player },
+      event: 'memo',
+    })
+  },
 }

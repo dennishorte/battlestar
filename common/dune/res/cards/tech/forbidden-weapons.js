@@ -15,4 +15,12 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
   vpsAvailable: 0,
+
+  onAcquire(game, player, card, { resolveEffect }) {
+    if (game.state.shieldWall) {
+      game.state.shieldWall = false
+      game.log.add({ template: '{player} destroys the Shield Wall', args: { player } })
+    }
+    resolveEffect(game, player, { type: 'troop', amount: 1 }, null, card.name)
+  },
 }

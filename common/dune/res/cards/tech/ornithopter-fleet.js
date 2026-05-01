@@ -15,4 +15,8 @@ module.exports = {
   hasBattleIcons: true,
   hasSardaukar: false,
   vpsAvailable: 0,
+
+  onAcquire(game, player, card, { resolveEffect }) {
+    resolveEffect(game, player, { type: 'troop', amount: 2 }, null, card.name)
+  },
 }
