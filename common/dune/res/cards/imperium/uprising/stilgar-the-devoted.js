@@ -36,7 +36,12 @@ module.exports = {
   hasSardaukar: false,
 
   revealEffect(game, player, card, allRevealedCards) {
-    const fremenCount = allRevealedCards.filter(c =>
+    // "In play" includes cards revealed this turn AND agent cards already
+    // played earlier in the round (which sit in the player's `played` zone
+    // until end-of-turn cleanup).
+    const playedCards = game.zones.byId(`${player.name}.played`).cardlist()
+    const inPlay = [...allRevealedCards, ...playedCards]
+    const fremenCount = inPlay.filter(c =>
       c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('fremen')
     ).length
     const total = fremenCount * 2
