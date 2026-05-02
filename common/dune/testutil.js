@@ -270,7 +270,9 @@ TestUtil.setBoard = function(game, state) {
     }
 
     // Exact-hand override: useful when the deck-reorder hint can't deliver
-    // the right hand (e.g. cards aren't in the player's deck).
+    // the right hand (e.g. cards aren't in the player's deck). Searches the
+    // player's deck, the imperium deck, the imperium row, and the player's
+    // discard — so imperium cards can be placed directly in hand.
     for (const playerName of ['dennis', 'micah', 'scott', 'eliya']) {
       const ps = state[playerName]
       if (!ps || !ps.handExact) {
@@ -278,7 +280,35 @@ TestUtil.setBoard = function(game, state) {
       }
       applyHandExact(game, playerName, ps.handExact)
     }
+
+    // Pre-populate a player's played zone with named cards (typically
+    // imperium cards already played as agents earlier in the round). Same
+    // search order as handExact.
+    for (const playerName of ['dennis', 'micah', 'scott', 'eliya']) {
+      const ps = state[playerName]
+      if (!ps || !ps.played) {
+        continue
+      }
+      applyPlayed(game, playerName, ps.played)
+    }
   })
+}
+
+
+function findCardForPlayer(game, name, cardName) {
+  const zones = [
+    game.zones.byId(`${name}.deck`),
+    game.zones.byId('common.imperiumDeck'),
+    game.zones.byId('common.imperiumRow'),
+    game.zones.byId(`${name}.discard`),
+  ]
+  for (const zone of zones) {
+    const card = zone.cardlist().find(c => c.name === cardName)
+    if (card) {
+      return card
+    }
+  }
+  return null
 }
 
 
@@ -289,10 +319,23 @@ function applyHandExact(game, name, handExact) {
     card.moveTo(deckZone)
   }
   for (const cardName of handExact) {
-    const card = deckZone.cardlist().find(c => c.name === cardName)
-    if (card) {
-      card.moveTo(handZone)
+    const card = findCardForPlayer(game, name, cardName)
+    if (!card) {
+      throw new Error(`handExact: card "${cardName}" not found for ${name}`)
     }
+    card.moveTo(handZone)
+  }
+}
+
+
+function applyPlayed(game, name, played) {
+  const playedZone = game.zones.byId(`${name}.played`)
+  for (const cardName of played) {
+    const card = findCardForPlayer(game, name, cardName)
+    if (!card) {
+      throw new Error(`played: card "${cardName}" not found for ${name}`)
+    }
+    card.moveTo(playedZone)
   }
 }
 

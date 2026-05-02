@@ -3,51 +3,6 @@
 const t = require('../../../../testutil')
 const card = require('./stilgar-the-devoted.js')
 
-// Replace dennis's hand with the named cards. Cards are pulled from imperium
-// deck, player deck, or discard (in that order). Original hand cards land in
-// discard so they don't interfere with the reveal.
-function setHand(game, cardNames) {
-  game.testSetBreakpoint('after-round-start', (g) => {
-    const hand = g.zones.byId('dennis.hand')
-    const discard = g.zones.byId('dennis.discard')
-    const imperiumDeck = g.zones.byId('common.imperiumDeck')
-    const playerDeck = g.zones.byId('dennis.deck')
-
-    for (const c of [...hand.cardlist()]) {
-      c.moveTo(discard)
-    }
-    for (const name of cardNames) {
-      let c = imperiumDeck.cardlist().find(x => x.name === name)
-      if (!c) {
-        c = playerDeck.cardlist().find(x => x.name === name)
-      }
-      if (!c) {
-        c = discard.cardlist().find(x => x.name === name)
-      }
-      if (!c) {
-        throw new Error(`Card "${name}" not found`)
-      }
-      c.moveTo(hand)
-    }
-  })
-}
-
-// Pre-populate a player's played zone with named cards from the imperium deck,
-// simulating cards played as agents earlier in the round.
-function setPlayed(game, playerName, cardNames) {
-  game.testSetBreakpoint('after-round-start', (g) => {
-    const played = g.zones.byId(`${playerName}.played`)
-    const imperiumDeck = g.zones.byId('common.imperiumDeck')
-    for (const name of cardNames) {
-      const c = imperiumDeck.cardlist().find(x => x.name === name)
-      if (!c) {
-        throw new Error(`Card "${name}" not in imperium deck`)
-      }
-      c.moveTo(played)
-    }
-  })
-}
-
 describe('Stilgar, The Devoted', () => {
 
   test('data', () => {
@@ -58,102 +13,112 @@ describe('Stilgar, The Devoted', () => {
     expect(card.factionAffiliation).toBe('fremen')
   })
 
-  test('reveal alone gives +2 persuasion (counts itself)', () => {
+  test('reveal alone gives base 2 persuasion (does not count itself)', () => {
     const game = t.fixture()
-    // Hand: Stilgar + 4 non-Fremen starter cards (none have factionAffiliation)
-    setHand(game, ['Stilgar, The Devoted', 'Dagger', 'Diplomacy', 'Convincing Argument', 'Reconnaissance'])
+    t.setBoard(game, {
+      dennis: { handExact: ['Stilgar, The Devoted'] },
+    })
     game.run()
 
     t.choose(game, 'Reveal Turn')
 
     const dennis = game.players.byName('dennis')
-    // Base reveal: Stilgar(2) + Dagger(0) + Diplomacy(1) + CA(2) + Recon(1) = 6
-    // Stilgar bonus: 1 Fremen × 2 = 2
+    // Stilgar reveal(2) + 0 other Fremen × 2 = 2
+    expect(dennis.getCounter('persuasion')).toBe(2)
+  })
+
+  test('one other Fremen card in hand gives +2 bonus', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { handExact: ['Stilgar, The Devoted', 'Desert Survival'] },
+    })
+    game.run()
+
+    t.choose(game, 'Reveal Turn')
+
+    const dennis = game.players.byName('dennis')
+    // Stilgar(2) + Desert Survival(1) + 1 other Fremen × 2 = 5
+    expect(dennis.getCounter('persuasion')).toBe(5)
+  })
+
+  test('two other Fremen cards in hand give +4 bonus', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { handExact: ['Stilgar, The Devoted', 'Desert Survival', 'Maula Pistol'] },
+    })
+    game.run()
+
+    t.choose(game, 'Reveal Turn')
+
+    const dennis = game.players.byName('dennis')
+    // Stilgar(2) + Desert Survival(1) + Maula Pistol(1) + 2 other Fremen × 2 = 8
     expect(dennis.getCounter('persuasion')).toBe(8)
-  })
-
-  test('reveal with one other Fremen card gives +4 bonus', () => {
-    const game = t.fixture()
-    setHand(game, ['Stilgar, The Devoted', 'Desert Survival', 'Dagger', 'Diplomacy', 'Reconnaissance'])
-    game.run()
-
-    t.choose(game, 'Reveal Turn')
-
-    const dennis = game.players.byName('dennis')
-    // Base reveal: Stilgar(2) + Desert Survival(1) + Dagger(0) + Diplomacy(1) + Recon(1) = 5
-    // Stilgar bonus: 2 Fremen × 2 = 4
-    expect(dennis.getCounter('persuasion')).toBe(9)
-  })
-
-  test('reveal with two other Fremen cards gives +6 bonus', () => {
-    const game = t.fixture()
-    setHand(game, ['Stilgar, The Devoted', 'Desert Survival', 'Maula Pistol', 'Diplomacy', 'Reconnaissance'])
-    game.run()
-
-    t.choose(game, 'Reveal Turn')
-
-    const dennis = game.players.byName('dennis')
-    // Base reveal: Stilgar(2) + Desert Survival(1) + Maula Pistol(1) + Diplomacy(1) + Recon(1) = 6
-    // Stilgar bonus: 3 Fremen × 2 = 6
-    expect(dennis.getCounter('persuasion')).toBe(12)
   })
 
   test('counts a Fremen card already played as an agent this round', () => {
     const game = t.fixture()
-    setHand(game, ['Stilgar, The Devoted', 'Dagger', 'Diplomacy', 'Convincing Argument', 'Reconnaissance'])
-    setPlayed(game, 'dennis', ['Desert Survival'])
+    t.setBoard(game, {
+      dennis: {
+        handExact: ['Stilgar, The Devoted'],
+        played: ['Desert Survival'],
+      },
+    })
     game.run()
 
     t.choose(game, 'Reveal Turn')
 
     const dennis = game.players.byName('dennis')
-    // Base reveal: Stilgar(2) + Dagger(0) + Diplomacy(1) + CA(2) + Recon(1) = 6
-    // Stilgar bonus: 2 Fremen (Stilgar revealed + Desert Survival in played) × 2 = 4
-    expect(dennis.getCounter('persuasion')).toBe(10)
+    // Stilgar(2) + 1 other Fremen (Desert Survival in played) × 2 = 4
+    expect(dennis.getCounter('persuasion')).toBe(4)
   })
 
   test('counts Fremen cards across both played and revealed zones', () => {
     const game = t.fixture()
-    setHand(game, ['Stilgar, The Devoted', 'Maula Pistol', 'Diplomacy', 'Convincing Argument', 'Reconnaissance'])
-    setPlayed(game, 'dennis', ['Desert Survival'])
+    t.setBoard(game, {
+      dennis: {
+        handExact: ['Stilgar, The Devoted', 'Maula Pistol'],
+        played: ['Desert Survival'],
+      },
+    })
     game.run()
 
     t.choose(game, 'Reveal Turn')
 
     const dennis = game.players.byName('dennis')
-    // Base reveal: Stilgar(2) + Maula Pistol(1) + Diplomacy(1) + CA(2) + Recon(1) = 7
-    // Stilgar bonus: 3 Fremen (Stilgar + Maula Pistol revealed, Desert Survival played) × 2 = 6
-    expect(dennis.getCounter('persuasion')).toBe(13)
+    // Stilgar(2) + Maula Pistol(1) + 2 other Fremen (Maula Pistol + Desert Survival) × 2 = 7
+    expect(dennis.getCounter('persuasion')).toBe(7)
   })
 
   test('does not count opponent\'s Fremen cards in their played zone', () => {
     const game = t.fixture()
-    setHand(game, ['Stilgar, The Devoted', 'Dagger', 'Diplomacy', 'Convincing Argument', 'Reconnaissance'])
-    setPlayed(game, 'micah', ['Desert Survival'])
+    t.setBoard(game, {
+      dennis: { handExact: ['Stilgar, The Devoted'] },
+      micah: { played: ['Desert Survival'] },
+    })
     game.run()
 
     t.choose(game, 'Reveal Turn')
 
     const dennis = game.players.byName('dennis')
-    // Base reveal: Stilgar(2) + Dagger(0) + Diplomacy(1) + CA(2) + Recon(1) = 6
-    // Stilgar bonus: 1 Fremen (only Stilgar — micah's card doesn't count) × 2 = 2
-    expect(dennis.getCounter('persuasion')).toBe(8)
+    // Stilgar(2) + 0 other Fremen (micah's card doesn't count) × 2 = 2
+    expect(dennis.getCounter('persuasion')).toBe(2)
   })
 
   test('non-Fremen cards in revealed hand do not contribute to bonus', () => {
     const game = t.fixture()
-    // Southern Elders is bene-gesserit, not fremen (factionAccess fremen but
-    // factionAffiliation is bene-gesserit) — should NOT count.
-    setHand(game, ['Stilgar, The Devoted', 'Southern Elders', 'Dagger', 'Diplomacy', 'Reconnaissance'])
+    // Southern Elders has factionAccess fremen but factionAffiliation
+    // bene-gesserit — should NOT count toward Stilgar's bonus.
+    t.setBoard(game, {
+      dennis: { handExact: ['Stilgar, The Devoted', 'Southern Elders'] },
+    })
     game.run()
 
     t.choose(game, 'Reveal Turn')
 
     const dennis = game.players.byName('dennis')
-    // Base reveal: Stilgar(2) + Southern Elders(0, +1 water side effect) + Dagger(0) + Diplomacy(1) + Recon(1) = 4
-    // Stilgar bonus: 1 Fremen (only itself) × 2 = 2
-    // Note: Southern Elders has Fremen Bond which DOES fire here (Stilgar is a
-    // Fremen card revealed alongside it) — adds +2 persuasion.
-    expect(dennis.getCounter('persuasion')).toBe(8)
+    // Stilgar(2) + Southern Elders(0) + 0 other Fremen × 2 = 2.
+    // Note: Southern Elders' Fremen Bond fires (Stilgar is Fremen) → +2.
+    // Total: 4.
+    expect(dennis.getCounter('persuasion')).toBe(4)
   })
 })

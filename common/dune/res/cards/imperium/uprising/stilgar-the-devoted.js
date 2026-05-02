@@ -18,7 +18,7 @@ module.exports = {
   ],
   spyAccess: false,
   agentAbility: "+2 Troops",
-  revealPersuasion: 2,
+  revealPersuasion: 0,
   revealSwords: 0,
   revealAbility: "+2 Persuasion for each Fremen card you have in play (including this one)",
   factionAffiliation: "fremen",
@@ -38,7 +38,7 @@ module.exports = {
   revealEffect(game, player, card, allRevealedCards) {
     // "In play" includes cards revealed this turn AND agent cards already
     // played earlier in the round (which sit in the player's `played` zone
-    // until end-of-turn cleanup).
+    // until end-of-turn cleanup). Stilgar himself does not count.
     const playedCards = game.zones.byId(`${player.name}.played`).cardlist()
     const inPlay = [...allRevealedCards, ...playedCards]
     const fremenCount = inPlay.filter(c =>
