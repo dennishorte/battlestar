@@ -13,8 +13,8 @@
                         :feyd-position="feydPosition"
                         class="leader-chip" />
       </div>
-      <span class="battle-icons" v-if="objective || wonBattleIcons.length">
-        <span v-if="objective"
+      <span class="battle-icons" v-if="objectiveIconShown || wonBattleIcons.length">
+        <span v-if="objectiveIconShown"
               class="battle-icon objective-icon"
               :title="`Objective: ${objective.name}`">
           {{ battleIconLabel(objective.battleIcon) }}
@@ -148,9 +148,20 @@ export default {
       return this.game.state.objectives[this.player.name] || null
     },
 
+    flippedCardIds() {
+      return new Set(this.game.state.conflict?.flippedCardIds?.[this.player.name] || [])
+    },
+
+    objectiveIconShown() {
+      return this.objective && !this.flippedCardIds.has(this.objective.id)
+    },
+
     wonBattleIcons() {
       const wonCards = this.game.state.conflict?.wonCards?.[this.player.name] || []
-      return wonCards.map(c => ({ battleIcon: c.battleIcon, cardName: c.name }))
+      const flipped = this.flippedCardIds
+      return wonCards
+        .filter(c => !flipped.has(c.id))
+        .map(c => ({ battleIcon: c.battleIcon, cardName: c.name }))
     },
 
     feydPosition() {
