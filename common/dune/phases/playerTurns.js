@@ -950,18 +950,33 @@ function resolveEffect(game, player, effect, space, sourceName) {
       break
 
     case 'trash-card': {
-      // Let player choose a card from hand to trash
-      const handZone = game.zones.byId(`${player.name}.hand`)
-      const handCards = handZone.cardlist()
-      if (handCards.length > 0) {
-        const trashChoices = ['Pass', ...handCards.map(c => c.name)]
-        const [trashChoice] = game.actions.choose(player, trashChoices, {
+      // Per official rules, "trash a card" allows a card from hand,
+      // in play (Agent-played or Revealed), or discard pile.
+      const sources = [
+        { zoneId: `${player.name}.hand`, label: 'Hand' },
+        { zoneId: `${player.name}.played`, label: 'In Play' },
+        { zoneId: `${player.name}.revealed`, label: 'In Play' },
+        { zoneId: `${player.name}.discard`, label: 'Discard' },
+      ]
+      const entries = []
+      for (const { zoneId, label } of sources) {
+        const zone = game.zones.byId(zoneId)
+        if (!zone) {
+          continue
+        }
+        for (const card of zone.cardlist()) {
+          entries.push({ card, label })
+        }
+      }
+      if (entries.length > 0) {
+        const choices = ['Pass', ...entries.map(e => `${e.card.name} (${e.label})`)]
+        const [choice] = game.actions.choose(player, choices, {
           title: 'Choose a card to trash',
         })
-        if (trashChoice !== 'Pass') {
-          const card = handCards.find(c => c.name === trashChoice)
-          if (card) {
-            deckEngine.trashCard(game, card)
+        if (choice !== 'Pass') {
+          const entry = entries.find(e => `${e.card.name} (${e.label})` === choice)
+          if (entry) {
+            deckEngine.trashCard(game, entry.card)
           }
         }
       }
