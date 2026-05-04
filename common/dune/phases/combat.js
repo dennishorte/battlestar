@@ -76,7 +76,7 @@ function combatIntrigueRound(game, combatants) {
           game.log.indent()
           const combatEffect = card.definition.combatEffect
           if (typeof combatEffect === 'function') {
-            combatEffect(game, player, card)
+            combatEffect(game, player, card, { resolveEffect })
             game.log.outdent()
             consecutivePasses = 0
             currentIndex++

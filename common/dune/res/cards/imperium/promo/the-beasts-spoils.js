@@ -1,6 +1,5 @@
 'use strict'
 
-const deckEngine = require('../../../../systems/deckEngine.js')
 module.exports = {
   id: "the-beasts-spoils",
   name: "The Beast's Spoils",
@@ -33,8 +32,7 @@ module.exports = {
   hasBattleIcons: true,
   hasSardaukar: false,
 
-  agentEffect(game, player) {
-    // Gain rewards for face-up Battle Icons: Green -> Trash, Yellow -> +1 Spice, Blue -> +1 Troop
+  agentEffect(game, player, sourceCard, { resolveEffect }) {
     const wonCards = game.state.conflict.wonCards?.[player.name] || []
     for (const card of wonCards) {
       if (!card.battleIcon) {
@@ -42,20 +40,7 @@ module.exports = {
       }
       switch (card.battleIcon) {
         case 'green':
-          // Offer trash
-          { const handZone = game.zones.byId(`${player.name}.hand`)
-            const handCards = handZone.cardlist()
-            if (handCards.length > 0) {
-              const choices = ['Pass', ...handCards.map(c => c.name)]
-              const [choice] = game.actions.choose(player, choices, { title: 'Green icon: Trash a card?' })
-              if (choice !== 'Pass') {
-                const c = handCards.find(cc => cc.name === choice)
-                if (c) {
-                  deckEngine.trashCard(game, c)
-                }
-              }
-            }
-          }
+          resolveEffect(game, player, { type: 'trash-card' }, null, sourceCard.name)
           break
         case 'yellow':
           player.incrementCounter('spice', 1, { silent: true })

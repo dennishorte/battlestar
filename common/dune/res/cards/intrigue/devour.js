@@ -1,6 +1,5 @@
 'use strict'
 
-const deckEngine = require('../../../systems/deckEngine.js')
 const constants = require('../../constants.js')
 const { addStrength } = require('../../../systems/strengthBreakdown.js')
 
@@ -24,21 +23,12 @@ module.exports = {
   endgameEffect: null,
   combatText: "+2 Swords; If you have 1+ Sandworm in the Conflict: +2 Swords and Trash a card",
 
-  combatEffect(game, player) {
+  combatEffect(game, player, card, { resolveEffect }) {
     addStrength(game, player, 'intrigue', 'Devour', 2 * constants.SWORD_STRENGTH)
     const sandworms = game.state.conflict.deployedSandworms[player.name] || 0
     if (sandworms > 0) {
       addStrength(game, player, 'intrigue', 'Devour (Sandworm)', 2 * constants.SWORD_STRENGTH)
-      // Trash a card
-      const handZone = game.zones.byId(`${player.name}.hand`)
-      const cards = handZone.cardlist()
-      if (cards.length > 0) {
-        const [choice] = game.actions.choose(player, cards.map(c => c.name), { title: 'Trash a card' })
-        const card = cards.find(c => c.name === choice)
-        if (card) {
-          deckEngine.trashCard(game, card)
-        }
-      }
+      resolveEffect(game, player, { type: 'trash-card' }, null, card.name)
       game.log.add({ template: '{player}: +4 Swords (Sandworm bonus)', args: { player } })
     }
     else {

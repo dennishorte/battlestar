@@ -22,8 +22,7 @@ module.exports = {
   endgameEffect: null,
   plotText: "Recall a Spy → Trash a card and Draw a card OR Ignore Influence requirements on board spaces when sending an Agent this turn",
 
-  plotEffect(game, player) {
-    // Recall Spy -> Trash + Draw OR Ignore Influence requirements
+  plotEffect(game, player, card, { resolveEffect }) {
     const observationPosts = require('../../observationPosts.js')
     const hasSpy = observationPosts.some(p => (game.state.spyPosts[p.id] || []).includes(player.name))
     const choices = []
@@ -35,16 +34,7 @@ module.exports = {
     const [choice] = game.actions.choose(player, choices, { title: 'Insider Information' })
     if (choice.includes('Recall')) {
       spies.recallSpy(game, player)
-      // Trash from hand
-      const handZone = game.zones.byId(`${player.name}.hand`)
-      const cards = handZone.cardlist()
-      if (cards.length > 0) {
-        const [tc] = game.actions.choose(player, cards.map(c => c.name), { title: 'Trash a card' })
-        const card = cards.find(c => c.name === tc)
-        if (card) {
-          deckEngine.trashCard(game, card)
-        }
-      }
+      resolveEffect(game, player, { type: 'trash-card' }, null, card.name)
       deckEngine.drawCards(game, player, 1)
     }
     else if (choice.includes('Ignore')) {

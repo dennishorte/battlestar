@@ -635,7 +635,7 @@ function resolveCardAgentAbility(game, player, card) {
 
   // Per-card agentEffect method lives on the card definition.
   if (typeof card.definition?.agentEffect === 'function') {
-    card.definition.agentEffect(game, player, card)
+    card.definition.agentEffect(game, player, card, { resolveEffect })
     return
   }
 
@@ -977,6 +977,7 @@ function resolveEffect(game, player, effect, space, sourceName) {
           const entry = entries.find(e => `${e.card.name} (${e.label})` === choice)
           if (entry) {
             deckEngine.trashCard(game, entry.card)
+            return entry.card
           }
         }
       }
@@ -1572,7 +1573,7 @@ function offerPlotIntrigue(game, player) {
     const plotEffect = card.definition.plotEffect
     if (typeof plotEffect === 'function') {
       game.log.indent()
-      plotEffect(game, player, card)
+      plotEffect(game, player, card, { resolveEffect })
       game.log.outdent()
       continue
     }

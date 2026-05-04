@@ -1,6 +1,5 @@
 'use strict'
 
-const deckEngine = require('../../../systems/deckEngine.js')
 module.exports = {
   id: "the-strong-survive",
   name: "The Strong Survive",
@@ -21,7 +20,7 @@ module.exports = {
   endgameEffect: null,
   combatText: "+3 Troops OR Retreat one of your troops → Trash a card",
 
-  combatEffect(game, player) {
+  combatEffect(game, player, card, { resolveEffect }) {
     const choices = ['+3 Troops']
     const deployed = game.state.conflict.deployedTroops[player.name] || 0
     if (deployed > 0) {
@@ -38,15 +37,7 @@ module.exports = {
     else {
       game.state.conflict.deployedTroops[player.name]--
       player.incrementCounter('troopsInSupply', 1, { silent: true })
-      const handZone = game.zones.byId(`${player.name}.hand`)
-      const cards = handZone.cardlist()
-      if (cards.length > 0) {
-        const [tc] = game.actions.choose(player, cards.map(c => c.name), { title: 'Trash' })
-        const card = cards.find(c => c.name === tc)
-        if (card) {
-          deckEngine.trashCard(game, card)
-        }
-      }
+      resolveEffect(game, player, { type: 'trash-card' }, null, card.name)
     }
   },
 
