@@ -11,7 +11,7 @@ module.exports = {
   acquisitionBonus: null,
   passiveAbility: null,
   agentIcons: [],
-  factionAccess: [],
+  factionAccess: ['guild'],
   spyAccess: false,
   agentAbility: "Deploy a Spy on Emperor/Bene Gesserit/Fremen Observation Post",
   revealPersuasion: 1,
