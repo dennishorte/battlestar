@@ -77,6 +77,9 @@ export default {
       for (const faction of this.def.factionAccess || []) {
         icons.push({ type: faction, faction: true })
       }
+      if (this.def.spyAccess) {
+        icons.push({ type: 'spy' })
+      }
       return icons
     },
 

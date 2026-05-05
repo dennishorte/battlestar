@@ -50,4 +50,11 @@ export default {
   width: calc(.9 * var(--agent-icon-base));
   height: calc(.85 * var(--agent-icon-base));
 }
+
+.dune-agent-icon-spy {
+  background-color: #1f1f24;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  width: calc(.85 * var(--agent-icon-base));
+  height: calc(.85 * var(--agent-icon-base));
+}
 </style>

@@ -10,8 +10,8 @@
         <span>{{ player.water }} water</span>
       </div>
 
-      <div class="summary" v-if="agentIconChips.length || factionAccessChips.length || affiliationChips.length">
-        <div class="summary-row" v-if="agentIconChips.length || factionAccessChips.length">
+      <div class="summary" v-if="agentIconChips.length || factionAccessChips.length || spyAccessChip || affiliationChips.length">
+        <div class="summary-row" v-if="agentIconChips.length || factionAccessChips.length || spyAccessChip">
           <span class="summary-label">Icons</span>
           <span class="summary-chips">
             <span v-for="chip in agentIconChips"
@@ -27,6 +27,12 @@
                   :title="chip.title">
               <DuneFactionIcon :faction="chip.type" size=".95em" />
               <span class="chip-count">×{{ chip.count }}</span>
+            </span>
+            <span v-if="spyAccessChip"
+                  class="summary-chip"
+                  :title="spyAccessChip.title">
+              <DuneAgentIcon type="spy" />
+              <span class="chip-count">×{{ spyAccessChip.count }}</span>
             </span>
           </span>
         </div>
@@ -245,6 +251,23 @@ export default {
           count: counts[f],
           title: `${counts[f]} card${counts[f] === 1 ? '' : 's'} with ${FACTION_LABELS[f] || f} icon`,
         }))
+    },
+
+    spyAccessChip() {
+      let count = 0
+      for (const card of this.summaryCards) {
+        const def = card.definition || card.data || card
+        if (def.spyAccess) {
+          count++
+        }
+      }
+      if (!count) {
+        return null
+      }
+      return {
+        count,
+        title: `${count} card${count === 1 ? '' : 's'} with spy access`,
+      }
     },
 
     affiliationChips() {
