@@ -1,18 +1,55 @@
+const boardSpaces = require('../res/boardSpaces.js')
 const observationPosts = require('../res/observationPosts.js')
 
+function postFactions(post) {
+  const factions = new Set()
+  for (const id of post.spaces) {
+    const space = boardSpaces.find(s => s.id === id)
+    if (space?.faction) {
+      factions.add(space.faction)
+    }
+  }
+  return factions
+}
+
 /**
- * Place a spy on an observation post.
- * Player chooses from unoccupied posts (by their own spies).
+ * Place a spy on an observation post. By default each post holds at most one
+ * spy across all players. Options:
+ *   - allowOccupied: allow placing on a post that already has another spy
+ *     (used by abilities like Double Agent that explicitly grant this).
+ *   - factions: array of faction ids; restrict to posts connected to a space
+ *     of one of those factions (e.g. Reliable Informant: emperor/BG/fremen).
  */
-function placeSpy(game, player) {
+function placeSpy(game, player, options = {}) {
   if (player.spiesInSupply <= 0) {
     return false
   }
 
+  const { allowOccupied = false, factions = null } = options
+  const factionFilter = factions ? new Set(factions) : null
+
   const availablePosts = observationPosts.filter(post => {
-    // A post can hold spies from multiple players, but a player can only have one spy per post
     const occupants = game.state.spyPosts[post.id] || []
-    return !occupants.includes(player.name)
+    if (occupants.includes(player.name)) {
+      return false
+    }
+    if (!allowOccupied && occupants.length > 0) {
+      return false
+    }
+    if (factionFilter) {
+      const pf = postFactions(post)
+      let match = false
+      for (const f of pf) {
+        if (factionFilter.has(f)) {
+          match = true
+          break
+        }
+      }
+      if (!match) {
+        return false
+      }
+    }
+    return true
   })
 
   if (availablePosts.length === 0) {
@@ -21,7 +58,6 @@ function placeSpy(game, player) {
 
   const choices = availablePosts.map(post => {
     const spaceNames = post.spaces.map(id => {
-      const boardSpaces = require('../res/boardSpaces.js')
       const space = boardSpaces.find(s => s.id === id)
       return space ? space.name : id
     })
@@ -150,7 +186,7 @@ function recallSpyAt(game, player, spaceId) {
  * chooser. Used by abilities that dictate the post (e.g. Lady Margot Fenring,
  * Staban Tuek).
  */
-function placeSpyAt(game, player, postId) {
+function placeSpyAt(game, player, postId, options = {}) {
   if (player.spiesInSupply <= 0) {
     return false
   }
@@ -158,8 +194,12 @@ function placeSpyAt(game, player, postId) {
   if (!post) {
     return false
   }
+  const { allowOccupied = false } = options
   const occupants = game.state.spyPosts[post.id] || []
   if (occupants.includes(player.name)) {
+    return false
+  }
+  if (!allowOccupied && occupants.length > 0) {
     return false
   }
   player.decrementCounter('spiesInSupply', 1, { silent: true })

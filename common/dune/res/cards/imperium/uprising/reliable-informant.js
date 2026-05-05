@@ -32,8 +32,9 @@ module.exports = {
   hasSardaukar: false,
 
   agentEffect(game, player) {
-    // Deploy a Spy on Emperor/BG/Fremen Observation Post
-    spies.placeSpy(game, player)
+    spies.placeSpy(game, player, {
+      factions: ['emperor', 'bene-gesserit', 'fremen'],
+    })
   },
 
 }

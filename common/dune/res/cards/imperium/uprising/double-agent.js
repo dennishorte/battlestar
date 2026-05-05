@@ -36,8 +36,7 @@ module.exports = {
   hasSardaukar: false,
 
   agentEffect(game, player) {
-    // +1 Spy on the board space you sent an Agent to this turn
-    spies.placeSpy(game, player)
+    spies.placeSpy(game, player, { allowOccupied: true })
   },
 
 }
