@@ -26,7 +26,7 @@ module.exports = {
     const sandworms = game.state.conflict.deployedSandworms[player.name] || 0
     if (sandworms > 0) {
       if (game.state.turnTracking) {
-        game.state.turnTracking.acquireToTopOfDeck = true
+        game.state.turnTracking.acquireToHand = true
       }
     }
   },

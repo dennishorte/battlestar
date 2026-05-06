@@ -31,7 +31,7 @@ module.exports = {
     choices.push('Pass')
     const [choice] = game.actions.choose(player, choices, { title: 'Special Mission' })
     if (choice.includes('Place')) {
-      spies.placeSpy(game, player)
+      spies.placeSpy(game, player, { icons: ['purple'] })
     }
     else if (choice.includes('Recall')) {
       spies.recallSpy(game, player)

@@ -437,6 +437,22 @@ function applyPlayerState(game, name, state) {
     }
   }
 
+  // Reserve cards (e.g. The Spice Must Flow) acquired into discard. Useful
+  // for endgame intrigue tests that count owned TSMF copies.
+  if (state.reserveAcquired) {
+    const discardZone = game.zones.byId(`${name}.discard`)
+    for (const [cardName, count] of Object.entries(state.reserveAcquired)) {
+      const sourceZoneId = cardName.includes('Spice Must Flow')
+        ? 'common.reserve.spiceMustFlow'
+        : 'common.reserve.prepareTheWay'
+      const reserveZone = game.zones.byId(sourceZoneId)
+      const cards = reserveZone.cardlist().slice(0, count)
+      for (const card of cards) {
+        card.moveTo(discardZone)
+      }
+    }
+  }
+
   // state.hand and state.handExact are processed in setBoard's breakpoints,
   // not here.
 }

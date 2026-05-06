@@ -1,5 +1,8 @@
 'use strict'
 
+const factions = require('../../../systems/factions.js')
+const deckEngine = require('../../../systems/deckEngine.js')
+
 module.exports = {
   id: "sietch-ritual",
   name: "Sietch Ritual",
@@ -16,7 +19,34 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "Discard a card:\n· +1 Influence with Bene Gesserit or Fremen",
   combatEffect: null,
   endgameEffect: null,
+  plotText: "Discard a card → +1 Influence with Bene Gesserit or Fremen",
+
+  plotEffect(game, player) {
+    const handZone = game.zones.byId(`${player.name}.hand`)
+    const handCards = handZone.cardlist()
+    if (handCards.length === 0) {
+      game.log.add({
+        template: '{player}: no cards to discard — no effect',
+        args: { player },
+        event: 'memo',
+      })
+      return
+    }
+    const discardChoices = handCards.map(c => c.name)
+    const [discardChoice] = game.actions.choose(player, discardChoices, {
+      title: 'Choose a card to discard',
+    })
+    const discardCard = handCards.find(c => c.name === discardChoice)
+    if (discardCard) {
+      deckEngine.discardCard(game, player, discardCard)
+    }
+
+    const [factionChoice] = game.actions.choose(player, ['Bene Gesserit', 'Fremen'], {
+      title: 'Choose a faction',
+    })
+    const faction = factionChoice === 'Bene Gesserit' ? 'bene-gesserit' : 'fremen'
+    factions.gainInfluence(game, player, faction, 1)
+  },
 }

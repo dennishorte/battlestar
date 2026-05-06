@@ -12,6 +12,17 @@ function postFactions(post) {
   return factions
 }
 
+function postIcons(post) {
+  const icons = new Set()
+  for (const id of post.spaces) {
+    const space = boardSpaces.find(s => s.id === id)
+    if (space?.icon) {
+      icons.add(space.icon)
+    }
+  }
+  return icons
+}
+
 /**
  * Place a spy on an observation post. By default each post holds at most one
  * spy across all players. Options:
@@ -25,8 +36,9 @@ function placeSpy(game, player, options = {}) {
     return false
   }
 
-  const { allowOccupied = false, factions = null } = options
+  const { allowOccupied = false, factions = null, icons = null } = options
   const factionFilter = factions ? new Set(factions) : null
+  const iconFilter = icons ? new Set(icons) : null
 
   const availablePosts = observationPosts.filter(post => {
     const occupants = game.state.spyPosts[post.id] || []
@@ -41,6 +53,19 @@ function placeSpy(game, player, options = {}) {
       let match = false
       for (const f of pf) {
         if (factionFilter.has(f)) {
+          match = true
+          break
+        }
+      }
+      if (!match) {
+        return false
+      }
+    }
+    if (iconFilter) {
+      const pi = postIcons(post)
+      let match = false
+      for (const i of pi) {
+        if (iconFilter.has(i)) {
           match = true
           break
         }

@@ -1,5 +1,7 @@
 'use strict'
 
+const constants = require('../../constants.js')
+
 module.exports = {
   id: "shadow-alliance",
   name: "Shadow Alliance",
@@ -18,5 +20,19 @@ module.exports = {
   vpsAvailable: 1,
   plotEffect: null,
   combatEffect: null,
-  endgameEffect: "If you have 4+ Influence on a Faction track where an opponent has the Alliance:\n· +1 Victory Point",
+  endgameText: "If you have 4+ Influence on a Faction track where an opponent has the Alliance: +1 Victory Point",
+
+  endgameEffect(game, player) {
+    const qualifies = constants.FACTIONS.some(faction => {
+      const allianceHolder = game.state.alliances[faction]
+      if (!allianceHolder || allianceHolder === player.name) {
+        return false
+      }
+      return player.getInfluence(faction) >= 4
+    })
+    if (qualifies) {
+      player.gainVp(1, 'Shadow Alliance')
+      game.log.add({ template: '{player} gains 1 Victory Point', args: { player } })
+    }
+  },
 }
