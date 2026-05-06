@@ -35,7 +35,7 @@ module.exports = {
       const count = parseInt(choice.match(/\d+/)[0])
       if (count > 0) {
         player.decrementCounter('troopsInGarrison', count, { silent: true })
-        game.state.conflict.deployedTroops[player.name] = (game.state.conflict.deployedTroops[player.name] || 0) + count
+        require('../../../systems/deploy.js').deployToConflict(game, player, count)
       }
     }
   },

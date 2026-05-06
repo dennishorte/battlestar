@@ -27,10 +27,76 @@ describe("distraction", () => {
     expect(discard.some(c => c.name === 'Distraction')).toBe(true)
   })
 
-  // See common/dune/docs/known-bugs.md — Distraction needs per-turn deploy
-  // tracking and a consumer that grants +1 Spy when the threshold is met.
-  // Currently sets a flag nothing reads.
-  it.skip('plot: arms +1 Spy trigger when 3+ units are deployed in one turn', () => {})
+  test('plot: 3+ deploy in one turn places a Spy', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      shieldWall: false,
+      dennis: {
+        intrigue: ['Distraction', 'Detonation'],
+        troopsInGarrison: 5,
+        spiesInSupply: 1,
+      },
+    })
+    game.run()
 
-  it.skip('Spy from Distraction may co-locate with another player\'s Spy', () => {})
+    t.choose(game, 'Distraction')
+    t.choose(game, 'Detonation')
+    t.choose(game, 'Deploy up to 4 Troops to Conflict')
+    t.choose(game, 'Deploy 3')
+
+    const postChoice = t.currentChoices(game).find(c => c.startsWith('Post '))
+    expect(postChoice).toBeDefined()
+    t.choose(game, postChoice)
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.spiesInSupply).toBe(0)
+    const placedSomewhere = Object.values(game.state.spyPosts).some(occ => occ.includes('dennis'))
+    expect(placedSomewhere).toBe(true)
+  })
+
+  test('plot: <3 deploy does not trigger Spy placement', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      shieldWall: false,
+      dennis: {
+        intrigue: ['Distraction', 'Detonation'],
+        troopsInGarrison: 5,
+        spiesInSupply: 1,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Distraction')
+    t.choose(game, 'Detonation')
+    t.choose(game, 'Deploy up to 4 Troops to Conflict')
+    t.choose(game, 'Deploy 2')
+
+    expect(t.currentChoices(game).some(c => c.startsWith('Post '))).toBe(false)
+    expect(game.players.byName('dennis').spiesInSupply).toBe(1)
+  })
+
+  test('plot: Spy may co-locate with another player\'s Spy', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      shieldWall: false,
+      spyPosts: { A: ['micah'] },
+      dennis: {
+        intrigue: ['Distraction', 'Detonation'],
+        troopsInGarrison: 5,
+        spiesInSupply: 1,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Distraction')
+    t.choose(game, 'Detonation')
+    t.choose(game, 'Deploy up to 4 Troops to Conflict')
+    t.choose(game, 'Deploy 3')
+
+    const occupiedPostAChoice = t.currentChoices(game).find(c => c.startsWith('Post A '))
+    expect(occupiedPostAChoice).toBeDefined()
+    t.choose(game, occupiedPostAChoice)
+
+    expect(game.state.spyPosts.A).toEqual(expect.arrayContaining(['micah', 'dennis']))
+  })
 })

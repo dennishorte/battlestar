@@ -54,7 +54,7 @@ module.exports = {
         const [choice] = game.actions.choose(player, choices, { title: 'Fremen Bond' })
         if (choice.includes('Deploy')) {
           player.decrementCounter('troopsInGarrison', 1, { silent: true })
-          game.state.conflict.deployedTroops[player.name] = (game.state.conflict.deployedTroops[player.name] || 0) + 1
+          require('../../../../systems/deploy.js').deployToConflict(game, player, 1)
         }
         else if (choice.includes('Retreat')) {
           game.state.conflict.deployedTroops[player.name]--

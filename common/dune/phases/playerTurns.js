@@ -1,6 +1,7 @@
 const deckEngine = require('../systems/deckEngine.js')
 const factions = require('../systems/factions.js')
 const spies = require('../systems/spies.js')
+const deploy = require('../systems/deploy.js')
 const { parseAgentAbility } = require('../systems/cardEffects.js')
 const leaderAbilities = require('../systems/leaderAbilities.js')
 const constants = require('../res/constants.js')
@@ -64,6 +65,9 @@ function playerTurnsPhase(game) {
         acquireWithSolari: !!persisted.acquireWithSolari,
         acquireToHand: !!persisted.acquireToHand,
         acquireToTopOfDeck: !!persisted.acquireToTopOfDeck,
+        unitsDeployedThisTurn: 0,
+        distractionArmed: false,
+        distractionFired: false,
       }
 
       // Plot Intrigue may only be played at the start or end of the player's
@@ -636,8 +640,7 @@ function deployUnits(game, player) {
   const count = parseInt(choice.match(/\d+/)[0])
   if (count > 0) {
     player.decrementCounter('troopsInGarrison', count, { silent: true })
-    game.state.conflict.deployedTroops[player.name] =
-      (game.state.conflict.deployedTroops[player.name] || 0) + count
+    deploy.deployToConflict(game, player, count)
     game.log.add({
       template: '{player} deploys {count} troop(s) to the Conflict',
       args: { player, count },
@@ -865,8 +868,7 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
         player.decrementCounter('troopsInSupply', recruit, { silent: true })
         // Sardaukar Coordination: recruited troops go to conflict instead of garrison
         if (game.state.turnTracking?.recruitToConflict) {
-          game.state.conflict.deployedTroops[player.name] =
-            (game.state.conflict.deployedTroops[player.name] || 0) + recruit
+          deploy.deployToConflict(game, player, recruit)
           game.log.add({
             template: '{player} recruits {amount} troop(s) to Conflict',
             args: { player, amount: recruit },
@@ -1284,8 +1286,7 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
         const count = parseInt(deployChoice.match(/\d+/)[0])
         if (count > 0) {
           player.decrementCounter('troopsInGarrison', count, { silent: true })
-          game.state.conflict.deployedTroops[player.name] =
-            (game.state.conflict.deployedTroops[player.name] || 0) + count
+          deploy.deployToConflict(game, player, count)
           game.log.add({
             template: '{player} deploys {count} troop(s) to the Conflict',
             args: { player, count },

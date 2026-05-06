@@ -36,7 +36,7 @@ module.exports = {
           // Deploy one of your troops
           if (player.troopsInGarrison > 0) {
             player.decrementCounter('troopsInGarrison', 1, { silent: true })
-            game.state.conflict.deployedTroops[player.name] = (game.state.conflict.deployedTroops[player.name] || 0) + 1
+            require('../../../systems/deploy.js').deployToConflict(game, player, 1)
           }
           game.log.add({ template: '{player} forces {target} to lose 1 troop, deploys 1', args: { player, target } })
         }

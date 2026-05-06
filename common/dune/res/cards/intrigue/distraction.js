@@ -20,11 +20,12 @@ module.exports = {
   endgameEffect: null,
   plotText: "When you deploy 3+ units to the Conflict in a single turn: +1 Spy. You may place this Spy on the same observation post as another player's Spy",
 
-  plotEffect(game) {
-    // When deploy 3+ units: +1 Spy
-    if (game.state.turnTracking) {
-      game.state.turnTracking.distraction = true
+  plotEffect(game, player) {
+    if (!game.state.turnTracking) {
+      return
     }
+    game.state.turnTracking.distractionArmed = true
+    require('../../../systems/deploy.js').checkDistractionTrigger(game, player)
   },
 
 }

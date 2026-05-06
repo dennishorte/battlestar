@@ -48,15 +48,73 @@ describe("impress", () => {
     driveToCombatIntrigue(game)
     t.choose(game, 'Impress')
 
-    expect(game.waiting.selectors[0]?.title).toBe('Choose a Contract to take')
+    // After Impress: prompt is the inline acquire (cost <= 3) — pass it.
+    t.choose(game, { id: '__pass__' })
+
     const breakdown = game.state.conflict.strengthBreakdown.dennis || []
     const total = breakdown.filter(b => b.label === 'Impress').reduce((s, b) => s + b.amount, 0)
     expect(total).toBe(2)
   })
 
-  // See common/dune/docs/known-bugs.md — Impress's "Acquire a card that
-  // costs 3 Persuasion or less" has no combat-time acquire path. The current
-  // implementation grants +3 persuasion at combat time, which is dead since
-  // persuasion resets before the next acquire phase.
-  it.skip('combat: acquire a card costing 3 Persuasion or less', () => {})
+  test('combat: acquires a row card costing <= 3 Persuasion', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        troopsInGarrison: 5,
+        intrigue: ['Impress'],
+      },
+      conflict: {
+        deployedTroops: { dennis: 2 },
+      },
+      conflictCard: { id: 'conflict-trade-dispute' },
+    })
+    game.run()
+
+    driveToCombatIntrigue(game)
+    t.choose(game, 'Impress')
+
+    const acquireSelector = game.waiting.selectors.find(
+      s => s.title && s.title.startsWith('Impress: acquire')
+    )
+    expect(acquireSelector).toBeDefined()
+    const cheap = acquireSelector.choices.find(c => c.id !== '__pass__')
+    expect(cheap).toBeDefined()
+    t.choose(game, { id: cheap.id })
+
+    const allCards = [
+      ...game.zones.byId('dennis.discard').cardlist(),
+      ...game.zones.byId('dennis.deck').cardlist(),
+      ...game.zones.byId('dennis.hand').cardlist(),
+      ...game.zones.byId('dennis.played').cardlist(),
+    ]
+    expect(allCards.some(c => c.id === cheap.id)).toBe(true)
+  })
+
+  test('combat: pass on acquire still grants the +2 swords', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        troopsInGarrison: 5,
+        intrigue: ['Impress'],
+      },
+      conflict: {
+        deployedTroops: { dennis: 2 },
+      },
+      conflictCard: { id: 'conflict-trade-dispute' },
+    })
+    game.run()
+
+    driveToCombatIntrigue(game)
+    t.choose(game, 'Impress')
+
+    const acquireSelector = game.waiting.selectors.find(
+      s => s.title && s.title.startsWith('Impress: acquire')
+    )
+    expect(acquireSelector).toBeDefined()
+    t.choose(game, { id: '__pass__' })
+
+    const breakdown = game.state.conflict.strengthBreakdown.dennis || []
+    const total = breakdown.filter(b => b.label === 'Impress').reduce((s, b) => s + b.amount, 0)
+    expect(total).toBe(2)
+  })
 })
