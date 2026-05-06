@@ -102,7 +102,7 @@ describe('Card Agent Ability Parser', () => {
     expect(result).not.toBeNull()
     expect(result[0].type).toBe('conditional')
     expect(result[0].condition.type).toBe('faction-card-in-play')
-    expect(result[0].condition.faction).toBe('bene gesserit')
+    expect(result[0].condition.faction).toBe('bene-gesserit')
   })
 
   test('parses "With N Influence with Faction" conditionals', () => {

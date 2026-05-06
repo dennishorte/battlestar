@@ -1,5 +1,7 @@
 'use strict'
 
+const constants = require('../../../constants.js')
+
 module.exports = {
   id: "southern-elders",
   name: "Southern Elders",
@@ -19,7 +21,7 @@ module.exports = {
   revealPersuasion: 0,
   revealSwords: 0,
   revealAbility: "· +1 Water\nFremen Bond:\n· +2 Persuasion",
-  factionAffiliation: "bene-gesserit",
+  factionAffiliation: ["bene-gesserit", "fremen"],
   vpsAvailable: 0,
   hasTech: false,
   hasShipping: false,
@@ -37,7 +39,7 @@ module.exports = {
     player.incrementCounter('water', 1, { silent: true })
     game.log.add({ template: '{player}: +1 Water', args: { player } })
     const hasFremen = allRevealedCards.some(c =>
-      c !== card && c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('fremen')
+      c !== card && constants.getFactionAffiliations(c).includes('fremen')
     )
     if (hasFremen) {
       player.incrementCounter('persuasion', 2, { silent: true })

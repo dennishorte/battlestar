@@ -32,6 +32,18 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
 
+  onDiscard(game, player) {
+    // "When this card is discarded: +2 Spice"
+    if (!player) {
+      return
+    }
+    player.incrementCounter('spice', 2, { silent: true })
+    game.log.add({
+      template: "{player}: Spacing Guild's Favor discarded — +2 Spice",
+      args: { player },
+    })
+  },
+
   revealEffect(game, player) {
     if (player.spice >= 3) {
       const choices = ['Pass', 'Pay 3 Spice for +1 Influence']

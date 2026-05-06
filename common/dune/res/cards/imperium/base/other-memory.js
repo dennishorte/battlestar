@@ -1,6 +1,7 @@
 'use strict'
 
 const deckEngine = require('../../../../systems/deckEngine.js')
+const constants = require('../../../constants.js')
 module.exports = {
   id: "other-memory",
   name: "Other Memory",
@@ -38,7 +39,7 @@ module.exports = {
     // Draw 1 card or Draw 1 Bene Gesserit card from your discard pile
     const discardZone = game.zones.byId(`${player.name}.discard`)
     const bgCards = discardZone.cardlist().filter(c =>
-      c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('bene gesserit')
+      constants.getFactionAffiliations(c).includes('bene-gesserit')
     )
     const choices = ['Draw 1 card from deck']
     if (bgCards.length > 0) {

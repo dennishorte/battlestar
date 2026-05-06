@@ -60,14 +60,19 @@ module.exports = {
   },
 
   revealEffect(game, player) {
+    const choices = ['+5 Solari']
     if (!player.hasHighCouncil && player.solari >= 5) {
-      const choices = ['Pass', 'Pay 5 Solari for High Council seat']
-      const [choice] = game.actions.choose(player, choices, { title: 'Corrinth City' })
-      if (choice !== 'Pass') {
-        player.decrementCounter('solari', 5, { silent: true })
-        player.setCounter('hasHighCouncil', 1, { silent: true })
-        game.log.add({ template: '{player} takes High Council seat', args: { player } })
-      }
+      choices.push('Pay 5 Solari for High Council seat')
+    }
+    const [choice] = game.actions.choose(player, choices, { title: 'Corrinth City' })
+    if (choice === '+5 Solari') {
+      player.incrementCounter('solari', 5, { silent: true })
+      game.log.add({ template: '{player} gains 5 Solari', args: { player } })
+    }
+    else if (choice === 'Pay 5 Solari for High Council seat') {
+      player.decrementCounter('solari', 5, { silent: true })
+      player.setCounter('hasHighCouncil', 1, { silent: true })
+      game.log.add({ template: '{player} takes High Council seat', args: { player } })
     }
   },
 

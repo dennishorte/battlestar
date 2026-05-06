@@ -50,4 +50,39 @@ module.exports = {
 
   // Faction icons (also valid agent icons for faction board spaces)
   FACTION_ICONS: ['emperor', 'guild', 'bene-gesserit', 'fremen'],
+
+  // Normalize any free-text or alias spelling to the canonical short faction id.
+  normalizeFactionId(text) {
+    if (!text) {
+      return null
+    }
+    const key = String(text).toLowerCase().trim().replace(/^the\s+/, '')
+    const map = {
+      'emperor': 'emperor',
+      'guild': 'guild',
+      'spacing guild': 'guild',
+      'bene-gesserit': 'bene-gesserit',
+      'bene gesserit': 'bene-gesserit',
+      'fremen': 'fremen',
+    }
+    return map[key] || key
+  },
+
+  // Returns array of canonical faction ids for a card whose definition's
+  // factionAffiliation may be a string, array, or null/undefined.
+  getFactionAffiliations(card) {
+    const raw = card?.factionAffiliation ?? card?.definition?.factionAffiliation
+    if (!raw) {
+      return []
+    }
+    const list = Array.isArray(raw) ? raw : [raw]
+    const out = []
+    for (const f of list) {
+      const norm = module.exports.normalizeFactionId(f)
+      if (norm) {
+        out.push(norm)
+      }
+    }
+    return out
+  },
 }

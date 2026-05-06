@@ -30,6 +30,12 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
 
+  agentEffect(game, player, card, { resolveEffect }) {
+    if (game.state.turnTracking?.recalledSpy) {
+      resolveEffect(game, player, { type: 'troop', amount: 3 }, null, card.name)
+    }
+  },
+
   onAcquire(game, player, card, { resolveEffect }) {
     resolveEffect(game, player, { type: 'spy' }, null, card.name)
   },

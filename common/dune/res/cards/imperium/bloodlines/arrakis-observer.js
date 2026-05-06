@@ -2,6 +2,7 @@
 
 const deckEngine = require('../../../../systems/deckEngine.js')
 const spies = require('../../../../systems/spies.js')
+const constants = require('../../../constants.js')
 module.exports = {
   id: "arrakis-observer",
   name: "Arrakis Observer",
@@ -44,7 +45,7 @@ module.exports = {
       const [choice] = game.actions.choose(player, choices, { title: 'Discard a card' })
       const card = handCards.find(c => c.name === choice)
       if (card) {
-        const isGuild = card.factionAffiliation && card.factionAffiliation.toLowerCase().includes('spacing guild')
+        const isGuild = constants.getFactionAffiliations(card).includes('guild')
         deckEngine.discardCard(game, player, card)
         spies.placeSpy(game, player)
         if (isGuild) {

@@ -40,7 +40,7 @@ module.exports = {
     // +1 Influence with any Faction OR +2 Troops. If you have another BG card in play, get both.
     const playedZone = game.zones.byId(`${player.name}.played`)
     const hasBG = playedZone.cardlist().some(c =>
-      c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('bene gesserit')
+      constants.getFactionAffiliations(c).includes('bene-gesserit')
     )
     if (hasBG) {
       // Get both

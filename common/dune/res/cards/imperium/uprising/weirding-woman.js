@@ -1,5 +1,7 @@
 'use strict'
 
+const constants = require('../../../constants.js')
+
 module.exports = {
   id: "weirding-woman",
   name: "Weirding Woman",
@@ -37,7 +39,7 @@ module.exports = {
     // If you have another BG card in play, return this card from play to your hand
     const playedZone = game.zones.byId(`${player.name}.played`)
     const hasBG = playedZone.cardlist().some(c =>
-      c !== card && c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('bene gesserit')
+      c !== card && constants.getFactionAffiliations(c).includes('bene-gesserit')
     )
     if (hasBG) {
       const handZone = game.zones.byId(`${player.name}.hand`)

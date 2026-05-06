@@ -18,7 +18,7 @@ module.exports = {
   revealPersuasion: 2,
   revealSwords: 0,
   revealAbility: null,
-  factionAffiliation: "bene-gesserit",
+  factionAffiliation: ["bene-gesserit", "fremen"],
   vpsAvailable: 0,
   hasTech: false,
   hasShipping: false,

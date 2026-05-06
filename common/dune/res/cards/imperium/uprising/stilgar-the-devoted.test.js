@@ -104,10 +104,8 @@ describe('Stilgar, The Devoted', () => {
     expect(dennis.getCounter('persuasion')).toBe(2)
   })
 
-  test('non-Fremen cards in revealed hand do not contribute to bonus', () => {
+  test('Southern Elders (BG/Fremen multi-affiliation) contributes to bonus', () => {
     const game = t.fixture()
-    // Southern Elders has factionAccess fremen but factionAffiliation
-    // bene-gesserit — should NOT count toward Stilgar's bonus.
     t.setBoard(game, {
       dennis: { handExact: ['Stilgar, The Devoted', 'Southern Elders'] },
     })
@@ -116,9 +114,9 @@ describe('Stilgar, The Devoted', () => {
     t.choose(game, 'Reveal Turn')
 
     const dennis = game.players.byName('dennis')
-    // Stilgar(2) + Southern Elders(0) + 0 other Fremen × 2 = 2.
-    // Note: Southern Elders' Fremen Bond fires (Stilgar is Fremen) → +2.
-    // Total: 4.
-    expect(dennis.getCounter('persuasion')).toBe(4)
+    // Stilgar + Southern Elders (Fremen-affiliated) = 2 Fremen × 2 = 4.
+    // Southern Elders' Fremen Bond fires (Stilgar is Fremen) → +2.
+    // Total: 6.
+    expect(dennis.getCounter('persuasion')).toBe(6)
   })
 })

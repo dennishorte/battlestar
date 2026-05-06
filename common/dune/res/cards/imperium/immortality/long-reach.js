@@ -36,7 +36,7 @@ module.exports = {
     // If you have another BG card in play: this card gets all access. +1 Influence with 2 Factions.
     const playedZone = game.zones.byId(`${player.name}.played`)
     const hasBG = playedZone.cardlist().some(c =>
-      c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('bene gesserit')
+      constants.getFactionAffiliations(c).includes('bene-gesserit')
     )
     if (hasBG) {
       for (let i = 0; i < 2; i++) {

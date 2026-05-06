@@ -39,6 +39,19 @@ common/dune/
 └── tests/                     # Test files
 ```
 
+### Card abilities and lifecycle hooks
+
+Card definitions can declare per-card hooks that fire when a card transitions between zones:
+
+- `agentEffect(game, player, card, ctx)` / `revealEffect(game, player, card, allRevealed)` — agent and reveal abilities. If absent, `agentAbility` / `revealAbility` text is parsed by `systems/cardEffects.js`.
+- `onAcquire(game, player, card, ctx)` — fires when the card is acquired into a player's discard pile.
+- `onTrash(game, player, card, ctx)` — fires when the card moves to the trash via `deckEngine.trashCard`.
+- `onDiscard(game, player, card, ctx)` — fires when the card is sent to a player's discard via `deckEngine.discardCard`.
+
+`ctx` provides `{ resolveEffect }` for declarative effects.
+
+`factionAffiliation` may be a single faction id or an array of ids (cards with two printed affiliations, e.g. Maker Keeper). Use `constants.getFactionAffiliations(card)` for any synergy / bond / "card in play" check — never compare the raw string.
+
 ### Card Data and Expansion System
 
 All card data lives in `res/cards/` as JS modules converted from CSV inventories. Every card has `source` (which product) and `compatibility` (which game configurations use it).

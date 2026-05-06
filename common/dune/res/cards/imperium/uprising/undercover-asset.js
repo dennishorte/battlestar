@@ -24,7 +24,7 @@ module.exports = {
   revealPersuasion: 0,
   revealSwords: 0,
   revealAbility: "· +1 Spy\n  OR\n· +2 Daggers",
-  factionAffiliation: "emperor",
+  factionAffiliation: ["emperor", "guild"],
   vpsAvailable: 0,
   hasTech: false,
   hasShipping: false,

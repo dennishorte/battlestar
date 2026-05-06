@@ -30,6 +30,21 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
 
+  agentEffect(game, player, card) {
+    if (game.state.turnTracking?.sentToFactionSpace) {
+      const factions = require('../../../../systems/factions.js')
+      const deckEngine = require('../../../../systems/deckEngine.js')
+      // Faction influence was already granted (1) when the agent was placed;
+      // grant +1 more to honor "Gain two Influence instead of one".
+      const space = require('../../../boardSpaces.js').find(s => s.faction
+        && (game.state.boardSpaces[s.id] || []).includes(player.name))
+      if (space?.faction) {
+        factions.gainInfluence(game, player, space.faction, 1)
+      }
+      deckEngine.trashCard(game, card, player)
+    }
+  },
+
   onAcquire(game, player, card, { resolveEffect }) {
     resolveEffect(game, player, { type: 'spy' }, null, card.name)
   },

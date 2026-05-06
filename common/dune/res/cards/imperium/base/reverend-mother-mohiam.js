@@ -1,6 +1,7 @@
 'use strict'
 
 const deckEngine = require('../../../../systems/deckEngine.js')
+const constants = require('../../../constants.js')
 module.exports = {
   id: "reverend-mother-mohiam",
   name: "Reverend Mother Mohiam",
@@ -38,7 +39,7 @@ module.exports = {
     // With another BG card in play: each opponent discards 2 cards
     const playedZone = game.zones.byId(`${player.name}.played`)
     const hasBG = playedZone.cardlist().some(c =>
-      c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('bene gesserit')
+      constants.getFactionAffiliations(c).includes('bene-gesserit')
     )
     if (hasBG) {
       for (const opponent of game.players.all()) {

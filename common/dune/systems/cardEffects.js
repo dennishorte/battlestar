@@ -21,8 +21,17 @@ function parseAgentAbility(text) {
     return null
   }
 
-  // Normalize: strip bullet prefixes, newlines to spaces, collapse whitespace, strip trailing period
-  text = text.replace(/·\s*/g, '').replace(/\n/g, ' ').replace(/\s+/g, ' ').trim().replace(/\.\s*$/, '')
+  // Normalize: bullet markers become separators (preserve the split between items),
+  // then collapse whitespace, trim, drop trailing period.
+  text = text
+    .replace(/\s*\n\s*/g, '\n')
+    .replace(/(?:^|\n)·\s*/g, '\n')
+    .replace(/·\s*/g, ', ')
+    .replace(/\n+/g, ', ')
+    .replace(/^,\s*/, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\.\s*$/, '')
 
   // Signet Ring handled specially
   if (/^Signet Ring$/i.test(text)) {
@@ -167,7 +176,7 @@ function parseAgentAbility(text) {
   // "With another Faction card in play: Effect"
   const withFactionCardMatch = text.match(/^With\s+(?:another\s+)?(Emperor|Spacing Guild|Bene Gesserit|Fremen)\s+card\s+in\s+play:\s*(.+)$/i)
   if (withFactionCardMatch) {
-    const condition = { type: 'faction-card-in-play', faction: withFactionCardMatch[1].toLowerCase() }
+    const condition = { type: 'faction-card-in-play', faction: normalizeFaction(withFactionCardMatch[1]) }
     const parsedEffect = parseAgentAbility(withFactionCardMatch[2].trim())
     if (parsedEffect) {
       return [{ type: 'conditional', condition, effects: parsedEffect }]
@@ -232,7 +241,7 @@ function parseAgentAbility(text) {
   // "Fremen/Emperor/BG/Guild Bond: Effect"
   const bondInline = text.match(/^(Fremen|Emperor|Bene Gesserit|Spacing Guild)\s+[Bb]ond:\s*(.+)$/i)
   if (bondInline) {
-    const bondFaction = bondInline[1].toLowerCase()
+    const bondFaction = normalizeFaction(bondInline[1])
     const bondEffect = parseAgentAbility(bondInline[2].trim())
     if (bondEffect) {
       return [{ type: 'conditional', condition: { type: 'faction-card-in-play', faction: bondFaction }, effects: bondEffect }]
@@ -672,17 +681,7 @@ function parseSingleAbility(text) {
  * Normalize faction name from card text to internal ID.
  */
 function normalizeFaction(text) {
-  const map = {
-    'emperor': 'emperor',
-    'the emperor': 'emperor',
-    'spacing guild': 'guild',
-    'the spacing guild': 'guild',
-    'bene gesserit': 'bene-gesserit',
-    'the bene gesserit': 'bene-gesserit',
-    'fremen': 'fremen',
-    'the fremen': 'fremen',
-  }
-  return map[text.toLowerCase()] || text.toLowerCase()
+  return require('../res/constants.js').normalizeFactionId(text)
 }
 
 /**
@@ -725,7 +724,7 @@ function parseCondition(text) {
   // "you have another Faction card in play"
   const factionCardMatch = text.match(/you have another (\w[\w\s]*?) card in play/i)
   if (factionCardMatch) {
-    return { type: 'faction-card-in-play', faction: factionCardMatch[1].trim().toLowerCase() }
+    return { type: 'faction-card-in-play', faction: normalizeFaction(factionCardMatch[1].trim()) }
   }
 
   // "you have N+ Sandworms in the Conflict"

@@ -1,5 +1,7 @@
 'use strict'
 
+const constants = require('../../../constants.js')
+
 module.exports = {
   id: "elite-forces",
   name: "Elite Forces",
@@ -37,7 +39,7 @@ module.exports = {
     const deckEngine = require('../../../../systems/deckEngine.js')
     const trashed = resolveEffect(game, player, { type: 'trash-card' }, null, card.name)
     if (trashed) {
-      const isEmperor = trashed.factionAffiliation && trashed.factionAffiliation.toLowerCase().includes('emperor')
+      const isEmperor = constants.getFactionAffiliations(trashed).includes('emperor')
       if (isEmperor) {
         deckEngine.drawIntrigueCard(game, player, 1)
         const recruit = Math.min(1, player.troopsInSupply)

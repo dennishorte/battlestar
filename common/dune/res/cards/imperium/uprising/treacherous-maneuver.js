@@ -1,6 +1,7 @@
 'use strict'
 
 const deckEngine = require('../../../../systems/deckEngine.js')
+const constants = require('../../../constants.js')
 module.exports = {
   id: "treacherous-maneuver",
   name: "Treacherous Maneuver",
@@ -38,9 +39,12 @@ module.exports = {
 
   agentEffect(game, player, card) {
     // Trash this card and an Emperor card from hand -> Gain 2 influence instead of 1
+    if (!game.state.turnTracking?.sentToFactionSpace) {
+      return
+    }
     const handZone = game.zones.byId(`${player.name}.hand`)
     const emperorCards = handZone.cardlist().filter(c =>
-      c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('emperor')
+      constants.getFactionAffiliations(c).includes('emperor')
     )
     if (emperorCards.length > 0) {
       const choices = ['Pass', ...emperorCards.map(c => c.name)]

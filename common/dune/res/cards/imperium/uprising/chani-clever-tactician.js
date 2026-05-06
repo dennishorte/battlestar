@@ -50,7 +50,7 @@ module.exports = {
       }
     }
     const hasFremen = allRevealedCards.some(c =>
-      c !== card && c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('fremen')
+      c !== card && constants.getFactionAffiliations(c).includes('fremen')
     )
     if (hasFremen) {
       player.incrementCounter('persuasion', 2, { silent: true })

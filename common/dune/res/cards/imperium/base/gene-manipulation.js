@@ -1,5 +1,7 @@
 'use strict'
 
+const constants = require('../../../constants.js')
+
 module.exports = {
   id: "gene-manipulation",
   name: "Gene Manipulation",
@@ -37,7 +39,7 @@ module.exports = {
     resolveEffect(game, player, { type: 'trash-card' }, null, card.name)
     const playedZone = game.zones.byId(`${player.name}.played`)
     const hasBG = playedZone.cardlist().some(c =>
-      c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('bene gesserit')
+      constants.getFactionAffiliations(c).includes('bene-gesserit')
     )
     if (hasBG) {
       player.incrementCounter('spice', 2, { silent: true })

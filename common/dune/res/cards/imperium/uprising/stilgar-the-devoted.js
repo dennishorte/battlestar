@@ -1,5 +1,7 @@
 'use strict'
 
+const constants = require('../../../constants.js')
+
 module.exports = {
   id: "stilgar-the-devoted",
   name: "Stilgar, The Devoted",
@@ -38,11 +40,13 @@ module.exports = {
   revealEffect(game, player, card, allRevealedCards) {
     // "In play" includes cards revealed this turn AND agent cards already
     // played earlier in the round (which sit in the player's `played` zone
-    // until end-of-turn cleanup). Stilgar himself does not count.
+    // until end-of-turn cleanup). Stilgar himself is included via
+    // allRevealedCards; the printed text "+2 per Fremen card including this
+    // one" yields the same result.
     const playedCards = game.zones.byId(`${player.name}.played`).cardlist()
     const inPlay = [...allRevealedCards, ...playedCards]
     const fremenCount = inPlay.filter(c =>
-      c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('fremen')
+      constants.getFactionAffiliations(c).includes('fremen')
     ).length
     const total = fremenCount * 2
     if (total > 0) {

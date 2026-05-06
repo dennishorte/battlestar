@@ -413,6 +413,30 @@ function applyPlayerState(game, name, state) {
     }
   }
 
+  // Completed contracts: move N cards from contract deck/market to the
+  // player's completed-contracts zone. Useful for testing effects that
+  // scale with the number of completed contracts (e.g. Interstellar Trade).
+  // Accepts either an integer count (anonymous filler) or an array of names.
+  if (state.contractsCompleted !== undefined) {
+    const contractDeck = game.zones.byId('common.contractDeck')
+    const contractMarket = game.zones.byId('common.contractMarket')
+    const completedZone = game.zones.byId(`${name}.contractsCompleted`)
+    const pool = [...contractMarket.cardlist(), ...contractDeck.cardlist()]
+    if (typeof state.contractsCompleted === 'number') {
+      for (let i = 0; i < state.contractsCompleted && i < pool.length; i++) {
+        pool[i].moveTo(completedZone)
+      }
+    }
+    else if (Array.isArray(state.contractsCompleted)) {
+      for (const cardName of state.contractsCompleted) {
+        const card = pool.find(c => c.name === cardName)
+        if (card) {
+          card.moveTo(completedZone)
+        }
+      }
+    }
+  }
+
   // state.hand and state.handExact are processed in setBoard's breakpoints,
   // not here.
 }

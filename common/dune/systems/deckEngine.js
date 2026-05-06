@@ -2,6 +2,11 @@ const { DuneCard } = require('../DuneCard.js')
 const constants = require('../res/constants.js')
 const util = require('../../lib/util.js')
 
+// Lazy require to avoid circular dependency between deckEngine and playerTurns.
+function _resolveEffectLazy() {
+  return require('../phases/playerTurns.js').resolveEffect
+}
+
 /**
  * Draw cards from a player's deck into their hand.
  * When the deck is empty, reshuffles the discard pile to form a new deck.
@@ -76,18 +81,24 @@ function revealHand(game, player) {
 function discardCard(game, player, card) {
   const discardZone = game.zones.byId(`${player.name}.discard`)
   card.moveTo(discardZone)
+  if (typeof card.definition?.onDiscard === 'function') {
+    card.definition.onDiscard(game, player, card, { resolveEffect: _resolveEffectLazy() })
+  }
 }
 
 /**
  * Trash a card (remove it from the game).
  */
-function trashCard(game, card) {
+function trashCard(game, card, player) {
   const trashZone = game.zones.byId('common.trash')
   card.moveTo(trashZone)
   game.log.add({
     template: '{card} is trashed',
     args: { card },
   })
+  if (typeof card.definition?.onTrash === 'function') {
+    card.definition.onTrash(game, player, card, { resolveEffect: _resolveEffectLazy() })
+  }
 }
 
 /**

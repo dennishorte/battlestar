@@ -36,10 +36,12 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
 
-  revealEffect(game, player) {
+  revealEffect(game, player, card) {
     const playedZone = game.zones.byId(`${player.name}.played`)
-    const emperorCards = playedZone.cardlist().filter(c =>
-      c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('emperor')
+    const revealedZone = game.zones.byId(`${player.name}.revealed`)
+    const inPlay = [...playedZone.cardlist(), ...revealedZone.cardlist()]
+    const emperorCards = inPlay.filter(c =>
+      c !== card && constants.getFactionAffiliations(c).includes('emperor')
     )
     if (emperorCards.length > 0) {
       const choices = ['Pass', ...emperorCards.map(c => c.name)]

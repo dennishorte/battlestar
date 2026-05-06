@@ -36,4 +36,17 @@ module.exports = {
     // "When this card is trashed: Get 1 Intrigue Card" — passive trigger, handled when trashed
   },
 
+  onTrash(game, player) {
+    // "When this card is trashed: Get 1 Intrigue Card"
+    if (!player) {
+      return
+    }
+    const deckEngine = require('../../../../systems/deckEngine.js')
+    deckEngine.drawIntrigueCard(game, player, 1)
+    game.log.add({
+      template: '{player}: Sardaukar Soldier trashed — gain 1 Intrigue card',
+      args: { player },
+    })
+  },
+
 }

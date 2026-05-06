@@ -1,6 +1,7 @@
 'use strict'
 
 const deckEngine = require('../../../../systems/deckEngine.js')
+const constants = require('../../../constants.js')
 module.exports = {
   id: "guild-envoy",
   name: "Guild Envoy",
@@ -45,7 +46,7 @@ module.exports = {
       const [choice] = game.actions.choose(player, choices, { title: 'Discard a card' })
       const card = handCards.find(c => c.name === choice)
       if (card) {
-        const isGuild = card.factionAffiliation && card.factionAffiliation.toLowerCase().includes('spacing guild')
+        const isGuild = constants.getFactionAffiliations(card).includes('guild')
         deckEngine.discardCard(game, player, card)
         if (isGuild) {
           deckEngine.drawCards(game, player, 2)

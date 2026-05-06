@@ -1,5 +1,7 @@
 'use strict'
 
+const constants = require('../../../constants.js')
+
 module.exports = {
   id: "holy-war",
   name: "Holy War",
@@ -43,7 +45,7 @@ module.exports = {
       player.incrementCounter('troopsInGarrison', recruit, { silent: true })
     }
     const hasFremen = allRevealedCards.some(c =>
-      c !== card && c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('fremen')
+      c !== card && constants.getFactionAffiliations(c).includes('fremen')
     )
     if (hasFremen) {
       game.log.add({ template: '{player}: Fremen Bond — may deploy troops', args: { player }, event: 'memo' })

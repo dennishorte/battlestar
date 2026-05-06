@@ -351,8 +351,8 @@ function revealTurn(game, player) {
  * Let player spend persuasion to acquire cards.
  */
 function acquireCardsPhase(game, player) {
-  const useSolari = game.state.turnTracking?.acquireWithSolari
   while (true) {
+    const useSolari = game.state.turnTracking?.acquireWithSolari
     const budget = useSolari ? player.solari : player.getCounter('persuasion')
     if (budget <= 0) {
       break
@@ -401,15 +401,27 @@ function acquireCardsPhase(game, player) {
         )
       }
 
-      // Acquire to top of deck or discard pile
+      // Acquire to top of deck, hand, or discard pile
       if (game.state.turnTracking?.acquireToTopOfDeck) {
         const deckZone = game.zones.byId(`${player.name}.deck`)
         card.moveTo(deckZone)
         game.log.add({ template: '{player} acquires {card} to top of deck', args: { player, card } })
         deckEngine.refillImperiumRow(game)
       }
+      else if (game.state.turnTracking?.acquireToHand) {
+        const handZone = game.zones.byId(`${player.name}.hand`)
+        card.moveTo(handZone)
+        game.log.add({ template: '{player} acquires {card} to hand', args: { player, card } })
+        deckEngine.refillImperiumRow(game)
+      }
       else {
         deckEngine.acquireCard(game, player, card)
+      }
+
+      // Price is Not Object: solari-acquire applies to one acquisition only
+      if (game.state.turnTracking?.acquireWithSolari) {
+        game.state.turnTracking.acquireWithSolari = false
+        game.state.turnTracking.acquireToHand = false
       }
 
       // Troop on acquire (Call to Arms)
@@ -425,6 +437,25 @@ function acquireCardsPhase(game, player) {
       // Per-card onAcquire hook lives on the card definition.
       if (typeof card.definition?.onAcquire === 'function') {
         card.definition.onAcquire(game, player, card, { resolveEffect })
+      }
+
+      // Guild Spy: if you acquire The Spice Must Flow this turn, gain +1
+      // influence with each faction you are spying on.
+      if (card.defId === 'the-spice-must-flow' && game.state.turnTracking?.guildSpyTSMF) {
+        const spyMod = require('../systems/spies.js')
+        const boardSpaces = getBoardSpaces()
+        const connectedSpaceIds = spyMod.getSpyConnectedSpaces(game, player)
+        const spiedFactions = new Set()
+        for (const spaceId of connectedSpaceIds) {
+          const space = boardSpaces.find(s => s.id === spaceId)
+          if (space?.faction) {
+            spiedFactions.add(space.faction)
+          }
+        }
+        for (const faction of spiedFactions) {
+          factions.gainInfluence(game, player, faction, 1)
+        }
+        game.state.turnTracking.guildSpyTSMF = false
       }
     }
   }
@@ -653,7 +684,7 @@ function resolveCardAgentAbility(game, player, card) {
   // Find the card object for trash-self (it's now in the played zone)
   for (const effect of effects) {
     if (effect.type === 'trash-self') {
-      deckEngine.trashCard(game, card)
+      deckEngine.trashCard(game, card, player)
     }
     else if (effect.type === 'discard-card') {
       // Discard from hand
@@ -696,14 +727,14 @@ function resolveCardRevealAbility(game, player, card, allRevealedCards) {
   }
 
   // Check for bond pattern: "Faction Bond: effect"
-  const bondMatch = abilityText.match(/^(\w+)\s+[Bb]ond:\s*(.+)$/i)
+  const bondMatch = abilityText.match(/^([\w-]+(?:\s+\w+)?)\s+[Bb]ond:\s*(.+)$/i)
   if (bondMatch) {
-    const bondFaction = bondMatch[1].toLowerCase()
+    const bondFaction = constants.normalizeFactionId(bondMatch[1])
     const bondEffect = bondMatch[2].trim()
 
     // Check if another revealed card has the same faction affiliation
     const hasBond = allRevealedCards.some(c =>
-      c !== card && c.factionAffiliation && c.factionAffiliation.toLowerCase().includes(bondFaction)
+      c !== card && constants.getFactionAffiliations(c).includes(bondFaction)
     )
 
     if (!hasBond) {
@@ -976,7 +1007,7 @@ function resolveEffect(game, player, effect, space, sourceName) {
         if (choice !== 'Pass') {
           const entry = entries.find(e => `${e.card.name} (${e.label})` === choice)
           if (entry) {
-            deckEngine.trashCard(game, entry.card)
+            deckEngine.trashCard(game, entry.card, player)
             return entry.card
           }
         }
@@ -1038,7 +1069,7 @@ function resolveEffect(game, player, effect, space, sourceName) {
         if (trashChoice !== 'Pass') {
           const card = intrigueCards.find(c => c.name === trashChoice)
           if (card) {
-            deckEngine.trashCard(game, card)
+            deckEngine.trashCard(game, card, player)
             deckEngine.drawIntrigueCard(game, player, 1)
           }
         }
@@ -1390,17 +1421,17 @@ function countPerVariable(game, player, per) {
     const choamCount = require('../systems/choam.js')
     return choamCount.getCompletedContractCount(game, player)
   }
-  if (/fremen card in play/i.test(per)) {
-    const played = game.zones.byId(`${player.name}.played`)
-    return played.cardlist().filter(c => c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('fremen')).length
+  const factionRevealedMatch = per.match(/(emperor|fremen|bene[\s-]gesserit|spacing\s+guild|guild)\s+card you revealed/i)
+  if (factionRevealedMatch) {
+    const target = constants.normalizeFactionId(factionRevealedMatch[1])
+    const revealed = game.zones.byId(`${player.name}.revealed`).cardlist()
+    return revealed.filter(c => constants.getFactionAffiliations(c).includes(target)).length
   }
-  if (/bene gesserit card in play/i.test(per)) {
-    const played = game.zones.byId(`${player.name}.played`)
-    return played.cardlist().filter(c => c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('bene gesserit')).length
-  }
-  if (/emperor card in play/i.test(per)) {
-    const played = game.zones.byId(`${player.name}.played`)
-    return played.cardlist().filter(c => c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('emperor')).length
+  const factionInPlayMatch = per.match(/(emperor|fremen|bene[\s-]gesserit|spacing\s+guild|guild)\s+card in play/i)
+  if (factionInPlayMatch) {
+    const target = constants.normalizeFactionId(factionInPlayMatch[1])
+    const played = game.zones.byId(`${player.name}.played`).cardlist()
+    return played.filter(c => constants.getFactionAffiliations(c).includes(target)).length
   }
   if (/garrisoned troop/i.test(per)) {
     return player.troopsInGarrison
@@ -1441,8 +1472,9 @@ function checkCondition(game, player, condition) {
 
     case 'faction-card-in-play': {
       const playedZone = game.zones.byId(`${player.name}.played`)
+      const target = constants.normalizeFactionId(condition.faction)
       return playedZone.cardlist().some(c =>
-        c.factionAffiliation && c.factionAffiliation.toLowerCase().includes(condition.faction)
+        constants.getFactionAffiliations(c).includes(target)
       )
     }
 

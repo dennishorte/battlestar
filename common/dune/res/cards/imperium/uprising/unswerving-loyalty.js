@@ -1,5 +1,7 @@
 'use strict'
 
+const constants = require('../../../constants.js')
+
 module.exports = {
   id: "unswerving-loyalty",
   name: "Unswerving Loyalty",
@@ -37,7 +39,7 @@ module.exports = {
       player.incrementCounter('troopsInGarrison', recruit, { silent: true })
     }
     const hasFremen = allRevealedCards.some(c =>
-      c !== card && c.factionAffiliation && c.factionAffiliation.toLowerCase().includes('fremen')
+      c !== card && constants.getFactionAffiliations(c).includes('fremen')
     )
     if (hasFremen) {
       const choices = ['Pass']

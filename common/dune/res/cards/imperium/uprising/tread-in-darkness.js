@@ -33,4 +33,16 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player, card, { resolveEffect }) {
+    const constants = require('../../../constants.js')
+    const playedZone = game.zones.byId(`${player.name}.played`)
+    const hasOtherBG = playedZone.cardlist().some(c =>
+      c !== card && constants.getFactionAffiliations(c).includes('bene-gesserit')
+    )
+    if (hasOtherBG) {
+      resolveEffect(game, player, { type: 'trash-card' }, null, card.name)
+      resolveEffect(game, player, { type: 'draw', amount: 1 }, null, card.name)
+    }
+  },
 }

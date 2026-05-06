@@ -19,7 +19,7 @@ module.exports = {
   revealPersuasion: 2,
   revealSwords: 0,
   revealAbility: "+2 Solari",
-  factionAffiliation: "emperor",
+  factionAffiliation: ["emperor", "bene-gesserit"],
   vpsAvailable: 0,
   hasTech: false,
   hasShipping: false,
@@ -34,9 +34,9 @@ module.exports = {
   hasSardaukar: false,
 
   agentEffect(game) {
-    // You may acquire a card using Solari instead of Persuasion this round
     if (game.state.turnTracking) {
       game.state.turnTracking.acquireWithSolari = true
+      game.state.turnTracking.acquireToHand = true
     }
   },
 
