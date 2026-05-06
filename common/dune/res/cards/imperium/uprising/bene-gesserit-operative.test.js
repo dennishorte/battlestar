@@ -40,7 +40,7 @@ describe('bene-gesserit-operative', () => {
   // skip: engine bug — `has-spies-on-board` condition checks
   // `getCounter('spiesTotal') - spiesInSupply`, but `spiesTotal` is never
   // initialized, so the bonus never fires regardless of board state.
-  test.skip('reveal with two or more spies on board grants +2 persuasion', () => {
+  test('reveal with two or more spies on board grants +2 persuasion', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: {

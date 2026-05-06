@@ -23,7 +23,7 @@ describe('undercover-asset', () => {
   // runs AFTER placement), so the flag never helps the placement of
   // Undercover Asset itself. Pre-existing ordering bug — flag is only useful
   // if some other mechanic triggers a second placement in the same turn.
-  test.skip('agent ability: ignores influence requirements (Sietch Tabr without 2 fremen)', () => {
+  test('agent ability: ignores influence requirements (Sietch Tabr without 2 fremen)', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { handExact: ['Undercover Asset'], influence: { fremen: 0 } },

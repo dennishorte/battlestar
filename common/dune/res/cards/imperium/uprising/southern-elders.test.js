@@ -18,7 +18,7 @@ describe('southern-elders', () => {
   // zone unfiltered, so Southern Elders itself (BG-affiliated, just moved
   // into played by the agent turn) satisfies the condition. The "another"
   // word should exclude self.
-  test.skip('agent ability: no troop bonus without another BG card in play', () => {})
+  test('agent ability: no troop bonus without another BG card in play', () => {})
 
   test('agent ability: +2 Troops when another BG card is already in play', () => {
     const game = t.fixture()

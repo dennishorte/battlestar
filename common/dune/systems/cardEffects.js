@@ -22,29 +22,53 @@ function parseAgentAbility(text) {
   }
 
   // Normalize: bullet markers become separators (preserve the split between items),
-  // then collapse whitespace, trim, drop trailing period.
+  // then collapse whitespace, trim, drop trailing period. Unicode arrow → is
+  // normalized to ASCII -> so cost-effect splitters all see the same token.
   text = text
+    .replace(/→/g, '->')
     .replace(/\s*\n\s*/g, '\n')
     .replace(/(?:^|\n)·\s*/g, '\n')
     .replace(/·\s*/g, ', ')
     .replace(/\n+/g, ', ')
     .replace(/^,\s*/, '')
+    .replace(/,\s*$/, '')
     .replace(/\s+/g, ' ')
     .trim()
     .replace(/\.\s*$/, '')
+    // Strip stray commas around standalone OR so the OR-splitter can fire on
+    // bullet-list reveal text like "· +2 Spice\nOR\nIf ...".
+    .replace(/,\s*OR\s*,/gi, ' OR ')
 
   // Signet Ring handled specially
   if (/^Signet Ring$/i.test(text)) {
     return null
   }
 
-  // Handle chained "If X: A If Y: B" patterns (no separator between clauses)
-  const chainedIfMatch = text.match(/^(If .+?:\s*.+?)\s+(If .+)$/i)
+  // Handle chained "If X: A If Y: B" patterns (no separator between clauses).
+  // The word "ALSO" anywhere in the second condition means it's gated on
+  // (X AND Y), not Y alone — so a player satisfying Y but not X gets
+  // nothing from the second clause.
+  const chainedIfMatch = text.match(/^If\s+(.+?):\s*(.+?)\s+If\s+(.+?):\s*(.+)$/i)
   if (chainedIfMatch) {
-    const first = parseAgentAbility(chainedIfMatch[1].trim())
-    const second = parseAgentAbility(chainedIfMatch[2].trim())
-    if (first && second) {
-      return [...first, ...second]
+    const firstCond = parseCondition(chainedIfMatch[1].trim())
+    const firstEffect = parseAgentAbility(chainedIfMatch[2].trim().replace(/,\s*$/, ''))
+    const secondCondText = chainedIfMatch[3].trim()
+    const isAlso = /\bALSO\b/.test(secondCondText)
+    const secondCond = parseCondition(secondCondText.replace(/\bALSO\s+/i, ''))
+    const secondEffect = parseAgentAbility(chainedIfMatch[4].trim())
+    if (firstCond && firstEffect && secondCond && secondEffect) {
+      const out = [{ type: 'conditional', condition: firstCond, effects: firstEffect }]
+      if (isAlso) {
+        out.push({
+          type: 'conditional',
+          condition: { type: 'and', conditions: [firstCond, secondCond] },
+          effects: secondEffect,
+        })
+      }
+      else {
+        out.push({ type: 'conditional', condition: secondCond, effects: secondEffect })
+      }
+      return out
     }
   }
 
@@ -278,17 +302,21 @@ function parseAgentAbility(text) {
   // Handle OR choices — uppercase OR only to avoid matching "or" in phrases like "Garrison or Conflict"
   if (/\bOR\b/.test(text) || /\bOr\b/.test(text)) {
     const parts = text.split(/\s+(?:OR|Or)\s+/)
-    const parsed = parts.map(p => parseAgentAbility(p.trim()))
-    if (parsed.some(p => p === null)) {
-      return null
+    // Only enter the OR branch if we actually split into multiple parts —
+    // otherwise we'd recurse on the same text and blow the stack.
+    if (parts.length > 1) {
+      const cleaned = parts.map(p => p.trim().replace(/^,\s*/, '').replace(/,\s*$/, ''))
+      const parsed = cleaned.map(p => parseAgentAbility(p))
+      if (!parsed.some(p => p === null)) {
+        return [{
+          type: 'choice',
+          choices: cleaned.map((p, i) => ({
+            label: p,
+            effects: parsed[i],
+          })),
+        }]
+      }
     }
-    return [{
-      type: 'choice',
-      choices: parts.map((p, i) => ({
-        label: p.trim(),
-        effects: parsed[i],
-      })),
-    }]
   }
 
   // Handle discard-as-cost patterns: "Discard a card -> Effect" / "Discard N cards -> Effect"
@@ -389,7 +417,12 @@ function parseAgentAbility(text) {
     if (!effect) {
       return null
     } // Can't parse one part — bail
-    effects.push(effect)
+    if (Array.isArray(effect)) {
+      effects.push(...effect)
+    }
+    else {
+      effects.push(effect)
+    }
   }
 
   return effects

@@ -47,7 +47,7 @@ describe("priority-contracts", () => {
   // the OR branch contains an "If ..." sub-clause that re-enters the parser
   // without making progress, hitting the call-stack limit. Real bug in
   // systems/cardEffects.js.
-  test.skip('reveal: <4 contracts completed → take +2 Spice branch', () => {
+  test('reveal: <4 contracts completed → take +2 Spice branch', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { handExact: ['Priority Contracts'], contractsCompleted: 0 },
@@ -74,7 +74,7 @@ describe("priority-contracts", () => {
 
   // skip: same parser stack overflow as the +2 Spice branch — see comment
   // above. parseAgentAbility can't handle an OR containing a conditional.
-  test.skip('reveal: 4+ contracts completed → trash for +1 VP branch', () => {
+  test('reveal: 4+ contracts completed → trash for +1 VP branch', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { handExact: ['Priority Contracts'], contractsCompleted: 4 },

@@ -17,7 +17,7 @@ describe("overthrow", () => {
   // is set too late to upgrade the current placement. Documented in
   // phases/playerTurns.js around the gainInfluence call vs resolveCardAgentAbility
   // ordering.
-  test.skip('agent ability: gain 2 influence instead of 1 on faction space', () => {
+  test('agent ability: gain 2 influence instead of 1 on faction space', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { handExact: ['Overthrow'] },

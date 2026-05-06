@@ -1,6 +1,7 @@
 'use strict'
 
 const deckEngine = require('../../../../systems/deckEngine.js')
+const factions = require('../../../../systems/factions.js')
 const constants = require('../../../constants.js')
 module.exports = {
   id: "treacherous-maneuver",
@@ -54,8 +55,12 @@ module.exports = {
         if (empCard) {
           deckEngine.trashCard(game, card)
           deckEngine.trashCard(game, empCard)
-          if (game.state.turnTracking) {
-            game.state.turnTracking.extraInfluence = true
+          // The space's +1 faction influence has already been granted by the
+          // engine; this card converts the standard 1 to 2 by adding 1 more.
+          // The faction is recorded on turnTracking via the space's icon.
+          const faction = game.state.turnTracking?.spaceIcon
+          if (faction) {
+            factions.gainInfluence(game, player, faction, 1)
           }
         }
       }

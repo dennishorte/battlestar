@@ -18,7 +18,7 @@ describe('captured-mentat', () => {
   // card, Draw 1 card" fails to parse and the card's agent ability is a
   // no-op. Affects all uprising cards using the same arrow form (this card
   // has no custom `agentEffect`).
-  test.skip('agent ability: discard a card to gain +1 intrigue and draw 1', () => {
+  test('agent ability: discard a card to gain +1 intrigue and draw 1', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { handExact: ['Captured Mentat', 'Dagger'] },

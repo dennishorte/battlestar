@@ -36,7 +36,7 @@ describe('spy-network', () => {
   // parseAgentAbility (only "->", "-->", and ":" are recognized), so the
   // "Recall a Spy → Get an Intrigue card" cost-effect never parses and the
   // condition is logged as memo only. Pre-existing parser limitation.
-  test.skip('reveal with 2 spies on board: recall a spy then gain an Intrigue card', () => {
+  test('reveal with 2 spies on board: recall a spy then gain an Intrigue card', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { handExact: ['Spy Network'], spiesInSupply: 1 },

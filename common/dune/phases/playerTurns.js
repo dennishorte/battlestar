@@ -46,6 +46,13 @@ function playerTurnsPhase(game) {
 
       // Initialize per-turn tracking state up front so Plot Intrigue at
       // start of turn reads sensible defaults (recalledSpy: false, etc.).
+      // A few flags must span Agent Turn → Reveal Turn (e.g. Price is Not
+      // Object sets them on Agent Turn but they're consumed in
+      // acquireCardsPhase during the same player's Reveal Turn, possibly
+      // several other-player turns later). Pull those off persistent
+      // per-player state so they survive turnTracking resets.
+      game.state.persistentFlags = game.state.persistentFlags || {}
+      const persisted = game.state.persistentFlags[player.name] || {}
       game.state.turnTracking = {
         recalledSpy: false,
         completedContract: false,
@@ -54,6 +61,9 @@ function playerTurnsPhase(game) {
         sentToFactionSpace: false,
         spaceIcon: null,
         garrisonAtTurnStart: player.troopsInGarrison,
+        acquireWithSolari: !!persisted.acquireWithSolari,
+        acquireToHand: !!persisted.acquireToHand,
+        acquireToTopOfDeck: !!persisted.acquireToTopOfDeck,
       }
 
       // Plot Intrigue may only be played at the start or end of the player's
@@ -109,6 +119,13 @@ function agentTurn(game, player, card) {
 
   // Leader start-of-turn hook
   leaderAbilities.onAgentTurnStart(game, player)
+
+  // Pre-placement card effect — flags that must apply to the card's own
+  // placement (e.g. Undercover Asset's "ignore Influence requirements")
+  // need to be set before canSendAgentTo runs.
+  if (typeof card.definition?.prePlacementEffect === 'function') {
+    card.definition.prePlacementEffect(game, player, card, { resolveEffect })
+  }
 
   // Step 2: Choose a board space
   const boardSpaces = getBoardSpaces()
@@ -418,10 +435,17 @@ function acquireCardsPhase(game, player) {
         deckEngine.acquireCard(game, player, card)
       }
 
-      // Price is Not Object: solari-acquire applies to one acquisition only
+      // Price is Not Object: solari-acquire applies to one acquisition only.
+      // Clear both turnTracking AND persistent storage so the flag doesn't
+      // leak into the next round.
       if (game.state.turnTracking?.acquireWithSolari) {
         game.state.turnTracking.acquireWithSolari = false
         game.state.turnTracking.acquireToHand = false
+        const flags = game.state.persistentFlags?.[player.name]
+        if (flags) {
+          flags.acquireWithSolari = false
+          flags.acquireToHand = false
+        }
       }
 
       // Troop on acquire (Call to Arms)
@@ -706,7 +730,7 @@ function resolveCardAgentAbility(game, player, card) {
       }
     }
     else {
-      resolveEffect(game, player, effect, null, card?.name)
+      resolveEffect(game, player, effect, null, card?.name, card)
     }
   }
 }
@@ -762,7 +786,7 @@ function resolveCardRevealAbility(game, player, card, allRevealedCards) {
     const effects = parseAgentAbility(bondEffect)
     if (effects) {
       for (const effect of effects) {
-        resolveEffect(game, player, effect, null, `${card.name} (Bond)`)
+        resolveEffect(game, player, effect, null, `${card.name} (Bond)`, card)
       }
     }
     return
@@ -781,7 +805,7 @@ function resolveCardRevealAbility(game, player, card, allRevealedCards) {
   }
 
   for (const effect of effects) {
-    resolveEffect(game, player, effect, null, card.name)
+    resolveEffect(game, player, effect, null, card.name, card)
   }
 }
 
@@ -819,7 +843,7 @@ function resolveBoardSpaceEffects(game, player, space) {
 /**
  * Resolve a single effect. Used by board spaces, choice sub-effects, and combat rewards.
  */
-function resolveEffect(game, player, effect, space, sourceName) {
+function resolveEffect(game, player, effect, space, sourceName, card) {
   switch (effect.type) {
     case 'gain':
       player.incrementCounter(effect.resource, effect.amount, { silent: true })
@@ -939,7 +963,7 @@ function resolveEffect(game, player, effect, space, sourceName) {
 
       // Resolve sub-effects
       for (const subEffect of chosen.effects) {
-        resolveEffect(game, player, subEffect, space, sourceName)
+        resolveEffect(game, player, subEffect, space, sourceName, card)
       }
       break
     }
@@ -1191,16 +1215,33 @@ function resolveEffect(game, player, effect, space, sourceName) {
       break
     }
 
-    case 'extra-influence':
-      if (game.state.turnTracking) {
-        game.state.turnTracking.extraInfluence = true
+    case 'trash-self':
+      if (card) {
+        deckEngine.trashCard(game, card, player)
       }
       break
 
+    case 'extra-influence': {
+      // The engine grants +1 faction influence at agent placement before
+      // card abilities resolve, so by the time we get here the standard +1
+      // is already on the board. Directly grant 1 more with the faction
+      // matching the space the player just sent to.
+      const faction = game.state.turnTracking?.spaceIcon
+      if (faction && constants.FACTIONS.includes(faction)) {
+        factions.gainInfluence(game, player, faction, 1)
+      }
+      else if (game.state.turnTracking) {
+        // Fallback for non-faction spaces or future callers: keep the flag
+        // so other code paths that read it still work.
+        game.state.turnTracking.extraInfluence = true
+      }
+      break
+    }
+
     case 'conditional': {
-      if (checkCondition(game, player, effect.condition)) {
+      if (checkCondition(game, player, effect.condition, card)) {
         for (const subEffect of effect.effects) {
-          resolveEffect(game, player, subEffect, space, sourceName)
+          resolveEffect(game, player, subEffect, space, sourceName, card)
         }
       }
       break
@@ -1449,8 +1490,11 @@ function countPerVariable(game, player, per) {
 /**
  * Check if a conditional effect's condition is met.
  */
-function checkCondition(game, player, condition) {
+function checkCondition(game, player, condition, card) {
   switch (condition.type) {
+    case 'and':
+      return condition.conditions.every(c => checkCondition(game, player, c, card))
+
     case 'influence':
       return player.getInfluence(condition.faction) >= condition.amount
 
@@ -1472,9 +1516,11 @@ function checkCondition(game, player, condition) {
 
     case 'faction-card-in-play': {
       const playedZone = game.zones.byId(`${player.name}.played`)
+      const revealedZone = game.zones.byId(`${player.name}.revealed`)
       const target = constants.normalizeFactionId(condition.faction)
-      return playedZone.cardlist().some(c =>
-        constants.getFactionAffiliations(c).includes(target)
+      const inPlay = [...playedZone.cardlist(), ...revealedZone.cardlist()]
+      return inPlay.some(c =>
+        c !== card && constants.getFactionAffiliations(c).includes(target)
       )
     }
 
@@ -1527,8 +1573,15 @@ function checkCondition(game, player, condition) {
       return player.troopsInGarrison >= condition.amount
 
     case 'has-spies-on-board': {
-      const totalSpies = player.getCounter('spiesTotal') - player.spiesInSupply
-      return totalSpies >= condition.amount
+      let count = 0
+      for (const occupants of Object.values(game.state.spyPosts || {})) {
+        for (const name of (occupants || [])) {
+          if (name === player.name) {
+            count++
+          }
+        }
+      }
+      return count >= condition.amount
     }
 
     case 'agent-on-space': {

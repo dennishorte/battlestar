@@ -38,11 +38,17 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
 
-  agentEffect(game) {
-    // Ignore Influence requirements on board spaces this turn
+  // The flag must be in place before canSendAgentTo evaluates this card's
+  // own placement, so set it pre-placement rather than in agentEffect.
+  prePlacementEffect(game) {
     if (game.state.turnTracking) {
       game.state.turnTracking.ignoreInfluenceRequirements = true
     }
+  },
+
+  agentEffect() {
+    // Effect is applied by prePlacementEffect; this is a no-op kept so that
+    // resolveCardAgentAbility doesn't fall through to the parser.
   },
 
   revealEffect(game, player) {

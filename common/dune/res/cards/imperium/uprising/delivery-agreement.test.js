@@ -54,7 +54,7 @@ describe('delivery-agreement', () => {
   // skip: parseAgentAbility hits infinite recursion (RangeError) on the reveal
   // text "+1 Spice OR (If you have completed 4+ Contracts: Trash this card →
   // +1 VP)" — bug in the ability parser, not the card.
-  test.skip('reveal: card is revealed and logged (complex OR with conditional VP branch)', () => {
+  test('reveal: card is revealed and logged (complex OR with conditional VP branch)', () => {
     // The reveal text "+1 Spice OR (4+ Contracts: Trash → +1 VP)" is complex
     // and currently parses as a memo-only ability — verify reveal completes
     // without crashing and the card lands in discard after cleanup.

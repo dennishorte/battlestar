@@ -48,7 +48,7 @@ describe('covert-operation', () => {
   // skip: parser bug — `+N Spies` (N > 1) returns a nested effect array
   // (`[[{spy},{spy}]]`) which the engine's effect dispatcher does not
   // unwrap, so the reveal places 0 spies.
-  test.skip('reveal: +2 Spies places two spies', () => {
+  test('reveal: +2 Spies places two spies', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { handExact: ['Covert Operation'], spiesInSupply: 3 },

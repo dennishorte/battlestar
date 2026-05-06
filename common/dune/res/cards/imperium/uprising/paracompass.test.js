@@ -66,7 +66,7 @@ describe("paracompass", () => {
   // skip: parser treats the two `If ...:` clauses as independent rather than
   // chained ("ALSO" is dropped). Swordmaster alone yields +1 Persuasion when
   // it should yield +0 because the second clause is conditioned on the first.
-  test.skip('reveal: Swordmaster only (no High Council) → +0 Persuasion', () => {
+  test('reveal: Swordmaster only (no High Council) → +0 Persuasion', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { handExact: ['Paracompass'], hasSwordmaster: true },

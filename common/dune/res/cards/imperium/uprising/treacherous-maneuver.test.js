@@ -88,7 +88,7 @@ describe('treacherous-maneuver', () => {
   // skip: pre-existing ordering bug at phases/playerTurns.js:206 — influence is
   // granted (amount = extraInfluence ? 2 : 1) BEFORE the card's agentEffect
   // runs, so the +2 branch never fires. Test against the intended behavior.
-  test.skip('agent ability: trash grants +2 Emperor influence (instead of 1)', () => {
+  test('agent ability: trash grants +2 Emperor influence (instead of 1)', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: {

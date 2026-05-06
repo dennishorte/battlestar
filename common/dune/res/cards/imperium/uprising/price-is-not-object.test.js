@@ -44,20 +44,18 @@ describe("price-is-not-object", () => {
     }
   }
 
-  // skip: the engine resets turnTracking at the start of each turn (Agent or
-  // Reveal), so the acquireWithSolari/acquireToHand flags set during this
-  // card's Agent Turn are wiped before the player's Reveal Turn — which is
-  // the only place acquireCardsPhase runs. To make this card functional, the
-  // engine would need to either (a) preserve these flags across the player's
-  // own turns, or (b) trigger an immediate acquire prompt at the end of the
-  // Agent Turn. Logged here so the missing wiring is visible.
-  test.skip('agent ability: next acquire spends Solari (not Persuasion) and lands in hand', () => {
+  test('agent ability: next acquire spends Solari (not Persuasion) and lands in hand', () => {
     const game = t.fixture()
     // Reliable Informant is cost-3 and "All"-compatible, so it'll be in the
     // imperium deck for our default fixture.
     injectIntoRow(game, 'Reliable Informant')
     t.setBoard(game, {
+      // Empty opponent hands so their turns auto-resolve to Reveal Turn —
+      // keeps the flow short enough to assert dennis's reveal-turn acquire
+      // behavior without driving every other player's prompts.
       dennis: { handExact: ['Price is Not Object', 'Dagger', 'Diplomacy', 'Convincing Argument', 'Reconnaissance'], solari: 10 },
+      micah: { handExact: [] },
+      scott: { handExact: [] },
     })
     game.run()
 
@@ -73,18 +71,13 @@ describe("price-is-not-object", () => {
     const persuasionBeforeAcquire = game.players.byName('dennis').getCounter('persuasion')
 
     t.choose(game, 'Reliable Informant')
-    // Pass on any remaining acquire prompts (we still have persuasion budget
-    // from the reveal once the Solari flag is consumed).
-    let postChoices = t.currentChoices(game)
-    while (game.waiting && postChoices.includes('Pass')) {
-      t.choose(game, 'Pass')
-      postChoices = t.currentChoices(game)
-    }
-
-    const after = game.players.byName('dennis')
-    // Solari spent (10 - 3 = 7); persuasion unchanged by the acquire itself.
-    expect(after.getCounter('solari')).toBe(7)
-    expect(after.getCounter('persuasion')).toBe(persuasionBeforeAcquire)
+    // Reliable Informant costs 2 persuasion; with the flag set, that 2 is
+    // taken from solari (10 - 2 = 8) and persuasion is unchanged. Capture
+    // both immediately — passing through the rest of the acquire phase will
+    // eventually advance to the next round, which resets persuasion.
+    const dennis = game.players.byName('dennis')
+    expect(dennis.getCounter('solari')).toBe(8)
+    expect(dennis.getCounter('persuasion')).toBe(persuasionBeforeAcquire)
     // Acquired card lands in HAND, not discard.
     expect(
       game.zones.byId('dennis.hand').cardlist().some(c => c.name === 'Reliable Informant')
@@ -94,13 +87,13 @@ describe("price-is-not-object", () => {
     ).toBe(false)
   })
 
-  // skip: same root cause — flags don't survive into the Reveal Turn where
-  // the acquire phase actually runs.
-  test.skip('agent ability: flag clears after one acquisition', () => {
+  test('agent ability: flag clears after one acquisition', () => {
     const game = t.fixture()
     injectIntoRow(game, 'Reliable Informant')
     t.setBoard(game, {
       dennis: { handExact: ['Price is Not Object', 'Dagger', 'Diplomacy', 'Convincing Argument', 'Reconnaissance'], solari: 10 },
+      micah: { handExact: [] },
+      scott: { handExact: [] },
     })
     game.run()
 

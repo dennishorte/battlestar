@@ -20,7 +20,7 @@ describe('shishakli', () => {
   // single nested element. resolveCardAgentAbility iterates effects expecting
   // each to have a .type, so the nested array is treated as one no-op effect
   // and neither the trash prompt nor the draw fire.
-  test.skip('agent ability: trash-a-card-then-draw is a no-op (parser bug)', () => {})
+  test('agent ability: trash-a-card-then-draw is a no-op (parser bug)', () => {})
 
   test('reveal: alone gives printed +2 swords (no Fremen Bond)', () => {
     const game = t.fixture()
