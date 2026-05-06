@@ -16,7 +16,7 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "Pay 4 Spice:\n· +1 Victory Point",
+  plotEffect: "Pay 4 Spice: +1 Victory Point",
   combatEffect: null,
   endgameEffect: null,
 }
