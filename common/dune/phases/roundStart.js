@@ -1,4 +1,5 @@
 const deckEngine = require('../systems/deckEngine.js')
+const deploy = require('../systems/deploy.js')
 const constants = require('../res/constants.js')
 
 /**
@@ -18,32 +19,19 @@ function roundStartPhase(game) {
   for (const old of conflictActive.cardlist()) {
     old.moveTo(conflictDiscard)
   }
+  let revealedCard = null
   const conflictCards = conflictDeck.cardlist()
   if (conflictCards.length > 0) {
     const card = conflictCards[0]
     card.moveTo(conflictActive)
     game.state.conflict.cardId = card.id
     game.state.conflict.currentCard = card.definition || card
+    revealedCard = card
     game.log.add({
       template: 'Conflict card revealed: {card}',
       args: { card },
       event: 'step',
     })
-
-    // Defensive bonus: controller of the conflict's location deploys 1 troop
-    const location = card.definition?.location
-    if (location && game.state.controlMarkers[location]) {
-      const controllerName = game.state.controlMarkers[location]
-      const controller = game.players.byName(controllerName)
-      if (controller && controller.troopsInSupply > 0) {
-        controller.decrementCounter('troopsInSupply', 1, { silent: true })
-        controller.incrementCounter('troopsInGarrison', 1, { silent: true })
-        game.log.add({
-          template: '{player} deploys 1 troop (defensive bonus for {location})',
-          args: { player: controller, location },
-        })
-      }
-    }
   }
 
   // Each player draws 5 cards
@@ -60,6 +48,30 @@ function roundStartPhase(game) {
     game.state.conflict.deployedTroops[player.name] = 0
     game.state.conflict.deployedSandworms[player.name] = 0
     player.setCounter('strength', 0, { silent: true })
+  }
+
+  // Defensive bonus: controller of the conflict's location may deploy 1 troop
+  // from supply directly to the Conflict (rules.txt:314). Resolved after combat
+  // state reset so the deployed troop persists.
+  if (revealedCard) {
+    const location = revealedCard.definition?.location
+    if (location && game.state.controlMarkers[location]) {
+      const controllerName = game.state.controlMarkers[location]
+      const controller = game.players.byName(controllerName)
+      if (controller && controller.troopsInSupply > 0) {
+        const [choice] = game.actions.choose(controller, ['Deploy', 'Decline'], {
+          title: `Defensive bonus (${location}): deploy 1 troop from supply to Conflict?`,
+        })
+        if (choice === 'Deploy') {
+          controller.decrementCounter('troopsInSupply', 1, { silent: true })
+          deploy.deployToConflict(game, controller, 1)
+          game.log.add({
+            template: '{player} deploys 1 troop to Conflict (defensive bonus for {location})',
+            args: { player: controller, location },
+          })
+        }
+      }
+    }
   }
 }
 

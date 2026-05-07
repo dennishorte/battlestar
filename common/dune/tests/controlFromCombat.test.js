@@ -64,12 +64,15 @@ describe('Control Marker from Combat', () => {
       return
     }
 
-    // Defensive bonus: dennis controls imperial-basin, conflict is at imperial-basin
-    // roundStartPhase should have deployed 1 troop from supply to garrison
+    // Defensive bonus: dennis controls imperial-basin, conflict is at imperial-basin.
+    // roundStartPhase prompts the controller; accepting deploys 1 troop from
+    // supply directly to the Conflict (rules.txt:314).
+    expect(t.currentChoices(game)).toEqual(expect.arrayContaining(['Deploy', 'Decline']))
+    t.choose(game, 'Deploy')
+
     const player = game.players.byName('dennis')
-    // Starting: supply=5, garrison=3
-    // Defensive bonus: supply=4, garrison=4
     expect(player.troopsInSupply).toBe(4)
-    expect(player.troopsInGarrison).toBe(4)
+    expect(player.troopsInGarrison).toBe(3)
+    expect(game.state.conflict.deployedTroops.dennis).toBe(1)
   })
 })
