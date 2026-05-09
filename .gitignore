@@ -9,6 +9,7 @@ ik*
 .DS_Store
 .env
 .env.*
+!.env.example
 
 common_dist
 .claude

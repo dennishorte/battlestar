@@ -4,6 +4,17 @@
 
 Multiplayer Magic: The Gathering implementation with deck selection, stack-based spell resolution, and card drafting (Cube Draft / Set Draft).
 
+## Refreshing card and set data
+
+Card and set data live in MongoDB (collections `magic.scryfall` and `magic.sets`). Refreshing both is a heavy job (downloads ~600MB of bulk data from Scryfall, processes ~100k cards) and is not run from the server — it's run from a dev machine that tunnels into prod's Mongo.
+
+```bash
+# from the api/ workspace
+npm run magic:update
+```
+
+The wrapper opens an SSH tunnel to the host `vue` (configured in `~/.ssh/config`), points `MONGODB_URI` through it, and runs `api/scripts/update_scryfall.js`. Override the SSH host, ports, or full Mongo URI via `api/.env` (see `api/.env.example`). The tunnel is torn down on exit.
+
 ## Key Files
 
 ```
@@ -15,8 +26,6 @@ common/magic/
 ├── MagicPlayerManager.js  Player management
 ├── MagicZone.js           Zone with morph/secret visibility
 ├── Zone.js                Zone extension
-├── data_sets.js           Card database (703KB)
-├── data.js                Data utilities
 ├── draft/                 Draft game variant
 │   ├── cube_draft.js      Cube draft implementation
 │   ├── CubeDraftPlayer.js Draft player state

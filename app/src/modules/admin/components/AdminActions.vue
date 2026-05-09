@@ -6,12 +6,7 @@
     <div v-if="status == 'waiting'" class="alert alert-warning">{{ message }}</div>
     <div v-if="status == 'error'" class="alert alert-danger">{{ message }}</div>
 
-    <pre v-if="scryfallLog.length" class="scryfall-log">{{ scryfallLog.join('\n') }}</pre>
-
     <div class="buttons">
-      <BButton variant="secondary" :disabled="scryfallRunning" @click="updateScryfall">
-        {{ scryfallRunning ? 'Update Running...' : 'Update Scryfall Data' }}
-      </BButton>
       <BButton variant="secondary" @click="gameLoaderVis = true">Load Game</BButton>
       <BButton variant="warning" @click="clearAllImpersonations">Clear All Impersonations</BButton>
     </div>
@@ -54,19 +49,9 @@ export default {
       status: 'idle',
       message: '',
 
-      scryfallRunning: false,
-      scryfallLog: [],
-      scryfallPollHandle: null,
-
       gameLoaderVis: false,
       gameLoaderText: '',
       gameLoaderPlayerMap: Array(10).fill(''),
-    }
-  },
-
-  beforeUnmount() {
-    if (this.scryfallPollHandle) {
-      clearTimeout(this.scryfallPollHandle)
     }
   },
 
@@ -114,58 +99,6 @@ export default {
   },
 
   methods: {
-    async updateScryfall() {
-      this.status = 'waiting'
-      this.message = 'Starting Scryfall update (sets + cards). This can take several minutes.'
-      this.scryfallLog = []
-      this.scryfallRunning = true
-
-      try {
-        await this.$post('/api/magic/scryfall/update', {})
-      }
-      catch (e) {
-        this.scryfallRunning = false
-        this.status = 'error'
-        this.message = e.response?.data?.message || 'Failed to start update. Check console for details.'
-        throw e
-      }
-
-      this.pollScryfallStatus()
-    },
-
-    async pollScryfallStatus() {
-      try {
-        const s = await this.$post('/api/magic/scryfall/update/status', {})
-        this.scryfallLog = s.log || []
-
-        if (s.running) {
-          this.message = `Update in progress — phase: ${s.phase}`
-          this.scryfallPollHandle = setTimeout(() => this.pollScryfallStatus(), 2000)
-        }
-        else {
-          this.scryfallRunning = false
-          if (s.error) {
-            this.status = 'error'
-            this.message = `Update failed: ${s.error}`
-          }
-          else if (s.result) {
-            this.status = 'success'
-            this.message = `Update complete: ${s.result.sets} sets, ${s.result.cards} cards (${s.result.version})`
-          }
-          else {
-            this.status = 'idle'
-            this.message = ''
-          }
-        }
-      }
-      catch (e) {
-        this.scryfallRunning = false
-        this.status = 'error'
-        this.message = 'Lost connection to update status endpoint. Check console.'
-        throw e
-      }
-    },
-
     async loadGame() {
       // Ensure players are selected.
 
@@ -266,17 +199,5 @@ export default {
   display: flex;
   flex-direction: row;
   gap: .5em;
-}
-
-.scryfall-log {
-  background: #f4f4f4;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: .5em;
-  max-height: 300px;
-  overflow-y: auto;
-  font-size: .8em;
-  white-space: pre-wrap;
-  word-break: break-word;
 }
 </style>
