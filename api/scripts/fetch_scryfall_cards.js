@@ -189,8 +189,10 @@ function cleanScryfallCards(cards) {
   }
 }
 
-function prefilterVersions(cards) {
-  // Collect names of cards that have a normal (non-full-art, non-textless) version
+// Names of cards that have a "normal" (non-full-art, non-textless) printing.
+// In the streaming bulk update we compute this once across the whole file so
+// that chunked processCards calls produce the same result as a single batch.
+function buildHasNormalVersionSet(cards) {
   const hasNormalVersion = new Set()
   for (const card of cards) {
     if (card.lang !== 'en') {
@@ -203,6 +205,13 @@ function prefilterVersions(cards) {
       continue
     }
     hasNormalVersion.add(card.name)
+  }
+  return hasNormalVersion
+}
+
+function prefilterVersions(cards, hasNormalVersion) {
+  if (!hasNormalVersion) {
+    hasNormalVersion = buildHasNormalVersionSet(cards)
   }
 
   const filteredCards = []
@@ -314,10 +323,12 @@ function processSingleCard(card) {
   }
 }
 
-// Function to process an array of cards
-function processCards(cards) {
+// Function to process an array of cards.
+// Pass `hasNormalVersion` (built via buildHasNormalVersionSet over the full
+// corpus) to chunk-process correctly; otherwise it's recomputed from `cards`.
+function processCards(cards, hasNormalVersion) {
   // Pre-filter
-  const prefilteredCards = prefilterVersions(cards)
+  const prefilteredCards = prefilterVersions(cards, hasNormalVersion)
 
   // Clean
   cleanScryfallCards(prefilteredCards)
@@ -467,6 +478,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 export {
   processSingleCard,
   processCards,
+  buildHasNormalVersionSet,
   fetchFromScryfallAndClean,
   fetchScryfallDefaultDataUri,
   fetchScryfallDefaultCards,
