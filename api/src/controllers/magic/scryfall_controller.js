@@ -1,24 +1,27 @@
 import db from '../../models/db.js'
+import * as job from '../../services/scryfall_update_job.js'
 
 /**
- * Update Scryfall data
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
+ * Kick off a background Scryfall update (sets + cards). Returns immediately.
+ * Use the status endpoint to poll progress.
  */
 export const update = async (req, res) => {
-  try {
-    const result = await db.magic.scryfall.update()
-    res.json({
-      status: 'success',
-      message: 'Scryfall data updated',
-      ...result,
-    })
-  }
-  catch (error) {
-    console.error('Error updating Scryfall data:', error)
-    res.status(500).json({
+  const started = job.start(progress => db.magic.scryfall.runFullUpdate(progress))
+
+  if (!started) {
+    return res.status(409).json({
       status: 'error',
-      message: error.message
+      message: 'Update already running',
+      ...job.getStatus(),
     })
   }
+
+  res.json({ status: 'started', ...job.getStatus() })
+}
+
+/**
+ * Return current job status: running flag, phase, log, error, result.
+ */
+export const updateStatus = async (req, res) => {
+  res.json({ status: 'success', ...job.getStatus() })
 }

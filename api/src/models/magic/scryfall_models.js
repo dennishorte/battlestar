@@ -1,34 +1,36 @@
-import fs from 'fs'
+import {
+  fetchScryfallDefaultDataUri,
+  fetchScryfallDefaultCards,
+  processCards,
+} from '../../../scripts/fetch_scryfall_cards.js'
+
 import { client as databaseClient } from '../../utils/mongo.js'
+import Sets from './sets_models.js'
+
 const database = databaseClient.db('magic')
 const scryfallCollection = database.collection('scryfall')
 const versionCollection = database.collection('versions')
 
 
-const Scryfall = {}  // This will be the exported module
+const Scryfall = {}
 
 async function insertCardsIntoDatabase(cards, version) {
-  // Ensure all cards have a properly formatted id as _id
   for (const card of cards) {
-    // Validate that _id exists and is a string
     if (!card._id || typeof card._id !== 'string') {
       console.log(card)
       throw new Error('Card missing _id or _id is not a string')
     }
 
-    // Convert to lowercase and validate format
     const md5Pattern = /^scryfall-md5-[0-9a-f]{32}$/
     if (!md5Pattern.test(card._id)) {
       throw new Error(`Invalid MD5 format for card ${card.name}: ${card._id}`)
     }
   }
 
-  await scryfallCollection.deleteMany({})  // Remove old data
+  await scryfallCollection.deleteMany({})
   await scryfallCollection.insertMany(cards, { ordered: true })
 
-  const versionRecord = await versionCollection.findOne({
-    name: 'scryfall',
-  })
+  const versionRecord = await versionCollection.findOne({ name: 'scryfall' })
 
   if (versionRecord) {
     await versionCollection.updateOne(
@@ -42,27 +44,45 @@ async function insertCardsIntoDatabase(cards, version) {
 }
 
 Scryfall.fetchAll = async function() {
-  const cursor = await scryfallCollection.find({})
+  const cursor = scryfallCollection.find({})
   return await cursor.toArray()
 }
 
-Scryfall.update = async function() {
-  const scryfallFolder = new URL('../../../scripts/card_data', import.meta.url).pathname
-  const files = fs
-    .readdirSync(scryfallFolder)
-    .filter(filename => filename.startsWith('default-cards-'))
-    .sort()
-  const latest = files[files.length - 1]
+/**
+ * Run the full update: refresh sets, then fetch + process + insert cards.
+ * Designed to be called from the background job runner.
+ */
+Scryfall.runFullUpdate = async function(progress) {
+  progress.setPhase('sets')
+  progress.log('Fetching set list from Scryfall...')
+  const setsResult = await Sets.update()
+  progress.log(`Updated ${setsResult.count} sets`)
 
-  console.log('loading card data from ' + latest)
+  progress.setPhase('locate-bulk')
+  progress.log('Looking up bulk card download URI...')
+  const downloadUri = await fetchScryfallDefaultDataUri()
+  const version = downloadUri.split('/').slice(-1)[0]
+  progress.log(`Bulk file: ${version}`)
 
-  const data = fs.readFileSync(scryfallFolder + '/' + latest).toString()
-  const cards = JSON.parse(data)
-  await insertCardsIntoDatabase(cards, latest)
+  progress.setPhase('download')
+  progress.log('Downloading bulk card data (this is the slow step, several minutes)...')
+  const rawCards = await fetchScryfallDefaultCards(downloadUri)
+  progress.log(`Downloaded ${rawCards.length} raw card entries`)
+
+  progress.setPhase('process')
+  progress.log('Processing cards...')
+  const formatted = processCards(rawCards)
+  progress.log(`${formatted.length} cards after processing`)
+
+  progress.setPhase('insert')
+  progress.log('Inserting cards into database...')
+  await insertCardsIntoDatabase(formatted, version)
+  progress.log('Database insert complete')
 
   return {
-    count: Object.keys(cards).length,
-    filename: latest,
+    sets: setsResult.count,
+    cards: formatted.length,
+    version,
   }
 }
 

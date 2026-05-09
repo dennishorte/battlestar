@@ -4,9 +4,16 @@ import * as scryfallController from '../../../controllers/magic/scryfall_control
 
 /**
  * @route POST /api/magic/scryfall/update
- * @desc Update Scryfall data
+ * @desc Kick off background Scryfall update (sets + cards)
  * @access Private
  */
 router.post('/update', scryfallController.update)
+
+/**
+ * @route POST /api/magic/scryfall/update/status
+ * @desc Poll current update job progress
+ * @access Private
+ */
+router.post('/update/status', scryfallController.updateStatus)
 
 export default router

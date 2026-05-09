@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-// Mock MongoDB client
 vi.mock('../../../../src/utils/mongo.js', () => {
   return {
     client: {
@@ -17,30 +16,33 @@ vi.mock('../../../../src/utils/mongo.js', () => {
   }
 })
 
-// Mock DB
 vi.mock('../../../../src/models/db.js', () => {
   return {
     default: {
       magic: {
         scryfall: {
-          update: vi.fn()
+          runFullUpdate: vi.fn()
         }
       }
     }
   }
 })
 
+vi.mock('../../../../src/services/scryfall_update_job.js', () => {
+  return {
+    start: vi.fn(),
+    getStatus: vi.fn(),
+  }
+})
+
 import * as scryfallController from '../../../../src/controllers/magic/scryfall_controller.js'
-import db from '../../../../src/models/db.js'
+import * as job from '../../../../src/services/scryfall_update_job.js'
 
 describe('Scryfall Controller', () => {
   let req, res
 
   beforeEach(() => {
-    req = {
-      body: {},
-      query: {}
-    }
+    req = { body: {}, query: {} }
     res = {
       json: vi.fn(),
       status: vi.fn().mockReturnThis()
@@ -49,48 +51,47 @@ describe('Scryfall Controller', () => {
   })
 
   describe('update', () => {
-    it('should update Scryfall data and return success response', async () => {
-      // Setup
-      const mockUpdateResult = {
-        cardsAdded: 100,
-        cardsUpdated: 50
-      }
+    it('returns started=true when job kicks off', async () => {
+      job.start.mockReturnValueOnce(true)
+      job.getStatus.mockReturnValue({ running: true, phase: 'starting', log: [] })
 
-      db.magic.scryfall.update.mockResolvedValueOnce(mockUpdateResult)
-
-      // Execute
       await scryfallController.update(req, res)
 
-      // Verify
-      expect(db.magic.scryfall.update).toHaveBeenCalled()
-      expect(res.json).toHaveBeenCalledWith({
-        status: 'success',
-        message: 'Scryfall data updated',
-        ...mockUpdateResult
-      })
+      expect(job.start).toHaveBeenCalled()
+      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
+        status: 'started',
+        running: true,
+      }))
     })
 
-    it('should handle errors during update', async () => {
-      // Setup
-      const errorMessage = 'Failed to update Scryfall data'
+    it('returns 409 when a job is already running', async () => {
+      job.start.mockReturnValueOnce(false)
+      job.getStatus.mockReturnValue({ running: true, phase: 'download', log: ['x'] })
 
-      // Mock console.error to prevent log output during test
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-
-      db.magic.scryfall.update.mockRejectedValueOnce(new Error(errorMessage))
-
-      // Execute
       await scryfallController.update(req, res)
 
-      // Verify
-      expect(db.magic.scryfall.update).toHaveBeenCalled()
-      expect(res.status).toHaveBeenCalledWith(500)
-      expect(res.json).toHaveBeenCalledWith({
+      expect(res.status).toHaveBeenCalledWith(409)
+      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
         status: 'error',
-        message: errorMessage
-      })
+        message: 'Update already running',
+      }))
+    })
+  })
 
-      consoleErrorSpy.mockRestore()
+  describe('updateStatus', () => {
+    it('returns the current job status', async () => {
+      const status = {
+        running: false,
+        phase: 'done',
+        log: ['a', 'b'],
+        error: null,
+        result: { sets: 800, cards: 30000, version: 'default-cards.json' },
+      }
+      job.getStatus.mockReturnValueOnce(status)
+
+      await scryfallController.updateStatus(req, res)
+
+      expect(res.json).toHaveBeenCalledWith({ status: 'success', ...status })
     })
   })
 })
