@@ -13,7 +13,8 @@
     "test:coverage": "vitest run --coverage",
     "lint": "npx eslint --max-warnings=0 .",
     "lint:fix": "npx eslint --fix --max-warnings=0 .",
-    "magic:update": "bash scripts/update_magic_via_tunnel.sh"
+    "magic:update": "bash scripts/update_magic_via_tunnel.sh",
+    "magic:update:local": "node scripts/update_scryfall.js"
   },
   "nodemonConfig": {
     "watch": [

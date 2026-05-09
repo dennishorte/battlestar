@@ -6,14 +6,19 @@ Multiplayer Magic: The Gathering implementation with deck selection, stack-based
 
 ## Refreshing card and set data
 
-Card and set data live in MongoDB (collections `magic.scryfall` and `magic.sets`). Refreshing both is a heavy job (downloads ~600MB of bulk data from Scryfall, processes ~100k cards) and is not run from the server — it's run from a dev machine that tunnels into prod's Mongo.
+Card and set data live in MongoDB (collections `magic.scryfall` and `magic.sets`). Refreshing both is a heavy job (downloads ~600MB of bulk data from Scryfall, processes ~100k cards). Run it from your dev machine — never on the prod box, which doesn't have the headroom.
 
 ```bash
 # from the api/ workspace
+
+# Local dev Mongo (mongodb://localhost:27017/game-center)
+npm run magic:update:local
+
+# Prod Mongo, via SSH tunnel to host 'vue'
 npm run magic:update
 ```
 
-The wrapper opens an SSH tunnel to the host `vue` (configured in `~/.ssh/config`), points `MONGODB_URI` through it, and runs `api/scripts/update_scryfall.js`. Override the SSH host, ports, or full Mongo URI via `api/.env` (see `api/.env.example`). The tunnel is torn down on exit.
+The local script runs the worker directly. The prod script wraps it: opens an SSH tunnel `vue:27017` -> `localhost:27018`, sources `api/.env` for any `MONGODB_URI` override (e.g. prod auth credentials — see `api/.env.example`), runs the worker against the tunneled URI, and tears the tunnel down on exit. The worker itself does not source `.env`, so the local and prod commands never collide.
 
 ## Key Files
 
