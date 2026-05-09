@@ -1,11 +1,22 @@
 /**
- * Singleton job tracker for the Scryfall update flow.
+ * Singleton tracker for the Scryfall update worker.
  *
- * The update is too slow to run inside a request, so the controller kicks
- * off a background async runner and the frontend polls for progress. State
- * lives in process memory — if the API restarts mid-run, the job is lost
- * and the user must retry.
+ * The update is too heavy to run inside the API process: parsing a ~600MB
+ * bulk file and inserting it into Mongo competes with request handling and
+ * can OOM the server. We spawn `api/scripts/update_scryfall.js` as a child
+ * process and tail its stdout/stderr into a log buffer that the admin UI
+ * polls.
+ *
+ * State is in-process and is reset each run. A restart wipes the log; the
+ * user retries.
  */
+
+import { spawn } from 'child_process'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const WORKER_PATH = path.resolve(__dirname, '../../scripts/update_scryfall.js')
 
 const state = {
   running: false,
@@ -15,61 +26,107 @@ const state = {
   log: [],
   error: null,
   result: null,
+  child: null,
 }
 
 function reset() {
   state.running = true
   state.startedAt = new Date().toISOString()
   state.finishedAt = null
-  state.phase = 'starting'
+  state.phase = 'spawning'
   state.log = []
   state.error = null
   state.result = null
+  state.child = null
 }
 
-function makeProgress() {
-  return {
-    log(msg) {
-      const line = `[${new Date().toISOString()}] ${msg}`
-      console.log('scryfall-update:', msg)
-      state.log.push(line)
-    },
-    setPhase(phase) {
-      state.phase = phase
-    },
+function pushLine(line) {
+  if (!line) {
+    return
+  }
+  state.log.push(line)
+
+  // Worker prefixes phases with [phase-name]. Pick that up so the UI can
+  // show what's currently happening even when no new lines have arrived
+  // recently.
+  const phaseMatch = line.match(/^\[([a-z-]+)\]/)
+  if (phaseMatch) {
+    state.phase = phaseMatch[1]
+  }
+
+  // Result line written at the end of a successful run.
+  const resultMatch = line.match(/RESULT sets=(\d+) cards=(\d+) version=(\S+)/)
+  if (resultMatch) {
+    state.result = {
+      sets: Number(resultMatch[1]),
+      cards: Number(resultMatch[2]),
+      version: resultMatch[3],
+    }
   }
 }
 
-/**
- * Start the job. Returns false if a job is already running.
- * @param {(progress) => Promise<any>} runner
- */
-export function start(runner) {
+function makeLineSplitter(prefix = '') {
+  let leftover = ''
+  return (chunk) => {
+    leftover += chunk.toString('utf8')
+    const lines = leftover.split('\n')
+    leftover = lines.pop()
+    for (const line of lines) {
+      pushLine(prefix + line)
+    }
+  }
+}
+
+export function start({ workerPath = WORKER_PATH, spawnFn = spawn } = {}) {
   if (state.running) {
     return false
   }
   reset()
-  const progress = makeProgress()
 
-  // Fire and forget. We deliberately don't await so the controller can return
-  // immediately. Errors are captured into state.error.
-  ;(async () => {
-    try {
-      const result = await runner(progress)
-      state.result = result
-      progress.log('Job complete')
+  let child
+  try {
+    child = spawnFn(process.execPath, ['--max-old-space-size=4096', workerPath], {
+      stdio: ['ignore', 'pipe', 'pipe'],
+      env: process.env,
+    })
+  }
+  catch (err) {
+    state.running = false
+    state.finishedAt = new Date().toISOString()
+    state.error = err.message
+    state.phase = 'error'
+    return false
+  }
+
+  state.child = child
+
+  child.stdout.on('data', makeLineSplitter(''))
+  child.stderr.on('data', makeLineSplitter('[stderr] '))
+
+  child.on('error', (err) => {
+    pushLine(`[error] spawn error: ${err.message}`)
+    state.error = err.message
+    state.running = false
+    state.finishedAt = new Date().toISOString()
+    state.phase = 'error'
+    state.child = null
+  })
+
+  child.on('exit', (code, signal) => {
+    state.running = false
+    state.finishedAt = new Date().toISOString()
+    state.child = null
+
+    if (code === 0) {
+      state.phase = 'done'
     }
-    catch (err) {
-      console.error('scryfall-update failed:', err)
-      state.error = err.message || String(err)
-      progress.log(`ERROR: ${state.error}`)
+    else {
+      state.phase = 'error'
+      state.error = signal
+        ? `Worker killed by signal ${signal}`
+        : `Worker exited with code ${code}`
     }
-    finally {
-      state.running = false
-      state.finishedAt = new Date().toISOString()
-      state.phase = state.error ? 'error' : 'done'
-    }
-  })()
+  })
 
   return true
 }

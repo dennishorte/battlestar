@@ -49,6 +49,14 @@ Scryfall.fetchAll = async function() {
 }
 
 /**
+ * Insert pre-processed cards (replacing all existing) and bump the version.
+ * Exposed so the update worker can call it directly.
+ */
+Scryfall.insertCards = async function(cards, version) {
+  await insertCardsIntoDatabase(cards, version)
+}
+
+/**
  * Run the full update: refresh sets, then fetch + process + insert cards.
  * Designed to be called from the background job runner.
  */

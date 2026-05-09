@@ -16,18 +16,6 @@ vi.mock('../../../../src/utils/mongo.js', () => {
   }
 })
 
-vi.mock('../../../../src/models/db.js', () => {
-  return {
-    default: {
-      magic: {
-        scryfall: {
-          runFullUpdate: vi.fn()
-        }
-      }
-    }
-  }
-})
-
 vi.mock('../../../../src/services/scryfall_update_job.js', () => {
   return {
     start: vi.fn(),
@@ -59,20 +47,21 @@ describe('Scryfall Controller', () => {
 
       expect(job.start).toHaveBeenCalled()
       expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
-        status: 'started',
+        status: 'success',
+        started: true,
         running: true,
       }))
     })
 
-    it('returns 409 when a job is already running', async () => {
+    it('returns started=false when a job is already running', async () => {
       job.start.mockReturnValueOnce(false)
       job.getStatus.mockReturnValue({ running: true, phase: 'download', log: ['x'] })
 
       await scryfallController.update(req, res)
 
-      expect(res.status).toHaveBeenCalledWith(409)
       expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
-        status: 'error',
+        status: 'success',
+        started: false,
         message: 'Update already running',
       }))
     })
