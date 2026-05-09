@@ -4,7 +4,6 @@ const {
   GameOverEvent,
 } = require('../lib/game.js')
 
-const res = require('./data.js')
 const util = require('../lib/util.js')
 
 const wrappers = {
@@ -28,7 +27,6 @@ module.exports = {
 
   constructor: Magic,
   factory: factoryFromLobby,
-  res,
   draft: {
     cube: require('./draft/cube_draft.js'),
     pack: require('./draft/pack.js'),

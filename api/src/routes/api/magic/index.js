@@ -3,6 +3,7 @@ import cubeRouter from './cube_router.js'
 import cardRouter from './card_router.js'
 import deckRouter from './deck_router.js'
 import scryfallRouter from './scryfall_router.js'
+import setsRouter from './sets_router.js'
 import linkRouter from './link_router.js'
 
 /**
@@ -14,6 +15,7 @@ router.use('/cube', cubeRouter)
 router.use('/card', cardRouter)
 router.use('/deck', deckRouter)
 router.use('/scryfall', scryfallRouter)
+router.use('/sets', setsRouter)
 router.use('/link', linkRouter)
 
 // All magic routes have been migrated

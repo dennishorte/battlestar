@@ -8,6 +8,7 @@
 
     <div class="buttons">
       <BButton variant="secondary" @click="updateScryfall">Update Scryfall Data</BButton>
+      <BButton variant="secondary" @click="updateMagicSets">Update Magic Sets</BButton>
       <BButton variant="secondary" @click="gameLoaderVis = true">Load Game</BButton>
       <BButton variant="warning" @click="clearAllImpersonations">Clear All Impersonations</BButton>
     </div>
@@ -112,6 +113,22 @@ export default {
       catch (e) {
         this.status = 'error'
         this.message = 'Check console for details'
+        throw e
+      }
+    },
+
+    async updateMagicSets() {
+      this.status = 'waiting'
+      this.message = 'Fetching set list from Scryfall...'
+
+      try {
+        const result = await this.$post('/api/magic/sets/update', {})
+        this.message = `Magic sets updated (${result.count} sets)`
+        this.status = 'success'
+      }
+      catch (e) {
+        this.status = 'error'
+        this.message = e.response?.data?.message || 'Failed to update sets. Check console for details.'
         throw e
       }
     },

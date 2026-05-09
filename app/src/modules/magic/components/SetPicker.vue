@@ -1,7 +1,9 @@
 <template>
   <div class="set-picker">
     <input v-model="searchPrefix" class="form-control" placeholder="search" />
-    <div class="set-list">
+    <div v-if="loading" class="loading">Loading sets...</div>
+    <div v-else-if="error" class="alert alert-danger">{{ error }}</div>
+    <div v-else class="set-list">
       <div
         v-for="sett in searchedSets"
         :key="sett.name"
@@ -17,8 +19,6 @@
 
 
 <script>
-import { mag } from 'battlestar-common'
-
 const setSortOrder = [
   'expansion',
   'core',
@@ -57,6 +57,9 @@ export default {
       highlighted: null,
       highlightedName: '',
       searchPrefix: '',
+      sets: [],
+      loading: true,
+      error: '',
     }
   },
 
@@ -68,7 +71,7 @@ export default {
     },
 
     sortedSets() {
-      return mag.res.setData.sort((l, r) => {
+      return [...this.sets].sort((l, r) => {
         if (l.set_type === r.set_type) {
           return this.dateSort(l.released_at, r.released_at)
         }
@@ -77,6 +80,20 @@ export default {
         }
       })
     },
+  },
+
+  async created() {
+    try {
+      const response = await this.$post('/api/magic/sets/all', {})
+      this.sets = response.sets || []
+    }
+    catch (e) {
+      this.error = 'Failed to load sets'
+      throw e
+    }
+    finally {
+      this.loading = false
+    }
   },
 
   methods: {
@@ -121,5 +138,10 @@ export default {
 .set-name {
   overflow-x: hidden;
   white-space: nowrap;
+}
+
+.loading {
+  color: #888;
+  padding: .5em 0;
 }
 </style>
