@@ -39,6 +39,27 @@ function combatIntrigueRound(game, combatants) {
     return
   }
 
+  const combatantNames = new Set(combatants.map(p => p.name))
+  for (const player of game.players.all()) {
+    if (!combatantNames.has(player.name)) {
+      game.log.add({
+        template: '{player} is not in the combat',
+        args: { player },
+        event: 'memo',
+      })
+    }
+  }
+  for (const player of combatants) {
+    const intrigueZone = game.zones.byId(`${player.name}.intrigue`)
+    if (intrigueZone.cardlist().length === 0) {
+      game.log.add({
+        template: '{player} has no intrigue cards',
+        args: { player },
+        event: 'memo',
+      })
+    }
+  }
+
   let consecutivePasses = 0
   let currentIndex = 0
 
@@ -61,6 +82,11 @@ function combatIntrigueRound(game, combatants) {
       })
 
       if (choice === 'Pass') {
+        game.log.add({
+          template: '{player} chooses not to play an intrigue card',
+          args: { player },
+          event: 'memo',
+        })
         consecutivePasses++
       }
       else {
