@@ -52,7 +52,7 @@ describe("paracompass", () => {
     expect(game.players.byName('dennis').getCounter('persuasion')).toBe(0)
   })
 
-  test('reveal: High Council only → +2 Persuasion', () => {
+  test('reveal: High Council only → +2 Persuasion (+2 seat) = 4', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { handExact: ['Paracompass'], hasHighCouncil: true },
@@ -60,7 +60,7 @@ describe("paracompass", () => {
     game.run()
 
     t.choose(game, 'Reveal Turn')
-    expect(game.players.byName('dennis').getCounter('persuasion')).toBe(2)
+    expect(game.players.byName('dennis').getCounter('persuasion')).toBe(4)
   })
 
   // skip: parser treats the two `If ...:` clauses as independent rather than
@@ -78,7 +78,7 @@ describe("paracompass", () => {
     expect(game.players.byName('dennis').getCounter('persuasion')).toBe(0)
   })
 
-  test('reveal: High Council AND Swordmaster → +3 Persuasion', () => {
+  test('reveal: High Council AND Swordmaster → +3 Persuasion (+2 seat) = 5', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { handExact: ['Paracompass'], hasHighCouncil: true, hasSwordmaster: true },
@@ -86,6 +86,6 @@ describe("paracompass", () => {
     game.run()
 
     t.choose(game, 'Reveal Turn')
-    expect(game.players.byName('dennis').getCounter('persuasion')).toBe(3)
+    expect(game.players.byName('dennis').getCounter('persuasion')).toBe(5)
   })
 })

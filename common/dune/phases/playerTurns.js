@@ -338,6 +338,16 @@ function revealTurn(game, player) {
     game.log.outdent()
   }
 
+  // High Council seat: +2 Persuasion during Reveal
+  if (player.hasHighCouncil) {
+    const seatBonus = 2
+    totalPersuasion += seatBonus
+    game.log.add({
+      template: '{player}: +{amount} Persuasion (High Council seat)',
+      args: { player, amount: seatBonus },
+    })
+  }
+
   if (totalPersuasion > 0) {
     player.incrementCounter('persuasion', totalPersuasion, { silent: true })
   }
