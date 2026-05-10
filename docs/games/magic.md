@@ -18,7 +18,7 @@ npm run magic:update:local
 npm run magic:update
 ```
 
-The local script runs the worker directly. The prod script wraps it: opens an SSH tunnel `vue:27017` -> `localhost:27018`, sources `api/.env` for any `MONGODB_URI` override (e.g. prod auth credentials — see `api/.env.example`), runs the worker against the tunneled URI, and tears the tunnel down on exit. The worker itself does not source `.env`, so the local and prod commands never collide.
+Both commands run the same worker (`api/scripts/update_scryfall.js`), which loads `api/.env` via dotenv. The local command uses `MONGODB_URI` from `.env` (your local dev creds). The prod command opens an SSH tunnel `vue:27017` -> `localhost:27018`, then overrides `MONGODB_URI` with `PROD_MONGODB_URI` from `.env` before running the worker — so the two commands have separate credential variables and can't collide. See `api/.env.example`.
 
 ## Key Files
 

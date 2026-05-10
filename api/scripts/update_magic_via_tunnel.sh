@@ -9,8 +9,11 @@
 #   MAGIC_UPDATE_SSH_HOST   ssh-config alias for prod (default: vue)
 #   MAGIC_UPDATE_LOCAL_PORT local port to bind for the tunnel (default: 27018)
 #   MAGIC_UPDATE_REMOTE_PORT remote MongoDB port on the prod host (default: 27017)
-#   MONGODB_URI             full mongo URI (default: mongodb://localhost:<LOCAL_PORT>/game-center)
-#                           — set this in api/.env if prod Mongo requires auth.
+#   PROD_MONGODB_URI        full mongo URI for the prod connection through the
+#                           tunnel (default: mongodb://localhost:<LOCAL_PORT>/game-center).
+#                           Set this in api/.env if prod Mongo requires auth.
+#                           Note: distinct from MONGODB_URI (which is your *local*
+#                           dev Mongo URI used by `npm run magic:update:local`).
 
 set -euo pipefail
 
@@ -30,7 +33,10 @@ SSH_HOST="${MAGIC_UPDATE_SSH_HOST:-vue}"
 LOCAL_PORT="${MAGIC_UPDATE_LOCAL_PORT:-27018}"
 REMOTE_PORT="${MAGIC_UPDATE_REMOTE_PORT:-27017}"
 
-export MONGODB_URI="${MONGODB_URI:-mongodb://localhost:${LOCAL_PORT}/game-center}"
+# Override MONGODB_URI for the worker. We deliberately ignore whatever
+# MONGODB_URI is in .env (that's the local dev Mongo) and use PROD_MONGODB_URI
+# instead, falling back to a no-auth tunnel default if it isn't set.
+export MONGODB_URI="${PROD_MONGODB_URI:-mongodb://localhost:${LOCAL_PORT}/game-center}"
 
 # Sanity: refuse to run against the default-port localhost — that's almost
 # certainly the user's local Mongo, not a tunneled connection.

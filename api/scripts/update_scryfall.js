@@ -20,6 +20,8 @@
  * Exit code 0 = success, 1 = failure.
  */
 
+import 'dotenv/config'
+
 import axios from 'axios'
 import fs from 'fs'
 import os from 'os'
