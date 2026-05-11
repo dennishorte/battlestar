@@ -81,6 +81,23 @@ module.exports = {
 
 When two cards genuinely share an effect (not just a name), extract the implementation into a small shared module and `require` it from each card file. Don't try to dedupe by string-keyed lookup; dedupe at the JavaScript module level so each card file still declares which behavior it uses.
 
+### Loading Cards With `loadFromDirectory`
+
+Once cards are split into one file each, do not hand-maintain a per-directory `index.js` that lists them all — those registries are pure overhead, easy to drift out of sync with the files on disk, and one of the most common sources of "I added a card but the game can't see it" bugs. Use `BaseCardManager.loadFromDirectory(__dirname)` instead:
+
+```javascript
+// res/cards/intrigue/index.js
+'use strict'
+const { BaseCardManager } = require('../../../../lib/game/BaseCardManager.js')
+module.exports = BaseCardManager.loadFromDirectory(__dirname)
+```
+
+The helper walks the directory, requires every `.js` file that isn't `index.js` or a `*.test.js`, sorts the result alphabetically for deterministic output, and throws fast at load time if any card is missing the required `source` field. Adding a new card is then a single new file under the right directory — no registry edit, no risk of forgetting to wire it.
+
+Filtering by enabled expansions belongs in the game class (not the loader): resolve the active source list from `game.settings`, then call `BaseCardManager.filterDefinitions(defs, { sources: activeSources })`. Keeping the settings → sources mapping in one place per game avoids re-implementing the filter per card type.
+
+If a game has cards organized by source-subfolder (e.g. `imperium/{base,bloodlines,uprising}/`), each subfolder gets its own one-line `index.js`; the parent `index.js` spreads them. If cards from multiple sources live in one flat folder (Dune's `intrigue/` is the canonical example), each card declares its own `source: 'Uprising'` etc. and a single `loadFromDirectory` call covers them all.
+
 ---
 
 ## Card Body Text Is UI Only
