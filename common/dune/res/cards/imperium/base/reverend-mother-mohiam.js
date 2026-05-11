@@ -50,10 +50,10 @@ module.exports = {
           const oppHand = game.zones.byId(`${opponent.name}.hand`)
           const oppCards = oppHand.cardlist()
           if (oppCards.length > 0) {
-            const [choice] = game.actions.choose(opponent, oppCards.map(c => c.name), {
+            const card = game.actions.chooseCard(opponent, oppCards, {
               title: 'Discard a card',
+              kind: 'imperium-card',
             })
-            const card = oppCards.find(c => c.name === choice)
             if (card) {
               deckEngine.discardCard(game, opponent, card)
             }

@@ -28,13 +28,16 @@ module.exports = {
     if (rowCards.length === 0) {
       return
     }
-    const [choice] = game.actions.choose(player, ['Pass', ...rowCards.map(c => c.name)], {
+    const choices = ['Pass', ...rowCards.map(c => game.actions.cardOption(c, 'imperium-card'))]
+    const [choice] = game.actions.choose(player, choices, {
       title: 'Manipulate: Remove a card from the Imperium Row',
     })
     if (choice === 'Pass') {
       return
     }
-    const card = rowCards.find(c => c.name === choice)
+    const card = typeof choice === 'object'
+      ? rowCards.find(c => c.id === choice.id)
+      : rowCards.find(c => c.name === choice)
     if (!card) {
       return
     }

@@ -26,12 +26,13 @@ module.exports = {
         p.name !== player.name && (game.state.conflict.deployedTroops[p.name] || 0) > 0
       )
       if (opponents.length > 0) {
-        const choices = ['Pass', ...opponents.map(p => p.name)]
+        const choices = ['Pass', ...opponents.map(p => game.actions.playerOption(p))]
         const [choice] = game.actions.choose(player, choices, { title: 'Pay 1 Solari — which opponent loses a troop?' })
         if (choice !== 'Pass') {
+          const opponentId = typeof choice === 'object' ? choice.id : choice
           player.decrementCounter('solari', 1, { silent: true })
-          game.state.conflict.deployedTroops[choice]--
-          const target = game.players.byName(choice)
+          game.state.conflict.deployedTroops[opponentId]--
+          const target = game.players.byName(opponentId)
           target.incrementCounter('troopsInSupply', 1, { silent: true })
           // Deploy one of your troops
           if (player.troopsInGarrison > 0) {

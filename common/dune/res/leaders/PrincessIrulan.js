@@ -55,22 +55,20 @@ module.exports = {
     }
 
     if (choice.startsWith('Acquire')) {
-      const names = acquirable.map(c => c.name)
-      const [pick] = game.actions.choose(player, names, {
+      const card = game.actions.chooseCard(player, acquirable, {
         title: 'Acquire which card?',
+        kind: 'imperium-card',
       })
-      const card = acquirable.find(c => c.name === pick)
       if (card) {
         deckEngine.acquireCard(game, player, card)
       }
       return
     }
 
-    const names = hand.map(c => c.name)
-    const [pick] = game.actions.choose(player, names, {
+    const card = game.actions.chooseCard(player, hand, {
       title: 'Trash which card?',
+      kind: 'imperium-card',
     })
-    const card = hand.find(c => c.name === pick)
     if (!card) {
       return
     }

@@ -48,10 +48,12 @@ module.exports = {
       constants.getFactionAffiliations(c).includes('emperor')
     )
     if (emperorCards.length > 0) {
-      const choices = ['Pass', ...emperorCards.map(c => c.name)]
+      const choices = ['Pass', ...emperorCards.map(c => game.actions.cardOption(c, 'imperium-card'))]
       const [choice] = game.actions.choose(player, choices, { title: 'Trash an Emperor card for +2 Influence?' })
       if (choice !== 'Pass') {
-        const empCard = emperorCards.find(c => c.name === choice)
+        const empCard = typeof choice === 'object'
+          ? emperorCards.find(c => c.id === choice.id)
+          : emperorCards.find(c => c.name === choice)
         if (empCard) {
           deckEngine.trashCard(game, card)
           deckEngine.trashCard(game, empCard)

@@ -18,12 +18,14 @@ module.exports = {
     if (playedCards.length === 0) {
       return
     }
-    const choices = ['Pass', ...playedCards.map(c => c.name)]
+    const choices = ['Pass', ...playedCards.map(c => game.actions.cardOption(c, 'imperium-card'))]
     const [choice] = game.actions.choose(player, choices, {
       title: 'Coordination: Trash a card in play?',
     })
     if (choice !== 'Pass') {
-      const card = playedCards.find(c => c.name === choice)
+      const card = typeof choice === 'object'
+        ? playedCards.find(c => c.id === choice.id)
+        : playedCards.find(c => c.name === choice)
       if (card) {
         deckEngine.trashCard(game, card)
         game.log.add({

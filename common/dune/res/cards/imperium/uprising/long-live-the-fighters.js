@@ -40,20 +40,17 @@ module.exports = {
     const deckZone = game.zones.byId(`${player.name}.deck`)
     const topCards = deckZone.cardlist().slice(0, 3)
     if (topCards.length >= 3) {
-      const names = topCards.map(c => c.name)
-      const [drawChoice] = game.actions.choose(player, names, { title: 'Draw which card?' })
-      const drawCard = topCards.find(c => c.name === drawChoice)
+      const drawCard = game.actions.chooseCard(player, topCards, { title: 'Draw which card?', kind: 'imperium-card' })
       if (drawCard) {
         const handZone = game.zones.byId(`${player.name}.hand`)
         drawCard.moveTo(handZone)
       }
-      const remaining1 = topCards.filter(c => c.name !== drawChoice)
-      const [discardChoice] = game.actions.choose(player, remaining1.map(c => c.name), { title: 'Discard which card?' })
-      const discardCard = remaining1.find(c => c.name === discardChoice)
+      const remaining1 = topCards.filter(c => c !== drawCard)
+      const discardCard = game.actions.chooseCard(player, remaining1, { title: 'Discard which card?', kind: 'imperium-card' })
       if (discardCard) {
         deckEngine.discardCard(game, player, discardCard)
       }
-      const trashCard = remaining1.find(c => c.name !== discardChoice)
+      const trashCard = remaining1.find(c => c !== discardCard)
       if (trashCard) {
         deckEngine.trashCard(game, trashCard)
       }

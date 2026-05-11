@@ -41,10 +41,12 @@ module.exports = {
       const handZone = game.zones.byId(`${player.name}.hand`)
       const handCards = handZone.cardlist()
       if (handCards.length > 0) {
-        const choices = ['Pass', ...handCards.map(c => c.name)]
+        const choices = ['Pass', ...handCards.map(c => game.actions.cardOption(c, 'imperium-card'))]
         const [choice] = game.actions.choose(player, choices, { title: 'Discard a card?' })
         if (choice !== 'Pass') {
-          const card = handCards.find(c => c.name === choice)
+          const card = typeof choice === 'object'
+            ? handCards.find(c => c.id === choice.id)
+            : handCards.find(c => c.name === choice)
           if (card) {
             deckEngine.discardCard(game, player, card)
             const factionChoices = ['emperor', 'guild', 'fremen']

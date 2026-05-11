@@ -37,9 +37,7 @@ module.exports = {
     const handZone = game.zones.byId(`${player.name}.hand`)
     const handCards = handZone.cardlist()
     if (handCards.length > 0) {
-      const choices = handCards.map(c => c.name)
-      const [choice] = game.actions.choose(player, choices, { title: 'Discard a card' })
-      const card = handCards.find(c => c.name === choice)
+      const card = game.actions.chooseCard(player, handCards, { title: 'Discard a card', kind: 'imperium-card' })
       if (card) {
         const isGuild = constants.getFactionAffiliations(card).includes('guild')
         deckEngine.discardCard(game, player, card)

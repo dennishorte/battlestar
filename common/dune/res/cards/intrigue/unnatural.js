@@ -25,10 +25,12 @@ module.exports = {
     const intrigueZone = game.zones.byId(`${player.name}.intrigue`)
     const cards = intrigueZone.cardlist()
     if (cards.length > 0) {
-      const choices = ['Pass', ...cards.map(c => c.name)]
+      const choices = ['Pass', ...cards.map(c => game.actions.cardOption(c, 'intrigue-card'))]
       const [choice] = game.actions.choose(player, choices, { title: 'Trash an Intrigue card?' })
       if (choice !== 'Pass') {
-        const card = cards.find(c => c.name === choice)
+        const card = typeof choice === 'object'
+          ? cards.find(c => c.id === choice.id)
+          : cards.find(c => c.name === choice)
         if (card) {
           deckEngine.trashCard(game, card)
           deckEngine.drawIntrigueCard(game, player, 1)

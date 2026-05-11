@@ -44,10 +44,12 @@ module.exports = {
       c !== card && constants.getFactionAffiliations(c).includes('emperor')
     )
     if (emperorCards.length > 0) {
-      const choices = ['Pass', ...emperorCards.map(c => c.name)]
+      const choices = ['Pass', ...emperorCards.map(c => game.actions.cardOption(c, 'imperium-card'))]
       const [choice] = game.actions.choose(player, choices, { title: 'Trash Emperor card for +3 Swords?' })
       if (choice !== 'Pass') {
-        const card = emperorCards.find(c => c.name === choice)
+        const card = typeof choice === 'object'
+          ? emperorCards.find(c => c.id === choice.id)
+          : emperorCards.find(c => c.name === choice)
         if (card) {
           deckEngine.trashCard(game, card)
           addStrength(game, player, 'card', 'Calculus of Power', 3 * constants.SWORD_STRENGTH)

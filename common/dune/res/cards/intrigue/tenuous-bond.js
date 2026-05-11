@@ -44,10 +44,12 @@ module.exports = {
     const discardZone = game.zones.byId(`${player.name}.discard`)
     const trashable = discardZone.cardlist().filter(c => c.persuasionCost > 0)
     if (trashable.length > 0) {
-      const choices = ['Pass', ...trashable.map(c => c.name)]
+      const choices = ['Pass', ...trashable.map(c => game.actions.cardOption(c, 'imperium-card'))]
       const [choice] = game.actions.choose(player, choices, { title: 'Trash from discard for +4 Swords?' })
       if (choice !== 'Pass') {
-        const card = trashable.find(c => c.name === choice)
+        const card = typeof choice === 'object'
+          ? trashable.find(c => c.id === choice.id)
+          : trashable.find(c => c.name === choice)
         if (card) {
           deckEngine.trashCard(game, card)
           addStrength(game, player, 'card', 'Tenuous Bond', 4 * constants.SWORD_STRENGTH)

@@ -135,7 +135,7 @@ function offerEndgameIntrigue(game, player) {
       return
     }
 
-    const choices = ['Pass', ...endgameCards.map(c => c.name)]
+    const choices = ['Pass', ...endgameCards.map(c => game.actions.cardOption(c, 'intrigue-card'))]
     const [choice] = game.actions.choose(player, choices, {
       title: 'Play an Endgame Intrigue card?',
     })
@@ -144,7 +144,9 @@ function offerEndgameIntrigue(game, player) {
       return
     }
 
-    const card = endgameCards.find(c => c.name === choice)
+    const card = typeof choice === 'object'
+      ? endgameCards.find(c => c.id === choice.id)
+      : endgameCards.find(c => c.name === choice)
     if (!card) {
       return
     }

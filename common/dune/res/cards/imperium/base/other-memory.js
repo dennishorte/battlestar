@@ -52,11 +52,10 @@ module.exports = {
       deckEngine.drawCards(game, player, 1)
     }
     else {
-      const bgChoices = bgCards.map(c => c.name)
-      const [bgChoice] = game.actions.choose(player, bgChoices, {
+      const card = game.actions.chooseCard(player, bgCards, {
         title: 'Choose a Bene Gesserit card from discard',
+        kind: 'imperium-card',
       })
-      const card = bgCards.find(c => c.name === bgChoice)
       if (card) {
         const handZone = game.zones.byId(`${player.name}.hand`)
         card.moveTo(handZone)

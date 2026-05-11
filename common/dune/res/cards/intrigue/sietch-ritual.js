@@ -34,11 +34,10 @@ module.exports = {
       })
       return
     }
-    const discardChoices = handCards.map(c => c.name)
-    const [discardChoice] = game.actions.choose(player, discardChoices, {
+    const discardCard = game.actions.chooseCard(player, handCards, {
       title: 'Choose a card to discard',
+      kind: 'imperium-card',
     })
-    const discardCard = handCards.find(c => c.name === discardChoice)
     if (discardCard) {
       deckEngine.discardCard(game, player, discardCard)
     }

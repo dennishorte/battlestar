@@ -34,8 +34,7 @@ module.exports = {
     const [choice] = game.actions.choose(player, choices, { title: 'Devious' })
     if (choice.includes('Trash')) {
       const cards = handZone.cardlist()
-      const [tc] = game.actions.choose(player, cards.map(c => c.name), { title: 'Trash which card?' })
-      const card = cards.find(c => c.name === tc)
+      const card = game.actions.chooseCard(player, cards, { title: 'Trash which card?', kind: 'imperium-card' })
       if (card) {
         deckEngine.trashCard(game, card)
       }

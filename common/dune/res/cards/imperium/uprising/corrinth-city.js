@@ -45,8 +45,7 @@ module.exports = {
         for (let i = 0; i < 2; i++) {
           const cards = handZone.cardlist()
           if (cards.length > 0) {
-            const [dc] = game.actions.choose(player, cards.map(c => c.name), { title: 'Discard a card' })
-            const card = cards.find(c => c.name === dc)
+            const card = game.actions.chooseCard(player, cards, { title: 'Discard a card', kind: 'imperium-card' })
             if (card) {
               deckEngine.discardCard(game, player, card)
             }

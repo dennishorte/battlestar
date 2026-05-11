@@ -75,7 +75,7 @@ function combatIntrigueRound(game, combatants) {
     )
 
     if (allCards.length > 0) {
-      const choices = ['Pass', ...combatCards.map(c => c.name)]
+      const choices = ['Pass', ...combatCards.map(c => game.actions.cardOption(c, 'intrigue-card'))]
       const [choice] = game.actions.choose(player, choices, {
         title: 'Play Combat Intrigue card or Pass',
         noAutoRespond: (game.settings.version || 1) >= 2,
@@ -91,7 +91,9 @@ function combatIntrigueRound(game, combatants) {
       }
       else {
         // Play the combat intrigue card
-        const card = combatCards.find(c => c.name === choice)
+        const card = typeof choice === 'object'
+          ? combatCards.find(c => c.id === choice.id)
+          : combatCards.find(c => c.name === choice)
         if (card) {
           const discardZone = game.zones.byId('common.intrigueDiscard')
           card.moveTo(discardZone)

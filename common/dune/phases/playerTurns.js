@@ -7,17 +7,9 @@ const leaderAbilities = require('../systems/leaderAbilities.js')
 const constants = require('../res/constants.js')
 
 /**
- * Build a structured choice option for a card. Carries `kind`, `defId`, and
- * instance `id` so the UI can render the correct chip and resolve responses
- * unambiguously even when card names collide with leaders / board spaces /
- * other cards.
- */
-function cardOption(card, kind = 'imperium-card') {
-  return { title: card.name, id: card.id, defId: card.defId, kind }
-}
-
-/**
- * Build a structured choice option for a board space.
+ * Build a structured choice option for a board space. The engine provides
+ * `actions.cardOption` / `actions.playerOption`; spaces are Dune-specific so
+ * the helper stays local.
  */
 function spaceOption(space) {
   return { title: space.name, id: space.id, kind: 'board-space' }
@@ -103,7 +95,7 @@ function playerTurnsPhase(game) {
         if (playableCards.length > 0) {
           choices.push({
             title: 'Agent Turn',
-            choices: playableCards.map(c => cardOption(c)),
+            choices: playableCards.map(c => game.actions.cardOption(c, 'imperium-card')),
           })
         }
         choices.push('Reveal Turn')
@@ -257,7 +249,7 @@ function agentTurn(game, player, card) {
   // Resolve card agent ability and board space effects (player chooses order per rules)
   const hasCardAbility = !!card.definition?.agentAbility
   if (hasCardAbility) {
-    const orderChoices = [cardOption(card), spaceOption(space)]
+    const orderChoices = [game.actions.cardOption(card, 'imperium-card'), spaceOption(space)]
     const [order] = game.actions.choose(player, orderChoices, {
       title: 'Which effect to resolve first?',
     })
@@ -688,11 +680,12 @@ function deployUnits(game, player) {
           p.name !== player.name && (game.state.conflict.deployedTroops[p.name] || 0) > 0
         )
         if (opponents.length > 0) {
-          const targetChoices = ['Pass', ...opponents.map(p => p.name)]
-          const [targetName] = game.actions.choose(player, targetChoices, {
+          const targetChoices = ['Pass', ...opponents.map(p => game.actions.playerOption(p))]
+          const [targetChoice] = game.actions.choose(player, targetChoices, {
             title: 'Force an enemy troop to retreat?',
           })
-          if (targetName !== 'Pass') {
+          if (targetChoice !== 'Pass') {
+            const targetName = typeof targetChoice === 'object' ? targetChoice.id : targetChoice
             game.state.conflict.deployedTroops[targetName]--
             const target = game.players.byName(targetName)
             target.incrementCounter('troopsInSupply', 1, { silent: true })
@@ -753,11 +746,10 @@ function resolveCardAgentAbility(game, player, card) {
       const handZone = game.zones.byId(`${player.name}.hand`)
       const handCards = handZone.cardlist()
       if (handCards.length > 0) {
-        const choices = handCards.map(c => c.name)
-        const [discardChoice] = game.actions.choose(player, choices, {
+        const discardCard = game.actions.chooseCard(player, handCards, {
           title: 'Choose a card to discard',
+          kind: 'imperium-card',
         })
-        const discardCard = handCards.find(c => c.name === discardChoice)
         if (discardCard) {
           deckEngine.discardCard(game, player, discardCard)
           game.log.add({
@@ -1065,12 +1057,19 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
         }
       }
       if (entries.length > 0) {
-        const choices = ['Pass', ...entries.map(e => `${e.card.name} (${e.label})`)]
+        const choices = ['Pass', ...entries.map(e => ({
+          title: `${e.card.name} (${e.label})`,
+          id: `${e.card.id}:${e.label}`,
+          defId: e.card.defId,
+          kind: 'imperium-card',
+        }))]
         const [choice] = game.actions.choose(player, choices, {
           title: 'Choose a card to trash',
         })
         if (choice !== 'Pass') {
-          const entry = entries.find(e => `${e.card.name} (${e.label})` === choice)
+          const entry = typeof choice === 'object'
+            ? entries.find(e => `${e.card.id}:${e.label}` === choice.id)
+            : entries.find(e => `${e.card.name} (${e.label})` === choice)
           if (entry) {
             deckEngine.trashCard(game, entry.card, player)
             return entry.card
@@ -1127,12 +1126,14 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
       const intrigueZone = game.zones.byId(`${player.name}.intrigue`)
       const intrigueCards = intrigueZone.cardlist()
       if (intrigueCards.length > 0) {
-        const trashChoices = ['Pass', ...intrigueCards.map(c => c.name)]
+        const trashChoices = ['Pass', ...intrigueCards.map(c => game.actions.cardOption(c, 'intrigue-card'))]
         const [trashChoice] = game.actions.choose(player, trashChoices, {
           title: 'Choose an Intrigue card to trash',
         })
         if (trashChoice !== 'Pass') {
-          const card = intrigueCards.find(c => c.name === trashChoice)
+          const card = typeof trashChoice === 'object'
+            ? intrigueCards.find(c => c.id === trashChoice.id)
+            : intrigueCards.find(c => c.name === trashChoice)
           if (card) {
             deckEngine.trashCard(game, card, player)
             deckEngine.drawIntrigueCard(game, player, 1)
@@ -1343,10 +1344,10 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
         const oppHand = game.zones.byId(`${opponent.name}.hand`)
         const oppCards = oppHand.cardlist()
         if (oppCards.length > 0) {
-          const [discardChoice] = game.actions.choose(opponent, oppCards.map(c => c.name), {
+          const card = game.actions.chooseCard(opponent, oppCards, {
             title: 'Choose a card to discard',
+            kind: 'imperium-card',
           })
-          const card = oppCards.find(c => c.name === discardChoice)
           if (card) {
             deckEngine.discardCard(game, opponent, card)
             game.log.add({
@@ -1381,12 +1382,10 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
         p.name !== player.name && (game.state.conflict.deployedTroops[p.name] || 0) > 0
       )
       if (opponents.length > 0) {
-        const targetChoices = opponents.map(p => p.name)
-        const [targetName] = game.actions.choose(player, targetChoices, {
+        const target = game.actions.choosePlayer(player, opponents, {
           title: 'Choose opponent to force retreat',
         })
-        game.state.conflict.deployedTroops[targetName]--
-        const target = game.players.byName(targetName)
+        game.state.conflict.deployedTroops[target.name]--
         target.incrementCounter('troopsInSupply', 1, { silent: true })
         game.log.add({
           template: '{player} forces {target} to retreat 1 troop',
@@ -1453,11 +1452,10 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
       const playerContracts = game.zones.byId(`${player.name}.contracts`)
       const contracts = playerContracts.cardlist()
       if (contracts.length > 0) {
-        const choices = contracts.map(c => c.name)
-        const [choice] = game.actions.choose(player, choices, {
+        const card = game.actions.chooseCard(player, contracts, {
           title: 'Choose a contract to complete',
+          kind: 'imperium-card',
         })
-        const card = contracts.find(c => c.name === choice)
         if (card) {
           choamComplete.completeContract(game, player, card)
         }
@@ -1674,7 +1672,7 @@ function offerPlotIntrigue(game, player) {
       return
     }
 
-    const choices = ['Pass', ...plotCards.map(c => c.name)]
+    const choices = ['Pass', ...plotCards.map(c => game.actions.cardOption(c, 'intrigue-card'))]
     const [choice] = game.actions.choose(player, choices, {
       title: 'Play a Plot Intrigue card?',
     })
@@ -1683,7 +1681,9 @@ function offerPlotIntrigue(game, player) {
       return
     }
 
-    const card = plotCards.find(c => c.name === choice)
+    const card = typeof choice === 'object'
+      ? plotCards.find(c => c.id === choice.id)
+      : plotCards.find(c => c.name === choice)
     if (!card) {
       return
     }

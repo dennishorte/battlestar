@@ -38,11 +38,10 @@ module.exports = {
     const intrigueZone = game.zones.byId(`${player.name}.intrigue`)
     const cards = intrigueZone.cardlist()
     if (cards.length > 0) {
-      const choices = cards.map(c => c.name)
-      const [choice] = game.actions.choose(player, choices, {
+      const card = game.actions.chooseCard(player, cards, {
         title: 'Choose an Intrigue card to put on bottom of deck',
+        kind: 'intrigue-card',
       })
-      const card = cards.find(c => c.name === choice)
       if (card) {
         const intrigueDeck = game.zones.byId('common.intrigueDeck')
         card.moveTo(intrigueDeck)

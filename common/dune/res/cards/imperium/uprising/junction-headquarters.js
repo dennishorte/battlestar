@@ -41,10 +41,12 @@ module.exports = {
       const intrigueZone = game.zones.byId(`${player.name}.intrigue`)
       const cards = intrigueZone.cardlist()
       if (cards.length > 0 && player.spice >= 2) {
-        const choices = ['Pass', ...cards.map(c => c.name)]
+        const choices = ['Pass', ...cards.map(c => game.actions.cardOption(c, 'intrigue-card'))]
         const [choice] = game.actions.choose(player, choices, { title: 'Trash Intrigue + 2 Spice for +1 VP?' })
         if (choice !== 'Pass') {
-          const card = cards.find(c => c.name === choice)
+          const card = typeof choice === 'object'
+            ? cards.find(c => c.id === choice.id)
+            : cards.find(c => c.name === choice)
           if (card) {
             deckEngine.trashCard(game, card)
             player.decrementCounter('spice', 2, { silent: true })

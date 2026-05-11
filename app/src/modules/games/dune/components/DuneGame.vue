@@ -262,14 +262,9 @@ export default {
       // (e.g. "Duncan Idaho" exists as both an imperium card and a leader).
       // Leaders only appear as choices during setup, where the engine already
       // emits a structured option with kind:'leader' and we never reach this
-      // fallback. New engine call sites should emit structured options
-      // ({title, id, defId, kind}) via chooseCards / cardOption / spaceOption
-      // rather than bare names — see common/dune/phases/playerTurns.js.
-      if (import.meta.env?.DEV) {
-
-        console.warn('[Dune] bare-string choice option, no kind/defId:', name)
-      }
-
+      // fallback. Belt-and-suspenders for stored games recorded before
+      // structured options shipped; the engine-side `_warnOnBareStrings` in
+      // BaseActionManager surfaces new bare-string emissions during dev play.
       const card = cardsByName[name]
       if (card) {
         return {
