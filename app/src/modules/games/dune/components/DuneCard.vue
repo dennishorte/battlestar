@@ -13,10 +13,11 @@
       <span class="card-cost" v-if="costLabel">{{ costLabel }}</span>
     </div>
     <div class="card-affiliation"
-         v-if="affiliation"
-         :class="`affiliation-${affiliation.id}`">
-      <DuneFactionIcon :faction="affiliation.id" size=".9em" />
-      {{ affiliation.label }}
+         v-for="aff in affiliations"
+         :key="aff.id"
+         :class="`affiliation-${aff.id}`">
+      <DuneFactionIcon :faction="aff.id" size=".9em" />
+      {{ aff.label }}
     </div>
     <div class="card-effects" v-if="sections.length">
       <div v-for="(section, i) in sections"
@@ -83,12 +84,13 @@ export default {
       return icons
     },
 
-    affiliation() {
-      const id = this.def.factionAffiliation
-      if (!id) {
-        return null
+    affiliations() {
+      const raw = this.def.factionAffiliation
+      if (!raw) {
+        return []
       }
-      return { id, label: factionLabels[id] || id }
+      const ids = Array.isArray(raw) ? raw : [raw]
+      return ids.map(id => ({ id, label: factionLabels[id] || id }))
     },
 
     costLabel() {
