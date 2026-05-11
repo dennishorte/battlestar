@@ -1296,7 +1296,7 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
       }
       const attachBonuses = this._getPlanetAttachmentBonuses(pId)
       inf += attachBonuses.influence
-      return `${pId} (${inf})`
+      return this.actions.planetOption(pId, inf)
     })
 
     const exhaustSelection = this.actions.choose(player, planetChoices, {
@@ -1307,7 +1307,7 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
 
     let totalInfluence = 0
     for (const choice of exhaustSelection) {
-      const planetId = choice.split(' (')[0]
+      const planetId = typeof choice === 'object' ? choice.id : choice.split(' (')[0]
       const planet = res.getPlanet(planetId)
       if (planet) {
         let inf = planet.influence

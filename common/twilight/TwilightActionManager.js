@@ -13,6 +13,26 @@ class TwilightActionManager extends BaseActionManager {
     super(game)
   }
 
+  // Structured option for a planet. `displayValue` is the parenthesized
+  // suffix shown in the prompt (e.g. influence count, resources, "R/I"
+  // pair) — varies by prompt. Response carries `id: planetId` so callers
+  // don't have to regex-parse the title back to an id.
+  planetOption(planetId, displayValue) {
+    return {
+      title: displayValue !== undefined ? `${planetId} (${displayValue})` : planetId,
+      id: planetId,
+      kind: 'planet',
+    }
+  }
+
+  systemOption(systemId, displayValue) {
+    return {
+      title: displayValue !== undefined ? `${systemId} (${displayValue})` : systemId,
+      id: systemId,
+      kind: 'system',
+    }
+  }
+
   choose(player, choices, opts = {}) {
     // During the active player's turn, inject "Propose Transaction" into every
     // non-transaction choice prompt so the player can transact at any time.
@@ -77,14 +97,18 @@ class TwilightActionManager extends BaseActionManager {
     }
 
     // Use super.choose to avoid re-injecting "Propose Transaction"
-    const selection = super.choose(player, ['Cancel', ...partners], {
+    const partnerOptions = partners.map(name => ({
+      title: name, id: name, kind: 'player',
+    }))
+    const selection = super.choose(player, ['Cancel', ...partnerOptions], {
       title: 'Propose Transaction',
     })
 
-    const targetName = selection[0]
-    if (targetName === 'Cancel') {
+    const pick = selection[0]
+    if (pick === 'Cancel') {
       return
     }
+    const targetName = typeof pick === 'object' ? pick.id : pick
 
     this.game._resolveTransaction(player, targetName)
   }

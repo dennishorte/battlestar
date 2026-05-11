@@ -85,13 +85,13 @@ module.exports = function(Twilight) {
     const otherPlayers = this.players.all().filter(p =>
       p.name !== player.name && !this._isEliminated(p.name)
     )
-    const selection = this.actions.choose(player, otherPlayers.map(p => p.name), {
+    const selection = this.actions.choose(player, otherPlayers.map(p => this.actions.playerOption(p)), {
       title: 'Choose players for free Trade secondary (replenish commodities)',
       min: 0,
     })
 
     // Store chosen players so _resolveSecondaries marks them as free
-    this.state._tradeFreeSecondary = selection
+    this.state._tradeFreeSecondary = selection.map(s => typeof s === 'object' ? s.id : s)
   }
 
 
@@ -1102,21 +1102,22 @@ module.exports = function(Twilight) {
     const tgResourceValue = this.factionAbilities.getTradeGoodResourceValue(player)
     const readyPlanets = player.getReadyPlanets()
 
-    const planetChoices = readyPlanets.map(pId => {
+    const planetResources = (pId) => {
       const planet = res.getPlanet(pId)
-      let resources = planet?.resources || 0
+      let r = planet?.resources || 0
       if (this.state.planets[pId]?.terraform) {
-        resources += 1
+        r += 1
       }
       const bonuses = this._getPlanetAttachmentBonuses(pId)
-      resources += bonuses.resources
+      r += bonuses.resources
       if (canSpendFlexibly) {
-        resources += (planet?.influence || 0) + bonuses.influence
+        r += (planet?.influence || 0) + bonuses.influence
       }
-      return `${pId} (${resources})`
-    })
+      return r
+    }
+    const planetChoices = readyPlanets.map(pId => this.actions.planetOption(pId, planetResources(pId)))
 
-    const totalPlanetResources = planetChoices.reduce((sum, c) => sum + parseInt(c.match(/\((\d+)\)/)[1]), 0)
+    const totalPlanetResources = readyPlanets.reduce((sum, pId) => sum + planetResources(pId), 0)
 
     // Auto-resolve: 0-1 planets or must use all
     if (readyPlanets.length <= 1 && totalPlanetResources >= cost) {
@@ -1146,9 +1147,9 @@ module.exports = function(Twilight) {
 
     let totalSelected = 0
     for (const choice of selection) {
-      const planetId = choice.split(' (')[0]
+      const planetId = typeof choice === 'object' ? choice.id : choice.split(' (')[0]
       this.state.planets[planetId].exhausted = true
-      totalSelected += parseInt(choice.match(/\((\d+)\)/)[1])
+      totalSelected += planetResources(planetId)
     }
 
     // Trade goods for remainder
@@ -1167,21 +1168,22 @@ module.exports = function(Twilight) {
     const canSpendFlexibly = this.factionAbilities.canSpendFlexibly(player)
     const readyPlanets = player.getReadyPlanets()
 
-    const planetChoices = readyPlanets.map(pId => {
+    const planetInfluence = (pId) => {
       const planet = res.getPlanet(pId)
-      let inf = planet?.influence || 0
+      let i = planet?.influence || 0
       if (this.state.planets[pId]?.terraform) {
-        inf += 1
+        i += 1
       }
       const bonuses = this._getPlanetAttachmentBonuses(pId)
-      inf += bonuses.influence
+      i += bonuses.influence
       if (canSpendFlexibly) {
-        inf += (planet?.resources || 0) + bonuses.resources
+        i += (planet?.resources || 0) + bonuses.resources
       }
-      return `${pId} (${inf})`
-    })
+      return i
+    }
+    const planetChoices = readyPlanets.map(pId => this.actions.planetOption(pId, planetInfluence(pId)))
 
-    const totalAvailable = planetChoices.reduce((sum, c) => sum + parseInt(c.match(/\((\d+)\)/)[1]), 0)
+    const totalAvailable = readyPlanets.reduce((sum, pId) => sum + planetInfluence(pId), 0)
 
     // Auto-resolve: 0-1 planets or must use all
     if (readyPlanets.length <= 1) {
@@ -1205,7 +1207,7 @@ module.exports = function(Twilight) {
     })
 
     for (const choice of selection) {
-      const planetId = choice.split(' (')[0]
+      const planetId = typeof choice === 'object' ? choice.id : choice.split(' (')[0]
       this.state.planets[planetId].exhausted = true
     }
   }

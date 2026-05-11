@@ -354,16 +354,17 @@ module.exports = {
     const planetChoices = controlledPlanets.map(pId => {
       const planet = ctx.game.res.getPlanet(pId)
       if (planet) {
-        return `${pId} (${planet.resources}R/${planet.influence}I)`
+        return ctx.actions.planetOption(pId, `${planet.resources}R/${planet.influence}I`)
       }
-      return pId
+      return ctx.actions.planetOption(pId)
     })
 
     const selection = ctx.actions.choose(player, planetChoices, {
       title: 'Hegemonic Trade Policy: Choose planet to swap resource/influence values',
     })
 
-    const planetId = selection[0].split(' (')[0]
+    const pick = selection[0]
+    const planetId = typeof pick === 'object' ? pick.id : pick.split(' (')[0]
 
     // Store the swap on game state so production can reference it
     if (!ctx.state.hegemonicTradeSwaps) {

@@ -5,6 +5,11 @@ const SAFE_BARE_OPTIONS = new Set([
   'Pass', 'Skip', 'Continue', 'Cancel', 'Done',
   'Yes', 'No', 'yes', 'no',
   'heads', 'tails',
+  // Twilight Imperium domain ids — lowercase, already disambiguated by context,
+  // restructuring as {title, id} adds no value over the bare string.
+  'tactics', 'fleet', 'strategy',
+  'alpha', 'beta',
+  'pds', 'space-dock',
 ])
 
 class BaseActionManager {

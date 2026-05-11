@@ -251,7 +251,7 @@ module.exports = {
     const readyPlanets = targetPlayer.getReadyPlanets()
     const planetChoices = readyPlanets.map(pId => {
       const planet = ctx.game.res.getPlanet(pId)
-      return `${pId} (${planet ? planet.influence : 0})`
+      return ctx.actions.planetOption(pId, planet ? planet.influence : 0)
     })
 
     let influenceSpent = 0
@@ -261,7 +261,8 @@ module.exports = {
         title: `Doctor Sucaban: Exhaust planets for influence (${remaining} more needed)`,
       })
 
-      const planetId = selection[0].split(' (')[0]
+      const pick = selection[0]
+      const planetId = typeof pick === 'object' ? pick.id : pick.split(' (')[0]
       const planet = ctx.game.res.getPlanet(planetId)
       if (planet) {
         influenceSpent += planet.influence
@@ -269,7 +270,7 @@ module.exports = {
       }
 
       // Remove the exhausted planet from choices
-      const idx = planetChoices.indexOf(selection[0])
+      const idx = planetChoices.findIndex(opt => opt.id === planetId)
       if (idx !== -1) {
         planetChoices.splice(idx, 1)
       }

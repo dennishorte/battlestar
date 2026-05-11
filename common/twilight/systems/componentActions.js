@@ -460,10 +460,9 @@ module.exports = function(Twilight) {
         target = others[0]
       }
       else {
-        const sel = this.actions.choose(player, others.map(p => p.name), {
+        target = this.actions.choosePlayer(player, others, {
           title: 'Production Biomes: Choose a player to gain 2 trade goods',
         })
-        target = this.players.byName(sel[0])
       }
 
       if (target) {
