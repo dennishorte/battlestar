@@ -10,7 +10,7 @@ Companion analysis: see commit-history retrospective in chat; the lessons summar
 
 | # | Item | Type | Risk | Dependencies | Approx. effort | Status |
 |---|------|------|------|--------------|----------------|--------|
-| 1 | ESLint rule: tests cannot import internal modules | Config | Low | — | ~½ day | — |
+| 1 | ESLint rule: tests cannot import internal modules | Config | Low | — | ~½ day | ✓ Completed 2026-05-11 |
 | 2 | `BaseCardManager` source indexing + `loadFromDirectory` | Engine (additive) | Low | — | 1–2 days | ✓ Completed 2026-05-11 |
 | 3 | `BasePlayer.incrementCounter` source attribution + history | Engine (additive) | Low | — | 1 day + per-game migration | ✓ Completed 2026-05-11 (Dune migrated) |
 | 4 | Structured `choose()` options (`{title, id, kind}`) | Engine (additive) | Medium | — | 2 days + per-game migration | ✓ Completed 2026-05-11 |
@@ -28,7 +28,7 @@ Total engine work: ~3 weeks of focused effort, plus migration cost paid per game
 
 ## Sequencing rationale
 
-**Phase 1 — Independent additive primitives.** Items 1–5 can land in any order and don't break existing games. They unlock the largest immediate quality-of-life wins for the next game build.
+**Phase 1 — Independent additive primitives.** Items 1–5 can land in any order and don't break existing games. They unlock the largest immediate quality-of-life wins for the next game build. ✓ Phase complete 2026-05-11 (item 5 deferred — see its section for the rationale).
 
 **Phase 2 — Schema changes.** Items 6 and 7 redefine where state lives and how cards opt in to lifecycle events. Each migration is per-game work but mechanical. Do these before any new game starts.
 
@@ -181,6 +181,8 @@ The systems are already lazy-required inside functions today (`dune.js:163`, `du
 - Adding a deliberately broken `require('./systems/foo')` to any game test file fires the rule.
 
 **Done when.** `npm run lint -w common` passes; the rule fires on a deliberately-broken test; the three carve-outs are documented above with their follow-up trigger.
+
+**Status.** ✓ Completed 2026-05-11. Landed in `efe66be89` (test rewrites stopping the offending imports across Twilight / Dune / Agricola, plus Dune `game.spies` and `game.leaders` facades) and `f9e863b38` (the `no-restricted-syntax` block in `common/eslint.config.js` with the carve-outs for `lib/**`, `**/testutil*.js`, Dune's two pending parser tests, and `magic/util/CardFilter.test.js`).
 
 ---
 
@@ -817,6 +819,7 @@ This doc itself should be revisited after the next game build — every recurrin
 
 | Item | Completed | Landing commits | Notes |
 |---|---|---|---|
+| 1 — ESLint rule: tests cannot import internal modules | 2026-05-11 | `efe66be89`, `f9e863b38` | `no-restricted-syntax` block in `common/eslint.config.js` fires on `require('systems/…')` / `require('phases/…')` / `require('mixins/…')` / `require('fs')` / `require('path')` in `**/*.test.js`. Per-game test rewrites + Dune `game.spies` / `game.leaders` facades; four carve-outs documented in the section above |
 | 2 — `BaseCardManager` source indexing + `loadFromDirectory` | 2026-05-11 | `bd36b4982` | 16 Dune per-source/per-type `index.js` files collapsed to one-liners; adding a card file requires zero registry edits. Engine helpers (`loadFromDirectory`, `filterDefinitions`) added to `BaseCardManager` |
 | 3 — `BasePlayer.incrementCounter` source attribution + history | 2026-05-11 | `e81373aaa`, `6a5459118`, `3509487df` | `BasePlayer.incrementCounter` / `setCounter` write `game.state.counterHistory`; shared `CounterHistoryTable` Vue component renders the table; Dune VP migrated from bespoke `gainVp` / `loseVp` / `vpHistory` to the shared infrastructure |
 | 4 — Structured `choose()` options | 2026-05-11 | `85822d919`, `0f9dc3bfe`, `f103213b9`, `d0016a203` | Engine `option` / `cardOption` / `playerOption` helpers + bare-string dev warning; `chooseYesNo`/`choosePlayer` rerouted through structured options; Dune (~22 sites) + Twilight (planet/player/transaction sites, planet regex parsing gone) + Ultimate (`UltimateActionManager.chooseCards` central migration) migrated; Agricola required no changes |
