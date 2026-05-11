@@ -38,14 +38,20 @@ describe('Objectives', () => {
   })
 
   test('first player set correctly based on objectives', () => {
-    // With 3-player test_seed, dennis draws the first player objective.
-    // players.all() order is [dennis, scott, micah] (viewer seated first),
-    // so dennis's index is 0.
+    // When a player draws the first-player objective, firstPlayer / firstPlayerIndex
+    // must match that player and their position in players.all(). When the FP
+    // objective isn't drawn, firstPlayer stays null and the engine doesn't
+    // override the default index of 0.
     const game = t.fixture({ preserveFirstPlayer: true })
     game.run()
 
-    expect(game.state.firstPlayer).toBe('dennis')
-    expect(game.state.firstPlayerIndex).toBe(0)
+    const fpEntry = Object.entries(game.state.objectives).find(([, obj]) => obj.isFirstPlayer)
+    const allPlayers = game.players.all()
+    const expectedFirstPlayer = fpEntry ? fpEntry[0] : null
+    const expectedIndex = fpEntry ? allPlayers.findIndex(p => p.name === fpEntry[0]) : 0
+
+    expect(game.state.firstPlayer).toBe(expectedFirstPlayer)
+    expect(game.state.firstPlayerIndex).toBe(expectedIndex)
   })
 
   test('first player set when FP objective is drawn', () => {

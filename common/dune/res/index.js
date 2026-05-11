@@ -1,3 +1,4 @@
+const { BaseCardManager } = require('../../lib/game/BaseCardManager.js')
 const boardSpaces = require('./boardSpaces')
 const observationPosts = require('./observationPosts')
 const constants = require('./constants')
@@ -13,40 +14,36 @@ const SOURCE_TO_SETTING = {
   'Promo': 'usePromo',
 }
 
-/**
- * A source is active if it is 'Uprising' or the corresponding setting flag
- * is true. 'Uprising' is the current game line and always active.
- */
+// Resolve the set of source names currently enabled by settings. 'Uprising' is
+// the current game line and always active.
+function getActiveSources(settings) {
+  const sources = ['Uprising']
+  for (const [source, key] of Object.entries(SOURCE_TO_SETTING)) {
+    if (settings[key]) {
+      sources.push(source)
+    }
+  }
+  return sources
+}
+
 function isSourceActive(source, settings) {
-  if (source === 'Uprising') {
-    return true
-  }
-  const key = SOURCE_TO_SETTING[source]
-  if (!key) {
-    return false
-  }
-  return Boolean(settings[key])
+  return getActiveSources(settings).includes(source)
 }
 
-/**
- * A card is included iff:
- *   - compatibility is 'All' or 'Uprising' (the only variants the Uprising
- *     game engine actually supports), AND
- *   - its source is 'Uprising' or the source is enabled in settings
- *
- * Items without source/compatibility fields (e.g. sardaukar, objectives)
- * should not pass through this filter — callers for those collections
- * handle selection themselves.
- */
+// Dune-specific compatibility filter: only Uprising-compatible cards are
+// playable in this engine, regardless of source. Applied alongside the
+// generic source filter.
+function isCompatibleWithUprising(item) {
+  return item.compatibility === 'All' || item.compatibility === 'Uprising'
+}
+
 function isIncluded(item, settings) {
-  if (item.compatibility !== 'All' && item.compatibility !== 'Uprising') {
-    return false
-  }
-  return isSourceActive(item.source, settings)
+  return isCompatibleWithUprising(item) && isSourceActive(item.source, settings)
 }
 
-function filterByCompatibility(items, settings) {
-  return items.filter(item => isIncluded(item, settings))
+function getCards(defs, settings) {
+  const compatible = defs.filter(isCompatibleWithUprising)
+  return BaseCardManager.filterDefinitions(compatible, { sources: getActiveSources(settings) })
 }
 
 module.exports = {
@@ -57,46 +54,19 @@ module.exports = {
   leaderData,
   isSourceActive,
   isIncluded,
-  filterByCompatibility,
 
-  getImperiumCards(settings) {
-    return cards.imperiumCards.filter(item => isIncluded(item, settings))
-  },
-
-  getIntrigueCards(settings) {
-    return filterByCompatibility(cards.intrigueCards, settings)
-  },
-
-  getReserveCards(settings) {
-    return filterByCompatibility(cards.reserveCards, settings)
-  },
-
-  getStarterCards(settings) {
-    return filterByCompatibility(cards.starterCards, settings)
-  },
-
-  getConflictCards(settings) {
-    return filterByCompatibility(cards.conflictCards, settings)
-  },
+  getImperiumCards: settings => getCards(cards.imperiumCards, settings),
+  getIntrigueCards: settings => getCards(cards.intrigueCards, settings),
+  getReserveCards: settings => getCards(cards.reserveCards, settings),
+  getStarterCards: settings => getCards(cards.starterCards, settings),
+  getConflictCards: settings => getCards(cards.conflictCards, settings),
+  getTechCards: settings => getCards(cards.techCards, settings),
+  getTleilaxCards: settings => getCards(cards.tleilaxCards, settings),
+  getSardaukarCards: settings => getCards(cards.sardaukarCards, settings),
+  getLeaders: settings => getCards(leaderData, settings),
 
   getContractCards() {
     return cards.contractCards
-  },
-
-  getLeaders(settings) {
-    return filterByCompatibility(leaderData, settings)
-  },
-
-  getTechCards(settings) {
-    return filterByCompatibility(cards.techCards, settings)
-  },
-
-  getTleilaxCards(settings) {
-    return filterByCompatibility(cards.tleilaxCards, settings)
-  },
-
-  getSardaukarCards(settings) {
-    return filterByCompatibility(cards.sardaukarCards, settings)
   },
 
   ...livingRules,
