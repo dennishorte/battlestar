@@ -338,6 +338,51 @@ See Agricola's testing guide (`common/agricola/docs/specs/testing.md`) and Twili
 
 ---
 
+## The Audit Phase
+
+After cards and abilities reach nominal 100% implementation, schedule an explicit per-card audit pass. The audit is where the engine's hidden bugs surface — not while writing the original card. Treat the bug count as a project KPI, not a regression.
+
+### Budget
+
+- Reserve **at least 20% of total project time** for the audit phase. Dune spent ~1.5 of ~6 weeks on audits.
+- Expect **5–10 engine bugs per ~50 cards audited**. Dune's three audit sweeps (`6e44883dc`, `e2e0ae89e`, `cf13e480a`) found 6, 5, and 9 engine bugs across imperium, intrigue, and parser respectively.
+- An audit pass with **zero** engine bugs is suspect — either the audit isn't exhaustive or the audit happened too late, after fixes were already done piecemeal.
+
+### Per-card audit checklist
+
+For each card, write integration tests that exercise:
+
+- [ ] **Happy path** — primary effect resolves with default conditions
+- [ ] **Each conditional branch** — every "if" / "or" / "may" produces tests for all sides
+- [ ] **Cost edge cases** — paying with each valid resource alternative; insufficient resources blocks play
+- [ ] **Empty state** — no targets available; engine prompts or skips correctly
+- [ ] **Mid-phase activation** — card placed mid-turn, mid-phase, or between rounds where relevant
+- [ ] **Multi-player prompts** — when targeting opponents, every opponent count (2p / 3p / 4p)
+- [ ] **Persistence boundary** — flag-setting effects survive the phase boundary they're supposed to and don't survive the ones they shouldn't
+- [ ] **Structured choice prompts** — no bare-string options collide with anything else in the choice set
+- [ ] **Hidden-info safety** — prompts fire even when the player has nothing relevant (no "no prompt = no card" leak)
+- [ ] **Log output** — every meaningful decision creates a log line
+
+### Track engine bugs separately during audit
+
+Maintain `common/<game>/docs/known-bugs.md` during the audit. Each pass finds bugs faster than they can be fixed — batching them keeps the audit moving and clusters related fixes into coherent commits (e.g. "parser bugs", "phase-boundary bugs").
+
+Skip the failing tests with a comment referencing the entry in `known-bugs.md`, then come back and unskip them after the engine fix.
+
+Delete `known-bugs.md` once the backlog clears. Dune's file was 178 lines at peak (`6e44883dc`); cleared and deleted by `242d618cb` once all 24 bugs were resolved.
+
+### Audit completion criteria
+
+The audit is done when:
+
+- [ ] Every card has at least one integration test covering primary effect + each conditional branch
+- [ ] `known-bugs.md` is empty or deleted
+- [ ] No skipped tests remain (or each remaining skip references a tracked, accepted engine limitation)
+- [ ] At least one test exercises every hook the engine fires (no orphan hooks added "just in case")
+- [ ] Random play of 5+ full games surfaces no uncaught exceptions
+
+---
+
 ## References
 
 - **Test infrastructure**: [docs/testing.md](../testing.md)

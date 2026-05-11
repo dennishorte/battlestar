@@ -83,6 +83,42 @@ When two cards genuinely share an effect (not just a name), extract the implemen
 
 ---
 
+## Card Body Text Is UI Only
+
+Text fields on card definitions (the printed rules text shown to players) are for UI rendering. **Never parse card text at runtime to drive game logic.** Effects must be either:
+
+1. **Structured data** on the definition (`{ effects: [{ type: 'gain-resource', resource: 'gold', amount: 2 }] }`), or
+2. **Hook functions** on the definition (`onPlay(game, player) { player.incrementCounter('gold', 2) }`).
+
+Dune attempted to parse card body text with a grammar-based parser. Seven "Parser batch" commits crawled to 58% coverage before the project pivoted to per-card function dispatch (`a1528998c`) and hit 100% within hours. The parser still leaked bugs in audits for weeks after: Unicode arrow normalization, infinite recursion on bullet-list reveal text, compound effects returning `null`, and `+N Spies` count loss (`cf13e480a`, `08372779a`).
+
+### Why text parsing always loses
+
+Card text is written for humans. Human language tolerates ambiguity that code cannot:
+
+- "Discard up to 2 cards" vs "Discard 2 cards" vs "You may discard 2 cards" — three different mechanics, often one word apart
+- Variable references ("for each Fremen agent card in play") embed game-state lookups parsers can't disambiguate
+- Card-specific exceptions are the norm, not the exception — every card eventually has special-case wording
+- Expansions add new grammar to the same card pool; the parser becomes an open-ended translation problem
+
+### Decision checklist
+
+Before adding a card text parser rule, check:
+
+- [ ] Have I considered whether a **structured `effects` field** on the definition would express this instead?
+- [ ] Could a **hook function** (`onPlay`, `onReveal`, etc.) own this card's behavior with no parser involvement?
+- [ ] If the parser already exists, does this card use **standard grammar already covered**, or am I adding a new rule for one card?
+- [ ] If I'm adding a new rule, how many other cards will use it? **One-card rules don't belong in the parser.**
+- [ ] Is the text I'm trying to parse **stable across expansions**, or is the publisher likely to use slightly different wording next set?
+
+If you find yourself writing a regex or a tokenizer to extract a card's effect from its `text` field — stop. Add a `hooks` or `effects` field to the definition and put the logic there. Use the text field only for the UI tooltip.
+
+### Migration trigger
+
+If a game accumulates more than ~10 card-text parser rules with regular reports of parser bugs, it's past the point of diminishing returns. Convert to per-card hooks before adding the 11th. Dune held off too long; the pivot in `a1528998c` should have come at parser-rule #5.
+
+---
+
 ## Hook Patterns
 
 Hooks are methods on card definitions (or ability handlers) that the game engine calls at specific points. The game decides which hooks to support based on its mechanics.

@@ -189,6 +189,41 @@ These are included in test fixtures by default and referenced in `setBoard` to s
 
 ---
 
+## Multi-Valued Fields: Default to Arrays
+
+Any property on a card, space, or other game entity that *could* legitimately have two values someday — make it an array from the start. Always-an-array beats sometimes-an-array, because the day the second value appears, every consumer in every game has to learn to handle a new shape.
+
+Dune's `card.faction` started as a single string. When dual-affiliation cards (Maker Keeper, Southern Elders, Undercover Asset, etc.) arrived from the Bloodlines expansion, every `card.faction === player.faction` check became a bug, and the UI had to be rewritten to render one row per faction (`fc9ec5c07`). The fix would have been free if `factions` had been an array from day one.
+
+### Checklist: fields that should always be arrays
+
+- [ ] **Faction / affiliation membership** — a card can belong to multiple factions
+- [ ] **Card type / subtype** — a card can be both a "Warrior" and a "Reverend Mother"
+- [ ] **Icons on action spaces or cards** — a space provides multiple icons; a card grants multiple icons
+- [ ] **Cost alternatives** — a card may have multiple ways to pay (`costAlternative` in Agricola)
+- [ ] **Target type** — an effect may target "any one of: player / location / card"
+- [ ] **Payout / reward type** — a reward may grant multiple resources simultaneously
+- [ ] **Tags / keywords** — anything that classifies an entity for filtering
+- [ ] **Source / expansion** — cards reprinted across expansions may carry multiple sources
+- [ ] **Trigger conditions** — an ability may fire on multiple events
+
+### Naming convention
+
+Plural names signal arrays: `factions`, `icons`, `tags`, `costs`. Singular names signal scalars: `name`, `id`, `cost` (only when truly singular). If a field could plausibly have a default of `[]` and stay valid, use an array even if every current card has exactly one entry.
+
+### Smell test
+
+When you write code like:
+
+```javascript
+if (card.faction === player.faction) { ... }
+if (Array.isArray(card.faction) ? card.faction.includes(...) : card.faction === ...) { ... }
+```
+
+…the field is asking to be an array. Migrate it before adding the second consumer of the polymorphic check.
+
+---
+
 ## The Factory Pattern
 
 Every game exports three things: the game constructor, a factory function, and a lobby-to-factory adapter.
