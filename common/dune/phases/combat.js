@@ -501,7 +501,7 @@ function awardReward(game, player, rewardText, rank) {
           for (let i = 0; i < effect.spyCount; i++) {
             spies.recallSpy(game, player)
           }
-          player.gainVp(effect.vpAmount, sourceLabel)
+          player.incrementCounter('vp', effect.vpAmount, { silent: true, source: sourceLabel })
           game.log.add({
             template: '{player} gains {amount} Victory Point(s)',
             args: { player, amount: effect.vpAmount },
@@ -552,7 +552,7 @@ function moveConflictCardToWinner(game, winner, conflictCard) {
   if (partner) {
     flipped.push(conflictCard.id)
     flipped.push(partner.id)
-    winner.gainVp(1, `Battle icons: ${conflictCard.name} + ${partner.name}`)
+    winner.incrementCounter('vp', 1, { silent: true, source: `Battle icons: ${conflictCard.name} + ${partner.name}` })
     game.log.add({
       template: '{player} matches battle icons ({card1} + {card2}): +1 Victory Point',
       args: { player: winner, card1: conflictCard, card2: partner },

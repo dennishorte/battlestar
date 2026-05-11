@@ -27,7 +27,7 @@ module.exports = {
       const [choice] = game.actions.choose(player, choices, { title: 'Strategic Stockpiling: Spice' })
       if (choice !== 'Pass') {
         player.decrementCounter('spice', 5, { silent: true })
-        player.gainVp(1, 'Strategic Stockpiling')
+        player.incrementCounter('vp', 1, { silent: true, source: 'Strategic Stockpiling' })
         game.log.add({ template: '{player}: pays 5 Spice, +1 VP', args: { player } })
       }
     }
@@ -38,7 +38,7 @@ module.exports = {
       const [choice] = game.actions.choose(player, choices, { title: 'Strategic Stockpiling: Water' })
       if (choice !== 'Pass') {
         player.decrementCounter('water', 3, { silent: true })
-        player.gainVp(1, 'Strategic Stockpiling')
+        player.incrementCounter('vp', 1, { silent: true, source: 'Strategic Stockpiling' })
         game.log.add({ template: '{player}: pays 3 Water, +1 VP', args: { player } })
       }
     }

@@ -31,7 +31,7 @@ module.exports = {
       return player.getInfluence(faction) >= 4
     })
     if (qualifies) {
-      player.gainVp(1, 'Shadow Alliance')
+      player.incrementCounter('vp', 1, { silent: true, source: 'Shadow Alliance' })
       game.log.add({ template: '{player} gains 1 Victory Point', args: { player } })
     }
   },

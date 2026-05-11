@@ -29,7 +29,7 @@ module.exports = {
     if (flippable.length > 0) {
       flipped.add(flippable[0].id)
       game.state.conflict.flippedCardIds[player.name] = [...flipped]
-      player.gainVp(1, 'Ornithopter (intrigue)')
+      player.incrementCounter('vp', 1, { silent: true, source: 'Ornithopter (intrigue)' })
       game.log.add({ template: '{player}: Flips Ornithopter icon — +1 VP', args: { player } })
     }
   },

@@ -20,7 +20,7 @@ function gainInfluence(game, player, faction, amount = 1) {
 
   // Check VP threshold at 2
   if (prev < constants.INFLUENCE_VP_THRESHOLD && next >= constants.INFLUENCE_VP_THRESHOLD) {
-    player.gainVp(1, `${factionLabel(faction)} Influence (2+)`)
+    player.incrementCounter('vp', 1, { silent: true, source: `${factionLabel(faction)} Influence (2+)` })
     game.log.add({
       template: '{player} reaches 2 {faction} Influence: +1 Victory Point',
       args: { player, faction },
@@ -54,7 +54,7 @@ function loseInfluence(game, player, faction, amount = 1) {
 
   // Lose VP when dropping below 2
   if (prev >= constants.INFLUENCE_VP_THRESHOLD && next < constants.INFLUENCE_VP_THRESHOLD) {
-    player.loseVp(1, `${factionLabel(faction)} Influence (lost)`)
+    player.decrementCounter('vp', 1, { silent: true, source: `${factionLabel(faction)} Influence (lost)` })
     game.log.add({
       template: '{player} drops below 2 {faction} Influence: -1 Victory Point',
       args: { player, faction },
@@ -107,7 +107,7 @@ function checkAlliance(game, player, faction) {
   if (!currentHolder) {
     // No one has the alliance yet — first to reach 4
     game.state.alliances[faction] = player.name
-    player.gainVp(1, `${factionLabel(faction)} Alliance`)
+    player.incrementCounter('vp', 1, { silent: true, source: `${factionLabel(faction)} Alliance` })
     game.log.add({
       template: '{player} earns the {faction} Alliance: +1 Victory Point',
       args: { player, faction },
@@ -122,8 +122,8 @@ function checkAlliance(game, player, faction) {
     if (player.getInfluence(faction) > holder.getInfluence(faction)) {
       // Steal the alliance
       game.state.alliances[faction] = player.name
-      holder.loseVp(1, `${factionLabel(faction)} Alliance (lost to ${player.name})`)
-      player.gainVp(1, `${factionLabel(faction)} Alliance (from ${holder.name})`)
+      holder.decrementCounter('vp', 1, { silent: true, source: `${factionLabel(faction)} Alliance (lost to ${player.name})` })
+      player.incrementCounter('vp', 1, { silent: true, source: `${factionLabel(faction)} Alliance (from ${holder.name})` })
       game.log.add({
         template: '{player} takes the {faction} Alliance from {holder}: VP transfers',
         args: { player, faction, holder },

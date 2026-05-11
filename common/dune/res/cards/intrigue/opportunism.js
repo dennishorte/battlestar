@@ -35,7 +35,7 @@ module.exports = {
             factions.loseInfluence(game, player, faction, 1)
           }
           player.decrementCounter('solari', 2, { silent: true })
-          player.gainVp(1, 'Opportunism (intrigue)')
+          player.incrementCounter('vp', 1, { silent: true, source: 'Opportunism (intrigue)' })
           game.log.add({ template: '{player}: +1 VP', args: { player } })
         }
       }
