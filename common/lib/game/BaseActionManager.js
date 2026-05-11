@@ -1,10 +1,47 @@
 const { GameProxy } = require('./GameProxy.js')
 const selector = require('../selector.js')
 
+const SAFE_BARE_OPTIONS = new Set([
+  'Pass', 'Skip', 'Continue', 'Cancel', 'Done',
+  'Yes', 'No', 'yes', 'no',
+  'heads', 'tails',
+])
+
 class BaseActionManager {
   constructor(game) {
     this.game = game
     return GameProxy.create(this)
+  }
+
+  static SAFE_BARE_OPTIONS = SAFE_BARE_OPTIONS
+
+  option({ id, title, kind, defId, meta } = {}) {
+    const opt = { title: title ?? String(id) }
+    if (id != null) {
+      opt.id = id
+    }
+    if (defId != null) {
+      opt.defId = defId
+    }
+    if (kind != null) {
+      opt.kind = kind
+    }
+    if (meta != null) {
+      opt.meta = meta
+    }
+    return opt
+  }
+
+  cardOption(card, kind = 'card') {
+    const opt = { title: card.name, id: card.id, kind }
+    if (card.defId != null) {
+      opt.defId = card.defId
+    }
+    return opt
+  }
+
+  playerOption(player) {
+    return { title: player.name, id: player.name, kind: 'player' }
   }
 
   choose(player, choices, opts={}) {
@@ -17,6 +54,8 @@ class BaseActionManager {
     if (opts.min === 0) {
       opts.title = '(optional) ' + title
     }
+
+    this._warnOnBareStrings(choices, opts.title || title)
 
     const chooseSelector = {
       type: 'select',
@@ -57,6 +96,33 @@ class BaseActionManager {
     }
 
     return true
+  }
+
+  // Dev-time warning when a non-structured option slips through. Skips test
+  // runs to avoid spamming Jest output; surfaces during dev play through the
+  // browser console. Numeric strings are also exempt (1, 2, … are common as
+  // count-style selections).
+  _warnOnBareStrings(choices, title) {
+    if (process.env.NODE_ENV === 'production') {
+      return
+    }
+    if (process.env.NODE_ENV === 'test') {
+      return
+    }
+    for (const c of choices) {
+      if (typeof c !== 'string') {
+        continue
+      }
+      if (SAFE_BARE_OPTIONS.has(c)) {
+        continue
+      }
+      if (/^\d+$/.test(c)) {
+        continue
+      }
+      console.warn(
+        `[choose] bare-string option "${c}" in prompt "${title ?? 'Choose'}" — emit {title, id, kind?} instead`
+      )
+    }
   }
 
   chooseCard(player, choices, opts={}) {
@@ -112,17 +178,25 @@ class BaseActionManager {
   }
 
   choosePlayer(player, choices, opts={}) {
-    const playerNames = this.choose(
+    const selected = this.choose(
       player,
-      choices.map(player => player.name),
-      { ...opts, title: 'Choose Player' },
+      choices.map(p => this.playerOption(p)),
+      { ...opts, title: opts.title ?? 'Choose Player' },
     )
-    return choices.find(p => p.name === playerNames[0])
+    const pick = selected[0]
+    // `?? pick` keeps back-compat with stored bare-string responses from
+    // games recorded before structured options shipped.
+    const id = pick?.id ?? pick
+    return choices.find(p => p.name === id)
   }
 
   chooseYesNo(player, title) {
-    const choice = this.choose(player, ['yes', 'no'], { title, count: 1 })
-    return choice[0] === 'yes'
+    const choice = this.choose(player, [
+      { title: 'yes', id: 'yes' },
+      { title: 'no', id: 'no' },
+    ], { title, count: 1 })
+    const pick = choice[0]
+    return (pick?.id ?? pick) === 'yes'
   }
 
   flipCoin(player) {

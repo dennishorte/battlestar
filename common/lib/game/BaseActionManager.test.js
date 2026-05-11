@@ -534,10 +534,154 @@ describe('BaseActionManager', () => {
       // Call chooseYesNo
       actionManager.chooseYesNo(player1, 'Test question?')
 
-      // Verify only yes/no choices are provided
-      expect(capturedSelector.choices).toEqual(['yes', 'no'])
+      // Structured options carry both title (display) and id (resolution key)
+      expect(capturedSelector.choices).toEqual([
+        { title: 'yes', id: 'yes' },
+        { title: 'no', id: 'no' },
+      ])
 
       fixture.assertAllResponsesConsumed()
+    })
+
+    test('accepts structured {id} response', () => {
+      const { fixture, actionManager, player1 } = createUniqueFixture()
+      fixture.queueResponse(player1, [{ title: 'yes', id: 'yes' }])
+      expect(actionManager.chooseYesNo(player1, 'Confirm?')).toBe(true)
+      fixture.assertAllResponsesConsumed()
+    })
+  })
+
+  describe('choosePlayer()', () => {
+    test('emits structured player options into the selector', () => {
+      const { actionManager, player1, player2, game } = createUniqueFixture()
+
+      let capturedSelector = null
+      game.requestInputSingle = (selector) => {
+        capturedSelector = selector
+        return [{ title: 'player2', id: 'player2' }]
+      }
+
+      actionManager.choosePlayer(player1, [player1, player2])
+
+      expect(capturedSelector.choices).toEqual([
+        { title: 'player1', id: 'player1', kind: 'player' },
+        { title: 'player2', id: 'player2', kind: 'player' },
+      ])
+    })
+
+    test('resolves structured response to the correct player', () => {
+      const { fixture, actionManager, player1, player2 } = createUniqueFixture()
+      fixture.queueResponse(player1, [{ title: 'player2', id: 'player2' }])
+      const result = actionManager.choosePlayer(player1, [player1, player2])
+      expect(result).toBe(player2)
+      fixture.assertAllResponsesConsumed()
+    })
+
+    test('resolves bare-string response (back-compat)', () => {
+      const { fixture, actionManager, player1, player2 } = createUniqueFixture()
+      fixture.queueResponse(player1, ['player2'])
+      const result = actionManager.choosePlayer(player1, [player1, player2])
+      expect(result).toBe(player2)
+      fixture.assertAllResponsesConsumed()
+    })
+
+    test('respects custom opts.title', () => {
+      const { actionManager, player1, player2, game } = createUniqueFixture()
+      let capturedSelector = null
+      game.requestInputSingle = (selector) => {
+        capturedSelector = selector
+        return [{ id: 'player2' }]
+      }
+      actionManager.choosePlayer(player1, [player1, player2], { title: 'Pick a target' })
+      expect(capturedSelector.title).toBe('Pick a target')
+    })
+  })
+
+  describe('option helpers', () => {
+    test('option() builds canonical shape and drops unset fields', () => {
+      const { actionManager } = createUniqueFixture()
+      expect(actionManager.option({ id: 'a', title: 'Alpha' })).toEqual({
+        title: 'Alpha', id: 'a',
+      })
+      expect(actionManager.option({ id: 'a' })).toEqual({ title: 'a', id: 'a' })
+      expect(actionManager.option({ id: 'x', title: 'X', kind: 'k', defId: 'd', meta: { z: 1 } })).toEqual({
+        title: 'X', id: 'x', defId: 'd', kind: 'k', meta: { z: 1 },
+      })
+    })
+
+    test('cardOption() pulls name/id/defId off the card', () => {
+      const { actionManager } = createUniqueFixture()
+      expect(actionManager.cardOption({ name: 'Spice Hoard', id: 'sh-1', defId: 'spice-hoard' })).toEqual({
+        title: 'Spice Hoard', id: 'sh-1', defId: 'spice-hoard', kind: 'card',
+      })
+      expect(actionManager.cardOption({ name: 'Bare', id: 'b' }, 'imperium-card')).toEqual({
+        title: 'Bare', id: 'b', kind: 'imperium-card',
+      })
+    })
+
+    test('playerOption() builds {title, id, kind:"player"}', () => {
+      const { actionManager, player1 } = createUniqueFixture()
+      expect(actionManager.playerOption(player1)).toEqual({
+        title: 'player1', id: 'player1', kind: 'player',
+      })
+    })
+  })
+
+  describe('_warnOnBareStrings', () => {
+    let originalEnv
+    let warnSpy
+
+    beforeEach(() => {
+      originalEnv = process.env.NODE_ENV
+      // Warning is suppressed in test env by design; flip to dev to exercise it.
+      process.env.NODE_ENV = 'development'
+      warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    })
+
+    afterEach(() => {
+      process.env.NODE_ENV = originalEnv
+      warnSpy.mockRestore()
+    })
+
+    test('warns once per non-allowlisted bare-string option', () => {
+      const { actionManager, player1, game } = createUniqueFixture()
+      game.requestInputSingle = () => ['Custom Choice']
+      actionManager.choose(player1, ['Custom Choice', 'Another One'], { title: 'Pick' })
+      expect(warnSpy).toHaveBeenCalledTimes(2)
+      expect(warnSpy.mock.calls[0][0]).toContain('bare-string option "Custom Choice"')
+      expect(warnSpy.mock.calls[0][0]).toContain('in prompt "Pick"')
+    })
+
+    test('stays silent for allowlisted sentinels', () => {
+      const { actionManager, player1, game } = createUniqueFixture()
+      game.requestInputSingle = () => ['Pass']
+      actionManager.choose(player1, ['Pass', 'Skip', 'Done', 'Cancel'], { title: 'Confirm' })
+      expect(warnSpy).not.toHaveBeenCalled()
+    })
+
+    test('stays silent for numeric strings', () => {
+      const { actionManager, player1, game } = createUniqueFixture()
+      game.requestInputSingle = () => ['2']
+      actionManager.choose(player1, ['1', '2', '3'], { title: 'Pick a number' })
+      expect(warnSpy).not.toHaveBeenCalled()
+    })
+
+    test('stays silent for structured options', () => {
+      const { actionManager, player1, game } = createUniqueFixture()
+      game.requestInputSingle = () => [{ id: 'a' }]
+      actionManager.choose(player1, [
+        { title: 'Alpha', id: 'a' },
+        { title: 'Beta', id: 'b' },
+      ], { title: 'Pick' })
+      expect(warnSpy).not.toHaveBeenCalled()
+    })
+
+    test('NODE_ENV=test suppresses the warning', () => {
+      process.env.NODE_ENV = 'test'
+      const { actionManager, player1, game } = createUniqueFixture()
+      game.requestInputSingle = () => ['Custom']
+      actionManager.choose(player1, ['Custom'], { title: 'Pick' })
+      expect(warnSpy).not.toHaveBeenCalled()
     })
   })
 
