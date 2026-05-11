@@ -115,4 +115,29 @@ module.exports = defineConfig([
       "jest/no-standalone-expect": "off",
     },
   },
+
+  {
+    files: ['**/*.test.js'],
+    ignores: [
+      'lib/**',                          // engine unit tests need internal access
+      '**/testutil*.js',                 // testutil files are not test files anyway
+      'dune/tests/cardEffects.test.js',  // pure parser unit test; pending P3 refactor
+      'dune/tests/combat.test.js',       // pure parser unit test; pending P3 refactor
+      'magic/util/CardFilter.test.js',   // pure utility test; loads card DB from disk
+    ],
+    rules: {
+      // Codebase is CommonJS, so no-restricted-imports (which only catches ES `import`)
+      // doesn't help. Match `require('...')` calls via esquery instead.
+      'no-restricted-syntax': ['error',
+        {
+          selector: "CallExpression[callee.name='require'][arguments.0.value=/(\\/|^)(systems|phases|mixins)\\//]",
+          message: 'Tests must drive the game via testutil + game.run()/choose()/action(). Do not require internal modules (systems/phases/mixins).',
+        },
+        {
+          selector: "CallExpression[callee.name='require'][arguments.0.value=/^(fs|fs\\/.*|path)$/]",
+          message: 'Tests should not read source files. Use inline fixtures or expose a loader through testutil.',
+        },
+      ],
+    },
+  },
 ])

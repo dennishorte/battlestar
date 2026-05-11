@@ -72,39 +72,38 @@ The deny patterns (`**/systems/**`, `**/phases/**`, `**/mixins/**`) only fire on
 
 ### Rule design (`common/eslint.config.js`)
 
-Add a new flat-config block after the existing one:
+Codebase is CommonJS, so `no-restricted-imports` (which only catches ES `import` declarations) does nothing here. Use `no-restricted-syntax` with esquery selectors that match `require('...')` AST nodes instead.
 
 ```js
 {
   files: ['**/*.test.js'],
   ignores: [
-    'lib/**',                              // engine unit tests need internal access
-    '**/testutil*.js',                     // testutil files are not test files anyway
-    'dune/tests/cardEffects.test.js',      // pure parser unit test; pending P3 refactor
-    'dune/tests/combat.test.js',           // pure parser unit test; pending P3 refactor
-    'magic/util/CardFilter.test.js',       // pure utility test; loads card DB from disk
+    'lib/**',                          // engine unit tests need internal access
+    '**/testutil*.js',                 // testutil files are not test files anyway
+    'dune/tests/cardEffects.test.js',  // pure parser unit test; pending P3 refactor
+    'dune/tests/combat.test.js',       // pure parser unit test; pending P3 refactor
+    'magic/util/CardFilter.test.js',   // pure utility test; loads card DB from disk
   ],
   rules: {
-    'no-restricted-imports': ['error', {
-      patterns: [
-        {
-          group: ['**/systems/**', '**/phases/**', '**/mixins/**'],
-          message: 'Tests must drive the game via testutil + game.run()/choose()/action(). Do not import internal modules.',
-        },
-        {
-          group: ['fs', 'fs/*', 'fs/promises', 'path'],
-          message: 'Tests should not read source files. Use inline fixtures or expose a loader through testutil.',
-        },
-      ],
-    }],
+    'no-restricted-syntax': ['error',
+      {
+        selector: "CallExpression[callee.name='require'][arguments.0.value=/(\\/|^)(systems|phases|mixins)\\//]",
+        message: 'Tests must drive the game via testutil + game.run()/choose()/action(). Do not require internal modules (systems/phases/mixins).',
+      },
+      {
+        selector: "CallExpression[callee.name='require'][arguments.0.value=/^(fs|fs\\/.*|path)$/]",
+        message: 'Tests should not read source files. Use inline fixtures or expose a loader through testutil.',
+      },
+    ],
   },
 }
 ```
 
 Key choices:
-- Patterns use `**/segment/**` (not `*/segment/*`) — minimatch's `*` matches a single path segment, so `*/systems/*` would miss `../../systems/factions/index.js`.
-- `**/mixins/**` added to the deny list (not in original roadmap) — catches the lone Agricola violation and prevents future ones.
-- `lib/game.js`, `lib/util.js`, `lib/selector.js` are framework public API and are deliberately not in the deny list. Tests already import them.
+- Selectors fire on direct `require('...')` calls only. They don't catch `require.resolve(...)` (a `MemberExpression`, not `Identifier` callee) — currently unused in tests; revisit if it appears.
+- The first pattern matches `(/|^)(systems|phases|mixins)/` against the require argument so it catches relative paths like `../../systems/foo` as well as bare ones.
+- `**/mixins/**` (added to original roadmap deny list) catches the lone Agricola violation and prevents future ones.
+- `lib/game.js`, `lib/util.js`, `lib/selector.js` are framework public API and remain importable.
 - Three carve-outs are pending follow-up:
   - **Dune parser tests** kept until card-text parsing is removed (roadmap P3 + item #6). Re-enable the rule on these files when those land.
   - **Magic CardFilter** is a pure utility unit test, not a game test. Conceptually outside this rule's scope.
