@@ -710,10 +710,6 @@ describe('L1Z1X Mindnet', () => {
     })
 
     test('Fealty Uplink: gain 1 command token when scoring public objective with most tokens on board', () => {
-      const { getHandler } = require('../../systems/factions/index.js')
-      const handler = getHandler('l1z1x-mindnet')
-
-      // Set up a mock context with 2 players
       const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
       t.setBoard(game, {
         dennis: {
@@ -732,17 +728,13 @@ describe('L1Z1X Mindnet', () => {
       const dennis = game.players.byName('dennis')
       const initialTactics = dennis.commandTokens.tactics
 
-      // Call the handler directly
-      handler.onPublicObjectiveScored(dennis, game.factionAbilities, {})
+      game.factionAbilities.onPublicObjectiveScored(dennis)
 
       // Dennis had 3 tokens on board vs micah's 1 => should gain 1 command token
       expect(dennis.commandTokens.tactics).toBe(initialTactics + 1)
     })
 
     test('Fealty Uplink: no token gain when not having most tokens on board', () => {
-      const { getHandler } = require('../../systems/factions/index.js')
-      const handler = getHandler('l1z1x-mindnet')
-
       const game = t.fixture({ factions: ['l1z1x-mindnet', 'emirates-of-hacan'] })
       t.setBoard(game, {
         dennis: {
@@ -761,7 +753,7 @@ describe('L1Z1X Mindnet', () => {
       const dennis = game.players.byName('dennis')
       const initialTactics = dennis.commandTokens.tactics
 
-      handler.onPublicObjectiveScored(dennis, game.factionAbilities, {})
+      game.factionAbilities.onPublicObjectiveScored(dennis)
 
       // Dennis had fewer tokens => no gain
       expect(dennis.commandTokens.tactics).toBe(initialTactics)

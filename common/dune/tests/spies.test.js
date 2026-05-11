@@ -1,5 +1,4 @@
 const t = require('../testutil')
-const spySystem = require('../systems/spies')
 
 describe('Spy System', () => {
 
@@ -7,7 +6,7 @@ describe('Spy System', () => {
     const game = t.fixture()
     game.run()
     const player = game.players.byName('dennis')
-    expect(spySystem.hasSpyAt(game, player, 'arrakeen')).toBe(false)
+    expect(game.spies.hasSpyAt(player, 'arrakeen')).toBe(false)
   })
 
   test('hasSpyAt returns true when spy on connected post', () => {
@@ -18,9 +17,9 @@ describe('Spy System', () => {
     game.run()
     const player = game.players.byName('dennis')
     // Post A connects to arrakeen and spice-refinery
-    expect(spySystem.hasSpyAt(game, player, 'arrakeen')).toBe(true)
-    expect(spySystem.hasSpyAt(game, player, 'spice-refinery')).toBe(true)
-    expect(spySystem.hasSpyAt(game, player, 'research-station')).toBe(false)
+    expect(game.spies.hasSpyAt(player, 'arrakeen')).toBe(true)
+    expect(game.spies.hasSpyAt(player, 'spice-refinery')).toBe(true)
+    expect(game.spies.hasSpyAt(player, 'research-station')).toBe(false)
   })
 
   test('getSpyConnectedSpaces returns all connected spaces', () => {
@@ -30,7 +29,7 @@ describe('Spy System', () => {
     })
     game.run()
     const player = game.players.byName('dennis')
-    const connected = spySystem.getSpyConnectedSpaces(game, player)
+    const connected = game.spies.connectedSpaces(player)
     // A: arrakeen, spice-refinery; C: research-station, sietch-tabr
     expect(connected.has('arrakeen')).toBe(true)
     expect(connected.has('spice-refinery')).toBe(true)

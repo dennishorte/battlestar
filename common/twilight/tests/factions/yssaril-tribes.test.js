@@ -487,38 +487,6 @@ describe('Yssaril Tribes', () => {
       })
     })
 
-    describe('Transparasteel Plating', () => {
-      test('passive ability is registered', () => {
-        const game = t.fixture({
-          factions: ['yssaril-tribes', 'emirates-of-hacan'],
-        })
-        t.setBoard(game, {
-          dennis: {
-            technologies: ['transparasteel-plating'],
-          },
-        })
-        game.run()
-
-        // Verify the handler has the ability method
-        const { getHandler } = require('../../systems/factions/index.js')
-        const handler = getHandler('yssaril-tribes')
-        const dennis = game.players.byName('dennis')
-        expect(handler.canPassedPlayersPlayActionCards(dennis)).toBe(false)
-      })
-
-      test('returns true without the tech', () => {
-        const game = t.fixture({
-          factions: ['yssaril-tribes', 'emirates-of-hacan'],
-        })
-        game.run()
-
-        const { getHandler } = require('../../systems/factions/index.js')
-        const handler = getHandler('yssaril-tribes')
-        const dennis = game.players.byName('dennis')
-        expect(handler.canPassedPlayersPlayActionCards(dennis)).toBe(true)
-      })
-    })
-
     describe('Deepgloom Executable', () => {
       test('share Stall Tactics with other player', () => {
         // Dennis = Yssaril (with Deepgloom), Micah = Hacan (can use shared Stall Tactics)

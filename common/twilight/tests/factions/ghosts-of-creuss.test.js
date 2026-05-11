@@ -128,19 +128,6 @@ describe('Ghosts of Creuss', () => {
   })
 
   describe('Agent — Emissary Taivra', () => {
-    test('after activating system with wormhole, exhausts to make it adjacent to wormhole systems', () => {
-      const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
-      game.run()
-
-      const dennis = game.players.byName('dennis')
-      expect(dennis.isAgentReady()).toBe(true)
-
-      // The handler method exists on the faction
-      const { getHandler } = require('../../systems/factions/index.js')
-      const handler = getHandler('ghosts-of-creuss')
-      expect(handler.onAnySystemActivated).toBeDefined()
-    })
-
     test('exhausted agent cannot be used', () => {
       const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
       t.setBoard(game, {
@@ -218,10 +205,6 @@ describe('Ghosts of Creuss', () => {
     })
 
     test('afterShipsMove handler places fighters when commander unlocked and ships moved through wormhole', () => {
-      const { getHandler } = require('../../systems/factions/index.js')
-      const handler = getHandler('ghosts-of-creuss')
-      expect(handler.afterShipsMove).toBeDefined()
-
       const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
       t.setBoard(game, {
         dennis: {
@@ -238,16 +221,11 @@ describe('Ghosts of Creuss', () => {
       })
       game.run()
 
-      const dennis = game.players.byName('dennis')
-
-      // Call the handler directly: carrier moved through wormhole, cruiser didn't
-      handler.afterShipsMove(dennis, game.factionAbilities, {
-        systemId: '26',
-        movedShips: [
-          { owner: 'dennis', type: 'carrier', movedThroughWormhole: true },
-          { owner: 'dennis', type: 'cruiser', movedThroughWormhole: false },
-        ],
-      })
+      // Carrier moved through wormhole, cruiser didn't
+      game.factionAbilities.afterShipsMove('dennis', '26', [
+        { owner: 'dennis', type: 'carrier', movedThroughWormhole: true },
+        { owner: 'dennis', type: 'cruiser', movedThroughWormhole: false },
+      ])
 
       // Only the carrier has capacity and moved through wormhole => 1 fighter placed
       const fighters = game.state.units['26'].space
@@ -256,9 +234,6 @@ describe('Ghosts of Creuss', () => {
     })
 
     test('afterShipsMove does nothing when commander is locked', () => {
-      const { getHandler } = require('../../systems/factions/index.js')
-      const handler = getHandler('ghosts-of-creuss')
-
       const game = t.fixture({ factions: ['ghosts-of-creuss', 'emirates-of-hacan'] })
       t.setBoard(game, {
         dennis: {
@@ -275,14 +250,9 @@ describe('Ghosts of Creuss', () => {
       })
       game.run()
 
-      const dennis = game.players.byName('dennis')
-
-      handler.afterShipsMove(dennis, game.factionAbilities, {
-        systemId: '26',
-        movedShips: [
-          { owner: 'dennis', type: 'carrier', movedThroughWormhole: true },
-        ],
-      })
+      game.factionAbilities.afterShipsMove('dennis', '26', [
+        { owner: 'dennis', type: 'carrier', movedThroughWormhole: true },
+      ])
 
       // No fighter placed because commander is locked
       const fighters = game.state.units['26'].space

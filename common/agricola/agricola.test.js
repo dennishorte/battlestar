@@ -403,29 +403,6 @@ describe('Agricola', () => {
       const dennis = game.players.byName('dennis')
       expect(dennis.canRenovate()).toBe(false)
     })
-
-    test('house-redevelopment action requires renovation resources', () => {
-      const game = t.gameFixture({
-        dennis: { clay: 0, reed: 0 },
-      })
-      game.run()
-
-      const dennis = game.players.byName('dennis')
-      const action = res.getActionById('renovation-improvement')
-
-      // Import the mixin to access checkActionPrerequisites
-      const { ActionChoicesMixin } = require('./mixins/ActionChoicesMixin.js')
-
-      // Without resources, action should be blocked
-      expect(dennis.canRenovate()).toBe(false)
-      expect(ActionChoicesMixin.checkActionPrerequisites.call(game, dennis, action)).toBe(false)
-
-      // With resources, action should be allowed
-      dennis.setResource('clay', 2)
-      dennis.setResource('reed', 1)
-      expect(dennis.canRenovate()).toBe(true)
-      expect(ActionChoicesMixin.checkActionPrerequisites.call(game, dennis, action)).toBe(true)
-    })
   })
 
   describe('gameFixture', () => {

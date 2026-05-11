@@ -778,10 +778,6 @@ describe('Mahact Gene-Sorcerers', () => {
         })
         game.run()
 
-        // Directly test the revival state tracking and turn start handler
-        const { getHandler } = require('../../systems/factions/index.js')
-        const handler = getHandler('mahact-gene-sorcerers')
-
         // Count existing infantry in home system before revival
         const existingInfantry = (game.state.units['mahact-home']?.planets?.ixth || [])
           .filter(u => u.owner === 'dennis' && u.type === 'infantry').length
@@ -792,7 +788,7 @@ describe('Mahact Gene-Sorcerers', () => {
         const dennis = game.players.byName('dennis')
 
         // Simulate turn start — handler should place infantry in home system
-        handler.onTurnStart(dennis, game.factionAbilities)
+        game.factionAbilities.onTurnStart(dennis)
 
         // Revival count should be reset
         expect(game.state.crimsonLegionnaireRevival.dennis).toBe(0)

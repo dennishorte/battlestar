@@ -1,5 +1,4 @@
 const t = require('../../testutil.js')
-const factions = require('../../systems/factions.js')
 const leader = require('./LadyMargotFenring.js')
 
 describe('Lady Margot Fenring', () => {
@@ -17,7 +16,7 @@ describe('Lady Margot Fenring', () => {
       })
       game.run()
 
-      factions.gainInfluence(game, game.players.byName('dennis'), 'bene-gesserit')
+      game.factions.gainInfluence(game.players.byName('dennis'), 'bene-gesserit')
       expect(game.players.byName('dennis').spice).toBe(2)
     })
 
@@ -29,7 +28,7 @@ describe('Lady Margot Fenring', () => {
       })
       game.run()
 
-      factions.gainInfluence(game, game.players.byName('dennis'), 'bene-gesserit', 3)
+      game.factions.gainInfluence(game.players.byName('dennis'), 'bene-gesserit', 3)
       expect(game.players.byName('dennis').spice).toBe(2)
     })
 
@@ -41,7 +40,7 @@ describe('Lady Margot Fenring', () => {
       })
       game.run()
 
-      factions.gainInfluence(game, game.players.byName('dennis'), 'bene-gesserit')
+      game.factions.gainInfluence(game.players.byName('dennis'), 'bene-gesserit')
       expect(game.players.byName('dennis').spice).toBe(0)
     })
 
@@ -53,9 +52,9 @@ describe('Lady Margot Fenring', () => {
       })
       game.run()
 
-      factions.gainInfluence(game, game.players.byName('dennis'), 'bene-gesserit')
-      factions.loseInfluence(game, game.players.byName('dennis'), 'bene-gesserit', 2)
-      factions.gainInfluence(game, game.players.byName('dennis'), 'bene-gesserit', 2)
+      game.factions.gainInfluence(game.players.byName('dennis'), 'bene-gesserit')
+      game.factions.loseInfluence(game.players.byName('dennis'), 'bene-gesserit', 2)
+      game.factions.gainInfluence(game.players.byName('dennis'), 'bene-gesserit', 2)
       expect(game.players.byName('dennis').spice).toBe(4)
     })
 
@@ -67,9 +66,9 @@ describe('Lady Margot Fenring', () => {
       })
       game.run()
 
-      factions.gainInfluence(game, game.players.byName('dennis'), 'emperor')
-      factions.gainInfluence(game, game.players.byName('dennis'), 'guild')
-      factions.gainInfluence(game, game.players.byName('dennis'), 'fremen')
+      game.factions.gainInfluence(game.players.byName('dennis'), 'emperor')
+      game.factions.gainInfluence(game.players.byName('dennis'), 'guild')
+      game.factions.gainInfluence(game.players.byName('dennis'), 'fremen')
       // emperor/guild/fremen reach-2 bonuses include their own resource grants;
       // compare against a fresh game without the leader to isolate Loyalty.
       const baseline = t.fixture()
@@ -77,9 +76,9 @@ describe('Lady Margot Fenring', () => {
         dennis: { influence: { emperor: 1, guild: 1, fremen: 1 }, spice: 0 },
       })
       baseline.run()
-      factions.gainInfluence(baseline, baseline.players.byName('dennis'), 'emperor')
-      factions.gainInfluence(baseline, baseline.players.byName('dennis'), 'guild')
-      factions.gainInfluence(baseline, baseline.players.byName('dennis'), 'fremen')
+      baseline.factions.gainInfluence(baseline.players.byName('dennis'), 'emperor')
+      baseline.factions.gainInfluence(baseline.players.byName('dennis'), 'guild')
+      baseline.factions.gainInfluence(baseline.players.byName('dennis'), 'fremen')
 
       expect(game.players.byName('dennis').spice).toBe(baseline.players.byName('dennis').spice)
     })

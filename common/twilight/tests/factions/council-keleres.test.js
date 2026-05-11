@@ -420,9 +420,6 @@ describe('Council Keleres', () => {
 
   describe('Mech — Omniopiares', () => {
     test('getInvasionInfluenceCost returns 1 when mech present on planet', () => {
-      const { getHandler } = require('../../systems/factions/index.js')
-      const handler = getHandler('council-keleres')
-
       const game = t.fixture({
         factions: ['council-keleres', 'federation-of-sol'],
         keleresSubFaction: 'mentak-coalition',
@@ -438,19 +435,11 @@ describe('Council Keleres', () => {
       })
       game.run()
 
-      const dennis = game.players.byName('dennis')
-      const cost = handler.getInvasionInfluenceCost(dennis, game.factionAbilities, {
-        planetId: 'new-albion',
-        systemId: '27',
-        invadingPlayer: 'micah',
-      })
+      const cost = game.factionAbilities.getInvasionInfluenceCost('new-albion', '27', 'micah')
       expect(cost).toBe(1)
     })
 
     test('getInvasionInfluenceCost returns 0 when no mech on planet', () => {
-      const { getHandler } = require('../../systems/factions/index.js')
-      const handler = getHandler('council-keleres')
-
       const game = t.fixture({
         factions: ['council-keleres', 'federation-of-sol'],
         keleresSubFaction: 'mentak-coalition',
@@ -466,19 +455,11 @@ describe('Council Keleres', () => {
       })
       game.run()
 
-      const dennis = game.players.byName('dennis')
-      const cost = handler.getInvasionInfluenceCost(dennis, game.factionAbilities, {
-        planetId: 'new-albion',
-        systemId: '27',
-        invadingPlayer: 'micah',
-      })
+      const cost = game.factionAbilities.getInvasionInfluenceCost('new-albion', '27', 'micah')
       expect(cost).toBe(0)
     })
 
     test('getInvasionInfluenceCost returns 0 for own invasion', () => {
-      const { getHandler } = require('../../systems/factions/index.js')
-      const handler = getHandler('council-keleres')
-
       const game = t.fixture({
         factions: ['council-keleres', 'federation-of-sol'],
         keleresSubFaction: 'mentak-coalition',
@@ -494,12 +475,7 @@ describe('Council Keleres', () => {
       })
       game.run()
 
-      const dennis = game.players.byName('dennis')
-      const cost = handler.getInvasionInfluenceCost(dennis, game.factionAbilities, {
-        planetId: 'new-albion',
-        systemId: '27',
-        invadingPlayer: 'dennis',
-      })
+      const cost = game.factionAbilities.getInvasionInfluenceCost('new-albion', '27', 'dennis')
       expect(cost).toBe(0)
     })
   })

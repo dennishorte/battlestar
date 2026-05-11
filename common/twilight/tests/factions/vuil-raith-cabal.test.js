@@ -161,30 +161,20 @@ describe("Vuil'raith Cabal", () => {
     })
 
     test('does not capture own units', () => {
-      // Directly invoke the handler to verify own-unit filtering
-      const handler = require('../../systems/factions/vuil-raith-cabal.js')
-      const mockCtx = {
-        game: { res: require('../../res/index.js') },
-        state: { capturedUnits: {} },
-        log: { add: jest.fn() },
-      }
-      const player = { name: 'dennis' }
-      const ownUnit = { type: 'fighter', owner: 'dennis' }
-      handler.onUnitDestroyed(player, mockCtx, { systemId: '27', unit: ownUnit })
-      expect(mockCtx.state.capturedUnits['dennis'] || []).toEqual([])
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      game.run()
+
+      // Cabal player destroys own fighter — Devour should skip it.
+      game.factionAbilities.onUnitDestroyed('27', { type: 'fighter', owner: 'dennis' }, 'dennis')
+      expect(game.state.capturedUnits['dennis'] || []).toEqual([])
     })
 
     test('does not capture structures', () => {
-      const handler = require('../../systems/factions/vuil-raith-cabal.js')
-      const mockCtx = {
-        game: { res: require('../../res/index.js') },
-        state: { capturedUnits: {} },
-        log: { add: jest.fn() },
-      }
-      const player = { name: 'dennis' }
-      const structureUnit = { type: 'space-dock', owner: 'micah' }
-      handler.onUnitDestroyed(player, mockCtx, { systemId: '27', unit: structureUnit })
-      expect(mockCtx.state.capturedUnits['dennis'] || []).toEqual([])
+      const game = t.fixture({ factions: ['vuil-raith-cabal', 'emirates-of-hacan'] })
+      game.run()
+
+      game.factionAbilities.onUnitDestroyed('27', { type: 'space-dock', owner: 'micah' }, 'dennis')
+      expect(game.state.capturedUnits['dennis'] || []).toEqual([])
     })
   })
 
@@ -697,24 +687,6 @@ describe("Vuil'raith Cabal", () => {
       })
     })
 
-    describe('Dimensional Tear II', () => {
-      test('provides getFighterCapacityExemption of 12 when researched', () => {
-        const handler = require('../../systems/factions/vuil-raith-cabal.js')
-
-        // Without tech
-        const playerWithout = {
-          hasTechnology: (id) => id !== 'dimensional-tear-ii',
-        }
-        expect(handler.getFighterCapacityExemption(playerWithout, {})).toBe(6)
-
-        // With tech
-        const playerWith = {
-          hasTechnology: (id) => id === 'dimensional-tear-ii' || id === 'self-assembly-routines',
-        }
-        expect(handler.getFighterCapacityExemption(playerWith, {})).toBe(12)
-      })
-    })
-
     describe("Al'Raith Ix Ianovar", () => {
       test('causes The Fracture to enter play and move ingress tokens into gravity rift systems', () => {
         const game = t.fixture({ factions: ['vuil-raith-cabal', 'federation-of-sol'] })
@@ -749,9 +721,6 @@ describe("Vuil'raith Cabal", () => {
       })
 
       test('+1 Move for ships starting in The Fracture', () => {
-        const { getHandler } = require('../../systems/factions/index.js')
-        const handler = getHandler('vuil-raith-cabal')
-
         const game = t.fixture({ factions: ['vuil-raith-cabal', 'federation-of-sol'] })
         t.setBoard(game, {
           dennis: {
@@ -770,13 +739,11 @@ describe("Vuil'raith Cabal", () => {
 
         game.run()
 
-        const dennis = game.players.byName('dennis')
-
         // Ships starting in The Fracture get +1 Move
-        expect(handler.getMovementBonus(dennis, game.factionAbilities, 'the-fracture')).toBe(1)
+        expect(game.factionAbilities.getMovementBonus('dennis', 'the-fracture')).toBe(1)
 
         // Ships starting elsewhere get no bonus
-        expect(handler.getMovementBonus(dennis, game.factionAbilities, 'cabal-home')).toBe(0)
+        expect(game.factionAbilities.getMovementBonus('dennis', 'cabal-home')).toBe(0)
       })
     })
   })

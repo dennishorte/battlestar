@@ -1,5 +1,4 @@
 const t = require('../../testutil.js')
-const factions = require('../../systems/factions.js')
 const leader = require('./PrincessIrulan.js')
 
 describe('Princess Irulan', () => {
@@ -19,7 +18,7 @@ describe('Princess Irulan', () => {
       game.run()
 
       const before = game.zones.byId('dennis.intrigue').cardlist().length
-      factions.gainInfluence(game, game.players.byName('dennis'), 'emperor')
+      game.factions.gainInfluence(game.players.byName('dennis'), 'emperor')
       expect(game.zones.byId('dennis.intrigue').cardlist().length).toBe(before + 1)
     })
 
@@ -32,7 +31,7 @@ describe('Princess Irulan', () => {
       game.run()
 
       const before = game.zones.byId('dennis.intrigue').cardlist().length
-      factions.gainInfluence(game, game.players.byName('dennis'), 'emperor', 3)
+      game.factions.gainInfluence(game.players.byName('dennis'), 'emperor', 3)
       expect(game.zones.byId('dennis.intrigue').cardlist().length).toBe(before + 1)
     })
 
@@ -45,7 +44,7 @@ describe('Princess Irulan', () => {
       game.run()
 
       const before = game.zones.byId('dennis.intrigue').cardlist().length
-      factions.gainInfluence(game, game.players.byName('dennis'), 'emperor')
+      game.factions.gainInfluence(game.players.byName('dennis'), 'emperor')
       expect(game.zones.byId('dennis.intrigue').cardlist().length).toBe(before)
     })
 
@@ -58,9 +57,9 @@ describe('Princess Irulan', () => {
       game.run()
 
       const before = game.zones.byId('dennis.intrigue').cardlist().length
-      factions.gainInfluence(game, game.players.byName('dennis'), 'emperor')
-      factions.loseInfluence(game, game.players.byName('dennis'), 'emperor', 2)
-      factions.gainInfluence(game, game.players.byName('dennis'), 'emperor', 2)
+      game.factions.gainInfluence(game.players.byName('dennis'), 'emperor')
+      game.factions.loseInfluence(game.players.byName('dennis'), 'emperor', 2)
+      game.factions.gainInfluence(game.players.byName('dennis'), 'emperor', 2)
       expect(game.zones.byId('dennis.intrigue').cardlist().length).toBe(before + 2)
     })
 
@@ -73,9 +72,9 @@ describe('Princess Irulan', () => {
       game.run()
 
       const before = game.zones.byId('dennis.intrigue').cardlist().length
-      factions.gainInfluence(game, game.players.byName('dennis'), 'bene-gesserit')
-      factions.gainInfluence(game, game.players.byName('dennis'), 'guild')
-      factions.gainInfluence(game, game.players.byName('dennis'), 'fremen')
+      game.factions.gainInfluence(game.players.byName('dennis'), 'bene-gesserit')
+      game.factions.gainInfluence(game.players.byName('dennis'), 'guild')
+      game.factions.gainInfluence(game.players.byName('dennis'), 'fremen')
       expect(game.zones.byId('dennis.intrigue').cardlist().length).toBe(before)
     })
   })

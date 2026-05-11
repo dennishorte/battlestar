@@ -1,5 +1,4 @@
 const t = require('../testutil')
-const leaders = require('../systems/leaders')
 
 describe('Leaders', () => {
 
@@ -8,13 +7,13 @@ describe('Leaders', () => {
     game.run()
 
     for (const player of game.players.all()) {
-      const leader = leaders.getLeader(game, player)
+      const leader = game.leaders.get(player)
       expect(leader).toBeTruthy()
       expect(leader.name).toBeTruthy()
     }
 
     // Different leaders for each player
-    const names = game.players.all().map(p => leaders.getLeader(game, p).name)
+    const names = game.players.all().map(p => game.leaders.get(p).name)
     expect(new Set(names).size).toBe(names.length)
   })
 
@@ -30,7 +29,7 @@ describe('Leaders', () => {
     })
     game.run()
 
-    const leader = leaders.getLeader(game, game.players.byName('dennis'))
+    const leader = game.leaders.get(game.players.byName('dennis'))
     expect(leader.name).toContain('Beast')
 
     const player = game.players.byName('dennis')
