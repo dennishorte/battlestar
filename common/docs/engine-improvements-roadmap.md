@@ -188,24 +188,165 @@ The systems are already lazy-required inside functions today (`dune.js:163`, `du
 
 **Problem.** Late additions in Dune: `0c9754c29` (gate cards on source selection), `118c1f84e` (`usePromo`), `7baa1f33a` (lobby toggle for base imperium), `06daadd20` (exclude Base-only cards). Each game reinvents the filter pipeline. Per-card file split (`9baa0c944`) had to manually wire each new file into the registry.
 
-**Plan.**
-1. Add to `BaseCardManager`:
-   ```js
-   loadFromDirectory(dirPath, { skip = /\.test\.js$/ } = {})
-   // Returns: { [defId]: definition }
-   // Walks dir, requires every .js file matching pattern,
-   // validates each export against this.cardSchema (subclass-defined).
-   ```
-2. Add `getDefinitions({ sources, tags } = {})` to filter by `definition.source` and `definition.tags[]`.
-3. Define `source` as a top-level required field on card definitions; games declare their valid source set via `static SOURCES = [...]`.
-4. Settings-driven filtering lives in the game class, not the manager — the manager exposes `getDefinitions`, the game decides which sources to pull from `settings`.
+### Current state (audited 2026-05-11)
 
-**Migration.**
-- Dune already has per-card files; convert its `cardLoader.js` (or equivalent) to `loadFromDirectory` in one PR.
-- Ultimate, Twilight, Agricola: opt in only when they refactor to per-card files (likely deferred).
-- Document the convention in `docs/new-game-guide/`.
+Dune card definitions live under `common/dune/res/cards/` with two layout patterns:
 
-**Done when.** Dune card loading goes through `BaseCardManager.loadFromDirectory`; adding a card file requires zero registry edits.
+| Pattern | Example | Subdir per source? | `index.js` size |
+|---|---|---|---|
+| **Source-subfolder** | `imperium/{base,bloodlines,immortality,promo,riseOfIx,uprising}/` | yes | 21–113 lines each (6 indexes) |
+| **Flat with source field** | `intrigue/`, `conflict/`, `contracts/`, `tech/`, etc. | no — `source` distinguishes | 17–269 lines each (9 indexes) |
+
+A total of **16 per-source / per-card-type `index.js` files** manually `require()` every card file and re-export the union as an array. Per-card files already carry `source` and `compatibility` as top-level fields (`source: "Uprising"`, `compatibility: "All"`). Each new card requires editing exactly one index file.
+
+Filtering today (`common/dune/res/index.js`):
+- `SOURCE_TO_SETTING = { 'Base': 'useBaseGameCards', ... }` maps source names to settings flags.
+- `isSourceActive(source, settings)` returns `true` for `'Uprising'` always, otherwise checks the corresponding flag.
+- `isIncluded(item, settings)` combines source-active with compatibility (`'All'` or `'Uprising'`).
+- Per-card-type getters: `getImperiumCards(settings)`, `getIntrigueCards(settings)`, etc. — 10 of them, each calling `filterByCompatibility` (or, for imperium, a slightly different one-liner).
+- Consumers: `systems/deckEngine.js` calls `getImperiumCards/getIntrigueCards/...`, `systems/leaders.js` calls `getLeaders`, `systems/choam.js` calls `getContractCards`.
+
+No `cardLoader.js` exists — the original roadmap's reference to one is aspirational. Dune also has no `DuneCardManager.js`; it uses `BaseCardManager` directly (Magic and Ultimate are the only games with subclasses today).
+
+### Engine changes
+
+`BaseCardManager` today is a runtime *instance* registry, not a *definition* loader. The roadmap conflates the two; for this implementation, the loader helpers are static methods on `BaseCardManager` to keep card-related machinery in one place, but they don't read or write `this`.
+
+```js
+// common/lib/game/BaseCardManager.js
+
+const fs = require('fs')
+const path = require('path')
+
+class BaseCardManager {
+  // ... existing instance methods unchanged
+
+  /**
+   * Walk a directory, require every .js file that isn't a test or index,
+   * and return their exports as an array. Mechanical replacement for the
+   * hand-maintained per-card-type index.js files.
+   *
+   * opts.skip — RegExp matched against each filename. Default skips test files.
+   * opts.requireSource — throw if any def is missing a `source` field. Default true.
+   */
+  static loadFromDirectory(dirPath, { skip = /\.test\.js$/, requireSource = true } = {}) {
+    const defs = []
+    for (const entry of fs.readdirSync(dirPath).sort()) {
+      if (entry === 'index.js') continue
+      if (!entry.endsWith('.js')) continue
+      if (skip.test(entry)) continue
+      const def = require(path.join(dirPath, entry))
+      if (requireSource && !def.source) {
+        throw new Error(`Card definition ${entry} is missing required 'source' field`)
+      }
+      defs.push(def)
+    }
+    return defs
+  }
+
+  /**
+   * Filter a list of definitions by allowed source set and/or required tags.
+   * Settings-driven filtering belongs in the game class; this is the pure
+   * predicate.
+   */
+  static filterDefinitions(defs, { sources, tags } = {}) {
+    return defs.filter(def => {
+      if (sources && !sources.includes(def.source)) return false
+      if (tags && !def.tags?.some(t => tags.includes(t))) return false
+      return true
+    })
+  }
+}
+```
+
+Design notes:
+- **Static, not instance**: these operate on raw definitions before any game exists. Putting them on `this` would require constructing a CardManager just to load defs, which is backwards.
+- **Sorted readdir**: makes the resulting array order deterministic across filesystems. Today's hand-written `index.js` files are author-ordered (no consistent rule); sorting alphabetically is the simplest stable convention.
+- **`requireSource` defaults true**: enforces the roadmap's "source is a required top-level field" rule without a separate schema validator. If a game doesn't use sources (Tyrants?), it can opt out per call.
+- **No `tags` field exists yet** in any game's card defs. Including it in `filterDefinitions` future-proofs the API but is unused on day one.
+- **No `static SOURCES` requirement**: the roadmap suggested games declare their valid sources via a class static. Skipped — the game's settings-to-sources mapping already encodes the valid set implicitly; an explicit class static adds a synchronization point without enforcement value.
+
+### Dune migration
+
+**Per-card-type index files** (16 total). Replace hand-listed `require()`s with `loadFromDirectory(__dirname)`. Examples:
+
+```js
+// common/dune/res/cards/intrigue/index.js (was 269 lines)
+'use strict'
+const { BaseCardManager } = require('../../../../lib/game/BaseCardManager.js')
+module.exports = BaseCardManager.loadFromDirectory(__dirname)
+```
+
+```js
+// common/dune/res/cards/imperium/uprising/index.js (was 113 lines)
+'use strict'
+const { BaseCardManager } = require('../../../../../lib/game/BaseCardManager.js')
+module.exports = BaseCardManager.loadFromDirectory(__dirname)
+```
+
+The aggregator `imperium/index.js` (which spreads the 6 source arrays) can stay as-is — each spread now points at a `loadFromDirectory`-backed file. Or it can collapse to a single `loadFromDirectory` walk plus per-subdir spread; either way the line count drops from ~12 to similar.
+
+**Top-level filtering** (`res/index.js`). Replace `filterByCompatibility` with `BaseCardManager.filterDefinitions`, keeping the existing settings → sources translation:
+
+```js
+const { BaseCardManager } = require('../../lib/game/BaseCardManager.js')
+
+const SOURCE_TO_SETTING = { /* unchanged */ }
+
+function getActiveSources(settings) {
+  return ['Uprising', ...Object.entries(SOURCE_TO_SETTING)
+    .filter(([_, key]) => Boolean(settings[key]))
+    .map(([source]) => source)]
+}
+
+function getCards(defs, settings) {
+  // Compatibility is Dune-specific (Uprising vs. original Dune Imperium); keep it inline.
+  const compatible = defs.filter(d => d.compatibility === 'All' || d.compatibility === 'Uprising')
+  return BaseCardManager.filterDefinitions(compatible, { sources: getActiveSources(settings) })
+}
+
+module.exports = {
+  // ...
+  getImperiumCards: settings => getCards(cards.imperiumCards, settings),
+  getIntrigueCards: settings => getCards(cards.intrigueCards, settings),
+  // etc.
+}
+```
+
+The 10 getter methods collapse to one-liners over a shared `getCards`. Compatibility check stays Dune-specific (it's an artifact of supporting both the Uprising and original Dune Imperium card pools).
+
+**Files touched**: ~16 per-type index.js files (massive line reduction), `res/index.js` (minor refactor), `lib/game/BaseCardManager.js` (additions). No game-logic changes; all consumers continue calling the same `getImperiumCards(settings)` etc.
+
+### Other games — deferred
+
+| Game | Card def layout | Migration |
+|---|---|---|
+| Twilight | One-file-per-faction in `res/factions/`, plus shared `res/` data files | Defer — no per-card-file split yet |
+| Ultimate | `res/{base,arti,figs,echo,unseen,echo2,figs2}/` per-card files | Could migrate, but the existing per-expansion `factory(...)` pattern is more involved than Dune's; defer |
+| Agricola | `res/cards/{minorA-E,occupationA-E,major}/` per-card files | Eligible for migration on the same model, but ~270 cards × per-set files is its own project |
+| Tyrants | `res/cards/{drow,demons,...}/` per-card files | Small (~33 cards); easy candidate after Dune validates the approach |
+| Magic | No per-card definitions; cards loaded from the MTG database at runtime | N/A |
+
+Engine changes are pure additions, so deferring per-game adoption is safe.
+
+### Implementation order
+
+1. Add `loadFromDirectory` + `filterDefinitions` to `BaseCardManager`, with one unit test in `common/lib/game/BaseCardManager.test.js` covering a temp directory fixture.
+2. Migrate Dune `intrigue/index.js` first (largest file, flat layout) — validates the basic case.
+3. Migrate Dune `imperium/{base,bloodlines,immortality,promo,riseOfIx,uprising}/index.js` (6 files, source-subfolder layout).
+4. Migrate remaining per-card-type indexes (conflict, contracts, objectives, reserve, sardaukar, starter, tech, tleilax — 8 files).
+5. Refactor `res/index.js` filtering to use `filterDefinitions` + a shared `getCards` helper.
+6. Run full Dune test suite; expect no regressions.
+7. Add a short note to `docs/new-game-guide/06-cards-and-abilities.md` describing the convention.
+
+### Verification
+
+- `npm run test -w common -- --testPathPattern dune` passes unchanged.
+- Adding a new file `common/dune/res/cards/imperium/uprising/new-card.js` (with `source: "Uprising"`) makes it appear in `getImperiumCards(settings)` with no other edits.
+- Removing a file removes the card the same way.
+- Deliberately omitting `source:` from a card def fails fast at module-load time with the file name in the error.
+
+**Done when.** Dune card loading goes through `BaseCardManager.loadFromDirectory`; adding a card file requires zero registry edits; lint + tests clean.
 
 ---
 
