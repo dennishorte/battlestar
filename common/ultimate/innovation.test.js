@@ -847,7 +847,7 @@ describe('Innovation', () => {
         const result1 = game.run()
         const result2 = t.choose(game, 'Endorse.green')
 
-        expect(result2.selectors[0].choices).toStrictEqual(['Mathematics', 'Tools'])
+        expect(result2.selectors[0].choices.map(c => c.title || c)).toStrictEqual(['Mathematics', 'Tools'])
       })
 
       test('leader goes twice, shares once, demands twice', () => {

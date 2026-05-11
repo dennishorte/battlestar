@@ -335,8 +335,8 @@ class UltimateActionManager extends BaseActionManager {
 
     const choiceMap = cards.map(card => {
       if (card === 'auto') {
-        // 'auto' is a special keyword used createManyMethod that allows players
-        // to skip manually ordering the actions on many cards.
+        // 'auto' is a special keyword used by createManyMethod that allows
+        // players to skip manually ordering the actions on many cards.
         return { name: 'auto', card: 'auto' }
       }
       else if (!card.id) {
@@ -348,7 +348,6 @@ class UltimateActionManager extends BaseActionManager {
         cardIsHidden = false
       }
 
-
       if (cardIsHidden) {
         return { name: card.getHiddenName(this.game), card }
       }
@@ -358,33 +357,44 @@ class UltimateActionManager extends BaseActionManager {
     })
 
     opts.title = opts.title || 'Choose Cards(s)'
-    const choices = choiceMap.map(x => x.name)
+
+    // Emit structured options: 'auto' stays bare (sentinel handled below),
+    // real cards carry {title, id, kind:'card'} so the engine dev warning
+    // stays silent and the UI can route the chip without name fallback.
+    const choices = choiceMap.map(m =>
+      m.card === 'auto'
+        ? 'auto'
+        : { title: m.name, id: m.name, kind: 'card' }
+    )
 
     if (opts.hidden) {
-      choices.sort()
+      choices.sort((a, b) => {
+        const at = typeof a === 'object' ? a.title : a
+        const bt = typeof b === 'object' ? b.title : b
+        return at.localeCompare(bt)
+      })
     }
 
     let output
 
     while (true) {
-      const cardNames = this.choose(
-        player,
-        choices,
-        opts
-      )
+      const selections = this.choose(player, choices, opts)
 
-      if (cardNames.length === 0) {
+      if (selections.length === 0) {
         this.log.addDoNothing(player, 'select a card')
         return []
       }
 
-      if (cardNames.includes('auto')) {
+      // Selections may be bare strings (legacy stored responses) or
+      // structured {title, id} objects. Normalize to the lookup key (name).
+      const selectedNames = selections.map(s => (typeof s === 'object' ? s.id : s))
+
+      if (selectedNames.includes('auto')) {
         return ['auto']
       }
       else {
         output = []
-
-        for (const name of cardNames) {
+        for (const name of selectedNames) {
           const mapping = choiceMap.find(m => m.name === name && !output.includes(m.card))
           output.push(mapping.card)
         }

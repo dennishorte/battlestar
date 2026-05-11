@@ -18,7 +18,7 @@ describe('Code of Laws', () => {
     game.run()
     const result2 = t.choose(game, 'Dogma.Code of Laws')
 
-    expect(result2.selectors[0].choices.sort()).toEqual(['Metalworking', 'Writing'])
+    expect(result2.selectors[0].choices.map(c => c.title || c).sort()).toEqual(['Metalworking', 'Writing'])
 
     const result3 = t.choose(game, 'Writing')
 

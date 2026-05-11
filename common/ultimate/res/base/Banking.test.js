@@ -22,10 +22,10 @@ describe('Banking', () => {
     game.run()
     const result2 = t.choose(game, 'Dogma.Banking')
 
-    expect(result2.selectors[0]).toEqual(expect.objectContaining({
-      actor: 'micah',
-      choices: expect.arrayContaining(['Industrialization', 'Chemistry'])
-    }))
+    expect(result2.selectors[0].actor).toBe('micah')
+    expect(result2.selectors[0].choices.map(c => c.title || c)).toEqual(
+      expect.arrayContaining(['Industrialization', 'Chemistry'])
+    )
 
     t.choose(game, 'Chemistry')
 

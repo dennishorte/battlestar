@@ -19,7 +19,7 @@ describe('Bioengineering', () => {
     game.run()
     const request = t.choose(game, 'Dogma.Bioengineering')
 
-    expect(request.selectors[0].choices.sort()).toEqual(['Agriculture', 'Clothing', 'Sailing'])
+    expect(request.selectors[0].choices.map(c => c.title || c).sort()).toEqual(['Agriculture', 'Clothing', 'Sailing'])
 
     t.choose(game, 'Sailing')
 

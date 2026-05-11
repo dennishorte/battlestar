@@ -22,7 +22,7 @@ describe('Construction', () => {
       const selector = request.selectors[0]
       expect(selector.actor).toBe('micah')
       expect(selector.count).toBe(2)
-      expect(selector.choices.sort()).toEqual(handNames)
+      expect(selector.choices.map(c => c.title || c).sort()).toEqual(handNames)
     })
 
     test('draw a 2', () => {
