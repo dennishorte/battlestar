@@ -354,35 +354,115 @@ Engine changes are pure additions, so deferring per-game adoption is safe.
 
 **Problem.** `0efda16d1` retrofitted source labels onto every VP-mutating call site in Dune late in the project. Every game eventually needs a "where did points/resources come from?" UI. Currently each game would solve it independently.
 
-**Plan.**
-1. Extend `BasePlayer.incrementCounter(name, count, opts)` so `opts.source` is canonical:
-   ```js
-   incrementCounter(name, count=1, opts={}) {
-     // opts.source: { label: string, ref?: any }  -- recommended
-     // opts.silent: existing
-     this.counters[name] += count
-     this.game.state.counterHistory ||= {}
-     const history = this.game.state.counterHistory[this.id] ||= []
-     history.push({
-       counter: name,
-       delta: count,
-       total: this.counters[name],
-       source: opts.source || null,
-       round: this.game.state.round ?? null,
-       turn: this.game.state.turn ?? null,
-     })
-     if (!opts.silent) { /* existing log */ }
-   }
-   ```
-2. Apply the same treatment to `setCounter`.
-3. Ship a generic Vue component `app/src/modules/games/common/CounterHistoryModal.vue` that renders `game.state.counterHistory[playerId][counter]` as a sortable table. Games wire it to whichever counter badge they expose.
-4. Mark `opts.source` as recommended in docs, not required — but lint warn if missing in PR review.
+### Current state (audited 2026-05-11)
 
-**Migration.**
-- Add the param (no-op default) — zero breaking change.
-- Per-game adoption: each game updates its mutation sites with source labels over time. Game state is ephemeral (deterministic replay), so backfilling historical games is automatic on next load.
+Only Dune has any history tracking today:
+- `DunePlayer.gainVp(amount, source)` / `loseVp(amount, source)` write `{amount, source, round}` entries into `game.state.vpHistory[playerName][]`.
+- Bootstrap: `dune.js:160` initializes `state.vpHistory = {}`, `initializePlayers()` seeds starting-VP entries.
+- 29 call sites pass plain-string sources like `'For Humanity'`, `'Junction Headquarters'`, `"Smuggler's Haven"`. Each site also emits its own VP log message; `gainVp` calls `incrementCounter` with `silent: true` to avoid double logging.
+- Only consumer: `app/src/modules/games/dune/components/modals/DuneVpBreakdownModal.vue` (132 lines, renders the per-player VP table). Wired into `DunePlayerPanel.vue` via a click handler on the VP badge.
 
-**Done when.** `BasePlayer` writes `counterHistory` for every mutation; Dune's bespoke `gainVp/loseVp` + `DuneVpBreakdownModal` are replaced by the shared infrastructure.
+Other games:
+- Magic / Ultimate / Agricola / Twilight have no `History` state at all. None override the counter methods. Counter mutation site density: Dune 198, Tyrants 95, Magic 1, the others use direct `counters[name] = ...` or game-specific shortcuts.
+
+No `BasePlayer` subclass overrides `incrementCounter` / `setCounter`. The base class today has no history infrastructure.
+
+### Engine changes — `BasePlayer`
+
+Add a `counterHistory` state writer to the existing `incrementCounter` and `setCounter`. Both accept a new `opts.source`, which can be either a plain string (treated as a label) or `{ label, ref? }` for callers who want to attach a card/leader/space reference.
+
+```js
+incrementCounter(name, count=1, opts={}) {
+  const before = this.counters[name] || 0
+  this.counters[name] = before + count
+  this._recordCounterChange(name, count, before + count, opts.source)
+
+  if (!opts.silent) {
+    this.log.add({ /* existing template */ })
+  }
+}
+
+setCounter(name, value, opts={}) {
+  const before = this.counters[name] || 0
+  this.counters[name] = value
+  this._recordCounterChange(name, value - before, value, opts.source)
+
+  if (!opts.silent) {
+    this.log.add({ /* existing template */ })
+  }
+}
+
+_recordCounterChange(counter, delta, total, source) {
+  if (delta === 0) {
+    return
+  }
+  this.game.state.counterHistory ||= {}
+  this.game.state.counterHistory[this.name] ||= []
+  this.game.state.counterHistory[this.name].push({
+    counter,
+    delta,
+    total,
+    source: this._normalizeSource(source),
+    round: this.game.state.round ?? null,
+    turn: this.game.state.turn ?? null,
+  })
+}
+
+_normalizeSource(source) {
+  if (!source) return null
+  if (typeof source === 'string') return { label: source }
+  return source
+}
+```
+
+Decisions baked in:
+- **Track unconditionally** — every non-zero mutation goes into history. Roadmap's preference. Cost is ~200-300 entries per Dune game; state is ephemeral so it doesn't grow across runs, but does inflate the JSON over the wire. Acceptable tradeoff for full audit coverage.
+- **Skip zero-delta mutations** — `setCounter(name, current)` and `incrementCounter(name, 0)` don't emit history rows. Stops the noise of no-op writes.
+- **`addCounter` stays untracked** — initial-value registration in subclass constructors isn't a mutation. History begins when gameplay does.
+- **`opts.source` accepts string or `{ label, ref? }`** — string for the 90% case, structured form when callers want to reference the card/leader that caused it. Normalized to `{ label, ref? }` on write so the consumer always sees the same shape.
+
+### Engine changes — Vue: generic `CounterHistoryModal`
+
+Move the Dune VP table to `app/src/modules/games/common/CounterHistoryModal.vue`. Make it parameterized:
+
+```vue
+<!-- Props (or modal payload): playerId, counterName, title, currentValue -->
+<!-- Reads: game.state.counterHistory[playerId].filter(e => e.counter === counterName) -->
+```
+
+The modal builds the running total internally (entries store `total`, but recomputing from `delta` keeps it self-contained). Renders Rd | Source | Δ | Total just like Dune's current one.
+
+Per-game wiring: each game's main component imports `CounterHistoryModal` and exposes it under whichever modal id makes sense (e.g., Dune keeps `dune-vp-breakdown-modal` id for now; under the hood it's the generic component with `counterName: 'vp'`).
+
+### Dune migration
+
+1. **Replace `gainVp` / `loseVp` call sites.** Each of the 29 sites does `player.gainVp(N, 'Source Name')`; rewrite to `player.incrementCounter('vp', N, { silent: true, source: 'Source Name' })`. Keep the `silent: true` so the per-card log messages don't double up. Then delete `gainVp`, `loseVp`, `_recordVpEntry` from `DunePlayer`.
+2. **Replace starting-VP seed.** `dune.js:initializePlayers` currently writes a manual `vpHistory[player.name].push({...})`; change to `player.setCounter('vp', startingVp, { silent: true, source: 'Starting VP' })`.
+3. **Drop `state.vpHistory`.** Remove the init in `_reset` and the manual writes in `initializePlayers`. The new `state.counterHistory` covers the same ground.
+4. **Update `DuneVpBreakdownModal`.** Either (a) replace it entirely with `CounterHistoryModal` wired with `counterName: 'vp'`, or (b) thin-wrap if Dune wants specific styling. Recommendation: thin-wrap, ~10 lines, defers full deletion to a follow-up.
+5. **Leave `gainInfluence` / `loseInfluence` alone.** Those wrappers live on `DunePlayer` but are entry points for a workflow (the `systems/factions.js` orchestration around influence-gain hooks). They should keep their own existence; under the hood they'll now record history via `incrementCounter`.
+
+### Other games — deferred
+
+Engine change is additive: existing call sites without `opts.source` produce history entries with `source: null`. Tyrants' 95 mutation sites and the others will accumulate sourceless rows until someone migrates them. No UI exists to consume non-Dune history yet, so the entries are harmless until that work happens.
+
+### Implementation order
+
+1. Add `_recordCounterChange` + `_normalizeSource` to `BasePlayer`, wire from `incrementCounter` + `setCounter`. Extend `BasePlayerManager.test.js` (or add to `BasePlayer.test.js` if missing) with cases: increment writes history, setCounter writes delta, zero-delta skipped, string source normalized, `{label, ref}` source preserved, `addCounter` doesn't write.
+2. Add `app/src/modules/games/common/CounterHistoryModal.vue` (carved from `DuneVpBreakdownModal.vue`).
+3. Migrate Dune's 29 `gainVp` / `loseVp` call sites to `incrementCounter('vp', N, { silent: true, source })`.
+4. Migrate Dune's starting-VP seed; remove `vpHistory` state + `gainVp` / `loseVp` / `_recordVpEntry` methods.
+5. Replace `DuneVpBreakdownModal` body with `<CounterHistoryModal counterName="vp" :playerId="..." />` (thin wrapper, file stays as a Dune-named modal).
+6. Run Dune test suite + lint.
+
+### Verification
+
+- `npm run test -w common` clean.
+- A new test confirms that `incrementCounter` / `setCounter` write `counterHistory` entries with the right shape.
+- The Dune VP breakdown modal renders identically (eyeball check on a running game).
+- Counter mutations from non-Dune games produce sourceless `counterHistory` entries without breaking anything.
+
+**Done when.** `BasePlayer` writes `counterHistory` for every non-zero mutation; Dune's bespoke `gainVp` / `loseVp` / `_recordVpEntry` + `state.vpHistory` are gone; the VP breakdown UI reads from the shared `counterHistory`.
 
 ---
 
