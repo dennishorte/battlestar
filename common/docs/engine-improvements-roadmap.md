@@ -14,7 +14,7 @@ Companion analysis: see commit-history retrospective in chat; the lessons summar
 | 2 | `BaseCardManager` source indexing + `loadFromDirectory` | Engine (additive) | Low | — | 1–2 days | ✓ Completed 2026-05-11 |
 | 3 | `BasePlayer.incrementCounter` source attribution + history | Engine (additive) | Low | — | 1 day + per-game migration | ✓ Completed 2026-05-11 (Dune migrated) |
 | 4 | Structured `choose()` options (`{title, id, kind}`) | Engine (additive) | Medium | — | 2 days + per-game migration | ✓ Completed 2026-05-11 |
-| 5 | `actions.privateChoice()` primitive | Engine (additive) | Low | — | 1 day | — |
+| 5 | `actions.privateChoice()` primitive | Engine (additive) | Low | — | 1 day | Deferred — adequate workarounds in place |
 | 6 | `BaseCard.hooks` + `LIFECYCLE_EVENTS` registry | Engine (schema) | High | 4 (so handlers can emit structured prompts uniformly) | 3–5 days + per-game migration | — |
 | 7 | Scope-explicit state (`transient/turn/round/persistent`) | Engine (schema) | High | — | 2–3 days + per-game migration | — |
 | 8 | `BaseTestUtil` with schema-validated `setBoard/testBoard` | Engine (infrastructure) | High | 6, 7 (state shape must be canonical) | 4–6 days + per-game migration | — |
@@ -652,6 +652,8 @@ Engine auto-respond strips `meta` from structured options, so sites that need to
 ---
 
 ## 5. `actions.privateChoice()` primitive
+
+**Status.** Deferred 2026-05-11. The three Dune leak fixes (`a3dabdaf1`, `197c16b3c`, `31f50c0c8`) settled into a working pattern — `noAutoRespond` on the selector + explicit "X chooses not to play" / "X has no intrigue cards" log memos surface the decision without revealing card contents. The Prescience case (`dfe96fe43`) was solved with `LogEntry.visibility` + `redacted`, which is a log-layer concern, not a choose-layer one. The primitive would be cleaner but the surface area for new leaks is small and the existing pattern is well-understood; revisit if another leak shows up or if the next game has hidden-info prompts as a load-bearing mechanic.
 
 **Problem.** `a3dabdaf1`: prompting only when the player has a playable card leaks "I have nothing." Re-litigated 24 days later (`197c16b3c`) and once more (`31f50c0c8`). `dfe96fe43` is the same shape: Prescience reveal leaked to others.
 
