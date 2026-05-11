@@ -204,6 +204,36 @@ class BaseActionManager {
     return (pick?.id ?? pick) === 'yes'
   }
 
+  // Hidden-info prompt. Always emits — single-option lists do NOT
+  // auto-resolve, and an empty `choices` array collapses to ['Pass'] so
+  // opponents see the pause regardless of whether the actor has anything
+  // to do. After the response, a privacy-aware memo lands in the log:
+  // the actor sees their selection, opponents see only that a decision
+  // happened. Suppress the memo with `opts.logDecision: false` when the
+  // caller will log a more specific consequence themselves.
+  privateChoice(player, choices, opts={}) {
+    const augmented = choices.length > 0 ? choices : ['Pass']
+
+    const selection = this.choose(player, augmented, {
+      ...opts,
+      noAutoRespond: true,
+    })
+
+    if (opts.logDecision !== false) {
+      const pick = selection[0]
+      const choiceLabel = pick && typeof pick === 'object' ? pick.title : pick
+      this.log.add({
+        template: opts.logTemplate || '{player} makes a private decision: {choice}',
+        args: { player, choice: choiceLabel ?? 'Pass' },
+        visibility: [player.name],
+        redacted: opts.redactedTemplate || '{player} makes a private decision',
+        event: 'private-choice',
+      })
+    }
+
+    return selection
+  }
+
   flipCoin(player) {
     const choice = this.choose(player, ['heads', 'tails'], {
       title: 'Call it...'

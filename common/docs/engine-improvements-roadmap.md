@@ -14,7 +14,7 @@ Companion analysis: see commit-history retrospective in chat; the lessons summar
 | 2 | `BaseCardManager` source indexing + `loadFromDirectory` | Engine (additive) | Low | — | 1–2 days | ✓ Completed 2026-05-11 |
 | 3 | `BasePlayer.incrementCounter` source attribution + history | Engine (additive) | Low | — | 1 day + per-game migration | ✓ Completed 2026-05-11 (Dune migrated) |
 | 4 | Structured `choose()` options (`{title, id, kind}`) | Engine (additive) | Medium | — | 2 days + per-game migration | ✓ Completed 2026-05-11 |
-| 5 | `actions.privateChoice()` primitive | Engine (additive) | Low | — | 1 day | Deferred — adequate workarounds in place |
+| 5 | `actions.privateChoice()` primitive | Engine (additive) | Low | — | 1 day | ✓ Completed 2026-05-11 |
 | 6 | `BaseCard.hooks` + `LIFECYCLE_EVENTS` registry | Engine (schema) | High | 4 (so handlers can emit structured prompts uniformly) | 3–5 days + per-game migration | — |
 | 7 | Scope-explicit state (`transient/turn/round/persistent`) | Engine (schema) | High | — | 2–3 days + per-game migration | — |
 | 8 | `BaseTestUtil` with schema-validated `setBoard/testBoard` | Engine (infrastructure) | High | 6, 7 (state shape must be canonical) | 4–6 days + per-game migration | — |
@@ -28,7 +28,7 @@ Total engine work: ~3 weeks of focused effort, plus migration cost paid per game
 
 ## Sequencing rationale
 
-**Phase 1 — Independent additive primitives.** Items 1–5 can land in any order and don't break existing games. They unlock the largest immediate quality-of-life wins for the next game build. ✓ Phase complete 2026-05-11 (item 5 deferred — see its section for the rationale).
+**Phase 1 — Independent additive primitives.** Items 1–5 can land in any order and don't break existing games. They unlock the largest immediate quality-of-life wins for the next game build. ✓ Phase complete 2026-05-11.
 
 **Phase 2 — Schema changes.** Items 6 and 7 redefine where state lives and how cards opt in to lifecycle events. Each migration is per-game work but mechanical. Do these before any new game starts.
 
@@ -655,30 +655,100 @@ Engine auto-respond strips `meta` from structured options, so sites that need to
 
 ## 5. `actions.privateChoice()` primitive
 
-**Status.** Deferred 2026-05-11. The three Dune leak fixes (`a3dabdaf1`, `197c16b3c`, `31f50c0c8`) settled into a working pattern — `noAutoRespond` on the selector + explicit "X chooses not to play" / "X has no intrigue cards" log memos surface the decision without revealing card contents. The Prescience case (`dfe96fe43`) was solved with `LogEntry.visibility` + `redacted`, which is a log-layer concern, not a choose-layer one. The primitive would be cleaner but the surface area for new leaks is small and the existing pattern is well-understood; revisit if another leak shows up or if the next game has hidden-info prompts as a load-bearing mechanic.
-
 **Problem.** `a3dabdaf1`: prompting only when the player has a playable card leaks "I have nothing." Re-litigated 24 days later (`197c16b3c`) and once more (`31f50c0c8`). `dfe96fe43` is the same shape: Prescience reveal leaked to others.
 
-**Plan.**
-1. Add to `BaseActionManager`:
-   ```js
-   privateChoice(player, choices, opts) {
-     // - Always emits a prompt, even if `choices` is empty (auto-injects a 'Pass' option).
-     // - InputRequestEvent carries { private: true, actor: player.name }
-     //   so the UI shows opponents "Waiting on <player>..." without the choice set.
-     // - Log emits a structured 'private-choice' entry; opponents see "<player> made a private choice"
-     //   while the actor sees the actual selection (or "passed").
-   }
-   ```
-2. Selector validation rejects empty selections on private choices unless `Pass` is explicitly selected — prevents UI bugs from making a pass invisible.
-3. Add to `BaseLogManager`: an opponent-visible "private decision" event type that hides args but shows actor + context.
+### Current state (audited 2026-05-11)
 
-**Migration.**
-- Dune `combat.js` intrigue prompt → `privateChoice`.
-- Twilight: action card play prompts → `privateChoice`.
-- Magic: any "decline to respond" prompt → `privateChoice`.
+**Engine.** `BaseActionManager.choose` is type-agnostic about privacy. The selector it builds (`{type:'select', actor, choices, ...opts}`) ends up in `game.waiting.selectors[]` and is exposed only to the actor through `game.getWaiting(player)` — non-actors get `undefined`, so opponents never see the choice list in the UI. The frontend `WaitingChoice` component reads `game.getWaiting(this.owner)`, which returns nothing for non-actor viewers; their tab in `WaitingPanel` just shows "No actions waiting for you right now." Per-viewer card visibility is enforced separately at the zone level. So the *choice list itself* is already partitioned by viewer; the leak isn't there.
 
-**Done when.** No game ad-hoc-checks "does this player have a playable card?" before prompting in a hidden-info context.
+The actual leak sources, in order of subtlety:
+1. **Auto-respond elision.** `_tryToAutomaticallyRespond` (`common/lib/game.js:573`) skips the input request entirely when `min >= choices.length` — exactly one playable option. The opponent observes "no pause happened" and infers the decision was forced. `noAutoRespond: true` on the selector opts out; this is what `197c16b3c` did for combat intrigue. Engine support is already present.
+2. **Skipped prompts.** When the call site checks "do I have a playable card?" and skips `choose` entirely, opponents observe no pause and infer the absence. `a3dabdaf1` fixed this for combat intrigue by always prompting whenever the player has *any* intrigue card; the call site does the playability filter internally and offers only 'Pass' when none qualify.
+3. **Decision elision.** When the actor passes silently (no log entry), opponents see nothing happen and infer the absence again. `31f50c0c8` added explicit "X chooses not to play an intrigue card" / "X has no intrigue cards" / "X is not in the combat" memos to make the negative space observable.
+
+**Log infrastructure.** `LogEntry.visibility` (array of player names who see the entry) and `LogEntry.redacted` (alternate template for non-visible players) are already wired through `BaseLogManager.add`. `dfe96fe43` (Prescience) uses both. The "private decision" event type proposed in the original roadmap is just `visibility: [player.name]` + a `redacted` template — no new infrastructure needed.
+
+**Other engine bits.** `noAutoRespond: true` is the only existing privacy-relevant selector flag. There's no `private:` field today; the roadmap proposed one but the analysis above shows it isn't load-bearing because the UI already partitions on actor.
+
+### Engine changes
+
+Add one method to `BaseActionManager`:
+
+```js
+privateChoice(player, choices, opts = {}) {
+  // Ensure the prompt always emits — empty choice lists collapse to a
+  // single 'Pass' so opponents observe a pause even when the actor had
+  // nothing to do. Allowlist already covers the 'Pass' sentinel so the
+  // bare-string warning stays silent.
+  const augmented = choices.length > 0 ? choices : ['Pass']
+
+  const selection = this.choose(player, augmented, {
+    ...opts,
+    noAutoRespond: true,
+  })
+
+  // Decision memo. Actor sees their selection; opponents see only that a
+  // decision happened. Suppressible via `opts.logDecision: false` for call
+  // sites that prefer to log their own consequence message.
+  if (opts.logDecision !== false) {
+    const pick = selection[0]
+    const choiceLabel = pick && typeof pick === 'object' ? pick.title : pick
+    this.log.add({
+      template: opts.logTemplate || '{player} makes a private decision: {choice}',
+      args: { player, choice: choiceLabel ?? 'Pass' },
+      visibility: [player.name],
+      redacted: opts.redactedTemplate || '{player} makes a private decision',
+      event: 'private-choice',
+    })
+  }
+
+  return selection
+}
+```
+
+Design notes:
+- **Always `noAutoRespond: true`.** This is the whole point — a single-option pick must still emit the prompt so opponents see the pause. Callers don't get to opt out; if they need auto-respond, they should use `choose` instead.
+- **`'Pass'` auto-injection on empty choices.** Lets call sites stop guarding with `if (choices.length > 0)`. The sentinel is in the engine allowlist already.
+- **`logDecision` opt-out.** Some prompts have a more specific consequence message (e.g. "X plays Card Y" when not passing) — the caller wants to log that publicly and skip the redacted memo. Default-on covers the common case.
+- **No new selector field.** The roadmap originally proposed `{private: true, actor: ...}` on the InputRequestEvent. Skipped because the UI already partitions on `actor` via `getWaiting`; adding `private: true` would be informational and would gate nothing.
+- **No selector validation change.** The roadmap proposed rejecting empty selections "unless Pass is explicitly selected." The existing validator already enforces min/max bounds; with `'Pass'` injected automatically and counted as a real option, no further rejection logic is needed.
+
+### Per-game migration
+
+**Dune combat intrigue (`phases/combat.js:78`).** Current code passes `noAutoRespond: (game.settings.version || 1) >= 2` to gate the always-prompt behavior to v2+ stored games. Migrating to `privateChoice` would unconditionally set `noAutoRespond`, which breaks replay of v1 stored games. Two options:
+- Bump game version and migrate (replay of v1 games would re-pause for new prompts they didn't have before)
+- Wait for v1 stored games to age out, then migrate
+
+Recommendation: defer the Dune migration. New game versions can use `privateChoice` directly; the existing combat site stays on `choose` until v1 ages out.
+
+**Twilight action card play prompts.** Action card plays are public knowledge per game rules — when a player plays an action card, opponents see the card. The decision itself (which card, whether to play) doesn't have a leak surface in the same way intrigue does. Likely not a migration target.
+
+**Magic "decline to respond" prompts.** Magic's draft pick prompts are already private per-player. The "decline to respond" pattern doesn't currently exist in the Magic draft surface. No migration today.
+
+**Net.** Add the primitive; don't migrate any existing site immediately. The primitive becomes the default for any *new* hidden-info prompts. The Dune combat intrigue site can migrate when v1 stored games no longer matter.
+
+### Implementation order
+
+1. Add `privateChoice` to `BaseActionManager`. Wire from existing `choose` — the implementation is `choose` + `noAutoRespond` + auto-Pass + memo log.
+2. Add unit tests in `common/lib/game/BaseActionManager.test.js` covering:
+   - empty `choices` array gets a `'Pass'` injected and the prompt fires
+   - single-option `choices` array does not auto-respond
+   - non-actor viewers see the `redacted` template via `LogEntry.redacted`; actor sees the full template
+   - `opts.logDecision: false` skips the memo
+   - `opts.logTemplate` / `opts.redactedTemplate` overrides apply
+3. Lint + full common test suite clean.
+
+No game migrations in this commit. Future game code that needs a private prompt should reach for `actions.privateChoice` directly.
+
+### Verification
+
+- New unit tests pass.
+- Existing game test suites unchanged — the primitive is purely additive.
+- A new test fixture that does `actions.privateChoice(player, [])` produces a prompt rather than silently no-op'ing.
+
+**Done when.** `BaseActionManager.privateChoice` exists with the auto-Pass + always-prompt + redacted-memo semantics; unit tests cover the four behaviors above; no game migration required for this commit.
+
+**Status.** ✓ Completed 2026-05-11. Added `privateChoice` to `BaseActionManager` with six unit tests covering: `'Pass'` injection on empty choices, `noAutoRespond` on single-option lists, the privacy-aware memo (visibility + redacted + event), `opts.logTemplate` / `opts.redactedTemplate` overrides, `opts.logDecision: false` suppression, and structured-selection title resolution. No game migrations — Dune combat intrigue keeps its version-gated `noAutoRespond` until v1 stored games age out; Twilight / Magic don't have current sites that match the pattern.
 
 ---
 
@@ -823,5 +893,6 @@ This doc itself should be revisited after the next game build — every recurrin
 | 2 — `BaseCardManager` source indexing + `loadFromDirectory` | 2026-05-11 | `bd36b4982` | 16 Dune per-source/per-type `index.js` files collapsed to one-liners; adding a card file requires zero registry edits. Engine helpers (`loadFromDirectory`, `filterDefinitions`) added to `BaseCardManager` |
 | 3 — `BasePlayer.incrementCounter` source attribution + history | 2026-05-11 | `e81373aaa`, `6a5459118`, `3509487df` | `BasePlayer.incrementCounter` / `setCounter` write `game.state.counterHistory`; shared `CounterHistoryTable` Vue component renders the table; Dune VP migrated from bespoke `gainVp` / `loseVp` / `vpHistory` to the shared infrastructure |
 | 4 — Structured `choose()` options | 2026-05-11 | `85822d919`, `0f9dc3bfe`, `f103213b9`, `d0016a203` | Engine `option` / `cardOption` / `playerOption` helpers + bare-string dev warning; `chooseYesNo`/`choosePlayer` rerouted through structured options; Dune (~22 sites) + Twilight (planet/player/transaction sites, planet regex parsing gone) + Ultimate (`UltimateActionManager.chooseCards` central migration) migrated; Agricola required no changes |
+| 5 — `actions.privateChoice()` primitive | 2026-05-11 | _this commit_ | Engine primitive with always-prompt + auto-`'Pass'` injection + privacy-aware decision memo; six unit tests. No game migrations — Dune combat intrigue keeps version-gated `noAutoRespond` until v1 stored games age out |
 
 Full item sections remain in place above for reference. New entries land here when the corresponding section's "Done when" criteria are satisfied.

@@ -597,6 +597,96 @@ describe('BaseActionManager', () => {
     })
   })
 
+  describe('privateChoice()', () => {
+    test('injects "Pass" when choices is empty and still emits a prompt', () => {
+      const { actionManager, player1, game } = createUniqueFixture()
+      let capturedSelector = null
+      game.requestInputSingle = (selector) => {
+        capturedSelector = selector
+        return ['Pass']
+      }
+      actionManager.privateChoice(player1, [], { title: 'Decide' })
+      expect(capturedSelector.choices).toEqual(['Pass'])
+      expect(capturedSelector.noAutoRespond).toBe(true)
+    })
+
+    test('sets noAutoRespond so single-option lists still prompt', () => {
+      const { actionManager, player1, game } = createUniqueFixture()
+      let capturedSelector = null
+      game.requestInputSingle = (selector) => {
+        capturedSelector = selector
+        return ['Only']
+      }
+      actionManager.privateChoice(player1, ['Only'], { title: 'Decide' })
+      expect(capturedSelector.noAutoRespond).toBe(true)
+    })
+
+    test('emits a privacy-aware memo: visibility to actor, redacted for opponents', () => {
+      const { fixture, actionManager, player1 } = createUniqueFixture()
+      fixture.queueResponse(player1, ['Pass'])
+      actionManager.privateChoice(player1, [], { title: 'Decide' })
+
+      const entry = fixture.getLastLogEntry()
+      expect(entry.visibility).toEqual(['player1'])
+      expect(entry.redacted).toBe('{player} makes a private decision')
+      expect(entry.template).toBe('{player} makes a private decision: {choice}')
+      // BaseLogManager wraps primitive args as {value}.
+      expect(entry.args.choice.value).toBe('Pass')
+      expect(entry.event).toBe('private-choice')
+
+      fixture.assertAllResponsesConsumed()
+    })
+
+    test('honours opts.logTemplate / opts.redactedTemplate overrides', () => {
+      const { fixture, actionManager, player1 } = createUniqueFixture()
+      fixture.queueResponse(player1, ['Play'])
+      actionManager.privateChoice(player1, ['Play', 'Pass'], {
+        title: 'Combat Intrigue',
+        logTemplate: '{player} plays {choice}',
+        redactedTemplate: '{player} makes a combat decision',
+      })
+
+      const entry = fixture.getLastLogEntry()
+      expect(entry.template).toBe('{player} plays {choice}')
+      expect(entry.redacted).toBe('{player} makes a combat decision')
+      expect(entry.args.choice.value).toBe('Play')
+
+      fixture.assertAllResponsesConsumed()
+    })
+
+    test('opts.logDecision: false suppresses the memo', () => {
+      const { fixture, actionManager, player1 } = createUniqueFixture()
+      fixture.queueResponse(player1, ['Pass'])
+      const beforeCount = fixture.getLogEntries().length
+
+      actionManager.privateChoice(player1, [], { title: 'Decide', logDecision: false })
+
+      const afterCount = fixture.getLogEntries().length
+      // No new private-choice entry; do-nothing log from choose() may
+      // still have fired for the Pass selection, but no privacy memo.
+      const entries = fixture.getLogEntries()
+      for (let i = beforeCount; i < afterCount; i++) {
+        expect(entries[i].event).not.toBe('private-choice')
+      }
+
+      fixture.assertAllResponsesConsumed()
+    })
+
+    test('structured selection logs the option title, not the raw object', () => {
+      const { fixture, actionManager, player1 } = createUniqueFixture()
+      fixture.queueResponse(player1, [{ title: 'Card A', id: 'card-a' }])
+      actionManager.privateChoice(player1, [
+        { title: 'Card A', id: 'card-a', kind: 'card' },
+        { title: 'Card B', id: 'card-b', kind: 'card' },
+      ])
+
+      const entry = fixture.getLastLogEntry()
+      expect(entry.args.choice.value).toBe('Card A')
+
+      fixture.assertAllResponsesConsumed()
+    })
+  })
+
   describe('option helpers', () => {
     test('option() builds canonical shape and drops unset fields', () => {
       const { actionManager } = createUniqueFixture()
