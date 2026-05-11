@@ -999,7 +999,11 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
         leaderAbilities.onGainHighCouncil(game, player)
       }
       else {
-        // 2nd time+: gain 2 spice, draw 1 intrigue, gain 3 troops
+        // Already seated: board-printed alternate payout.
+        game.log.add({
+          template: '{player} already has a High Council seat — takes the alternate payout',
+          args: { player },
+        })
         resolveEffect(game, player, { type: 'gain', resource: 'spice', amount: 2 }, space)
         resolveEffect(game, player, { type: 'intrigue', amount: 1 }, space)
         resolveEffect(game, player, { type: 'troop', amount: 3 }, space)

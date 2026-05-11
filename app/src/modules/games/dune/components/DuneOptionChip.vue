@@ -126,7 +126,7 @@ export default {
         'maker-hook': () => '+1 maker hook',
         'trash-card': () => 'trash a card',
         'steal-intrigue': () => 'steal intrigue (4+ cards)',
-        'high-council': () => 'gain High Council seat',
+        'high-council': () => 'gain High Council seat (if already seated: +2 spice, +1 intrigue, +3 troops)',
         'sword-master': () => 'gain Swordmaster (3rd agent)',
         'recall-agent': () => 'recall an agent',
         'intrigue-trash-draw': () => 'trash intrigue → draw intrigue',

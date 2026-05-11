@@ -135,8 +135,9 @@ const boardSpaces = [
     icon: 'green',
     cost: { solari: 5 },
     effects: [
-      // 1st time: gain a seat on the high council
-      // 2nd time+: gain 2 spice, draw 1 intrigue, gain 3 troops
+      // Printed on the board:
+      //   Take your seat on the High Council.
+      //   If you already have a seat: +2 Spice, +1 Intrigue, +3 Troops.
       { type: 'high-council' },
     ],
   },
