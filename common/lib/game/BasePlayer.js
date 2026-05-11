@@ -48,6 +48,7 @@ class BasePlayer {
     }
 
     this.counters[name] += count
+    this._recordCounterChange(name, count, this.counters[name], opts.source)
   }
 
   isCurrentPlayer() {
@@ -72,7 +73,43 @@ class BasePlayer {
       })
     }
 
+    const before = this.counters[name] || 0
     this.counters[name] = value
+    this._recordCounterChange(name, value - before, value, opts.source)
+  }
+
+  // Record a counter mutation in game.state.counterHistory for later
+  // breakdown UIs. Skips zero-delta writes (no-op setCounter calls).
+  // Source can be a plain label string or { label, ref? }; normalized
+  // on write so consumers always see the structured form.
+  _recordCounterChange(counter, delta, total, source) {
+    if (delta === 0) {
+      return
+    }
+    if (!this.game.state.counterHistory) {
+      this.game.state.counterHistory = {}
+    }
+    if (!this.game.state.counterHistory[this.name]) {
+      this.game.state.counterHistory[this.name] = []
+    }
+    this.game.state.counterHistory[this.name].push({
+      counter,
+      delta,
+      total,
+      source: this._normalizeSource(source),
+      round: this.game.state.round ?? null,
+      turn: this.game.state.turn ?? null,
+    })
+  }
+
+  _normalizeSource(source) {
+    if (!source) {
+      return null
+    }
+    if (typeof source === 'string') {
+      return { label: source }
+    }
+    return source
   }
 
   static isActive(player) {
