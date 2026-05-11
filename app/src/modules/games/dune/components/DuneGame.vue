@@ -256,14 +256,25 @@ export default {
         }
       }
 
-      // Fallback: legacy bare-string options resolved by name. The priority-
-      // ordered cardsByName table above picks the most-likely deck when a
-      // name collides across decks.
-      const leader = leadersByName[name]
-      if (leader) {
+      // Fallback: legacy bare-string options resolved by name. Cards take
+      // priority over leaders and board spaces because in-game prompts choose
+      // cards far more often, and card names can collide with leader names
+      // (e.g. "Duncan Idaho" exists as both an imperium card and a leader).
+      // Leaders only appear as choices during setup, where the engine already
+      // emits a structured option with kind:'leader' and we never reach this
+      // fallback. New engine call sites should emit structured options
+      // ({title, id, defId, kind}) via chooseCards / cardOption / spaceOption
+      // rather than bare names — see common/dune/phases/playerTurns.js.
+      if (import.meta.env?.DEV) {
+
+        console.warn('[Dune] bare-string choice option, no kind/defId:', name)
+      }
+
+      const card = cardsByName[name]
+      if (card) {
         return {
           component: DuneOptionChip,
-          props: { name, leader },
+          props: { name, card },
         }
       }
 
@@ -275,11 +286,11 @@ export default {
         }
       }
 
-      const card = cardsByName[name]
-      if (card) {
+      const leader = leadersByName[name]
+      if (leader) {
         return {
           component: DuneOptionChip,
-          props: { name, card },
+          props: { name, leader },
         }
       }
 

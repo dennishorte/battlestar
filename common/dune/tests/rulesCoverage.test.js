@@ -146,7 +146,8 @@ describe('No-icon cards cannot be used for agent turns', () => {
     game.run()
 
     const agentTurnChoice = game.waiting.selectors[0].choices.find(c => c.title === 'Agent Turn')
-    expect(agentTurnChoice.choices).not.toContain('Convincing Argument')
+    const titles = agentTurnChoice.choices.map(c => c.title || c)
+    expect(titles).not.toContain('Convincing Argument')
   })
 
   test('cards with agent icons are offered during agent turn', () => {
@@ -154,8 +155,31 @@ describe('No-icon cards cannot be used for agent turns', () => {
     game.run()
 
     const agentTurnChoice = game.waiting.selectors[0].choices.find(c => c.title === 'Agent Turn')
-    expect(agentTurnChoice.choices).toContain('Dagger')
-    expect(agentTurnChoice.choices).toContain('Reconnaissance')
+    const titles = agentTurnChoice.choices.map(c => c.title || c)
+    expect(titles).toContain('Dagger')
+    expect(titles).toContain('Reconnaissance')
+  })
+
+  test('agent-turn card choices carry kind/defId so name collisions with leaders cannot misroute the UI', () => {
+    // Regression: with Duncan Idaho as both leader and hand card, the engine
+    // must emit a structured option (not a bare "Duncan Idaho" string) so the
+    // UI resolver doesn't fall back to leader lookup. Without this guarantee
+    // the player sees a "play your leader" chip during the agent turn.
+    const game = t.fixture({ useBaseGameCards: true, useBloodlines: true })
+    t.setBoard(game, {
+      leaders: { dennis: require('../res/leaders/DuncanIdaho.js') },
+      dennis: { handExact: ['Duncan Idaho'] },
+    })
+    game.run()
+
+    const agentTurnChoice = game.waiting.selectors[0].choices.find(c => c.title === 'Agent Turn')
+    expect(agentTurnChoice).toBeDefined()
+    const duncan = agentTurnChoice.choices.find(c => (c.title || c) === 'Duncan Idaho')
+    expect(duncan).toBeDefined()
+    expect(typeof duncan).toBe('object')
+    expect(duncan.kind).toBe('imperium-card')
+    expect(duncan.defId).toBe('duncan-idaho')
+    expect(duncan.id).toBeTruthy()
   })
 })
 

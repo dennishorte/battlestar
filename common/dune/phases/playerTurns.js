@@ -7,6 +7,23 @@ const leaderAbilities = require('../systems/leaderAbilities.js')
 const constants = require('../res/constants.js')
 
 /**
+ * Build a structured choice option for a card. Carries `kind`, `defId`, and
+ * instance `id` so the UI can render the correct chip and resolve responses
+ * unambiguously even when card names collide with leaders / board spaces /
+ * other cards.
+ */
+function cardOption(card, kind = 'imperium-card') {
+  return { title: card.name, id: card.id, defId: card.defId, kind }
+}
+
+/**
+ * Build a structured choice option for a board space.
+ */
+function spaceOption(space) {
+  return { title: space.name, id: space.id, kind: 'board-space' }
+}
+
+/**
  * Phase 2: Player Turns
  * Players take turns clockwise. On each turn, a player takes either an Agent Turn
  * or a Reveal Turn. Once all players have taken a Reveal Turn, the phase ends.
@@ -86,7 +103,7 @@ function playerTurnsPhase(game) {
         if (playableCards.length > 0) {
           choices.push({
             title: 'Agent Turn',
-            choices: playableCards.map(c => c.name),
+            choices: playableCards.map(c => cardOption(c)),
           })
         }
         choices.push('Reveal Turn')
@@ -96,8 +113,11 @@ function playerTurnsPhase(game) {
         })
 
         if (choice.title === 'Agent Turn') {
-          const cardName = choice.selection[0]
-          const card = playableCards.find(c => c.name === cardName)
+          const sel = choice.selection[0]
+          const selId = typeof sel === 'object' ? sel.id : null
+          const selTitle = typeof sel === 'object' ? sel.title : sel
+          const card = playableCards.find(c => c.id === selId)
+            || playableCards.find(c => c.name === selTitle)
           agentTurn(game, player, card)
         }
         else {
@@ -141,11 +161,14 @@ function agentTurn(game, player, card) {
     return
   }
 
-  const spaceChoices = validSpaces.map(s => s.name)
+  const spaceChoices = validSpaces.map(s => spaceOption(s))
   const [spaceChoice] = game.actions.choose(player, spaceChoices, {
     title: 'Choose a board space',
   })
-  const space = validSpaces.find(s => s.name === spaceChoice)
+  const spaceId = typeof spaceChoice === 'object' ? spaceChoice.id : null
+  const spaceTitle = typeof spaceChoice === 'object' ? spaceChoice.title : spaceChoice
+  const space = validSpaces.find(s => s.id === spaceId)
+    || validSpaces.find(s => s.name === spaceTitle)
 
   // Spy actions before placing agent
   const spaceOccupied = (game.state.boardSpaces[space.id] || []).length > 0
@@ -234,10 +257,12 @@ function agentTurn(game, player, card) {
   // Resolve card agent ability and board space effects (player chooses order per rules)
   const hasCardAbility = !!card.definition?.agentAbility
   if (hasCardAbility) {
-    const [order] = game.actions.choose(player, [card.name, space.name], {
+    const orderChoices = [cardOption(card), spaceOption(space)]
+    const [order] = game.actions.choose(player, orderChoices, {
       title: 'Which effect to resolve first?',
     })
-    if (order === card.name) {
+    const orderTitle = typeof order === 'object' ? order.title : order
+    if (orderTitle === card.name) {
       resolveCardAgentAbility(game, player, card)
       resolveBoardSpaceEffects(game, player, space)
     }
