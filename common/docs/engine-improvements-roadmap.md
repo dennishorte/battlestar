@@ -13,7 +13,7 @@ Companion analysis: see commit-history retrospective in chat; the lessons summar
 | 1 | ESLint rule: tests cannot import internal modules | Config | Low | — | ~½ day | — |
 | 2 | `BaseCardManager` source indexing + `loadFromDirectory` | Engine (additive) | Low | — | 1–2 days | ✓ Completed 2026-05-11 |
 | 3 | `BasePlayer.incrementCounter` source attribution + history | Engine (additive) | Low | — | 1 day + per-game migration | ✓ Completed 2026-05-11 (Dune migrated) |
-| 4 | Structured `choose()` options (`{title, id, kind}`) | Engine (additive) | Medium | — | 2 days + per-game migration | — |
+| 4 | Structured `choose()` options (`{title, id, kind}`) | Engine (additive) | Medium | — | 2 days + per-game migration | ✓ Completed 2026-05-11 |
 | 5 | `actions.privateChoice()` primitive | Engine (additive) | Low | — | 1 day | — |
 | 6 | `BaseCard.hooks` + `LIFECYCLE_EVENTS` registry | Engine (schema) | High | 4 (so handlers can emit structured prompts uniformly) | 3–5 days + per-game migration | — |
 | 7 | Scope-explicit state (`transient/turn/round/persistent`) | Engine (schema) | High | — | 2–3 days + per-game migration | — |
@@ -641,6 +641,14 @@ choosePlayer(player, choices, opts={}) {
 
 **Done when.** `cardOption` lives on `BaseActionManager`; Dune's seven `cards.map(c => c.name)` sites are structured; Twilight's parseable planet strings (and their regex parsers) are gone; the engine-side dev warning has replaced Dune's frontend warning; the warning produces zero hits for Dune and Twilight under their test suites.
 
+**Status.** ✓ Completed 2026-05-11. Landed across four commits:
+- `85822d919` Engine helpers (`option` / `cardOption` / `playerOption` on `BaseActionManager`), `SAFE_BARE_OPTIONS` allowlist, `_warnOnBareStrings` dev warning (silent in test/prod), and structured `chooseYesNo` / `choosePlayer` with back-compat resolution.
+- `0f9dc3bfe` Dune migration — 19 card-name and 3 player-name `actions.choose` sites converted (chooseCard for forced picks, structured + id resolution for Pass-mixed), local `cardOption` helper lifted out of `phases/playerTurns.js`, Dune-only frontend warning removed.
+- `f103213b9` Twilight migration — `planetOption` / `systemOption` on `TwilightActionManager`; the five regex-parsed planet sites (agenda voting, two `strategyCards.js` pay-loops, Jol-Nar Doctor Sucaban, Winnu Hegemonic Trade) emit structured options and resolve by id; `choice.split(' (')[0]` parsing is gone. Two player-name choose sites migrated; `_handleTransaction` partner list structured. Engine allowlist gained pool tokens (`tactics`, `fleet`, `strategy`, `alpha`, `beta`, `pds`, `space-dock`).
+- `d0016a203` Ultimate — `UltimateActionManager.chooseCards` emits structured options (the `auto` sentinel stays bare). Five tests updated to extract titles from structured choices. Agricola required no changes; its choose sites were already structured.
+
+Engine auto-respond strips `meta` from structured options, so sites that need to preserve computed display values use a recompute function (see Twilight `planetResources` / `planetInfluence` helpers) instead. Future improvement: have auto-respond preserve full structured options including meta. Description-string options (`['Pass', 'Discard 2 cards and pay 5 Solari for +1 VP']` and similar) still trip the dev warning — those are non-ambiguous semantic strings and can be allowlisted per-prompt later if the warning noise becomes a problem.
+
 ---
 
 ## 5. `actions.privateChoice()` primitive
@@ -809,5 +817,6 @@ This doc itself should be revisited after the next game build — every recurrin
 |---|---|---|---|
 | 2 — `BaseCardManager` source indexing + `loadFromDirectory` | 2026-05-11 | `bd36b4982` | 16 Dune per-source/per-type `index.js` files collapsed to one-liners; adding a card file requires zero registry edits. Engine helpers (`loadFromDirectory`, `filterDefinitions`) added to `BaseCardManager` |
 | 3 — `BasePlayer.incrementCounter` source attribution + history | 2026-05-11 | `e81373aaa`, `6a5459118`, `3509487df` | `BasePlayer.incrementCounter` / `setCounter` write `game.state.counterHistory`; shared `CounterHistoryTable` Vue component renders the table; Dune VP migrated from bespoke `gainVp` / `loseVp` / `vpHistory` to the shared infrastructure |
+| 4 — Structured `choose()` options | 2026-05-11 | `85822d919`, `0f9dc3bfe`, `f103213b9`, `d0016a203` | Engine `option` / `cardOption` / `playerOption` helpers + bare-string dev warning; `chooseYesNo`/`choosePlayer` rerouted through structured options; Dune (~22 sites) + Twilight (planet/player/transaction sites, planet regex parsing gone) + Ultimate (`UltimateActionManager.chooseCards` central migration) migrated; Agricola required no changes |
 
 Full item sections remain in place above for reference. New entries land here when the corresponding section's "Done when" criteria are satisfied.
