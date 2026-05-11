@@ -8,19 +8,19 @@ Companion analysis: see commit-history retrospective in chat; the lessons summar
 
 ## At a glance
 
-| # | Item | Type | Risk | Dependencies | Approx. effort |
-|---|------|------|------|--------------|----------------|
-| 1 | ESLint rule: tests cannot import internal modules | Config | Low | — | ~½ day |
-| 2 | `BaseCardManager` source indexing + `loadFromDirectory` | Engine (additive) | Low | — | 1–2 days |
-| 3 | `BasePlayer.incrementCounter` source attribution + history | Engine (additive) | Low | — | 1 day + per-game migration |
-| 4 | Structured `choose()` options (`{id, label, kind}`) | Engine (additive) | Medium | — | 2 days + per-game migration |
-| 5 | `actions.privateChoice()` primitive | Engine (additive) | Low | — | 1 day |
-| 6 | `BaseCard.hooks` + `LIFECYCLE_EVENTS` registry | Engine (schema) | High | 4 (so handlers can emit structured prompts uniformly) | 3–5 days + per-game migration |
-| 7 | Scope-explicit state (`transient/turn/round/persistent`) | Engine (schema) | High | — | 2–3 days + per-game migration |
-| 8 | `BaseTestUtil` with schema-validated `setBoard/testBoard` | Engine (infrastructure) | High | 6, 7 (state shape must be canonical) | 4–6 days + per-game migration |
-| P1 | Process: audit-by-card budget | Doc | — | — | — |
-| P2 | Process: multi-valued data discipline | Doc | — | — | — |
-| P3 | Process: card body text is UI-only | Doc | — | — | — |
+| # | Item | Type | Risk | Dependencies | Approx. effort | Status |
+|---|------|------|------|--------------|----------------|--------|
+| 1 | ESLint rule: tests cannot import internal modules | Config | Low | — | ~½ day | — |
+| 2 | `BaseCardManager` source indexing + `loadFromDirectory` | Engine (additive) | Low | — | 1–2 days | ✓ Completed 2026-05-11 |
+| 3 | `BasePlayer.incrementCounter` source attribution + history | Engine (additive) | Low | — | 1 day + per-game migration | ✓ Completed 2026-05-11 (Dune migrated) |
+| 4 | Structured `choose()` options (`{title, id, kind}`) | Engine (additive) | Medium | — | 2 days + per-game migration | — |
+| 5 | `actions.privateChoice()` primitive | Engine (additive) | Low | — | 1 day | — |
+| 6 | `BaseCard.hooks` + `LIFECYCLE_EVENTS` registry | Engine (schema) | High | 4 (so handlers can emit structured prompts uniformly) | 3–5 days + per-game migration | — |
+| 7 | Scope-explicit state (`transient/turn/round/persistent`) | Engine (schema) | High | — | 2–3 days + per-game migration | — |
+| 8 | `BaseTestUtil` with schema-validated `setBoard/testBoard` | Engine (infrastructure) | High | 6, 7 (state shape must be canonical) | 4–6 days + per-game migration | — |
+| P1 | Process: audit-by-card budget | Doc | — | — | — | — |
+| P2 | Process: multi-valued data discipline | Doc | — | — | — | — |
+| P3 | Process: card body text is UI-only | Doc | — | — | — | — |
 
 Total engine work: ~3 weeks of focused effort, plus migration cost paid per game.
 
@@ -348,6 +348,8 @@ Engine changes are pure additions, so deferring per-game adoption is safe.
 
 **Done when.** Dune card loading goes through `BaseCardManager.loadFromDirectory`; adding a card file requires zero registry edits; lint + tests clean.
 
+**Status.** ✓ Completed 2026-05-11. Landed in `bd36b4982` (per-card-type `index.js` files migrated to `loadFromDirectory`); engine helpers added earlier on the `BaseCardManager` class. All 16 Dune per-source/per-type index files collapsed to one-liners; new card files appear automatically with zero registry edits.
+
 ---
 
 ## 3. `BasePlayer.incrementCounter` source attribution + history
@@ -464,28 +466,180 @@ Engine change is additive: existing call sites without `opts.source` produce his
 
 **Done when.** `BasePlayer` writes `counterHistory` for every non-zero mutation; Dune's bespoke `gainVp` / `loseVp` / `_recordVpEntry` + `state.vpHistory` are gone; the VP breakdown UI reads from the shared `counterHistory`.
 
+**Status.** ✓ Completed 2026-05-11. Landed across three commits: `e81373aaa` (`BasePlayer.incrementCounter` / `setCounter` write `counterHistory`), `6a5459118` (shared `CounterHistoryTable` Vue component), `3509487df` (Dune VP migrated to shared infrastructure). Other games will accumulate sourceless `counterHistory` entries as they call `incrementCounter` / `setCounter`; migration to source-attributed calls happens opportunistically.
+
 ---
 
 ## 4. Structured `choose()` options
 
 **Problem.** `274cbde3c` (today): bare-string option `"Duncan Idaho"` was ambiguous between an imperium card and a leader. `chooseCards` already emits `{title, id, defId, kind}` (good — fixed during Dune), but plain `choose` still takes raw strings, so any game-level prompt mixing cards with non-cards has to manually structure the payload. `637653484` and `3fa3853b4` had to bolt on chip-rendering for the same reason.
 
-**Plan.**
-1. Define the canonical option shape:
-   ```js
-   { id: string, label: string, kind?: 'card'|'leader'|'space'|'faction'|..., meta?: object }
-   ```
-2. `BaseActionManager.choose` accepts a mixed array; auto-wraps bare strings as `{ id: s, label: s }` for an allowlist (`Yes`, `No`, `Pass`, `Skip`, `Continue`, `Cancel`, digits).
-3. Bare strings outside the allowlist emit a dev-only `console.warn` (gated on `process.env.NODE_ENV !== 'production'`). The UI fallback resolver in each game's main Vue component already exists; the warning surfaces the migration path.
-4. `chooseYesNo`, `choosePlayer`, etc. internally route through the structured path.
-5. The response selector (`common/lib/selector.js`) accepts both bare-string and `{id}` responses — selection equality matches on `id`.
+### Current state (audited 2026-05-11)
 
-**Migration.**
-- Engine change is additive; existing games work unchanged.
-- Per-game: grep for `actions.choose(.*[A-Z]` and convert ambiguous payloads to `{id, label, kind}`. Highest priority: Dune (already partly done), Twilight (component actions use strings), Ultimate (card-name strings everywhere).
-- Each game's frontend `resolveOption` should prefer structured `id` over `label`.
+**Engine.** `BaseActionManager.choose(player, choices, opts)` is type-agnostic — it accepts any array and passes it through to `common/lib/selector.js`, which already does most of the structured-option work:
 
-**Done when.** Dune's per-game patch from `274cbde3c` (DuneGame.vue fallback resolver) is no longer special — it's the engine default. The dev-warning produces zero hits for migrated games.
+- `_normalize` wraps bare-string choices into `{ title: opt }` form before validation, so the validator never sees raw strings.
+- `_validate` matches selector option ↔ selection by `id` when both sides carry one, otherwise by `title`. Structured options round-trip safely *and* bare-string responses from legacy clients keep working.
+- Therefore the migration is purely additive: structured options are already supported end-to-end. The remaining work is (a) emitting structured options at call sites, (b) catching bare-string leaks early.
+
+`chooseCards` already emits `{ title, id, defId?, kind? }` and sorts alphabetically. `chooseYesNo`, `choosePlayer`, `flipCoin` still pass bare strings (`['yes', 'no']`, `choices.map(p => p.name)`, `['heads', 'tails']`).
+
+**Dune (canonical shape established).** `common/dune/phases/playerTurns.js` already defines local helpers:
+
+```js
+function cardOption(card, kind = 'imperium-card') {
+  return { title: card.name, id: card.id, defId: card.defId, kind }
+}
+function spaceOption(space) {
+  return { title: space.name, id: space.id, kind: 'board-space' }
+}
+```
+
+`274cbde3c` made these the engine-blessed shape. The Dune frontend `DuneGame.vue` resolver:
+- prefers structured options carrying `kind`/`defId`/`id` for chip routing
+- falls back to bare-name lookup with cards prioritized over leaders (cards collide far more often, e.g. Duncan Idaho)
+- emits a dev-only `console.warn` when a bare-string option arrives
+
+Note: original roadmap proposed `{ id, label, kind, meta }`. Reality uses `{ title, id, defId?, kind? }` — `title` (not `label`) is what `selector._validate` keys on, and `chooseCards` already produces this shape. Don't rename.
+
+**Bare-string surface across games.** 837 `actions.choose` sites total. Sampled patterns:
+
+| Game | Sites | Notable bare-string patterns |
+|---|---|---|
+| Twilight | 337 | Parseable planet strings (`'${pId} (${inf})'` parsed back with regex); player names; system ids; pool tokens (`'tactics'`/`'fleet'`/`'strategy'`) — last group is benign |
+| Ultimate | 268 | Colors / numbers / biscuit codes (mostly benign primitives); some `cards.map(c => c.name)` patterns |
+| Dune | 150 | 7 sites still pass `cards.map(c => c.name)` directly; rest already structured via `cardOption`/`spaceOption` |
+| Agricola | 67 | Largely structured `choices = [{title, ...}]` arrays already |
+| Tyrants | 14 | No known ambiguity |
+| Magic | 0 | n/a |
+
+The worst pattern by far is Twilight's planet-vote / production prompts: `readyPlanets.map(pId => '${pId} (${inf})')`, then `choice.split(' (')[0]` to recover the id. Embeds parseable data in display strings and regexes it back out. Direct migration target.
+
+**Dune's remaining 7 `cards.map(c => c.name)` sites**:
+- `res/cards/imperium/uprising/corrinth-city.js`
+- `res/cards/imperium/uprising/branching-path.js`
+- `res/cards/imperium/base/reverend-mother-mohiam.js`
+- `res/cards/intrigue/discerning.js`
+- `res/cards/intrigue/devious.js`
+- `res/cards/intrigue/unnatural.js`
+- `res/cards/intrigue/manipulate.js`
+
+Each does name-based recovery (`cards.find(c => c.name === choice)`) — safe for unique-name hands but unnecessarily fragile.
+
+### Engine changes
+
+**1. Canonical option shape.** `{ title, id?, defId?, kind?, meta? }`. Already enforced de facto by `selector._normalize` / `_validate`; just codify in a helper.
+
+**2. Helpers on `BaseActionManager`.** Promote Dune's local helpers so all games share them:
+
+```js
+// common/lib/game/BaseActionManager.js
+
+option({ id, title, kind, defId, meta } = {}) {
+  const opt = { title: title ?? String(id) }
+  if (id != null) opt.id = id
+  if (defId != null) opt.defId = defId
+  if (kind != null) opt.kind = kind
+  if (meta != null) opt.meta = meta
+  return opt
+}
+
+cardOption(card, kind = 'card') {
+  return { title: card.name, id: card.id, defId: card.defId, kind }
+}
+
+playerOption(player) {
+  return { title: player.name, id: player.name, kind: 'player' }
+}
+```
+
+`cardOption` lives on the base manager because cards are universal. `spaceOption` / `factionOption` / `planetOption` are game-specific — each game extends `BaseActionManager` (or adds methods on its `actions` instance) to provide them. Dune keeps `spaceOption` local for now; Twilight needs a new `planetOption` / `systemOption`.
+
+**3. Bare-string allowlist + dev warning.** Add to `BaseActionManager`:
+
+```js
+static SAFE_BARE_OPTIONS = new Set([
+  'Pass', 'Skip', 'Continue', 'Cancel', 'Done',
+  'Yes', 'No', 'yes', 'no',
+  'heads', 'tails',
+])
+
+_warnOnBareStrings(choices, title) {
+  if (process.env.NODE_ENV === 'production') return
+  for (const c of choices) {
+    if (typeof c !== 'string') continue
+    if (BaseActionManager.SAFE_BARE_OPTIONS.has(c)) continue
+    if (/^\d+$/.test(c)) continue
+    console.warn(`[choose] bare-string option "${c}" in prompt "${title ?? 'Choose'}" — emit {title, id, kind?} instead`)
+  }
+}
+```
+
+Wire from `choose` before the selector dispatches. Warning surfaces the migration surface without breaking builds. Domain primitives like `'tactics'`/`'fleet'`/`'strategy'` will warn — either add them to the allowlist (preferred for Twilight pool tokens) or restructure as `{ title: 'Tactics', id: 'tactics', kind: 'command-token' }`. Picking case-by-case is fine.
+
+**4. Route `chooseYesNo`, `choosePlayer`, `flipCoin` through structured path.** All three pass bare strings today and would trip their own warning. Update:
+
+```js
+chooseYesNo(player, title) {
+  const choice = this.choose(player, [
+    { title: 'Yes', id: 'yes' },
+    { title: 'No',  id: 'no' },
+  ], { title, count: 1 })
+  const pick = choice[0]
+  return (pick?.id ?? pick) === 'yes'
+}
+
+choosePlayer(player, choices, opts={}) {
+  const selected = this.choose(
+    player,
+    choices.map(p => this.playerOption(p)),
+    { ...opts, title: opts.title ?? 'Choose Player' },
+  )
+  const pick = selected[0]
+  const id = pick?.id ?? pick
+  return choices.find(p => p.name === id)
+}
+```
+
+`?? pick` keeps backward compatibility with bare-string responses from legacy stored games (same fallback `chooseCards` uses).
+
+**5. Selector validation: unchanged.** `_normalize` + `_validate` already handle both bare-string and structured selections; no changes needed.
+
+### Per-game migration
+
+**Dune** (mostly done — finish):
+- Lift `cardOption` / `spaceOption` from `phases/playerTurns.js` into the engine layer. `cardOption` becomes `game.actions.cardOption(card, 'imperium-card')`; `spaceOption` stays a local Dune helper (board-space concept doesn't generalize).
+- Convert the 7 `cards.map(c => c.name)` sites to `cards.map(c => game.actions.cardOption(c, 'imperium-card'))`. Replace the post-`choose` `cards.find(c => c.name === choice)` with `cards.find(c => c.id === selected.id)` (where `selected` is the option object). For mixed lists like `['Pass', ...cards.map(c => c.name)]`, keep `'Pass'` bare (allowlisted) and structure the rest.
+- Remove the dev-only bare-string warning from `DuneGame.vue` once the engine-side warning is in place. Keep the cards-prioritized fallback resolver — that's belt-and-suspenders for legacy stored games.
+
+**Twilight** (biggest win, biggest lift):
+- Add `actions.planetOption(planetId, influence)` returning `{ title: '${planetId} (${influence})', id: planetId, kind: 'planet' }`. Convert ~12 sites in `twilight.js`, `strategyCards.js`, `universities-of-jol-nar.js`, etc. Drop the regex parsing of selection strings.
+- Convert `systemSelection[0]` patterns to read `.id`. Add a `systemOption(systemId)` helper if it shows up more than twice.
+- Convert `actions.choose(player, others.map(p => p.name))` to `others.map(p => this.playerOption(p))`. Read `.id` on the response.
+- Pool tokens (`'tactics'`/`'fleet'`/`'strategy'`): add to `SAFE_BARE_OPTIONS` rather than restructuring (they're already lowercase ids; structuring adds no value).
+
+**Ultimate, Agricola**: opportunistic. Sweep `actions.choose(...)` for `.map(c => c.name)` and similar. Each game's existing `chooseCard` / `chooseCards` paths already structure card options; plain-string `choose` calls on card-name arrays are the targets.
+
+**Tyrants, Magic**: defer. 14 sites and 0 sites; no known collisions; ROI low.
+
+### Implementation order
+
+1. Add `option` / `cardOption` / `playerOption` + `SAFE_BARE_OPTIONS` + `_warnOnBareStrings` to `BaseActionManager`. Wire warning from `choose`. Add unit tests in `common/lib/game/BaseActionManager.test.js` covering: structured option round-trip, allowlisted bare string passes silently, non-allowlisted bare string warns once, `chooseYesNo` returns boolean from structured choice, `choosePlayer` returns the right player object.
+2. Update `chooseYesNo`, `choosePlayer`, `flipCoin` to use structured options. Run full test suite — every game uses these.
+3. Dune: convert the 7 `cards.map(c => c.name)` sites; lift `cardOption` to the engine (delete the local helper); remove the Dune-only frontend warning.
+4. Twilight: add `planetOption`, migrate planet-vote / production-planet / Jol-Nar Pillage sites. Drop string-parsing.
+5. Twilight: migrate player-name and system sites. Add pool tokens to allowlist.
+6. Ultimate / Agricola: sweep `.map(c => c.name)` sites.
+7. `npm run lint -w common`, `npm run test -w common` clean per game.
+
+### Verification
+
+- New unit tests confirm the dev warning fires once per non-allowlisted bare-string and stays silent for allowlisted/numeric/structured options.
+- `chooseYesNo` / `choosePlayer` return the same values as before across every game's test suite (regression net).
+- Test fixture: two cards with the same name in a Dune hand, prompted via structured `actions.choose` — selection returns the specific instance via `id`.
+- Running each game's suite produces zero `[choose] bare-string` warnings outside the allowlist for migrated games; remaining warnings form an actionable migration list.
+
+**Done when.** `cardOption` lives on `BaseActionManager`; Dune's seven `cards.map(c => c.name)` sites are structured; Twilight's parseable planet strings (and their regex parsers) are gone; the engine-side dev warning has replaced Dune's frontend warning; the warning produces zero hits for Dune and Twilight under their test suites.
 
 ---
 
@@ -643,6 +797,17 @@ Seven "Parser batch" commits + ongoing parser bugs prove this. The pivot to per-
 
 ## Tracking
 
-Track active work in the project TODO doc. As items land, update the "Done when" line and move them to a "Completed" section at the bottom of this file.
+Track active work in the project TODO doc. As items land, update the "Done when" line and add a row under "Completed" below.
 
 This doc itself should be revisited after the next game build — every recurring problem in the next game's history is a candidate addition.
+
+---
+
+## Completed
+
+| Item | Completed | Landing commits | Notes |
+|---|---|---|---|
+| 2 — `BaseCardManager` source indexing + `loadFromDirectory` | 2026-05-11 | `bd36b4982` | 16 Dune per-source/per-type `index.js` files collapsed to one-liners; adding a card file requires zero registry edits. Engine helpers (`loadFromDirectory`, `filterDefinitions`) added to `BaseCardManager` |
+| 3 — `BasePlayer.incrementCounter` source attribution + history | 2026-05-11 | `e81373aaa`, `6a5459118`, `3509487df` | `BasePlayer.incrementCounter` / `setCounter` write `game.state.counterHistory`; shared `CounterHistoryTable` Vue component renders the table; Dune VP migrated from bespoke `gainVp` / `loseVp` / `vpHistory` to the shared infrastructure |
+
+Full item sections remain in place above for reference. New entries land here when the corresponding section's "Done when" criteria are satisfied.
