@@ -42,28 +42,146 @@ Total engine work: ~3 weeks of focused effort, plus migration cost paid per game
 
 **Problem.** `e8e44bea2` rewrote 18 Dune test files that had imported `systems/*`, `phases/*`, and called internal helpers (`resolveEffect`, `spySystem.*`, `parseRewardText`). The integration-only rule lives in `CLAUDE.md` and `docs/testing.md` but was unenforced.
 
-**Plan.**
-1. Add `eslint-plugin-import` (already present in `api/`) to `common/`.
-2. In `common/.eslintrc` add overrides for `**/*.test.js`:
-   ```js
-   {
-     files: ['**/*.test.js'],
-     rules: {
-       'no-restricted-imports': ['error', {
-         patterns: [
-           { group: ['*/systems/*', '*/phases/*'], message: 'Tests must use testutil; never import internal modules directly.' },
-           { group: ['fs', 'path'], message: 'Tests cannot read source files — write integration tests against game.run().' },
-         ],
-       }],
-     },
-   }
-   ```
-3. Allow each game's `testutil.js` to opt out via per-file override.
-4. Update `docs/testing.md` to note the rule is now mechanical.
+### Current violation surface (audited 2026-05-11)
 
-**Migration.** Run `npm run lint -w common` per game, fix violations. Most should already comply post-Dune; Twilight tests have a few known offenders.
+The original roadmap text claimed "most should already comply post-Dune; Twilight tests have a few known offenders." That is wrong — actual counts:
 
-**Done when.** `npm run lint -w common` passes; the rule fires on a deliberately-broken test.
+| Game | Files | Notes |
+|---|---|---|
+| Twilight | 6 | ~17 inline `getHandler`/handler requires inside `describe`/`it` blocks |
+| Dune | 7 | 5 in `tests/`, 2 in `res/leaders/` |
+| Agricola | 1 | inline `mixins/ActionChoicesMixin` require in `agricola.test.js:417` |
+| Magic | 1 | `util/CardFilter.test.js` uses `fs`/`path` to read the MTG card DB |
+| `common/lib/` | 8 | engine unit tests — must be exempted from the rule |
+
+No game's production code requires refactoring. The work is test rewrites plus one optional Dune facade addition.
+
+### Per-game structural notes
+
+| Game | Has `systems/` | Has `phases/` | Test layout |
+|---|---|---|---|
+| Dune | yes | yes | `tests/` + co-located `res/cards/*.test.js`, `res/leaders/*.test.js` |
+| Twilight | yes | no | `tests/` + `tests/factions/*.test.js` |
+| Agricola | no | yes (tests live there but don't import from `phases/`) | top-level + co-located `res/`, `actions/`, `phases/`, `player/`, `util/` |
+| Ultimate | no | no | top-level + co-located `res/` |
+| Tyrants | no | no | top-level + co-located `res/cards/` |
+| Magic | no | no | top-level + co-located `draft/`, `util/` |
+| `lib/` | n/a | n/a | engine tests — exempt |
+
+The deny patterns (`**/systems/**`, `**/phases/**`, `**/mixins/**`) only fire on Dune, Twilight, and one Agricola line — exactly where violations exist. Co-located card tests that import the card def they're testing (`require('./advanced-weaponry.js')`) are unaffected.
+
+### Rule design (`common/eslint.config.js`)
+
+Add a new flat-config block after the existing one:
+
+```js
+{
+  files: ['**/*.test.js'],
+  ignores: [
+    'lib/**',                              // engine unit tests need internal access
+    '**/testutil*.js',                     // testutil files are not test files anyway
+    'dune/tests/cardEffects.test.js',      // pure parser unit test; pending P3 refactor
+    'dune/tests/combat.test.js',           // pure parser unit test; pending P3 refactor
+    'magic/util/CardFilter.test.js',       // pure utility test; loads card DB from disk
+  ],
+  rules: {
+    'no-restricted-imports': ['error', {
+      patterns: [
+        {
+          group: ['**/systems/**', '**/phases/**', '**/mixins/**'],
+          message: 'Tests must drive the game via testutil + game.run()/choose()/action(). Do not import internal modules.',
+        },
+        {
+          group: ['fs', 'fs/*', 'fs/promises', 'path'],
+          message: 'Tests should not read source files. Use inline fixtures or expose a loader through testutil.',
+        },
+      ],
+    }],
+  },
+}
+```
+
+Key choices:
+- Patterns use `**/segment/**` (not `*/segment/*`) — minimatch's `*` matches a single path segment, so `*/systems/*` would miss `../../systems/factions/index.js`.
+- `**/mixins/**` added to the deny list (not in original roadmap) — catches the lone Agricola violation and prevents future ones.
+- `lib/game.js`, `lib/util.js`, `lib/selector.js` are framework public API and are deliberately not in the deny list. Tests already import them.
+- Three carve-outs are pending follow-up:
+  - **Dune parser tests** kept until card-text parsing is removed (roadmap P3 + item #6). Re-enable the rule on these files when those land.
+  - **Magic CardFilter** is a pure utility unit test, not a game test. Conceptually outside this rule's scope.
+
+### Per-game migration breakdown
+
+#### Twilight (6 files, ~17 sites)
+
+All violations are inline `require('../../systems/factions/...')` calls that grab a faction handler to either:
+1. **Tautologically assert handler structure** (`expect(handler.onAnySystemActivated).toBeDefined()`) — *delete*. These check that a method exists by name; if the method disappears, the integration tests covering its behavior already fail.
+2. **Call handler methods with synthesized mock contexts** (e.g., `vuil-raith-cabal.test.js:165–188` builds a fake `mockCtx` to invoke `handler.onUnitDestroyed`) — *rewrite as integration tests* driving real game state.
+
+Sites per file: ghosts-of-creuss 3, council-keleres 3, l1z1x-mindnet 2, yssaril-tribes 2, mahact 1, vuil-raith-cabal 4. Start with mahact (single site) to validate the approach.
+
+No Twilight game-code refactor required. `game.factionAbilities.handlerFor(player)` could be exposed for cleaner test code, but the structural-assert sites should be deleted regardless, so the win is small.
+
+#### Dune (7 files)
+
+| File | What it does | Migration |
+|---|---|---|
+| `tests/cardEffects.test.js` | unit-tests `parseAgentAbility` | **Carve-out** — keep until P3 refactor removes body-text parsing |
+| `tests/combat.test.js` | unit-tests `parseRewardText` | **Carve-out** — same as above |
+| `tests/spies.test.js` | calls `spySystem.hasSpyAt(game, ...)` etc. | Switch to `game.spies.hasSpyAt(player, loc)` facade |
+| `tests/leaders.test.js` | calls `leaders.getLeader(game, player)` | Switch to `game.leaders.get(player)` facade |
+| `tests/combatTies4p.test.js` | uses `fs` to read `phases/combat.js` source and string-match | **Delete the two source-grep tests outright** (they assert source substrings, not behavior). Keep the third test (real integration) |
+| `res/leaders/LadyMargotFenring.test.js` | imports `systems/factions` to call `factions.gainInfluence(...)` in setup | Drive influence gain through `setBoard({ ... })` or an existing game action; remove the import |
+| `res/leaders/PrincessIrulan.test.js` | same | same |
+
+**Game refactor:** add `game.spies` and `game.leaders` facades to `Dune` (in the constructor). Bind to existing `systems/spies.js` and `systems/leaders.js` exports — no logic moves, just method dispatch.
+
+```js
+function Dune(serialized_data, viewerName) {
+  Game.call(this, /* ... */)
+  const spies = require('./systems/spies.js')
+  const leaders = require('./systems/leaders.js')
+  this.spies = {
+    hasSpyAt: (player, loc) => spies.hasSpyAt(this, player, loc),
+    connectedSpaces: (player) => spies.getSpyConnectedSpaces(this, player),
+    placeSpyAt: (post, player) => spies.placeSpyAt(this, post, player),
+    recallSpyAt: (post, player) => spies.recallSpyAt(this, post, player),
+  }
+  this.leaders = {
+    get: (player) => leaders.getLeader(this, player),
+  }
+}
+```
+
+The systems are already lazy-required inside functions today (`dune.js:163`, `dune.js:205`) to avoid circular imports — keep `require` inside the constructor for the same reason.
+
+#### Agricola (1 file)
+
+`agricola.test.js:417` does `const { ActionChoicesMixin } = require('./mixins/ActionChoicesMixin.js')` and calls `ActionChoicesMixin.checkActionPrerequisites.call(game, dennis, action)`. Rewrite to assert the prerequisite check through actual game-action choice availability (`t.currentChoices(game)`), or expose `game.canPlayerTakeAction(player, action)` as a facade.
+
+#### Magic (1 file)
+
+`util/CardFilter.test.js` is exempted via the `ignores` list above. No code change.
+
+### Implementation order
+
+1. Add the rule to `common/eslint.config.js` with the carve-outs.
+2. Run `npm run lint -w common` — confirm violation surface matches the table above.
+3. Add `game.spies` and `game.leaders` facades to Dune.
+4. Migrate `dune/tests/spies.test.js` and `dune/tests/leaders.test.js` to use the facades.
+5. Delete the two source-grep tests in `dune/tests/combatTies4p.test.js`; keep the third.
+6. Migrate the two Dune leader res tests to drop the `systems/factions` import.
+7. Migrate the Agricola `mixins` violation.
+8. Twilight: rewrite/delete handler-import sites in 6 files, starting with `mahact-gene-sorcerers.test.js`.
+9. `npm run lint -w common` — clean.
+10. `npm run test -w common` — clean per game (touch each game's test suite to confirm no regressions).
+
+### Verification
+
+- `npm run lint -w common` passes.
+- `npm run test -w common` passes per game.
+- Adding a deliberately broken `require('./systems/foo')` to any game test file fires the rule.
+
+**Done when.** `npm run lint -w common` passes; the rule fires on a deliberately-broken test; the three carve-outs are documented above with their follow-up trigger.
 
 ---
 
