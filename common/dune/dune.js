@@ -23,6 +23,26 @@ function Dune(serialized_data, viewerName) {
     LogManager: DuneLogManager,
     PlayerManager: DunePlayerManager,
   })
+
+  // Subsystem facades for tests and idiomatic external access. Lazy-required
+  // here for the same reason existing systems are lazy-required (avoid cycles
+  // between dune.js and systems/* during module init).
+  const spies = require('./systems/spies.js')
+  const leaders = require('./systems/leaders.js')
+  const factions = require('./systems/factions.js')
+  this.spies = {
+    hasSpyAt: (player, loc) => spies.hasSpyAt(this, player, loc),
+    connectedSpaces: (player) => spies.getSpyConnectedSpaces(this, player),
+    placeSpyAt: (post, player) => spies.placeSpyAt(this, post, player),
+    recallSpyAt: (post, player) => spies.recallSpyAt(this, post, player),
+  }
+  this.leaders = {
+    get: (player) => leaders.getLeader(this, player),
+  }
+  this.factions = {
+    gainInfluence: (player, faction, amount) => factions.gainInfluence(this, player, faction, amount),
+    loseInfluence: (player, faction, amount) => factions.loseInfluence(this, player, faction, amount),
+  }
 }
 
 util.inherit(Game, Dune)
