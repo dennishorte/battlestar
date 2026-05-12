@@ -11,10 +11,23 @@ set -e
 SSH_HOST="game-center"
 REMOTE_DIR="code/battlestar"
 
+FORCE=0
+for arg in "$@"; do
+  case "$arg" in
+    --force) FORCE=1 ;;
+    *) echo "Unknown argument: $arg" >&2; exit 1 ;;
+  esac
+done
+
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJ_DIR="$(dirname "$SCRIPT_DIR")"
 
 cd "$PROJ_DIR"
+
+if [ "$FORCE" -ne 1 ] && [ -n "$(git status --porcelain)" ]; then
+  echo "Error: working tree has uncommitted changes. Commit, stash, or pass --force to override." >&2
+  exit 1
+fi
 
 echo "=== Pushing latest changes ==="
 git push
