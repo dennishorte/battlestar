@@ -358,6 +358,10 @@ The fix is a build-time codegen rather than a runtime helper. A `regen-card-inde
 
 The runtime `loadFromDirectory` helper is **removed** (along with its tests) in favor of the codegen — single mechanism, used universally. `BaseCardManager.filterDefinitions` stays on the class because it's pure JS that runs anywhere.
 
+The codegen also preserves the existing export order from each `index.js` it rewrites (matching exports back to filenames via require-cache object identity), with new files appended at the end. This is a kludge to protect in-progress Dune games — definition iteration order feeds into seeded deck shuffling, so reordering breaks replay. The order-preservation logic has no design merit on its own.
+
+**Follow-up.** When the next breaking-change window opens (a game version bump or once v1 stored games have aged out), simplify `regen-card-indexes.js` back to pure alphabetical sort: drop `determineOrder` and the require-cache matching (~50 lines), drop the "newly added files appended at end" branch. The output then becomes a pure function of the directory contents, with no hidden dependency on the previous index.js — easier to audit, easier to predict.
+
 ---
 
 ## 3. `BasePlayer.incrementCounter` source attribution + history
