@@ -2,8 +2,12 @@
 'use strict'
 
 // Walks the workspace, finds every index.js carrying the marker line, and
-// rewrites it as a sorted list of `require('./<file>.js')` calls plus a
-// `module.exports = [...]` array.
+// rewrites it as a list of `require('./<file>.js')` calls plus a
+// `module.exports = [...]` array. Existing order is preserved — replay of
+// stored games depends on definition iteration order feeding into seeded
+// deck shuffles, so the codegen must NOT silently reorder cards. New files
+// (present on disk but missing from the current export array) are appended
+// at the end, sorted alphabetically among themselves.
 //
 // Why a build-time codegen instead of a runtime helper: card-index files
 // are bundled into the browser via Vite, and `fs.readdirSync` / `__dirname`
@@ -37,13 +41,79 @@ function varNameForFile(file) {
   return name
 }
 
+// Determine the order to emit. Existing export order is preserved so that
+// stored games can still replay deterministically; new files get appended.
+// Order discovery works by requiring the current index.js and walking its
+// exported array, matching each entry back to a filename via object
+// identity in the require cache. If the current index is unparseable
+// (e.g. a freshly-seeded stub with only the marker), all files are treated
+// as new and emitted alphabetically.
+function determineOrder(dir, files) {
+  const indexPath = path.join(dir, 'index.js')
+
+  // Prime require cache and build a definition → filename map. Bust each
+  // cache slot first so edits to card files mid-session are honored.
+  const defByFile = new Map()
+  for (const file of files) {
+    const filePath = path.join(dir, file)
+    delete require.cache[require.resolve(filePath)]
+    try {
+      defByFile.set(file, require(filePath))
+    }
+    catch (e) {
+      // Card file failed to load — surface but continue; it just won't
+      // appear in the preserved order and will be treated as new.
+      console.error(`! Could not load ${file}: ${e.message}`)
+    }
+  }
+
+  // Read the existing export array via require. Catches malformed /
+  // marker-only stubs and falls back to a fresh start.
+  let exported = null
+  try {
+    delete require.cache[require.resolve(indexPath)]
+    const maybe = require(indexPath)
+    if (Array.isArray(maybe)) {
+      exported = maybe
+    }
+  }
+  catch {
+    // Stub or missing index — start fresh.
+  }
+
+  const previous = []
+  if (exported) {
+    const seen = new Set()
+    for (const def of exported) {
+      for (const [file, fileDef] of defByFile) {
+        if (seen.has(file)) {
+          continue
+        }
+        if (fileDef === def || (fileDef && def && fileDef.id && fileDef.id === def.id)) {
+          previous.push(file)
+          seen.add(file)
+          break
+        }
+      }
+    }
+  }
+
+  const presentSet = new Set(files)
+  const previousStillPresent = previous.filter(f => presentSet.has(f))
+  const previousSet = new Set(previousStillPresent)
+  const newlyAdded = files.filter(f => !previousSet.has(f)).sort()
+
+  return [...previousStillPresent, ...newlyAdded]
+}
+
 function regenIndex(dir) {
   const files = fs.readdirSync(dir).filter(isCardFile).sort()
+  const order = determineOrder(dir, files)
 
   const lines = ["'use strict'", '', MARKER, '']
   const exports = []
 
-  for (const file of files) {
+  for (const file of order) {
     const varName = varNameForFile(file)
     lines.push(`const ${varName} = require('./${file}')`)
     exports.push(varName)
