@@ -16,10 +16,14 @@ module.exports = {
       kind: 'would-first',
       matches: (game, player, { card, owner }) => game.zones.byPlayer(owner, card.color).splay !== 'left',
       func(game, player, { card, owner, self }) {
+        // Per splay rules, attempting to splay a color that is already splayed
+        // in that direction is a legal choice — it just does nothing. So we
+        // intentionally do not filter out players whose stack is already
+        // splayed left; the owner is not forced to splay their own board when
+        // the opponent's stack is already splayed left.
         const choices = game
           .players
           .all()
-          .filter(other => game.zones.byPlayer(other, card.color).splay !== 'left')
           .filter(other => game.zones.byPlayer(other, card.color).cardlist().length > 1)
 
         const chosenPlayer = game.actions.choosePlayer(owner, choices)

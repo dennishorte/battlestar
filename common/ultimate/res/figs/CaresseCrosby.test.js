@@ -252,6 +252,55 @@ describe('Caresse Crosby', () => {
       })
     })
 
+    test('karma: can choose player whose color is already splayed left (no-op splay)', () => {
+      // Per the splay rule, attempting to splay a color already splayed in
+      // that direction does nothing. The owner of Caresse should still be
+      // allowed to pick such a board rather than be forced to splay their own.
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'], numPlayers: 2 })
+      t.setBoard(game, {
+        dennis: {
+          yellow: ['Caresse Crosby'],
+          blue: ['Writing', 'Tools'], // Dennis's blue is NOT splayed left
+        },
+        micah: {
+          // Chosen so micah has zero 's' biscuits visible when splayed left,
+          // avoiding sharing Writing's dogma. Top card Alchemy (hlkk) shows
+          // all 4 biscuits; under card Astronomy contributes BR=h when splayed left.
+          blue: {
+            cards: ['Alchemy', 'Climatology'],
+            splay: 'left', // Micah's blue is already splayed left
+          },
+        },
+        decks: {
+          base: {
+            2: ['Construction', 'Fermenting', 'Currency'],
+          },
+        },
+      })
+
+      let request
+      request = game.run()
+      request = t.choose(game, 'Dogma.Writing')
+      // Karma triggers (dennis owns Caresse and doesn't have blue splayed left).
+      // Dennis chooses micah even though micah's blue is already splayed left.
+      request = t.choose(game, 'micah')
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          yellow: ['Caresse Crosby'],
+          blue: ['Writing', 'Tools'], // Unchanged — splay happened on micah's board
+          hand: ['Construction', 'Fermenting', 'Currency'], // Still drew two age 2 from karma + Writing dogma
+        },
+        micah: {
+          blue: {
+            cards: ['Alchemy', 'Climatology'],
+            splay: 'left', // Unchanged — no-op splay (already left)
+          },
+        },
+      })
+    })
+
   })
 
 })
