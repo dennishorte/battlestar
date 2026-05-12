@@ -21,6 +21,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "lint": "npx eslint --max-warnings=0 .",
-    "lint:fix": "npx eslint --fix --max-warnings=0 ."
+    "lint:fix": "npx eslint --fix --max-warnings=0 .",
+    "regen-card-indexes": "node scripts/regen-card-indexes.js"
   }
 }
