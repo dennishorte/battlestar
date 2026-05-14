@@ -13,7 +13,14 @@
       <div class="spaces-column" ref="spacesColumn">
         <div class="section-header">
           Action Spaces
-          <span class="shield-wall-destroyed" v-if="!game.state.shieldWall">Shield Wall Destroyed</span>
+          <button type="button"
+                  class="shield-wall-banner"
+                  :class="game.state.shieldWall ? 'sw-intact' : 'sw-destroyed'"
+                  @click="openShieldWall"
+                  :title="game.state.shieldWall ? 'Shield Wall is intact — click for details' : 'Shield Wall is destroyed — click for details'">
+            <span class="sw-icon">{{ game.state.shieldWall ? '\u{1F6E1}' : '\u{1F4A5}' }}</span>
+            <span class="sw-label">Shield Wall: {{ game.state.shieldWall ? 'Intact' : 'Destroyed' }}</span>
+          </button>
         </div>
         <div v-for="group in spaceGroups" :key="group.label" class="space-group">
           <div class="group-label" :class="`group-${group.icon}`">
@@ -118,7 +125,7 @@ export default {
     DuneFactionIcon,
   },
 
-  inject: ['actor', 'bus', 'game'],
+  inject: ['actor', 'bus', 'game', 'ui'],
 
   data() {
     return {
@@ -397,6 +404,10 @@ export default {
     formatName(id) {
       return id.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')
     },
+
+    openShieldWall() {
+      this.$modal('dune-shield-wall-modal').show()
+    },
   },
 }
 </script>
@@ -420,10 +431,42 @@ export default {
   margin-bottom: .3em;
 }
 
-.shield-wall-destroyed {
-  font-size: .8em;
-  color: #c04040;
-  font-weight: 400;
+.shield-wall-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: .3em;
+  font-size: .75em;
+  font-weight: 600;
+  padding: .15em .5em;
+  border-radius: .25em;
+  border: 1px solid;
+  cursor: pointer;
+  background: none;
+  line-height: 1.2;
+}
+
+.shield-wall-banner.sw-intact {
+  color: #3a6b1f;
+  border-color: #b8d09a;
+  background-color: #eef5e4;
+}
+
+.shield-wall-banner.sw-intact:hover {
+  background-color: #e2eed3;
+}
+
+.shield-wall-banner.sw-destroyed {
+  color: #8b2a2a;
+  border-color: #d4a0a0;
+  background-color: #f8e0e0;
+}
+
+.shield-wall-banner.sw-destroyed:hover {
+  background-color: #f0d0d0;
+}
+
+.sw-icon {
+  font-size: .95em;
 }
 
 .control-row {

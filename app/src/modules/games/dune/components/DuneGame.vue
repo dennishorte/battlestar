@@ -39,6 +39,7 @@
     <DuneCardViewerModal />
     <DuneCardListModal />
     <DuneRulesModal />
+    <DuneShieldWallModal />
     <DuneTableauModal />
     <DuneVpBreakdownModal />
     <DebugModal />
@@ -65,6 +66,7 @@ import DuneOptionChip from './DuneOptionChip.vue'
 import DuneCardListModal from './modals/DuneCardListModal.vue'
 import DuneCardViewerModal from './modals/DuneCardViewerModal.vue'
 import DuneRulesModal from './modals/DuneRulesModal.vue'
+import DuneShieldWallModal from './modals/DuneShieldWallModal.vue'
 import DuneTableauModal from './modals/DuneTableauModal.vue'
 import DuneVpBreakdownModal from './modals/DuneVpBreakdownModal.vue'
 
@@ -84,6 +86,7 @@ export default {
     DuneImperiumRow,
     DunePlayerPanel,
     DuneRulesModal,
+    DuneShieldWallModal,
     DuneTableauModal,
     DuneVpBreakdownModal,
     GameLogDune,
