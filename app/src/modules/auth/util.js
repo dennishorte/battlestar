@@ -1,8 +1,10 @@
 import store from '@/store'
 
 
+const PUBLIC_ROUTES = new Set(['SiteLogin', 'AcceptInvite'])
+
 function canAccess(routeRecord) {
-  if (routeRecord.name == 'SiteLogin') {
+  if (PUBLIC_ROUTES.has(routeRecord.name)) {
     return true
   }
   else {

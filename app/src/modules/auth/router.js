@@ -1,4 +1,5 @@
 import store from '@/store'
+import AcceptInvite from './components/AcceptInvite.vue'
 import SiteLogin from './components/SiteLogin.vue'
 
 export default [
@@ -7,6 +8,12 @@ export default [
     name: 'SiteLogin',
     title: 'Login',
     component: SiteLogin,
+  },
+  {
+    path: '/invite/:token',
+    name: 'AcceptInvite',
+    title: 'Create Account',
+    component: AcceptInvite,
   },
   {
     path: '/logout',

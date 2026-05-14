@@ -27,6 +27,8 @@
         <div class="row">
           <div class="col-4">
             <CreateUser v-on:user-created="getAllUsers" />
+            <hr />
+            <InviteLinks />
           </div>
 
           <div class="col">
@@ -62,6 +64,7 @@ import GameHeader from '../../../../src/components/GameHeader.vue'
 import AdminActions from './AdminActions.vue'
 import CreateUser from './CreateUser.vue'
 import GameSummary from './GameSummary.vue'
+import InviteLinks from './InviteLinks.vue'
 import UserList from './UserList.vue'
 import ImpersonationStatus from './ImpersonationStatus.vue'
 
@@ -73,6 +76,7 @@ export default {
     AdminActions,
     CreateUser,
     GameSummary,
+    InviteLinks,
     UserList,
     ImpersonationStatus,
   },

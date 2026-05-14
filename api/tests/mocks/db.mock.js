@@ -162,6 +162,15 @@ const lobby = {
   kill: vi.fn().mockResolvedValue(true)
 }
 
+// Invite model mock
+const invite = {
+  generateToken: vi.fn(() => 'mock-token'),
+  create: vi.fn(),
+  findByToken: vi.fn(),
+  markUsed: vi.fn().mockResolvedValue({ modifiedCount: 1 }),
+  listActive: vi.fn().mockResolvedValue([])
+}
+
 // Misc model mock
 const misc = {
   appVersion: vi.fn().mockResolvedValue('1.0.0')
@@ -178,6 +187,7 @@ export default {
   user,
   game,
   lobby,
+  invite,
   misc,
   clearAll
 }

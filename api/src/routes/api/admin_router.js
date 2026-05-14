@@ -389,6 +389,99 @@ router.post('/clear-all-impersonations', async (req, res) => {
   }
 })
 
+/**
+ * @swagger
+ * /admin/invite/create:
+ *   post:
+ *     summary: Create a registration invite link
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [username]
+ *             properties:
+ *               username:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Invite created
+ *       400:
+ *         description: Bad request
+ */
+router.post('/invite/create', async (req, res) => {
+  try {
+    const { username } = req.body
+
+    if (!username || typeof username !== 'string' || !username.trim()) {
+      return res.status(400).json({ status: 'error', message: 'username is required' })
+    }
+
+    const trimmed = username.trim()
+    const existing = await db.user.findByName(trimmed)
+    if (existing) {
+      return res.status(400).json({
+        status: 'error',
+        message: `User with name (${trimmed}) already exists`
+      })
+    }
+
+    const invite = await db.invite.create({
+      username: trimmed,
+      createdBy: req.user._id,
+    })
+
+    res.status(200).json({
+      status: 'success',
+      invite: {
+        token: invite.token,
+        username: invite.username,
+        createdAt: invite.createdAt,
+        expiresAt: invite.expiresAt,
+      },
+    })
+  }
+  catch (error) {
+    logger.error(`Invite create error: ${error.message}`)
+    res.status(500).json({ status: 'error', message: 'Failed to create invite' })
+  }
+})
+
+/**
+ * @swagger
+ * /admin/invite/list:
+ *   post:
+ *     summary: List active (unused, unexpired) registration invites
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of active invites
+ */
+router.post('/invite/list', async (req, res) => {
+  try {
+    const invites = await db.invite.listActive()
+    res.status(200).json({
+      status: 'success',
+      invites: invites.map(i => ({
+        token: i.token,
+        username: i.username,
+        createdAt: i.createdAt,
+        expiresAt: i.expiresAt,
+      })),
+    })
+  }
+  catch (error) {
+    logger.error(`Invite list error: ${error.message}`)
+    res.status(500).json({ status: 'error', message: 'Failed to list invites' })
+  }
+})
+
 router.post('/game-summary', async (req, res) => {
   try {
     const result = await db.game.getActiveSummary()
