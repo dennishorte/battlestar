@@ -1278,11 +1278,16 @@ class UltimateActionManager extends BaseActionManager {
       const opts = args[numArgs] || {}
 
       const results = []
+      // `ordered`: caller already sorted the cards — process in array order, no prompts.
+      // `chooseOrder`: order matters for reasons the _orderMatters heuristic can't see
+      //   (e.g. Alchemy: returning to deck affects future draws) — always prompt, and
+      //   don't offer the 'auto' shortcut since accepting it would defeat the point.
       let auto = opts.ordered || false
+      const forceChoose = !auto && (opts.chooseOrder || false)
       let remaining = [...cards]
       const startZones = Object.fromEntries(remaining.map(c => [c.id, c.zone]))
 
-      if (!auto && remaining.length > 1) {
+      if (!auto && !forceChoose && remaining.length > 1) {
         auto = !this._orderMatters(player, verb, remaining, args[2])
       }
 
@@ -1298,9 +1303,10 @@ class UltimateActionManager extends BaseActionManager {
           next = remaining[0]
         }
         else {
+          const choices = forceChoose ? remaining : remaining.concat(['auto'])
           next = this.chooseCard(
             player,
-            remaining.concat(['auto']),
+            choices,
             { title: `Choose a card to ${verb} next.` },
           )
         }
