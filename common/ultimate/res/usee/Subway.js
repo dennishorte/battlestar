@@ -11,6 +11,10 @@ module.exports = {
   dogmaImpl: [
     (game, player, { self }) => {
       const card = game.actions.drawAndTuck(player, game.getEffectAge(self, 7))
+      if (!card) {
+        game.log.add({ template: 'No card was tucked' })
+        return
+      }
 
       const visibleCards = game.zones.byPlayer(player, card.color).numVisibleCards()
 

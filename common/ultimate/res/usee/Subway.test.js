@@ -96,4 +96,32 @@ describe('Subway', () => {
     })
   })
 
+  test('Napoleon Bonaparte karma intercepts the tuck: dogma does nothing further', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Subway'],
+        red: ['Napoleon Bonaparte'],
+      },
+      decks: {
+        usee: { 7: ['Mafia'] },
+        base: { 8: ['Flight'], 9: ['Computers'] },
+      },
+    })
+
+    game.run()
+    t.choose(game, 'Dogma.Subway')
+
+    // Napoleon's karma melds Mafia instead of tucking. Mafia (yellow) is
+    // not red/blue, so it isn't tucked. With no tucked card, Subway's
+    // dogma should not continue — no junking, no follow-up draw.
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        yellow: ['Mafia', 'Subway'],
+        score: ['Napoleon Bonaparte'],
+      },
+    })
+  })
+
 })
