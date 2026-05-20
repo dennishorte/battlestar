@@ -89,21 +89,37 @@ Agricola.prototype.endGame = function() {
 
   const winner = playerResults[0]
 
-  // Check for unbreakable tie
-  const tiedPlayers = playerResults.filter(
-    p => p.score === winner.score && p.buildingResources === winner.buildingResources
+  // Players tied at the top score (before applying tie-breaker)
+  const tiedOnScore = playerResults.filter(p => p.score === winner.score)
+  // Players still tied after the building-resources tie-breaker
+  const tiedPlayers = tiedOnScore.filter(
+    p => p.buildingResources === winner.buildingResources
   )
 
   // Finalize stats before game ends
   this._finalizeStats(playerResults)
 
+  if (tiedOnScore.length > 1) {
+    // There is a score tie — explain who's involved and how it's broken
+    const tiedNames = tiedOnScore.map(p => p.player.name).join(', ')
+    this.log.add({
+      template: `Score tie at ${winner.score} points between ${tiedNames} — tie-breaker is building resources remaining (wood + clay + reed + stone)`,
+    })
+    for (const p of tiedOnScore) {
+      this.log.add({
+        template: `{player}: ${p.buildingResources} building resources`,
+        args: { player: p.player },
+      })
+    }
+  }
+
   if (tiedPlayers.length > 1) {
     // True tie - multiple winners
     const names = tiedPlayers.map(p => p.player.name).join(' and ')
-    this.log.add({ template: `Tie between ${names}!` })
+    this.log.add({ template: `Tie cannot be broken — ${names} share the win` })
     this.youWin(winner.player, 'tied for highest score')
   }
-  else if (playerResults[1] && playerResults[1].score === winner.score) {
+  else if (tiedOnScore.length > 1) {
     // Won by tie-breaker
     this.log.add({
       template: '{player} wins the tie-breaker with {resources} building resources',
