@@ -9,11 +9,27 @@ module.exports = function(Twilight) {
     // Rule 98.7: if multiple players reach 10 VP simultaneously,
     // the player earliest in initiative order wins
     const players = this._getPlayersInInitiativeOrder()
-    for (const player of players) {
-      if (player.getVictoryPoints() >= 10) {
-        this.youWin(player, `${player.name} has reached 10 victory points!`)
-      }
+    const atVictory = players.filter(p => p.getVictoryPoints() >= 10)
+    if (atVictory.length === 0) {
+      return
     }
+
+    if (atVictory.length > 1) {
+      const tiedNames = atVictory.map(p => `${p.name} (${p.getVictoryPoints()} VP)`).join(', ')
+      this.log.add({
+        template: `Multiple players reached 10+ VP simultaneously: ${tiedNames} — Rule 98.7 tie-breaker is initiative order`,
+      })
+      const winner = atVictory[0]
+      this.log.add({
+        template: `{player} wins the tie-breaker as first in initiative order`,
+        args: { player: winner },
+      })
+      this.youWin(winner, `${winner.name} wins by initiative order at ${winner.getVictoryPoints()} VP!`)
+      return
+    }
+
+    const winner = atVictory[0]
+    this.youWin(winner, `${winner.name} has reached 10 victory points!`)
   }
 
 

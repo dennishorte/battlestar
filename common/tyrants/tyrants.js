@@ -1480,12 +1480,14 @@ Tyrants.prototype.checkForEndOfGame = function() {
     }
 
     if (scores[0].score === scores[1].score) {
+      const tied = scores.filter(s => s.score === scores[0].score)
+      const tiedNames = tied.map(s => s.player.name).join(', ')
       this.log.add({
-        template: 'Multiple players are tied for the highest score. There is no tie breaker, so they share the victory.'
+        template: `Tie at ${scores[0].score} points between ${tiedNames}. There is no tie-breaker, so they share the victory.`,
       })
       throw new GameOverEvent({
-        player: 'All players with the highest score',
-        reason: 'Points are tied',
+        player: tiedNames,
+        reason: `Points are tied at ${scores[0].score}`,
       })
     }
 

@@ -299,7 +299,28 @@ module.exports = function(Twilight) {
       // Player with most VP wins; tiebreak by initiative order (same as _checkVictory)
       const players = this._getPlayersInInitiativeOrder()
       const maxVP = Math.max(...players.map(p => p.getVictoryPoints()))
-      const winner = players.find(p => p.getVictoryPoints() === maxVP)
+      const tied = players.filter(p => p.getVictoryPoints() === maxVP)
+
+      if (tied.length > 1) {
+        const tiedNames = tied.map(p => p.name).join(', ')
+        this.log.add({
+          template: `Tie at ${maxVP} VP between ${tiedNames} — Rule 61.15 tie-breaker is initiative order`,
+        })
+        for (const p of players) {
+          this.log.add({
+            template: `{player}: ${p.getVictoryPoints()} VP`,
+            args: { player: p },
+          })
+        }
+      }
+
+      const winner = tied[0]
+      if (tied.length > 1) {
+        this.log.add({
+          template: `{player} wins the tie-breaker as first in initiative order`,
+          args: { player: winner },
+        })
+      }
       this.youWin(winner, `${winner.name} wins with ${maxVP} victory points! (no objectives remaining)`)
       return
     }

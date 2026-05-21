@@ -108,15 +108,50 @@ function endGame(game) {
       return b.garrison - a.garrison
     })
 
-  const winner = players[0].player
+  const winner = players[0]
+
+  // If multiple players are tied on VP, log who is involved and walk
+  // through the cascading tie-breakers (spice → solari → water → garrison)
+  // so the outcome is auditable.
+  const tiedOnVP = players.filter(p => p.vp === winner.vp)
+  if (tiedOnVP.length > 1) {
+    const tiedNames = tiedOnVP.map(p => p.player.name).join(', ')
+    game.log.add({
+      template: `Tie at ${winner.vp} VP between ${tiedNames} — tie-breakers (in order): spice, solari, water, garrisoned troops`,
+    })
+    for (const p of tiedOnVP) {
+      game.log.add({
+        template: `{player}: ${p.spice} spice, ${p.solari} solari, ${p.water} water, ${p.garrison} garrisoned troops`,
+        args: { player: p.player },
+      })
+    }
+
+    const categories = [
+      { key: 'spice', label: 'spice' },
+      { key: 'solari', label: 'solari' },
+      { key: 'water', label: 'water' },
+      { key: 'garrison', label: 'garrisoned troops' },
+    ]
+    for (const { key, label } of categories) {
+      const max = Math.max(...tiedOnVP.map(p => p[key]))
+      const stillTied = tiedOnVP.filter(p => p[key] === max)
+      if (stillTied.length < tiedOnVP.length) {
+        game.log.add({
+          template: `{player} wins the tie-breaker with ${max} ${label}`,
+          args: { player: winner.player },
+        })
+        break
+      }
+    }
+  }
 
   game.log.add({
     template: '{player} wins with {vp} Victory Points!',
-    args: { player: winner, vp: winner.vp },
+    args: { player: winner.player, vp: winner.vp },
   })
 
   throw new GameOverEvent({
-    player: winner,
+    player: winner.player,
     reason: `${winner.vp} Victory Points`,
   })
 }

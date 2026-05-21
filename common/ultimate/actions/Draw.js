@@ -39,32 +39,7 @@ function DrawAction(player, opts={}) {
 
 function _doDraw(player, exp, age, opts={}) {
   if (age > this.game.getMaxAge()) {
-    const scores = this
-      .game
-      .players
-      .all()
-      .map(player => ({
-        player,
-        score: player.score(),
-        achs: player.achievementCount().total,
-      }))
-      .sort((l, r) => {
-        if (r.score !== l.score) {
-          r.reason = 'high draw'
-          l.reason = 'high draw'
-          return r.score - l.score
-        }
-        else if (r.achs !== l.achs) {
-          r.reason = 'high draw - tie breaker (achievements)'
-          l.reason = 'high draw - tie breaker (achievements)'
-          return r.achs - l.achs
-        }
-        else {
-          this.game.youWin(player, 'Tied for points and achievements; player who drew the big card wins!')
-        }
-      })
-
-    this.game.youWin(scores[0].player, scores[0].reason)
+    return _endGameByHighDraw.call(this, player)
   }
 
   const source = this.zones.byDeck(exp, age)
@@ -84,6 +59,60 @@ function _doDraw(player, exp, age, opts={}) {
 
   this.acted(player)
   return card
+}
+
+// End of game by trying to draw above the highest age.
+// Winner is highest score; ties broken by most achievements; if still tied,
+// the player who attempted the failing draw wins.
+function _endGameByHighDraw(drawingPlayer) {
+  const results = this
+    .game
+    .players
+    .all()
+    .map(p => ({
+      player: p,
+      score: p.score(),
+      achs: p.achievementCount().total,
+    }))
+    .sort((l, r) => (r.score - l.score) || (r.achs - l.achs))
+
+  this.game.log.add({
+    template: 'No more cards can be drawn — game ends. Winner is highest score; tie-breaker is achievements; if still tied, the player who drew wins.',
+  })
+  for (const r of results) {
+    this.game.log.add({
+      template: `{player}: ${r.score} points, ${r.achs} achievements`,
+      args: { player: r.player },
+    })
+  }
+
+  const top = results[0]
+  const tiedOnScore = results.filter(r => r.score === top.score)
+
+  if (tiedOnScore.length === 1) {
+    return this.game.youWin(top.player, 'high draw')
+  }
+
+  const maxAchs = Math.max(...tiedOnScore.map(r => r.achs))
+  const tiedOnAchs = tiedOnScore.filter(r => r.achs === maxAchs)
+
+  if (tiedOnAchs.length === 1) {
+    const winner = tiedOnAchs[0]
+    this.game.log.add({
+      template: '{player} wins the tie-breaker with {achs} achievements',
+      args: { player: winner.player, achs: winner.achs },
+    })
+    return this.game.youWin(winner.player, 'high draw - tie breaker (achievements)')
+  }
+
+  const tiedNames = tiedOnAchs.map(r => r.player.name).join(', ')
+  this.game.log.add({
+    template: `${tiedNames} are tied on points and achievements — the player who drew wins`,
+  })
+  return this.game.youWin(
+    drawingPlayer,
+    'Tied for points and achievements; player who drew the big card wins!'
+  )
 }
 
 function _statsCardWasDrawn(card) {
