@@ -184,8 +184,8 @@ describe('Agricola End-to-End', () => {
     expect(result).toBeInstanceOf(GameOverEvent)
     expect(game.state.round).toBeGreaterThanOrEqual(14)
 
-    // Verify a winner was determined (game stores 'player' not 'winner')
-    expect(result.data.player).toBeDefined()
+    // Verify a winner was determined
+    expect(result.data.winners.length).toBeGreaterThanOrEqual(1)
   })
 
 
@@ -486,9 +486,10 @@ describe('Agricola End-to-End', () => {
       expect(breakdown.total).toBe(score)
     }
 
-    // Winner should have highest score (game stores 'player' not 'winner')
-    expect(result.data.player).toBeDefined()
-    const winnerName = typeof result.data.player === 'string' ? result.data.player : result.data.player.name
+    // Winner should have highest score
+    expect(result.data.winners.length).toBeGreaterThanOrEqual(1)
+    const winnerObj = result.data.winners[0]
+    const winnerName = typeof winnerObj === 'string' ? winnerObj : winnerObj.name
     const winner = game.players.byName(winnerName)
     const winnerScore = winner.calculateScore()
 

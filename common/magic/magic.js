@@ -405,13 +405,13 @@ Magic.prototype.aConcede = function(player) {
     const winningTeam = remaining[0]
     if (winningTeam.length === 1) {
       throw new GameOverEvent({
-        player: winningTeam[0].name,
+        winners: [winningTeam[0].name],
         reason: 'I am the best, you are the rest!',
       })
     }
     else {
       throw new GameOverEvent({
-        player: `team ${winningTeam[0].team}`,
+        winners: winningTeam.map(p => p.name),
         reason: 'All your base are belong to us.',
       })
     }
@@ -564,7 +564,7 @@ Magic.prototype.aDrawGame = function(player) {
     event: 'draw-game',
   })
   throw new GameOverEvent({
-    player: 'nobody',
+    winners: [],
     reason: 'Draw Game',
   })
 }

@@ -114,10 +114,9 @@ Agricola.prototype.endGame = function() {
   }
 
   if (tiedPlayers.length > 1) {
-    // True tie - multiple winners
     const names = tiedPlayers.map(p => p.player.name).join(' and ')
     this.log.add({ template: `Tie cannot be broken — ${names} share the win` })
-    this.youWin(winner.player, 'tied for highest score')
+    this.youAllWin(tiedPlayers.map(p => p.player), 'tied for highest score')
   }
   else if (tiedOnScore.length > 1) {
     // Won by tie-breaker

@@ -435,7 +435,8 @@ describe('Magic Actions', () => {
     })
 
     expect(game.checkGameIsOver()).toBe(true)
-    expect(game.gameOverData.player).toBe('nobody')
+    expect(game.gameOverData.winners).toEqual([])
+    expect(game.gameOverData.player).toBe(null)
   })
 
   test('hide all', () => {

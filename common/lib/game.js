@@ -399,10 +399,7 @@ Game.prototype.run = function() {
       const result = this._gameOver(e)
 
       this.gameOver = true
-      this.gameOverData = result.data
-      if (result.data.player && result.data.player.name) {
-        this.gameOverData.player = this.gameOverData.player.name
-      }
+      this.gameOverData = _normalizeGameOverData(result.data)
 
       this.log.add({ template: this.getResultMessage() })
 
@@ -455,10 +452,37 @@ Game.prototype.undo = function() {
 }
 
 Game.prototype.youWin = function(player, reason) {
-  throw new GameOverEvent({
-    player,
-    reason,
-  })
+  throw new GameOverEvent({ winners: [player], reason })
+}
+
+Game.prototype.youAllWin = function(players, reason) {
+  throw new GameOverEvent({ winners: players, reason })
+}
+
+Game.prototype.gameDraw = function(reason) {
+  throw new GameOverEvent({ winners: [], reason })
+}
+
+// Accepts either the new { winners } shape, the legacy { player } shape, or a mix
+// (the latter happens when a custom game's `_gameOver` hook rebuilds the event).
+// Always returns { winners: string[], reason, player } where `player` is the legacy
+// scalar derived from winners[0] for back-compat with stored games and old consumers.
+function _normalizeGameOverData(data) {
+  let winners
+  if (Array.isArray(data.winners)) {
+    winners = data.winners.map(p => p?.name ?? p).filter(n => n != null)
+  }
+  else if (data.player != null && data.player !== '') {
+    winners = [data.player?.name ?? data.player]
+  }
+  else {
+    winners = []
+  }
+  return {
+    winners,
+    reason: data.reason,
+    player: winners[0] ?? null,
+  }
 }
 
 Game.prototype.youLose = function(player, reason) {
@@ -491,15 +515,17 @@ Game.prototype.dumpLog = function() {
 }
 
 Game.prototype.getResultMessage = function() {
-  if (this.checkGameIsOver()) {
-    const player = this.gameOverData.player
-    const winnerName = player.name ? player.name : player
-    const reason = this.gameOverData.reason
-    return `${winnerName} wins due to ${reason}`
-  }
-  else {
+  if (!this.checkGameIsOver()) {
     return 'in progress'
   }
+  const { winners, reason } = this.gameOverData
+  if (winners.length === 0) {
+    return `Game ended in a draw — ${reason}`
+  }
+  if (winners.length === 1) {
+    return `${winners[0]} wins due to ${reason}`
+  }
+  return `${winners.join(' and ')} share the win — ${reason}`
 }
 
 Game.prototype.getViewerName = function() {

@@ -1486,14 +1486,14 @@ Tyrants.prototype.checkForEndOfGame = function() {
         template: `Tie at ${scores[0].score} points between ${tiedNames}. There is no tie-breaker, so they share the victory.`,
       })
       throw new GameOverEvent({
-        player: tiedNames,
+        winners: tied.map(s => s.player.name),
         reason: `Points are tied at ${scores[0].score}`,
       })
     }
 
     else {
       throw new GameOverEvent({
-        player: scores[0].player.name,
+        winners: [scores[0].player.name],
         reason: 'ALL THE POINTS!'
       })
     }

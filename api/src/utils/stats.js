@@ -12,6 +12,22 @@ function getCardAge(cardName) {
   return innovationCardAges[cardName]
 }
 
+// Extracts the list of winning player names from a stored game's stats result.
+// Tolerates three on-disk shapes:
+//   - new:    result.winners = ['dennis', 'scott']
+//   - legacy: result.player = { name: 'dennis' }
+//   - legacy sentinel: result.player = { name: 'nobody' } or 'everyone' (treated as draw)
+function getWinners(result) {
+  if (Array.isArray(result?.winners)) {
+    return result.winners
+  }
+  const legacyName = result?.player?.name
+  if (!legacyName || legacyName === 'nobody' || legacyName === 'everyone') {
+    return []
+  }
+  return [legacyName]
+}
+
 Stats.processInnovationStats = async function(cursor) {
   const output = {
     count: 0,
@@ -22,11 +38,11 @@ Stats.processInnovationStats = async function(cursor) {
   }
 
   for await (const datum of cursor) {
-    const winner = datum.stats?.result?.player?.name
+    const winners = getWinners(datum.stats?.result)
     const inGame = datum.stats?.inGame || {}
 
     // Skip games without proper stats
-    if (!winner || !inGame.melded) {
+    if (winners.length === 0 || !inGame.melded) {
       continue
     }
 
@@ -40,7 +56,7 @@ Stats.processInnovationStats = async function(cursor) {
     }
     output.reasons[reason] += 1
 
-    // Player stats
+    // Player stats — tied winners each count as a win.
     const playerNames = datum.settings.players.map(p => p.name)
     for (const player of datum.settings.players) {
       if (!(player.name in output.players)) {
@@ -53,7 +69,7 @@ Stats.processInnovationStats = async function(cursor) {
       const pd = output.players[player.name]
       pd.count += 1
 
-      if (player.name === winner) {
+      if (winners.includes(player.name)) {
         pd.wins += 1
       }
     }
@@ -72,7 +88,11 @@ Stats.processInnovationStats = async function(cursor) {
       }
 
       output.matchups[matchupKey].games += 1
-      output.matchups[matchupKey].wins[winner] += 1
+      for (const winner of winners) {
+        if (winner in output.matchups[matchupKey].wins) {
+          output.matchups[matchupKey].wins[winner] += 1
+        }
+      }
     }
 
     // Card draw stats
@@ -104,7 +124,7 @@ Stats.processInnovationStats = async function(cursor) {
       const cd = output.cards[card]
       cd.melded += 1
 
-      if (inGame.meldedBy?.[card] === winner) {
+      if (winners.includes(inGame.meldedBy?.[card])) {
         cd.wins += 1
       }
     }
@@ -139,7 +159,7 @@ Stats.processAgricolaStats = async function(cursor) {
   for await (const datum of cursor) {
     output.count += 1
 
-    const winner = datum.stats?.result?.player?.name
+    const winners = getWinners(datum.stats?.result)
     const playerCount = datum.stats?.inGame?.metadata?.playerCount || datum.settings?.players?.length || 0
     const inGame = datum.stats?.inGame || {}
 
@@ -150,16 +170,17 @@ Stats.processAgricolaStats = async function(cursor) {
     const bucket = output.byPlayerCount[playerCount]
     bucket.count += 1
 
-    // Process played cards
+    // Process played cards — tied winners each get a win credited.
     for (const [cardId, cardData] of Object.entries(inGame.cards?.played || {})) {
       const cardKey = cardData.name
+      const playedByWinner = winners.includes(cardData.playedBy)
 
       // Per-player-count
       if (!bucket.cards[cardKey]) {
         bucket.cards[cardKey] = { id: cardId, name: cardData.name, type: cardData.type, setId: cardData.setId, played: 0, wins: 0 }
       }
       bucket.cards[cardKey].played += 1
-      if (cardData.playedBy === winner) {
+      if (playedByWinner) {
         bucket.cards[cardKey].wins += 1
       }
 
@@ -168,7 +189,7 @@ Stats.processAgricolaStats = async function(cursor) {
         output.aggregate.cards[cardKey] = { id: cardId, name: cardData.name, type: cardData.type, setId: cardData.setId, played: 0, wins: 0 }
       }
       output.aggregate.cards[cardKey].played += 1
-      if (cardData.playedBy === winner) {
+      if (playedByWinner) {
         output.aggregate.cards[cardKey].wins += 1
       }
     }

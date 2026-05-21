@@ -75,9 +75,15 @@ Innovation.prototype._mainProgram = function() {
 }
 
 Innovation.prototype._gameOver = function(event) {
-  // Check for 'would-win' karmas.
+  // would-win karmas only fire for single-winner game-overs; multi-winner ties and
+  // draws have no nominal "winner" for opponents to react to.
+  const winners = event.data.winners ?? (event.data.player ? [event.data.player] : [])
+  if (winners.length !== 1) {
+    return event
+  }
+
   this.state.wouldWinKarma = true
-  const result = this.triggerKarma(event.data.player, 'would-win', { event })
+  const result = this.triggerKarma(winners[0], 'would-win', { event })
   this.state.wouldWinKarma = false
 
   if (result) {

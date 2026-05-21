@@ -177,7 +177,7 @@ CubeDraft.prototype.mainLoop = function() {
   }
 
   throw new GameOverEvent({
-    player: 'everyone',
+    winners: [],
     reason: 'Draft is complete'
   })
 }

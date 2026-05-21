@@ -256,8 +256,17 @@ TestCommon.testChoices = function(request, expected, expectedMin, expectedMax) {
 
 TestCommon.testGameOver = function(request, playerName, reason) {
   expect(request).toEqual(expect.any(GameOverEvent))
-  expect(request.data.player).toBe(playerName)
-  expect(request.data.reason).toBe(reason)
+  const data = request.data
+  // Accept either the new { winners: [Player|name, ...] } shape or the legacy { player } shape.
+  const winnerName = (() => {
+    if (Array.isArray(data.winners) && data.winners.length > 0) {
+      const w = data.winners[0]
+      return w?.name ?? w
+    }
+    return data.player?.name ?? data.player
+  })()
+  expect(winnerName).toBe(playerName)
+  expect(data.reason).toBe(reason)
 }
 
 TestCommon.testNotGameOver = function(request) {

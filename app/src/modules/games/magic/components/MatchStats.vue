@@ -49,28 +49,58 @@ export default {
 
   computed: {
     resultString() {
-      const wins = this
-        .games
-        .filter(g => g.gameOverData && g.gameOverData.player === this.actor.name)
-        .length
+      let wins = 0
+      let losses = 0
+      let draws = 0
 
-      const losses = this
-        .games
-        .filter(g => g.gameOverData && g.gameOverData.player !== this.actor.name)
-        .length
+      for (const g of this.games) {
+        if (!g.gameOverData) {
+          continue
+        }
+        const winners = this.winnersOf(g)
+        if (winners.length === 0) {
+          draws += 1
+        }
+        else if (winners.includes(this.actor.name)) {
+          wins += 1
+        }
+        else {
+          losses += 1
+        }
+      }
 
-      return `${wins} - ${losses}`
+      return draws > 0 ? `${wins} - ${losses} - ${draws}` : `${wins} - ${losses}`
     },
   },
 
   methods: {
-    gameWinner(game) {
-      if (game.gameOverData) {
-        return game.gameOverData.player
+    winnersOf(game) {
+      const data = game.gameOverData
+      if (!data) {
+        return []
       }
-      else {
+      if (Array.isArray(data.winners)) {
+        return data.winners
+      }
+      // Legacy single-player shape, including 'nobody' / 'everyone' sentinels.
+      if (!data.player || data.player === 'nobody' || data.player === 'everyone') {
+        return []
+      }
+      return [data.player]
+    },
+
+    gameWinner(game) {
+      if (!game.gameOverData) {
         return 'IN PROGRESS'
       }
+      const winners = this.winnersOf(game)
+      if (winners.length === 0) {
+        return 'Draw'
+      }
+      if (winners.length === 1) {
+        return winners[0]
+      }
+      return `${winners.join(' & ')} (tied)`
     },
 
     goToGame(game) {
@@ -117,15 +147,17 @@ export default {
     },
 
     rowClass(game) {
-      if (this.gameWinner(game) === this.actor.name) {
-        return 'table-success'
-      }
-      else if (this.gameWinner(game) === 'IN PROGRESS') {
+      if (!game.gameOverData) {
         return ''
       }
-      else {
-        return 'table-danger'
+      const winners = this.winnersOf(game)
+      if (winners.length === 0) {
+        return 'table-warning'
       }
+      if (winners.includes(this.actor.name)) {
+        return 'table-success'
+      }
+      return 'table-danger'
     }
   },
 

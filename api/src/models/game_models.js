@@ -67,10 +67,13 @@ Game.gameOver = async function(game, killed=false) {
   }
   else {
     // Save stats when game ends normally (not killed)
+    const winners = game.gameOverData?.winners ?? (game.gameOverData?.player ? [game.gameOverData.player] : [])
     setValues.stats = {
       error: false,
       result: {
-        player: { name: game.gameOverData?.player },
+        winners,
+        // Legacy field for back-compat with old stats consumers; equals winners[0] (or null for draws).
+        player: { name: winners[0] ?? null },
         reason: game.gameOverData?.reason,
       },
       inGame: game.stats || {},

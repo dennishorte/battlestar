@@ -58,25 +58,44 @@ export default {
           )
         })
 
-      const wins = (player) => {
-        return games
-          .filter(game => {
-            return (
-              game.gameOver
-              && game.gameOverData
-              && game.gameOverData.player === player.name
-            )
-          })
-          .length
+      const winnersOf = (game) => {
+        const data = game.gameOverData
+        if (!data) {
+          return []
+        }
+        if (Array.isArray(data.winners)) {
+          return data.winners
+        }
+        if (!data.player || data.player === 'nobody' || data.player === 'everyone') {
+          return []
+        }
+        return [data.player]
       }
 
-      const p1wins = wins(p1)
-      const p2wins = wins(p2)
-      const other = games.length - p1wins - p2wins
-      const otherString = other > 0 ? '*' : ''
+      let p1wins = 0
+      let p2wins = 0
+      let draws = 0
+      for (const game of games) {
+        if (!game.gameOver) {
+          continue
+        }
+        const winners = winnersOf(game)
+        if (winners.length === 0) {
+          draws += 1
+        }
+        else {
+          if (winners.includes(p1.name)) {
+            p1wins += 1
+          }
+          if (winners.includes(p2.name)) {
+            p2wins += 1
+          }
+        }
+      }
+      const drawString = draws > 0 ? `-${draws}` : ''
 
-      if (p1wins + p2wins + other > 0) {
-        return `${p1wins}-${p2wins}${otherString}`
+      if (p1wins + p2wins + draws > 0) {
+        return `${p1wins}-${p2wins}${drawString}`
       }
       else {
         return ''
