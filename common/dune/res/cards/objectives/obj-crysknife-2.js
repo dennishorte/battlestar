@@ -7,5 +7,5 @@ module.exports = {
   compatibility: 'Uprising',
   battleIcon: 'crysknife',
   isFirstPlayer: false,
-  playerCount: 'all',
+  playerCount: '4+',
 }
