@@ -21,6 +21,10 @@ module.exports = {
     },
     (game, player) => {
       const age = game.actions.chooseAge(player, null, { min: 0 })
+      if (age === null || age === undefined) {
+        return
+      }
+
       const cardsOfAge = game.cards.byPlayer(player, 'hand').filter(c => c.getAge() === age)
       game.actions.scoreMany(player, cardsOfAge)
 
