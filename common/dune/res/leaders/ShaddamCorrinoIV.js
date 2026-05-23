@@ -13,6 +13,7 @@ module.exports = {
   onAssign(game, player) {
     const contractDeck = game.zones.byId('common.contractDeck')
     const contractMarket = game.zones.byId('common.contractMarket')
+    const contractReserved = game.zones.byId('common.contractReserved')
     const allContracts = [...contractDeck.cardlist(), ...contractMarket.cardlist()]
     const sardaukarContracts = allContracts.filter(c => c.name === 'Sardaukar')
 
@@ -21,10 +22,13 @@ module.exports = {
     }
     for (const contract of sardaukarContracts) {
       game.state.shaddamReservedContracts.push(contract.id)
+      contract.moveTo(contractReserved)
     }
     if (sardaukarContracts.length > 0) {
+      const choam = require('../../systems/choam.js')
+      choam.refillContractMarket(game, { silent: true })
       game.log.add({
-        template: '{player}: Sardaukar Commander — {count} Sardaukar contract(s) reserved',
+        template: '{player}: Sardaukar Commander — {count} Sardaukar contract(s) set aside',
         args: { player, count: sardaukarContracts.length },
       })
     }

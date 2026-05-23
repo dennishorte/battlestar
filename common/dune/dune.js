@@ -202,6 +202,7 @@ Dune.prototype.initializeZones = function() {
   z('common.trash', 'Trash', 'hidden')
   z('common.contractDeck', 'Contract Deck', 'hidden')
   z('common.contractMarket', 'Contract Market', 'public')
+  z('common.contractReserved', 'Reserved Contracts', 'public')
   z('common.reservedCards', 'Reserved (Manipulate)', 'public')
 
   // Per-player zones

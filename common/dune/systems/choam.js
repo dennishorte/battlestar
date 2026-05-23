@@ -102,19 +102,14 @@ function refillContractMarket(game, { silent = false } = {}) {
  */
 function takeContract(game, player) {
   const market = game.zones.byId('common.contractMarket')
-  const contracts = market.cardlist()
-
-  if (contracts.length === 0) {
-    game.log.add({ template: 'No contracts available', event: 'memo' })
-    return
-  }
-
-  // Filter out Sardaukar contracts reserved for Shaddam Corrino IV
-  const reserved = game.state.shaddamReservedContracts || []
   const isShaddam = game.state.leaders?.[player.name]?.name === 'Shaddam Corrino IV'
-  const availableContracts = contracts.filter(c =>
-    !reserved.includes(c.id) || isShaddam
-  )
+  const availableContracts = [...market.cardlist()]
+  if (isShaddam) {
+    const reservedZone = game.zones.byId('common.contractReserved')
+    if (reservedZone) {
+      availableContracts.push(...reservedZone.cardlist())
+    }
+  }
 
   if (availableContracts.length === 0) {
     game.log.add({ template: 'No contracts available', event: 'memo' })
