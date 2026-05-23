@@ -70,13 +70,13 @@ function initializeContracts(game) {
   contractDeckZone.shuffle(game.random)
 
   // Deal 2 face-up to the market
-  refillContractMarket(game)
+  refillContractMarket(game, { silent: true })
 }
 
 /**
  * Refill contract market to 2 face-up cards.
  */
-function refillContractMarket(game) {
+function refillContractMarket(game, { silent = false } = {}) {
   const market = game.zones.byId('common.contractMarket')
   const deck = game.zones.byId('common.contractDeck')
 
@@ -85,7 +85,14 @@ function refillContractMarket(game) {
     if (cards.length === 0) {
       break
     }
-    cards[0].moveTo(market)
+    const card = cards[0]
+    card.moveTo(market)
+    if (!silent) {
+      game.log.add({
+        template: '{card} is added to the Contract Market',
+        args: { card },
+      })
+    }
   }
 }
 

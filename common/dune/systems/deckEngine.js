@@ -119,7 +119,7 @@ function acquireCard(game, player, card) {
 /**
  * Refill the Imperium Row to 5 cards from the Imperium Deck.
  */
-function refillImperiumRow(game) {
+function refillImperiumRow(game, { silent = false } = {}) {
   const rowZone = game.zones.byId('common.imperiumRow')
   const deckZone = game.zones.byId('common.imperiumDeck')
 
@@ -128,7 +128,14 @@ function refillImperiumRow(game) {
     if (deckCards.length === 0) {
       break
     }
-    deckCards[0].moveTo(rowZone)
+    const card = deckCards[0]
+    card.moveTo(rowZone)
+    if (!silent) {
+      game.log.add({
+        template: '{card} is added to the Imperium Row',
+        args: { card },
+      })
+    }
   }
 }
 
@@ -286,7 +293,7 @@ function initializeCards(game) {
   }
 
   // Fill the Imperium Row
-  refillImperiumRow(game)
+  refillImperiumRow(game, { silent: true })
 }
 
 module.exports = {
