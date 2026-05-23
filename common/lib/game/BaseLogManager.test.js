@@ -113,6 +113,75 @@ describe('BaseLogManager', () => {
       expect(playerArg.classes).toContain('player-name')
     })
 
+    describe('addPrivate', () => {
+      test('builds entry with visibility, redacted template, and args', () => {
+        const { logManager } = createLogManager()
+
+        logManager.addPrivate({
+          viewer: { name: 'dennis' },
+          template: '{player} draws {cards}',
+          redactedTemplate: '{player} draws {count} cards',
+          args: { player: 'dennis', cards: [{ id: 'c-1' }, { id: 'c-2' }], count: 2 },
+        })
+
+        const entry = logManager.getLog()[0]
+        expect(entry.template).toBe('{player} draws {cards}')
+        expect(entry.redacted).toBe('{player} draws {count} cards')
+        expect(entry.visibility).toEqual(['dennis'])
+        expect(entry.args.cards).toEqual({
+          value: 'card(c-1), card(c-2)',
+          classes: ['card-id-list'],
+        })
+        expect(entry.args.count).toEqual({ value: 2 })
+      })
+
+      test('accepts viewer as a bare name string', () => {
+        const { logManager } = createLogManager()
+
+        logManager.addPrivate({
+          viewer: 'micah',
+          template: '{player} peeks',
+          redactedTemplate: '{player} peeks at something',
+          args: { player: 'micah' },
+        })
+
+        expect(logManager.getLog()[0].visibility).toEqual(['micah'])
+      })
+
+      test('throws if viewer is missing', () => {
+        const { logManager } = createLogManager()
+        expect(() => logManager.addPrivate({
+          template: 't',
+          redactedTemplate: 'r',
+        })).toThrow('addPrivate: missing viewer')
+      })
+
+      test('throws if redactedTemplate is missing', () => {
+        const { logManager } = createLogManager()
+        expect(() => logManager.addPrivate({
+          viewer: 'dennis',
+          template: 't',
+        })).toThrow('addPrivate: missing redactedTemplate')
+      })
+
+      test('forwards event and classes through to the entry', () => {
+        const { logManager } = createLogManager()
+
+        logManager.addPrivate({
+          viewer: 'dennis',
+          template: '{player} draws {cards}',
+          redactedTemplate: '{player} draws 1 card',
+          args: { player: 'dennis', cards: [{ id: 'c-1' }] },
+          classes: ['draw-event'],
+          event: 'card-draw',
+        })
+
+        const entry = logManager.getLog()[0]
+        expect(entry.classes).toEqual(['draw-event'])
+        expect(entry.event).toBe('card-draw')
+      })
+    })
+
     test('addNoEffect should add appropriate log entry', () => {
       const { logManager } = createLogManager()
 
@@ -530,6 +599,38 @@ describe('BaseLogManager', () => {
       expect(entry.args.card).toEqual({
         value: 'CardID123',
         classes: ['card-id']
+      })
+    })
+
+    test('cards array handler emits card() tokens for each entry', () => {
+      const { logManager } = createLogManager()
+
+      const entry = {
+        args: {
+          cards: [{ id: 'c-1' }, { id: 'c-2' }, 'c-3'],
+        },
+      }
+
+      logManager._enrichLogArgs(entry)
+
+      // Exact-match 'cards' handler wins over the 'card*' wildcard.
+      expect(entry.args.cards).toEqual({
+        value: 'card(c-1), card(c-2), card(c-3)',
+        classes: ['card-id-list'],
+      })
+    })
+
+    test('cards handler passes pre-formatted strings through unchanged', () => {
+      const { logManager } = createLogManager()
+
+      // Twilight (and any pre-existing caller) passes a pre-joined string;
+      // the handler must not mangle it.
+      const entry = { args: { cards: 'Foo, Bar, Baz' } }
+      logManager._enrichLogArgs(entry)
+
+      expect(entry.args.cards).toEqual({
+        value: 'Foo, Bar, Baz',
+        classes: ['card-id'],
       })
     })
 

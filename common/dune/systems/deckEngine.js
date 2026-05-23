@@ -16,7 +16,7 @@ function drawCards(game, player, count) {
   const handZone = game.zones.byId(`${player.name}.hand`)
   const discardZone = game.zones.byId(`${player.name}.discard`)
 
-  let drawn = 0
+  const drawnCards = []
   for (let i = 0; i < count; i++) {
     if (deckZone.cardlist().length === 0) {
       // Reshuffle discard into deck
@@ -32,19 +32,24 @@ function drawCards(game, player, count) {
 
     const cards = deckZone.cardlist()
     if (cards.length > 0) {
-      cards[0].moveTo(handZone)
-      drawn++
+      const card = cards[0]
+      card.moveTo(handZone)
+      drawnCards.push(card)
     }
   }
 
-  if (drawn > 0) {
-    game.log.add({
-      template: '{player} draws {count} cards',
-      args: { player, count: drawn },
+  if (drawnCards.length > 0) {
+    game.log.addPrivate({
+      viewer: player,
+      template: '{player} draws {cards}',
+      redactedTemplate: drawnCards.length === 1
+        ? '{player} draws 1 card'
+        : '{player} draws {count} cards',
+      args: { player, cards: drawnCards, count: drawnCards.length },
     })
   }
 
-  return drawn
+  return drawnCards.length
 }
 
 /**
@@ -163,24 +168,29 @@ function drawIntrigueCard(game, player, count = 1) {
   const intrigueDeck = game.zones.byId('common.intrigueDeck')
   const playerIntrigue = game.zones.byId(`${player.name}.intrigue`)
 
-  let drawn = 0
+  const drawnCards = []
   for (let i = 0; i < count; i++) {
     const cards = intrigueDeck.cardlist()
     if (cards.length === 0) {
       break
     }
-    cards[0].moveTo(playerIntrigue)
-    drawn++
+    const card = cards[0]
+    card.moveTo(playerIntrigue)
+    drawnCards.push(card)
   }
 
-  if (drawn > 0) {
-    game.log.add({
-      template: '{player} draws {count} Intrigue cards',
-      args: { player, count: drawn },
+  if (drawnCards.length > 0) {
+    game.log.addPrivate({
+      viewer: player,
+      template: '{player} draws Intrigue: {cards}',
+      redactedTemplate: drawnCards.length === 1
+        ? '{player} draws an Intrigue card'
+        : '{player} draws {count} Intrigue cards',
+      args: { player, cards: drawnCards, count: drawnCards.length },
     })
   }
 
-  return drawn
+  return drawnCards.length
 }
 
 /**

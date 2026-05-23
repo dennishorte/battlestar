@@ -88,6 +88,31 @@ class BaseLogManager {
     })
   }
 
+  // Viewer-aware log entry. `viewer` (player or name) sees `template` rendered
+  // against `args`; everyone else sees `redactedTemplate` rendered against the
+  // same args dict. Include every arg either template references — args not
+  // referenced by the rendered template are ignored, so the two templates can
+  // safely pull from different fields (e.g. `{cards}` for the actor, `{count}`
+  // for opponents). Use whenever the actor learns something hidden (drew a
+  // card, peeked at a deck, etc.) and the public log should announce only the
+  // generic event.
+  addPrivate({ viewer, template, args, redactedTemplate, classes, event }) {
+    if (!viewer) {
+      throw new Error('addPrivate: missing viewer')
+    }
+    if (!redactedTemplate) {
+      throw new Error('addPrivate: missing redactedTemplate')
+    }
+    this.add({
+      template,
+      args: args || {},
+      classes,
+      visibility: [viewer.name ?? viewer],
+      redacted: redactedTemplate,
+      event,
+    })
+  }
+
   addNoEffect() {
     this.add({ template: 'no effect' })
   }
@@ -237,6 +262,23 @@ class BaseLogManager {
       value: typeof card === 'string' ? card : card.id,
       classes: ['card-id'],
     }))
+
+    // Handler for the 'cards' arg. Arrays render as comma-joined card() tokens
+    // (frontend tokenizes each into an inline chip). Strings pass through so
+    // pre-formatted callers keep working — without this exact-match entry the
+    // 'card*' wildcard above used to handle the string case the same way.
+    this.registerHandler('cards', (cards) => {
+      if (Array.isArray(cards)) {
+        return {
+          value: cards.map(c => `card(${typeof c === 'string' ? c : c.id})`).join(', '),
+          classes: ['card-id-list'],
+        }
+      }
+      return {
+        value: typeof cards === 'string' ? cards : String(cards),
+        classes: ['card-id'],
+      }
+    })
 
     // Handler for keys starting with 'zone'
     this.registerHandler('zone*', (zone) => ({
