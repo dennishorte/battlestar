@@ -13,14 +13,6 @@
       <div class="spaces-column" ref="spacesColumn">
         <div class="section-header">
           Action Spaces
-          <button type="button"
-                  class="shield-wall-banner"
-                  :class="game.state.shieldWall ? 'sw-intact' : 'sw-destroyed'"
-                  @click="openShieldWall"
-                  :title="game.state.shieldWall ? 'Shield Wall is intact — click for details' : 'Shield Wall is destroyed — click for details'">
-            <span class="sw-icon">{{ game.state.shieldWall ? '\u{1F6E1}' : '\u{1F4A5}' }}</span>
-            <span class="sw-label">Shield Wall: {{ game.state.shieldWall ? 'Intact' : 'Destroyed' }}</span>
-          </button>
         </div>
         <div v-for="group in spaceGroups" :key="group.label" class="space-group">
           <div class="group-label" :class="`group-${group.icon}`">
@@ -53,7 +45,11 @@
             <div class="space-effects">
               <div v-for="(line, i) in describeSpace(space)"
                    :key="i"
-                   :class="line.startsWith('+') ? 'effect-always' : 'effect-line'">
+                   :class="[
+                     line.startsWith('+') ? 'effect-always' : 'effect-line',
+                     sandwormsBlocked && /sandworm/i.test(line) ? 'effect-blocked' : '',
+                   ]"
+                   :title="sandwormsBlocked && /sandworm/i.test(line) ? 'Sandworms cannot deploy to a shield-protected conflict' : null">
                 {{ line }}
               </div>
             </div>
@@ -194,6 +190,18 @@ export default {
         }
       }
       return ids
+    },
+
+    activeConflictCard() {
+      const cards = this.game.zones.byId('common.conflictActive').cardlist()
+      if (cards.length > 0) {
+        return cards[0].data || cards[0]
+      }
+      return this.game.state.conflict?.currentCard || null
+    },
+
+    sandwormsBlocked() {
+      return !!(this.game.state.shieldWall && this.activeConflictCard?.behindShieldWall)
     },
   },
 
@@ -404,10 +412,6 @@ export default {
     formatName(id) {
       return id.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')
     },
-
-    openShieldWall() {
-      this.$modal('dune-shield-wall-modal').show()
-    },
   },
 }
 </script>
@@ -429,44 +433,6 @@ export default {
   font-size: .9em;
   color: #8b6914;
   margin-bottom: .3em;
-}
-
-.shield-wall-banner {
-  display: inline-flex;
-  align-items: center;
-  gap: .3em;
-  font-size: .75em;
-  font-weight: 600;
-  padding: .15em .5em;
-  border-radius: .25em;
-  border: 1px solid;
-  cursor: pointer;
-  background: none;
-  line-height: 1.2;
-}
-
-.shield-wall-banner.sw-intact {
-  color: #3a6b1f;
-  border-color: #b8d09a;
-  background-color: #eef5e4;
-}
-
-.shield-wall-banner.sw-intact:hover {
-  background-color: #e2eed3;
-}
-
-.shield-wall-banner.sw-destroyed {
-  color: #8b2a2a;
-  border-color: #d4a0a0;
-  background-color: #f8e0e0;
-}
-
-.shield-wall-banner.sw-destroyed:hover {
-  background-color: #f0d0d0;
-}
-
-.sw-icon {
-  font-size: .95em;
 }
 
 .control-row {
@@ -560,6 +526,12 @@ export default {
   margin-top: .15em;
   font-style: italic;
   color: #8a7a68;
+}
+
+.effect-blocked {
+  text-decoration: line-through;
+  color: #b0a088;
+  opacity: .65;
 }
 
 .space-name {

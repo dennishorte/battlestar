@@ -2,7 +2,6 @@
   <div class="board-state">
     <div class="section-header">
       Board
-      <span class="shield-wall" v-if="!game.state.shieldWall">Shield Wall Destroyed</span>
     </div>
 
     <div class="subsection">
@@ -78,12 +77,6 @@ export default {
   font-size: .9em;
   color: #8b6914;
   margin-bottom: .3em;
-}
-
-.shield-wall {
-  font-size: .8em;
-  color: #c04040;
-  font-weight: 400;
 }
 
 .subsection {

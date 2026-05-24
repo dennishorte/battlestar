@@ -41,7 +41,7 @@ export default {
 
 <style scoped>
 .imperium-row {
-  margin: .5em 0;
+  margin-bottom: .5em;
   padding: .5em;
   border: 1px solid #d4c8a8;
   border-radius: .3em;

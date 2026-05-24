@@ -343,6 +343,7 @@ export default {
   max-width: 380px;
   overflow-x: hidden;
   overflow-y: auto;
+  padding-top: .5em;
   padding-bottom: 3em;
 }
 
@@ -352,6 +353,7 @@ export default {
   max-width: 300px;
   overflow-x: hidden;
   overflow-y: auto;
+  padding-top: .5em;
   padding-bottom: 3em;
 }
 
@@ -361,6 +363,7 @@ export default {
   max-width: 300px;
   overflow-x: hidden;
   overflow-y: auto;
+  padding-top: .5em;
   padding-bottom: 3em;
 }
 
@@ -370,6 +373,7 @@ export default {
   max-width: 240px;
   overflow-x: hidden;
   overflow-y: auto;
+  padding-top: .5em;
   padding-bottom: 3em;
 }
 
