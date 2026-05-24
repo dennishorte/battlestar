@@ -183,7 +183,12 @@ export default {
       const ordered = allPlayers.length
         ? this.game.players.startingWith(firstPlayer)
         : []
-      const currentName = this.game.players.current()?.name
+
+      // "Current turn" is meaningful only during player-turns. The engine
+      // writes currentTurnPlayer at the top of each inner-loop iteration.
+      const activeName = this.game.state.phase === 'player-turns'
+        ? this.game.state.currentTurnPlayer
+        : null
 
       return ordered.map(player => {
         const t = troops[player.name] || 0
@@ -196,7 +201,7 @@ export default {
           name: player.name,
           color: player.color,
           isFirstPlayer: player.name === firstPlayer?.name,
-          isCurrent: player.name === currentName,
+          isCurrent: player.name === activeName,
           agentsAvailable: player.availableAgents,
           agentsTotal,
           intrigueCount,

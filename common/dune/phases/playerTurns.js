@@ -48,6 +48,8 @@ function playerTurnsPhase(game) {
         game.chooseColor(player)
       }
 
+      game.state.currentTurnPlayer = player.name
+
       game.log.add({
         template: `${player.name}'s Turn`,
         event: 'turn-start',

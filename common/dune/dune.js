@@ -93,6 +93,7 @@ Dune.prototype._reset = function() {
   this.state.round = 0
   this.state.phase = null
   this.state.firstPlayerIndex = 0
+  this.state.currentTurnPlayer = null
 
   // Board space occupation: { spaceId: playerName[] }
   // Multiple occupants possible via spy infiltration or leader abilities
