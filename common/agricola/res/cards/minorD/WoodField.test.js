@@ -1,7 +1,7 @@
 const t = require('../../../testutil_v2.js')
 
 describe('Wood Field', () => {
-  test('on play, creates virtual field that can be sown with wood', () => {
+  test('on play, creates two wood-only virtual fields', () => {
     const game = t.fixture({ cardSets: ['minorImprovementD', 'occupationA', 'test'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
@@ -22,30 +22,34 @@ describe('Wood Field', () => {
     // Micah turn 1
     t.choose(game, 'Day Laborer')
 
-    // Dennis turn 2: sow wood via Grain Utilization
+    // Dennis turn 2: sow wood on first Wood Field via Grain Utilization
     t.choose(game, 'Grain Utilization')
-    t.action(game, 'sow-virtual-field', { fieldId: 'wood-field', cropType: 'wood' })
+    t.action(game, 'sow-virtual-field', { fieldId: 'wood-field-d075-1', cropType: 'wood' })
 
     // Micah turn 2
     t.choose(game, 'Forest')
 
-    // Virtual field state has no testBoard equivalent — check directly
+    // Each Wood Field can be sown independently; sowing once costs 1 wood and
+    // places 3 wood (wood is sown as grain). The second field is still empty.
     const dennis = game.players.byName('dennis')
-    const vf = dennis.getVirtualField('wood-field')
-    expect(vf.crop).toBe('wood')
-    expect(vf.cropCount).toBe(2)
+    const vf1 = dennis.getVirtualField('wood-field-d075-1')
+    const vf2 = dennis.getVirtualField('wood-field-d075-2')
+    expect(vf1.crop).toBe('wood')
+    expect(vf1.cropCount).toBe(3)
+    expect(vf2.crop).toBe(null)
+    expect(vf2.cropCount).toBe(0)
 
     t.testBoard(game, {
       dennis: {
         occupations: ['test-occupation-1'],
         minorImprovements: ['wood-field-d075'],
-        wood: 1, // 2 - 1 used for sowing
+        wood: 1, // 2 - 1 used for sowing one field
         food: 1, // 1 card cost - 1 food cost + 1 Meeting Place food = 1
       },
     })
   })
 
-  test('cannot sow grain or vegetables on wood field', () => {
+  test('cannot sow grain or vegetables on wood fields', () => {
     const game = t.fixture({ cardSets: ['minorImprovementD', 'occupationA', 'test'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
@@ -58,17 +62,17 @@ describe('Wood Field', () => {
     })
     game.run()
 
-    // Virtual field crop restriction has no testBoard equivalent — check directly
     const dennis = game.players.byName('dennis')
-    expect(dennis.virtualFields).toHaveLength(1)
-    expect(dennis.virtualFields[0].cropRestriction).toBe('wood')
+    expect(dennis.virtualFields).toHaveLength(2)
+    expect(dennis.virtualFields.every(vf => vf.cropRestriction === 'wood')).toBe(true)
 
-    // Cannot sow grain or vegetables (no testBoard equivalent for virtual field restriction)
-    expect(dennis.canSowVirtualField('wood-field', 'grain')).toBe(false)
-    expect(dennis.canSowVirtualField('wood-field', 'vegetables')).toBe(false)
+    expect(dennis.canSowVirtualField('wood-field-d075-1', 'grain')).toBe(false)
+    expect(dennis.canSowVirtualField('wood-field-d075-1', 'vegetables')).toBe(false)
+    expect(dennis.canSowVirtualField('wood-field-d075-2', 'grain')).toBe(false)
+    expect(dennis.canSowVirtualField('wood-field-d075-2', 'vegetables')).toBe(false)
   })
 
-  test('harvest returns wood to player', () => {
+  test('harvest returns 1 wood per sown sub-field', () => {
     const game = t.fixture({ cardSets: ['minorImprovementD', 'occupationA', 'test'] })
     t.setBoard(game, {
       round: 4, // first harvest round
@@ -77,48 +81,45 @@ describe('Wood Field', () => {
         occupations: ['test-occupation-1'],
         minorImprovements: ['wood-field-d075'],
         virtualFields: {
-          'wood-field': { crop: 'wood', cropCount: 2 },
+          'wood-field-d075-1': { crop: 'wood', cropCount: 3 },
+          'wood-field-d075-2': { crop: 'wood', cropCount: 3 },
         },
         food: 10, // enough to feed
       },
     })
     game.run()
 
-    // Play through round 4 actions (4 turns needed)
+    // Play through round 4 actions (4 turns)
     t.choose(game, 'Day Laborer')
     t.choose(game, 'Grain Seeds')
     t.choose(game, 'Clay Pit')
     t.choose(game, 'Fishing')
 
-    // Harvest: field phase harvests 1 wood, feeding phase auto-resolves
-
-    // Virtual field cropCount has no testBoard equivalent — check directly
+    // Harvest: each sown wood field yields 1 wood
     const dennis = game.players.byName('dennis')
-    expect(dennis.getVirtualField('wood-field').cropCount).toBe(1)
+    expect(dennis.getVirtualField('wood-field-d075-1').cropCount).toBe(2)
+    expect(dennis.getVirtualField('wood-field-d075-2').cropCount).toBe(2)
 
     t.testBoard(game, {
       dennis: {
         occupations: ['test-occupation-1'],
         minorImprovements: ['wood-field-d075'],
-        wood: 1, // 1 from harvest
+        wood: 2, // 1 from each sown sub-field
         food: 8, // 10 + 2 (Day Laborer) - 4 (feeding)
         clay: 1, // from Clay Pit
       },
     })
   })
 
-  test('counts as field for scoring when sown', () => {
-    // Wood Field's virtual field countsAsFieldForScoring, but only when sown
-    // With 1 real field + 1 sown virtual = 2 fields (+1) vs 1 field (-1) = +2 difference
+  test('counts as 1 field for scoring even when both sub-fields are empty', () => {
+    // Both sub-fields share the scoring group 'wood-field-d075', so the
+    // card always contributes exactly 1 field to scoring regardless of sowing.
     const game = t.fixture({ cardSets: ['minorImprovementD', 'occupationA', 'test'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
       dennis: {
         occupations: ['test-occupation-1'],
         minorImprovements: ['wood-field-d075'],
-        virtualFields: {
-          'wood-field': { crop: 'wood', cropCount: 1 },
-        },
         farmyard: { fields: [{ row: 0, col: 2 }] },
       },
     })
@@ -130,8 +131,8 @@ describe('Wood Field', () => {
     t.choose(game, 'Grain Seeds')
     t.choose(game, 'Clay Pit')
 
-    // fields=2 (+1), pastures=0 (-1), grain=1 (+1), veg=0 (-1),
-    // sheep=0 (-1), boar=0 (-1), cattle=0 (-1), rooms=2 wood (0),
+    // fields=2 (+1 from real field + Wood Field scoring group), pastures=0 (-1),
+    // grain=1 (+1), veg=0 (-1), sheep/boar/cattle=0 (-1 each), rooms=2 wood (0),
     // family=2 (6), unused=12 (-12), bonusPoints=1 (vps)
     // Total = 1 + (-1) + 1 + (-1) + (-1) + (-1) + (-1) + 0 + 6 + (-12) + 0 + 1 = -8
     t.testBoard(game, {
