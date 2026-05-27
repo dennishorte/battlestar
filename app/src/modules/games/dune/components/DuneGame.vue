@@ -22,11 +22,7 @@
         </div>
 
         <div class="col player-column">
-          <DunePlayerPanel
-            v-for="player in orderedPlayers"
-            :key="player.name"
-            :player="player"
-          />
+          <DunePlayerSummary />
         </div>
 
         <div class="col spaces-column">
@@ -56,7 +52,7 @@ import DebugModal from '@/modules/games/common/components/DebugModal.vue'
 import { dune } from 'battlestar-common'
 
 import GameLogDune from './GameLogDune.vue'
-import DunePlayerPanel from './DunePlayerPanel.vue'
+import DunePlayerSummary from './DunePlayerSummary.vue'
 import DuneImperiumRow from './DuneImperiumRow.vue'
 import DuneConflict from './DuneConflict.vue'
 import DuneFactionTrack from './DuneFactionTrack.vue'
@@ -84,7 +80,7 @@ export default {
     DuneContractMarket,
     DuneFactionTrack,
     DuneImperiumRow,
-    DunePlayerPanel,
+    DunePlayerSummary,
     DuneRulesModal,
     DuneShieldWallModal,
     DuneTableauModal,
@@ -115,13 +111,6 @@ export default {
     return {
       ui: this.ui,
     }
-  },
-
-  computed: {
-    orderedPlayers() {
-      const viewer = this.game.players.byName(this.actor.name)
-      return this.game.players.startingWith(viewer)
-    },
   },
 
   methods: {
