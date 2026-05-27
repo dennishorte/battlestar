@@ -1,78 +1,27 @@
 <template>
   <div class="dune-log-shell">
-    <div class="log-mode-toggle">
-      <button
-        type="button"
-        class="mode-btn"
-        :class="{ active: viewMode === 'summary' }"
-        @click="setMode('summary')">
-        Summary
-      </button>
-      <button
-        type="button"
-        class="mode-btn"
-        :class="{ active: viewMode === 'detail' }"
-        @click="setMode('detail')">
-        Detail
-      </button>
-    </div>
+    <SummaryToggle v-model="viewMode" @update:modelValue="setMode" />
     <GameLog id="gamelog" />
   </div>
 </template>
 
 <script setup>
-import { inject, ref } from 'vue'
+import { inject } from 'vue'
 import GameLog from '@/modules/games/common/components/log/GameLog.vue'
+import SummaryToggle from '@/modules/games/common/components/log/SummaryToggle.vue'
 import { useGameLogProvider } from '@/modules/games/common/composables/useGameLog'
+import { useSummaryLog } from '@/modules/games/common/composables/useSummaryLog'
 import modalUtil from '@/util/modal.js'
 import { dune } from 'battlestar-common'
 
 const game = inject('game')
 const ui = inject('ui')
 
-const VIEW_MODE_KEY = 'dune.logViewMode'
-const STRUCTURAL_EVENTS = new Set(['round-start', 'phase-start', 'turn-start', 'game-over'])
-
-const viewMode = ref(window.localStorage.getItem(VIEW_MODE_KEY) || 'summary')
-
-function setMode(mode) {
-  viewMode.value = mode
-  window.localStorage.setItem(VIEW_MODE_KEY, mode)
-}
-
-function filterEntries(entries) {
-  if (viewMode.value !== 'summary') {
-    return entries
-  }
-
-  let inCombat = false
-  const out = []
-  for (const entry of entries) {
-    if (entry.type !== 'log') {
-      out.push(entry)
-      continue
-    }
-    if (entry.event === 'phase-start') {
-      inCombat = entry.template === 'Combat'
-      if (entry.template === 'Combat' || entry.template === 'Game Over') {
-        out.push(entry)
-      }
-      continue
-    }
-    if (inCombat) {
-      out.push(entry)
-      continue
-    }
-    if (entry.event && STRUCTURAL_EVENTS.has(entry.event)) {
-      out.push(entry)
-      continue
-    }
-    if (entry.summary) {
-      out.push(entry)
-    }
-  }
-  return out
-}
+const { viewMode, setMode, filterEntries } = useSummaryLog({
+  storageKey: 'dune.logViewMode',
+  keepPhases: ['Game Over'],
+  passthroughPhases: ['Combat'],
+})
 
 // Scan decks in priority order so common decks win name collisions
 // (e.g. imperium "Desert Power" over conflict "Desert Power").
@@ -181,38 +130,16 @@ useGameLogProvider({
   flex-direction: column;
   height: 100%;
   min-height: 0;
-}
 
-.log-mode-toggle {
-  display: flex;
-  gap: 4px;
-  padding: 6px 8px 4px;
-  background-color: #f5f0e8;
-  border-bottom: 1px solid #d4c8a8;
-  flex-shrink: 0;
-}
-
-.log-mode-toggle .mode-btn {
-  flex: 1;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 3px 10px;
-  border: 1px solid #c4b890;
-  border-radius: 3px;
-  background-color: #fbf8f0;
-  color: #4a3a20;
-  cursor: pointer;
-  transition: background-color 0.1s;
-}
-
-.log-mode-toggle .mode-btn:hover {
-  background-color: #f0e8d0;
-}
-
-.log-mode-toggle .mode-btn.active {
-  background-color: #8b6914;
-  color: white;
-  border-color: #8b6914;
+  --summary-toggle-bg: #f5f0e8;
+  --summary-toggle-border-bottom: 1px solid #d4c8a8;
+  --summary-toggle-btn-border: #c4b890;
+  --summary-toggle-btn-bg: #fbf8f0;
+  --summary-toggle-btn-color: #4a3a20;
+  --summary-toggle-btn-hover-bg: #f0e8d0;
+  --summary-toggle-btn-active-bg: #8b6914;
+  --summary-toggle-btn-active-color: white;
+  --summary-toggle-btn-active-border: #8b6914;
 }
 
 .dune-log-shell #gamelog {

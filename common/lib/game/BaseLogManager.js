@@ -101,7 +101,7 @@ class BaseLogManager {
   // for opponents). Use whenever the actor learns something hidden (drew a
   // card, peeked at a deck, etc.) and the public log should announce only the
   // generic event.
-  addPrivate({ viewer, template, args, redactedTemplate, classes, event }) {
+  addPrivate({ viewer, template, args, redactedTemplate, classes, event, summary }) {
     if (!viewer) {
       throw new Error('addPrivate: missing viewer')
     }
@@ -115,6 +115,7 @@ class BaseLogManager {
       visibility: [viewer.name ?? viewer],
       redacted: redactedTemplate,
       event,
+      summary,
     })
   }
 
