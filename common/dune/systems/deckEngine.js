@@ -61,6 +61,7 @@ function playCard(game, player, card) {
   game.log.add({
     template: '{player} plays {card}',
     args: { player, card },
+    summary: true,
   })
 }
 
@@ -115,6 +116,7 @@ function acquireCard(game, player, card) {
   game.log.add({
     template: '{player} acquires {card}',
     args: { player, card },
+    summary: true,
   })
 
   // Refill Imperium Row if the card came from there

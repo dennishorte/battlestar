@@ -111,7 +111,11 @@ const lines = computed(() => {
     return props.entries
   }
   else if (game.value?.log) {
-    return nestLog(game.value.log.merged()).output
+    let merged = game.value.log.merged()
+    if (funcs.filterEntries) {
+      merged = funcs.filterEntries(merged)
+    }
+    return nestLog(merged).output
   }
   else {
     return []

@@ -18,7 +18,7 @@ class SystemMessage {
 }
 
 class LogEntry {
-  constructor(id, indent, template, args, classes, visibility, redacted, event) {
+  constructor(id, indent, template, args, classes, visibility, redacted, event, summary) {
     this.id = id
     this.indent = indent
     this.template = template
@@ -33,6 +33,10 @@ class LogEntry {
 
     if (event) {
       this.event = event
+    }
+
+    if (summary) {
+      this.summary = true
     }
   }
 }
@@ -73,6 +77,7 @@ class BaseLogManager {
       msg.visibility,
       msg.redacted,
       msg.event,
+      msg.summary,
     )
     this._enrichLogArgs(entry)
     if (this._postEnrichArgs(entry)) {

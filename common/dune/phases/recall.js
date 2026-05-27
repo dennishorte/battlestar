@@ -191,6 +191,7 @@ function offerEndgameIntrigue(game, player) {
     game.log.add({
       template: '{player} plays {card} (Endgame)',
       args: { player, card },
+      summary: true,
     })
 
     const endgameEffect = card.definition.endgameEffect

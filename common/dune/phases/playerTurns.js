@@ -208,6 +208,7 @@ function agentTurn(game, player, card) {
   game.log.add({
     template: '{player} sends Agent to {boardSpace}',
     args: { player, boardSpace: space.name },
+    summary: true,
   })
 
   // Pay board space cost
@@ -458,13 +459,13 @@ function acquireCardsPhase(game, player) {
       if (game.state.turnTracking?.acquireToTopOfDeck) {
         const deckZone = game.zones.byId(`${player.name}.deck`)
         card.moveTo(deckZone)
-        game.log.add({ template: '{player} acquires {card} to top of deck', args: { player, card } })
+        game.log.add({ template: '{player} acquires {card} to top of deck', args: { player, card }, summary: true })
         deckEngine.refillImperiumRow(game)
       }
       else if (game.state.turnTracking?.acquireToHand) {
         const handZone = game.zones.byId(`${player.name}.hand`)
         card.moveTo(handZone)
-        game.log.add({ template: '{player} acquires {card} to hand', args: { player, card } })
+        game.log.add({ template: '{player} acquires {card} to hand', args: { player, card }, summary: true })
         deckEngine.refillImperiumRow(game)
       }
       else {
@@ -1717,6 +1718,7 @@ function offerPlotIntrigue(game, player) {
     game.log.add({
       template: '{player} plays {card} (Plot)',
       args: { player, card },
+      summary: true,
     })
 
     const plotEffect = card.definition.plotEffect

@@ -100,6 +100,7 @@ function combatIntrigueRound(game, combatants) {
           game.log.add({
             template: '{player} plays {card}',
             args: { player, card },
+            summary: true,
           })
           game.log.indent()
           const combatEffect = card.definition.combatEffect

@@ -1,9 +1,27 @@
 <template>
-  <GameLog id="gamelog" />
+  <div class="dune-log-shell">
+    <div class="log-mode-toggle">
+      <button
+        type="button"
+        class="mode-btn"
+        :class="{ active: viewMode === 'summary' }"
+        @click="setMode('summary')">
+        Summary
+      </button>
+      <button
+        type="button"
+        class="mode-btn"
+        :class="{ active: viewMode === 'detail' }"
+        @click="setMode('detail')">
+        Detail
+      </button>
+    </div>
+    <GameLog id="gamelog" />
+  </div>
 </template>
 
 <script setup>
-import { inject } from 'vue'
+import { inject, ref } from 'vue'
 import GameLog from '@/modules/games/common/components/log/GameLog.vue'
 import { useGameLogProvider } from '@/modules/games/common/composables/useGameLog'
 import modalUtil from '@/util/modal.js'
@@ -11,6 +29,50 @@ import { dune } from 'battlestar-common'
 
 const game = inject('game')
 const ui = inject('ui')
+
+const VIEW_MODE_KEY = 'dune.logViewMode'
+const STRUCTURAL_EVENTS = new Set(['round-start', 'phase-start', 'turn-start', 'game-over'])
+
+const viewMode = ref(window.localStorage.getItem(VIEW_MODE_KEY) || 'summary')
+
+function setMode(mode) {
+  viewMode.value = mode
+  window.localStorage.setItem(VIEW_MODE_KEY, mode)
+}
+
+function filterEntries(entries) {
+  if (viewMode.value !== 'summary') {
+    return entries
+  }
+
+  let inCombat = false
+  const out = []
+  for (const entry of entries) {
+    if (entry.type !== 'log') {
+      out.push(entry)
+      continue
+    }
+    if (entry.event === 'phase-start') {
+      inCombat = entry.template === 'Combat'
+      if (entry.template === 'Combat' || entry.template === 'Game Over') {
+        out.push(entry)
+      }
+      continue
+    }
+    if (inCombat) {
+      out.push(entry)
+      continue
+    }
+    if (entry.event && STRUCTURAL_EVENTS.has(entry.event)) {
+      out.push(entry)
+      continue
+    }
+    if (entry.summary) {
+      out.push(entry)
+    }
+  }
+  return out
+}
 
 // Scan decks in priority order so common decks win name collisions
 // (e.g. imperium "Desert Power" over conflict "Desert Power").
@@ -91,20 +153,21 @@ function lineStyles(line) {
     if (playerName) {
       const player = game.value.players.byName(playerName)
       if (player) {
-        return { 'background-color': player.color }
+        return { 'border-left-color': player.color }
       }
     }
   }
 }
 
 function playerStyles(player) {
-  return { 'border-bottom': `2px solid ${player.color}`, 'font-weight': 'bold' }
+  return { 'border-left': `3px solid ${player.color}`, 'font-weight': 'bold' }
 }
 
 useGameLogProvider({
   cardClick,
   chatColors,
   convertArg,
+  filterEntries,
   lineClasses,
   lineStyles,
   locClasses,
@@ -113,6 +176,50 @@ useGameLogProvider({
 </script>
 
 <style scoped>
+.dune-log-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.log-mode-toggle {
+  display: flex;
+  gap: 4px;
+  padding: 6px 8px 4px;
+  background-color: #f5f0e8;
+  border-bottom: 1px solid #d4c8a8;
+  flex-shrink: 0;
+}
+
+.log-mode-toggle .mode-btn {
+  flex: 1;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border: 1px solid #c4b890;
+  border-radius: 3px;
+  background-color: #fbf8f0;
+  color: #4a3a20;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.log-mode-toggle .mode-btn:hover {
+  background-color: #f0e8d0;
+}
+
+.log-mode-toggle .mode-btn.active {
+  background-color: #8b6914;
+  color: white;
+  border-color: #8b6914;
+}
+
+.dune-log-shell #gamelog {
+  flex: 1;
+  min-height: 0;
+}
+
 /* Round headers — most prominent */
 #gamelog :deep(.round-header) {
   display: flex;
@@ -143,12 +250,14 @@ useGameLogProvider({
 #gamelog :deep(.player-turn) {
   display: flex;
   width: 100%;
-  font-size: 1.05em;
-  font-weight: 700;
-  padding: 5px 12px;
-  border-radius: 4px;
-  margin-top: 8px;
-  color: white;
+  font-size: 1em;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-left: 4px solid transparent;
+  border-radius: 2px;
+  margin-top: 6px;
+  color: #2c2416;
+  background-color: #f0e8d4;
 }
 
 /* Step headers */
@@ -229,7 +338,7 @@ useGameLogProvider({
 /* Player names */
 #gamelog :deep(.player-name) {
   display: inline-block;
-  padding: 0 .4em;
+  padding: 0 .4em 0 .35em;
   border-radius: .15em;
   background-color: #ebe4d8;
 }
