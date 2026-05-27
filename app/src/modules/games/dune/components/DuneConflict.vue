@@ -74,6 +74,16 @@
         <span v-else class="no-units">—</span>
       </div>
 
+      <div class="stat-label" title="Troops in supply">Sup</div>
+      <div v-for="entry in combatants"
+           :key="`sup-${entry.name}`"
+           class="stat-cell unit-cell"
+           :class="{ 'is-current': entry.isCurrent }">
+        <span class="unit-block" :class="{ dim: !entry.troopsInSupply }">
+          <span class="unit-count">{{ entry.troopsInSupply }}</span><span class="unit-letter">T</span>
+        </span>
+      </div>
+
       <div class="stat-label" title="Troops in garrison">Gar</div>
       <div v-for="entry in combatants"
            :key="`gar-${entry.name}`"
@@ -206,6 +216,7 @@ export default {
           agentsTotal,
           intrigueCount,
           garrisonTroops: player.troopsInGarrison,
+          troopsInSupply: player.troopsInSupply,
           hasMakerHook: (makerHooks[player.name] || 0) > 0,
           troops: t,
           sandworms: s,

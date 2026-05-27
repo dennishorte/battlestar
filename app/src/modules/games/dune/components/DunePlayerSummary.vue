@@ -54,25 +54,28 @@
       <div class="stat-label" title="Solari">Sol</div>
       <div v-for="entry in entries"
            :key="`sol-${entry.name}`"
-           class="stat-cell"
+           class="stat-cell resource-cell"
            :class="{ 'is-current': entry.isCurrent, dim: !entry.solari }">
-        {{ entry.solari }}
+        <DuneResourceIcon type="solari" />
+        <span>{{ entry.solari }}</span>
       </div>
 
       <div class="stat-label" title="Spice">Spi</div>
       <div v-for="entry in entries"
            :key="`spi-${entry.name}`"
-           class="stat-cell"
+           class="stat-cell resource-cell"
            :class="{ 'is-current': entry.isCurrent, dim: !entry.spice }">
-        {{ entry.spice }}
+        <DuneResourceIcon type="spice" />
+        <span>{{ entry.spice }}</span>
       </div>
 
       <div class="stat-label" title="Water">Wat</div>
       <div v-for="entry in entries"
            :key="`wat-${entry.name}`"
-           class="stat-cell"
+           class="stat-cell resource-cell"
            :class="{ 'is-current': entry.isCurrent, dim: !entry.water }">
-        {{ entry.water }}
+        <DuneResourceIcon type="water" />
+        <span>{{ entry.water }}</span>
       </div>
 
       <div class="stat-label" title="Available / total agents">Agt</div>
@@ -83,52 +86,13 @@
         {{ entry.agentsAvailable }}/{{ entry.agentsTotal }}
       </div>
 
-      <div class="stat-label" title="Troops in garrison">Gar</div>
-      <div v-for="entry in entries"
-           :key="`gar-${entry.name}`"
-           class="stat-cell"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.garrisonTroops }">
-        {{ entry.garrisonTroops }}
-      </div>
-
-      <div class="stat-label" title="Troops in supply">Sup</div>
-      <div v-for="entry in entries"
-           :key="`sup-${entry.name}`"
-           class="stat-cell"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.troopsInSupply }">
-        {{ entry.troopsInSupply }}
-      </div>
-
       <div class="stat-label" title="Spies in supply">Spy</div>
       <div v-for="entry in entries"
            :key="`spy-${entry.name}`"
-           class="stat-cell"
+           class="stat-cell resource-cell"
            :class="{ 'is-current': entry.isCurrent, dim: !entry.spiesInSupply }">
-        {{ entry.spiesInSupply }}
-      </div>
-
-      <div class="stat-label" title="Cards in hand">Hand</div>
-      <div v-for="entry in entries"
-           :key="`hnd-${entry.name}`"
-           class="stat-cell"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.handCount }">
-        {{ entry.handCount }}
-      </div>
-
-      <div class="stat-label" title="Cards in deck">Deck</div>
-      <div v-for="entry in entries"
-           :key="`dck-${entry.name}`"
-           class="stat-cell"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.deckCount }">
-        {{ entry.deckCount }}
-      </div>
-
-      <div class="stat-label" title="Cards in discard">Disc</div>
-      <div v-for="entry in entries"
-           :key="`dsc-${entry.name}`"
-           class="stat-cell"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.discardCount }">
-        {{ entry.discardCount }}
+        <DuneAgentIcon type="spy" />
+        <span>{{ entry.spiesInSupply }}</span>
       </div>
 
       <div class="stat-label" title="Intrigue cards">Int</div>
@@ -186,8 +150,10 @@
 
 
 <script>
+import DuneAgentIcon from './DuneAgentIcon.vue'
 import DuneCard from './DuneCard.vue'
 import DuneOptionChip from './DuneOptionChip.vue'
+import DuneResourceIcon from './DuneResourceIcon.vue'
 
 const BATTLE_ICON_LABELS = {
   'desert-mouse': '\u{1F42D}',
@@ -199,7 +165,7 @@ const BATTLE_ICON_LABELS = {
 export default {
   name: 'DunePlayerSummary',
 
-  components: { DuneCard, DuneOptionChip },
+  components: { DuneAgentIcon, DuneCard, DuneOptionChip, DuneResourceIcon },
 
   inject: ['actor', 'game', 'ui'],
 
@@ -267,12 +233,7 @@ export default {
           water: player.water,
           agentsAvailable: player.availableAgents,
           agentsTotal: player.getCounter('agents') + player.getCounter('hasSwordmaster'),
-          garrisonTroops: player.troopsInGarrison,
-          troopsInSupply: player.troopsInSupply,
           spiesInSupply: player.spiesInSupply,
-          handCount: this.zoneCount(player.name, 'hand'),
-          deckCount: this.zoneCount(player.name, 'deck'),
-          discardCount: this.zoneCount(player.name, 'discard'),
           intrigueCount: this.zoneCount(player.name, 'intrigue'),
           contractsCount: this.zoneCount(player.name, 'contracts'),
           hasHighCouncil: !!player.hasHighCouncil,
@@ -477,6 +438,15 @@ export default {
 .vp-cell {
   font-weight: bold;
   color: #8b6914;
+}
+
+.resource-cell {
+  gap: .25em;
+}
+
+.resource-cell.dim :deep(.resource-icon),
+.resource-cell.dim :deep(.dune-agent-icon) {
+  opacity: .35;
 }
 
 .leader-cell {
