@@ -14,22 +14,39 @@ describe("public-spectacle", () => {
     expect(card.factionAffiliation).toBe('emperor')
   })
 
-  test('agent placement: requires a spy on a connected post (no agentIcons, no factionAccess)', () => {
+  test('not offered as Agent Turn when no spy on a connected post (no agentIcons, no factionAccess)', () => {
     const game = t.fixture()
     t.setBoard(game, {
-      // No spies on board → Public Spectacle can't reach any space.
-      dennis: { handExact: ['Public Spectacle'], spiesInSupply: 3 },
+      // No spies on board → Public Spectacle has no valid placement.
+      // Pair it with Dagger (which has a valid green-space placement) so
+      // the engine still surfaces a Choose Turn prompt — otherwise the
+      // single Reveal Turn option auto-selects and we can't inspect it.
+      dennis: { handExact: ['Public Spectacle', 'Dagger'], spiesInSupply: 3 },
     })
     game.run()
 
-    // Choosing Public Spectacle should yield no valid spaces — the engine
-    // logs and skips the placement, returning the player to the turn choice.
-    t.choose(game, 'Agent Turn.Public Spectacle')
+    const turnChoices = game.waiting.selectors[0].choices
+    const agentTurn = turnChoices.find(c => typeof c === 'object' && c.title === 'Agent Turn')
+    expect(agentTurn).toBeTruthy()
+    const cardTitles = agentTurn.choices.map(c => typeof c === 'object' ? c.title : c)
+    // Dagger has a valid placement → present; Public Spectacle does not → absent.
+    expect(cardTitles).toContain('Dagger')
+    expect(cardTitles).not.toContain('Public Spectacle')
+  })
 
-    // Without a spy connection there are no spaces, so the agent turn aborts
-    // and the next prompt should be a higher-level turn prompt for some player.
-    // (Player loses no agents — verify dennis still has 2.)
-    expect(game.players.byName('dennis').availableAgents).toBe(2)
+  test('offered as Agent Turn when a spy is on a connected post', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      spyPosts: { I: ['dennis'] },
+      dennis: { handExact: ['Public Spectacle'], spiesInSupply: 2 },
+    })
+    game.run()
+
+    const turnChoices = game.waiting.selectors[0].choices
+    const agentTurn = turnChoices.find(c => typeof c === 'object' && c.title === 'Agent Turn')
+    expect(agentTurn).toBeTruthy()
+    const cardTitles = agentTurn.choices.map(c => typeof c === 'object' ? c.title : c)
+    expect(cardTitles).toContain('Public Spectacle')
   })
 
   test('agent ability: with spy connection + Gather Intelligence → +1 Influence prompt fires', () => {
@@ -96,8 +113,9 @@ describe("public-spectacle", () => {
     })
     game.run()
 
-    t.choose(game, 'Reveal Turn')
-    // "+1 Spy" prompts to choose a post.
+    // With only Public Spectacle in hand and no spy connection, Agent Turn
+    // is suppressed entirely; the lone Reveal Turn option auto-selects, so
+    // the game pauses directly on the "+1 Spy" post prompt.
     let choices = t.currentChoices(game)
     const postChoice = choices.find(c => c.startsWith('Post '))
     expect(postChoice).toBeTruthy()

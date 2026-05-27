@@ -117,7 +117,8 @@ describe('wheels-within-wheels', () => {
       dennis: { handExact: ['Wheels within Wheels'], spiesInSupply: 3 },
     })
     game.run()
-    t.choose(game, 'Reveal Turn')
+    // Spy-access-only card with no spies on the board → no valid placement,
+    // so Agent Turn is suppressed and Reveal Turn auto-selects.
     // Reveal "+1 Spy" parses to a spy placement prompt.
     const choices = t.currentChoices(game)
     const post = choices.find(c => c.startsWith('Post '))

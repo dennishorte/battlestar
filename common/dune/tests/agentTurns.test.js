@@ -94,6 +94,99 @@ describe('Agent Turns', () => {
     expect(spaces).toContain('Sietch Tabr')
   })
 
+  test('card not offered when no valid placement exists (all green spaces occupied, no solari)', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      // All five green-icon spaces taken by opponents. Dagger (green-only)
+      // has no spy connections in the default fixture, so it cannot
+      // infiltrate any of them. With 0 solari Dennis also cannot pay the
+      // cost-bearing green spaces. Pair Dagger with Diplomacy (faction
+      // access to all four factions) so the Choose Turn prompt still
+      // fires and we can inspect what's offered.
+      boardSpaces: {
+        'assembly-hall': 'micah',
+        'gather-support': 'micah',
+        'high-council': 'scott',
+        'imperial-privilege': 'scott',
+        'sword-master': 'micah',
+      },
+      dennis: { handExact: ['Dagger', 'Diplomacy'], solari: 0 },
+    })
+    game.run()
+
+    const turnChoices = game.waiting.selectors[0].choices
+    const agentTurn = turnChoices.find(c => typeof c === 'object' && c.title === 'Agent Turn')
+    expect(agentTurn).toBeTruthy()
+    const cardTitles = agentTurn.choices.map(c => typeof c === 'object' ? c.title : c)
+    // Diplomacy still has valid placements; Dagger does not.
+    expect(cardTitles).toContain('Diplomacy')
+    expect(cardTitles).not.toContain('Dagger')
+  })
+
+  test('card not offered when cost-bearing green spaces are unaffordable and free ones are taken', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      // Free green spaces taken; High Council (5 solari), Imperial Privilege
+      // (3 solari + emperor influence), Sword Master (8 solari) unreachable
+      // with 2 solari and no emperor influence.
+      boardSpaces: {
+        'assembly-hall': 'micah',
+        'gather-support': 'scott',
+      },
+      dennis: { handExact: ['Dagger', 'Diplomacy'], solari: 2 },
+    })
+    game.run()
+
+    const turnChoices = game.waiting.selectors[0].choices
+    const agentTurn = turnChoices.find(c => typeof c === 'object' && c.title === 'Agent Turn')
+    expect(agentTurn).toBeTruthy()
+    const cardTitles = agentTurn.choices.map(c => typeof c === 'object' ? c.title : c)
+    expect(cardTitles).toContain('Diplomacy')
+    expect(cardTitles).not.toContain('Dagger')
+  })
+
+  test('card is offered when at least one green space is reachable', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      // Four of five green spaces occupied; Gather Support is open and free.
+      boardSpaces: {
+        'assembly-hall': 'micah',
+        'high-council': 'scott',
+        'imperial-privilege': 'scott',
+        'sword-master': 'micah',
+      },
+      dennis: { handExact: ['Dagger'], solari: 0 },
+    })
+    game.run()
+
+    // Dagger is the only card in hand. Since it has a valid placement
+    // (Gather Support) the Agent Turn option must be offered alongside
+    // Reveal Turn.
+    const turnChoices = game.waiting.selectors[0].choices
+    const agentTurn = turnChoices.find(c => typeof c === 'object' && c.title === 'Agent Turn')
+    expect(agentTurn).toBeTruthy()
+    const cardTitles = agentTurn.choices.map(c => typeof c === 'object' ? c.title : c)
+    expect(cardTitles).toContain('Dagger')
+  })
+
+  test('mixed hand: only cards with valid placements appear under Agent Turn', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      // Public Spectacle has no spy connections → invalid. Dagger has at
+      // least one free green space → valid.
+      dennis: { handExact: ['Dagger', 'Public Spectacle'], spiesInSupply: 3 },
+    })
+    game.run()
+
+    // Inspect the nested Agent Turn choice list directly.
+    const turnChoices = game.waiting.selectors[0].choices
+    const agentTurn = turnChoices.find(c => typeof c === 'object' && c.title === 'Agent Turn')
+    expect(agentTurn).toBeTruthy()
+    const cardTitles = agentTurn.choices.map(c => typeof c === 'object' ? c.title : c)
+    expect(cardTitles).toContain('Dagger')
+    expect(cardTitles).not.toContain('Public Spectacle')
+  })
+
   test('once revealed, player turns are skipped', () => {
     const game = t.fixture()
     game.run()

@@ -70,7 +70,9 @@ describe('strike-fleet', () => {
       conflict: { deployedTroops: { dennis: 1 } },
     })
     game.run()
-    t.choose(game, 'Reveal Turn')
+    // Strike Fleet is spy-access only; with no spy connection it has no
+    // valid placement, so Agent Turn is suppressed and Reveal Turn auto-
+    // selects directly into the reveal phase.
 
     const dennis = game.players.byName('dennis')
     expect(dennis.getCounter('persuasion')).toBe(1)

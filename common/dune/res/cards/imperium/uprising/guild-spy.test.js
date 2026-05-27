@@ -89,7 +89,9 @@ describe('guild-spy', () => {
     })
     game.run()
 
-    t.choose(game, 'Reveal Turn')
+    // Guild Spy is spy-access only; with no spy on the board it has no
+    // valid placement, so Agent Turn is suppressed and Reveal Turn auto-
+    // selects.
 
     const dennis = game.players.byName('dennis')
     expect(dennis.getCounter('persuasion')).toBe(2)

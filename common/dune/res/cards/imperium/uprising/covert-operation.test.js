@@ -55,7 +55,9 @@ describe('covert-operation', () => {
     })
     game.run()
 
-    t.choose(game, 'Reveal Turn')
+    // Covert Operation is spy-access only; with no spies on the board it
+    // has no valid placement, so the Agent Turn option is suppressed and
+    // the lone Reveal Turn option auto-selects.
     // Two spy-post placement prompts
     let choices = t.currentChoices(game)
     while (choices.some(c => c.startsWith('Post '))) {

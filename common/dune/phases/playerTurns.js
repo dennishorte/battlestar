@@ -88,10 +88,13 @@ function playerTurnsPhase(game) {
 
       if (player.availableAgents > 0) {
         // Build playable card list for nested Agent Turn choice (after any
-        // plot intrigue has resolved, which may have added cards).
+        // plot intrigue has resolved, which may have added cards). A card is
+        // playable only if there exists at least one board space the player
+        // could actually send an agent to with it — otherwise the player
+        // would commit to the card and waste the turn with "no valid spaces".
         const handZone = game.zones.byId(`${player.name}.hand`)
         const handCards = handZone.cardlist()
-        const playableCards = handCards.filter(c => c.agentIcons.length > 0 || c.factionAccess.length > 0 || c.spyAccess)
+        const playableCards = handCards.filter(c => hasAgentTurnAccess(c) && hasValidPlacement(game, player, c))
 
         const choices = []
         if (playableCards.length > 0) {
@@ -576,6 +579,25 @@ function isReservedFor(game, player, card) {
   return game.state.reservedCards.some(
     entry => entry.player === player.name && entry.cardId === card.id
   )
+}
+
+/**
+ * Whether a card has any way to be played for an Agent Turn at all
+ * (matching icons, faction access, or spy access). A card lacking all
+ * three (e.g. a pure reveal-only card) can never be played as an agent.
+ */
+function hasAgentTurnAccess(card) {
+  return card.agentIcons.length > 0 || card.factionAccess.length > 0 || card.spyAccess
+}
+
+/**
+ * Whether the player has at least one valid board space they could send
+ * an agent to with this card given current game state (occupancy, costs,
+ * influence requirements, spy connections, blocked spaces, etc.).
+ */
+function hasValidPlacement(game, player, card) {
+  const boardSpaces = getBoardSpaces()
+  return boardSpaces.some(space => canSendAgentTo(game, player, card, space))
 }
 
 /**
