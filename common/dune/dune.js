@@ -314,6 +314,8 @@ Dune.prototype.mainLoop = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Exports
 
+const { previewReveal } = require('./systems/revealPreview.js')
+
 module.exports = {
   GameOverEvent,
   Dune,
@@ -321,4 +323,5 @@ module.exports = {
   constructor: Dune,
   factory: factoryFromLobby,
   res,
+  previewReveal,
 }
