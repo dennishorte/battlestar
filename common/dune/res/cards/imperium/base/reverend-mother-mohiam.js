@@ -21,7 +21,7 @@ module.exports = {
   revealPersuasion: 2,
   revealSwords: 0,
   revealAbility: "+2 Spice",
-  factionAffiliation: "emperor",
+  factionAffiliation: ["bene-gesserit", "emperor"],
   vpsAvailable: 0,
   hasTech: false,
   hasShipping: false,
