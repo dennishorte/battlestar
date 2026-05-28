@@ -52,4 +52,18 @@ module.exports = {
     }
   },
 
+  previewReveal(game, player) {
+    // Card does nothing without the BG Alliance; only surface the optional
+    // VP-for-influence trade when the gate is open AND you have something
+    // to trade.
+    if (game.state.alliances?.['bene-gesserit'] !== player.name) {
+      return {}
+    }
+    const canLose = constants.FACTIONS.some(f => player.getInfluence(f) >= 2)
+    if (!canLose) {
+      return {}
+    }
+    return { pending: 'Optional: -2 Influence with a Faction → +1 VP' }
+  },
+
 }

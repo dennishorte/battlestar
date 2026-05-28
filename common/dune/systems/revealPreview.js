@@ -52,8 +52,12 @@ function previewReveal(game, player) {
     }
 
     if (typeof def.previewReveal === 'function') {
-      const deltas = def.previewReveal(game, player, handCards) || {}
+      const result = def.previewReveal(game, player, handCards) || {}
+      const { pending: residual, ...deltas } = result
       mergeDeltas(totals, deltas, def.name, resolved)
+      if (residual) {
+        pending.push({ source: def.name, text: residual })
+      }
       continue
     }
 
@@ -76,13 +80,15 @@ function previewReveal(game, player) {
     resolved.push({ source: 'High Council', description: '+2 Persuasion' })
   }
 
-  const deployedTroops = game.state.conflict?.deployedTroops?.[player.name] || 0
-  const deployedSandworms = game.state.conflict?.deployedSandworms?.[player.name] || 0
-  const hasUnits = (deployedTroops + deployedSandworms) > 0
+  const baseDeployedTroops = game.state.conflict?.deployedTroops?.[player.name] || 0
+  const baseDeployedSandworms = game.state.conflict?.deployedSandworms?.[player.name] || 0
+  const totalDeployedTroops = baseDeployedTroops + (totals.deployFromSupply || 0)
+  const totalDeployedSandworms = baseDeployedSandworms
+  const hasUnits = (totalDeployedTroops + totalDeployedSandworms) > 0
   const strength = hasUnits
     ? totals.swords * constants.SWORD_STRENGTH
-      + deployedTroops * constants.TROOP_STRENGTH
-      + deployedSandworms * constants.SANDWORM_STRENGTH
+      + totalDeployedTroops * constants.TROOP_STRENGTH
+      + totalDeployedSandworms * constants.SANDWORM_STRENGTH
     : 0
 
   return {
@@ -91,8 +97,8 @@ function previewReveal(game, player) {
     pending,
     strength,
     hasUnits,
-    deployedTroops,
-    deployedSandworms,
+    deployedTroops: totalDeployedTroops,
+    deployedSandworms: totalDeployedSandworms,
     carriedPersuasion: player.getCounter('persuasion'),
   }
 }
@@ -109,6 +115,7 @@ function emptyTotals() {
     spy: 0,
     draw: 0,
     vp: 0,
+    deployFromSupply: 0,
     influence: {},
   }
 }
@@ -119,6 +126,7 @@ function defOf(card) {
 
 function evaluateEffects(game, player, handCards, sourceCard, effects, sourceName, totals, resolved, pending) {
   const list = Array.isArray(effects) ? effects : [effects]
+  const ctx = { game, player, handCards, sourceCard }
   for (const effect of list) {
     if (!effect) {
       continue
@@ -144,9 +152,12 @@ function evaluateEffects(game, player, handCards, sourceCard, effects, sourceNam
       pending.push({ source: sourceName, text: describeChoice(effect) })
       continue
     }
-    const desc = applyEffect(effect, totals)
+    const desc = applyEffect(effect, totals, ctx)
     if (desc) {
       resolved.push({ source: sourceName, description: desc })
+    }
+    else if (desc === '') {
+      // recognized type but zero-contribution — skip silently
     }
     else {
       pending.push({ source: sourceName, text: describeEffect(effect) })
@@ -154,7 +165,7 @@ function evaluateEffects(game, player, handCards, sourceCard, effects, sourceNam
   }
 }
 
-function applyEffect(effect, totals) {
+function applyEffect(effect, totals, ctx) {
   switch (effect.type) {
     case 'troop':
       totals.troops += effect.amount
@@ -163,6 +174,24 @@ function applyEffect(effect, totals) {
     case 'sword':
       totals.swords += effect.amount
       return `+${effect.amount} Sword${effect.amount === 1 ? '' : 's'}`
+    case 'swords-per': {
+      const n = countPerVariable(ctx.game, ctx.player, ctx.handCards, effect.per)
+      const total = effect.amount * n
+      if (total > 0) {
+        totals.swords += total
+        return `+${total} Sword${total === 1 ? '' : 's'} (${n}× ${effect.per})`
+      }
+      return ''
+    }
+    case 'persuasion-per': {
+      const n = countPerVariable(ctx.game, ctx.player, ctx.handCards, effect.per)
+      const total = effect.amount * n
+      if (total > 0) {
+        totals.persuasion += total
+        return `+${total} Persuasion (${n}× ${effect.per})`
+      }
+      return ''
+    }
     case 'spy':
       totals.spy += 1
       return '+1 Spy'
@@ -237,6 +266,7 @@ function formatDelta(key, value) {
     spy: value === 1 ? 'Spy' : 'Spies',
     draw: 'Draw',
     vp: 'VP',
+    deployFromSupply: value === 1 ? 'Troop deployed' : 'Troops deployed',
   }
   const sign = value >= 0 ? '+' : ''
   return `${sign}${value} ${labelMap[key] || key}`
@@ -362,6 +392,32 @@ function checkCondition(game, player, handCards, sourceCard, condition) {
     default:
       return null
   }
+}
+
+function countPerVariable(game, player, handCards, per) {
+  if (/contract.*completed/i.test(per)) {
+    const choamCount = require('./choam.js')
+    return choamCount.getCompletedContractCount(game, player)
+  }
+  const factionRevealedMatch = per.match(/(emperor|fremen|bene[\s-]gesserit|spacing\s+guild|guild)\s+card you revealed/i)
+  if (factionRevealedMatch) {
+    const target = constants.normalizeFactionId(factionRevealedMatch[1])
+    // Preview semantics: "revealed" = the cards about to be revealed (hand).
+    return handCards.filter(c => constants.getFactionAffiliations(c).includes(target)).length
+  }
+  const factionInPlayMatch = per.match(/(emperor|fremen|bene[\s-]gesserit|spacing\s+guild|guild)\s+card in play/i)
+  if (factionInPlayMatch) {
+    const target = constants.normalizeFactionId(factionInPlayMatch[1])
+    const played = game.zones.byId(`${player.name}.played`).cardlist()
+    return played.filter(c => constants.getFactionAffiliations(c).includes(target)).length
+  }
+  if (/garrisoned troop/i.test(per)) {
+    return player.troopsInGarrison
+  }
+  if (/deployed troop/i.test(per)) {
+    return game.state.conflict?.deployedTroops?.[player.name] || 0
+  }
+  return 0
 }
 
 function describeConditional(effect) {

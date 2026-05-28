@@ -47,4 +47,15 @@ module.exports = {
     }
   },
 
+  previewReveal(game, player) {
+    let swords = 0
+    if (player.getInfluence('fremen') >= 2) {
+      swords += 4
+    }
+    if (game.state.alliances?.fremen === player.name) {
+      swords += 2
+    }
+    return { swords }
+  },
+
 }

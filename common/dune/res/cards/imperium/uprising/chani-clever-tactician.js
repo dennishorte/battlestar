@@ -58,4 +58,18 @@ module.exports = {
     }
   },
 
+  previewReveal(game, player, handCards) {
+    const self = handCards.find(c => (c.definition || c).id === 'chani-clever-tactician')
+    const others = handCards.filter(c => c !== self)
+    const playedCards = game.zones.byId(`${player.name}.played`).cardlist()
+    const hasFremen = [...others, ...playedCards].some(c =>
+      constants.getFactionAffiliations(c).includes('fremen')
+    )
+    const canRetreat = (game.state.conflict?.deployedTroops?.[player.name] || 0) >= 2
+    return {
+      persuasion: hasFremen ? 2 : 0,
+      pending: canRetreat ? 'Optional: retreat 2 troops → +4 Swords' : null,
+    }
+  },
+
 }

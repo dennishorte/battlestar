@@ -44,4 +44,8 @@ module.exports = {
     }
   },
 
+  previewReveal(game, player) {
+    return { deployFromSupply: Math.min(2, player.troopsInSupply) }
+  },
+
 }

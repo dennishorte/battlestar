@@ -55,4 +55,12 @@ module.exports = {
     }
   },
 
+  previewReveal(game, player, handCards) {
+    const playedCards = game.zones.byId(`${player.name}.played`).cardlist()
+    const fremenCount = [...handCards, ...playedCards].filter(c =>
+      constants.getFactionAffiliations(c).includes('fremen')
+    ).length
+    return { persuasion: fremenCount * 2 }
+  },
+
 }

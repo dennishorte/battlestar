@@ -58,4 +58,18 @@ module.exports = {
     }
   },
 
+  previewReveal(game, player, handCards) {
+    // Card is dead unless there's another Emperor card to trash (in hand
+    // or already played). Surface the trade only when it's actually offered.
+    const self = handCards.find(c => (c.definition || c).id === 'calculus-of-power')
+    const others = handCards.filter(c => c !== self)
+    const playedCards = game.zones.byId(`${player.name}.played`).cardlist()
+    const hasEmperor = [...others, ...playedCards].some(c =>
+      constants.getFactionAffiliations(c).includes('emperor')
+    )
+    return hasEmperor
+      ? { pending: 'Optional: trash another Emperor card → +3 Swords' }
+      : {}
+  },
+
 }

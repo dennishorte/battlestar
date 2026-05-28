@@ -52,4 +52,17 @@ module.exports = {
     }
   },
 
+  previewReveal(game, player, handCards) {
+    const self = handCards.find(c => (c.definition || c).id === 'holy-war')
+    const others = handCards.filter(c => c !== self)
+    const playedCards = game.zones.byId(`${player.name}.played`).cardlist()
+    const hasFremen = [...others, ...playedCards].some(c =>
+      constants.getFactionAffiliations(c).includes('fremen')
+    )
+    return {
+      troops: Math.min(1, player.troopsInSupply),
+      pending: hasFremen ? 'Fremen Bond — may deploy troops' : null,
+    }
+  },
+
 }

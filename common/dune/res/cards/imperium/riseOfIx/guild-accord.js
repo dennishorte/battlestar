@@ -50,4 +50,12 @@ module.exports = {
     }
   },
 
+  previewReveal(game, player) {
+    const hasGuildAlliance = game.state.alliances?.guild === player.name
+    return {
+      water: 1,
+      spice: hasGuildAlliance ? 3 : 0,
+    }
+  },
+
 }

@@ -43,6 +43,11 @@ module.exports = {
     }
   },
 
+  previewReveal(game, player) {
+    const choam = require('../../../../systems/choam.js')
+    return { persuasion: choam.getCompletedContractCount(game, player) }
+  },
+
   onAcquire(game, player, card, { resolveEffect }) {
     resolveEffect(game, player, { type: 'contract' }, null, card.name)
   },

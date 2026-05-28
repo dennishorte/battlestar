@@ -47,4 +47,17 @@ module.exports = {
     }
   },
 
+  previewReveal(game, player, handCards) {
+    const self = handCards.find(c => (c.definition || c).id === 'southern-elders')
+    const others = handCards.filter(c => c !== self)
+    const playedCards = game.zones.byId(`${player.name}.played`).cardlist()
+    const hasFremen = [...others, ...playedCards].some(c =>
+      constants.getFactionAffiliations(c).includes('fremen')
+    )
+    return {
+      water: 1,
+      persuasion: hasFremen ? 2 : 0,
+    }
+  },
+
 }
