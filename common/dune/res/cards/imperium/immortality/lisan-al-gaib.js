@@ -38,4 +38,36 @@ module.exports = {
   onAcquire(game, player, card, { resolveEffect }) {
     resolveEffect(game, player, { type: 'gain', resource: 'spice', amount: 1 }, null, card.name)
   },
+
+  agentEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'faction-card-in-play',
+        faction: 'bene-gesserit'
+      },
+      effects: [
+        {
+          type: 'influence',
+          faction: 'fremen',
+          amount: 1
+        }
+      ]
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'faction-card-in-play',
+        faction: 'fremen'
+      },
+      effects: [
+        {
+          type: 'swords',
+          amount: 2
+        }
+      ]
+    }
+  ],
 }

@@ -60,4 +60,20 @@ module.exports = {
     }
   },
 
+
+  agentEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'faction-card-in-play',
+        faction: 'bene-gesserit'
+      },
+      effects: [
+        {
+          type: 'troop',
+          amount: 2
+        }
+      ]
+    }
+  ],
 }

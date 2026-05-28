@@ -32,4 +32,17 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'opponent-lose-troop',
+      amount: 1
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'deploy-to-conflict',
+      amount: 1
+    }
+  ],
 }

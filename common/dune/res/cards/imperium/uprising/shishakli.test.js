@@ -13,15 +13,6 @@ describe('shishakli', () => {
     expect(card.agentIcons).toEqual(['purple', 'yellow'])
   })
 
-  // skip: parseAgentAbility bug — "Trash a card -> Draw a card" falls through
-  // parseAgentAbility's main regexes to the split-by-comma path, which calls
-  // parseSingleAbility on the whole string. parseSingleAbility's trashCostMatch
-  // returns an *array* `[{trash-card},{draw}]`, which then gets pushed as a
-  // single nested element. resolveCardAgentAbility iterates effects expecting
-  // each to have a .type, so the nested array is treated as one no-op effect
-  // and neither the trash prompt nor the draw fire.
-  test('agent ability: trash-a-card-then-draw is a no-op (parser bug)', () => {})
-
   test('reveal: alone gives printed +2 swords (no Fremen Bond)', () => {
     const game = t.fixture()
     t.setBoard(game, {

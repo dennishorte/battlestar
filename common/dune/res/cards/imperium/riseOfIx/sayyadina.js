@@ -32,4 +32,44 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'choice',
+      choices: [
+        {
+          label: 'Pay 3 Water --> +1 Victory Point',
+          cost: {
+            water: 3
+          },
+          effects: [
+            {
+              type: 'vp',
+              amount: 1
+            }
+          ]
+        },
+        {
+          label: 'Decline',
+          effects: []
+        }
+      ]
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'faction-card-in-play',
+        faction: 'fremen'
+      },
+      effects: [
+        {
+          type: 'gain',
+          resource: 'persuasion',
+          amount: 3
+        }
+      ]
+    }
+  ],
 }

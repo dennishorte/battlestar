@@ -38,4 +38,16 @@ module.exports = {
   onAcquire(game, player, card, { resolveEffect }) {
     resolveEffect(game, player, { type: 'intrigue', amount: 1 }, null, card.name)
   },
+
+  agentEffects: [
+    {
+      type: 'extra-influence'
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'troop',
+      amount: 1
+    }
+  ],
 }

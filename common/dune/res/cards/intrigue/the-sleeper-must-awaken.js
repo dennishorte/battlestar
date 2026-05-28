@@ -19,4 +19,28 @@ module.exports = {
   plotEffect: "Pay 4 Spice: +1 Victory Point",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffects: [
+    {
+      type: 'choice',
+      choices: [
+        {
+          label: 'Pay 4 Spice: +1 Victory Point',
+          cost: {
+            spice: 4
+          },
+          effects: [
+            {
+              type: 'vp',
+              amount: 1
+            }
+          ]
+        },
+        {
+          label: 'Decline',
+          effects: []
+        }
+      ]
+    }
+  ],
 }

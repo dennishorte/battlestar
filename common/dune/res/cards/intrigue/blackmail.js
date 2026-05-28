@@ -19,4 +19,15 @@ module.exports = {
   plotEffect: null,
   combatEffect: "Lose one Influence:\n· +5 Swords",
   endgameEffect: null,
+
+  combatEffects: [
+    {
+      type: 'lose-influence',
+      amount: 1
+    },
+    {
+      type: 'swords',
+      amount: 5
+    }
+  ],
 }

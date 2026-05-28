@@ -19,4 +19,21 @@ module.exports = {
   plotEffect: null,
   combatEffect: "Retreat two of your Troops:\n· +3 Solari",
   endgameEffect: "If you have 10+ Solari:\n· +1 Victory Point",
+
+  endgameEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'has-resource',
+        resource: 'solari',
+        amount: 10
+      },
+      effects: [
+        {
+          type: 'vp',
+          amount: 1
+        }
+      ]
+    }
+  ],
 }

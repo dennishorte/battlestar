@@ -19,4 +19,12 @@ module.exports = {
       args: { player },
     })
   },
+
+  signetRingEffects: [
+    {
+      type: 'gain',
+      resource: 'solari',
+      amount: 1
+    }
+  ],
 }

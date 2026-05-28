@@ -19,4 +19,12 @@ module.exports = {
   plotEffect: "+1 Fremen Influence",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffects: [
+    {
+      type: 'influence',
+      faction: 'fremen',
+      amount: 1
+    }
+  ],
 }

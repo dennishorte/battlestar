@@ -41,4 +41,32 @@ module.exports = {
   onAcquire(game, player, card, { resolveEffect }) {
     resolveEffect(game, player, { type: 'influence', faction: 'emperor', amount: 1 }, null, card.name)
   },
+
+  agentEffects: [
+    {
+      type: 'intrigue',
+      amount: 1
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'has-garrison',
+        amount: 4
+      },
+      effects: [
+        {
+          type: 'gain',
+          resource: 'persuasion',
+          amount: 1
+        },
+        {
+          type: 'gain',
+          resource: 'solari',
+          amount: 3
+        }
+      ]
+    }
+  ],
 }

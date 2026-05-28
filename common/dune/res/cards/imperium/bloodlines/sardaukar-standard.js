@@ -33,4 +33,11 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: true,
+
+  revealEffects: [
+    {
+      type: 'troop',
+      amount: 1
+    }
+  ],
 }

@@ -29,4 +29,25 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'intrigue',
+      amount: 1
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'has-persuasion',
+        amount: 6
+      },
+      effects: [
+        {
+          type: 'trash-card'
+        }
+      ]
+    }
+  ],
 }

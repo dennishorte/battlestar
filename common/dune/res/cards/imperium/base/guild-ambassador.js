@@ -31,4 +31,64 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'choice',
+      choices: [
+        {
+          label: '+1 Spacing Guild Influence',
+          effects: [
+            {
+              type: 'influence',
+              faction: 'guild',
+              amount: 1
+            }
+          ]
+        },
+        {
+          label: '+2 Spice',
+          effects: [
+            {
+              type: 'gain',
+              resource: 'spice',
+              amount: 2
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'has-specific-alliance',
+        faction: 'guild'
+      },
+      effects: [
+        {
+          type: 'choice',
+          choices: [
+            {
+              label: 'Pay 3 Spice -> +1 Victory Point',
+              cost: {
+                spice: 3
+              },
+              effects: [
+                {
+                  type: 'vp',
+                  amount: 1
+                }
+              ]
+            },
+            {
+              label: 'Decline',
+              effects: []
+            }
+          ]
+        }
+      ]
+    }
+  ],
 }

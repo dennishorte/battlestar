@@ -19,4 +19,12 @@ module.exports = {
   plotEffect: "+1 Bene Gesserit Influence",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffects: [
+    {
+      type: 'influence',
+      faction: 'bene-gesserit',
+      amount: 1
+    }
+  ],
 }

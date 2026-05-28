@@ -19,4 +19,12 @@ module.exports = {
   plotEffect: "+1 Spacing Guild Influence",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffects: [
+    {
+      type: 'influence',
+      faction: 'guild',
+      amount: 1
+    }
+  ],
 }

@@ -40,13 +40,7 @@ describe("priority-contracts", () => {
   })
 
   // Reveal: "+2 Spice OR (If 4+ Contracts: Trash → +1 VP)"
-  // The parser exposes both branches as a choice when applicable.
 
-  // skip: parseAgentAbility recurses infinitely on the
-  // "+2 Spice OR If 4+ Contracts: Trash this card -> +1 VP" reveal text —
-  // the OR branch contains an "If ..." sub-clause that re-enters the parser
-  // without making progress, hitting the call-stack limit. Real bug in
-  // systems/cardEffects.js.
   test('reveal: <4 contracts completed → take +2 Spice branch', () => {
     const game = t.fixture()
     t.setBoard(game, {
@@ -72,8 +66,6 @@ describe("priority-contracts", () => {
     expect(dennis.getCounter('vp')).toBe(vpBefore)
   })
 
-  // skip: same parser stack overflow as the +2 Spice branch — see comment
-  // above. parseAgentAbility can't handle an OR containing a conditional.
   test('reveal: 4+ contracts completed → trash for +1 VP branch', () => {
     const game = t.fixture()
     t.setBoard(game, {

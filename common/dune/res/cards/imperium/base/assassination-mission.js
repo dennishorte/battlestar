@@ -34,4 +34,12 @@ module.exports = {
     // "When trashed by another card or effect: +4 Solari" — passive trigger, handled when trashed
   },
 
+
+  revealEffects: [
+    {
+      type: 'gain',
+      resource: 'solari',
+      amount: 1
+    }
+  ],
 }

@@ -52,4 +52,21 @@ module.exports = {
     resolveEffect(game, player, { type: 'troop', amount: 3 }, null, card.name)
   },
 
+
+  revealEffects: [
+    {
+      type: 'gain',
+      resource: 'water',
+      amount: 1
+    },
+    {
+      type: 'gain',
+      resource: 'spice',
+      amount: 1
+    },
+    {
+      type: 'troop',
+      amount: 1
+    }
+  ],
 }

@@ -1,6 +1,7 @@
 'use strict'
 
 const factions = require('../../../../systems/factions.js')
+const constants = require('../../../constants.js')
 module.exports = {
   id: "firm-grip",
   name: "Firm Grip",
@@ -44,10 +45,26 @@ module.exports = {
       })
       if (choice !== 'Pass') {
         player.decrementCounter('solari', 2, { silent: true })
-        const { normalizeFaction } = require('../../../../systems/cardEffects.js')
-        factions.gainInfluence(game, player, normalizeFaction(choice))
+        factions.gainInfluence(game, player, constants.normalizeFactionId(choice))
       }
     }
   },
 
+
+  revealEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'has-specific-alliance',
+        faction: 'emperor'
+      },
+      effects: [
+        {
+          type: 'gain',
+          resource: 'persuasion',
+          amount: 4
+        }
+      ]
+    }
+  ],
 }

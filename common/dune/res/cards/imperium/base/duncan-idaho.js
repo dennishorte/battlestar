@@ -31,4 +31,39 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'choice',
+      choices: [
+        {
+          label: 'Pay 1 Water:, +1 Troop, Draw 1 card',
+          cost: {
+            water: 1
+          },
+          effects: [
+            {
+              type: 'troop',
+              amount: 1
+            },
+            {
+              type: 'draw',
+              amount: 1
+            }
+          ]
+        },
+        {
+          label: 'Decline',
+          effects: []
+        }
+      ]
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'gain',
+      resource: 'water',
+      amount: 1
+    }
+  ],
 }

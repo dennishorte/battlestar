@@ -19,4 +19,19 @@ module.exports = {
   plotEffect: "If you have a seat on the High Council:\n· +2 Troops",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'has-high-council'
+      },
+      effects: [
+        {
+          type: 'troop',
+          amount: 2
+        }
+      ]
+    }
+  ],
 }

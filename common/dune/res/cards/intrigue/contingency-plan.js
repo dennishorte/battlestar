@@ -19,4 +19,18 @@ module.exports = {
   plotEffect: "+2 Solari",
   combatEffect: "+3 Swords",
   endgameEffect: null,
+
+  plotEffects: [
+    {
+      type: 'gain',
+      resource: 'solari',
+      amount: 2
+    }
+  ],
+  combatEffects: [
+    {
+      type: 'swords',
+      amount: 3
+    }
+  ],
 }

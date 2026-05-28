@@ -29,4 +29,20 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  revealEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'agent-on-space',
+        icon: 'emperor'
+      },
+      effects: [
+        {
+          type: 'swords',
+          amount: 3
+        }
+      ]
+    }
+  ],
 }

@@ -8,4 +8,10 @@ module.exports = {
   count: 1,
   reward: 'Recall an Agent',
   riseOfIxSpecific: false,
+
+  rewardEffects: [
+    {
+      type: 'recall-agent'
+    }
+  ],
 }

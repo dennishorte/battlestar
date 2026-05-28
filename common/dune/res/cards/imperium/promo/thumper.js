@@ -39,4 +39,12 @@ module.exports = {
     }
   },
 
+
+  revealEffects: [
+    {
+      type: 'gain',
+      resource: 'spice',
+      amount: 1
+    }
+  ],
 }

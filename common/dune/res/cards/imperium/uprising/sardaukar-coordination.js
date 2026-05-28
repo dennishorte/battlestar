@@ -41,4 +41,12 @@ module.exports = {
     }
   },
 
+
+  revealEffects: [
+    {
+      type: 'swords-per',
+      amount: 1,
+      per: 'emperor card you revealed (including this one)'
+    }
+  ],
 }

@@ -72,4 +72,10 @@ module.exports = {
       : {}
   },
 
+
+  agentEffects: [
+    {
+      type: 'trash-card'
+    }
+  ],
 }

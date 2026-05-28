@@ -33,4 +33,18 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'force-retreat'
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'trash-self'
+    },
+    {
+      type: 'deploy-troops'
+    }
+  ],
 }

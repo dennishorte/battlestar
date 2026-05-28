@@ -19,4 +19,12 @@ module.exports = {
   plotEffect: "+1 Emperor Influence",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffects: [
+    {
+      type: 'influence',
+      faction: 'emperor',
+      amount: 1
+    }
+  ],
 }

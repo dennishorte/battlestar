@@ -34,4 +34,12 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: true,
+
+  agentEffects: [
+    {
+      type: 'gain',
+      resource: 'solari',
+      amount: 2
+    }
+  ],
 }

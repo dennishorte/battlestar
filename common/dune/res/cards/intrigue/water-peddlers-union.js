@@ -19,4 +19,12 @@ module.exports = {
   plotEffect: "+1 Water",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffects: [
+    {
+      type: 'gain',
+      resource: 'water',
+      amount: 1
+    }
+  ],
 }

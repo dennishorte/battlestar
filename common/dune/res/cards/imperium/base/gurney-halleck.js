@@ -31,4 +31,15 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'troop',
+      amount: 2
+    },
+    {
+      type: 'draw',
+      amount: 1
+    }
+  ],
 }

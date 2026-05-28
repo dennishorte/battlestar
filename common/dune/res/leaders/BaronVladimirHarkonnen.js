@@ -45,4 +45,28 @@ module.exports = {
       args: { player },
     })
   },
+
+  signetRingEffects: [
+    {
+      type: 'choice',
+      choices: [
+        {
+          label: 'Pay 1 Solari:, Draw 1 Intrigue card',
+          cost: {
+            solari: 1
+          },
+          effects: [
+            {
+              type: 'intrigue',
+              amount: 1
+            }
+          ]
+        },
+        {
+          label: 'Decline',
+          effects: []
+        }
+      ]
+    }
+  ],
 }

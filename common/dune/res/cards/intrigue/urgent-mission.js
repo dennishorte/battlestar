@@ -19,4 +19,10 @@ module.exports = {
   plotEffect: "Recal one of your Agents",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffects: [
+    {
+      type: 'recall-agent'
+    }
+  ],
 }

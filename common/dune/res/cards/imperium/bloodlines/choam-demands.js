@@ -58,4 +58,10 @@ module.exports = {
       : {}
   },
 
+
+  agentEffects: [
+    {
+      type: 'complete-contract'
+    }
+  ],
 }

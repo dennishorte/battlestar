@@ -44,4 +44,12 @@ module.exports = {
     }
   },
 
+
+  revealEffects: [
+    {
+      type: 'swords-per',
+      amount: 1,
+      per: 'revealed card that provides one or more swords this turn'
+    }
+  ],
 }

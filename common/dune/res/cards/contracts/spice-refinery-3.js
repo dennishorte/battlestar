@@ -8,4 +8,11 @@ module.exports = {
   count: 1,
   reward: '+2 Troops',
   riseOfIxSpecific: false,
+
+  rewardEffects: [
+    {
+      type: 'troop',
+      amount: 2
+    }
+  ],
 }

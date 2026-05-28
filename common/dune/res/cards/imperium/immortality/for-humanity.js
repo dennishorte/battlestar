@@ -66,4 +66,11 @@ module.exports = {
     return { pending: 'Optional: -2 Influence with a Faction → +1 VP' }
   },
 
+
+  agentEffects: [
+    {
+      type: 'influence-choice',
+      amount: 1
+    }
+  ],
 }

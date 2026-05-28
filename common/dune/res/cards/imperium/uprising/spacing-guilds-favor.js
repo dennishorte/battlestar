@@ -62,4 +62,11 @@ module.exports = {
       : {}
   },
 
+
+  agentEffects: [
+    {
+      type: 'draw',
+      amount: 1
+    }
+  ],
 }

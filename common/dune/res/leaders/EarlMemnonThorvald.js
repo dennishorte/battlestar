@@ -22,4 +22,12 @@ module.exports = {
       args: { player, faction },
     })
   },
+
+  signetRingEffects: [
+    {
+      type: 'gain',
+      resource: 'spice',
+      amount: 1
+    }
+  ],
 }

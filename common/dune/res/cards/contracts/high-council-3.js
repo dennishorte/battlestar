@@ -8,4 +8,12 @@ module.exports = {
   count: 1,
   reward: '+1 Influence with Bene Gesserit',
   riseOfIxSpecific: false,
+
+  rewardEffects: [
+    {
+      type: 'influence',
+      faction: 'bene-gesserit',
+      amount: 1
+    }
+  ],
 }

@@ -34,4 +34,12 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'opponent-discard-or-lose',
+      discardCount: 1,
+      troopCount: 1
+    }
+  ],
 }

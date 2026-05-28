@@ -31,4 +31,26 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'sent-to-maker'
+      },
+      effects: [
+        {
+          type: 'troop',
+          amount: 1
+        }
+      ]
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'gain',
+      resource: 'water',
+      amount: 1
+    }
+  ],
 }

@@ -33,4 +33,33 @@ module.exports = {
   hasContracts: true,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'completed-contracts',
+        amount: 2
+      },
+      effects: [
+        {
+          type: 'draw',
+          amount: 1
+        }
+      ]
+    },
+    {
+      type: 'conditional',
+      condition: {
+        type: 'completed-contracts',
+        amount: 4
+      },
+      effects: [
+        {
+          type: 'draw',
+          amount: 1
+        }
+      ]
+    }
+  ],
 }

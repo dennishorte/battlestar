@@ -58,4 +58,16 @@ module.exports = {
     }
   },
 
+
+  revealEffects: [
+    {
+      type: 'gain',
+      resource: 'water',
+      amount: 1
+    },
+    {
+      type: 'troop',
+      amount: 1
+    }
+  ],
 }

@@ -39,4 +39,21 @@ module.exports = {
   onAcquire(game, player, card, { resolveEffect }) {
     resolveEffect(game, player, { type: 'influence', faction: 'guild', amount: 1 }, null, card.name)
   },
+
+  agentEffects: [
+    {
+      type: 'draw',
+      amount: 1
+    },
+    {
+      type: 'recall-agent'
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'gain',
+      resource: 'spice',
+      amount: 2
+    }
+  ],
 }

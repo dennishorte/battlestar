@@ -36,4 +36,12 @@ module.exports = {
       resolveEffect(game, player, { type: 'influence', faction, amount: 1 }, null, card.name)
     }
   },
+
+  revealEffects: [
+    {
+      type: 'gain',
+      resource: 'solari',
+      amount: 3
+    }
+  ],
 }

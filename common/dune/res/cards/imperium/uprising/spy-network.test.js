@@ -32,10 +32,6 @@ describe('spy-network', () => {
     expect(game.zones.byId('dennis.intrigue').cardlist().length).toBe(0)
   })
 
-  // skip: reveal text uses Unicode arrow "→" which is not normalized by
-  // parseAgentAbility (only "->", "-->", and ":" are recognized), so the
-  // "Recall a Spy → Get an Intrigue card" cost-effect never parses and the
-  // condition is logged as memo only. Pre-existing parser limitation.
   test('reveal with 2 spies on board: recall a spy then gain an Intrigue card', () => {
     const game = t.fixture()
     t.setBoard(game, {

@@ -41,4 +41,18 @@ module.exports = {
       event: 'memo',
     })
   },
+
+  agentEffects: [
+    {
+      type: 'troop',
+      amount: 2
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'swords-per',
+      amount: 3,
+      per: 'of your dreadnoughts in the conflict'
+    }
+  ],
 }

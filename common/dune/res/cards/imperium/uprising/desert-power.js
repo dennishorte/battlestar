@@ -61,4 +61,20 @@ module.exports = {
     return { pending: 'Choice: +2 Persuasion OR pay 1 Water → 1 Sandworm in conflict' }
   },
 
+
+  agentEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'sent-to-maker'
+      },
+      effects: [
+        {
+          type: 'gain',
+          resource: 'spice',
+          amount: 2
+        }
+      ]
+    }
+  ],
 }

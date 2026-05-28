@@ -31,4 +31,17 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'double-harvest'
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'gain',
+      resource: 'spice',
+      amount: 1
+    }
+  ],
 }

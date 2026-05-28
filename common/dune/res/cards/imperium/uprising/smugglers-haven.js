@@ -47,4 +47,20 @@ module.exports = {
     }
   },
 
+
+  revealEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'occupying-maker-space'
+      },
+      effects: [
+        {
+          type: 'gain',
+          resource: 'spice',
+          amount: 2
+        }
+      ]
+    }
+  ],
 }

@@ -19,4 +19,29 @@ module.exports = {
   plotEffect: "Pay 1 Water and 1 Spice:\n· Draw 3 cards",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffects: [
+    {
+      type: 'choice',
+      choices: [
+        {
+          label: 'Pay 1 Water and 1 Spice:, Draw 3 cards',
+          cost: {
+            water: 1,
+            spice: 1
+          },
+          effects: [
+            {
+              type: 'draw',
+              amount: 3
+            }
+          ]
+        },
+        {
+          label: 'Decline',
+          effects: []
+        }
+      ]
+    }
+  ],
 }

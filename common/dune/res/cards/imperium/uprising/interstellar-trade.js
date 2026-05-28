@@ -52,4 +52,11 @@ module.exports = {
     resolveEffect(game, player, { type: 'contract' }, null, card.name)
   },
 
+
+  agentEffects: [
+    {
+      type: 'influence-choice',
+      amount: 1
+    }
+  ],
 }

@@ -19,4 +19,28 @@ module.exports = {
   plotEffect: null,
   combatEffect: "Spend 1 Water:\n· +5 Swords",
   endgameEffect: null,
+
+  combatEffects: [
+    {
+      type: 'choice',
+      choices: [
+        {
+          label: 'Spend 1 Water:, +5 Swords',
+          cost: {
+            water: 1
+          },
+          effects: [
+            {
+              type: 'swords',
+              amount: 5
+            }
+          ]
+        },
+        {
+          label: 'Decline',
+          effects: []
+        }
+      ]
+    }
+  ],
 }

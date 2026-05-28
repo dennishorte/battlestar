@@ -19,4 +19,17 @@ module.exports = {
   plotEffect: "Discard two cards:\n· Draw two cards",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffects: [
+    {
+      type: 'discard-card'
+    },
+    {
+      type: 'discard-card'
+    },
+    {
+      type: 'draw',
+      amount: 2
+    }
+  ],
 }

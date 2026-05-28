@@ -31,4 +31,36 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'choice',
+      choices: [
+        {
+          label: '+1 Troop',
+          effects: [
+            {
+              type: 'troop',
+              amount: 1
+            }
+          ]
+        },
+        {
+          label: 'Trash a card',
+          effects: [
+            {
+              type: 'trash-card'
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'swords-per',
+      amount: 1,
+      per: 'other revealed card that provides one or more + sword this turn'
+    }
+  ],
 }

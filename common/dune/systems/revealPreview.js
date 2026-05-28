@@ -1,7 +1,6 @@
 'use strict'
 
 const constants = require('../res/constants.js')
-const { parseAgentAbility } = require('./cardEffects.js')
 
 const FACTION_LABELS = {
   emperor: 'Emperor',
@@ -66,7 +65,7 @@ function previewReveal(game, player) {
       continue
     }
 
-    const effects = parseAgentAbility(text)
+    const effects = def.revealEffects
     if (!effects) {
       pending.push({ source: def.name, text })
       continue

@@ -48,4 +48,13 @@ module.exports = {
     return { deployFromSupply: Math.min(2, player.troopsInSupply) }
   },
 
+
+  agentEffects: [
+    {
+      type: 'extra-influence'
+    },
+    {
+      type: 'trash-self'
+    }
+  ],
 }

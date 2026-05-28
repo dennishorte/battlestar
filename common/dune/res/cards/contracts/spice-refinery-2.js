@@ -8,4 +8,12 @@ module.exports = {
   count: 1,
   reward: '+1 Water',
   riseOfIxSpecific: false,
+
+  rewardEffects: [
+    {
+      type: 'gain',
+      resource: 'water',
+      amount: 1
+    }
+  ],
 }

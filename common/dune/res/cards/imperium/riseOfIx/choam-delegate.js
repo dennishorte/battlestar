@@ -31,4 +31,12 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  revealEffects: [
+    {
+      type: 'gain',
+      resource: 'solari',
+      amount: 3
+    }
+  ],
 }

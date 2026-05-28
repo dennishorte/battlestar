@@ -1,6 +1,5 @@
 const constants = require('../res/constants.js')
 const { GameOverEvent } = require('../../lib/game.js')
-const { parseAgentAbility } = require('../systems/cardEffects.js')
 const { resolveEffect } = require('./playerTurns.js')
 
 /**
@@ -202,24 +201,21 @@ function offerEndgameIntrigue(game, player) {
       continue
     }
 
-    const effectText = endgameEffect
-    const effects = parseAgentAbility(effectText)
+    const effects = card.definition.endgameEffects
+    game.log.indent()
     if (effects) {
-      game.log.indent()
       for (const effect of effects) {
         resolveEffect(game, player, effect, null)
       }
-      game.log.outdent()
     }
     else {
-      game.log.indent()
       game.log.add({
         template: '{effect}',
-        args: { effect: effectText },
+        args: { effect: endgameEffect },
         event: 'memo',
       })
-      game.log.outdent()
     }
+    game.log.outdent()
   }
 }
 

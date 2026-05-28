@@ -56,4 +56,18 @@ module.exports = {
       : {}
   },
 
+
+  agentEffects: [
+    {
+      type: 'discard-card'
+    },
+    {
+      type: 'intrigue',
+      amount: 1
+    },
+    {
+      type: 'draw',
+      amount: 1
+    }
+  ],
 }

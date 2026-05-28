@@ -31,4 +31,11 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  revealEffects: [
+    {
+      type: 'intrigue',
+      amount: 1
+    }
+  ],
 }

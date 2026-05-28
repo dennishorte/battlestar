@@ -54,4 +54,14 @@ module.exports = {
     }
   },
 
+
+  revealEffects: [
+    {
+      type: 'recall-spy-cost'
+    },
+    {
+      type: 'swords',
+      amount: 3
+    }
+  ],
 }

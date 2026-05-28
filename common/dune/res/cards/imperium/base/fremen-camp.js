@@ -31,4 +31,28 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'choice',
+      choices: [
+        {
+          label: 'Pay 2 Spice: +3 Troops',
+          cost: {
+            spice: 2
+          },
+          effects: [
+            {
+              type: 'troop',
+              amount: 3
+            }
+          ]
+        },
+        {
+          label: 'Decline',
+          effects: []
+        }
+      ]
+    }
+  ],
 }

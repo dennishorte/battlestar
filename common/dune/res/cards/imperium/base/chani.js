@@ -38,4 +38,11 @@ module.exports = {
   onAcquire(game, player, card, { resolveEffect }) {
     resolveEffect(game, player, { type: 'gain', resource: 'water', amount: 1 }, null, card.name)
   },
+
+  revealEffects: [
+    {
+      type: 'retreat-troops',
+      amount: 99
+    }
+  ],
 }

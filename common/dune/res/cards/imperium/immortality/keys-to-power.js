@@ -34,4 +34,22 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'influence',
+        faction: 'emperor',
+        amount: 2
+      },
+      effects: [
+        {
+          type: 'gain',
+          resource: 'spice',
+          amount: 2
+        }
+      ]
+    }
+  ],
 }

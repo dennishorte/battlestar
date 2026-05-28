@@ -19,4 +19,15 @@ module.exports = {
   plotEffect: "Lose one of your troops:\n· Draw a card",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffects: [
+    {
+      type: 'lose-troops',
+      amount: 1
+    },
+    {
+      type: 'draw',
+      amount: 1
+    }
+  ],
 }

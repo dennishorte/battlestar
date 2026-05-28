@@ -19,4 +19,19 @@ module.exports = {
   plotEffect: "Gain +1 Persuasion during your Reveal turn this round",
   combatEffect: null,
   endgameEffect: "If you have a seat on the High Council and 2 DNA:\n· +1 Victory Point",
+
+  endgameEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'has-high-council'
+      },
+      effects: [
+        {
+          type: 'vp',
+          amount: 1
+        }
+      ]
+    }
+  ],
 }

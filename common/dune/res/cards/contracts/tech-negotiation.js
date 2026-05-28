@@ -8,4 +8,10 @@ module.exports = {
   count: 1,
   reward: '+1 Contract',
   riseOfIxSpecific: true,
+
+  rewardEffects: [
+    {
+      type: 'contract'
+    }
+  ],
 }

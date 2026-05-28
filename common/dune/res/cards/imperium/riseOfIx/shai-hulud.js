@@ -35,4 +35,29 @@ module.exports = {
   onAcquire(game, player, card, { resolveEffect }) {
     resolveEffect(game, player, { type: 'trash-card' }, null, card.name)
   },
+
+  agentEffects: [
+    {
+      type: 'trash-card'
+    },
+    {
+      type: 'troop',
+      amount: 2
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'faction-card-in-play',
+        faction: 'fremen'
+      },
+      effects: [
+        {
+          type: 'swords',
+          amount: 5
+        }
+      ]
+    }
+  ],
 }

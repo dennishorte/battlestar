@@ -19,4 +19,28 @@ module.exports = {
   plotEffect: null,
   combatEffect: "Pay 2 Spice:\n· +5 Swords",
   endgameEffect: null,
+
+  combatEffects: [
+    {
+      type: 'choice',
+      choices: [
+        {
+          label: 'Pay 2 Spice:, +5 Swords',
+          cost: {
+            spice: 2
+          },
+          effects: [
+            {
+              type: 'swords',
+              amount: 5
+            }
+          ]
+        },
+        {
+          label: 'Decline',
+          effects: []
+        }
+      ]
+    }
+  ],
 }

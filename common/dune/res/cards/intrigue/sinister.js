@@ -19,4 +19,20 @@ module.exports = {
   plotEffect: null,
   combatEffect: "Lose two of your troops:\n· +1 Intrigue card\n· +1 Solari",
   endgameEffect: null,
+
+  combatEffects: [
+    {
+      type: 'lose-troops',
+      amount: 2
+    },
+    {
+      type: 'intrigue',
+      amount: 1
+    },
+    {
+      type: 'gain',
+      resource: 'solari',
+      amount: 1
+    }
+  ],
 }

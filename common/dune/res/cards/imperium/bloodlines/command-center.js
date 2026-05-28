@@ -33,4 +33,32 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'influence',
+        amount: 2,
+        faction: 'emperor'
+      },
+      effects: [
+        {
+          type: 'troop',
+          amount: 1
+        }
+      ]
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'retreat-troops',
+      amount: 2
+    },
+    {
+      type: 'gain',
+      resource: 'persuasion',
+      amount: 2
+    }
+  ],
 }

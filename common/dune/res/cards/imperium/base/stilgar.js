@@ -34,4 +34,12 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'gain',
+      resource: 'water',
+      amount: 1
+    }
+  ],
 }

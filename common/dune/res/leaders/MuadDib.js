@@ -22,4 +22,11 @@ module.exports = {
       })
     }
   },
+
+  signetRingEffects: [
+    {
+      type: 'draw',
+      amount: 1
+    }
+  ],
 }

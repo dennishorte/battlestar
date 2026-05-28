@@ -48,4 +48,17 @@ module.exports = {
     }
   },
 
+
+  revealEffects: [
+    {
+      type: 'gain',
+      resource: 'spice',
+      amount: 2
+    },
+    {
+      type: 'gain',
+      resource: 'solari',
+      amount: 2
+    }
+  ],
 }

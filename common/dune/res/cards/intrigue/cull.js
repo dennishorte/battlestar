@@ -19,4 +19,27 @@ module.exports = {
   plotEffect: "Pay 1 Solari:\n· Trash a card",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffects: [
+    {
+      type: 'choice',
+      choices: [
+        {
+          label: 'Pay 1 Solari:, Trash a card',
+          cost: {
+            solari: 1
+          },
+          effects: [
+            {
+              type: 'trash-card'
+            }
+          ]
+        },
+        {
+          label: 'Decline',
+          effects: []
+        }
+      ]
+    }
+  ],
 }

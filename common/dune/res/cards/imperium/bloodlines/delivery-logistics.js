@@ -36,4 +36,30 @@ module.exports = {
     game.log.add({ template: '{player}: Delivery Logistics — Agent icons match incomplete contracts', args: { player }, event: 'memo' })
   },
 
+
+  revealEffects: [
+    {
+      type: 'choice',
+      choices: [
+        {
+          label: '+1 Persuasion',
+          effects: [
+            {
+              type: 'gain',
+              resource: 'persuasion',
+              amount: 1
+            }
+          ]
+        },
+        {
+          label: '+1 Contract',
+          effects: [
+            {
+              type: 'contract'
+            }
+          ]
+        }
+      ]
+    }
+  ],
 }

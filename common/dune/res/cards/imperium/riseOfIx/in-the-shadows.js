@@ -58,4 +58,12 @@ module.exports = {
     }
   },
 
+
+  revealEffects: [
+    {
+      type: 'influence',
+      faction: 'bene-gesserit',
+      amount: 1
+    }
+  ],
 }

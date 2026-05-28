@@ -12,4 +12,10 @@ module.exports = {
   revealPersuasion: 0,
   revealSwords: 0,
   revealAbility: null,
+
+  agentEffects: [
+    {
+      type: 'trash-self'
+    }
+  ],
 }

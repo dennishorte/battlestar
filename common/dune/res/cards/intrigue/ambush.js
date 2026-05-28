@@ -19,4 +19,11 @@ module.exports = {
   plotEffect: null,
   combatEffect: "+4 Swords",
   endgameEffect: null,
+
+  combatEffects: [
+    {
+      type: 'swords',
+      amount: 4
+    }
+  ],
 }

@@ -26,4 +26,12 @@ module.exports = {
     const choam = require('../../../systems/choam.js')
     choam.checkContractCompletion(game, player, 'acquire-tsmf', {})
   },
+
+  revealEffects: [
+    {
+      type: 'gain',
+      resource: 'spice',
+      amount: 1
+    }
+  ],
 }

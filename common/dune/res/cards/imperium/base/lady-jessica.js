@@ -39,4 +39,11 @@ module.exports = {
   onAcquire(game, player, card, { resolveEffect }) {
     resolveEffect(game, player, { type: 'influence-choice', amount: 1 }, null, card.name)
   },
+
+  agentEffects: [
+    {
+      type: 'draw',
+      amount: 2
+    }
+  ],
 }

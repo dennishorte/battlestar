@@ -31,4 +31,24 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  revealEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'has-persuasion',
+        amount: 6
+      },
+      effects: [
+        {
+          type: 'gain',
+          resource: 'solari',
+          amount: 3
+        },
+        {
+          type: 'trash-self'
+        }
+      ]
+    }
+  ],
 }

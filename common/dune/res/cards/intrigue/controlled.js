@@ -43,4 +43,11 @@ module.exports = {
     }
   },
 
+
+  combatEffects: [
+    {
+      type: 'swords',
+      amount: 1
+    }
+  ],
 }

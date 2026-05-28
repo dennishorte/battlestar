@@ -13,11 +13,6 @@ describe('captured-mentat', () => {
     expect(card.persuasionCost).toBe(5)
   })
 
-  // skip: parser bug — `parseAgentAbility` does not recognize the Unicode
-  // arrow `→` as a cost-effect separator, so "Discard 1 card → +1 Intrigue
-  // card, Draw 1 card" fails to parse and the card's agent ability is a
-  // no-op. Affects all uprising cards using the same arrow form (this card
-  // has no custom `agentEffect`).
   test('agent ability: discard a card to gain +1 intrigue and draw 1', () => {
     const game = t.fixture()
     t.setBoard(game, {

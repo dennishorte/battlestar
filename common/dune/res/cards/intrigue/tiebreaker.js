@@ -19,4 +19,14 @@ module.exports = {
   plotEffect: null,
   combatEffect: "+2 Swords in Combat",
   endgameEffect: "+10 Spice during Endgame",
+
+  combatEffects: {
+    type: 'swords',
+    amount: 2
+  },
+  endgameEffects: {
+    type: 'gain',
+    resource: 'spice',
+    amount: 10
+  },
 }

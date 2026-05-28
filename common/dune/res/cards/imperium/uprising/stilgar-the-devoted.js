@@ -63,4 +63,11 @@ module.exports = {
     return { persuasion: fremenCount * 2 }
   },
 
+
+  agentEffects: [
+    {
+      type: 'troop',
+      amount: 2
+    }
+  ],
 }

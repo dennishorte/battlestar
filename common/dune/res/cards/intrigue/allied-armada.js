@@ -19,4 +19,36 @@ module.exports = {
   plotEffect: null,
   combatEffect: "If you have a Faction Alliance:\n· Pay 2 Spice → +7 Swords",
   endgameEffect: null,
+
+  combatEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'has-alliance'
+      },
+      effects: [
+        {
+          type: 'choice',
+          choices: [
+            {
+              label: 'Pay 2 Spice -> +7 Swords',
+              cost: {
+                spice: 2
+              },
+              effects: [
+                {
+                  type: 'swords',
+                  amount: 7
+                }
+              ]
+            },
+            {
+              label: 'Decline',
+              effects: []
+            }
+          ]
+        }
+      ]
+    }
+  ],
 }

@@ -34,4 +34,35 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'sandworms-in-conflict',
+        amount: 1
+      },
+      effects: [
+        {
+          type: 'intrigue',
+          amount: 1
+        }
+      ]
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'has-persuasion',
+        amount: 6
+      },
+      effects: [
+        {
+          type: 'influence-choice',
+          amount: 1
+        }
+      ]
+    }
+  ],
 }

@@ -23,4 +23,12 @@ module.exports = {
     })
     return Math.max(0, total - 1)
   },
+
+  signetRingEffects: [
+    {
+      type: 'gain',
+      resource: 'water',
+      amount: 1
+    }
+  ],
 }

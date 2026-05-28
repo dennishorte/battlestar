@@ -19,4 +19,66 @@ module.exports = {
   plotEffect: "· Pay 2 Solari → +5 Solari\n  OR\n· Pay 5 Solari → +5 Spice",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffects: [
+    {
+      type: 'choice',
+      choices: [
+        {
+          label: 'Pay 2 Solari -> +5 Solari',
+          effects: [
+            {
+              type: 'choice',
+              choices: [
+                {
+                  label: 'Pay 2 Solari -> +5 Solari',
+                  cost: {
+                    solari: 2
+                  },
+                  effects: [
+                    {
+                      type: 'gain',
+                      resource: 'solari',
+                      amount: 5
+                    }
+                  ]
+                },
+                {
+                  label: 'Decline',
+                  effects: []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          label: 'Pay 5 Solari -> +5 Spice',
+          effects: [
+            {
+              type: 'choice',
+              choices: [
+                {
+                  label: 'Pay 5 Solari -> +5 Spice',
+                  cost: {
+                    solari: 5
+                  },
+                  effects: [
+                    {
+                      type: 'gain',
+                      resource: 'spice',
+                      amount: 5
+                    }
+                  ]
+                },
+                {
+                  label: 'Decline',
+                  effects: []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
 }

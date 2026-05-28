@@ -33,4 +33,31 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  revealEffects: [
+    {
+      type: 'choice',
+      choices: [
+        {
+          label: '+2 Persuation',
+          effects: [
+            {
+              type: 'gain',
+              resource: 'persuasion',
+              amount: 2
+            }
+          ]
+        },
+        {
+          label: '+2 Swords',
+          effects: [
+            {
+              type: 'swords',
+              amount: 2
+            }
+          ]
+        }
+      ]
+    }
+  ],
 }

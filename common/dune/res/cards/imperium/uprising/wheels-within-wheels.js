@@ -42,4 +42,10 @@ module.exports = {
     }
   },
 
+
+  revealEffects: [
+    {
+      type: 'spy'
+    }
+  ],
 }

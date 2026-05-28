@@ -32,4 +32,31 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'trash-card'
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'faction-card-in-play',
+        faction: 'fremen'
+      },
+      effects: [
+        {
+          type: 'gain',
+          resource: 'persuasion',
+          amount: 3
+        },
+        {
+          type: 'gain',
+          resource: 'spice',
+          amount: 1
+        }
+      ]
+    }
+  ],
 }

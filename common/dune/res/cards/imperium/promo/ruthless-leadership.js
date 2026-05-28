@@ -32,4 +32,19 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: true,
+
+  revealEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'has-persuasion',
+        amount: 6
+      },
+      effects: [
+        {
+          type: 'deploy-troops'
+        }
+      ]
+    }
+  ],
 }

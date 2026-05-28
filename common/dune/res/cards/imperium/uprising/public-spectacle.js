@@ -29,4 +29,24 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'recalled-spy'
+      },
+      effects: [
+        {
+          type: 'influence-choice',
+          amount: 1
+        }
+      ]
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'spy'
+    }
+  ],
 }

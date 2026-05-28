@@ -31,4 +31,48 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'gain',
+      resource: 'solari',
+      amount: 2
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'has-high-council'
+      },
+      effects: [
+        {
+          type: 'gain',
+          resource: 'persuasion',
+          amount: 2
+        }
+      ]
+    },
+    {
+      type: 'conditional',
+      condition: {
+        type: 'and',
+        conditions: [
+          {
+            type: 'has-high-council'
+          },
+          {
+            type: 'has-swordmaster'
+          }
+        ]
+      },
+      effects: [
+        {
+          type: 'gain',
+          resource: 'persuasion',
+          amount: 1
+        }
+      ]
+    }
+  ],
 }

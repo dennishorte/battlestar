@@ -19,4 +19,11 @@ module.exports = {
   plotEffect: "Deploy any number of your garrisoned troops to the Conflict",
   combatEffect: null,
   endgameEffect: null,
+
+  plotEffects: [
+    {
+      type: 'deploy-to-conflict',
+      amount: 99
+    }
+  ],
 }

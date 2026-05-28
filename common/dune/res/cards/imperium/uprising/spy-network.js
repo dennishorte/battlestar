@@ -33,4 +33,23 @@ module.exports = {
   onAcquire(game, player, card, { resolveEffect }) {
     resolveEffect(game, player, { type: 'spy' }, null, card.name)
   },
+
+  revealEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'has-spies-on-board',
+        amount: 2
+      },
+      effects: [
+        {
+          type: 'recall-spy-cost'
+        },
+        {
+          type: 'intrigue',
+          amount: 1
+        }
+      ]
+    }
+  ],
 }

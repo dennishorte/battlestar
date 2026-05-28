@@ -72,4 +72,20 @@ module.exports = {
     }
   },
 
+
+  agentEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'units-in-conflict',
+        amount: 3
+      },
+      effects: [
+        {
+          type: 'intrigue',
+          amount: 1
+        }
+      ]
+    }
+  ],
 }

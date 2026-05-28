@@ -54,4 +54,15 @@ module.exports = {
       : {}
   },
 
+
+  agentEffects: [
+    {
+      type: 'discard-card'
+    },
+    {
+      type: 'gain',
+      resource: 'water',
+      amount: 1
+    }
+  ],
 }

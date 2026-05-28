@@ -45,4 +45,21 @@ module.exports = {
     }
   },
 
+
+  revealEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'faction-card-in-play',
+        faction: 'fremen'
+      },
+      effects: [
+        {
+          type: 'gain',
+          resource: 'spice',
+          amount: 2
+        }
+      ]
+    }
+  ],
 }

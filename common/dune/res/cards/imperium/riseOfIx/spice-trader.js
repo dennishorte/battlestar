@@ -32,4 +32,25 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'influence',
+        faction: 'fremen',
+        amount: 2
+      },
+      effects: [
+        {
+          type: 'discard-card'
+        },
+        {
+          type: 'gain',
+          resource: 'spice',
+          amount: 2
+        }
+      ]
+    }
+  ],
 }

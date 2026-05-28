@@ -31,4 +31,20 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'sent-to-occupied'
+      },
+      effects: [
+        {
+          type: 'gain',
+          resource: 'solari',
+          amount: 2
+        }
+      ]
+    }
+  ],
 }

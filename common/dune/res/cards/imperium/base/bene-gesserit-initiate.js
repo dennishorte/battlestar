@@ -33,4 +33,11 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'draw',
+      amount: 1
+    }
+  ],
 }

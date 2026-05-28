@@ -58,4 +58,12 @@ module.exports = {
     return { swords }
   },
 
+
+  agentEffects: [
+    {
+      type: 'gain',
+      resource: 'spice',
+      amount: 2
+    }
+  ],
 }

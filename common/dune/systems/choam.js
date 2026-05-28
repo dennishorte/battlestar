@@ -1,5 +1,4 @@
 const { DuneCard } = require('../DuneCard.js')
-const { parseAgentAbility } = require('./cardEffects.js')
 
 // Map contract names to board space IDs for board-space-visit triggers
 const BOARD_SPACE_CONTRACTS = {
@@ -157,11 +156,16 @@ function completeContract(game, player, card) {
     game.state.turnTracking.completedContract = true
   }
 
-  // Parse and resolve the reward
-  const rewardText = card.definition.reward
-  const effects = parseAgentAbility(rewardText)
-  if (effects) {
+  if (typeof card.definition.rewardEffect === 'function') {
     game.log.indent()
+    card.definition.rewardEffect(game, player, card, { resolveEffect, takeContract: () => takeContract(game, player) })
+    game.log.outdent()
+    return
+  }
+
+  const effects = card.definition.rewardEffects
+  game.log.indent()
+  if (effects) {
     for (const effect of effects) {
       if (effect.type === 'contract') {
         takeContract(game, player)
@@ -170,17 +174,15 @@ function completeContract(game, player, card) {
         resolveEffect(game, player, effect, null)
       }
     }
-    game.log.outdent()
   }
   else {
-    game.log.indent()
     game.log.add({
       template: 'Reward: {reward}',
-      args: { reward: rewardText },
+      args: { reward: card.definition.reward },
       event: 'memo',
     })
-    game.log.outdent()
   }
+  game.log.outdent()
 }
 
 /**

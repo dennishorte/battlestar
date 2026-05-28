@@ -2,7 +2,6 @@ const deckEngine = require('../systems/deckEngine.js')
 const factions = require('../systems/factions.js')
 const spies = require('../systems/spies.js')
 const deploy = require('../systems/deploy.js')
-const { parseAgentAbility } = require('../systems/cardEffects.js')
 const leaderAbilities = require('../systems/leaderAbilities.js')
 const constants = require('../res/constants.js')
 
@@ -750,9 +749,9 @@ function resolveCardAgentAbility(game, player, card) {
     return
   }
 
-  const effects = parseAgentAbility(abilityText)
+  const effects = card.definition?.agentEffects
   if (!effects) {
-    // Complex ability we can't execute yet — log it
+    // Complex ability without a static effect array or explicit function — log it.
     game.log.add({
       template: 'Card ability: {ability}',
       args: { ability: abilityText },
@@ -791,8 +790,11 @@ function resolveCardAgentAbility(game, player, card) {
 }
 
 /**
- * Resolve a card's reveal ability, including faction bond checks.
- * Bond abilities activate when you have another card of the same faction revealed.
+ * Resolve a card's reveal ability.
+ *
+ * Bond abilities are encoded as `conditional` effects with a
+ * `faction-card-in-play` condition; the runtime evaluates them generically
+ * via `resolveEffect` → `checkCondition`.
  */
 function resolveCardRevealAbility(game, player, card, allRevealedCards) {
   const abilityText = card.definition?.revealAbility
@@ -805,52 +807,8 @@ function resolveCardRevealAbility(game, player, card, allRevealedCards) {
     return
   }
 
-  // Check for bond pattern: "Faction Bond: effect"
-  const bondMatch = abilityText.match(/^([\w-]+(?:\s+\w+)?)\s+[Bb]ond:\s*(.+)$/i)
-  if (bondMatch) {
-    const bondFaction = constants.normalizeFactionId(bondMatch[1])
-    const bondEffect = bondMatch[2].trim()
-
-    // Check if another revealed card has the same faction affiliation
-    const hasBond = allRevealedCards.some(c =>
-      c !== card && constants.getFactionAffiliations(c).includes(bondFaction)
-    )
-
-    if (!hasBond) {
-      return
-    }
-
-    game.log.add({
-      template: '{card}: {faction} Bond activates',
-      args: { card, faction: bondMatch[1] },
-    })
-
-    // Parse the bond effect — handle swords specially
-    const swordMatch = bondEffect.match(/^\+(\d+)\s+Swords?$/i)
-    if (swordMatch) {
-      const swords = parseInt(swordMatch[1])
-      const { addStrength } = require('../systems/strengthBreakdown.js')
-      addStrength(game, player, 'card', `${card.name} (Bond)`, swords * constants.SWORD_STRENGTH)
-      game.log.add({
-        template: '{player} gains {amount} Sword(s)',
-        args: { player, amount: swords },
-      })
-      return
-    }
-
-    const effects = parseAgentAbility(bondEffect)
-    if (effects) {
-      for (const effect of effects) {
-        resolveEffect(game, player, effect, null, `${card.name} (Bond)`, card)
-      }
-    }
-    return
-  }
-
-  // Non-bond reveal abilities — parse with the same parser
-  const effects = parseAgentAbility(abilityText)
+  const effects = card.definition?.revealEffects
   if (!effects) {
-    // Complex ability — log it
     game.log.add({
       template: 'Reveal ability: {ability}',
       args: { ability: abilityText },
@@ -1729,24 +1687,21 @@ function offerPlotIntrigue(game, player) {
       continue
     }
 
-    const effectText = plotEffect
-    const effects = parseAgentAbility(effectText)
+    const effects = card.definition.plotEffects
+    game.log.indent()
     if (effects) {
-      game.log.indent()
       for (const effect of effects) {
         resolveEffect(game, player, effect, null)
       }
-      game.log.outdent()
     }
     else {
-      game.log.indent()
       game.log.add({
         template: '{effect}',
-        args: { effect: effectText },
+        args: { effect: plotEffect },
         event: 'memo',
       })
-      game.log.outdent()
     }
+    game.log.outdent()
   }
 }
 

@@ -31,4 +31,28 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'influence',
+        faction: 'guild',
+        amount: 2
+      },
+      effects: [
+        {
+          type: 'draw',
+          amount: 2
+        }
+      ]
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'gain',
+      resource: 'spice',
+      amount: 1
+    }
+  ],
 }

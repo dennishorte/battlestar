@@ -19,4 +19,28 @@ module.exports = {
   plotEffect: "+1 Spice",
   combatEffect: null,
   endgameEffect: "If you have 3+ Spice and 2 DNA:\n· +1 Victory Point",
+
+  plotEffects: [
+    {
+      type: 'gain',
+      resource: 'spice',
+      amount: 1
+    }
+  ],
+  endgameEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'has-resource',
+        resource: 'spice',
+        amount: 3
+      },
+      effects: [
+        {
+          type: 'vp',
+          amount: 1
+        }
+      ]
+    }
+  ],
 }

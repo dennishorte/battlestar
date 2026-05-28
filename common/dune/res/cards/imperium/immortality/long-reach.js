@@ -48,4 +48,11 @@ module.exports = {
     }
   },
 
+
+  revealEffects: [
+    {
+      type: 'intrigue',
+      amount: 1
+    }
+  ],
 }

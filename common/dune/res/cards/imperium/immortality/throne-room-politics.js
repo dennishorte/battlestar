@@ -31,4 +31,21 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'troop',
+      amount: 1
+    },
+    {
+      type: 'trash-card'
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'influence',
+      faction: 'bene-gesserit',
+      amount: 1
+    }
+  ],
 }

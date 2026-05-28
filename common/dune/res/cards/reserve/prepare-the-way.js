@@ -16,4 +16,21 @@ module.exports = {
   revealSwords: 0,
   revealAbility: null,
   factionAffiliation: 'bene-gesserit',
+
+  agentEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'influence',
+        faction: 'bene-gesserit',
+        amount: 2
+      },
+      effects: [
+        {
+          type: 'draw',
+          amount: 1
+        }
+      ]
+    }
+  ],
 }

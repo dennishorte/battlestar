@@ -19,4 +19,44 @@ module.exports = {
   plotEffect: null,
   combatEffect: "Pay 2 Solari:\n· +4 Swords",
   endgameEffect: "If you have 10+ Solari:\n· +1 Victory Point",
+
+  combatEffects: [
+    {
+      type: 'choice',
+      choices: [
+        {
+          label: 'Pay 2 Solari:, +4 Swords',
+          cost: {
+            solari: 2
+          },
+          effects: [
+            {
+              type: 'swords',
+              amount: 4
+            }
+          ]
+        },
+        {
+          label: 'Decline',
+          effects: []
+        }
+      ]
+    }
+  ],
+  endgameEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'has-resource',
+        resource: 'solari',
+        amount: 10
+      },
+      effects: [
+        {
+          type: 'vp',
+          amount: 1
+        }
+      ]
+    }
+  ],
 }

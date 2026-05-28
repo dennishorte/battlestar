@@ -19,4 +19,30 @@ module.exports = {
   plotEffect: null,
   combatEffect: "· +2 Swords\n  OR\n· Retreat any number of your Troops",
   endgameEffect: null,
+
+  combatEffects: [
+    {
+      type: 'choice',
+      choices: [
+        {
+          label: '+2 Swords',
+          effects: [
+            {
+              type: 'swords',
+              amount: 2
+            }
+          ]
+        },
+        {
+          label: 'Retreat any number of your Troops',
+          effects: [
+            {
+              type: 'retreat-troops',
+              amount: 99
+            }
+          ]
+        }
+      ]
+    }
+  ],
 }

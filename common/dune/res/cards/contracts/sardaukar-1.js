@@ -8,4 +8,11 @@ module.exports = {
   count: 1,
   reward: 'Draw 2 cards',
   riseOfIxSpecific: false,
+
+  rewardEffects: [
+    {
+      type: 'draw',
+      amount: 2
+    }
+  ],
 }

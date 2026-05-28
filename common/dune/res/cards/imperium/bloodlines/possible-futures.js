@@ -79,4 +79,12 @@ module.exports = {
     resolveEffect(game, player, { type: 'gain', resource: 'water', amount: 1 }, null, card.name)
   },
 
+
+  revealEffects: [
+    {
+      type: 'gain',
+      resource: 'water',
+      amount: 1
+    }
+  ],
 }

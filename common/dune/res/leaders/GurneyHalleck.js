@@ -36,4 +36,11 @@ module.exports = {
       })
     }
   },
+
+  signetRingEffects: [
+    {
+      type: 'troop',
+      amount: 1
+    }
+  ],
 }

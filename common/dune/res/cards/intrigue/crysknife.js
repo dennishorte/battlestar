@@ -34,4 +34,35 @@ module.exports = {
     }
   },
 
+
+  agentEffects: [
+    {
+      type: 'gain',
+      resource: 'solari',
+      amount: 1
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'faction-card-in-play',
+        faction: 'fremen'
+      },
+      effects: [
+        {
+          type: 'influence',
+          faction: 'fremen',
+          amount: 1
+        }
+      ]
+    }
+  ],
+  plotEffects: [
+    {
+      type: 'gain',
+      resource: 'spice',
+      amount: 1
+    }
+  ],
 }

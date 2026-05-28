@@ -31,4 +31,20 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'faction-card-in-play',
+        faction: 'bene-gesserit'
+      },
+      effects: [
+        {
+          type: 'draw',
+          amount: 2
+        }
+      ]
+    }
+  ],
 }

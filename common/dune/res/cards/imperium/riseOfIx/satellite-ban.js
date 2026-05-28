@@ -32,4 +32,26 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'discard-card'
+    },
+    {
+      type: 'gain',
+      resource: 'spice',
+      amount: 1
+    },
+    {
+      type: 'gain',
+      resource: 'water',
+      amount: 1
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'retreat-troops',
+      amount: 2
+    }
+  ],
 }

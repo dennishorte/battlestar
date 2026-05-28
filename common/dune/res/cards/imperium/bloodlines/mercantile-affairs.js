@@ -38,4 +38,19 @@ module.exports = {
   onAcquire(game, player, card, { resolveEffect }) {
     resolveEffect(game, player, { type: 'contract' }, null, card.name)
   },
+
+  agentEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'completed-contract-this-turn'
+      },
+      effects: [
+        {
+          type: 'intrigue',
+          amount: 1
+        }
+      ]
+    }
+  ],
 }

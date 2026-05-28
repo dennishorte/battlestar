@@ -37,4 +37,12 @@ module.exports = {
   onAcquire(game, player, card, { resolveEffect }) {
     resolveEffect(game, player, { type: 'influence', faction: 'emperor', amount: 1 }, null, card.name)
   },
+
+  revealEffects: [
+    {
+      type: 'persuasion-per',
+      amount: 2,
+      per: 'fremen card in play, including this one'
+    }
+  ],
 }

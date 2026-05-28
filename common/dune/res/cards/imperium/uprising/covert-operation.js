@@ -29,4 +29,19 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'opponent-discard',
+      amount: 1
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'spy'
+    },
+    {
+      type: 'spy'
+    }
+  ],
 }

@@ -32,4 +32,48 @@ module.exports = {
   hasContracts: true,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'contract'
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'choice',
+      choices: [
+        {
+          label: '+2 Spice',
+          effects: [
+            {
+              type: 'gain',
+              resource: 'spice',
+              amount: 2
+            }
+          ]
+        },
+        {
+          label: 'If you have completed 4+ Contracts:, Trash this card -> +1 Victory Point',
+          effects: [
+            {
+              type: 'conditional',
+              condition: {
+                type: 'completed-contracts',
+                amount: 4
+              },
+              effects: [
+                {
+                  type: 'trash-self'
+                },
+                {
+                  type: 'vp',
+                  amount: 1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
 }

@@ -19,4 +19,20 @@ module.exports = {
   plotEffect: null,
   combatEffect: null,
   endgameEffect: "If you have completed 4+ Contracts:\n· +1 Victory Point",
+
+  endgameEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'completed-contracts',
+        amount: 4
+      },
+      effects: [
+        {
+          type: 'vp',
+          amount: 1
+        }
+      ]
+    }
+  ],
 }

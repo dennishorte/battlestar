@@ -34,4 +34,13 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'discard-card'
+    },
+    {
+      type: 'trash-card'
+    }
+  ],
 }

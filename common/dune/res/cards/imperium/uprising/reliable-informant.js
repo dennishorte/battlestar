@@ -37,4 +37,12 @@ module.exports = {
     })
   },
 
+
+  revealEffects: [
+    {
+      type: 'gain',
+      resource: 'solari',
+      amount: 1
+    }
+  ],
 }

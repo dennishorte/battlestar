@@ -33,4 +33,29 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'discard-card'
+    },
+    {
+      type: 'draw',
+      amount: 1
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'has-persuasion',
+        amount: 6
+      },
+      effects: [
+        {
+          type: 'troop',
+          amount: 2
+        }
+      ]
+    }
+  ],
 }

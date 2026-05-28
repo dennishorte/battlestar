@@ -1,5 +1,3 @@
-const { parseAgentAbility } = require('./cardEffects.js')
-
 /**
  * Leader system for Dune Imperium: Uprising.
  *
@@ -68,11 +66,9 @@ function assignLeader(game, player, leader) {
  * Resolve the Signet Ring card for a player.
  *
  * Priority order:
- *   1. leader.resolveSignetRing — fully custom resolution (Lady Jessica,
- *      Feyd, Helena, Liet Kynes, Shaddam, Irulan, Margot, Amber, Yuna, Rabban,
- *      Staban).
- *   2. parseAgentAbility on the signetRingAbility text — for simple effects
- *      like "+1 Troop" / "+1 Solari" / "Draw 1 card".
+ *   1. leader.resolveSignetRing — fully custom resolution.
+ *   2. leader.signetRingEffects — static effect array consumed by the
+ *      generic effect runtime.
  *   3. Log the ability text as a memo (manual resolution).
  */
 function resolveSignetRing(game, player, resolveEffectFn) {
@@ -92,33 +88,24 @@ function resolveSignetRing(game, player, resolveEffectFn) {
   })
 
   if (typeof leader.resolveSignetRing === 'function') {
-    leader.resolveSignetRing(game, player, resolveEffectFn, parseAgentAbility)
+    leader.resolveSignetRing(game, player, resolveEffectFn)
     return
   }
 
-  // Signet ring text starts with the ability name followed by a newline,
-  // then bullet-prefixed effects. parseAgentAbility expects just the effect
-  // portion, so strip the leading name line.
-  const effectText = abilityText.includes('\n')
-    ? abilityText.split('\n').slice(1).join('\n')
-    : abilityText
-  const effects = parseAgentAbility(effectText)
-  if (effects) {
-    game.log.indent()
-    for (const effect of effects) {
+  game.log.indent()
+  if (leader.signetRingEffects) {
+    for (const effect of leader.signetRingEffects) {
       resolveEffectFn(game, player, effect, null)
     }
-    game.log.outdent()
   }
   else {
-    game.log.indent()
     game.log.add({
       template: '{effect}',
       args: { effect: abilityText },
       event: 'memo',
     })
-    game.log.outdent()
   }
+  game.log.outdent()
 }
 
 function getLeader(game, player) {

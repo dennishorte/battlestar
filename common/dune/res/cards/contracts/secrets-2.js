@@ -8,4 +8,16 @@ module.exports = {
   count: 1,
   reward: '· +2 Solari\n· Draw a card',
   riseOfIxSpecific: false,
+
+  rewardEffects: [
+    {
+      type: 'gain',
+      resource: 'solari',
+      amount: 2
+    },
+    {
+      type: 'draw',
+      amount: 1
+    }
+  ],
 }

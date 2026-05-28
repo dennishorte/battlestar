@@ -31,4 +31,35 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'gain',
+      resource: 'solari',
+      amount: 3
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'choice',
+      choices: [
+        {
+          label: 'Pay 6 Solari -> +1 Victory Point',
+          cost: {
+            solari: 6
+          },
+          effects: [
+            {
+              type: 'vp',
+              amount: 1
+            }
+          ]
+        },
+        {
+          label: 'Decline',
+          effects: []
+        }
+      ]
+    }
+  ],
 }

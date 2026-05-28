@@ -34,4 +34,12 @@ module.exports = {
     }
   },
 
+
+  plotEffects: [
+    {
+      type: 'gain',
+      resource: 'spice',
+      amount: 1
+    }
+  ],
 }

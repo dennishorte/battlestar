@@ -29,4 +29,16 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'influence',
+      faction: 'bene-gesserit',
+      amount: 1
+    },
+    {
+      type: 'intrigue',
+      amount: 1
+    }
+  ],
 }

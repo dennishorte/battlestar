@@ -33,4 +33,39 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'gained-spice',
+        amount: 2
+      },
+      effects: [
+        {
+          type: 'troop',
+          amount: 1
+        },
+        {
+          type: 'draw',
+          amount: 1
+        }
+      ]
+    }
+  ],
+  revealEffects: [
+    {
+      type: 'conditional',
+      condition: {
+        type: 'faction-card-in-play',
+        faction: 'fremen'
+      },
+      effects: [
+        {
+          type: 'swords',
+          amount: 2
+        }
+      ]
+    }
+  ],
 }
