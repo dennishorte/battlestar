@@ -63,7 +63,7 @@
         <span class="player-name" :title="entry.name">{{ entry.name }}</span>
       </div>
 
-      <div class="stat-label" title="Available / total agents">Agents</div>
+      <div class="stat-label">Agents</div>
       <div v-for="entry in combatants"
            :key="`agt-${entry.name}`"
            class="stat-cell"
@@ -71,7 +71,7 @@
         {{ entry.agentsAvailable }}/{{ entry.agentsTotal }}
       </div>
 
-      <div class="stat-label" title="Intrigue cards in hand">Intrigue</div>
+      <div class="stat-label">Intrigue</div>
       <div v-for="entry in combatants"
            :key="`int-${entry.name}`"
            class="stat-cell"
@@ -79,7 +79,7 @@
         {{ entry.intrigueCount }}
       </div>
 
-      <div class="stat-label" title="Maker Hook">Maker Hook</div>
+      <div class="stat-label">Maker Hook</div>
       <div v-for="entry in combatants"
            :key="`hook-${entry.name}`"
            class="stat-cell"
@@ -89,7 +89,7 @@
         <span v-else class="no-units">—</span>
       </div>
 
-      <div class="stat-label" title="Troops in supply">Supply</div>
+      <div class="stat-label">Supply</div>
       <div v-for="entry in combatants"
            :key="`sup-${entry.name}`"
            class="stat-cell unit-cell"
@@ -99,7 +99,7 @@
         </span>
       </div>
 
-      <div class="stat-label" title="Troops in garrison">Garrison</div>
+      <div class="stat-label">Garrison</div>
       <div v-for="entry in combatants"
            :key="`gar-${entry.name}`"
            class="stat-cell unit-cell"
@@ -109,7 +109,7 @@
         </span>
       </div>
 
-      <div class="stat-label" title="Units in conflict">In Conflict</div>
+      <div class="stat-label">In Conflict</div>
       <div v-for="entry in combatants"
            :key="`con-${entry.name}`"
            class="stat-cell unit-cell"
@@ -125,7 +125,7 @@
         <span v-else class="no-units">—</span>
       </div>
 
-      <div class="stat-label" title="Combat strength">Strength</div>
+      <div class="stat-label">Strength</div>
       <div v-for="entry in combatants"
            :key="`str-${entry.name}`"
            class="stat-cell stat-strength"

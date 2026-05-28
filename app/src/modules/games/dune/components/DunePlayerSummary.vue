@@ -13,7 +13,7 @@
         <span class="first-player" v-if="entry.isFirstPlayer" title="First Player">1st</span>
       </div>
 
-      <div class="stat-label" title="Victory Points">Victory Points</div>
+      <div class="stat-label">Victory Points</div>
       <div v-for="entry in entries"
            :key="`vp-${entry.name}`"
            class="stat-cell vp-cell clickable"
@@ -23,7 +23,7 @@
         {{ entry.vp }}
       </div>
 
-      <div class="stat-label" title="Leader">Leader</div>
+      <div class="stat-label">Leader</div>
       <div v-for="entry in entries"
            :key="`ldr-${entry.name}`"
            class="stat-cell leader-cell"
@@ -36,7 +36,7 @@
         <span v-else class="dim">—</span>
       </div>
 
-      <div class="stat-label" title="Battle Icons (objective + won conflicts)">Battle Icons</div>
+      <div class="stat-label">Battle Icons</div>
       <div v-for="entry in entries"
            :key="`icn-${entry.name}`"
            class="stat-cell icons-cell"
@@ -51,7 +51,7 @@
         <span v-else>—</span>
       </div>
 
-      <div class="stat-label" title="Solari">Solari</div>
+      <div class="stat-label">Solari</div>
       <div v-for="entry in entries"
            :key="`sol-${entry.name}`"
            class="stat-cell resource-cell"
@@ -60,7 +60,7 @@
         <span>{{ entry.solari }}</span>
       </div>
 
-      <div class="stat-label" title="Spice">Spice</div>
+      <div class="stat-label">Spice</div>
       <div v-for="entry in entries"
            :key="`spi-${entry.name}`"
            class="stat-cell resource-cell"
@@ -69,7 +69,7 @@
         <span>{{ entry.spice }}</span>
       </div>
 
-      <div class="stat-label" title="Water">Water</div>
+      <div class="stat-label">Water</div>
       <div v-for="entry in entries"
            :key="`wat-${entry.name}`"
            class="stat-cell resource-cell"
@@ -78,7 +78,7 @@
         <span>{{ entry.water }}</span>
       </div>
 
-      <div class="stat-label" title="Available / total agents">Agents</div>
+      <div class="stat-label">Agents</div>
       <div v-for="entry in entries"
            :key="`agt-${entry.name}`"
            class="stat-cell"
@@ -86,7 +86,7 @@
         {{ entry.agentsAvailable }}/{{ entry.agentsTotal }}
       </div>
 
-      <div class="stat-label" title="Spies in supply">Spies</div>
+      <div class="stat-label">Spies</div>
       <div v-for="entry in entries"
            :key="`spy-${entry.name}`"
            class="stat-cell resource-cell"
@@ -95,7 +95,7 @@
         <span>{{ entry.spiesInSupply }}</span>
       </div>
 
-      <div class="stat-label" title="Intrigue cards">Intrigue</div>
+      <div class="stat-label">Intrigue</div>
       <div v-for="entry in entries"
            :key="`int-${entry.name}`"
            class="stat-cell"
@@ -105,7 +105,7 @@
         {{ entry.intrigueCount }}
       </div>
 
-      <div class="stat-label" title="Contracts">Contracts</div>
+      <div class="stat-label">Contracts</div>
       <div v-for="entry in entries"
            :key="`con-${entry.name}`"
            class="stat-cell"
@@ -115,7 +115,7 @@
         {{ entry.contractsCount }}
       </div>
 
-      <div class="stat-label" title="High Council">High Council</div>
+      <div class="stat-label">High Council</div>
       <div v-for="entry in entries"
            :key="`hc-${entry.name}`"
            class="stat-cell"
