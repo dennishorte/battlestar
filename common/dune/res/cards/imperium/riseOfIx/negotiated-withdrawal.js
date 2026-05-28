@@ -50,6 +50,13 @@ module.exports = {
     }
   },
 
+  previewReveal(game, player) {
+    const deployed = game.state.conflict?.deployedTroops?.[player.name] || 0
+    return deployed >= 3
+      ? { pending: 'Optional: retreat 3 troops → +1 Influence (any faction)' }
+      : {}
+  },
+
   onAcquire(game, player, card, { resolveEffect }) {
     resolveEffect(game, player, { type: 'troop', amount: 1 }, null, card.name)
   },

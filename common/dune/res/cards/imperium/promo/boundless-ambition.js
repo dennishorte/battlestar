@@ -49,4 +49,8 @@ module.exports = {
     game.log.add({ template: '{player}: May acquire a card costing 5 or less', args: { player }, event: 'memo' })
   },
 
+  previewReveal() {
+    return { pending: 'May acquire a card costing 5 Persuasion or less' }
+  },
+
 }

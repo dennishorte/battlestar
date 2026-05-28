@@ -49,4 +49,11 @@ module.exports = {
     }
   },
 
+  previewReveal(game, player) {
+    const canLose = constants.FACTIONS.some(f => player.getInfluence(f) > 0)
+    return canLose
+      ? { pending: 'Optional: -1 Influence with a Faction → +1 Influence with a Faction' }
+      : {}
+  },
+
 }

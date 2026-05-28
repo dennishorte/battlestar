@@ -56,4 +56,10 @@ module.exports = {
     }
   },
 
+  previewReveal(game, player) {
+    return player.spice >= 3
+      ? { pending: 'Optional: spend 3 Spice → +1 Influence (any faction)' }
+      : {}
+  },
+
 }

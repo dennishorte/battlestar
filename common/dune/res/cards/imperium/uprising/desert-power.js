@@ -50,4 +50,15 @@ module.exports = {
     }
   },
 
+  previewReveal(game, player) {
+    // When the sandworm branch is unavailable the engine auto-picks +2
+    // Persuasion (single-choice prompt), so it's deterministic here too.
+    const hasMaker = !!game.state.makerHooks?.[player.name]
+    const canPaySandworm = hasMaker && player.water >= 1
+    if (!canPaySandworm) {
+      return { persuasion: 2 }
+    }
+    return { pending: 'Choice: +2 Persuasion OR pay 1 Water → 1 Sandworm in conflict' }
+  },
+
 }

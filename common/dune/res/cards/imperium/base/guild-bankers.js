@@ -42,4 +42,8 @@ module.exports = {
     game.state.tsmfDiscount += 3
   },
 
+  previewReveal() {
+    return { pending: 'The Spice Must Flow costs 3 Persuasion less this turn' }
+  },
+
 }

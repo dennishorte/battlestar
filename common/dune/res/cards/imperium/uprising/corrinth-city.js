@@ -75,4 +75,12 @@ module.exports = {
     }
   },
 
+  previewReveal(game, player) {
+    const canBuySeat = !player.hasHighCouncil && player.solari >= 5
+    if (!canBuySeat) {
+      return { solari: 5 }
+    }
+    return { pending: 'Choice: +5 Solari OR pay 5 Solari → High Council seat' }
+  },
+
 }

@@ -56,6 +56,10 @@ module.exports = {
     }
   },
 
+  previewReveal() {
+    return { pending: 'If you acquire The Spice Must Flow this turn: +1 Influence with each Faction you are spying on' }
+  },
+
   onAcquire(game, player, card, { resolveEffect }) {
     resolveEffect(game, player, { type: 'spy' }, null, card.name)
   },

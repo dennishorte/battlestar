@@ -213,6 +213,101 @@ describe('previewReveal', () => {
     expect(preview.pending[0].source).toBe('Unswerving Loyalty')
   })
 
+  test('Captured Mentat: pending only when player has influence to lose', () => {
+    const noInfluence = t.fixture()
+    t.setBoard(noInfluence, {
+      dennis: { handExact: ['Captured Mentat', 'Dagger'] },
+    })
+    noInfluence.run()
+    expect(previewReveal(noInfluence, noInfluence.players.byName('dennis')).pending).toEqual([])
+
+    const withInfluence = t.fixture()
+    t.setBoard(withInfluence, {
+      dennis: { handExact: ['Captured Mentat', 'Dagger'], influence: { fremen: 1 } },
+    })
+    withInfluence.run()
+    const pending = previewReveal(withInfluence, withInfluence.players.byName('dennis')).pending
+    expect(pending.length).toBe(1)
+    expect(pending[0].source).toBe('Captured Mentat')
+  })
+
+  test('Spacing Guild Favor: pending only with 3+ Spice', () => {
+    const broke = t.fixture()
+    t.setBoard(broke, { dennis: { handExact: ["Spacing Guild's Favor", 'Dagger'], spice: 2 } })
+    broke.run()
+    expect(previewReveal(broke, broke.players.byName('dennis')).pending).toEqual([])
+
+    const rich = t.fixture()
+    t.setBoard(rich, { dennis: { handExact: ["Spacing Guild's Favor", 'Dagger'], spice: 3 } })
+    rich.run()
+    expect(previewReveal(rich, rich.players.byName('dennis')).pending.length).toBe(1)
+  })
+
+  test('Negotiated Withdrawal: pending only with 3+ deployed troops', () => {
+    const few = t.fixture({ useRiseOfIx: true })
+    t.setBoard(few, {
+      dennis: { handExact: ['Negotiated Withdrawal', 'Dagger'] },
+      conflict: { deployedTroops: { dennis: 2 } },
+    })
+    few.run()
+    expect(previewReveal(few, few.players.byName('dennis')).pending).toEqual([])
+
+    const enough = t.fixture({ useRiseOfIx: true })
+    t.setBoard(enough, {
+      dennis: { handExact: ['Negotiated Withdrawal', 'Dagger'] },
+      conflict: { deployedTroops: { dennis: 3 } },
+    })
+    enough.run()
+    expect(previewReveal(enough, enough.players.byName('dennis')).pending.length).toBe(1)
+  })
+
+  test('In High Places: pending only with 2+ spies on board', () => {
+    const noSpies = t.fixture()
+    t.setBoard(noSpies, { dennis: { handExact: ['In High Places', 'Dagger'] } })
+    noSpies.run()
+    expect(previewReveal(noSpies, noSpies.players.byName('dennis')).pending).toEqual([])
+
+    const twoSpies = t.fixture()
+    t.setBoard(twoSpies, {
+      dennis: { handExact: ['In High Places', 'Dagger'] },
+      spyPosts: { I: ['dennis'], II: ['dennis'] },
+    })
+    twoSpies.run()
+    expect(previewReveal(twoSpies, twoSpies.players.byName('dennis')).pending.length).toBe(1)
+  })
+
+  test('Desert Power: auto +2 persuasion when sandworm branch unavailable', () => {
+    const game = t.fixture()
+    t.setBoard(game, { dennis: { handExact: ['Desert Power', 'Dagger'] } })
+    game.run()
+    const preview = previewReveal(game, game.players.byName('dennis'))
+    expect(preview.totals.persuasion).toBe(2)
+    expect(preview.pending).toEqual([])
+  })
+
+  test('Corrinth City: auto +5 Solari when HC seat already taken', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { handExact: ['Corrinth City', 'Dagger'], hasHighCouncil: true, solari: 10 },
+    })
+    game.run()
+    const preview = previewReveal(game, game.players.byName('dennis'))
+    expect(preview.totals.solari).toBe(5)
+    expect(preview.pending).toEqual([])
+  })
+
+  test('Corrinth City: pending choice when HC seat is available', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { handExact: ['Corrinth City', 'Dagger'], solari: 5 },
+    })
+    game.run()
+    const preview = previewReveal(game, game.players.byName('dennis'))
+    expect(preview.totals.solari).toBe(0)
+    expect(preview.pending.length).toBe(1)
+    expect(preview.pending[0].source).toBe('Corrinth City')
+  })
+
   test('Sardaukar Coordination: per-Emperor-revealed swords auto-resolved', () => {
     const game = t.fixture()
     t.setBoard(game, {

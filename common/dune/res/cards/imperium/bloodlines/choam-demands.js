@@ -51,4 +51,11 @@ module.exports = {
     }
   },
 
+  previewReveal(game, player) {
+    const choam = require('../../../../systems/choam.js')
+    return choam.getCompletedContractCount(game, player) >= 4
+      ? { pending: 'Optional: trash this card → +1 Influence with every Faction' }
+      : {}
+  },
+
 }

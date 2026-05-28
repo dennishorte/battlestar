@@ -70,6 +70,20 @@ module.exports = {
     game.log.add({ template: '{player} gains 3 Persuasion', args: { player } })
   },
 
+  previewReveal(game, player) {
+    let count = 0
+    for (const occupants of Object.values(game.state.spyPosts || {})) {
+      for (const name of (occupants || [])) {
+        if (name === player.name) {
+          count++
+        }
+      }
+    }
+    return count >= 2
+      ? { pending: 'Optional: recall 2 Spies → +3 Persuasion' }
+      : {}
+  },
+
   onAcquire(game, player, card, { resolveEffect }) {
     resolveEffect(game, player, { type: 'spy' }, null, card.name)
   },

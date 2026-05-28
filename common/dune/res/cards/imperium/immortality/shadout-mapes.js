@@ -56,4 +56,20 @@ module.exports = {
     }
   },
 
+  previewReveal(game, player) {
+    const canDeploy = player.troopsInGarrison > 0
+    const canRetreat = (game.state.conflict?.deployedTroops?.[player.name] || 0) > 0
+    if (!canDeploy && !canRetreat) {
+      return {}
+    }
+    const parts = []
+    if (canDeploy) {
+      parts.push('deploy 1 troop')
+    }
+    if (canRetreat) {
+      parts.push('retreat 1 troop')
+    }
+    return { pending: `Optional: ${parts.join(' or ')}` }
+  },
+
 }

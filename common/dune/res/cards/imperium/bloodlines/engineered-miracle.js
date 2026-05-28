@@ -46,4 +46,12 @@ module.exports = {
     }
   },
 
+  previewReveal(game, player) {
+    // The engine checks carried persuasion BEFORE adding this turn's
+    // reveal persuasion to the counter — mirror that here.
+    return player.getCounter('persuasion') >= 6
+      ? { pending: 'Optional: trash this card → acquire from Imperium Row' }
+      : {}
+  },
+
 }

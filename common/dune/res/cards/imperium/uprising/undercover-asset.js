@@ -63,4 +63,8 @@ module.exports = {
     }
   },
 
+  previewReveal() {
+    return { pending: 'Choice: +1 Spy OR +2 Swords' }
+  },
+
 }
