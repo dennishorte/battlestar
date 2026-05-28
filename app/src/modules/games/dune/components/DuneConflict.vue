@@ -17,9 +17,24 @@
         <span class="conflict-tier">Tier {{ conflictCard.tier }}</span>
       </div>
       <div class="rewards" v-if="conflictCard.rewards">
-        <div class="reward-line"><span class="reward-label">1st:</span> {{ conflictCard.rewards.first }}</div>
-        <div class="reward-line"><span class="reward-label">2nd:</span> {{ conflictCard.rewards.second }}</div>
-        <div class="reward-line" v-if="conflictCard.rewards.third" :class="{ 'reward-unavailable': !thirdPlaceAvailable }"><span class="reward-label">3rd:</span> {{ conflictCard.rewards.third }}</div>
+        <div class="reward-block">
+          <div class="reward-label">1st:</div>
+          <ul class="reward-items">
+            <li v-for="(item, i) in splitRewards(conflictCard.rewards.first)" :key="i">{{ item }}</li>
+          </ul>
+        </div>
+        <div class="reward-block">
+          <div class="reward-label">2nd:</div>
+          <ul class="reward-items">
+            <li v-for="(item, i) in splitRewards(conflictCard.rewards.second)" :key="i">{{ item }}</li>
+          </ul>
+        </div>
+        <div class="reward-block" v-if="conflictCard.rewards.third" :class="{ 'reward-unavailable': !thirdPlaceAvailable }">
+          <div class="reward-label">3rd:</div>
+          <ul class="reward-items">
+            <li v-for="(item, i) in splitRewards(conflictCard.rewards.third)" :key="i">{{ item }}</li>
+          </ul>
+        </div>
       </div>
     </div>
     <div v-else class="no-conflict">No active conflict</div>
@@ -231,6 +246,13 @@ export default {
   },
 
   methods: {
+    splitRewards(text) {
+      if (!text) {
+        return []
+      }
+      return text.split(/\s+and\s+/i).map(s => s.trim()).filter(Boolean)
+    },
+
     battleIconLabel(icon) {
       const labels = {
         'desert-mouse': '🐭',
@@ -334,15 +356,25 @@ export default {
   border-top: 1px solid #e0d8c8;
 }
 
-.reward-line {
+.reward-block {
   font-size: .85em;
   color: #4a3a20;
-  padding: .1em 0;
+  padding: .15em 0;
 }
 
 .reward-label {
   font-weight: 600;
   color: #8b6914;
+}
+
+.reward-items {
+  margin: 0;
+  padding-left: 1.2em;
+  list-style-type: disc;
+}
+
+.reward-items li {
+  padding: .05em 0;
 }
 
 .reward-unavailable {
