@@ -35,13 +35,9 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
 
-  agentEffect(game, player) {
+  agentEffect(game, player, card) {
     // With another BG card in play: each opponent discards 2 cards
-    const playedZone = game.zones.byId(`${player.name}.played`)
-    const hasBG = playedZone.cardlist().some(c =>
-      constants.getFactionAffiliations(c).includes('bene-gesserit')
-    )
-    if (hasBG) {
+    if (constants.hasOtherFactionAffiliatedCardInPlay(game, player, card, 'bene-gesserit')) {
       for (const opponent of game.players.all()) {
         if (opponent.name === player.name) {
           continue

@@ -37,11 +37,7 @@ module.exports = {
 
   agentEffect(game, player, card) {
     // If you have another BG card in play, return this card from play to your hand
-    const playedZone = game.zones.byId(`${player.name}.played`)
-    const hasBG = playedZone.cardlist().some(c =>
-      c !== card && constants.getFactionAffiliations(c).includes('bene-gesserit')
-    )
-    if (hasBG) {
+    if (constants.hasOtherFactionAffiliatedCardInPlay(game, player, card, 'bene-gesserit')) {
       const handZone = game.zones.byId(`${player.name}.hand`)
       card.moveTo(handZone)
       game.log.add({

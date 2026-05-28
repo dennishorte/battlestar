@@ -32,13 +32,9 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
 
-  agentEffect(game, player) {
+  agentEffect(game, player, card) {
     // If you have another BG card in play: this card gets all access. +1 Influence with 2 Factions.
-    const playedZone = game.zones.byId(`${player.name}.played`)
-    const hasBG = playedZone.cardlist().some(c =>
-      constants.getFactionAffiliations(c).includes('bene-gesserit')
-    )
-    if (hasBG) {
+    if (constants.hasOtherFactionAffiliatedCardInPlay(game, player, card, 'bene-gesserit')) {
       for (let i = 0; i < 2; i++) {
         const [faction] = game.actions.choose(player, constants.FACTIONS, {
           title: `+1 Influence (${i + 1} of 2)`,
