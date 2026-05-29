@@ -10,7 +10,6 @@ module.exports = {
   onPlay(game, _player) {
     const s = game.cardState(this.id)
     s.clay = 0
-    s.boar = 0
   },
   matches_onAction(game, player, actionId) {
     return game.isAccumulationSpace(actionId)
@@ -20,14 +19,18 @@ module.exports = {
     s.clay = (s.clay || 0) + 1
     while (s.clay >= 4) {
       s.clay -= 4
-      s.boar = (s.boar || 0) + 1
+      player.addCardAnimal(this.id, 'boar', 1)
       game.log.add({
         template: '{player} gets 1 wild boar on {card}',
         args: { player, card: this },
       })
     }
   },
-  getAnimalCapacity(game) {
-    return game.cardState(this.id).boar || 0
+  // Capacity equals the boar currently on the card: prevents adding any new
+  // animals (including via breeding overflow or manual moves), so removed
+  // boar can never go back on. Boar are added directly via addCardAnimal
+  // when the trigger fires.
+  getAnimalCapacity(game, player) {
+    return player.getCardAnimals(this.id).boar || 0
   },
 }
