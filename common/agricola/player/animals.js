@@ -219,7 +219,9 @@ AgricolaPlayer.prototype.getTotalAnimalCapacity = function(animalType) {
     }
   }
 
-  // Card-based holders
+  // Card-based holders. Like pastures, these contribute their FULL capacity
+  // for compatible types — current occupants are already counted by
+  // getTotalAnimals, so totals balance for canPlaceAnimals / overflow checks.
   for (const holding of this.getAnimalHoldingCards()) {
     // Skip if this card doesn't allow this animal type
     if (holding.allowedTypes && !holding.allowedTypes.includes(animalType)) {
@@ -227,10 +229,7 @@ AgricolaPlayer.prototype.getTotalAnimalCapacity = function(animalType) {
     }
 
     if (holding.perTypeLimits) {
-      // Per-type limits: capacity for this type is its specific limit
-      const limit = holding.perTypeLimits[animalType] || 0
-      const current = holding.animals[animalType] || 0
-      capacity += Math.max(0, limit - current)
+      capacity += holding.perTypeLimits[animalType] || 0
     }
     else if (holding.sameTypeOnly) {
       // Same-type-only: skip if card already has a different type
@@ -238,20 +237,17 @@ AgricolaPlayer.prototype.getTotalAnimalCapacity = function(animalType) {
       if (existingType && existingType !== animalType) {
         continue
       }
-      const totalOnCard = Object.values(holding.animals).reduce((s, n) => s + n, 0)
-      capacity += Math.max(0, holding.capacity - totalOnCard)
+      capacity += holding.capacity
     }
     else if (holding.mixedTypes) {
-      // Mixed types: capacity minus animals of other types
+      // Mixed types: full capacity minus slots taken by other types
       const otherCount = Object.entries(holding.animals)
         .filter(([t]) => t !== animalType)
         .reduce((sum, [, n]) => sum + n, 0)
       capacity += Math.max(0, holding.capacity - otherCount)
     }
     else {
-      // Single type (non-mixed, no per-type limits)
-      const totalOnCard = Object.values(holding.animals).reduce((s, n) => s + n, 0)
-      capacity += Math.max(0, holding.capacity - totalOnCard)
+      capacity += holding.capacity
     }
   }
 
