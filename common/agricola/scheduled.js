@@ -174,14 +174,17 @@ Agricola.prototype.offerPlowForFood = function(player, card, foodCost) {
     return
   }
 
-  const choices = [`Plow 1 field for ${cost} food`, 'Skip']
+  const choices = [
+    this.actions.option({ id: 'plow', title: `Plow 1 field for ${cost} food` }),
+    this.actions.option({ id: 'skip', title: 'Skip' }),
+  ]
   const selection = this.actions.choose(player, choices, {
     title: `${card.name}: Plow for food?`,
     min: 1,
     max: 1,
   })
 
-  if (selection[0] !== 'Skip') {
+  if (selection[0].id !== 'skip') {
     player.payCost({ food: cost })
     this.actions.plowField(player, { immediate: true })
   }
@@ -191,14 +194,17 @@ Agricola.prototype.offerPlowForFood = function(player, card, foodCost) {
  * Offer player a scheduled plow (Handplow)
  */
 Agricola.prototype.offerScheduledPlow = function(player) {
-  const choices = ['Plow 1 field (Handplow)', 'Skip']
+  const choices = [
+    this.actions.option({ id: 'plow', title: 'Plow 1 field (Handplow)' }),
+    this.actions.option({ id: 'skip', title: 'Skip' }),
+  ]
   const selection = this.actions.choose(player, choices, {
     title: 'Handplow: Plow scheduled field?',
     min: 1,
     max: 1,
   })
 
-  if (selection[0] === 'Plow 1 field (Handplow)') {
+  if (selection[0].id === 'plow') {
     this.actions.plowField(player, { immediate: true })
   }
 }
@@ -224,14 +230,17 @@ Agricola.prototype.offerScheduledStoneRoom = function(player) {
     return
   }
 
-  const choices = ['Build free stone room (Hawktower)', 'Skip']
+  const choices = [
+    this.actions.option({ id: 'build', title: 'Build free stone room (Hawktower)' }),
+    this.actions.option({ id: 'skip', title: 'Skip' }),
+  ]
   const selection = this.actions.choose(player, choices, {
     title: 'Hawktower: Build free stone room?',
     min: 1,
     max: 1,
   })
 
-  if (selection[0] === 'Build free stone room (Hawktower)') {
+  if (selection[0].id === 'build') {
     const spaceChoices = validSpaces.map(s => `${s.row},${s.col}`)
 
     const selector = {

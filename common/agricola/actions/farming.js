@@ -492,17 +492,19 @@ AgricolaActionManager.prototype.bakeBread = function(player) {
     }
     else {
       // Multiple improvements or continuation: let player choose
-      const choices = available.map(i => i.name)
-      choices.push('Done baking')
+      const choices = available.map(i => this.option({
+        id: i.id, title: i.name, kind: 'baking-improvement',
+      }))
+      choices.push(this.option({ id: 'done', title: 'Done baking' }))
       const selection = this.choose(player, choices, {
         title: 'Which baking improvement to use?',
         min: 1,
         max: 1,
       })
-      if (selection[0] === 'Done baking') {
+      if (selection[0].id === 'done') {
         break
       }
-      imp = available.find(i => i.name === selection[0])
+      imp = available.find(i => i.id === selection[0].id)
     }
 
     usedImprovements.add(imp.id)
@@ -512,9 +514,9 @@ AgricolaActionManager.prototype.bakeBread = function(player) {
       const maxBake = imp.bakingConversion.limit || player.grain
       const choices = []
       for (let i = 1; i <= Math.min(maxBake, player.grain); i++) {
-        choices.push(`Bake ${i} grain`)
+        choices.push(this.option({ id: `bake-${i}`, title: `Bake ${i} grain` }))
       }
-      choices.push('Do not bake')
+      choices.push(this.option({ id: 'skip', title: 'Do not bake' }))
       return choices
     }, {
       title: 'How much grain to bake?',
@@ -522,14 +524,14 @@ AgricolaActionManager.prototype.bakeBread = function(player) {
       max: 1,
     })
 
-    if (selection[0] === 'Do not bake') {
+    if (selection[0].id === 'skip') {
       if (totalBaked === 0 && available.length <= 1) {
         break
       }
       continue
     }
 
-    const amount = parseInt(selection[0].split(' ')[1])
+    const amount = parseInt(selection[0].id.slice('bake-'.length))
     const food = player.bakeGrain(amount, imp)
     totalBaked += amount
 
@@ -577,18 +579,18 @@ AgricolaActionManager.prototype.sowAndOrBake = function(player) {
       return true
     }
 
-    const choices = ['Sow and/or Bake Bread']
+    const choices = [this.option({ id: 'sow-bake', title: 'Sow and/or Bake Bread' })]
     if (canSow) {
-      choices.push('Build Fences instead of Sowing')
+      choices.push(this.option({ id: 'fences-not-sow', title: 'Build Fences instead of Sowing' }))
     }
     if (canBake) {
-      choices.push('Build Fences instead of Baking')
+      choices.push(this.option({ id: 'fences-not-bake', title: 'Build Fences instead of Baking' }))
     }
 
     const selection = this.choose(player, choices, { title: 'Agrarian Fences', min: 1, max: 1 })
-    const choice = selection[0]
+    const choiceId = selection[0].id
 
-    if (choice === 'Build Fences instead of Sowing') {
+    if (choiceId === 'fences-not-sow') {
       this.buildFences(player)
       const canBakeNow = (player.hasBakingAbility() && player.grain >= 1) || hasBakeReplacement
       if (canBakeNow) {
@@ -596,7 +598,7 @@ AgricolaActionManager.prototype.sowAndOrBake = function(player) {
       }
       return true
     }
-    if (choice === 'Build Fences instead of Baking') {
+    if (choiceId === 'fences-not-bake') {
       if (canSow) {
         this.sow(player)
       }
@@ -632,14 +634,17 @@ AgricolaActionManager.prototype.plowAndOrSow = function(player) {
 
   // Ask if player wants to plow (if possible)
   if (canPlow) {
-    const plowChoices = ['Plow a field', 'Skip plowing']
+    const plowChoices = [
+      this.option({ id: 'plow', title: 'Plow a field' }),
+      this.option({ id: 'skip', title: 'Skip plowing' }),
+    ]
     const plowSelection = this.choose(player, plowChoices, {
       title: 'Plow a field?',
       min: 1,
       max: 1,
     })
 
-    if (plowSelection[0] === 'Plow a field') {
+    if (plowSelection[0].id === 'plow') {
       let plowCount = 1
       for (const card of this.game.getPlayerActiveCards(player)) {
         if (card.hasHook('modifyPlowCount')) {

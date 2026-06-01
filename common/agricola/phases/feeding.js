@@ -25,7 +25,9 @@ Agricola.prototype.feedingPhase = function() {
     if (this.settings.version < 6) {
       const hasAnytimeActions = this.getAnytimeActions(player).some(a => !a.passive)
       if (hasAnytimeActions && player.food >= required) {
-        this.actions.choose(player, ['Feed family'], {
+        this.actions.choose(player, [
+          this.actions.option({ id: 'feed', title: 'Feed family' }),
+        ], {
           title: `Feed family (${player.food}/${required} food)`,
           min: 1, max: 1,
         })
@@ -59,6 +61,23 @@ Agricola.prototype.feedingPhase = function() {
   }
 
   this.log.outdent()
+}
+
+function _foodOptionId(opt) {
+  if (opt.type === 'organize-farmyard') {
+    return 'organize-farmyard'
+  }
+  const parts = [opt.type]
+  if (opt.improvementId) {
+    parts.push(opt.improvementId)
+  }
+  if (opt.cardName) {
+    parts.push(opt.cardName.toLowerCase().replace(/\s+/g, '-'))
+  }
+  if (opt.resource) {
+    parts.push(opt.resource)
+  }
+  return parts.join(':')
 }
 
 Agricola.prototype.allowFoodConversion = function(player, required) {
@@ -115,7 +134,9 @@ Agricola.prototype.allowFoodConversion = function(player, required) {
       if (canContinueAfterEnoughFood) {
         const hasAnytimeActions = this.getAnytimeActions(player).length > 0
         if (hasAnytimeActions) {
-          this.actions.choose(player, ['Done converting'], {
+          this.actions.choose(player, [
+            this.actions.option({ id: 'done', title: 'Done converting' }),
+          ], {
             title: `Need ${required - player.food} more food`,
             min: 1, max: 1,
           })
@@ -124,11 +145,16 @@ Agricola.prototype.allowFoodConversion = function(player, required) {
       break
     }
 
-    // Build choice strings with function wrapper so they refresh after anytime actions
+    // Build choice options with function wrapper so they refresh after anytime actions
     const choicesFn = () => {
       const currentOptions = getOptions()
-      const choices = currentOptions.map(opt => opt.description)
-      choices.push(player.food >= required ? 'Feed family' : 'Done converting')
+      const choices = currentOptions.map(opt => this.actions.option({
+        id: _foodOptionId(opt),
+        title: opt.description,
+      }))
+      const exitId = 'done'
+      const exitTitle = player.food >= required ? 'Feed family' : 'Done converting'
+      choices.push(this.actions.option({ id: exitId, title: exitTitle }))
       return choices
     }
 
@@ -141,15 +167,19 @@ Agricola.prototype.allowFoodConversion = function(player, required) {
       max: 1,
     })
 
-    const choice = selection[0]
+    const sel = selection[0]
+    const choiceId = (sel && typeof sel === 'object') ? sel.id : sel
 
-    if (choice === 'Done converting' || choice === 'Feed family') {
+    // Legacy bare-string responses (test mocks): match by title.
+    if (choiceId === 'done' || choiceId === 'Feed family' || choiceId === 'Done converting') {
       break
     }
 
-    // Find the matching option and execute it
+    // Find the matching option and execute it (match by id or by description for legacy mocks).
     const currentOptions = getOptions()
-    const selectedOption = currentOptions.find(opt => opt.description === choice)
+    const selectedOption = currentOptions.find(opt =>
+      _foodOptionId(opt) === choiceId || opt.description === choiceId
+    )
     if (selectedOption) {
       if (selectedOption.type === 'organize-farmyard') {
         this.actions.promptAnimalReorganization(player)

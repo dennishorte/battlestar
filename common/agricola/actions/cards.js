@@ -68,13 +68,16 @@ AgricolaActionManager.prototype._completeMajorPurchase = function(player, improv
   else {
     const affordableOptions = player.getAffordableMajorImprovementCostOptions(improvementId)
     if (affordableOptions.length > 1) {
-      const costChoices = affordableOptions.map(opt => this._formatCostLabel(opt.cost))
+      const costChoices = affordableOptions.map((opt, idx) => this.option({
+        id: `cost-${idx}`,
+        title: this._formatCostLabel(opt.cost),
+      }))
       const selection = this.choose(player, costChoices, {
         title: `Choose payment for ${imp.name}`,
         min: 1,
         max: 1,
       })
-      const selectedIdx = costChoices.indexOf(selection[0])
+      const selectedIdx = Number(selection[0].id.slice('cost-'.length))
       impCost = affordableOptions[selectedIdx].cost
     }
     else {
@@ -132,9 +135,9 @@ AgricolaActionManager.prototype.buyMajorImprovement = function(player, available
       .filter(id => player.canBuyMajorImprovement(id))
     const choices = curAffordable.map(id => {
       const imp = this.game.cards.byId(id)
-      return imp.name + ` (${id})`
+      return this.option({ id, title: `${imp.name} (${id})`, kind: 'major-improvement' })
     })
-    choices.push('Do not buy')
+    choices.push(this.option({ id: 'do-not-buy', title: 'Do not buy' }))
     return choices
   }, {
     title: 'Choose a major improvement',
@@ -142,14 +145,12 @@ AgricolaActionManager.prototype.buyMajorImprovement = function(player, available
     max: 1,
   })
 
-  if (selection[0] === 'Do not buy') {
+  const improvementId = selection[0].id
+
+  if (improvementId === 'do-not-buy') {
     this.log.addDoNothing(player, 'buy an improvement')
     return true
   }
-
-  // Extract ID from selection
-  const idMatch = selection[0].match(/\(([^)]+)\)/)
-  const improvementId = idMatch ? idMatch[1] : null
 
   if (improvementId) {
     return this._completeMajorPurchase(player, improvementId)
@@ -173,13 +174,16 @@ AgricolaActionManager.prototype.offerUseOtherSpace = function(player, card, othe
     return
   }
   const costLabel = opts.cost ? ` (pay ${Object.entries(opts.cost).map(([r, n]) => `${n} ${r}`).join(', ')})` : ''
-  const choices = [`Use ${action.name}${costLabel}`, 'Skip']
+  const choices = [
+    this.option({ id: 'use', title: `Use ${action.name}${costLabel}` }),
+    this.option({ id: 'skip', title: 'Skip' }),
+  ]
   const selection = this.choose(player, choices, {
     title: `${card.name}: Use other space with same person?`,
     min: 1,
     max: 1,
   })
-  if (selection[0] === 'Skip') {
+  if (selection[0].id === 'skip') {
     return
   }
   if (opts.cost) {
@@ -384,13 +388,17 @@ AgricolaActionManager.prototype.playOccupation = function(player, options = {}) 
   }
 
   // Build choices with card names
-  const choices = playableOccupations.map(cardId => {
-    const card = this.game.cards.byId(cardId)
-    return card ? card.name : cardId
+  const choices = playableOccupations.map(id => {
+    const card = this.game.cards.byId(id)
+    return this.option({
+      id,
+      title: card ? card.name : id,
+      kind: 'occupation',
+    })
   })
 
   // Add option to not play
-  choices.push('Do not play an occupation')
+  choices.push(this.option({ id: 'do-not-play', title: 'Do not play an occupation' }))
 
   const selection = this.choose(player, choices, {
     title: options.free ? 'Play an Occupation (free)' : (cost > 0 ? `Play an Occupation (costs ${cost} food)` : 'Play an Occupation (free)'),
@@ -398,18 +406,14 @@ AgricolaActionManager.prototype.playOccupation = function(player, options = {}) 
     max: 1,
   })
 
-  const selectedName = selection[0]
+  const selectedId = selection[0].id
 
-  if (selectedName === 'Do not play an occupation') {
+  if (selectedId === 'do-not-play') {
     this.log.addDoNothing(player, 'play an occupation')
     return false
   }
 
-  // Find the card id by name
-  const cardId = playableOccupations.find(id => {
-    const card = this.game.cards.byId(id)
-    return card && card.name === selectedName
-  })
+  const cardId = playableOccupations.find(id => id === selectedId)
 
   if (!cardId) {
     return false
@@ -430,13 +434,13 @@ AgricolaActionManager.prototype.playOccupation = function(player, options = {}) 
         const paySelection = this.choose(player, () => {
           const payChoices = []
           if (player.food >= amount) {
-            payChoices.push(`Pay ${amount} food`)
+            payChoices.push(this.option({ id: 'pay-food', title: `Pay ${amount} food` }))
           }
           if (player.wood >= amount) {
-            payChoices.push(`Pay ${amount} wood`)
+            payChoices.push(this.option({ id: 'pay-wood', title: `Pay ${amount} wood` }))
           }
           if (payChoices.length === 0) {
-            payChoices.push(`Pay ${amount} food`)
+            payChoices.push(this.option({ id: 'pay-food', title: `Pay ${amount} food` }))
           }
           return payChoices
         }, {
@@ -444,7 +448,7 @@ AgricolaActionManager.prototype.playOccupation = function(player, options = {}) 
           min: 1,
           max: 1,
         })
-        if (paySelection[0] === `Pay ${amount} wood`) {
+        if (paySelection[0].id === 'pay-wood') {
           player.payCost({ wood: amount })
         }
         else {
@@ -468,32 +472,29 @@ AgricolaActionManager.prototype.playOccupation = function(player, options = {}) 
         const payChoices = []
         // Standard food payment (if affordable)
         if (player.food >= cost) {
-          payChoices.push(`Pay ${cost} food`)
+          payChoices.push(this.option({ id: 'pay-food', title: `Pay ${cost} food` }))
         }
         // Building resource substitution options
         for (const res of affordableResources) {
-          if (remainingFood > 0) {
-            payChoices.push(`Pay 1 ${res} + ${remainingFood} food`)
+          const title = remainingFood > 0 ? `Pay 1 ${res} + ${remainingFood} food` : `Pay 1 ${res}`
+          payChoices.push(this.option({ id: `pay-${res}`, title }))
+        }
+
+        const applyPayment = (id) => {
+          if (id === 'pay-food') {
+            player.payCost({ food: cost })
+            return
           }
-          else {
-            payChoices.push(`Pay 1 ${res}`)
-          }
+          const res = id.slice('pay-'.length)
+          player.payCost({ [res]: 1, ...(remainingFood > 0 ? { food: remainingFood } : {}) })
+          this.log.add({
+            template: '{player} pays 1 {resource} in place of {amount} food via {card}',
+            args: { player, resource: res, amount: foodReduction, card: 'Working Gloves' },
+          })
         }
 
         if (payChoices.length === 1) {
-          // Auto-select if only one option
-          const choice = payChoices[0]
-          if (choice === `Pay ${cost} food`) {
-            player.payCost({ food: cost })
-          }
-          else {
-            const res = affordableResources.find(r => choice.includes(r))
-            player.payCost({ [res]: 1, ...(remainingFood > 0 ? { food: remainingFood } : {}) })
-            this.log.add({
-              template: '{player} pays 1 {resource} in place of {amount} food via {card}',
-              args: { player, resource: res, amount: foodReduction, card: 'Working Gloves' },
-            })
-          }
+          applyPayment(payChoices[0].id)
         }
         else {
           const paySelection = this.choose(player, payChoices, {
@@ -501,18 +502,7 @@ AgricolaActionManager.prototype.playOccupation = function(player, options = {}) 
             min: 1,
             max: 1,
           })
-          const selected = paySelection[0]
-          if (selected === `Pay ${cost} food`) {
-            player.payCost({ food: cost })
-          }
-          else {
-            const res = affordableResources.find(r => selected.includes(r))
-            player.payCost({ [res]: 1, ...(remainingFood > 0 ? { food: remainingFood } : {}) })
-            this.log.add({
-              template: '{player} pays 1 {resource} in place of {amount} food via {card}',
-              args: { player, resource: res, amount: foodReduction, card: 'Working Gloves' },
-            })
-          }
+          applyPayment(paySelection[0].id)
         }
       }
       else {
@@ -681,7 +671,7 @@ AgricolaActionManager.prototype.buyMinorImprovement = function(player) {
         })
       }
 
-      nestedChoices.push('Do not play an improvement')
+      nestedChoices.push(this.option({ id: 'do-not-play', title: 'Do not play an improvement' }))
       return nestedChoices
     }, {
       title: 'Play a Minor Improvement',
@@ -691,7 +681,7 @@ AgricolaActionManager.prototype.buyMinorImprovement = function(player) {
 
     const choice = selection[0]
 
-    if (choice === 'Do not play an improvement') {
+    if (choice && choice.id === 'do-not-play') {
       this.log.addDoNothing(player, 'play an improvement')
       return false
     }
@@ -747,11 +737,11 @@ AgricolaActionManager.prototype.buyMinorImprovement = function(player) {
   // Build choices with function wrapper (minor affordability may change via anytime conversion)
   const selection = this.choose(player, () => {
     const currentPlayable = minorInHand.filter(cardId => player.canPlayCard(cardId))
-    const choices = currentPlayable.map(cardId => {
-      const card = this.game.cards.byId(cardId)
-      return card ? card.name : cardId
+    const choices = currentPlayable.map(id => {
+      const card = this.game.cards.byId(id)
+      return this.option({ id, title: card ? card.name : id, kind: 'minor-improvement' })
     })
-    choices.push('Do not play a minor improvement')
+    choices.push(this.option({ id: 'do-not-play', title: 'Do not play a minor improvement' }))
     return choices
   }, {
     title: 'Play a Minor Improvement',
@@ -759,21 +749,15 @@ AgricolaActionManager.prototype.buyMinorImprovement = function(player) {
     max: 1,
   })
 
-  const selectedName = selection[0]
+  const cardId = selection[0].id
 
-  if (selectedName === 'Do not play a minor improvement') {
+  if (cardId === 'do-not-play') {
     this.log.addDoNothing(player, 'play a minor improvement')
     return false
   }
 
-  // Find the card id by name (re-filter to get current playable list)
-  const currentPlayable = minorInHand.filter(cardId => player.canPlayCard(cardId))
-  const cardId = currentPlayable.find(id => {
-    const card = this.game.cards.byId(id)
-    return card && card.name === selectedName
-  })
-
-  if (!cardId) {
+  const currentPlayable = minorInHand.filter(id => player.canPlayCard(id))
+  if (!currentPlayable.includes(cardId)) {
     return false
   }
 
@@ -912,7 +896,7 @@ AgricolaActionManager.prototype.buyImprovement = function(player, allowMajor, al
     }
 
     // Add option to not play
-    nestedChoices.push('Do not play an improvement')
+    nestedChoices.push(this.option({ id: 'do-not-play', title: 'Do not play an improvement' }))
 
     return nestedChoices
   }, {
@@ -924,7 +908,7 @@ AgricolaActionManager.prototype.buyImprovement = function(player, allowMajor, al
   const choice = selection[0]
 
   // Handle "do not play" choice
-  if (choice === 'Do not play an improvement') {
+  if (choice && choice.id === 'do-not-play') {
     this.log.addDoNothing(player, 'play an improvement')
     return false
   }
@@ -988,9 +972,9 @@ AgricolaActionManager.prototype._offerSecondMajorFromCard = function(player, jus
 
     const choices = otherIds.map(id => {
       const imp = this.game.cards.byId(id)
-      return `Also build ${imp.name}`
+      return this.option({ id, title: `Also build ${imp.name}`, kind: 'major-improvement' })
     })
-    choices.push('Skip')
+    choices.push(this.option({ id: 'skip', title: 'Skip' }))
 
     const selection = this.choose(player, choices, {
       title: card.name,
@@ -998,14 +982,11 @@ AgricolaActionManager.prototype._offerSecondMajorFromCard = function(player, jus
       max: 1,
     })
 
-    if (selection[0] === 'Skip') {
+    const chosenId = selection[0].id
+    if (chosenId === 'skip') {
       return
     }
-
-    // Extract the chosen improvement
-    const chosenName = selection[0].replace('Also build ', '')
-    const chosenId = otherIds.find(id => this.game.cards.byId(id).name === chosenName)
-    if (!chosenId) {
+    if (!otherIds.includes(chosenId)) {
       return
     }
 
@@ -1035,15 +1016,15 @@ AgricolaActionManager.prototype._offerRecruitmentFamilyGrowth = function(player)
   )
 
   const selection = this.choose(player, [
-    `Family Growth (${card.name})`,
-    'Play an Improvement',
+    this.option({ id: 'growth', title: `Family Growth (${card.name})` }),
+    this.option({ id: 'improvement', title: 'Play an Improvement' }),
   ], {
     title: card.name,
     min: 1,
     max: 1,
   })
 
-  if (selection[0] === 'Play an Improvement') {
+  if (selection[0].id === 'improvement') {
     return false
   }
 

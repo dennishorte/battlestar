@@ -86,20 +86,20 @@ Agricola.prototype.postBreedingPhase = function() {
 
       const currentAnimals = player.getAllAnimals()
       if (currentAnimals.sheep > 0) {
-        options.push('Cook 1 sheep')
+        options.push(this.actions.option({ id: 'sheep', title: 'Cook 1 sheep' }))
       }
       if (currentAnimals.boar > 0) {
-        options.push('Cook 1 boar')
+        options.push(this.actions.option({ id: 'boar', title: 'Cook 1 boar' }))
       }
       if (currentAnimals.cattle > 0) {
-        options.push('Cook 1 cattle')
+        options.push(this.actions.option({ id: 'cattle', title: 'Cook 1 cattle' }))
       }
 
       if (options.length === 0) {
         break
       }
 
-      options.push('Done cooking')
+      options.push(this.actions.option({ id: 'done', title: 'Done cooking' }))
 
       const selection = this.actions.choose(player, options, {
         title: 'Cook animals after breeding? (optional)',
@@ -107,29 +107,15 @@ Agricola.prototype.postBreedingPhase = function() {
         max: 1,
       })
 
-      const choice = selection[0]
+      const choiceId = selection[0].id
 
-      if (choice === 'Done cooking') {
+      if (choiceId === 'done') {
         wantsToCook = false
       }
-      else if (choice === 'Cook 1 sheep') {
-        const food = player.cookAnimal('sheep', 1)
+      else {
+        const food = player.cookAnimal(choiceId, 1)
         this.log.add({
-          template: '{player} cooks 1 sheep for {food} food',
-          args: { player, food },
-        })
-      }
-      else if (choice === 'Cook 1 boar') {
-        const food = player.cookAnimal('boar', 1)
-        this.log.add({
-          template: '{player} cooks 1 boar for {food} food',
-          args: { player, food },
-        })
-      }
-      else if (choice === 'Cook 1 cattle') {
-        const food = player.cookAnimal('cattle', 1)
-        this.log.add({
-          template: '{player} cooks 1 cattle for {food} food',
+          template: `{player} cooks 1 ${choiceId} for {food} food`,
           args: { player, food },
         })
       }

@@ -695,12 +695,12 @@ Game.prototype.chooseColor = function(player) {
 
   const availableColors = Object.entries(playerColors)
     .filter(([, hex]) => !this.players.all().some(p => p.color === hex))
-    .map(([name]) => name)
+    .map(([name]) => this.actions.option({ id: name, title: name, kind: 'color' }))
 
   const chosen = this.actions.choose(player, availableColors, {
     title: 'Choose a player color',
   })
-  player.color = playerColors[chosen]
+  player.color = playerColors[chosen[0].id]
 }
 
 

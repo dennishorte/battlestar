@@ -52,6 +52,9 @@ describe('Agricola End-to-End', () => {
       throw new Error(`No choice matching "${pattern}" for ${selector.actor}. Title: "${selector.title}". Available: ${availableLabels.join(', ')}`)
     }
 
+    if (typeof match === 'object' && match.id) {
+      return respond(game, { title: match.title, id: match.id })
+    }
     const label = typeof match === 'string' ? match : match.title
     return respond(game, label)
   }
@@ -65,6 +68,35 @@ describe('Agricola End-to-End', () => {
       return null
     }
     return request.selectors[0]?.actor
+  }
+
+  // Common helpers for handling structured + bare-string choices.
+  function titleOf(c) {
+    return typeof c === 'string' ? c : (c.title || '')
+  }
+  function isNested(c) {
+    return c && typeof c === 'object' && Array.isArray(c.choices)
+  }
+  function sendChoice(game, choice) {
+    if (choice && typeof choice === 'object' && choice.id) {
+      return respond(game, { title: choice.title, id: choice.id })
+    }
+    return respond(game, typeof choice === 'string' ? choice : choice.title)
+  }
+  function findSkippy(choices, words) {
+    return choices.find(c => {
+      if (isNested(c)) {
+        return false
+      }
+      const t = titleOf(c)
+      return words.some(w => t.includes(w))
+    })
+  }
+  function firstFlat(choices) {
+    return choices.find(c => !isNested(c)) || choices[0]
+  }
+  function matchByText(choices, pred) {
+    return choices.find(c => !isNested(c) && pred(titleOf(c)))
   }
 
 
@@ -108,74 +140,59 @@ describe('Agricola End-to-End', () => {
 
         let picked = false
         for (const preferred of preferredActions) {
-          const match = choices.find(c => {
-            const label = typeof c === 'string' ? c : (c.title || '')
-            return label.toLowerCase().includes(preferred)
-          })
+          const match = matchByText(choices, t => t.toLowerCase().includes(preferred))
           if (match) {
-            const label = typeof match === 'string' ? match : match.title
-            result = respond(game, label)
+            result = sendChoice(game, match)
             picked = true
             break
           }
         }
 
         if (!picked) {
-          // Just pick first available action
-          const first = choices[0]
-          result = respond(game, typeof first === 'string' ? first : first.title)
+          result = sendChoice(game, firstFlat(choices))
         }
       }
       else if (title.includes('more food')) {
         // Feeding phase - convert grain or say done
-        const grainOpt = choices.find(c => c.includes('grain'))
-        const vegOpt = choices.find(c => c.includes('vegetable') && !c.includes('Cook'))
-        const doneOpt = choices.find(c => c.includes('Done'))
+        const grainOpt = matchByText(choices, t => t.includes('grain'))
+        const vegOpt = matchByText(choices, t => t.includes('vegetable') && !t.includes('Cook'))
+        const doneOpt = matchByText(choices, t => t.includes('Done'))
 
         if (grainOpt) {
-          result = respond(game, grainOpt)
+          result = sendChoice(game, grainOpt)
         }
         else if (vegOpt) {
-          result = respond(game, vegOpt)
+          result = sendChoice(game, vegOpt)
         }
         else if (doneOpt) {
-          result = respond(game, doneOpt)
+          result = sendChoice(game, doneOpt)
         }
         else {
-          result = respond(game, choices[0])
+          result = sendChoice(game, firstFlat(choices))
         }
       }
       else if (title.includes('field') || title.includes('plow')) {
         // Field selection - pick first or skip if optional
-        const skipOpt = choices.find(c => c.includes('Done') || c.includes('Skip') || c.includes('Cancel'))
-        result = respond(game, skipOpt || choices[0])
+        const skipOpt = findSkippy(choices, ['Done', 'Skip', 'Cancel'])
+        result = sendChoice(game, skipOpt || firstFlat(choices))
       }
       else if (title.includes('resource') || title.includes('Choose')) {
         // Resource choice - pick first
-        result = respond(game, choices[0])
+        result = sendChoice(game, firstFlat(choices))
       }
       else if (title.includes('improvement') || title.includes('Improvement')) {
         // Improvement selection - look for "Do not play" option first, then pick any valid choice
-        const skipOpt = choices.find(c => typeof c === 'string' && (c.includes('Do not') || c.includes('Skip') || c.includes('Cancel')))
-        if (skipOpt) {
-          result = respond(game, skipOpt)
-        }
-        else {
-          // Find the first string choice (non-nested)
-          const stringChoice = choices.find(c => typeof c === 'string')
-          result = respond(game, stringChoice || choices[0])
-        }
+        const skipOpt = findSkippy(choices, ['Do not', 'Skip', 'Cancel'])
+        result = sendChoice(game, skipOpt || firstFlat(choices))
       }
       else {
         // Default: Look for skip options first, then pick first valid choice
-        const skipOpt = choices.find(c => typeof c === 'string' && (c.includes('Do not') || c.includes('Done') || c.includes('Skip') || c.includes('Cancel')))
+        const skipOpt = findSkippy(choices, ['Do not', 'Done', 'Skip', 'Cancel'])
         if (skipOpt) {
-          result = respond(game, skipOpt)
+          result = sendChoice(game, skipOpt)
         }
         else {
-          // Find the first string choice (non-nested) or fall back to first choice
-          const stringChoice = choices.find(c => typeof c === 'string')
-          result = respond(game, stringChoice || choices[0])
+          result = sendChoice(game, firstFlat(choices))
         }
       }
     }
@@ -265,14 +282,8 @@ describe('Agricola End-to-End', () => {
       }
       else {
         // Default: Look for skip options first (handles improvement prompts)
-        const skipOpt = choices.find(c => typeof c === 'string' && (c.includes('Do not') || c.includes('Done') || c.includes('Skip')))
-        if (skipOpt) {
-          result = respond(game, skipOpt)
-        }
-        else {
-          const stringChoice = choices.find(c => typeof c === 'string')
-          result = respond(game, stringChoice || choices[0])
-        }
+        const skipOpt = findSkippy(choices, ['Do not', 'Done', 'Skip'])
+        result = sendChoice(game, skipOpt || firstFlat(choices))
       }
     }
 
@@ -297,14 +308,8 @@ describe('Agricola End-to-End', () => {
       const selector = result.selectors[0]
       const choices = selector.choices || []
       // Look for skip options first (handles improvement prompts with nested choices)
-      const skipOpt = choices.find(c => typeof c === 'string' && (c.includes('Do not') || c.includes('Done') || c.includes('Skip')))
-      if (skipOpt) {
-        result = respond(game, skipOpt)
-      }
-      else {
-        const stringChoice = choices.find(c => typeof c === 'string')
-        result = respond(game, stringChoice || choices[0])
-      }
+      const skipOpt = findSkippy(choices, ['Do not', 'Done', 'Skip'])
+      result = sendChoice(game, skipOpt || firstFlat(choices))
     }
 
     // Continue to round 2
@@ -463,14 +468,8 @@ describe('Agricola End-to-End', () => {
 
       const choices = selector.choices || []
       // Look for skip options first (handles improvement prompts with nested choices)
-      const skipOpt = choices.find(c => typeof c === 'string' && (c.includes('Do not') || c.includes('Done') || c.includes('Skip')))
-      if (skipOpt) {
-        result = respond(game, skipOpt)
-      }
-      else {
-        const stringChoice = choices.find(c => typeof c === 'string')
-        result = respond(game, stringChoice || choices[0])
-      }
+      const skipOpt = findSkippy(choices, ['Do not', 'Done', 'Skip'])
+      result = sendChoice(game, skipOpt || firstFlat(choices))
     }
 
     expect(result).toBeInstanceOf(GameOverEvent)

@@ -52,13 +52,17 @@ class AgricolaActionManager extends BaseActionManager {
       modified[buildingResources[0]] = Math.max(0, modified[buildingResources[0]] - discount)
     }
     else {
-      const choices = buildingResources.map(r => `Reduce ${r} by 1`)
+      const choices = buildingResources.map(r => this.option({
+        id: r,
+        title: `Reduce ${r} by 1`,
+        kind: 'resource',
+      }))
       const selection = this.choose(player, choices, {
         title: 'Choose building resource discount',
         min: 1,
         max: 1,
       })
-      const chosenResource = buildingResources[choices.indexOf(selection[0])]
+      const chosenResource = selection[0].id
       modified[chosenResource] = Math.max(0, modified[chosenResource] - discount)
     }
     return modified
@@ -75,13 +79,17 @@ class AgricolaActionManager extends BaseActionManager {
       modified[resources[0]] = Math.max(0, modified[resources[0]] - discount)
     }
     else {
-      const choices = resources.map(r => `Reduce ${r} by 1`)
+      const choices = resources.map(r => this.option({
+        id: r,
+        title: `Reduce ${r} by 1`,
+        kind: 'resource',
+      }))
       const selection = this.choose(player, choices, {
         title: 'Choose resource discount',
         min: 1,
         max: 1,
       })
-      const chosenResource = resources[choices.indexOf(selection[0])]
+      const chosenResource = selection[0].id
       modified[chosenResource] = Math.max(0, modified[chosenResource] - discount)
     }
     return modified
@@ -93,13 +101,16 @@ class AgricolaActionManager extends BaseActionManager {
 
     let chosenCost
     if (affordableOptions.length > 1) {
-      const costChoices = affordableOptions.map(opt => this._formatCostLabel(opt.cost))
+      const costChoices = affordableOptions.map((opt, idx) => this.option({
+        id: `cost-${idx}`,
+        title: this._formatCostLabel(opt.cost),
+      }))
       const selection = this.choose(player, costChoices, {
         title: `Choose payment for ${card.name}`,
         min: 1,
         max: 1,
       })
-      const selectedIdx = costChoices.indexOf(selection[0])
+      const selectedIdx = Number(selection[0].id.slice('cost-'.length))
       chosenCost = affordableOptions[selectedIdx].cost
     }
     else {
@@ -282,13 +293,11 @@ class AgricolaActionManager extends BaseActionManager {
     const locations = player.getAnimalPlacementLocationsWithAvailability()
     const cookingRates = this.getCookingRates(player)
 
-    const choices = ['Place Animals']
+    const choices = [this.option({ id: 'place-animals', title: 'Place Animals' })]
     if (player.hasCookingAbility()) {
-      choices.push('Cook', 'Release')
+      choices.push(this.option({ id: 'cook', title: 'Cook' }))
     }
-    else {
-      choices.push('Release')
-    }
+    choices.push(this.option({ id: 'release', title: 'Release' }))
 
     const result = this.choose(player, choices, {
       type: 'animal-placement',
@@ -431,13 +440,11 @@ class AgricolaActionManager extends BaseActionManager {
     const locations = player.getAnimalPlacementLocationsWithAvailability()
     const cookingRates = this.getCookingRates(player)
 
-    const choices = ['Place Animals']
+    const choices = [this.option({ id: 'place-animals', title: 'Place Animals' })]
     if (player.hasCookingAbility()) {
-      choices.push('Cook', 'Release')
+      choices.push(this.option({ id: 'cook', title: 'Cook' }))
     }
-    else {
-      choices.push('Release')
-    }
+    choices.push(this.option({ id: 'release', title: 'Release' }))
 
     const result = this.choose(player, choices, {
       type: 'animal-placement',
@@ -548,40 +555,44 @@ class AgricolaActionManager extends BaseActionManager {
     const options = action.allowsResourceChoice
     const count = action.choiceCount || 1
     const mustBeDifferent = action.choiceMustBeDifferent || false
+    const buildResourceChoices = (resources) => resources.map(r => this.option({
+      id: r, title: r, kind: 'resource',
+    }))
 
     if (count === 1) {
       // Single choice
-      const selection = this.choose(player, options, {
+      const selection = this.choose(player, buildResourceChoices(options), {
         title: 'Choose a resource',
         min: 1,
         max: 1,
       })
 
-      player.addResource(selection[0], 1)
+      const chosen = selection[0].id
+      player.addResource(chosen, 1)
       this.log.add({
         template: '{player} takes 1 {resource}',
-        args: { player, resource: selection[0] },
+        args: { player, resource: chosen },
       })
     }
     else if (count === 2 && mustBeDifferent) {
       // Two different choices (Resource Market)
-      const firstSelection = this.choose(player, options, {
+      const firstSelection = this.choose(player, buildResourceChoices(options), {
         title: 'Choose first resource',
         min: 1,
         max: 1,
       })
 
-      const firstResource = firstSelection[0]
+      const firstResource = firstSelection[0].id
       player.addResource(firstResource, 1)
 
       const remainingOptions = options.filter(r => r !== firstResource)
-      const secondSelection = this.choose(player, remainingOptions, {
+      const secondSelection = this.choose(player, buildResourceChoices(remainingOptions), {
         title: 'Choose second resource (must be different)',
         min: 1,
         max: 1,
       })
 
-      const secondResource = secondSelection[0]
+      const secondResource = secondSelection[0].id
       player.addResource(secondResource, 1)
 
       this.log.add({
@@ -592,16 +603,17 @@ class AgricolaActionManager extends BaseActionManager {
     else {
       // Multiple same choices allowed
       for (let i = 0; i < count; i++) {
-        const selection = this.choose(player, options, {
+        const selection = this.choose(player, buildResourceChoices(options), {
           title: `Choose resource ${i + 1} of ${count}`,
           min: 1,
           max: 1,
         })
 
-        player.addResource(selection[0], 1)
+        const chosen = selection[0].id
+        player.addResource(chosen, 1)
         this.log.add({
           template: '{player} takes 1 {resource}',
-          args: { player, resource: selection[0] },
+          args: { player, resource: chosen },
         })
       }
     }

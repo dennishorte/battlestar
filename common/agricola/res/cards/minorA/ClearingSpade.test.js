@@ -251,9 +251,11 @@ describe('Clearing Spade', () => {
     // Only grid field target should be available, not Beanfield
     const request = game.waiting
     const selector = request.selectors[0]
-    const targetOptions = selector.options || selector.choices
-    expect(targetOptions).toContain('2,1')
-    expect(targetOptions.some(o => o.includes('Beanfield'))).toBe(false)
+    const targetTitles = (selector.options || selector.choices).map(o =>
+      typeof o === 'string' ? o : (o.title || '')
+    )
+    expect(targetTitles).toContain('2,1')
+    expect(targetTitles.some(t => t.includes('Beanfield'))).toBe(false)
 
     t.choose(game, '2,1')
   })

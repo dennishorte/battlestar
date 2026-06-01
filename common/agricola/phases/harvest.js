@@ -92,7 +92,9 @@ Agricola.prototype.fieldPhase = function() {
     const anytimeActions = this.getAnytimeActions(player)
     const hasCropMove = anytimeActions.some(a => a.type === 'crop-move')
     if (hasCropMove) {
-      this.actions.choose(player, ['Harvest crops'], {
+      this.actions.choose(player, [
+        this.actions.option({ id: 'harvest', title: 'Harvest crops' }),
+      ], {
         title: 'Use anytime actions before harvest?',
         min: 1, max: 1,
       })

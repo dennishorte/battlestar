@@ -131,6 +131,16 @@ TestCommon.choose = function(game, ...selections) {
           }
           return val
         }
+        if (exactMatches.length > 1) {
+          // All-interchangeable case (no distinct defIds, didn't throw above).
+          // If every match shares the same id, treat them as the same choice
+          // and return the structured form so game code can read .id safely.
+          const ids = new Set(exactMatches.map(c => (typeof c === 'object' ? c.id : null)).filter(Boolean))
+          if (ids.size === 1) {
+            const match = exactMatches[0]
+            return { title: match.title, id: match.id }
+          }
+        }
         // No exact match — try prefix match (legacy behavior):
         // e.g. 'Strategic Action' matches 'Strategic Action: leadership'.
         const prefixMatches = choices.filter(c => (c.title || c).startsWith(val + ': '))

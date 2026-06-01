@@ -54,12 +54,18 @@ AgricolaActionManager.prototype.buildFences = function(player) {
       || (player._farmRedevelopmentFreeFences || 0) > 0
       || (player.grain > 0 && player._getGrainSubstitutionLimit() > 0)
     if (canAffordMore && remainingFences - result.fencesBuilt > 0) {
-      const continueChoice = this.choose(player, ['Build another pasture', 'Done building fences'], {
+      const continueChoice = this.choose(player, [
+        this.option({ id: 'continue', title: 'Build another pasture' }),
+        this.option({ id: 'done', title: 'Done building fences' }),
+      ], {
         title: 'Continue fencing?',
         min: 1,
         max: 1,
       })
-      continueBuilding = continueChoice[0] === 'Build another pasture'
+      // An action-type response (e.g. 'done-building-pastures') is not "continue"
+      const sel = Array.isArray(continueChoice) ? continueChoice[0] : null
+      const selId = (sel && typeof sel === 'object') ? sel.id : sel
+      continueBuilding = selId === 'continue'
     }
     else {
       continueBuilding = false
@@ -89,7 +95,9 @@ AgricolaActionManager.prototype.selectPastureSpaces = function(player) {
   }
 
   // Use action-type selector - client manages selection locally and sends final result
-  const response = this.choose(player, ['Cancel fencing'], {
+  const response = this.choose(player, [
+    this.option({ id: 'cancel', title: 'Cancel fencing' }),
+  ], {
     title: 'Select spaces for pasture',
     min: 1,
     max: 1,
@@ -125,13 +133,16 @@ AgricolaActionManager.prototype.selectPastureSpaces = function(player) {
         delete player._pendingFenceCost
         const affordable = pending.options.filter(opt => player.canAffordCost(opt.cost))
         if (affordable.length > 1) {
-          const costChoices = affordable.map(opt => this._formatCostLabel(opt.cost))
+          const costChoices = affordable.map((opt, idx) => this.option({
+            id: `cost-${idx}`,
+            title: this._formatCostLabel(opt.cost),
+          }))
           const costSelection = this.choose(player, costChoices, {
             title: 'Choose payment for fences',
             min: 1,
             max: 1,
           })
-          const selectedIdx = costChoices.indexOf(costSelection[0])
+          const selectedIdx = Number(costSelection[0].id.slice('cost-'.length))
           player.payCost(affordable[selectedIdx].cost)
         }
         else {

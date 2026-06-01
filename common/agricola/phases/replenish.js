@@ -97,14 +97,17 @@ Agricola.prototype._handleActivePlayer = function(player) {
 
 Agricola.prototype._tryAlternativeWorkerSource = function(player) {
   if (this.canUseAdoptiveParents(player)) {
-    const choices = ['Adopt newborn (1 food)', 'Pass']
+    const choices = [
+      this.actions.option({ id: 'adopt', title: 'Adopt newborn (1 food)' }),
+      this.actions.option({ id: 'pass', title: 'Pass' }),
+    ]
     const selection = this.actions.choose(player, choices, {
       title: 'Adoptive Parents: Take action with newborn?',
       min: 1,
       max: 1,
     })
 
-    if (selection[0] === 'Adopt newborn (1 food)') {
+    if (selection[0].id === 'adopt') {
       player.adoptNewborn()
       this.log.add({
         template: '{player} uses Adoptive Parents (pays 1 food)',
@@ -120,14 +123,17 @@ Agricola.prototype._tryAlternativeWorkerSource = function(player) {
   }
 
   if (this.canUseGuestRoom(player)) {
-    const choices = ['Use Guest Room (1 food from card)', 'Pass']
+    const choices = [
+      this.actions.option({ id: 'use', title: 'Use Guest Room (1 food from card)' }),
+      this.actions.option({ id: 'pass', title: 'Pass' }),
+    ]
     const selection = this.actions.choose(player, choices, {
       title: 'Guest Room: Place a guest worker?',
       min: 1,
       max: 1,
     })
 
-    if (selection[0] === 'Use Guest Room (1 food from card)') {
+    if (selection[0].id === 'use') {
       const card = this._getGuestRoomCard(player)
       const state = this.cardState(card.id)
       state.food -= 1
@@ -185,14 +191,16 @@ Agricola.prototype._executeArchwayAction = function() {
   })
   choices.push({ id: 'skip', label: 'Skip extra action' })
 
-  const selectorChoices = choices.map(c => c.label)
+  const selectorChoices = choices.map(c => this.actions.option({
+    id: c.id, title: c.label, kind: 'action-space',
+  }))
   const selection = this.actions.choose(
     archwayPlayer,
     selectorChoices,
     { title: 'Archway: Choose an unoccupied action space', min: 1, max: 1 }
   )
 
-  const selectedChoice = choices.find(c => c.label === selection[0])
+  const selectedChoice = choices.find(c => c.id === selection[0].id)
   if (selectedChoice && selectedChoice.id !== 'skip') {
     const actionId = selectedChoice.id
     this.state.actionSpaces[actionId].occupiedBy = archwayPlayer.name

@@ -210,14 +210,14 @@ Agricola.prototype.callPlayerCardHookOrdered = function(player, hookName, ...arg
   const remaining = [...cards]
   const results = []
   while (remaining.length > 1) {
-    const remainingNames = remaining.map(c => c.definition.name)
-    const [name] = this.actions.choose(player, remainingNames, {
+    const cardChoices = remaining.map(c => this.actions.cardOption(c))
+    const [pick] = this.actions.choose(player, cardChoices, {
       title: `Choose next ${hookName} effect`,
       min: 1,
       max: 1,
       noAutoRespond: true,
     })
-    const idx = remaining.findIndex(c => c.definition.name === name)
+    const idx = remaining.findIndex(c => c.id === pick.id)
     const card = remaining.splice(idx, 1)[0]
     const matchResult = this._checkCardMatch(card, hookName, player, ...args)
     if (matchResult !== 'silent' && hookName !== 'onPlay') {

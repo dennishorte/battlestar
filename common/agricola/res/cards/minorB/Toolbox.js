@@ -10,9 +10,9 @@ function offerToolboxMajor(game, player) {
 
   const choices = available.map(id => {
     const imp = game.cards.byId(id)
-    return imp.name + ` (${id})`
+    return game.actions.option({ id, title: imp.name, kind: 'major-improvement' })
   })
-  choices.push('Do not build')
+  choices.push(game.actions.option({ id: 'do-not-build', title: 'Do not build' }))
 
   const selection = game.actions.choose(player, choices, {
     title: 'Toolbox: Build a major improvement?',
@@ -20,20 +20,15 @@ function offerToolboxMajor(game, player) {
     max: 1,
   })
 
-  const sel = Array.isArray(selection) ? selection[0] : selection
-  if (sel === 'Do not build') {
+  const improvementId = selection[0].id
+  if (improvementId === 'do-not-build') {
     return
   }
 
-  const idMatch = sel.match(/\(([^)]+)\)/)
-  const improvementId = idMatch ? idMatch[1] : null
-
-  if (improvementId) {
-    game.actions._completeMajorPurchase(player, improvementId, {
-      logTemplate: '{player} builds {card}',
-      logArgs: {},
-    })
-  }
+  game.actions._completeMajorPurchase(player, improvementId, {
+    logTemplate: '{player} builds {card}',
+    logArgs: {},
+  })
 }
 
 module.exports = {

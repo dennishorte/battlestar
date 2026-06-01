@@ -72,8 +72,8 @@ AgricolaActionManager.prototype.callOnAnyBeforeSowHooks = function(actingPlayer)
  */
 AgricolaActionManager.prototype.offerWoodForFoodExchange = function(player, card, exchange) {
   const choices = [
-    `Exchange ${exchange.wood} wood for ${exchange.food} food`,
-    'Skip',
+    this.option({ id: 'exchange', title: `Exchange ${exchange.wood} wood for ${exchange.food} food` }),
+    this.option({ id: 'skip', title: 'Skip' }),
   ]
   const selection = this.choose(player, choices, {
     title: `${card.name}: Exchange wood for food?`,
@@ -81,7 +81,7 @@ AgricolaActionManager.prototype.offerWoodForFoodExchange = function(player, card
     max: 1,
   })
 
-  if (selection[0] !== 'Skip') {
+  if (selection[0].id !== 'skip') {
     player.payCost({ wood: exchange.wood })
     player.addResource('food', exchange.food)
     this.log.add({
@@ -104,14 +104,14 @@ AgricolaActionManager.prototype.offerBuyBonusPoint = function(player, card, food
     return
   }
   const selection = this.choose(player, [
-    `Buy 1 bonus point for ${foodCost} food`,
-    'Skip',
+    this.option({ id: 'buy', title: `Buy 1 bonus point for ${foodCost} food` }),
+    this.option({ id: 'skip', title: 'Skip' }),
   ], {
     title: `${card.name}: Buy bonus point for food?`,
     min: 1,
     max: 1,
   })
-  if (selection[0] !== 'Skip') {
+  if (selection[0].id !== 'skip') {
     player.payCost({ food: foodCost })
     player.addBonusPoints(1, card.name)
     this.log.add({
@@ -133,8 +133,8 @@ AgricolaActionManager.prototype.offerBuyAnimal = function(player, card, animalTy
   }
 
   const choices = [
-    `Buy 1 ${animalType} for 1 food`,
-    'Skip',
+    this.option({ id: 'buy', title: `Buy 1 ${animalType} for 1 food` }),
+    this.option({ id: 'skip', title: 'Skip' }),
   ]
   const selection = this.choose(player, choices, {
     title: `${card.name}: Buy additional animal?`,
@@ -142,7 +142,7 @@ AgricolaActionManager.prototype.offerBuyAnimal = function(player, card, animalTy
     max: 1,
   })
 
-  if (selection[0] !== 'Skip') {
+  if (selection[0].id !== 'skip') {
     player.payCost({ food: 1 })
     this.handleAnimalPlacement(player, { [animalType]: 1 })
     this.log.add({
@@ -156,14 +156,16 @@ AgricolaActionManager.prototype.offerBuyAnimal = function(player, card, animalTy
  * Offer resource choice (Seasonal Worker, Animal Tamer)
  */
 AgricolaActionManager.prototype.offerResourceChoice = function(player, card, resources) {
-  const choices = resources.map(r => `Take 1 ${r}`)
+  const choices = resources.map(r => this.option({
+    id: r, title: `Take 1 ${r}`, kind: 'resource',
+  }))
   const selection = this.choose(player, choices, {
     title: `${card.name}: Choose resource`,
     min: 1,
     max: 1,
   })
 
-  const chosen = resources.find(r => selection[0].includes(r))
+  const chosen = selection[0].id
   if (chosen) {
     player.addResource(chosen, 1)
     this.log.add({
@@ -187,16 +189,21 @@ AgricolaActionManager.prototype.buildFreeStable = function(player, card) {
   }
 
   const cardName = card?.name || 'Mining Hammer'
-  const spaceChoices = validSpaces.map(s => `${s.row},${s.col}`)
-  spaceChoices.push('Skip')
+  const spaceChoices = validSpaces.map(s => this.option({
+    id: `space-${s.row}-${s.col}`,
+    title: `${s.row},${s.col}`,
+  }))
+  spaceChoices.push(this.option({ id: 'skip', title: 'Skip' }))
   const selection = this.choose(player, spaceChoices, {
     title: `${cardName}: Build a free stable?`,
     min: 1,
     max: 1,
   })
 
-  if (selection[0] !== 'Skip') {
-    const [row, col] = selection[0].split(',').map(Number)
+  if (selection[0].id !== 'skip') {
+    const coords = selection[0].id.slice('space-'.length).split('-')
+    const row = Number(coords[0])
+    const col = Number(coords[1])
     player.buildStable(row, col)
 
     this.log.add({
@@ -211,13 +218,16 @@ AgricolaActionManager.prototype.buildFreeStable = function(player, card) {
  * opts: { allowOccupied?: boolean, excludeMeetingPlace?: boolean }
  */
 AgricolaActionManager.prototype.offerExtraPerson = function(player, card, opts = {}) {
-  const choices = ['Place another person', 'Skip']
+  const choices = [
+    this.option({ id: 'place', title: 'Place another person' }),
+    this.option({ id: 'skip', title: 'Skip' }),
+  ]
   const selection = this.choose(player, choices, {
     title: `${card.name}: Place another person?`,
     min: 1,
     max: 1,
   })
-  if (selection[0] === 'Skip') {
+  if (selection[0].id === 'skip') {
     return
   }
   this.log.add({
@@ -252,26 +262,28 @@ AgricolaActionManager.prototype.offerBuildStableForWood = function(player, card)
     return
   }
 
-  const spaceChoices = validSpaces.map(s => `Build stable at ${s.row},${s.col}`)
-  spaceChoices.push('Skip')
+  const spaceChoices = validSpaces.map(s => this.option({
+    id: `space-${s.row}-${s.col}`,
+    title: `Build stable at ${s.row},${s.col}`,
+  }))
+  spaceChoices.push(this.option({ id: 'skip', title: 'Skip' }))
   const selection = this.choose(player, spaceChoices, {
     title: `${card.name}: Build a stable?`,
     min: 1,
     max: 1,
   })
 
-  if (selection[0] !== 'Skip') {
-    const match = selection[0].match(/(\d+),(\d+)/)
-    if (match) {
-      const row = parseInt(match[1])
-      const col = parseInt(match[2])
-      player.payCost(stableCost)
-      player.buildStable(row, col)
-      this.log.add({
-        template: '{player} builds a stable using {card}',
-        args: { player, card: card },
-      })
-    }
+  const choiceId = selection[0].id
+  if (choiceId !== 'skip') {
+    const coords = choiceId.slice('space-'.length).split('-')
+    const row = Number(coords[0])
+    const col = Number(coords[1])
+    player.payCost(stableCost)
+    player.buildStable(row, col)
+    this.log.add({
+      template: '{player} builds a stable using {card}',
+      args: { player, card: card },
+    })
   }
 }
 
@@ -350,8 +362,11 @@ AgricolaActionManager.prototype.houseBuilding = function(player) {
 
     const selection = this.choose(player, () => {
       const curSpaces = player.getValidRoomBuildSpaces()
-      const spaceChoices = curSpaces.map(s => `${s.row},${s.col}`)
-      spaceChoices.push('Done building rooms')
+      const spaceChoices = curSpaces.map(s => this.option({
+        id: `space-${s.row}-${s.col}`,
+        title: `${s.row},${s.col}`,
+      }))
+      spaceChoices.push(this.option({ id: 'done', title: 'Done building rooms' }))
       return spaceChoices
     }, {
       title: 'Build a room',
@@ -359,23 +374,29 @@ AgricolaActionManager.prototype.houseBuilding = function(player) {
       max: 1,
     })
 
-    if (selection[0] === 'Done building rooms') {
+    const chosenId = selection[0].id
+    if (chosenId === 'done') {
       break
     }
 
-    const [row, col] = selection[0].split(',').map(Number)
+    const coords = chosenId.slice('space-'.length).split('-')
+    const row = Number(coords[0])
+    const col = Number(coords[1])
 
     // Choose cost option (handles wood substitution from Frame Builder, etc.)
     const affordableOptions = player.getAffordableRoomCostOptions()
     let chosenCost
     if (affordableOptions.length > 1) {
-      const costChoices = affordableOptions.map(opt => this._formatCostLabel(opt.cost))
+      const costChoices = affordableOptions.map((opt, idx) => this.option({
+        id: `cost-${idx}`,
+        title: this._formatCostLabel(opt.cost),
+      }))
       const costSelection = this.choose(player, costChoices, {
         title: 'Choose payment for room',
         min: 1,
         max: 1,
       })
-      const selectedIdx = costChoices.indexOf(costSelection[0])
+      const selectedIdx = Number(costSelection[0].id.slice('cost-'.length))
       chosenCost = affordableOptions[selectedIdx].cost
     }
     else {
@@ -434,13 +455,13 @@ AgricolaActionManager.prototype.animalMarket = function(player) {
   const selection = this.choose(player, () => {
     const choices = []
     if (player.canPlaceAnimals('sheep', 1)) {
-      choices.push('Take 1 sheep and 1 food')
+      choices.push(this.option({ id: 'sheep', title: 'Take 1 sheep and 1 food' }))
     }
     const curCanPay = player.food >= 1 || this.game.getAnytimeFoodConversionOptions(player).length > 0
     if (curCanPay && player.canPlaceAnimals('cattle', 1)) {
-      choices.push('Pay 1 food for 1 cattle')
+      choices.push(this.option({ id: 'cattle', title: 'Pay 1 food for 1 cattle' }))
     }
-    choices.push('Do nothing')
+    choices.push(this.option({ id: 'nothing', title: 'Do nothing' }))
     return choices
   }, {
     title: 'Animal Market',
@@ -448,12 +469,13 @@ AgricolaActionManager.prototype.animalMarket = function(player) {
     max: 1,
   })
 
-  if (selection[0] === 'Do nothing') {
+  const choiceId = selection[0].id
+  if (choiceId === 'nothing') {
     this.log.addDoNothing(player, 'take animal')
     return true
   }
 
-  if (selection[0] === 'Take 1 sheep and 1 food') {
+  if (choiceId === 'sheep') {
     this.handleAnimalPlacement(player, { sheep: 1 })
     player.addResource('food', 1)
     this.log.add({
@@ -461,7 +483,7 @@ AgricolaActionManager.prototype.animalMarket = function(player) {
       args: { player },
     })
   }
-  else if (selection[0] === 'Pay 1 food for 1 cattle') {
+  else if (choiceId === 'cattle') {
     player.payCost({ food: 1 })
     this.handleAnimalPlacement(player, { cattle: 1 })
     this.log.add({
@@ -491,14 +513,17 @@ AgricolaActionManager.prototype.farmSupplies = function(player) {
 
   // Offer grain for food
   if (canPayFood) {
-    const grainChoices = ['Buy 1 grain for 1 food', 'Skip grain']
+    const grainChoices = [
+      this.option({ id: 'buy', title: 'Buy 1 grain for 1 food' }),
+      this.option({ id: 'skip', title: 'Skip grain' }),
+    ]
     const grainSelection = this.choose(player, grainChoices, {
       title: 'Farm Supplies: Buy grain?',
       min: 1,
       max: 1,
     })
 
-    if (grainSelection[0] === 'Buy 1 grain for 1 food') {
+    if (grainSelection[0].id === 'buy') {
       player.payCost({ food: 1 })
       player.addResource('grain', 1)
       this.log.add({
@@ -514,14 +539,17 @@ AgricolaActionManager.prototype.farmSupplies = function(player) {
   const canPlow = player.getValidPlowSpaces().length > 0
 
   if (canStillPayFood && canPlow) {
-    const plowChoices = ['Plow 1 field for 1 food', 'Skip plowing']
+    const plowChoices = [
+      this.option({ id: 'plow', title: 'Plow 1 field for 1 food' }),
+      this.option({ id: 'skip', title: 'Skip plowing' }),
+    ]
     const plowSelection = this.choose(player, plowChoices, {
       title: 'Farm Supplies: Plow field?',
       min: 1,
       max: 1,
     })
 
-    if (plowSelection[0] === 'Plow 1 field for 1 food') {
+    if (plowSelection[0].id === 'plow') {
       player.payCost({ food: 1 })
       this.plowField(player)
       didSomething = true
@@ -547,12 +575,15 @@ AgricolaActionManager.prototype.buildingSupplies = function(player) {
   })
 
   // Choose reed or stone
-  const choice1Selection = this.choose(player, ['Reed', 'Stone'], {
+  const choice1Selection = this.choose(player, [
+    this.option({ id: 'reed', title: 'Reed', kind: 'resource' }),
+    this.option({ id: 'stone', title: 'Stone', kind: 'resource' }),
+  ], {
     title: 'Building Supplies: Choose first resource',
     min: 1,
     max: 1,
   })
-  const firstResource = choice1Selection[0].toLowerCase()
+  const firstResource = choice1Selection[0].id
   player.addResource(firstResource, 1)
   this.log.add({
     template: '{player} takes 1 {resource}',
@@ -560,12 +591,15 @@ AgricolaActionManager.prototype.buildingSupplies = function(player) {
   })
 
   // Choose wood or clay
-  const choice2Selection = this.choose(player, ['Wood', 'Clay'], {
+  const choice2Selection = this.choose(player, [
+    this.option({ id: 'wood', title: 'Wood', kind: 'resource' }),
+    this.option({ id: 'clay', title: 'Clay', kind: 'resource' }),
+  ], {
     title: 'Building Supplies: Choose second resource',
     min: 1,
     max: 1,
   })
-  const secondResource = choice2Selection[0].toLowerCase()
+  const secondResource = choice2Selection[0].id
   player.addResource(secondResource, 1)
   this.log.add({
     template: '{player} takes 1 {resource}',
@@ -621,14 +655,17 @@ AgricolaActionManager.prototype.sideJob = function(player) {
   const canBuildStable = player.canAffordCost(stableCost) && player.getValidStableBuildSpaces().length > 0
 
   if (canBuildStable) {
-    const stableChoices = ['Build stable', 'Skip stable']
+    const stableChoices = [
+      this.option({ id: 'build', title: 'Build stable' }),
+      this.option({ id: 'skip', title: 'Skip stable' }),
+    ]
     const stableSelection = this.choose(player, stableChoices, {
       title: 'Side Job: Build a stable?',
       min: 1,
       max: 1,
     })
 
-    if (stableSelection[0] === 'Build stable') {
+    if (stableSelection[0].id === 'build') {
       player.payCost(stableCost)
       this.buildStable(player)
       didSomething = true
@@ -654,14 +691,17 @@ AgricolaActionManager.prototype.offerPlow = function(player, card) {
     return
   }
 
-  const choices = ['Plow 1 field', 'Skip']
+  const choices = [
+    this.option({ id: 'plow', title: 'Plow 1 field' }),
+    this.option({ id: 'skip', title: 'Skip' }),
+  ]
   const selection = this.choose(player, choices, {
     title: `${card.name}: Plow 1 field?`,
     min: 1,
     max: 1,
   })
 
-  if (selection[0] !== 'Skip') {
+  if (selection[0].id !== 'skip') {
     this.plowField(player)
   }
 }

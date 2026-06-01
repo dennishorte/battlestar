@@ -113,10 +113,11 @@ Agricola.prototype.playerTurn = function(player, options) {
   }
 
   const selectorChoices = choices.map(c => {
+    const opt = { title: c.label, id: c.id, kind: 'action-space' }
     if (c.detail) {
-      return { title: c.label, detail: c.detail }
+      opt.detail = c.detail
     }
-    return c.label
+    return opt
   })
 
   const selection = this.actions.choose(
@@ -125,9 +126,14 @@ Agricola.prototype.playerTurn = function(player, options) {
     { title: 'Choose an action', min: 1, max: 1 }
   )
 
-  // Find the selected action
-  const selectedLabel = selection[0]
-  const selectedChoice = choices.find(c => c.label === selectedLabel)
+  // Find the selected action. Response may be structured {title, id} or
+  // legacy bare title; match by id first, fall back to title.
+  const sel = selection[0]
+  const selectedId = (sel && typeof sel === 'object') ? sel.id : null
+  const selectedTitle = (sel && typeof sel === 'object') ? sel.title : sel
+  const selectedChoice = selectedId
+    ? choices.find(c => c.id === selectedId)
+    : choices.find(c => c.label === selectedTitle)
 
   // Handle special placement choices (no worker used or combined actions)
   if (selectedChoice && selectedChoice.special) {
@@ -200,7 +206,9 @@ Agricola.prototype.playerTurn = function(player, options) {
     if (!options?.isBonusTurn) {
       const unusedActions = this.getUnusedOncePerRoundActions(player)
       if (unusedActions.length > 0) {
-        this.actions.choose(player, ['End turn'], {
+        this.actions.choose(player, [
+          this.actions.option({ id: 'end', title: 'End turn' }),
+        ], {
           title: 'You have unused once-per-turn actions.',
           anytimeActions: unusedActions,
           noAutoRespond: true,
@@ -219,7 +227,9 @@ Agricola.prototype.playerTurn = function(player, options) {
         a => activatableTypes.has(a.type) && newCardIds.includes(a.cardId)
       )
       if (newActivatableActions.length > 0) {
-        this.actions.choose(player, ['End turn'], {
+        this.actions.choose(player, [
+          this.actions.option({ id: 'end', title: 'End turn' }),
+        ], {
           title: 'You have new anytime actions available.',
           noAutoRespond: true,
         })

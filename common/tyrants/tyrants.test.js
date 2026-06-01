@@ -17,7 +17,9 @@ describe('Tyrants', () => {
     const request2 = t.choose(game, 'green')
     const request3 = t.choose(game, 'Ched Nasad')
 
-    expect(request3.selectors[0].choices).toStrictEqual(['red', 'orange', 'yellow', 'lime', 'blue', 'indigo', 'pink'])
+    expect(request3.selectors[0].choices.map(c => c.title || c)).toStrictEqual(
+      ['red', 'orange', 'yellow', 'lime', 'blue', 'indigo', 'pink']
+    )
     expect(t.dennis(game).color).toBe('#2ebd32')
   })
 

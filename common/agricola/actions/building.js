@@ -51,15 +51,15 @@ AgricolaActionManager.prototype.buildRoomAndOrStable = function(player) {
 
       const choices = []
       if (canRoom) {
-        choices.push('Build Room')
+        choices.push(this.option({ id: 'build-room', title: 'Build Room' }))
       }
       for (const count of multiRoomOptions) {
-        choices.push(`Build ${count} Rooms`)
+        choices.push(this.option({ id: `build-rooms-${count}`, title: `Build ${count} Rooms` }))
       }
       if (canStable) {
-        choices.push('Build Stable')
+        choices.push(this.option({ id: 'build-stable', title: 'Build Stable' }))
       }
-      choices.push('Done Building')
+      choices.push(this.option({ id: 'done', title: 'Done Building' }))
       return choices
     }, {
       title: 'Choose what to build',
@@ -67,14 +67,14 @@ AgricolaActionManager.prototype.buildRoomAndOrStable = function(player) {
       max: 1,
     })
 
-    const choice = selection[0]
+    const choiceId = selection[0].id
 
-    if (choice === 'Done Building') {
+    if (choiceId === 'done') {
       break
     }
 
     // Handle multi-room building
-    const multiMatch = choice.match(/^Build (\d+) Rooms$/)
+    const multiMatch = choiceId.match(/^build-rooms-(\d+)$/)
     if (multiMatch) {
       const count = parseInt(multiMatch[1])
       this.buildMultipleRooms(player, count)
@@ -82,23 +82,26 @@ AgricolaActionManager.prototype.buildRoomAndOrStable = function(player) {
       continue
     }
 
-    if (choice === 'Build Room') {
+    if (choiceId === 'build-room') {
       this.buildRoom(player)
       builtAnything = true
       builtRoomType = player.roomType
     }
 
-    if (choice === 'Build Stable') {
+    if (choiceId === 'build-stable') {
       const affordableStableOptions = player.getAffordableStableCostOptions()
       let chosenStableCost
       if (affordableStableOptions.length > 1) {
-        const costChoices = affordableStableOptions.map(opt => this._formatCostLabel(opt.cost))
+        const costChoices = affordableStableOptions.map((opt, idx) => this.option({
+          id: `cost-${idx}`,
+          title: this._formatCostLabel(opt.cost),
+        }))
         const costSelection = this.choose(player, costChoices, {
           title: 'Choose payment for stable',
           min: 1,
           max: 1,
         })
-        const selectedIdx = costChoices.indexOf(costSelection[0])
+        const selectedIdx = Number(costSelection[0].id.slice('cost-'.length))
         chosenStableCost = affordableStableOptions[selectedIdx].cost
       }
       else {
@@ -288,13 +291,16 @@ AgricolaActionManager.prototype.buildRoom = function(player, opts = {}) {
   }
   let chosenCost
   if (affordableOptions.length > 1) {
-    const costChoices = affordableOptions.map(opt => this._formatCostLabel(opt.cost))
+    const costChoices = affordableOptions.map((opt, idx) => this.option({
+      id: `cost-${idx}`,
+      title: this._formatCostLabel(opt.cost),
+    }))
     const selection = this.choose(player, costChoices, {
       title: 'Choose payment for room',
       min: 1,
       max: 1,
     })
-    const selectedIdx = costChoices.indexOf(selection[0])
+    const selectedIdx = Number(selection[0].id.slice('cost-'.length))
     chosenCost = affordableOptions[selectedIdx].cost
   }
   else {
@@ -479,12 +485,15 @@ AgricolaActionManager.prototype.renovate = function(player) {
     const canStone = player.canRenovate('stone') // direct wood→stone
 
     if (canClay && canStone) {
-      const selection = this.choose(player, ['Renovate to Clay', 'Renovate to Stone'], {
+      const selection = this.choose(player, [
+        this.option({ id: 'clay', title: 'Renovate to Clay' }),
+        this.option({ id: 'stone', title: 'Renovate to Stone' }),
+      ], {
         title: 'Choose renovation type',
         min: 1,
         max: 1,
       })
-      targetType = selection[0] === 'Renovate to Stone' ? 'stone' : undefined
+      targetType = selection[0].id === 'stone' ? 'stone' : undefined
     }
     else if (canStone) {
       targetType = 'stone'
@@ -522,13 +531,16 @@ AgricolaActionManager.prototype.renovate = function(player) {
   const affordableRenovationOptions = player.getAffordableRenovationCostOptions(targetType)
   let chosenRenovationCost
   if (affordableRenovationOptions.length > 1) {
-    const costChoices = affordableRenovationOptions.map(opt => this._formatCostLabel(opt.cost))
+    const costChoices = affordableRenovationOptions.map((opt, idx) => this.option({
+      id: `cost-${idx}`,
+      title: this._formatCostLabel(opt.cost),
+    }))
     const selection = this.choose(player, costChoices, {
       title: 'Choose payment for renovation',
       min: 1,
       max: 1,
     })
-    const selectedIdx = costChoices.indexOf(selection[0])
+    const selectedIdx = Number(selection[0].id.slice('cost-'.length))
     chosenRenovationCost = affordableRenovationOptions[selectedIdx].cost
   }
   else if (affordableRenovationOptions.length === 1) {
@@ -573,18 +585,22 @@ AgricolaActionManager.prototype.freeRenovation = function(player, options = {}) 
   if (!targetType) {
     if (player.roomType === 'wood' && player.canRenovateDirectlyToStone()) {
       // Can go to clay or stone — let the player choose
-      const choices = ['Renovate to Clay for free', 'Renovate to Stone for free']
+      const choices = [
+        this.option({ id: 'clay', title: 'Renovate to Clay for free' }),
+        this.option({ id: 'stone', title: 'Renovate to Stone for free' }),
+      ]
       if (options.canSkip) {
-        choices.push('Skip')
+        choices.push(this.option({ id: 'skip', title: 'Skip' }))
       }
 
       const title = options.title || (options.card ? `${options.card.name}: Renovate for free?` : 'Renovate for free?')
       const selection = this.choose(player, choices, { title, min: 1, max: 1 })
 
-      if (selection[0] === 'Skip') {
+      const choiceId = selection[0].id
+      if (choiceId === 'skip') {
         return false
       }
-      targetType = selection[0].includes('Stone') ? 'stone' : 'clay'
+      targetType = choiceId
     }
     else {
       targetType = res.houseMaterialUpgrades[player.roomType]
@@ -595,10 +611,10 @@ AgricolaActionManager.prototype.freeRenovation = function(player, options = {}) 
       if (options.canSkip) {
         const title = options.title || (options.card ? `${options.card.name}: Renovate for free?` : 'Renovate for free?')
         const selection = this.choose(player, [
-          `Renovate from ${player.roomType} to ${targetType} for free`,
-          'Skip',
+          this.option({ id: 'renovate', title: `Renovate from ${player.roomType} to ${targetType} for free` }),
+          this.option({ id: 'skip', title: 'Skip' }),
         ], { title, min: 1, max: 1 })
-        if (selection[0] === 'Skip') {
+        if (selection[0].id === 'skip') {
           return false
         }
       }

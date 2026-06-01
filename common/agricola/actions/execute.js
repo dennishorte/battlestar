@@ -57,16 +57,16 @@ AgricolaActionManager.prototype.renovationAndOrFencing = function(player) {
   const selection = this.choose(player, () => {
     const choices = []
     if (player.canRenovate()) {
-      choices.push('Renovate')
+      choices.push(this.option({ id: 'renovate', title: 'Renovate' }))
     }
     const canFence = player.wood >= 1 || player.getFreeFenceCount() > 0 || hasFarmRedevFreeFences
     if (canFence) {
-      choices.push('Build Fences')
+      choices.push(this.option({ id: 'fences', title: 'Build Fences' }))
     }
     if (player.canRenovate() && canFence) {
-      choices.push('Renovate then Fences')
+      choices.push(this.option({ id: 'both', title: 'Renovate then Fences' }))
     }
-    choices.push('Do Nothing')
+    choices.push(this.option({ id: 'nothing', title: 'Do Nothing' }))
     return choices
   }, {
     title: 'Choose action',
@@ -74,18 +74,18 @@ AgricolaActionManager.prototype.renovationAndOrFencing = function(player) {
     max: 1,
   })
 
-  const choice = selection[0]
+  const choiceId = selection[0].id
 
-  if (choice === 'Do Nothing') {
+  if (choiceId === 'nothing') {
     this.log.addDoNothing(player, 'renovate or fence')
     return true
   }
 
-  if (choice === 'Renovate' || choice === 'Renovate then Fences') {
+  if (choiceId === 'renovate' || choiceId === 'both') {
     this.renovate(player)
   }
 
-  if (choice === 'Build Fences' || choice === 'Renovate then Fences') {
+  if (choiceId === 'fences' || choiceId === 'both') {
     let farmRedevFreeFences = 0
     for (const card of this.game.getPlayerActiveCards(player)) {
       if (card.definition.farmRedevelopmentFreeFences) {

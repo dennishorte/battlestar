@@ -561,8 +561,14 @@ Agricola.prototype.executeAnytimeCropMove = function(player, action) {
   const sourceVFs = player.getSownVirtualFields().filter(vf => vf.cropCount >= 2)
 
   const sourceChoices = [
-    ...sourceGridFields.map(f => `${f.row},${f.col} (${f.crop} x${f.cropCount})`),
-    ...sourceVFs.map(vf => `[${vf.label}] (${vf.crop} x${vf.cropCount})`),
+    ...sourceGridFields.map(f => this.actions.option({
+      id: `grid-${f.row}-${f.col}`,
+      title: `${f.row},${f.col} (${f.crop} x${f.cropCount})`,
+    })),
+    ...sourceVFs.map(vf => this.actions.option({
+      id: `vf-${vf.id}`,
+      title: `[${vf.label}] (${vf.crop} x${vf.cropCount})`,
+    })),
   ]
 
   const sourceSelection = this.actions.choose(player, sourceChoices, {
@@ -570,7 +576,7 @@ Agricola.prototype.executeAnytimeCropMove = function(player, action) {
     min: 1, max: 1,
   })
 
-  const sourceStr = Array.isArray(sourceSelection) ? sourceSelection[0] : sourceSelection
+  const sourceId = sourceSelection[0].id
 
   // Determine source type and get crop info
   let cropType
@@ -578,18 +584,21 @@ Agricola.prototype.executeAnytimeCropMove = function(player, action) {
   let sourceVF = null
   let sourceCell = null
   let sourceLabel
+  let sourceRow, sourceCol
 
-  if (sourceStr.startsWith('[')) {
+  if (sourceId.startsWith('vf-')) {
     // Virtual field source
     sourceIsVirtual = true
-    const labelMatch = sourceStr.match(/^\[(.+?)\]/)
-    sourceLabel = labelMatch[1]
-    sourceVF = [...sourceVFs].find(vf => vf.label === sourceLabel)
+    const vfId = sourceId.slice('vf-'.length)
+    sourceVF = [...sourceVFs].find(vf => vf.id === vfId)
     cropType = sourceVF.crop
+    sourceLabel = `[${sourceVF.label}]`
   }
   else {
     // Grid field source
-    const [sourceRow, sourceCol] = sourceStr.split(' ')[0].split(',').map(Number)
+    const coords = sourceId.slice('grid-'.length).split('-')
+    sourceRow = Number(coords[0])
+    sourceCol = Number(coords[1])
     sourceCell = player.farmyard.grid[sourceRow][sourceCol]
     cropType = sourceCell.crop
     sourceLabel = `(${sourceRow},${sourceCol})`
@@ -600,7 +609,7 @@ Agricola.prototype.executeAnytimeCropMove = function(player, action) {
     if (f.crop && f.cropCount > 0) {
       return false
     }
-    if (!sourceIsVirtual && f.row === Number(sourceStr.split(' ')[0].split(',')[0]) && f.col === Number(sourceStr.split(' ')[0].split(',')[1])) {
+    if (!sourceIsVirtual && f.row === sourceRow && f.col === sourceCol) {
       return false
     }
     return true
@@ -616,8 +625,14 @@ Agricola.prototype.executeAnytimeCropMove = function(player, action) {
   })
 
   const targetChoices = [
-    ...targetGridFields.map(f => `${f.row},${f.col}`),
-    ...targetVFs.map(vf => `[${vf.label}]`),
+    ...targetGridFields.map(f => this.actions.option({
+      id: `grid-${f.row}-${f.col}`,
+      title: `${f.row},${f.col}`,
+    })),
+    ...targetVFs.map(vf => this.actions.option({
+      id: `vf-${vf.id}`,
+      title: `[${vf.label}]`,
+    })),
   ]
 
   const targetSelection = this.actions.choose(player, targetChoices, {
@@ -625,20 +640,22 @@ Agricola.prototype.executeAnytimeCropMove = function(player, action) {
     min: 1, max: 1,
   })
 
-  const targetStr = Array.isArray(targetSelection) ? targetSelection[0] : targetSelection
+  const targetId = targetSelection[0].id
 
   let targetLabel
-  if (targetStr.startsWith('[')) {
+  if (targetId.startsWith('vf-')) {
     // Virtual field target
-    const labelMatch = targetStr.match(/^\[(.+?)\]/)
-    targetLabel = labelMatch[1]
-    const targetVF = player.virtualFields.find(vf => vf.label === targetLabel)
+    const vfId = targetId.slice('vf-'.length)
+    const targetVF = player.virtualFields.find(vf => vf.id === vfId)
     targetVF.crop = cropType
     targetVF.cropCount = 1
+    targetLabel = `[${targetVF.label}]`
   }
   else {
     // Grid field target
-    const [targetRow, targetCol] = targetStr.split(',').map(Number)
+    const coords = targetId.slice('grid-'.length).split('-')
+    const targetRow = Number(coords[0])
+    const targetCol = Number(coords[1])
     const targetCell = player.farmyard.grid[targetRow][targetCol]
     targetCell.crop = cropType
     targetCell.cropCount = 1
