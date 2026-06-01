@@ -153,6 +153,37 @@ describe('Units and Deployment', () => {
     expect(choices).not.toContain('Deploy 5 troop(s) from garrison')
   })
 
+  test('troops from a contract completed this turn are deployable', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { troopsInGarrison: 2, troopsInSupply: 9 },
+    })
+    // Place the +2 Troops Spice Refinery contract (by id, since multiple
+    // contracts share the name "Spice Refinery").
+    game.testSetBreakpoint('initialization-complete', (game) => {
+      const contractDeck = game.zones.byId('common.contractDeck')
+      const contractMarket = game.zones.byId('common.contractMarket')
+      const playerContracts = game.zones.byId('dennis.contracts')
+      const pool = [...contractMarket.cardlist(), ...contractDeck.cardlist()]
+      const card = pool.find(c => c.defId === 'spice-refinery-3')
+      card.moveTo(playerContracts)
+    })
+    game.run()
+
+    // Reconnaissance (purple) → Spice Refinery (combat space)
+    // Spice Refinery contract completes on visit → +2 troops to garrison.
+    // The "Pay 1 Spice, gain 4 Solari" option is filtered out (0 spice), so
+    // the space effect resolves silently.
+    t.choose(game, 'Agent Turn.Reconnaissance')
+    t.choose(game, 'Spice Refinery')
+
+    // 2 pre-existing + 2 from contract = 4 in garrison
+    // Can deploy: 2 recruited + min(2, 2 pre-existing) = 4
+    const choices = t.currentChoices(game)
+    expect(choices).toContain('Deploy 4 troop(s) from garrison')
+    expect(choices).not.toContain('Deploy 5 troop(s) from garrison')
+  })
+
   test('only 2 from garrison when no troops recruited on combat space', () => {
     const game = t.fixture()
     t.setBoard(game, {

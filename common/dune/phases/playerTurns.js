@@ -280,6 +280,11 @@ function agentTurn(game, player, card) {
     leaderAbilities.onOpponentVisitsMakerSpace(game, player, space)
   }
 
+  // Resolve contract completion before deployment so troops gained from a
+  // completed contract (e.g. Spice Refinery III) can be sent to the Conflict.
+  const choam = require('../systems/choam.js')
+  choam.checkContractCompletion(game, player, 'board-space', { spaceId: space.id })
+
   // Deploy units if combat space (or card made it a combat space)
   if (space.isCombatSpace || game.state.turnTracking?.spaceIsCombat) {
     deployUnits(game, player)
@@ -297,10 +302,6 @@ function agentTurn(game, player, card) {
       })
     }
   }
-
-  // Check contract completion for board space visit
-  const choam = require('../systems/choam.js')
-  choam.checkContractCompletion(game, player, 'board-space', { spaceId: space.id })
 
   // Offer to play a Plot Intrigue card
   offerPlotIntrigue(game, player)
