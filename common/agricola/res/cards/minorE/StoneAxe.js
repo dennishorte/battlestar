@@ -17,14 +17,14 @@ module.exports = {
     }
 
     const selection = game.actions.choose(player, [
-      'Return 1 stone for 3 additional wood',
-      'Skip',
+      game.actions.option({ id: 'use', title: 'Return 1 stone for 3 additional wood' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
     ], {
       title: 'Stone Axe',
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       player.payCost({ stone: 1 })
       player.addResource('wood', 3)
       game.log.add({

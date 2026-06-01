@@ -27,18 +27,17 @@ module.exports = {
     if (breedable.length === 0) {
       return
     }
-    const choices = breedable.map(type => `Breed ${type}`)
-    choices.push('Skip')
+    const choices = breedable.map(type => game.actions.option({ id: `breed-${type}`, title: `Breed ${type}` }))
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
     const selection = game.actions.choose(player, choices, {
       title: 'Pure Breeder',
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
-    const match = selection[0].match(/Breed (\w+)/)
-    const animalType = match[1]
+    const animalType = selection[0].id.replace(/^breed-/, '')
     game.actions.handleAnimalPlacement(player, { [animalType]: 1 })
     game.log.add({
       template: '{player} breeds 1 {type} ({card})',

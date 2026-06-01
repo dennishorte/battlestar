@@ -25,14 +25,14 @@ module.exports = {
     const validSpaces = player.getValidPlowSpaces()
     if (validSpaces.length > 0) {
       const selection = game.actions.choose(player, [
-        'Plow 1 field',
-        'Skip',
+        game.actions.option({ id: 'plow', title: 'Plow 1 field' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], {
         title: 'Melon Patch',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         game.actions.plowField(player)
         game.log.add({
           template: '{player} plows a field using {card}',

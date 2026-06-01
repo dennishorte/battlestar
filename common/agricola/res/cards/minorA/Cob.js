@@ -12,8 +12,8 @@ module.exports = {
   },
   onWorkPhaseStart(game, player) {
     const choices = [
-      'Exchange 1 grain for 2 clay and 1 food',
-      'Skip',
+      game.actions.option({ id: 'exchange', title: 'Exchange 1 grain for 2 clay and 1 food' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
     ]
     const selection = game.actions.choose(player, choices, {
       title: `${this.name}: Exchange grain for clay and food?`,
@@ -21,7 +21,7 @@ module.exports = {
       max: 1,
     })
 
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       player.payCost({ grain: 1 })
       player.addResource('clay', 2)
       player.addResource('food', 1)

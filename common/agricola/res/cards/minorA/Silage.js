@@ -26,10 +26,10 @@ module.exports = {
           const choices = []
           for (const type of animalTypes) {
             if (player.getTotalAnimals(type) >= 2 && player.canPlaceAnimals(type, 1)) {
-              choices.push(`Pay 1 grain to breed ${type}`)
+              choices.push(game.actions.option({ id: `breed-${type}`, title: `Pay 1 grain to breed ${type}` }))
             }
           }
-          choices.push('Skip')
+          choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
           return choices
         }, {
           title: `${card.name}: Pay grain to breed animals?`,
@@ -37,8 +37,8 @@ module.exports = {
           max: 1,
         })
 
-        if (selection[0] !== 'Skip') {
-          const match = selection[0].match(/breed (\w+)/)
+        if (selection[0].id !== 'skip') {
+          const match = selection[0].id.match(/breed-(\w+)/)
           if (match) {
             const animalType = match[1]
             if (player.grain >= 1) {

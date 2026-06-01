@@ -12,14 +12,14 @@ module.exports = {
   onPlay(game, player) {
     if (player.food >= 3) {
       const selection = game.actions.choose(player, [
-        'Buy 1 vegetable for 3 food',
-        'Skip',
+        game.actions.option({ id: 'buy', title: 'Buy 1 vegetable for 3 food' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], {
         title: 'Crudité',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ food: 3 })
         player.addResource('vegetables', 1)
         game.log.add({
@@ -52,14 +52,20 @@ module.exports = {
       targetField = vegFields[0]
     }
     else {
-      const choices = vegFields.map(f => `${f.row},${f.col} (vegetables x${f.cropCount})`)
+      const choices = vegFields.map(f =>
+        game.actions.option({
+          id: `space-${f.row}-${f.col}`,
+          title: `${f.row},${f.col} (vegetables x${f.cropCount})`,
+        })
+      )
       const selection = game.actions.choose(player, choices, {
         title: 'Crudité: Choose a field',
         min: 1,
         max: 1,
       })
-      const sel = Array.isArray(selection) ? selection[0] : selection
-      const [row, col] = sel.split(' ')[0].split(',').map(Number)
+      const m = selection[0].id.match(/^space-(\d+)-(\d+)$/)
+      const row = Number(m[1])
+      const col = Number(m[2])
       targetField = vegFields.find(f => f.row === row && f.col === col)
     }
 

@@ -29,8 +29,8 @@ module.exports = {
           // Only offer resources that are part of renovation cost
           const cost = player.getRenovationCost()
           return cost && cost[r] > 0
-        }).map(r => `Get 1 free ${r}`)
-        choices.push('No discount')
+        }).map(r => game.actions.option({ id: r, title: `Get 1 free ${r}` }))
+        choices.push(game.actions.option({ id: 'no-discount', title: 'No discount' }))
 
         const selection = game.actions.choose(player, choices, {
           title: 'Master Renovator: Choose discount resource',
@@ -38,9 +38,9 @@ module.exports = {
           max: 1,
         })
 
-        if (selection[0] !== 'No discount') {
-          const chosen = resources.find(r => selection[0] === `Get 1 free ${r}`)
-          if (chosen) {
+        if (selection[0].id !== 'no-discount') {
+          const chosen = selection[0].id
+          if (resources.includes(chosen)) {
             player.addResource(chosen, 1)
           }
         }
@@ -48,8 +48,11 @@ module.exports = {
       }
       else if (affordableWith.length > 0) {
         // Can only afford with discount
-        const choices = affordableWith.map(r => `Get 1 free ${r} and renovate`)
-        choices.push('Skip')
+        const choices = affordableWith.map(r => game.actions.option({
+          id: r,
+          title: `Get 1 free ${r} and renovate`,
+        }))
+        choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
 
         const selection = game.actions.choose(player, choices, {
           title: 'Master Renovator: Renovation with discount',
@@ -57,9 +60,9 @@ module.exports = {
           max: 1,
         })
 
-        if (selection[0] !== 'Skip') {
-          const chosen = resources.find(r => selection[0] === `Get 1 free ${r} and renovate`)
-          if (chosen) {
+        if (selection[0].id !== 'skip') {
+          const chosen = selection[0].id
+          if (resources.includes(chosen)) {
             player.addResource(chosen, 1)
             game.actions.renovate(player)
           }

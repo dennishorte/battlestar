@@ -11,13 +11,16 @@ module.exports = {
   },
   onAction(game, player, _actionId) {
     if (player.grain >= 1 && player.canPlaceAnimals('boar', 1)) {
-      const choices = ['Pay 1 grain for 1 boar', 'Skip']
+      const choices = [
+        game.actions.option({ id: 'pay', title: 'Pay 1 grain for 1 boar' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
+      ]
       const selection = game.actions.choose(player, choices, {
         title: 'Huntsman: Pay 1 grain for 1 boar?',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ grain: 1 })
         game.actions.handleAnimalPlacement(player, { boar: 1 })
         game.log.add({

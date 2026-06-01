@@ -13,13 +13,16 @@ module.exports = {
     if (!player.canGrowFamily()) {
       return
     }
-    const choices = ['Grow family (2 begging cards)', 'Skip']
+    const choices = [
+      game.actions.option({ id: 'grow', title: 'Grow family (2 begging cards)' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
     const selection = game.actions.choose(player, choices, {
       title: 'Child Ombudsman',
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       player.growFamily()
       player.addResource('beggingCards', 2)
       game.log.add({

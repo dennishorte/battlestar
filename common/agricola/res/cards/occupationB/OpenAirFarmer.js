@@ -20,7 +20,9 @@ module.exports = {
       return
     }
 
-    const response = game.actions.choose(player, ['Cancel'], {
+    const response = game.actions.choose(player, [
+      game.actions.option({ id: 'cancel', title: 'Cancel' }),
+    ], {
       title: 'Open Air Farmer: select 2 spaces for pasture',
       min: 1,
       max: 1,

@@ -13,14 +13,17 @@ module.exports = {
   onAction(game, player, _actionId) {
     if (player.grain >= 1) {
       const card = this
-      const choices = ['Accept', 'Skip']
+      const choices = [
+        game.actions.option({ id: 'accept', title: 'Accept' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
+      ]
       const selection = game.actions.choose(player, choices, {
         title: `${card.name}: Pay 1 grain to schedule 1 food on next 6 rounds?`,
         min: 1,
         max: 1,
       })
 
-      if (selection[0] === 'Accept') {
+      if (selection[0].id === 'accept') {
         player.payCost({ grain: 1 })
         const currentRound = game.state.round
         let scheduled = 0

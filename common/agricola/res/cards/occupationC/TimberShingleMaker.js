@@ -15,12 +15,12 @@ module.exports = {
     if (maxWood > 0) {
       const choices = []
       for (let i = 1; i <= maxWood; i++) {
-        choices.push(`Place ${i} wood in rooms`)
+        choices.push(game.actions.option({ id: `place-${i}`, title: `Place ${i} wood in rooms` }))
       }
-      choices.push('Skip')
+      choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
       const selection = game.actions.choose(player, () => choices, { title: 'Timber Shingle Maker', min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
-        const amount = parseInt(selection[0].match(/\d+/)[0])
+      if (selection[0].id !== 'skip') {
+        const amount = parseInt(selection[0].id.match(/\d+/)[0])
         player.payCost({ wood: amount })
         player.timberShingleMakerWood = (player.timberShingleMakerWood || 0) + amount
         game.log.add({

@@ -20,13 +20,16 @@ module.exports = {
     if (validSpaces.length === 0 || !canAffordWithDiscount) {
       return
     }
-    const choices = ['Build a room', 'Skip']
+    const choices = [
+      game.actions.option({ id: 'build', title: 'Build a room' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
     const selection = game.actions.choose(player, choices, {
       title: 'House Artist: Build a room (1 reed discount)?',
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
     game.actions.buildRoom(player, { discount: { reed: 1 } })

@@ -26,10 +26,10 @@ module.exports = {
   onHarvest(game, player, amount) {
     if (amount > 0) {
       const selection = game.actions.choose(player, [
-        `Convert ${amount} vegetable to ${amount * 4} food`,
-        'Keep vegetables',
+        game.actions.option({ id: 'convert', title: `Convert ${amount} vegetable to ${amount * 4} food` }),
+        game.actions.option({ id: 'keep', title: 'Keep vegetables' }),
       ], { title: 'Lettuce Patch', min: 1, max: 1 })
-      if (selection[0] !== 'Keep vegetables') {
+      if (selection[0].id !== 'keep') {
         player.addResource('vegetables', -amount)
         player.addResource('food', amount * 4)
         game.log.add({

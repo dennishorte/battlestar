@@ -12,10 +12,10 @@ module.exports = {
   onAction(game, player, _actionId) {
     if (player.wood >= 4) {
       const selection = game.actions.choose(player, () => [
-        'Place 4 wood for 2 stone, 1 clay, 1 reed, 1 grain',
-        'Skip',
+        game.actions.option({ id: 'exchange', title: 'Place 4 wood for 2 stone, 1 clay, 1 reed, 1 grain' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: 'Tree Guard', min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ wood: 4 })
         player.addResource('stone', 2)
         player.addResource('clay', 1)

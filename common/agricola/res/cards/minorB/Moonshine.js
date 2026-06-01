@@ -24,14 +24,17 @@ module.exports = {
     const chosenId = util.array.select(occupationsInHand, game.random)
     const chosenCard = game.cards.byId(chosenId)
 
-    const choices = [`Play ${chosenCard.name} for 2 food`, `Give ${chosenCard.name} to left player`]
+    const choices = [
+      game.actions.option({ id: 'play', title: `Play ${chosenCard.name} for 2 food` }),
+      game.actions.option({ id: 'give', title: `Give ${chosenCard.name} to left player` }),
+    ]
     const selection = game.actions.choose(player, choices, {
       title: `${card.name}: Play or pass the occupation?`,
       min: 1,
       max: 1,
     })
 
-    if (selection[0].startsWith('Play')) {
+    if (selection[0].id === 'play') {
       game.actions._completeOccupationPlay(player, chosenId, {
         cost: { food: 2 },
         logTemplate: '{player} plays {card} for 2 food (Moonshine)',

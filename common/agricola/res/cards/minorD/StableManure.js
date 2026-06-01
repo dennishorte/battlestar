@@ -30,18 +30,22 @@ module.exports = {
         field = available[0]
       }
       else {
-        const choices = available.map(f => `${f.row},${f.col} (${f.crop} x${f.cropCount})`)
-        choices.push('Skip')
+        const choices = available.map(f => game.actions.option({
+          id: `field-${f.row}-${f.col}`,
+          title: `${f.row},${f.col} (${f.crop} x${f.cropCount})`,
+        }))
+        choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
         const selection = game.actions.choose(player, choices, {
           title: `Stable Manure: Extra harvest (${i + 1}/${unfencedStables})`,
           min: 1,
           max: 1,
         })
-        if (selection[0] === 'Skip') {
+        if (selection[0].id === 'skip') {
           break
         }
-        const coords = selection[0].split(' ')[0]
-        const [row, col] = coords.split(',').map(Number)
+        const [, rowStr, colStr] = selection[0].id.match(/^field-(\d+)-(\d+)$/)
+        const row = Number(rowStr)
+        const col = Number(colStr)
         field = available.find(f => f.row === row && f.col === col)
       }
 

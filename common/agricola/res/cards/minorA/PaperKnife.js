@@ -26,17 +26,14 @@ module.exports = {
     }
     else {
       const choices = occupationsInHand.map(cardId => {
-        const card = game.cards.byId(cardId)
-        return card.name
+        return game.actions.cardOption(game.cards.byId(cardId))
       })
       const selection = game.actions.choose(player, choices, {
         title: 'Paper Knife: Select 3 occupations',
         min: 3,
         max: 3,
       })
-      selectedIds = selection.map(name => {
-        return occupationsInHand.find(id => game.cards.byId(id).name === name)
-      })
+      selectedIds = selection.map(opt => opt.id)
     }
 
     // Randomly select one of the three

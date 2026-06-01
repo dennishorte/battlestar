@@ -14,10 +14,10 @@ module.exports = {
   onBeforeAction(game, player, _actionId) {
     if (player.wood >= 1 || player.getFreeFenceCount() > 0) {
       const selection = game.actions.choose(player, [
-        'Build Fences',
-        'Skip',
+        game.actions.option({ id: 'build', title: 'Build Fences' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: 'Trellis', min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         game.actions.buildFences(player)
       }
     }

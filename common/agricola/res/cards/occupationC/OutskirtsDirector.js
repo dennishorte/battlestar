@@ -24,15 +24,15 @@ module.exports = {
     }
 
     const selection = game.actions.choose(player, [
-      `Place 2 reed on ${otherName}`,
-      'Do not place reed',
+      game.actions.option({ id: 'place', title: `Place 2 reed on ${otherName}` }),
+      game.actions.option({ id: 'skip', title: 'Do not place reed' }),
     ], {
       title: 'Outskirts Director',
       min: 1,
       max: 1,
     })
 
-    if (selection[0] === `Place 2 reed on ${otherName}`) {
+    if (selection[0].id === 'place') {
       const otherState = game.state.actionSpaces[otherId]
       if (!otherState.bonusResources) {
         otherState.bonusResources = {}

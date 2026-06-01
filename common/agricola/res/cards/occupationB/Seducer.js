@@ -16,14 +16,14 @@ module.exports = {
       return
     }
     const selection = game.actions.choose(player, [
-      'Pay 1 stone, 1 grain, 1 vegetable, 1 sheep for Family Growth without Room',
-      'Skip',
+      game.actions.option({ id: 'pay', title: 'Pay 1 stone, 1 grain, 1 vegetable, 1 sheep for Family Growth without Room' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
     ], {
       title: 'Seducer: Pay for Family Growth without Room?',
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
     player.payCost({ stone: 1, grain: 1, vegetables: 1 })

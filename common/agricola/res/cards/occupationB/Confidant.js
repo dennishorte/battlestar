@@ -10,7 +10,7 @@ module.exports = {
     const numPlayers = game.players.all().length
     const maxSpaces = numPlayers <= 2 ? 2 : numPlayers <= 3 ? 3 : 4
     const choicePairs = [[2, '2 spaces'], [3, '3 spaces'], [4, '4 spaces']].filter(([n]) => n <= maxSpaces && player.food >= n)
-    const choices = choicePairs.map(([, label]) => label)
+    const choices = choicePairs.map(([n, label]) => game.actions.option({ id: `spaces-${n}`, title: label }))
     if (choices.length === 0) {
       return
     }
@@ -19,7 +19,7 @@ module.exports = {
       min: 1,
       max: 1,
     })
-    const num = choicePairs.find(([, label]) => label === selection[0])[0]
+    const num = parseInt(selection[0].id.replace(/^spaces-/, ''), 10)
     player.payCost({ food: num })
     const currentRound = game.state.round
     for (let i = 1; i <= num; i++) {
@@ -50,21 +50,21 @@ module.exports = {
     }
     const choices = []
     if (canSow) {
-      choices.push('Sow')
+      choices.push(game.actions.option({ id: 'sow', title: 'Sow' }))
     }
     if (canFence) {
-      choices.push('Build Fences')
+      choices.push(game.actions.option({ id: 'build-fences', title: 'Build Fences' }))
     }
-    choices.push('Skip')
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
     const selection = game.actions.choose(player, choices, {
       title: 'Confidant: Choose an action',
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Sow') {
+    if (selection[0].id === 'sow') {
       game.actions.sow(player)
     }
-    else if (selection[0] === 'Build Fences') {
+    else if (selection[0].id === 'build-fences') {
       game.actions.buildFences(player)
     }
   },

@@ -20,12 +20,12 @@ module.exports = {
 
     const choices = []
     if (canBuildRoom) {
-      choices.push('Build 1 Room')
+      choices.push(game.actions.option({ id: 'build-room', title: 'Build 1 Room' }))
     }
     if (canRenovate) {
-      choices.push('Renovate')
+      choices.push(game.actions.option({ id: 'renovate', title: 'Renovate' }))
     }
-    choices.push('Skip')
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
 
     const selection = game.actions.choose(player, choices, {
       title: 'Cottager: Build 1 Room or Renovate?',
@@ -33,10 +33,10 @@ module.exports = {
       max: 1,
     })
 
-    if (selection[0] === 'Build 1 Room') {
+    if (selection[0].id === 'build-room') {
       game.actions.buildRoom(player)
     }
-    else if (selection[0] === 'Renovate') {
+    else if (selection[0].id === 'renovate') {
       game.actions.renovate(player)
     }
   },

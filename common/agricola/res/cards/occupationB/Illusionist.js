@@ -16,21 +16,27 @@ module.exports = {
         return
       }
 
-      const choices = ['Discard 1 card for 1 ' + resourceType, 'Skip']
+      const choices = [
+        game.actions.option({ id: 'discard', title: 'Discard 1 card for 1 ' + resourceType }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
+      ]
       const selection = game.actions.choose(player, choices, {
         title: 'Illusionist: Discard 1 card for bonus resource?',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         // Discard a card from hand
-        const cardChoices = player.hand.slice()
+        const cardChoices = player.hand.map(id => {
+          const card = game.cards.byId(id)
+          return game.actions.cardOption(card)
+        })
         const cardSelection = game.actions.choose(player, cardChoices, {
           title: 'Illusionist: Choose card to discard',
           min: 1,
           max: 1,
         })
-        const cardObj = game.cards.byId(cardSelection[0])
+        const cardObj = game.cards.byId(cardSelection[0].id)
         if (cardObj) {
           cardObj.moveTo(game.zones.byId('common.supply'))
         }

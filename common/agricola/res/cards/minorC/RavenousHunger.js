@@ -26,14 +26,17 @@ module.exports = {
       return
     }
 
-    const choices = ['Use Ravenous Hunger', 'Skip']
+    const choices = [
+      game.actions.option({ id: 'use', title: 'Use Ravenous Hunger' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
     const selection = game.actions.choose(player, choices, {
       title: 'Ravenous Hunger: Place a person on an accumulation space?',
       min: 1,
       max: 1,
     })
 
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
 

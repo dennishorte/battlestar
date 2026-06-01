@@ -10,10 +10,10 @@ module.exports = {
     const hasRoom = player.getRoomCount() > player.getFamilySize()
     if (hasRoom && player.food >= 3) {
       const selection = game.actions.choose(player, () => [
-        'Pay 3 food for family growth',
-        'Skip',
+        game.actions.option({ id: 'pay', title: 'Pay 3 food for family growth' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: 'Autumn Mother', min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ food: 3 })
         game.actions.familyGrowthWithoutRoom(player)
         game.log.add({

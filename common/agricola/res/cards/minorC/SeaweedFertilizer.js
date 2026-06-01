@@ -10,14 +10,14 @@ module.exports = {
   onAfterSow(game, player) {
     if (game.state.round >= 11) {
       const selection = game.actions.choose(player, [
-        'Get 1 grain',
-        'Get 1 vegetable',
+        game.actions.option({ id: 'grain', title: 'Get 1 grain' }),
+        game.actions.option({ id: 'vegetable', title: 'Get 1 vegetable' }),
       ], {
         title: 'Seaweed Fertilizer',
         min: 1,
         max: 1,
       })
-      if (selection[0] === 'Get 1 vegetable') {
+      if (selection[0].id === 'vegetable') {
         player.addResource('vegetables', 1)
         game.log.add({
           template: '{player} gets 1 vegetable from {card}',

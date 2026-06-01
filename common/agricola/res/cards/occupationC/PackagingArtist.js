@@ -14,14 +14,17 @@ module.exports = {
     })
   },
   onMinorImprovementAction(game, player) {
-    const choices = ['Bake bread instead', 'Play minor improvement normally']
+    const choices = [
+      game.actions.option({ id: 'bake', title: 'Bake bread instead' }),
+      game.actions.option({ id: 'normal', title: 'Play minor improvement normally' }),
+    ]
     const selection = game.actions.choose(player, choices, {
       title: 'Packaging Artist: Bake bread instead of minor improvement?',
       min: 1,
       max: 1,
     })
 
-    if (selection[0] === 'Bake bread instead') {
+    if (selection[0].id === 'bake') {
       game.actions.bakeBread(player)
       return true // signal that we replaced the action
     }

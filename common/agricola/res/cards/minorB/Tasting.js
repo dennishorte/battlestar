@@ -14,15 +14,15 @@ module.exports = {
     }
 
     const selection = game.actions.choose(player, [
-      'Exchange 1 grain for 4 food',
-      'Do not exchange',
+      game.actions.option({ id: 'exchange', title: 'Exchange 1 grain for 4 food' }),
+      game.actions.option({ id: 'skip', title: 'Do not exchange' }),
     ], {
       title: 'Tasting',
       min: 1,
       max: 1,
     })
 
-    if (selection[0] === 'Exchange 1 grain for 4 food') {
+    if (selection[0].id === 'exchange') {
       player.removeResource('grain', 1)
       player.addResource('food', 4)
       game.log.add({

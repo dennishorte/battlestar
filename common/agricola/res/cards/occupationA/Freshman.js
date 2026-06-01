@@ -15,14 +15,17 @@ module.exports = {
       return false
     }
 
-    const choices = ['Play an occupation free', 'Bake bread normally']
+    const choices = [
+      game.actions.option({ id: 'play-occupation', title: 'Play an occupation free' }),
+      game.actions.option({ id: 'bake', title: 'Bake bread normally' }),
+    ]
     const selection = game.actions.choose(player, choices, {
       title: 'Freshman: Play occupation instead of baking?',
       min: 1,
       max: 1,
     })
 
-    if (selection[0] === 'Play an occupation free') {
+    if (selection[0].id === 'play-occupation') {
       game.actions.playOccupation(player, { free: true })
       return true
     }

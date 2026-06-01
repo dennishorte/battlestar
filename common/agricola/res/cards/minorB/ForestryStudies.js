@@ -22,8 +22,8 @@ module.exports = {
       }
 
       const choices = [
-        'Return 2 wood to play 1 occupation free',
-        'Skip',
+        game.actions.option({ id: 'use', title: 'Return 2 wood to play 1 occupation free' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ]
       const selection = game.actions.choose(player, choices, {
         title: `${card.name}: Return 2 wood to play 1 occupation free?`,
@@ -31,7 +31,7 @@ module.exports = {
         max: 1,
       })
 
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ wood: 2 })
         const actionSpace = game.state.actionSpaces['take-wood']
         if (actionSpace) {

@@ -12,8 +12,11 @@ module.exports = {
     if (singleSpacePastures.length > 0) {
       const card = this
       const pastures = singleSpacePastures
-      const choices = pastures.map(p => `Build stable at ${p.spaces[0].row},${p.spaces[0].col}`)
-      choices.push('Skip')
+      const choices = pastures.map(p => game.actions.option({
+        id: `space-${p.spaces[0].row}-${p.spaces[0].col}`,
+        title: `Build stable at ${p.spaces[0].row},${p.spaces[0].col}`,
+      }))
+      choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
 
       const selection = game.actions.choose(player, choices, {
         title: `${card.name}: Build a free stable?`,
@@ -21,8 +24,8 @@ module.exports = {
         max: 1,
       })
 
-      if (selection[0] !== 'Skip') {
-        const match = selection[0].match(/(\d+),(\d+)/)
+      if (selection[0].id !== 'skip') {
+        const match = selection[0].id.match(/space-(\d+)-(\d+)/)
         if (match) {
           const row = parseInt(match[1])
           const col = parseInt(match[2])

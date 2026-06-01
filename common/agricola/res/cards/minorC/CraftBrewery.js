@@ -12,14 +12,14 @@ module.exports = {
   },
   onFeedingPhase(game, player) {
     const selection = game.actions.choose(player, [
-      'Exchange 1 grain (supply) + 1 grain (field) for 4 food and 2 bonus points',
-      'Skip',
+      game.actions.option({ id: 'exchange', title: 'Exchange 1 grain (supply) + 1 grain (field) for 4 food and 2 bonus points' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
     ], {
       title: 'Craft Brewery',
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       // Pay 1 grain from supply
       player.payCost({ grain: 1 })
       // Remove 1 grain from a grain field (reduce cropCount by 1)

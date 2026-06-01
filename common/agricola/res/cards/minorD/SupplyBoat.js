@@ -17,17 +17,17 @@ module.exports = {
       return
     }
 
-    const choices = ['Buy 1 grain for 1 food']
+    const choices = [game.actions.option({ id: 'grain', title: 'Buy 1 grain for 1 food' })]
     if (player.food >= 3) {
-      choices.push('Buy 1 vegetable for 3 food')
+      choices.push(game.actions.option({ id: 'vegetable', title: 'Buy 1 vegetable for 3 food' }))
     }
-    choices.push('Skip')
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
     const selection = game.actions.choose(player, choices, {
       title: 'Supply Boat',
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Buy 1 grain for 1 food') {
+    if (selection[0].id === 'grain') {
       player.payCost({ food: 1 })
       player.addResource('grain', 1)
       game.log.add({
@@ -35,7 +35,7 @@ module.exports = {
         args: { player },
       })
     }
-    else if (selection[0] === 'Buy 1 vegetable for 3 food') {
+    else if (selection[0].id === 'vegetable') {
       player.payCost({ food: 3 })
       player.addResource('vegetables', 1)
       game.log.add({

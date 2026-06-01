@@ -11,12 +11,15 @@ module.exports = {
   },
   onHarvest(game, player) {
     while (player.grain >= 1 && player.vegetables >= 1) {
-      const selection = game.actions.choose(player, ['Convert 1 grain + 1 vegetable to 6 food', 'Skip'], {
+      const selection = game.actions.choose(player, [
+        game.actions.option({ id: 'convert', title: 'Convert 1 grain + 1 vegetable to 6 food' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
+      ], {
         title: 'Veggie Lover: Convert?',
         min: 1,
         max: 1,
       })
-      if (selection[0] === 'Skip') {
+      if (selection[0].id === 'skip') {
         break
       }
       player.removeResource('grain', 1)

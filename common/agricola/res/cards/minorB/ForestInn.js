@@ -34,10 +34,11 @@ module.exports = {
       return
     }
 
-    const choices = affordable.map(t =>
-      `Exchange ${t.cost} wood for 8 wood and ${t.food} food`
-    )
-    choices.push('Skip')
+    const choices = affordable.map(t => game.actions.option({
+      id: `tier-${t.cost}`,
+      title: `Exchange ${t.cost} wood for 8 wood and ${t.food} food`,
+    }))
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
 
     const selection = game.actions.choose(actingPlayer, choices, {
       title: `${card.name}: Exchange wood?`,
@@ -45,10 +46,9 @@ module.exports = {
       max: 1,
     })
 
-    if (selection[0] !== 'Skip') {
-      const tier = affordable.find(t =>
-        selection[0] === `Exchange ${t.cost} wood for 8 wood and ${t.food} food`
-      )
+    if (selection[0].id !== 'skip') {
+      const tierCost = Number(selection[0].id.match(/^tier-(\d+)$/)[1])
+      const tier = affordable.find(t => t.cost === tierCost)
       actingPlayer.payCost({ wood: tier.cost })
       actingPlayer.addResource('wood', 8)
       actingPlayer.addResource('food', tier.food)

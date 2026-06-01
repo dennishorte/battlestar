@@ -26,13 +26,16 @@ module.exports = {
 
     if (otherPlayers.length > 0) {
       for (const other of otherPlayers) {
-        const selection = game.actions.choose(other, ['Buy reed for 2 food', 'Pass'], {
+        const selection = game.actions.choose(other, [
+          game.actions.option({ id: 'buy', title: 'Buy reed for 2 food' }),
+          game.actions.option({ id: 'pass', title: 'Pass' }),
+        ], {
           title: `${player.name} is selling 1 reed. Buy it for 2 food?`,
           min: 1,
           max: 1,
         })
         const sel = Array.isArray(selection) ? selection[0] : selection
-        if (sel === 'Buy reed for 2 food') {
+        if (sel.id === 'buy') {
           buyer = other
           break
         }

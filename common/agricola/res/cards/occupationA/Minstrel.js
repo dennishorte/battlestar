@@ -15,12 +15,15 @@ module.exports = {
     const action = game.getActionById(actionId)
     const spaceName = action ? action.name : actionId
     const cardName = 'Minstrel'
-    const choice = game.actions.choose(player, [`Use ${spaceName}`, 'Skip'], {
+    const choice = game.actions.choose(player, [
+      game.actions.option({ id: 'use', title: `Use ${spaceName}` }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ], {
       title: `${cardName}: Use the single unoccupied space (rounds 1–4)?`,
       min: 1,
       max: 1,
     })
-    if (choice[0] === 'Skip') {
+    if (choice[0].id === 'skip') {
       return
     }
     game.actions.executeAction(player, actionId)

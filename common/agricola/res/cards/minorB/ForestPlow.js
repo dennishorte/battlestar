@@ -14,8 +14,8 @@ module.exports = {
     if (player.wood >= 2) {
       const card = this
       const choices = [
-        'Pay 2 wood to plow 1 field',
-        'Skip',
+        game.actions.option({ id: 'plow', title: 'Pay 2 wood to plow 1 field' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ]
       const selection = game.actions.choose(player, choices, {
         title: `${card.name}: Pay 2 wood to plow 1 field?`,
@@ -23,7 +23,7 @@ module.exports = {
         max: 1,
       })
 
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ wood: 2 })
         const actionSpace = game.state.actionSpaces[actionId]
         if (actionSpace) {

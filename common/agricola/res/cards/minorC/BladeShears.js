@@ -24,11 +24,11 @@ module.exports = {
 
     // Sheep food > 3: offer meaningful choice
     const selection = game.actions.choose(player, [
-      'Get 3 food',
-      `Get ${sheepFood} food (1 per sheep)`,
+      game.actions.option({ id: 'flat', title: 'Get 3 food' }),
+      game.actions.option({ id: 'per-sheep', title: `Get ${sheepFood} food (1 per sheep)` }),
     ], { title: 'Blade Shears', min: 1, max: 1 })
 
-    const foodGained = selection[0] === 'Get 3 food' ? 3 : sheepFood
+    const foodGained = selection[0].id === 'flat' ? 3 : sheepFood
     player.addResource('food', foodGained)
     game.log.add({
       template: '{player} gets {food} food from {card}',

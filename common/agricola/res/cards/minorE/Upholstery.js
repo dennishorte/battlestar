@@ -14,14 +14,14 @@ module.exports = {
     const stored = game.cardState(this.id).stored || 0
     if (stored < player.getRoomCount() && player.reed >= 1) {
       const selection = game.actions.choose(player, [
-        'Store 1 reed for 1 bonus point',
-        'Skip',
+        game.actions.option({ id: 'store', title: 'Store 1 reed for 1 bonus point' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], {
         title: 'Upholstery',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ reed: 1 })
         const s = game.cardState(this.id)
         s.stored = (s.stored || 0) + 1

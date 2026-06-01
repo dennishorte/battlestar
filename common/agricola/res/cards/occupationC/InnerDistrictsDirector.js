@@ -13,10 +13,10 @@ module.exports = {
     const otherSpace = actionId === 'take-wood' ? 'take-clay' : 'take-wood'
     const otherName = actionId === 'take-wood' ? 'Clay Pit' : 'Forest'
     const selection = game.actions.choose(player, () => [
-      `Place 1 stone on ${otherName} and place another person`,
-      'Do not place stone',
+      game.actions.option({ id: 'place-stone', title: `Place 1 stone on ${otherName} and place another person` }),
+      game.actions.option({ id: 'skip', title: 'Do not place stone' }),
     ], { title: 'Inner Districts Director', min: 1, max: 1 })
-    if (selection[0] !== 'Do not place stone') {
+    if (selection[0].id !== 'skip') {
       // Add stone to the other accumulation space
       if (!game.state.actionSpaces[otherSpace]) {
         game.state.actionSpaces[otherSpace] = {}

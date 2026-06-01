@@ -16,9 +16,9 @@ module.exports = {
       const card = this
       const maxWood = 2
       const foodPerWood = 1
-      const choices = ['Skip']
+      const choices = [game.actions.option({ id: 'skip', title: 'Skip' })]
       for (let n = 1; n <= maxWood && player.food >= n * foodPerWood; n++) {
-        choices.unshift(`Buy ${n} wood for ${n * foodPerWood} food`)
+        choices.unshift(game.actions.option({ id: `buy-${n}`, title: `Buy ${n} wood for ${n * foodPerWood} food` }))
       }
       if (choices.length > 1) {
         const selection = game.actions.choose(player, choices, {
@@ -26,8 +26,8 @@ module.exports = {
           min: 1,
           max: 1,
         })
-        if (selection[0] !== 'Skip') {
-          const match = selection[0].match(/Buy (\d+) wood for (\d+) food/)
+        if (selection[0].id !== 'skip') {
+          const match = selection[0].id.match(/^buy-(\d+)$/)
           if (match) {
             const n = parseInt(match[1], 10)
             player.payCost({ food: n * foodPerWood })

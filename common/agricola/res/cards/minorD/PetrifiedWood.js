@@ -20,9 +20,12 @@ module.exports = {
 
     const choices = []
     for (let i = 1; i <= maxExchange; i++) {
-      choices.push(`Exchange ${i} wood for ${i} stone`)
+      choices.push(game.actions.option({
+        id: `exchange-${i}`,
+        title: `Exchange ${i} wood for ${i} stone`,
+      }))
     }
-    choices.push('Do not exchange')
+    choices.push(game.actions.option({ id: 'skip', title: 'Do not exchange' }))
 
     const selection = game.actions.choose(player, choices, {
       title: 'Petrified Wood',
@@ -30,8 +33,8 @@ module.exports = {
       max: 1,
     })
 
-    if (selection[0] !== 'Do not exchange') {
-      const amount = parseInt(selection[0].split(' ')[1])
+    if (selection[0].id !== 'skip') {
+      const amount = parseInt(selection[0].id.split('-')[1])
       player.removeResource('wood', amount)
       player.addResource('stone', amount)
       game.log.add({

@@ -27,18 +27,18 @@ module.exports = {
       if (options.length > 0) {
         const choices = options.map(id => {
           const action = game.getActionById(id)
-          return `Use ${action ? action.name : id}`
+          return game.actions.option({ id: `use-${id}`, title: `Use ${action ? action.name : id}` })
         })
-        choices.push('Skip')
+        choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
         const selection = game.actions.choose(player, choices, {
           title: 'Junior Artist: Pay 1 food to use another space?',
           min: 1,
           max: 1,
         })
-        if (selection[0] !== 'Skip') {
-          const idx = choices.indexOf(selection[0])
+        if (selection[0].id !== 'skip') {
+          const selectedActionId = selection[0].id.replace(/^use-/, '')
           player.payCost({ food: 1 })
-          game.actions.executeAction(player, options[idx])
+          game.actions.executeAction(player, selectedActionId)
         }
       }
     }

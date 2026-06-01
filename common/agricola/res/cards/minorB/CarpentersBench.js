@@ -22,18 +22,23 @@ module.exports = {
       return
     }
 
-    const selection = game.actions.choose(player, ['Build pasture', 'Skip'], {
+    const selection = game.actions.choose(player, [
+      game.actions.option({ id: 'build', title: 'Build pasture' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ], {
       title: `Carpenter's Bench: Build a pasture using ${woodTaken} wood (1 fence free)?`,
       min: 1,
       max: 1,
     })
 
     const sel = Array.isArray(selection) ? selection[0] : selection
-    if (sel === 'Skip') {
+    if (sel.id === 'skip') {
       return
     }
 
-    const response = game.actions.choose(player, ['Cancel fencing'], {
+    const response = game.actions.choose(player, [
+      game.actions.option({ id: 'cancel', title: 'Cancel fencing' }),
+    ], {
       title: "Carpenter's Bench: Select spaces for pasture",
       min: 1,
       max: 1,

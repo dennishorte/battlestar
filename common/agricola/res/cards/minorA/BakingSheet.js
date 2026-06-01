@@ -12,8 +12,8 @@ module.exports = {
     if (player.grain >= 1) {
       const card = this
       const choices = [
-        'Exchange 1 grain for 2 food and 1 bonus point',
-        'Skip',
+        game.actions.option({ id: 'exchange', title: 'Exchange 1 grain for 2 food and 1 bonus point' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ]
       const selection = game.actions.choose(player, choices, {
         title: `${card.name}: Exchange grain for food and bonus point?`,
@@ -21,7 +21,7 @@ module.exports = {
         max: 1,
       })
 
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ grain: 1 })
         player.addResource('food', 2)
         player.addBonusPoints(1)

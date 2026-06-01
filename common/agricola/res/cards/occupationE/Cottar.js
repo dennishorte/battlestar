@@ -7,12 +7,15 @@ module.exports = {
   players: "1+",
   text: "Each time you play or build an improvement, you get your choice of 1 wood or 1 clay immediately after paying its cost.",
   onBuildImprovement(game, player) {
-    const selection = game.actions.choose(player, ['Take 1 wood', 'Take 1 clay'], {
+    const selection = game.actions.choose(player, [
+      game.actions.option({ id: 'wood', title: 'Take 1 wood' }),
+      game.actions.option({ id: 'clay', title: 'Take 1 clay' }),
+    ], {
       title: 'Cottar: Choose resource',
       min: 1,
       max: 1,
     })
-    const resource = selection[0].includes('wood') ? 'wood' : 'clay'
+    const resource = selection[0].id
     player.addResource(resource, 1)
     game.log.add({
       template: '{player} gets 1 {resource}',

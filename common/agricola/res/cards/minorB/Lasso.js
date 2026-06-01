@@ -35,14 +35,17 @@ module.exports = {
       allowedActions = valid
     }
 
-    const choices = ['Use Lasso', 'Skip']
+    const choices = [
+      game.actions.option({ id: 'use', title: 'Use Lasso' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
     const selection = game.actions.choose(player, choices, {
       title: 'Lasso: Place a second person?',
       min: 1,
       max: 1,
     })
 
-    if (selection[0] === 'Use Lasso') {
+    if (selection[0].id === 'use') {
       game.log.add({
         template: '{player} uses Lasso to place a second person',
         args: { player },

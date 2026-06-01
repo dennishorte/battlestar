@@ -23,13 +23,16 @@ module.exports = {
       return
     }
 
-    const choices = ['Build a room (pay 1 food to opponent + room cost)', 'Skip']
+    const choices = [
+      game.actions.option({ id: 'build', title: 'Build a room (pay 1 food to opponent + room cost)' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
     const selection = game.actions.choose(cardOwner, choices, {
       title: 'Building Tycoon: Build a room?',
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
 

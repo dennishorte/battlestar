@@ -17,14 +17,14 @@ module.exports = {
     }
 
     const selection = game.actions.choose(player, [
-      'Pay 1 reed for 1 vegetable',
-      'Skip',
+      game.actions.option({ id: 'pay', title: 'Pay 1 reed for 1 vegetable' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
     ], {
       title: 'Small Basket',
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       player.payCost({ reed: 1 })
       player.addResource('vegetables', 1)
       game.log.add({

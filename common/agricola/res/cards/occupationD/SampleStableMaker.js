@@ -12,20 +12,20 @@ module.exports = {
       return
     }
 
-    const choices = stables.map(s => `Return stable at ${s.row},${s.col}`)
-    choices.push('Skip')
+    const choices = stables.map(s => game.actions.option({ id: `space-${s.row}-${s.col}`, title: `Return stable at ${s.row},${s.col}` }))
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
     const selection = game.actions.choose(player, choices, {
       title: 'Sample Stable Maker: Return a stable?',
       min: 1,
       max: 1,
     })
 
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
 
-    // Parse chosen stable coordinates
-    const match = selection[0].match(/(\d+),(\d+)/)
+    // Parse chosen stable coordinates from id
+    const match = selection[0].id.match(/^space-(\d+)-(\d+)$/)
     const row = parseInt(match[1])
     const col = parseInt(match[2])
 

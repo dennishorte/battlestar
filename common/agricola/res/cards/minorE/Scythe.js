@@ -12,13 +12,16 @@ module.exports = {
       return
     }
 
-    const choices = sownFields.map(f => {
-      if (f.isVirtualField) {
-        return `${f.label} (${f.crop}: ${f.cropCount})`
-      }
-      return `Field (${f.row},${f.col}) - ${f.crop}: ${f.cropCount}`
+    const choices = sownFields.map((f, idx) => {
+      const title = f.isVirtualField
+        ? `${f.label} (${f.crop}: ${f.cropCount})`
+        : `Field (${f.row},${f.col}) - ${f.crop}: ${f.cropCount}`
+      const id = f.isVirtualField
+        ? `virtual-${f.virtualFieldId ?? idx}`
+        : `field-${f.row}-${f.col}`
+      return game.actions.option({ id, title })
     })
-    choices.push('Skip')
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
 
     const selection = game.actions.choose(player, choices, {
       title: 'Scythe: Harvest all crops from one field',
@@ -26,8 +29,8 @@ module.exports = {
       max: 1,
     })
 
-    if (selection[0] !== 'Skip') {
-      const idx = choices.indexOf(selection[0])
+    if (selection[0].id !== 'skip') {
+      const idx = choices.findIndex(c => c.id === selection[0].id)
       const field = sownFields[idx]
       const crop = field.crop
       const amount = field.cropCount

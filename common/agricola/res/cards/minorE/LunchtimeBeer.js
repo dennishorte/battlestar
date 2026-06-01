@@ -7,14 +7,17 @@ module.exports = {
   cost: {},
   text: "At the start of each harvest, you can choose to skip the field and breeding phase of that harvest and get exactly 1 food instead.",
   onHarvestStart(game, player) {
-    const choices = ['Skip field and breeding (get 1 food)', 'Normal harvest']
+    const choices = [
+      game.actions.option({ id: 'skip-phases', title: 'Skip field and breeding (get 1 food)' }),
+      game.actions.option({ id: 'normal', title: 'Normal harvest' }),
+    ]
     const selection = game.actions.choose(player, choices, {
       title: 'Lunchtime Beer: Skip field and breeding phase?',
       min: 1,
       max: 1,
     })
 
-    if (selection[0].startsWith('Skip')) {
+    if (selection[0].id === 'skip-phases') {
       game.state.skipField.push(player.name)
       game.state.skipBreeding.push(player.name)
       player.addResource('food', 1)

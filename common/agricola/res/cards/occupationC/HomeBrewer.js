@@ -9,11 +9,11 @@ module.exports = {
   onFieldPhaseEnd(game, player) {
     if (player.grain >= 1) {
       const selection = game.actions.choose(player, () => [
-        'Convert 1 grain to 3 food',
-        'Convert 1 grain to 1 bonus point',
-        'Skip',
+        game.actions.option({ id: 'food', title: 'Convert 1 grain to 3 food' }),
+        game.actions.option({ id: 'bonus', title: 'Convert 1 grain to 1 bonus point' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: 'Home Brewer', min: 1, max: 1 })
-      if (selection[0] === 'Convert 1 grain to 3 food') {
+      if (selection[0].id === 'food') {
         player.payCost({ grain: 1 })
         player.addResource('food', 3)
         game.log.add({
@@ -21,7 +21,7 @@ module.exports = {
           args: { player },
         })
       }
-      else if (selection[0] === 'Convert 1 grain to 1 bonus point') {
+      else if (selection[0].id === 'bonus') {
         player.payCost({ grain: 1 })
         player.addBonusPoints(1)
         game.log.add({

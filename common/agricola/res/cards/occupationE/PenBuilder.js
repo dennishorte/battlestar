@@ -35,7 +35,7 @@ module.exports = {
     if (maxWood > 1) {
       const choices = []
       for (let i = 1; i <= Math.min(maxWood, 10); i++) {
-        choices.push(`Place ${i} wood`)
+        choices.push(game.actions.option({ id: `place-${i}`, title: `Place ${i} wood` }))
       }
       const selection = game.actions.choose(player, choices, {
         title: 'Pen Builder: How much wood to place?',
@@ -43,7 +43,7 @@ module.exports = {
         max: 1,
       })
       const sel = Array.isArray(selection) ? selection[0] : selection
-      amount = parseInt(sel.match(/\d+/)[0])
+      amount = parseInt(sel.id.match(/\d+/)[0])
     }
 
     this.placeWood(game, player, amount)

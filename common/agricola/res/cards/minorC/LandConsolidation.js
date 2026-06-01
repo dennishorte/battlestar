@@ -31,14 +31,20 @@ module.exports = {
       targetField = grainFields[0]
     }
     else {
-      const choices = grainFields.map(f => `${f.row},${f.col} (grain x${f.cropCount})`)
+      const choices = grainFields.map(f =>
+        game.actions.option({
+          id: `space-${f.row}-${f.col}`,
+          title: `${f.row},${f.col} (grain x${f.cropCount})`,
+        })
+      )
       const selection = game.actions.choose(player, choices, {
         title: 'Land Consolidation: Choose a field',
         min: 1,
         max: 1,
       })
-      const sel = Array.isArray(selection) ? selection[0] : selection
-      const [row, col] = sel.split(' ')[0].split(',').map(Number)
+      const m = selection[0].id.match(/^space-(\d+)-(\d+)$/)
+      const row = Number(m[1])
+      const col = Number(m[2])
       targetField = grainFields.find(f => f.row === row && f.col === col)
     }
 

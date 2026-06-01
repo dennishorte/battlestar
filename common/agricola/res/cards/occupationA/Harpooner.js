@@ -14,13 +14,16 @@ module.exports = {
       return
     }
     const foodBonus = player.familyMembers
-    const choices = [`Pay 1 wood for ${foodBonus} food and 1 reed`, 'Skip']
+    const choices = [
+      game.actions.option({ id: 'pay', title: `Pay 1 wood for ${foodBonus} food and 1 reed` }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
     const selection = game.actions.choose(player, choices, {
       title: `Harpooner: Pay wood for bonus?`,
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       player.payCost({ wood: 1 })
       player.addResource('food', foodBonus)
       player.addResource('reed', 1)

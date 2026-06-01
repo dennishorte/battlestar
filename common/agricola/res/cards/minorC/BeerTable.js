@@ -11,14 +11,14 @@ module.exports = {
   onFieldPhaseEnd(game, player) {
     if (player.grain >= 1) {
       const selection = game.actions.choose(player, [
-        'Pay 1 grain for 2 bonus points (others get 1 food)',
-        'Skip',
+        game.actions.option({ id: 'pay', title: 'Pay 1 grain for 2 bonus points (others get 1 food)' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], {
         title: 'Beer Table',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ grain: 1 })
         player.addBonusPoints(2)
         for (const other of game.players.all()) {

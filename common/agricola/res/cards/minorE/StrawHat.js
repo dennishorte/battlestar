@@ -41,14 +41,17 @@ module.exports = {
     farmlandState.occupiedBy = player.name
     player.availableWorkers -= 1
 
-    const choices = ['Move from Farmland', 'Get 1 food']
+    const choices = [
+      game.actions.option({ id: 'move', title: 'Move from Farmland' }),
+      game.actions.option({ id: 'food', title: 'Get 1 food' }),
+    ]
     const selection = game.actions.choose(player, choices, {
       title: 'Straw Hat: Move person from Farmland?',
       min: 1,
       max: 1,
     })
 
-    if (selection[0] === 'Get 1 food') {
+    if (selection[0].id === 'food') {
       player.addResource('food', 1)
       game.log.add({
         template: '{player} gets 1 food from {card}',

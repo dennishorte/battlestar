@@ -12,10 +12,10 @@ module.exports = {
   onAction(game, player, actionId) {
     if ((actionId === 'take-clay' || actionId === 'take-clay-2') && player.stone >= 1) {
       const selection = game.actions.choose(player, () => [
-        'Place 1 stone on space for 2 grain',
-        'Skip',
+        game.actions.option({ id: 'exchange', title: 'Place 1 stone on space for 2 grain' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: 'Soil Scientist', min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ stone: 1 })
         player.addResource('grain', 2)
         game.log.add({
@@ -26,10 +26,10 @@ module.exports = {
     }
     else if ((actionId === 'take-stone-1' || actionId === 'take-stone-2') && player.clay >= 2) {
       const selection = game.actions.choose(player, () => [
-        'Place 2 clay on space for 1 vegetable',
-        'Skip',
+        game.actions.option({ id: 'exchange', title: 'Place 2 clay on space for 1 vegetable' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: 'Soil Scientist', min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ clay: 2 })
         player.addResource('vegetables', 1)
         game.log.add({

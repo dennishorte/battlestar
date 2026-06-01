@@ -10,10 +10,10 @@ module.exports = {
     if (game.state.round === 7 || game.state.round === 9) {
       if (player.canSowAnything()) {
         const selection = game.actions.choose(player, [
-          'Take a Sow action',
-          'Skip',
+          game.actions.option({ id: 'sow', title: 'Take a Sow action' }),
+          game.actions.option({ id: 'skip', title: 'Skip' }),
         ], { title: 'Sundial', min: 1, max: 1 })
-        if (selection[0] !== 'Skip') {
+        if (selection[0].id !== 'skip') {
           game.actions.sow(player)
           game.log.add({
             template: '{player} takes a free Sow action via {card}',

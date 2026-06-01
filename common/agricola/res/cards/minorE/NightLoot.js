@@ -37,12 +37,12 @@ module.exports = {
     }
 
     // Pick first resource type
-    const selection1 = game.actions.choose(player, availableTypes, {
+    const selection1 = game.actions.choose(player, availableTypes.map(t => game.actions.option({ id: t, title: t })), {
       title: 'Night Loot: Choose 1st building resource',
       min: 1,
       max: 1,
     })
-    const type1 = selection1[0]
+    const type1 = selection1[0].id
 
     // Take 1 from an accumulation space of that type
     const takeFrom = (type) => {
@@ -57,13 +57,13 @@ module.exports = {
         space = spaces[0]
       }
       else {
-        const choices = spaces.map(s => s.name)
+        const choices = spaces.map(s => game.actions.option({ id: s.actionId, title: s.name }))
         const sel = game.actions.choose(player, choices, {
           title: `Night Loot: Choose ${type} source`,
           min: 1,
           max: 1,
         })
-        space = spaces[choices.indexOf(sel[0])]
+        space = spaces.find(s => s.actionId === sel[0].id)
       }
       game.state.actionSpaces[space.actionId].accumulated--
       player.addResource(type, 1)
@@ -85,12 +85,12 @@ module.exports = {
       type2 = remainingTypes[0]
     }
     else {
-      const selection2 = game.actions.choose(player, remainingTypes, {
+      const selection2 = game.actions.choose(player, remainingTypes.map(t => game.actions.option({ id: t, title: t })), {
         title: 'Night Loot: Choose 2nd building resource',
         min: 1,
         max: 1,
       })
-      type2 = selection2[0]
+      type2 = selection2[0].id
     }
 
     takeFrom(type2)

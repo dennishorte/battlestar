@@ -21,8 +21,8 @@ module.exports = {
     }
     else {
       const choices = [
-        'Exchange 1 wood for 3 food',
-        'Skip',
+        game.actions.option({ id: 'exchange', title: 'Exchange 1 wood for 3 food' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ]
       const selection = game.actions.choose(player, choices, {
         title: 'Shaving Horse: Exchange wood for food?',
@@ -30,7 +30,7 @@ module.exports = {
         max: 1,
       })
 
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ wood: 1 })
         player.addResource('food', 3)
         game.log.add({

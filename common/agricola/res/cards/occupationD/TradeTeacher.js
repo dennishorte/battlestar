@@ -19,27 +19,26 @@ module.exports = {
       }
       const choices = []
       if (player.food >= 1) {
-        choices.push('Buy 1 grain for 1 food')
-        choices.push('Buy 1 stone for 1 food')
-        choices.push('Buy 1 sheep for 1 food')
-        choices.push('Buy 1 boar for 1 food')
+        choices.push(game.actions.option({ id: 'grain', title: 'Buy 1 grain for 1 food' }))
+        choices.push(game.actions.option({ id: 'stone', title: 'Buy 1 stone for 1 food' }))
+        choices.push(game.actions.option({ id: 'sheep', title: 'Buy 1 sheep for 1 food' }))
+        choices.push(game.actions.option({ id: 'boar', title: 'Buy 1 boar for 1 food' }))
       }
       if (player.food >= 2) {
-        choices.push('Buy 1 cattle for 2 food')
-        choices.push('Buy 1 vegetable for 2 food')
+        choices.push(game.actions.option({ id: 'cattle', title: 'Buy 1 cattle for 2 food' }))
+        choices.push(game.actions.option({ id: 'vegetable', title: 'Buy 1 vegetable for 2 food' }))
       }
-      choices.push('Skip')
+      choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
       const selection = game.actions.choose(player, choices, {
         title: `Trade Teacher (purchase ${purchase + 1} of 2)`,
         min: 1,
         max: 1,
       })
-      if (selection[0] === 'Skip') {
+      if (selection[0].id === 'skip') {
         break
       }
-      const match = selection[0].match(/Buy 1 (\w+) for (\d+) food/)
-      const resource = match[1]
-      const cost = parseInt(match[2])
+      const resource = selection[0].id
+      const cost = (resource === 'cattle' || resource === 'vegetable') ? 2 : 1
       player.removeResource('food', cost)
       if (resource === 'sheep' || resource === 'boar' || resource === 'cattle') {
         game.actions.handleAnimalPlacement(player, { [resource]: 1 })

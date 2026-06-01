@@ -18,10 +18,10 @@ module.exports = {
     const validSpaces = player.getValidRoomBuildSpaces()
     if (validSpaces.length > 0 && player.canAffordRoom()) {
       const selection = game.actions.choose(player, [
-        'Build a Room',
-        'Skip',
+        game.actions.option({ id: 'build', title: 'Build a Room' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: 'Hammer Crusher', min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         game.actions.buildRoom(player)
       }
     }

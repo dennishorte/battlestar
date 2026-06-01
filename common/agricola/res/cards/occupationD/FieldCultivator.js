@@ -15,13 +15,16 @@ module.exports = {
       return
     }
     const nextGood = s.pile[0]
-    const choices = [`Take 1 ${nextGood} from pile`, 'Skip']
+    const choices = [
+      game.actions.option({ id: 'take', title: `Take 1 ${nextGood} from pile` }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
     const selection = game.actions.choose(player, choices, {
       title: 'Field Cultivator',
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       const good = s.pile.shift()
       player.addResource(good, 1)
       game.log.add({

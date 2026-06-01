@@ -36,14 +36,20 @@ module.exports = {
     const sownFields = player.getFieldSpaces().filter(f => f.crop && f.cropCount > 0)
 
     // Choose field to clear
-    const clearChoices = sownFields.map(f => `${f.row},${f.col} (${f.crop} x${f.cropCount})`)
+    const clearChoices = sownFields.map(f =>
+      game.actions.option({
+        id: `space-${f.row}-${f.col}`,
+        title: `${f.row},${f.col} (${f.crop} x${f.cropCount})`,
+      })
+    )
     const clearSelection = game.actions.choose(player, clearChoices, {
       title: 'Roll-Over Plow: Choose field to clear',
       min: 1,
       max: 1,
     })
-    const clearStr = Array.isArray(clearSelection) ? clearSelection[0] : clearSelection
-    const [clearRow, clearCol] = clearStr.split(' ')[0].split(',').map(Number)
+    const clearMatch = clearSelection[0].id.match(/^space-(\d+)-(\d+)$/)
+    const clearRow = Number(clearMatch[1])
+    const clearCol = Number(clearMatch[2])
 
     const cell = player.farmyard.grid[clearRow][clearCol]
     cell.crop = null
@@ -62,14 +68,20 @@ module.exports = {
       plowCol = validPlowSpaces[0].col
     }
     else {
-      const plowChoices = validPlowSpaces.map(s => `${s.row},${s.col}`)
+      const plowChoices = validPlowSpaces.map(s =>
+        game.actions.option({
+          id: `space-${s.row}-${s.col}`,
+          title: `${s.row},${s.col}`,
+        })
+      )
       const plowSelection = game.actions.choose(player, plowChoices, {
         title: 'Roll-Over Plow: Choose space to plow',
         min: 1,
         max: 1,
       })
-      const plowStr = Array.isArray(plowSelection) ? plowSelection[0] : plowSelection
-      ;[plowRow, plowCol] = plowStr.split(',').map(Number)
+      const plowMatch = plowSelection[0].id.match(/^space-(\d+)-(\d+)$/)
+      plowRow = Number(plowMatch[1])
+      plowCol = Number(plowMatch[2])
     }
 
     player.plowField(plowRow, plowCol)

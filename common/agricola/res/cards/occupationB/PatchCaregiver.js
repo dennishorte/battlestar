@@ -19,12 +19,12 @@ module.exports = {
     })
     const choices = []
     if (player.food >= 1) {
-      choices.push('Buy 1 grain for 1 food')
+      choices.push(game.actions.option({ id: 'grain', title: 'Buy 1 grain for 1 food' }))
     }
     if (player.food >= 3) {
-      choices.push('Buy 1 vegetable for 3 food')
+      choices.push(game.actions.option({ id: 'vegetable', title: 'Buy 1 vegetable for 3 food' }))
     }
-    choices.push('Skip')
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
     if (choices.length === 1) {
       return
     }
@@ -33,10 +33,10 @@ module.exports = {
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
-    if (selection[0] === 'Buy 1 grain for 1 food') {
+    if (selection[0].id === 'grain') {
       player.payCost({ food: 1 })
       player.addResource('grain', 1)
       game.log.add({

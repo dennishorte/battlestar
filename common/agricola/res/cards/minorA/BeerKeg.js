@@ -15,15 +15,15 @@ module.exports = {
     const selection = game.actions.choose(player, () => {
       const choices = []
       if (player.grain >= 1) {
-        choices.push('Exchange 1 grain for 3 food')
+        choices.push(game.actions.option({ id: 'grain-1', title: 'Exchange 1 grain for 3 food' }))
       }
       if (player.grain >= 2) {
-        choices.push('Exchange 2 grain for 3 food and 1 bonus point')
+        choices.push(game.actions.option({ id: 'grain-2', title: 'Exchange 2 grain for 3 food and 1 bonus point' }))
       }
       if (player.grain >= 3) {
-        choices.push('Exchange 3 grain for 3 food and 2 bonus points')
+        choices.push(game.actions.option({ id: 'grain-3', title: 'Exchange 3 grain for 3 food and 2 bonus points' }))
       }
-      choices.push('Skip')
+      choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
       return choices
     }, {
       title: `${this.name}: Exchange grain for food?`,
@@ -31,8 +31,8 @@ module.exports = {
       max: 1,
     })
 
-    if (selection[0] !== 'Skip') {
-      const match = selection[0].match(/Exchange (\d+) grain/)
+    if (selection[0].id !== 'skip') {
+      const match = selection[0].id.match(/grain-(\d+)/)
       if (match) {
         const grainCount = parseInt(match[1])
         const bonusPoints = Math.max(0, grainCount - 1)

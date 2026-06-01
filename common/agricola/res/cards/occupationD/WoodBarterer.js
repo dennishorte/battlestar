@@ -11,27 +11,27 @@ module.exports = {
     return buildActions.includes(actionId)
   },
   onBeforeAction(game, player, _actionId) {
-    const choices = ['Get 2 wood']
+    const choices = [game.actions.option({ id: 'gain', title: 'Get 2 wood' })]
     if (player.wood >= 1) {
-      choices.push('Exchange 1 wood for 1 reed')
+      choices.push(game.actions.option({ id: 'exchange-1', title: 'Exchange 1 wood for 1 reed' }))
     }
     if (player.wood >= 2) {
-      choices.push('Exchange 2 wood for 2 reed')
+      choices.push(game.actions.option({ id: 'exchange-2', title: 'Exchange 2 wood for 2 reed' }))
     }
-    choices.push('Skip')
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
     const selection = game.actions.choose(player, choices, {
       title: 'Wood Barterer',
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Get 2 wood') {
+    if (selection[0].id === 'gain') {
       player.addResource('wood', 2)
       game.log.add({
         template: '{player} gets 2 wood',
         args: { player },
       })
     }
-    else if (selection[0] === 'Exchange 1 wood for 1 reed') {
+    else if (selection[0].id === 'exchange-1') {
       player.removeResource('wood', 1)
       player.addResource('reed', 1)
       game.log.add({
@@ -39,7 +39,7 @@ module.exports = {
         args: { player },
       })
     }
-    else if (selection[0] === 'Exchange 2 wood for 2 reed') {
+    else if (selection[0].id === 'exchange-2') {
       player.removeResource('wood', 2)
       player.addResource('reed', 2)
       game.log.add({

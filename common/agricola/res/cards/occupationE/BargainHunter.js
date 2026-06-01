@@ -8,12 +8,15 @@ module.exports = {
   text: "At the start of each round, you can place 1 food from your supply on the \"Traveling Players\" accumulation space to play a minor improvement by paying its cost.",
   onRoundStart(game, player) {
     if (player.food >= 1) {
-      const selection = game.actions.choose(player, ['Place 1 food and play minor', 'Skip'], {
+      const selection = game.actions.choose(player, [
+        game.actions.option({ id: 'place', title: 'Place 1 food and play minor' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
+      ], {
         title: 'Bargain Hunter: Place food on Traveling Players?',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.removeResource('food', 1)
         const tpState = game.state.actionSpaces['traveling-players']
         if (tpState) {

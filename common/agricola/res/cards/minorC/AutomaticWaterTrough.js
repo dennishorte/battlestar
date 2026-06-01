@@ -10,31 +10,31 @@ module.exports = {
   onPlay(game, player) {
     const choices = []
     if (player.canPlaceAnimals('sheep', 1)) {
-      choices.push('Buy 1 sheep (free)')
+      choices.push(game.actions.option({ id: 'sheep', title: 'Buy 1 sheep (free)' }))
     }
     if (player.food >= 1 && player.canPlaceAnimals('boar', 1)) {
-      choices.push('Buy 1 wild boar for 1 food')
+      choices.push(game.actions.option({ id: 'boar', title: 'Buy 1 wild boar for 1 food' }))
     }
     if (player.food >= 2 && player.canPlaceAnimals('cattle', 1)) {
-      choices.push('Buy 1 cattle for 2 food')
+      choices.push(game.actions.option({ id: 'cattle', title: 'Buy 1 cattle for 2 food' }))
     }
     if (choices.length === 0) {
       return
     }
-    choices.push('Skip')
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
     const selection = game.actions.choose(player, choices, {
       title: 'Automatic Water Trough',
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Buy 1 sheep (free)') {
+    if (selection[0].id === 'sheep') {
       game.actions.handleAnimalPlacement(player, { sheep: 1 })
       game.log.add({
         template: '{player} buys 1 sheep using {card}',
         args: { player, card: this },
       })
     }
-    else if (selection[0] === 'Buy 1 wild boar for 1 food') {
+    else if (selection[0].id === 'boar') {
       player.payCost({ food: 1 })
       game.actions.handleAnimalPlacement(player, { boar: 1 })
       game.log.add({
@@ -42,7 +42,7 @@ module.exports = {
         args: { player, card: this },
       })
     }
-    else if (selection[0] === 'Buy 1 cattle for 2 food') {
+    else if (selection[0].id === 'cattle') {
       player.payCost({ food: 2 })
       game.actions.handleAnimalPlacement(player, { cattle: 1 })
       game.log.add({

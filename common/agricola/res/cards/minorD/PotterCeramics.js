@@ -10,14 +10,14 @@ module.exports = {
   onBeforeBake(game, player) {
     if (player.clay >= 1) {
       const selection = game.actions.choose(player, [
-        'Exchange 1 clay for 1 grain',
-        'Skip',
+        game.actions.option({ id: 'exchange', title: 'Exchange 1 clay for 1 grain' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], {
         title: 'Potter Ceramics',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ clay: 1 })
         player.addResource('grain', 1)
         game.log.add({

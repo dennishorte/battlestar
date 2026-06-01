@@ -27,20 +27,21 @@ module.exports = {
     for (const from of hasResources) {
       for (const to of buildingResources) {
         if (from !== to) {
-          choices.push(`Exchange 1 ${from} for 1 ${to}`)
+          choices.push(game.actions.option({
+            id: `${from}-to-${to}`,
+            title: `Exchange 1 ${from} for 1 ${to}`,
+          }))
         }
       }
     }
-    choices.push('Skip')
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
     const selection = game.actions.choose(player, choices, {
       title: 'Profiteering',
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
-      const parts = selection[0].split(' ')
-      const fromRes = parts[2]
-      const toRes = parts[5]
+    if (selection[0].id !== 'skip') {
+      const [fromRes, , toRes] = selection[0].id.split('-')
       player.payCost({ [fromRes]: 1 })
       player.addResource(toRes, 1)
       game.log.add({

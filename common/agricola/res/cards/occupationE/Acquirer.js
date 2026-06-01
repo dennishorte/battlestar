@@ -9,36 +9,27 @@ module.exports = {
   onRoundStart(game, player) {
     const cost = player.getFamilySize()
     if (player.food >= cost) {
-      const choices = ['1 wood', '1 clay', '1 reed', '1 stone', '1 grain', '1 vegetables', 'Skip']
+      const choices = [
+        game.actions.option({ id: 'wood', title: '1 wood' }),
+        game.actions.option({ id: 'clay', title: '1 clay' }),
+        game.actions.option({ id: 'reed', title: '1 reed' }),
+        game.actions.option({ id: 'stone', title: '1 stone' }),
+        game.actions.option({ id: 'grain', title: '1 grain' }),
+        game.actions.option({ id: 'vegetables', title: '1 vegetables' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
+      ]
       const selection = game.actions.choose(player, choices, {
         title: `Acquirer: Pay ${cost} food to buy 1 good?`,
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.removeResource('food', cost)
         const choice = selection[0]
-        if (choice === '1 wood') {
-          player.addResource('wood', 1)
-        }
-        else if (choice === '1 clay') {
-          player.addResource('clay', 1)
-        }
-        else if (choice === '1 reed') {
-          player.addResource('reed', 1)
-        }
-        else if (choice === '1 stone') {
-          player.addResource('stone', 1)
-        }
-        else if (choice === '1 grain') {
-          player.addResource('grain', 1)
-        }
-        else if (choice === '1 vegetables') {
-          player.addResource('vegetables', 1)
-        }
+        player.addResource(choice.id, 1)
         game.log.add({
           template: '{player} pays {cost} food to acquire {choice} ({card})',
-          args: { player, cost, choice , card: this},
+          args: { player, cost, choice: choice.title , card: this},
         })
       }
     }

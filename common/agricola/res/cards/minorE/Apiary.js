@@ -11,14 +11,14 @@ module.exports = {
     const emptyFields = player.getEmptyFields()
     if (emptyFields.length > 0 && (player.grain >= 1 || player.vegetables >= 1)) {
       const selection = game.actions.choose(player, [
-        'Sow 1 field',
-        'Skip',
+        game.actions.option({ id: 'sow', title: 'Sow 1 field' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], {
         title: 'Apiary',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         game.actions.sowSingleField(player, this)
       }
     }

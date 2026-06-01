@@ -19,9 +19,9 @@ module.exports = {
 
     const choices = available.map(id => {
       const imp = game.cards.byId(id)
-      return imp.name + ` (${id})`
+      return game.actions.option({ id, title: imp.name, kind: 'major-improvement' })
     })
-    choices.push('Do not build')
+    choices.push(game.actions.option({ id: 'do-not-build', title: 'Do not build' }))
 
     const selection = game.actions.choose(player, choices, {
       title: 'Hollow Warden: Build a Fireplace?',
@@ -29,20 +29,15 @@ module.exports = {
       max: 1,
     })
 
-    const sel = Array.isArray(selection) ? selection[0] : selection
-    if (sel === 'Do not build') {
+    const improvementId = selection[0].id
+    if (improvementId === 'do-not-build') {
       return
     }
 
-    const idMatch = sel.match(/\(([^)]+)\)/)
-    const improvementId = idMatch ? idMatch[1] : null
-
-    if (improvementId) {
-      game.actions._completeMajorPurchase(player, improvementId, {
-        logTemplate: '{player} uses {source} to build {card}',
-        logArgs: { source: card },
-      })
-    }
+    game.actions._completeMajorPurchase(player, improvementId, {
+      logTemplate: '{player} uses {source} to build {card}',
+      logArgs: { source: card },
+    })
   },
   matches_onAction(game, player, actionId) {
     return actionId === 'hollow' || actionId === 'hollow-5' || actionId === 'hollow-6'

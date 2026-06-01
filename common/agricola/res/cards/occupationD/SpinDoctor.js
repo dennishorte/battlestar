@@ -22,9 +22,10 @@ module.exports = {
     const choices = available.map(id => {
       const action = game.getActionById(id)
       const state = game.state.actionSpaces[id]
-      return action ? action.name : (state?.name || id)
+      const title = action ? action.name : (state?.name || id)
+      return game.actions.option({ id: `space-${id}`, title })
     })
-    choices.push('Skip')
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
 
     const selection = game.actions.choose(player, choices, {
       title: 'Spin Doctor: Place another person on any action space',
@@ -32,16 +33,11 @@ module.exports = {
       max: 1,
     })
 
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
 
-    const selectedName = selection[0]
-    const selectedActionId = available.find(id => {
-      const action = game.getActionById(id)
-      const state = game.state.actionSpaces[id]
-      return (action ? action.name : (state?.name || id)) === selectedName
-    })
+    const selectedActionId = selection[0].id.replace(/^space-/, '')
 
     if (selectedActionId) {
       game.state.actionSpaces[selectedActionId].occupiedBy = player.name

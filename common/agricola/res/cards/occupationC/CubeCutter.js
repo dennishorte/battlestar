@@ -16,10 +16,10 @@ module.exports = {
   onFieldPhase(game, player) {
     if (player.wood >= 1 && player.food >= 1) {
       const selection = game.actions.choose(player, () => [
-        'Exchange 1 wood and 1 food for 1 bonus point',
-        'Skip',
+        game.actions.option({ id: 'exchange', title: 'Exchange 1 wood and 1 food for 1 bonus point' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: 'Cube Cutter', min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ wood: 1, food: 1 })
         player.addBonusPoints(1)
         game.log.add({

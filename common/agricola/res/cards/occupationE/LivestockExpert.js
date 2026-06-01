@@ -13,38 +13,29 @@ module.exports = {
       const boar = player.getTotalAnimals('boar')
       const cattle = player.getTotalAnimals('cattle')
       if (sheep > 0 && player.canPlaceAnimals('sheep', sheep)) {
-        choices.push(`Double sheep (${sheep} → ${sheep * 2})`)
+        choices.push(game.actions.option({ id: 'sheep', title: `Double sheep (${sheep} → ${sheep * 2})` }))
       }
       if (boar > 0 && player.canPlaceAnimals('boar', boar)) {
-        choices.push(`Double boar (${boar} → ${boar * 2})`)
+        choices.push(game.actions.option({ id: 'boar', title: `Double boar (${boar} → ${boar * 2})` }))
       }
       if (cattle > 0 && player.canPlaceAnimals('cattle', cattle)) {
-        choices.push(`Double cattle (${cattle} → ${cattle * 2})`)
+        choices.push(game.actions.option({ id: 'cattle', title: `Double cattle (${cattle} → ${cattle * 2})` }))
       }
       if (choices.length === 0) {
         return
       }
 
-      choices.push('Skip')
+      choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
       const selection = game.actions.choose(player, choices, {
         title: 'Livestock Expert: Double which animal?',
         min: 1,
         max: 1,
       })
-      if (selection[0] === 'Skip') {
+      if (selection[0].id === 'skip') {
         return
       }
 
-      let type
-      if (selection[0].startsWith('Double sheep')) {
-        type = 'sheep'
-      }
-      else if (selection[0].startsWith('Double boar')) {
-        type = 'boar'
-      }
-      else if (selection[0].startsWith('Double cattle')) {
-        type = 'cattle'
-      }
+      const type = selection[0].id
 
       if (type) {
         const count = player.getTotalAnimals(type)

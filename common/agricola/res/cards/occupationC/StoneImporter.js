@@ -13,10 +13,10 @@ module.exports = {
     const cost = costs[harvestNumber]
     if (cost && player.food >= cost) {
       const selection = game.actions.choose(player, () => [
-        `Buy 2 stone for ${cost} food`,
-        'Skip',
+        game.actions.option({ id: 'buy', title: `Buy 2 stone for ${cost} food` }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: 'Stone Importer', min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ food: cost })
         player.addResource('stone', 2)
         game.log.add({

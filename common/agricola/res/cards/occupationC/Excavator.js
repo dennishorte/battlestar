@@ -18,10 +18,10 @@ module.exports = {
     })
     if (player.food >= 1) {
       const selection = game.actions.choose(player, () => [
-        'Pay 1 food for 1 stone',
-        'Do not buy stone',
+        game.actions.option({ id: 'buy', title: 'Pay 1 food for 1 stone' }),
+        game.actions.option({ id: 'skip', title: 'Do not buy stone' }),
       ], { title: 'Excavator', min: 1, max: 1 })
-      if (selection[0] === 'Pay 1 food for 1 stone') {
+      if (selection[0].id === 'buy') {
         player.payCost({ food: 1 })
         player.addResource('stone', 1)
         game.log.add({

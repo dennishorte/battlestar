@@ -12,10 +12,10 @@ module.exports = {
   onBeforeAction(game, player, _actionId) {
     if (player.food >= 1) {
       const selection = game.actions.choose(player, () => [
-        'Pay 1 food for 1 grain',
-        'Do not buy grain',
+        game.actions.option({ id: 'buy', title: 'Pay 1 food for 1 grain' }),
+        game.actions.option({ id: 'skip', title: 'Do not buy grain' }),
       ], { title: 'Thresher', min: 1, max: 1 })
-      if (selection[0] === 'Pay 1 food for 1 grain') {
+      if (selection[0].id === 'buy') {
         player.payCost({ food: 1 })
         player.addResource('grain', 1)
         game.log.add({

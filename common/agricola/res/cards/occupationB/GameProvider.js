@@ -23,15 +23,15 @@ module.exports = {
     }
 
     // Determine available exchanges: 1 grain → 1 boar, 3 grain → 2 boar, 4 grain → 3 boar
-    const choices = ['Skip']
+    const choices = [game.actions.option({ id: 'skip', title: 'Skip' })]
     if (fieldsWithGrain.length >= 1) {
-      choices.push('Discard 1 grain from 1 field → 1 wild boar')
+      choices.push(game.actions.option({ id: 'discard-1', title: 'Discard 1 grain from 1 field → 1 wild boar' }))
     }
     if (fieldsWithGrain.length >= 3) {
-      choices.push('Discard 1 grain each from 3 fields → 2 wild boar')
+      choices.push(game.actions.option({ id: 'discard-3', title: 'Discard 1 grain each from 3 fields → 2 wild boar' }))
     }
     if (fieldsWithGrain.length >= 4) {
-      choices.push('Discard 1 grain each from 4 fields → 3 wild boar')
+      choices.push(game.actions.option({ id: 'discard-4', title: 'Discard 1 grain each from 4 fields → 3 wild boar' }))
     }
 
     if (choices.length <= 1) {
@@ -44,17 +44,17 @@ module.exports = {
       max: 1,
     })
 
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
 
     let fieldsToDiscard = 0
     let boarToGain = 0
-    if (selection[0].includes('4 fields')) {
+    if (selection[0].id === 'discard-4') {
       fieldsToDiscard = 4
       boarToGain = 3
     }
-    else if (selection[0].includes('3 fields')) {
+    else if (selection[0].id === 'discard-3') {
       fieldsToDiscard = 3
       boarToGain = 2
     }

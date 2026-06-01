@@ -14,12 +14,15 @@ module.exports = {
       const isTraveling = actionId === 'traveling-players' || actionId === 'traveling-players-5'
       const otherName = isTraveling ? 'Fishing' : 'Traveling Players'
       const otherId = isTraveling ? 'fishing' : 'traveling-players'
-      const selection = game.actions.choose(player, [`Move 1 food to ${otherName}, get cattle`, 'Skip'], {
+      const selection = game.actions.choose(player, [
+        game.actions.option({ id: 'move', title: `Move 1 food to ${otherName}, get cattle` }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
+      ], {
         title: 'Roastmaster: Move food for cattle?',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.removeResource('food', 1)
         const otherState = game.state.actionSpaces[otherId]
         if (otherState) {

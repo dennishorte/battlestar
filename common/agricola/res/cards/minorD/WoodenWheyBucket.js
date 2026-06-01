@@ -24,18 +24,23 @@ module.exports = {
     }
 
     const selection = game.actions.choose(player, [
-      `Build 1 stable (${costLabel})`,
-      'Skip',
+      game.actions.option({ id: 'build', title: `Build 1 stable (${costLabel})` }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
     ], { title: 'Wooden Whey Bucket', min: 1, max: 1 })
 
-    if (selection[0] !== 'Skip') {
-      const spaceChoices = validSpaces.map(s => `${s.row},${s.col}`)
+    if (selection[0].id !== 'skip') {
+      const spaceChoices = validSpaces.map(s => game.actions.option({
+        id: `space-${s.row}-${s.col}`,
+        title: `${s.row},${s.col}`,
+      }))
       const locResult = game.actions.choose(player, spaceChoices, {
         title: 'Choose stable location',
         min: 1,
         max: 1,
       })
-      const [row, col] = locResult[0].split(',').map(Number)
+      const [, rowStr, colStr] = locResult[0].id.match(/^space-(\d+)-(\d+)$/)
+      const row = Number(rowStr)
+      const col = Number(colStr)
 
       if (!isFree) {
         player.addResource('wood', -1)

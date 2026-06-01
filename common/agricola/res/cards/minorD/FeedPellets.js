@@ -24,15 +24,18 @@ module.exports = {
     const animalTypes = ['sheep', 'boar', 'cattle'].filter(type =>
       player.getTotalAnimals(type) >= 1
     )
-    const choices = animalTypes.map(type => `Pay 1 vegetable for 1 ${type}`)
-    choices.push('Skip')
+    const choices = animalTypes.map(type => game.actions.option({
+      id: type,
+      title: `Pay 1 vegetable for 1 ${type}`,
+    }))
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
     const selection = game.actions.choose(player, choices, {
       title: 'Feed Pellets',
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
-      const type = animalTypes.find(t => selection[0] === `Pay 1 vegetable for 1 ${t}`)
+    if (selection[0].id !== 'skip') {
+      const type = selection[0].id
       player.payCost({ vegetables: 1 })
       game.log.add({
         template: '{player} exchanges 1 vegetable for 1 {type}',

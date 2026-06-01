@@ -22,9 +22,7 @@ describe('Hollow Warden', () => {
     expect(choices.some(c => c.includes('Fireplace'))).toBe(true)
 
     // Choose to build Fireplace (2 clay)
-    const fireplaceChoice = choices.find(c => c.includes('fireplace-2'))
-    expect(fireplaceChoice).toBeDefined()
-    t.choose(game, fireplaceChoice)
+    t.choose(game, { id: 'fireplace-2' })
 
     t.testBoard(game, {
       dennis: {

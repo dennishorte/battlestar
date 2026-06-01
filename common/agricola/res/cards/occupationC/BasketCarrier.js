@@ -9,10 +9,10 @@ module.exports = {
   onFieldPhaseEnd(game, player) {
     if (player.food >= 2) {
       const selection = game.actions.choose(player, () => [
-        'Buy 1 wood, 1 reed, 1 grain for 2 food',
-        'Skip',
+        game.actions.option({ id: 'buy', title: 'Buy 1 wood, 1 reed, 1 grain for 2 food' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: 'Basket Carrier', min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ food: 2 })
         player.addResource('wood', 1)
         player.addResource('reed', 1)

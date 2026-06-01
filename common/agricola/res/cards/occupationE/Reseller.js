@@ -19,12 +19,15 @@ module.exports = {
     }
 
     const costStr = Object.entries(printedCost).map(([r, n]) => `${n} ${r}`).join(', ')
-    const selection = game.actions.choose(player, [`Get ${costStr} from supply`, 'Skip'], {
+    const selection = game.actions.choose(player, [
+      game.actions.option({ id: 'get', title: `Get ${costStr} from supply` }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ], {
       title: 'Reseller: Refund improvement cost?',
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       for (const [resource, amount] of Object.entries(printedCost)) {
         player.addResource(resource, amount)
       }

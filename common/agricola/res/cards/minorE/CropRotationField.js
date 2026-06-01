@@ -25,10 +25,10 @@ module.exports = {
     const hasNextCrop = nextCrop === 'grain' ? player.grain >= 1 : player.vegetables >= 1
     if (hasNextCrop) {
       const selection = game.actions.choose(player, [
-        `Sow ${nextCrop} on Crop Rotation Field`,
-        'Skip',
+        game.actions.option({ id: 'sow', title: `Sow ${nextCrop} on Crop Rotation Field` }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: 'Crop Rotation Field', min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.sowVirtualField('crop-rotation-field-e070', nextCrop)
         game.log.add({
           template: '{player} sows {crop} on {card}',

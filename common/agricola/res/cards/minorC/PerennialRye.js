@@ -16,15 +16,17 @@ module.exports = {
       if (breedableTypes.length === 0) {
         return
       }
-      const choices = breedableTypes.map(type => `Pay 1 grain to breed ${type}`)
-      choices.push('Skip')
+      const choices = breedableTypes.map(type =>
+        game.actions.option({ id: type, title: `Pay 1 grain to breed ${type}` })
+      )
+      choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
       const selection = game.actions.choose(player, choices, {
         title: 'Perennial Rye',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
-        const type = breedableTypes.find(t => selection[0] === `Pay 1 grain to breed ${t}`)
+      if (selection[0].id !== 'skip') {
+        const type = selection[0].id
         player.payCost({ grain: 1 })
         game.actions.handleAnimalPlacement(player, { [type]: 1 })
         game.log.add({

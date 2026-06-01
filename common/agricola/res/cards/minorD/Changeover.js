@@ -23,12 +23,18 @@ module.exports = {
 
       const choices = []
       if (canSowGrain) {
-        choices.push(`Sow grain at (${field.row},${field.col})`)
+        choices.push(game.actions.option({
+          id: 'grain',
+          title: `Sow grain at (${field.row},${field.col})`,
+        }))
       }
       if (canSowVeg) {
-        choices.push(`Sow vegetables at (${field.row},${field.col})`)
+        choices.push(game.actions.option({
+          id: 'vegetables',
+          title: `Sow vegetables at (${field.row},${field.col})`,
+        }))
       }
-      choices.push('Skip')
+      choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
 
       const selection = game.actions.choose(player, choices, {
         title: `Changeover: Field (${field.row},${field.col}) has 1 ${field.crop}`,
@@ -36,7 +42,7 @@ module.exports = {
         max: 1,
       })
       const sel = Array.isArray(selection) ? selection[0] : selection
-      if (sel === 'Skip') {
+      if (sel.id === 'skip') {
         continue
       }
 
@@ -46,7 +52,7 @@ module.exports = {
       cell.cropCount = 0
 
       // Sow the chosen crop
-      const cropType = sel.startsWith('Sow grain') ? 'grain' : 'vegetables'
+      const cropType = sel.id === 'grain' ? 'grain' : 'vegetables'
       player.sowField(field.row, field.col, cropType)
 
       game.log.add({

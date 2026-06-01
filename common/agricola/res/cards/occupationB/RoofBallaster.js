@@ -11,14 +11,14 @@ module.exports = {
       return
     }
     const selection = game.actions.choose(player, [
-      'Pay 1 food to get 1 stone per room',
-      'Skip',
+      game.actions.option({ id: 'pay', title: 'Pay 1 food to get 1 stone per room' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
     ], {
       title: 'Roof Ballaster: Pay 1 food for 1 stone per room?',
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
     player.payCost({ food: 1 })

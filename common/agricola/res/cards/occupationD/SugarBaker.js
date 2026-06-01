@@ -11,13 +11,16 @@ module.exports = {
   },
   onAction(game, player, _actionId) {
     if (player.food >= 1) {
-      const choices = ['Buy 1 bonus point for 1 food', 'Skip']
+      const choices = [
+        game.actions.option({ id: 'buy', title: 'Buy 1 bonus point for 1 food' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
+      ]
       const selection = game.actions.choose(player, choices, {
         title: 'Sugar Baker',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.removeResource('food', 1)
         player.addBonusPoints(1)
         game.log.add({

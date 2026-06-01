@@ -13,12 +13,15 @@ module.exports = {
     if (player.wood < 1 || !player.canPlaceAnimals('sheep', 1)) {
       return
     }
-    const choice = game.actions.choose(player, ['Exchange 1 wood for 1 sheep', 'Skip'], {
+    const choice = game.actions.choose(player, [
+      game.actions.option({ id: 'exchange', title: 'Exchange 1 wood for 1 sheep' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ], {
       title: `Wood Worker: Exchange 1 wood for 1 sheep (wood on space)?`,
       min: 1,
       max: 1,
     })
-    if (choice[0] === 'Skip') {
+    if (choice[0].id === 'skip') {
       return
     }
     player.removeResource('wood', 1)

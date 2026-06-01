@@ -14,16 +14,19 @@ module.exports = {
     const maxReturn = Math.min(3, stables.length)
     const choices = []
     for (let i = 1; i <= maxReturn; i++) {
-      choices.push(`Return ${i} stable${i > 1 ? 's' : ''} for ${i * 3} wood`)
+      choices.push(game.actions.option({
+        id: `return-${i}`,
+        title: `Return ${i} stable${i > 1 ? 's' : ''} for ${i * 3} wood`,
+      }))
     }
-    choices.push('Skip')
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
     const selection = game.actions.choose(player, choices, {
       title: 'Lumber Pile',
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
-      const count = parseInt(selection[0].split(' ')[1])
+    if (selection[0].id !== 'skip') {
+      const count = parseInt(selection[0].id.split('-')[1])
       for (let i = 0; i < count; i++) {
         player.farmyard.grid[stables[i].row][stables[i].col].hasStable = false
       }

@@ -17,14 +17,14 @@ module.exports = {
     }
 
     const selection = game.actions.choose(player, [
-      'Pay 1 food for 1 bonus point',
-      'Skip',
+      game.actions.option({ id: 'pay', title: 'Pay 1 food for 1 bonus point' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
     ], {
       title: 'Truffle Slicer',
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       player.payCost({ food: 1 })
       player.addBonusPoints(1)
       game.log.add({

@@ -12,12 +12,12 @@ module.exports = {
     }
     const choices = []
     if (player.wood >= 2) {
-      choices.push('Pay 2 wood for up to 3 fences')
+      choices.push(game.actions.option({ id: 'pay-2', title: 'Pay 2 wood for up to 3 fences' }))
     }
     if (player.wood >= 3) {
-      choices.push('Pay 3 wood for up to 4 fences')
+      choices.push(game.actions.option({ id: 'pay-3', title: 'Pay 3 wood for up to 4 fences' }))
     }
-    choices.push('Skip')
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
 
     const selection = game.actions.choose(player, choices, {
       title: 'Master Fencer: Build fences?',
@@ -25,11 +25,11 @@ module.exports = {
       max: 1,
     })
 
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
 
-    if (selection[0] === 'Pay 2 wood for up to 3 fences') {
+    if (selection[0].id === 'pay-2') {
       player.payCost({ wood: 2 })
       player._masterFencerFreeFences = 3
     }

@@ -16,23 +16,23 @@ module.exports = {
     }
     const choices = []
     if (player.food >= 1) {
-      choices.push('Buy 1 wood for 1 food')
-      choices.push('Buy 1 clay for 1 food')
-      choices.push('Buy 1 reed for 1 food')
+      choices.push(game.actions.option({ id: 'wood', title: 'Buy 1 wood for 1 food' }))
+      choices.push(game.actions.option({ id: 'clay', title: 'Buy 1 clay for 1 food' }))
+      choices.push(game.actions.option({ id: 'reed', title: 'Buy 1 reed for 1 food' }))
     }
     if (player.food >= 2) {
-      choices.push('Buy 1 stone for 2 food')
+      choices.push(game.actions.option({ id: 'stone', title: 'Buy 1 stone for 2 food' }))
     }
-    choices.push('Skip')
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
     const selection = game.actions.choose(player, choices, {
       title: 'Forest Trader',
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
-    if (selection[0] === 'Buy 1 stone for 2 food') {
+    if (selection[0].id === 'stone') {
       player.removeResource('food', 2)
       player.addResource('stone', 1)
       game.log.add({
@@ -41,7 +41,7 @@ module.exports = {
       })
     }
     else {
-      const resource = selection[0].match(/Buy 1 (\w+)/)[1]
+      const resource = selection[0].id
       player.removeResource('food', 1)
       player.addResource(resource, 1)
       game.log.add({

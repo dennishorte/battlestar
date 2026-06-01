@@ -25,21 +25,21 @@ module.exports = {
       if (!canAfford) {
         continue
       }
-      choices.push(opt.label)
+      choices.push(game.actions.option({ id: opt.animal, title: opt.label }))
     }
     if (choices.length === 0) {
       return
     }
-    choices.push('Skip')
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
     const selection = game.actions.choose(player, choices, {
       title: `${cardName}: Buy 1 animal (0/1/2 food)?`,
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
-    const chosen = options.find(o => o.label === selection[0])
+    const chosen = options.find(o => o.animal === selection[0].id)
     if (!chosen) {
       return
     }

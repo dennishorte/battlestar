@@ -10,28 +10,28 @@ module.exports = {
     if (player.roomType === 'stone') {
       const options = []
       if (player.hand.some(id => game.cards.byId(id) && game.cards.byId(id).type === 'occupation') && player.food >= 1) {
-        options.push('Play an occupation (1 food)')
+        options.push(game.actions.option({ id: 'play-occupation', title: 'Play an occupation (1 food)' }))
       }
       const minors = player.hand.filter(id => {
         const c = game.cards.byId(id)
         return c && c.type === 'minor' && player.canAffordCost(c.cost || {})
       })
       if (minors.length > 0) {
-        options.push('Play a minor improvement')
+        options.push(game.actions.option({ id: 'play-minor', title: 'Play a minor improvement' }))
       }
       if (options.length === 0) {
         return
       }
-      options.push('Skip')
+      options.push(game.actions.option({ id: 'skip', title: 'Skip' }))
       const selection = game.actions.choose(player, options, {
         title: 'Scholar: Play a card?',
         min: 1,
         max: 1,
       })
-      if (selection[0] === 'Skip') {
+      if (selection[0].id === 'skip') {
         return
       }
-      if (selection[0].startsWith('Play an occupation')) {
+      if (selection[0].id === 'play-occupation') {
         game.actions.playOccupation(player, { costOverride: 1 })
       }
       else {

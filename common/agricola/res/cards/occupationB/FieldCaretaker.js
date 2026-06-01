@@ -18,12 +18,12 @@ module.exports = {
       args: { player , card: this},
     })
     // Exchange 0/1/3 clay for 1/2/3 grain
-    const choices = ['Take 1 grain (free)']
+    const choices = [game.actions.option({ id: 'free', title: 'Take 1 grain (free)' })]
     if (player.clay >= 1) {
-      choices.push('Pay 1 clay for 2 grain')
+      choices.push(game.actions.option({ id: 'pay-1', title: 'Pay 1 clay for 2 grain' }))
     }
     if (player.clay >= 3) {
-      choices.push('Pay 3 clay for 3 grain')
+      choices.push(game.actions.option({ id: 'pay-3', title: 'Pay 3 clay for 3 grain' }))
     }
 
     const selection = game.actions.choose(player, choices, {
@@ -32,14 +32,14 @@ module.exports = {
       max: 1,
     })
 
-    if (selection[0] === 'Take 1 grain (free)') {
+    if (selection[0].id === 'free') {
       player.addResource('grain', 1)
       game.log.add({
         template: '{player} takes 1 grain from {card}',
         args: { player , card: this},
       })
     }
-    else if (selection[0] === 'Pay 1 clay for 2 grain') {
+    else if (selection[0].id === 'pay-1') {
       player.payCost({ clay: 1 })
       player.addResource('grain', 2)
       game.log.add({
@@ -47,7 +47,7 @@ module.exports = {
         args: { player , card: this},
       })
     }
-    else if (selection[0] === 'Pay 3 clay for 3 grain') {
+    else if (selection[0].id === 'pay-3') {
       player.payCost({ clay: 3 })
       player.addResource('grain', 3)
       game.log.add({

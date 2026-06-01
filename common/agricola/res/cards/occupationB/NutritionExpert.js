@@ -9,13 +9,16 @@ module.exports = {
   onRoundStart(game, player) {
     const hasAnimal = player.getTotalAnimals('sheep') >= 1 || player.getTotalAnimals('boar') >= 1 || player.getTotalAnimals('cattle') >= 1
     if (player.grain >= 1 && player.vegetables >= 1 && hasAnimal) {
-      const choices = ['Exchange 1 animal + 1 grain + 1 vegetable for 5 food + 2 BP', 'Skip']
+      const choices = [
+        game.actions.option({ id: 'exchange', title: 'Exchange 1 animal + 1 grain + 1 vegetable for 5 food + 2 BP' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
+      ]
       const selection = game.actions.choose(player, choices, {
         title: 'Nutrition Expert: Exchange set for food and points?',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         // Choose which animal to give up
         const animalTypes = []
         if (player.getTotalAnimals('sheep') >= 1) {
@@ -33,13 +36,13 @@ module.exports = {
           animalType = animalTypes[0]
         }
         else {
-          const animalChoices = animalTypes.map(a => `Give 1 ${a}`)
+          const animalChoices = animalTypes.map(a => game.actions.option({ id: a, title: `Give 1 ${a}` }))
           const animalSelection = game.actions.choose(player, animalChoices, {
             title: 'Nutrition Expert: Which animal?',
             min: 1,
             max: 1,
           })
-          animalType = animalTypes.find(a => animalSelection[0].includes(a))
+          animalType = animalSelection[0].id
         }
         player.removeAnimals(animalType, 1)
         player.payCost({ grain: 1, vegetables: 1 })

@@ -12,14 +12,14 @@ module.exports = {
       const validSpaces = player.getValidPlowSpaces()
       if (validSpaces.length > 0) {
         const selection = game.actions.choose(player, [
-          'Pay 3 food to plow 1 field',
-          'Skip',
+          game.actions.option({ id: 'plow', title: 'Pay 3 food to plow 1 field' }),
+          game.actions.option({ id: 'skip', title: 'Skip' }),
         ], {
           title: 'Drill Harrow',
           min: 1,
           max: 1,
         })
-        if (selection[0] !== 'Skip') {
+        if (selection[0].id !== 'skip') {
           player.payCost({ food: 3 })
           game.actions.plowField(player)
           game.log.add({

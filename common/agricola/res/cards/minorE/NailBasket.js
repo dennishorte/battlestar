@@ -13,15 +13,15 @@ module.exports = {
   afterPlayerAction(game, player, _actionId) {
     if (player.stone >= 1) {
       const selection = game.actions.choose(player, [
-        'Pay 1 stone to build fences',
-        'Skip',
+        game.actions.option({ id: 'pay', title: 'Pay 1 stone to build fences' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], {
         title: 'Nail Basket',
         min: 1,
         max: 1,
       })
 
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.addResource('stone', -1)
         game.log.add({
           template: '{player} pays 1 stone to build fences',

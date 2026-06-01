@@ -24,12 +24,13 @@ module.exports = {
     const chosen = []
 
     for (let i = 0; i < goodsCount && remaining.length > 0; i++) {
-      const selection = game.actions.choose(player, remaining, {
+      const options = remaining.map(r => game.actions.option({ id: r, title: r }))
+      const selection = game.actions.choose(player, options, {
         title: `${card.name}: Choose good ${i + 1} of ${goodsCount}`,
         min: 1,
         max: 1,
       })
-      const resource = selection[0]
+      const resource = selection[0].id
       chosen.push(resource)
       remaining.splice(remaining.indexOf(resource), 1)
       player.addResource(resource, 1)

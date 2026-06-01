@@ -11,12 +11,15 @@ module.exports = {
   },
   onHarvestStart(game, player) {
     if (player.wood >= 1) {
-      const selection = game.actions.choose(player, ['Place 1 wood', 'Skip'], {
+      const selection = game.actions.choose(player, [
+        game.actions.option({ id: 'place', title: 'Place 1 wood' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
+      ], {
         title: 'Dentist: Place 1 wood on card?',
         min: 1,
         max: 1,
       })
-      if (selection[0] === 'Place 1 wood') {
+      if (selection[0].id === 'place') {
         player.removeResource('wood', 1)
         game.cardState(this.id).wood = (game.cardState(this.id).wood || 0) + 1
         game.log.add({

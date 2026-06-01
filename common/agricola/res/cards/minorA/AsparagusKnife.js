@@ -17,8 +17,8 @@ module.exports = {
       }
 
       const choices = [
-        'Take 1 vegetable from field for 3 food and 1 bonus point',
-        'Skip',
+        game.actions.option({ id: 'take', title: 'Take 1 vegetable from field for 3 food and 1 bonus point' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ]
       const selection = game.actions.choose(player, choices, {
         title: `${card.name}: Harvest vegetable for food and bonus point?`,
@@ -26,7 +26,7 @@ module.exports = {
         max: 1,
       })
 
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         const field = player.getFieldSpaces().find(f => f.crop === 'vegetables' && f.cropCount > 0)
         const space = player.getSpace(field.row, field.col)
         space.cropCount -= 1

@@ -11,8 +11,8 @@ module.exports = {
   },
   onBuildRoom(game, player) {
     const choices = [
-      'Pay 1 wood and 1 grain for Family Growth with Room Only',
-      'Skip',
+      game.actions.option({ id: 'pay', title: 'Pay 1 wood and 1 grain for Family Growth with Room Only' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
     ]
     const selection = game.actions.choose(player, choices, {
       title: `${this.name}: Pay 1 wood and 1 grain for family growth?`,
@@ -20,7 +20,7 @@ module.exports = {
       max: 1,
     })
 
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       player.payCost({ wood: 1, grain: 1 })
       game.actions.familyGrowth(player, true)
       game.log.add({

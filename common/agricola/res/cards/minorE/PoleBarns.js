@@ -15,19 +15,22 @@ module.exports = {
         break
       }
 
-      const spaceChoices = validSpaces.map(s => `${s.row},${s.col}`)
-      spaceChoices.push('Skip')
+      const spaceChoices = validSpaces.map(s => game.actions.option({
+        id: `space-${s.row}-${s.col}`,
+        title: `${s.row},${s.col}`,
+      }))
+      spaceChoices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
       const selection = game.actions.choose(player, spaceChoices, {
         title: `Pole Barns: Build a free stable (${i + 1}/3)?`,
         min: 1,
         max: 1,
       })
 
-      if (selection[0] === 'Skip') {
+      if (selection[0].id === 'skip') {
         break
       }
 
-      const [row, col] = selection[0].split(',').map(Number)
+      const [, row, col] = selection[0].id.split('-').map(Number)
       player.buildStable(row, col)
       built++
     }

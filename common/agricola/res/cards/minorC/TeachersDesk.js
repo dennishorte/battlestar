@@ -18,10 +18,10 @@ module.exports = {
     })
     if (occsInHand.length > 0 && player.food >= 1) {
       const selection = game.actions.choose(player, [
-        'Play 1 occupation for 1 food',
-        'Skip',
+        game.actions.option({ id: 'play', title: 'Play 1 occupation for 1 food' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: "Teacher's Desk", min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         game.actions.playOccupation(player, { costOverride: 1 })
       }
     }

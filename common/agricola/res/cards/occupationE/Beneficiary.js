@@ -19,15 +19,15 @@ module.exports = {
 
       if (hasOccInHand && hasMinorInHand) {
         const selection = game.actions.choose(player, [
-          'Play an occupation first',
-          'Play a minor improvement first',
+          game.actions.option({ id: 'occupation-first', title: 'Play an occupation first' }),
+          game.actions.option({ id: 'minor-first', title: 'Play a minor improvement first' }),
         ], {
           title: 'Beneficiary: Choose order',
           min: 1,
           max: 1,
         })
 
-        if (selection[0] === 'Play a minor improvement first') {
+        if (selection[0].id === 'minor-first') {
           game.actions.buyMinorImprovement(player)
           game.actions.offerPlayOccupation(player, this, { cost: { food: 1 } })
         }

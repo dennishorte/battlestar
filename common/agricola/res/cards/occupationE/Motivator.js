@@ -10,12 +10,15 @@ module.exports = {
     return player.getUnusedSpaceCount() === 0 && player.hasPersonInSupply()
   },
   onWorkPhaseStart(game, player) {
-    const selection = game.actions.choose(player, ['Place person', 'Skip'], {
+    const selection = game.actions.choose(player, [
+      game.actions.option({ id: 'place', title: 'Place person' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ], {
       title: 'Motivator: Place a person from your supply?',
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Place person') {
+    if (selection[0].id === 'place') {
       game.log.add({
         template: '{player} places an extra person',
         args: { player },

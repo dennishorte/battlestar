@@ -28,13 +28,18 @@ module.exports = {
       col = emptyFields[0].col
     }
     else {
-      const choices = emptyFields.map(f => `${f.row},${f.col}`)
+      const choices = emptyFields.map(f => game.actions.option({
+        id: `field-${f.row}-${f.col}`,
+        title: `${f.row},${f.col}`,
+      }))
       const selection = game.actions.choose(player, choices, {
         title: 'Fern Seeds: Choose field to sow grain',
         min: 1,
         max: 1,
       })
-      ;[row, col] = selection[0].split(',').map(Number)
+      const [, rowStr, colStr] = selection[0].id.match(/^field-(\d+)-(\d+)$/)
+      row = Number(rowStr)
+      col = Number(colStr)
     }
 
     player.sowField(row, col, 'grain')

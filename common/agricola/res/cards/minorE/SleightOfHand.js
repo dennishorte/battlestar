@@ -20,11 +20,14 @@ module.exports = {
       for (const give of canGive) {
         for (const get of buildingResources) {
           if (give !== get) {
-            choices.push(`${give} \u2192 ${get}`)
+            choices.push(game.actions.option({
+              id: `${give}-to-${get}`,
+              title: `${give} \u2192 ${get}`,
+            }))
           }
         }
       }
-      choices.push('Done')
+      choices.push(game.actions.option({ id: 'done', title: 'Done' }))
 
       const selection = game.actions.choose(player, choices, {
         title: `Sleight of Hand (${i + 1}/4)`,
@@ -32,13 +35,11 @@ module.exports = {
         max: 1,
       })
 
-      if (selection[0] === 'Done') {
+      if (selection[0].id === 'done') {
         break
       }
 
-      const parts = selection[0].split(' \u2192 ')
-      const give = parts[0]
-      const get = parts[1]
+      const [give, , get] = selection[0].id.split('-')
       player.addResource(give, -1)
       player.addResource(get, 1)
       game.log.add({

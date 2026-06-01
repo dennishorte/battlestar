@@ -17,15 +17,15 @@ module.exports = {
     }
 
     const choice = game.actions.choose(player, [
-      'Pay 2 food for 1 sheep, 1 boar, 1 cattle',
-      'Decline',
+      game.actions.option({ id: 'pay', title: 'Pay 2 food for 1 sheep, 1 boar, 1 cattle' }),
+      game.actions.option({ id: 'decline', title: 'Decline' }),
     ], {
       title: 'Stable Sergeant: pay 2 food for animals?',
       min: 1,
       max: 1,
     })
 
-    if (choice[0] === 'Pay 2 food for 1 sheep, 1 boar, 1 cattle') {
+    if (choice[0].id === 'pay') {
       player.payCost({ food: 2 })
       game.actions.handleAnimalPlacement(player, { sheep: 1, boar: 1, cattle: 1 })
       game.log.add({

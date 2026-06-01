@@ -13,26 +13,26 @@ module.exports = {
     const state = game.cardState(this.id)
     const choices = []
     if (player.food > 0) {
-      choices.push('Move 1 food to card')
+      choices.push(game.actions.option({ id: 'move', title: 'Move 1 food to card' }))
     }
     if (state.food > 0) {
-      choices.push('Discard 1 food from card')
+      choices.push(game.actions.option({ id: 'discard', title: 'Discard 1 food from card' }))
     }
     if (choices.length === 0) {
       return
     }
-    choices.push('Skip')
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
 
     const selection = game.actions.choose(player, choices, {
       title: 'Entrepreneur: Move or discard food?',
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
 
-    if (selection[0] === 'Move 1 food to card') {
+    if (selection[0].id === 'move') {
       player.removeResource('food', 1)
       state.food += 1
       game.log.add({
@@ -40,7 +40,7 @@ module.exports = {
         args: { player, total: state.food , card: this},
       })
     }
-    else if (selection[0] === 'Discard 1 food from card') {
+    else if (selection[0].id === 'discard') {
       state.food -= 1
       game.log.add({
         template: '{player} discards 1 food from {card} ({total} remaining)',
@@ -51,16 +51,16 @@ module.exports = {
     // Give 1 building resource of a type the player does not have
     const missing = []
     if (player.wood === 0) {
-      missing.push('1 wood')
+      missing.push(game.actions.option({ id: 'wood', title: '1 wood' }))
     }
     if (player.clay === 0) {
-      missing.push('1 clay')
+      missing.push(game.actions.option({ id: 'clay', title: '1 clay' }))
     }
     if (player.reed === 0) {
-      missing.push('1 reed')
+      missing.push(game.actions.option({ id: 'reed', title: '1 reed' }))
     }
     if (player.stone === 0) {
-      missing.push('1 stone')
+      missing.push(game.actions.option({ id: 'stone', title: '1 stone' }))
     }
 
     if (missing.length === 0) {
@@ -80,22 +80,11 @@ module.exports = {
       resourceChoice = resSel[0]
     }
 
-    if (resourceChoice === '1 wood') {
-      player.addResource('wood', 1)
-    }
-    else if (resourceChoice === '1 clay') {
-      player.addResource('clay', 1)
-    }
-    else if (resourceChoice === '1 reed') {
-      player.addResource('reed', 1)
-    }
-    else if (resourceChoice === '1 stone') {
-      player.addResource('stone', 1)
-    }
+    player.addResource(resourceChoice.id, 1)
 
     game.log.add({
       template: '{player} gets {choice} from {card}',
-      args: { player, choice: resourceChoice , card: this},
+      args: { player, choice: resourceChoice.title , card: this},
     })
   },
 }

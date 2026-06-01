@@ -13,48 +13,48 @@ module.exports = {
     while (remaining > 0) {
       const choices = []
       if (player.wood > 0) {
-        choices.push('Sell 1 wood (2 food)')
+        choices.push(game.actions.option({ id: 'wood', title: 'Sell 1 wood (2 food)' }))
       }
       if (player.clay > 0) {
-        choices.push('Sell 1 clay (2 food)')
+        choices.push(game.actions.option({ id: 'clay', title: 'Sell 1 clay (2 food)' }))
       }
       if (player.reed > 0) {
-        choices.push('Sell 1 reed (3 food)')
+        choices.push(game.actions.option({ id: 'reed', title: 'Sell 1 reed (3 food)' }))
       }
       if (player.stone > 0) {
-        choices.push('Sell 1 stone (3 food)')
+        choices.push(game.actions.option({ id: 'stone', title: 'Sell 1 stone (3 food)' }))
       }
       if (choices.length === 0) {
         break
       }
-      choices.push('Done')
+      choices.push(game.actions.option({ id: 'done', title: 'Done' }))
 
       const selection = game.actions.choose(player, choices, {
         title: `Emergency Seller: Convert building resources to food (${remaining} left)`,
         min: 1,
         max: 1,
       })
-      if (selection[0] === 'Done') {
+      if (selection[0].id === 'done') {
         break
       }
 
       const choice = selection[0]
-      if (choice.includes('wood')) {
+      if (choice.id === 'wood') {
         player.removeResource('wood', 1)
         player.addResource('food', 2)
         game.log.add({ template: '{player} sells 1 wood for 2 food (Emergency Seller)', args: { player } })
       }
-      else if (choice.includes('clay')) {
+      else if (choice.id === 'clay') {
         player.removeResource('clay', 1)
         player.addResource('food', 2)
         game.log.add({ template: '{player} sells 1 clay for 2 food (Emergency Seller)', args: { player } })
       }
-      else if (choice.includes('reed')) {
+      else if (choice.id === 'reed') {
         player.removeResource('reed', 1)
         player.addResource('food', 3)
         game.log.add({ template: '{player} sells 1 reed for 3 food (Emergency Seller)', args: { player } })
       }
-      else if (choice.includes('stone')) {
+      else if (choice.id === 'stone') {
         player.removeResource('stone', 1)
         player.addResource('food', 3)
         game.log.add({ template: '{player} sells 1 stone for 3 food (Emergency Seller)', args: { player } })

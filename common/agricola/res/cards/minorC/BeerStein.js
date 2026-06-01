@@ -10,14 +10,14 @@ module.exports = {
   onBake(game, player) {
     if (player.grain >= 1) {
       const selection = game.actions.choose(player, [
-        'Turn 1 grain into 2 food and 1 bonus point',
-        'Skip',
+        game.actions.option({ id: 'use', title: 'Turn 1 grain into 2 food and 1 bonus point' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], {
         title: 'Beer Stein',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ grain: 1 })
         player.addResource('food', 2)
         player.addBonusPoints(1)

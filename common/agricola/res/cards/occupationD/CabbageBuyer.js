@@ -11,13 +11,16 @@ module.exports = {
     // (middle ground: minor improvement discount)
     const cost = 2
     if (cardOwner.food >= cost) {
-      const choices = [`Buy 1 vegetable for ${cost} food`, 'Skip']
+      const choices = [
+        game.actions.option({ id: 'buy', title: `Buy 1 vegetable for ${cost} food` }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
+      ]
       const selection = game.actions.choose(cardOwner, choices, {
         title: 'Cabbage Buyer',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         cardOwner.removeResource('food', cost)
         cardOwner.addResource('vegetables', 1)
         game.log.add({

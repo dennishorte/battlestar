@@ -11,10 +11,10 @@ module.exports = {
   },
   onAction(game, player, _actionId) {
     const selection = game.actions.choose(player, () => [
-      'Get 1 grain and 1 vegetable (others get 1 grain)',
-      'Skip',
+      game.actions.option({ id: 'take', title: 'Get 1 grain and 1 vegetable (others get 1 grain)' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
     ], { title: 'Market Crier', min: 1, max: 1 })
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       player.addResource('grain', 1)
       player.addResource('vegetables', 1)
       for (const other of game.players.all()) {

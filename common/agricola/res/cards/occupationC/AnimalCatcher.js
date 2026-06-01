@@ -20,10 +20,10 @@ module.exports = {
         && player.canPlaceAnimals('boar', 1)
         && player.canPlaceAnimals('cattle', 1)) {
       const selection = game.actions.choose(player, () => [
-        `Pay ${harvestsLeft} food for 1 sheep, 1 boar, 1 cattle`,
-        'Do not catch animals',
+        game.actions.option({ id: 'catch', title: `Pay ${harvestsLeft} food for 1 sheep, 1 boar, 1 cattle` }),
+        game.actions.option({ id: 'skip', title: 'Do not catch animals' }),
       ], { title: 'Animal Catcher', min: 1, max: 1 })
-      if (selection[0] !== 'Do not catch animals') {
+      if (selection[0].id !== 'skip') {
         // Undo Day Laborer's 2 food
         player.removeResource('food', 2)
         player.payCost({ food: harvestsLeft })

@@ -9,10 +9,10 @@ module.exports = {
   onPlay(game, player) {
     if (player.food >= 1) {
       const selection = game.actions.choose(player, () => [
-        'Buy 2 stone for 1 food',
-        'Skip',
+        game.actions.option({ id: 'buy', title: 'Buy 2 stone for 1 food' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: 'Stone Buyer', min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ food: 1 })
         player.addResource('stone', 2)
         game.log.add({ template: '{player} buys 2 stone for 1 food from {card}', args: { player, card: this } })
@@ -22,10 +22,10 @@ module.exports = {
   onRoundStart(game, player) {
     if (player.food >= 2) {
       const selection = game.actions.choose(player, () => [
-        'Buy 1 stone for 2 food',
-        'Skip',
+        game.actions.option({ id: 'buy', title: 'Buy 1 stone for 2 food' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: 'Stone Buyer', min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ food: 2 })
         player.addResource('stone', 1)
         game.log.add({ template: '{player} buys 1 stone for 2 food from {card}', args: { player, card: this } })

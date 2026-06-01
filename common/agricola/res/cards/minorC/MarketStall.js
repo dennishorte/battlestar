@@ -10,14 +10,14 @@ module.exports = {
   onFieldPhaseEnd(game, player) {
     if (player.grain >= 1 && player.getFencesInSupply() >= 1) {
       const selection = game.actions.choose(player, [
-        'Exchange 1 grain and 1 fence for 5 food',
-        'Skip',
+        game.actions.option({ id: 'exchange', title: 'Exchange 1 grain and 1 fence for 5 food' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], {
         title: 'Market Stall',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ grain: 1 })
         player.useFenceFromSupply()
         player.addResource('food', 5)

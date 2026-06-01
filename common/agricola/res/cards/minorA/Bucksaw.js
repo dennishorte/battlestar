@@ -12,8 +12,8 @@ module.exports = {
   },
   onRenovate(game, player) {
     const choices = [
-      'Pay 1 wood for 1 grain and 1 bonus point',
-      'Skip',
+      game.actions.option({ id: 'pay', title: 'Pay 1 wood for 1 grain and 1 bonus point' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
     ]
     const selection = game.actions.choose(player, choices, {
       title: `${this.name}: Pay wood for grain and bonus point?`,
@@ -21,7 +21,7 @@ module.exports = {
       max: 1,
     })
 
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       player.payCost({ wood: 1 })
       player.addResource('grain', 1)
       player.addBonusPoints(1)

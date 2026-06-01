@@ -9,13 +9,16 @@ module.exports = {
   onHarvestGrain(game, player, grainCount) {
     // Offer to leave grain on field and take from supply instead
     if (grainCount > 0) {
-      const choices = ['Use Grain Thief', 'Skip']
+      const choices = [
+        game.actions.option({ id: 'use', title: 'Use Grain Thief' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
+      ]
       const selection = game.actions.choose(player, choices, {
         title: 'Grain Thief: Leave grain on field, take 1 from supply?',
         min: 1,
         max: 1,
       })
-      if (selection[0] === 'Use Grain Thief') {
+      if (selection[0].id === 'use') {
         // Return 1 grain to a field (put it back) and take 1 from supply
         const fields = player.getFieldSpaces().filter(f => f.crop === 'grain' && f.cropCount === 0)
         if (fields.length > 0) {

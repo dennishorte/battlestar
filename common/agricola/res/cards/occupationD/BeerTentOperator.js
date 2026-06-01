@@ -10,13 +10,16 @@ module.exports = {
     return player.wood >= 1 && player.grain >= 1
   },
   onFeedingPhase(game, player) {
-    const choices = ['Convert 1 wood + 1 grain to 1 point + 2 food', 'Skip']
+    const choices = [
+      game.actions.option({ id: 'convert', title: 'Convert 1 wood + 1 grain to 1 point + 2 food' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
     const selection = game.actions.choose(player, choices, {
       title: 'Beer Tent Operator',
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       player.removeResource('wood', 1)
       player.removeResource('grain', 1)
       player.addBonusPoints(1)

@@ -12,10 +12,10 @@ module.exports = {
   onAction(game, player, _actionId) {
     if (player.food >= 1) {
       const selection = game.actions.choose(player, () => [
-        'Pay 1 food to take improvement action again',
-        'Skip',
+        game.actions.option({ id: 'pay', title: 'Pay 1 food to take improvement action again' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: 'Merchant', min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ food: 1 })
         game.actions.buyImprovement(player, true, true)
         game.log.add({

@@ -49,8 +49,11 @@ module.exports = {
     }
 
     const choices = [
-      'Pass',
-      ...eligibleSpaces.map(s => `${s.name} (${s.amount} ${s.goodType})`),
+      game.actions.option({ id: 'pass', title: 'Pass' }),
+      ...eligibleSpaces.map(s => game.actions.option({
+        id: `space-${s.actionId}`,
+        title: `${s.name} (${s.amount} ${s.goodType})`,
+      })),
     ]
 
     const selection = game.actions.choose(player, choices, {
@@ -59,12 +62,12 @@ module.exports = {
       max: 1,
     })
 
-    if (selection[0] === 'Pass') {
+    if (selection[0].id === 'pass') {
       return
     }
 
-    const selectedIdx = choices.indexOf(selection[0]) - 1
-    const selected = eligibleSpaces[selectedIdx]
+    const selectedActionId = selection[0].id.replace(/^space-/, '')
+    const selected = eligibleSpaces.find(s => s.actionId === selectedActionId)
 
     const state = game.state.actionSpaces[selected.actionId]
     state.occupiedBy = player.name

@@ -25,8 +25,11 @@ module.exports = {
 
     while (player.getValidStableBuildSpaces().length > 0 && player.canAffordCost(cost)) {
       const validSpaces = player.getValidStableBuildSpaces()
-      const spaceChoices = validSpaces.map(s => `${s.row},${s.col}`)
-      spaceChoices.push('Done')
+      const spaceChoices = validSpaces.map(s => game.actions.option({
+        id: `space-${s.row}-${s.col}`,
+        title: `${s.row},${s.col}`,
+      }))
+      spaceChoices.push(game.actions.option({ id: 'done', title: 'Done' }))
 
       const selection = game.actions.choose(player, spaceChoices, {
         title: 'Stable Cleaner: Choose where to build a stable',
@@ -34,11 +37,11 @@ module.exports = {
         max: 1,
       })
       const sel = Array.isArray(selection) ? selection[0] : selection
-      if (sel === 'Done') {
+      if (sel.id === 'done') {
         break
       }
 
-      const [row, col] = sel.split(',').map(Number)
+      const [row, col] = sel.title.split(',').map(Number)
       player.payCost(cost)
       player.buildStable(row, col)
 

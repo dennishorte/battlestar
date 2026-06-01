@@ -40,8 +40,11 @@ module.exports = {
       return false
     }
 
-    const spaceChoices = validSpaces.map(s => `${s.row},${s.col}`)
-    spaceChoices.push('Do not build')
+    const spaceChoices = validSpaces.map(s => game.actions.option({
+      id: `space-${s.row}-${s.col}`,
+      title: `${s.row},${s.col}`,
+    }))
+    spaceChoices.push(game.actions.option({ id: 'do-not-build', title: 'Do not build' }))
 
     const selection = game.actions.choose(player, spaceChoices, {
       title: 'Choose space for free single-space pasture',
@@ -50,11 +53,13 @@ module.exports = {
     })
 
     const sel = Array.isArray(selection) ? selection[0] : selection
-    if (sel === 'Do not build') {
+    if (sel.id === 'do-not-build') {
       return false
     }
 
-    const [row, col] = sel.split(',').map(Number)
+    const [, rowStr, colStr] = sel.id.match(/^space-(\d+)-(\d+)$/)
+    const row = Number(rowStr)
+    const col = Number(colStr)
 
     // Calculate fences needed for single space
     const fences = player.calculateFencesForPasture([{ row, col }])

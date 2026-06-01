@@ -13,8 +13,8 @@ module.exports = {
   },
   onBuildFences(game, player) {
     const choices = [
-      'Exchange 1 wood and 1 fence for 2 food and 1 bonus point',
-      'Skip',
+      game.actions.option({ id: 'exchange', title: 'Exchange 1 wood and 1 fence for 2 food and 1 bonus point' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
     ]
     const selection = game.actions.choose(player, choices, {
       title: `${this.name}: Exchange wood and fence for food and bonus point?`,
@@ -22,7 +22,7 @@ module.exports = {
       max: 1,
     })
 
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       player.payCost({ wood: 1 })
       player.useFenceFromSupply(1)
       player.addResource('food', 2)

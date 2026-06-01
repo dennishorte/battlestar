@@ -34,18 +34,18 @@ module.exports = {
 
       const choices = []
       if (total >= 2 && player.canPlaceAnimals('sheep', 1)) {
-        choices.push('Spend 2 resources for 1 sheep')
+        choices.push(game.actions.option({ id: 'sheep', title: 'Spend 2 resources for 1 sheep' }))
       }
       if (total >= 3 && player.canPlaceAnimals('boar', 1)) {
-        choices.push('Spend 3 resources for 1 boar')
+        choices.push(game.actions.option({ id: 'boar', title: 'Spend 3 resources for 1 boar' }))
       }
       if (total >= 4 && player.canPlaceAnimals('cattle', 1)) {
-        choices.push('Spend 4 resources for 1 cattle')
+        choices.push(game.actions.option({ id: 'cattle', title: 'Spend 4 resources for 1 cattle' }))
       }
       if (choices.length === 0) {
         break
       }
-      choices.push('Done')
+      choices.push(game.actions.option({ id: 'done', title: 'Done' }))
 
       const selection = game.actions.choose(player, choices, {
         title: `Bartering Hut (${attempt + 1}/2)`,
@@ -53,11 +53,11 @@ module.exports = {
         max: 1,
       })
 
-      if (selection[0] === 'Done') {
+      if (selection[0].id === 'done') {
         break
       }
 
-      if (selection[0].includes('sheep')) {
+      if (selection[0].id === 'sheep') {
         payBuildingResources(2)
         game.actions.handleAnimalPlacement(player, { sheep: 1 })
         game.log.add({
@@ -65,7 +65,7 @@ module.exports = {
           args: { player, card: this },
         })
       }
-      else if (selection[0].includes('boar')) {
+      else if (selection[0].id === 'boar') {
         payBuildingResources(3)
         game.actions.handleAnimalPlacement(player, { boar: 1 })
         game.log.add({
@@ -73,7 +73,7 @@ module.exports = {
           args: { player, card: this },
         })
       }
-      else if (selection[0].includes('cattle')) {
+      else if (selection[0].id === 'cattle') {
         payBuildingResources(4)
         game.actions.handleAnimalPlacement(player, { cattle: 1 })
         game.log.add({

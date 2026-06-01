@@ -17,13 +17,16 @@ module.exports = {
     if (player.getPersonPlacedThisRound() < 2) {
       return
     }
-    const choices = ['Pay 1 sheep + 2 food to free a worker', 'Skip']
+    const choices = [
+      game.actions.option({ id: 'pay', title: 'Pay 1 sheep + 2 food to free a worker' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
     const selection = game.actions.choose(player, choices, {
       title: 'Sheep Inspector',
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       s.usedThisWorkPhase = true
       player.removeResource('food', 2)
       player.removeAnimals('sheep', 1)

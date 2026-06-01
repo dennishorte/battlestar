@@ -25,12 +25,15 @@ module.exports = {
         args: { player, amount: wood , card: this},
       })
       // Offer optional fence building
-      const selection = game.actions.choose(player, ['Build Fences', 'Skip'], {
+      const selection = game.actions.choose(player, [
+        game.actions.option({ id: 'build', title: 'Build Fences' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
+      ], {
         title: 'Animal Husbandry Worker: Build fences?',
         min: 1,
         max: 1,
       })
-      if (selection[0] === 'Build Fences') {
+      if (selection[0].id === 'build') {
         game.actions.buildFences(player)
       }
     }

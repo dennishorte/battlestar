@@ -30,14 +30,17 @@ module.exports = {
         break
       }
       const selection = game.actions.choose(player, [
-        `Plow a field from Turnwrest Plow (${state.charges} remaining)`,
-        'Skip',
+        game.actions.option({
+          id: 'plow',
+          title: `Plow a field from Turnwrest Plow (${state.charges} remaining)`,
+        }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], {
         title: 'Turnwrest Plow',
         min: 1,
         max: 1,
       })
-      if (selection[0] === 'Skip') {
+      if (selection[0].id === 'skip') {
         break
       }
       game.actions.plowField(player)

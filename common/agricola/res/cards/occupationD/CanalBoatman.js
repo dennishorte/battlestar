@@ -13,18 +13,22 @@ module.exports = {
     if (player.food < 1 || player.getAvailableWorkers() < 1) {
       return
     }
-    const choices = ['Get 3 stone (pay 1 food + 1 worker)', 'Get 1 grain + 1 vegetable (pay 1 food + 1 worker)', 'Skip']
+    const choices = [
+      game.actions.option({ id: 'stone', title: 'Get 3 stone (pay 1 food + 1 worker)' }),
+      game.actions.option({ id: 'grain-veg', title: 'Get 1 grain + 1 vegetable (pay 1 food + 1 worker)' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
     const selection = game.actions.choose(player, choices, {
       title: 'Canal Boatman',
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
     player.removeResource('food', 1)
     player.availableWorkers -= 1
-    if (selection[0].startsWith('Get 3 stone')) {
+    if (selection[0].id === 'stone') {
       player.addResource('stone', 3)
       game.log.add({
         template: '{player} places a worker for 3 stone',

@@ -14,15 +14,17 @@ module.exports = {
       return
     }
 
-    const choices = ['Move first person to Basket Chair', 'No']
+    const choices = [
+      game.actions.option({ id: 'move', title: 'Move first person to Basket Chair' }),
+      game.actions.option({ id: 'no', title: 'No' }),
+    ]
     const selection = game.actions.choose(player, choices, {
       title: 'Basket Chair: Move your first person?',
       min: 1,
       max: 1,
     })
 
-    const sel = Array.isArray(selection) ? selection[0] : selection
-    if (sel === 'Move first person to Basket Chair') {
+    if (selection[0].id === 'move') {
       game.state.actionSpaces[firstAction].occupiedBy = null
       game.state.basketChairBonusTurn = player.name
       game.log.add({

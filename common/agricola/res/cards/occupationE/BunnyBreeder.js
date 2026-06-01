@@ -11,7 +11,7 @@ module.exports = {
     const choices = []
     for (let round = currentRound + 1; round <= 14; round++) {
       const food = round - currentRound
-      choices.push(`Round ${round} (${food} food)`)
+      choices.push(game.actions.option({ id: `round-${round}`, title: `Round ${round} (${food} food)` }))
     }
 
     if (choices.length === 0) {
@@ -24,7 +24,7 @@ module.exports = {
       max: 1,
     })
 
-    const round = parseInt(selection[0].split(' ')[1])
+    const round = parseInt(selection[0].id.replace('round-', ''))
     const food = round - currentRound
 
     game.scheduleResource(player, 'food', round, food)

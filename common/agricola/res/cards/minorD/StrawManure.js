@@ -13,10 +13,13 @@ module.exports = {
     if (player.grain >= 1 && vegFields.length > 0) {
       const count = Math.min(vegFields.length, 2)
       const selection = game.actions.choose(player, [
-        `Pay 1 grain to add vegetable to ${count} field${count > 1 ? 's' : ''}`,
-        'Skip',
+        game.actions.option({
+          id: 'pay',
+          title: `Pay 1 grain to add vegetable to ${count} field${count > 1 ? 's' : ''}`,
+        }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: 'Straw Manure', min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.addResource('grain', -1)
         let added = 0
         for (const field of vegFields) {

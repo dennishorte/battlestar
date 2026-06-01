@@ -13,20 +13,24 @@ module.exports = {
     if (actionId !== 'take-stone-1' && actionId !== 'take-stone-2') {
       return
     }
-    const choices = ['Get 1 food', 'Build free stable', 'Skip']
+    const choices = [
+      game.actions.option({ id: 'food', title: 'Get 1 food' }),
+      game.actions.option({ id: 'stable', title: 'Build free stable' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
     const selection = game.actions.choose(cardOwner, choices, {
       title: 'Casual Worker',
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Get 1 food') {
+    if (selection[0].id === 'food') {
       cardOwner.addResource('food', 1)
       game.log.add({
         template: '{player} gets 1 food from {card}',
         args: { player: cardOwner , card: this},
       })
     }
-    else if (selection[0] === 'Build free stable') {
+    else if (selection[0].id === 'stable') {
       game.actions.buildFreeStable(cardOwner, this)
     }
   },

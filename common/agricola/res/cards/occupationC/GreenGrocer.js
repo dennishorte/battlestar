@@ -9,55 +9,56 @@ module.exports = {
   onRoundStart(game, player) {
     const choices = []
     if (player.getTotalAnimals('cattle') >= 1) {
-      choices.push('Exchange 1 cattle for 1 vegetable')
+      choices.push(game.actions.option({ id: 'cattle-to-veg', title: 'Exchange 1 cattle for 1 vegetable' }))
     }
     if (player.vegetables >= 1) {
-      choices.push('Exchange 1 vegetable for 1 cattle')
+      choices.push(game.actions.option({ id: 'veg-to-cattle', title: 'Exchange 1 vegetable for 1 cattle' }))
     }
     if (player.getTotalAnimals('sheep') >= 2) {
-      choices.push('Exchange 2 sheep for 1 vegetable')
+      choices.push(game.actions.option({ id: 'sheep-to-veg', title: 'Exchange 2 sheep for 1 vegetable' }))
     }
     if (player.vegetables >= 1) {
-      choices.push('Exchange 1 vegetable for 2 sheep')
+      choices.push(game.actions.option({ id: 'veg-to-sheep', title: 'Exchange 1 vegetable for 2 sheep' }))
     }
     if (player.food >= 2) {
-      choices.push('Exchange 2 food for 1 grain')
+      choices.push(game.actions.option({ id: 'food-to-grain', title: 'Exchange 2 food for 1 grain' }))
     }
     if (player.grain >= 1) {
-      choices.push('Exchange 1 grain for 2 food')
+      choices.push(game.actions.option({ id: 'grain-to-food', title: 'Exchange 1 grain for 2 food' }))
     }
-    choices.push('Skip')
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
 
     if (choices.length > 1) {
       const selection = game.actions.choose(player, () => choices, { title: 'Green Grocer', min: 1, max: 1 })
-      if (selection[0] === 'Exchange 1 cattle for 1 vegetable') {
+      const id = selection[0].id
+      if (id === 'cattle-to-veg') {
         player.removeAnimals('cattle', 1)
         player.addResource('vegetables', 1)
       }
-      else if (selection[0] === 'Exchange 1 vegetable for 1 cattle') {
+      else if (id === 'veg-to-cattle') {
         player.payCost({ vegetables: 1 })
         game.actions.handleAnimalPlacement(player, { cattle: 1 })
       }
-      else if (selection[0] === 'Exchange 2 sheep for 1 vegetable') {
+      else if (id === 'sheep-to-veg') {
         player.removeAnimals('sheep', 2)
         player.addResource('vegetables', 1)
       }
-      else if (selection[0] === 'Exchange 1 vegetable for 2 sheep') {
+      else if (id === 'veg-to-sheep') {
         player.payCost({ vegetables: 1 })
         game.actions.handleAnimalPlacement(player, { sheep: 2 })
       }
-      else if (selection[0] === 'Exchange 2 food for 1 grain') {
+      else if (id === 'food-to-grain') {
         player.payCost({ food: 2 })
         player.addResource('grain', 1)
       }
-      else if (selection[0] === 'Exchange 1 grain for 2 food') {
+      else if (id === 'grain-to-food') {
         player.payCost({ grain: 1 })
         player.addResource('food', 2)
       }
-      if (selection[0] !== 'Skip') {
+      if (id !== 'skip') {
         game.log.add({
           template: '{player} uses {card}: {choice}',
-          args: { player, choice: selection[0] , card: this},
+          args: { player, choice: selection[0].title, card: this },
         })
       }
     }

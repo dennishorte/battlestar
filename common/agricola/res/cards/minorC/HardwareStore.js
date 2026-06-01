@@ -14,14 +14,14 @@ module.exports = {
   onAction(game, player, _actionId) {
     if (player.food >= 2) {
       const selection = game.actions.choose(player, [
-        'Pay 2 food for 1 wood, 1 clay, 1 reed, and 1 stone',
-        'Skip',
+        game.actions.option({ id: 'pay', title: 'Pay 2 food for 1 wood, 1 clay, 1 reed, and 1 stone' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], {
         title: 'Hardware Store',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ food: 2 })
         player.addResource('wood', 1)
         player.addResource('clay', 1)

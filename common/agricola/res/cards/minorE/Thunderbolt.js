@@ -27,13 +27,16 @@ module.exports = {
       chosen = grainFields[0]
     }
     else {
-      const choices = grainFields.map(f => `${f.row},${f.col} (grain x${f.cropCount})`)
+      const choices = grainFields.map(f => game.actions.option({
+        id: `space-${f.row}-${f.col}`,
+        title: `${f.row},${f.col} (grain x${f.cropCount})`,
+      }))
       const selection = game.actions.choose(player, choices, {
         title: 'Thunderbolt: Choose a grain field',
         min: 1,
         max: 1,
       })
-      const [row, col] = selection[0].split(' ')[0].split(',').map(Number)
+      const [, row, col] = selection[0].id.split('-').map(Number)
       chosen = grainFields.find(f => f.row === row && f.col === col)
     }
 

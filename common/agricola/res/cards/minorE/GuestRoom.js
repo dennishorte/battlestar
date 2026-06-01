@@ -19,7 +19,7 @@ module.exports = {
 
     const choices = []
     for (let i = 0; i <= available; i++) {
-      choices.push(`Place ${i} food`)
+      choices.push(game.actions.option({ id: `place-${i}`, title: `Place ${i} food` }))
     }
 
     const selection = game.actions.choose(player, choices, {
@@ -28,19 +28,16 @@ module.exports = {
       max: 1,
     })
 
-    const sel = Array.isArray(selection) ? selection[0] : selection
-    const match = sel.match(/Place (\d+)/)
-    if (match) {
-      const amount = parseInt(match[1])
-      if (amount > 0) {
-        player.removeResource('food', amount)
-        const state = game.cardState(cardId)
-        state.food = (state.food || 0) + amount
-        game.log.add({
-          template: `{player} places ${amount} food on ${cardName}`,
-          args: { player },
-        })
-      }
+    const sel = selection[0]
+    const amount = parseInt(sel.id.split('-')[1])
+    if (amount > 0) {
+      player.removeResource('food', amount)
+      const state = game.cardState(cardId)
+      state.food = (state.food || 0) + amount
+      game.log.add({
+        template: `{player} places ${amount} food on ${cardName}`,
+        args: { player },
+      })
     }
   },
 }

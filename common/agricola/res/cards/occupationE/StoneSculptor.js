@@ -10,12 +10,15 @@ module.exports = {
     return player.stone >= 1
   },
   onHarvest(game, player) {
-    const selection = game.actions.choose(player, ['Convert 1 stone to 1 VP + 1 food', 'Skip'], {
+    const selection = game.actions.choose(player, [
+      game.actions.option({ id: 'convert', title: 'Convert 1 stone to 1 VP + 1 food' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ], {
       title: 'Stone Sculptor: Convert?',
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       player.removeResource('stone', 1)
       player.addBonusPoints(1)
       player.addResource('food', 1)

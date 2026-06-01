@@ -29,13 +29,16 @@ module.exports = {
     player._plumberActive = false
 
     if (canReno) {
-      const choices = ['Renovate (discounted)', 'Skip']
+      const choices = [
+        game.actions.option({ id: 'renovate', title: 'Renovate (discounted)' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
+      ]
       const selection = game.actions.choose(player, choices, {
         title: 'Plumber: Renovate for 2 clay/stone less?',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player._plumberActive = true
         game.actions.renovate(player)
         player._plumberActive = false

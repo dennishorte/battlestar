@@ -11,14 +11,14 @@ module.exports = {
   onHarvestEnd(game, player) {
     if (player.reed >= 1) {
       const selection = game.actions.choose(player, [
-        'Exchange 1 reed for 1 bonus point',
-        'Skip',
+        game.actions.option({ id: 'exchange', title: 'Exchange 1 reed for 1 bonus point' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], {
         title: 'Elephantgrass Plant',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ reed: 1 })
         player.addBonusPoints(1)
         game.log.add({

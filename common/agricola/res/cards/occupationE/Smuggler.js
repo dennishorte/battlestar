@@ -12,32 +12,32 @@ module.exports = {
     while (exchangesLeft > 0) {
       const choices = []
       if (player.wood > 0) {
-        choices.push('Exchange 1 wood for 1 grain')
+        choices.push(game.actions.option({ id: 'wood-to-grain', title: 'Exchange 1 wood for 1 grain' }))
       }
       if (player.grain > 0) {
-        choices.push('Exchange 1 grain for 1 stone')
+        choices.push(game.actions.option({ id: 'grain-to-stone', title: 'Exchange 1 grain for 1 stone' }))
       }
       if (choices.length === 0) {
         break
       }
-      choices.push('Done')
+      choices.push(game.actions.option({ id: 'done', title: 'Done' }))
 
       const selection = game.actions.choose(player, choices, {
         title: `Smuggler: Exchange goods (${exchangesLeft} left)`,
         min: 1,
         max: 1,
       })
-      if (selection[0] === 'Done') {
+      if (selection[0].id === 'done') {
         break
       }
 
       const choice = selection[0]
-      if (choice.includes('wood for 1 grain')) {
+      if (choice.id === 'wood-to-grain') {
         player.removeResource('wood', 1)
         player.addResource('grain', 1)
         game.log.add({ template: '{player} exchanges 1 wood for 1 grain', args: { player } })
       }
-      else if (choice.includes('grain for 1 stone')) {
+      else if (choice.id === 'grain-to-stone') {
         player.removeResource('grain', 1)
         player.addResource('stone', 1)
         game.log.add({ template: '{player} exchanges 1 grain for 1 stone', args: { player } })

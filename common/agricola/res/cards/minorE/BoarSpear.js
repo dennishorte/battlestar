@@ -17,10 +17,10 @@ module.exports = {
 
       const foodGain = actualBoar * 4
       const selection = game.actions.choose(player, [
-        `Convert ${actualBoar} boar to ${foodGain} food`,
-        'Keep boar',
+        game.actions.option({ id: 'convert', title: `Convert ${actualBoar} boar to ${foodGain} food` }),
+        game.actions.option({ id: 'keep', title: 'Keep boar' }),
       ], { title: 'Boar Spear', min: 1, max: 1 })
-      if (selection[0] !== 'Keep boar') {
+      if (selection[0].id !== 'keep') {
         // Remove the boar that were just placed and give food instead
         player.removeAnimals('boar', actualBoar)
         player.addResource('food', foodGain)

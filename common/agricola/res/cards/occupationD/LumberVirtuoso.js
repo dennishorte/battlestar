@@ -10,13 +10,16 @@ module.exports = {
     return player.wood >= 5
   },
   onHarvest(game, player) {
-    const choices = ['Build stables (discard excess wood)', 'Skip']
+    const choices = [
+      game.actions.option({ id: 'build', title: 'Build stables (discard excess wood)' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
     const selection = game.actions.choose(player, choices, {
       title: 'Lumber Virtuoso',
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
     // Discard wood down to 5

@@ -16,21 +16,21 @@ module.exports = {
     const s = game.cardState(this.id)
     const choices = []
     if (player.grain >= 1) {
-      choices.push('Place 1 grain')
+      choices.push(game.actions.option({ id: 'grain', title: 'Place 1 grain' }))
     }
     if (player.vegetables >= 1) {
-      choices.push('Place 1 vegetable')
+      choices.push(game.actions.option({ id: 'vegetable', title: 'Place 1 vegetable' }))
     }
     if (player.getTotalAnimals('sheep') >= 1) {
-      choices.push('Place 1 sheep')
+      choices.push(game.actions.option({ id: 'sheep', title: 'Place 1 sheep' }))
     }
     if (player.getTotalAnimals('boar') >= 1) {
-      choices.push('Place 1 boar')
+      choices.push(game.actions.option({ id: 'boar', title: 'Place 1 boar' }))
     }
     if (player.getTotalAnimals('cattle') >= 1) {
-      choices.push('Place 1 cattle')
+      choices.push(game.actions.option({ id: 'cattle', title: 'Place 1 cattle' }))
     }
-    choices.push('Skip')
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
     if (choices.length === 1) {
       return
     }
@@ -40,11 +40,11 @@ module.exports = {
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
 
-    const good = selection[0].replace('Place 1 ', '')
+    const good = selection[0].id
     if (['sheep', 'boar', 'cattle'].includes(good)) {
       player.removeAnimals(good, 1)
     }

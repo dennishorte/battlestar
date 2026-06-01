@@ -19,8 +19,8 @@ module.exports = {
     else if (player.vegetables >= 3) {
       const card = this
       const choices = [
-        'Convert 1 vegetable to 6 food',
-        'Skip',
+        game.actions.option({ id: 'convert', title: 'Convert 1 vegetable to 6 food' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ]
       const selection = game.actions.choose(player, choices, {
         title: `${card.name}: Convert vegetable to food?`,
@@ -28,7 +28,7 @@ module.exports = {
         max: 1,
       })
 
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.payCost({ vegetables: 1 })
         player.addResource('food', 6)
         game.log.add({

@@ -11,10 +11,10 @@ module.exports = {
   onReturnHome(game, player) {
     if (player.getRoomCount() > player.familyMembers && player.food >= 1 && player.canGrowFamily()) {
       const selection = game.actions.choose(player, [
-        'Pay 1 food for Family Growth',
-        'Skip',
+        game.actions.option({ id: 'pay', title: 'Pay 1 food for Family Growth' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: "Stork's Nest", min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         player.addResource('food', -1)
         game.actions.familyGrowth(player)
         game.log.add({

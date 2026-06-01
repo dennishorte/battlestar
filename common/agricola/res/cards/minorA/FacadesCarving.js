@@ -22,9 +22,12 @@ module.exports = {
         const curMax = Math.min(maxExchange, player.food)
         const choices = []
         for (let i = 1; i <= curMax; i++) {
-          choices.push(`Exchange ${i} food for ${i} bonus point${i > 1 ? 's' : ''}`)
+          choices.push(game.actions.option({
+            id: `food-${i}`,
+            title: `Exchange ${i} food for ${i} bonus point${i > 1 ? 's' : ''}`,
+          }))
         }
-        choices.push('Skip')
+        choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
         return choices
       }, {
         title: `${card.name}: Exchange food for bonus points?`,
@@ -32,8 +35,8 @@ module.exports = {
         max: 1,
       })
 
-      if (selection[0] !== 'Skip') {
-        const match = selection[0].match(/Exchange (\d+) food/)
+      if (selection[0].id !== 'skip') {
+        const match = selection[0].id.match(/food-(\d+)/)
         if (match) {
           const amount = parseInt(match[1])
           player.payCost({ food: amount })

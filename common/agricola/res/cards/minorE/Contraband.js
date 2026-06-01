@@ -14,15 +14,18 @@ module.exports = {
     const buildingResources = ['wood', 'clay', 'stone', 'reed']
     const resourcesInCost = buildingResources.filter(r => card.cost[r] > 0 && player[r] >= 1)
     if (resourcesInCost.length > 0) {
-      const choices = resourcesInCost.map(r => `Pay 1 ${r} for 3 food`)
-      choices.push('Skip')
+      const choices = resourcesInCost.map(r => game.actions.option({
+        id: r,
+        title: `Pay 1 ${r} for 3 food`,
+      }))
+      choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
       const selection = game.actions.choose(player, choices, {
         title: 'Contraband',
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
-        const resource = selection[0].match(/Pay 1 (\w+)/)[1]
+      if (selection[0].id !== 'skip') {
+        const resource = selection[0].id
         player.payCost({ [resource]: 1 })
         player.addResource('food', 3)
         game.log.add({

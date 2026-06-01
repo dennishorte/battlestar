@@ -7,28 +7,22 @@ module.exports = {
   players: "1+",
   text: "When you play this card and each time before you use the most recent action space card, you get 1 building resource of your choice and 1 food.",
   _offerBuildingResource(game, player) {
-    const selection = game.actions.choose(player, ['1 wood', '1 clay', '1 reed', '1 stone'], {
+    const selection = game.actions.choose(player, [
+      game.actions.option({ id: 'wood', title: '1 wood' }),
+      game.actions.option({ id: 'clay', title: '1 clay' }),
+      game.actions.option({ id: 'reed', title: '1 reed' }),
+      game.actions.option({ id: 'stone', title: '1 stone' }),
+    ], {
       title: 'Pioneer: Choose a building resource',
       min: 1,
       max: 1,
     })
     const choice = selection[0]
-    if (choice === '1 wood') {
-      player.addResource('wood', 1)
-    }
-    else if (choice === '1 clay') {
-      player.addResource('clay', 1)
-    }
-    else if (choice === '1 reed') {
-      player.addResource('reed', 1)
-    }
-    else if (choice === '1 stone') {
-      player.addResource('stone', 1)
-    }
+    player.addResource(choice.id, 1)
     player.addResource('food', 1)
     game.log.add({
       template: '{player} gets {choice} and 1 food',
-      args: { player, choice },
+      args: { player, choice: choice.title },
     })
   },
   onPlay(game, player) {

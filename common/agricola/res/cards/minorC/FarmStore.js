@@ -12,35 +12,33 @@ module.exports = {
   },
   onFeedingPhaseEnd(game, player) {
     const choices = [
-      '1 wood and 1 clay',
-      '1 wood and 1 stone',
-      '1 wood and 1 reed',
-      '1 clay and 1 stone',
-      '1 clay and 1 reed',
-      '1 stone and 1 reed',
-      '1 vegetable',
-      'Skip',
+      game.actions.option({ id: 'wood-clay', title: '1 wood and 1 clay' }),
+      game.actions.option({ id: 'wood-stone', title: '1 wood and 1 stone' }),
+      game.actions.option({ id: 'wood-reed', title: '1 wood and 1 reed' }),
+      game.actions.option({ id: 'clay-stone', title: '1 clay and 1 stone' }),
+      game.actions.option({ id: 'clay-reed', title: '1 clay and 1 reed' }),
+      game.actions.option({ id: 'stone-reed', title: '1 stone and 1 reed' }),
+      game.actions.option({ id: 'vegetable', title: '1 vegetable' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
     ]
     const selection = game.actions.choose(player, choices, {
       title: 'Farm Store: Exchange 1 food',
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       player.payCost({ food: 1 })
-      if (selection[0] === '1 vegetable') {
+      if (selection[0].id === 'vegetable') {
         player.addResource('vegetables', 1)
       }
       else {
-        const parts = selection[0].split(' and ')
-        const r1 = parts[0].split(' ')[1]
-        const r2 = parts[1].split(' ')[1]
+        const [r1, r2] = selection[0].id.split('-')
         player.addResource(r1, 1)
         player.addResource(r2, 1)
       }
       game.log.add({
         template: '{player} exchanges 1 food for {choice}',
-        args: { player, choice: selection[0] },
+        args: { player, choice: selection[0].title },
       })
     }
   },

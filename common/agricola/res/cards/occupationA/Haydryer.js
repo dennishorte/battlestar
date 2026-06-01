@@ -16,12 +16,15 @@ module.exports = {
       return
     }
     const label = cost === 0 ? 'Buy 1 cattle for 0 food' : `Buy 1 cattle for ${cost} food`
-    const choice = game.actions.choose(player, [label, 'Skip'], {
+    const choice = game.actions.choose(player, [
+      game.actions.option({ id: 'buy', title: label }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ], {
       title: 'Haydryer: Buy 1 cattle (4 − pastures food, min 0)?',
       min: 1,
       max: 1,
     })
-    if (choice[0] === 'Skip') {
+    if (choice[0].id === 'skip') {
       return
     }
     if (cost > 0) {

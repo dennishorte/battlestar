@@ -11,8 +11,8 @@ module.exports = {
   text: "At the end of each turn in which you renovate, you can exchange your Joinery for the Pottery or your Pottery for the Basketmaker's Workshop.",
   onRenovate(game, player) {
     const swaps = [
-      { from: ['joinery', 'joinery-2'], to: ['pottery', 'pottery-2'], label: 'Exchange Joinery for Pottery' },
-      { from: ['pottery', 'pottery-2'], to: ['basketmakers-workshop', 'basketmakers-workshop-2'], label: "Exchange Pottery for Basketmaker's Workshop" },
+      { id: 'joinery-pottery', from: ['joinery', 'joinery-2'], to: ['pottery', 'pottery-2'], label: 'Exchange Joinery for Pottery' },
+      { id: 'pottery-basketmakers', from: ['pottery', 'pottery-2'], to: ['basketmakers-workshop', 'basketmakers-workshop-2'], label: "Exchange Pottery for Basketmaker's Workshop" },
     ]
 
     const commonZone = player.zones.byId('common.majorImprovements')
@@ -28,14 +28,17 @@ module.exports = {
       return
     }
 
-    const choices = [...validSwaps.map(s => s.label), 'Skip']
+    const choices = [
+      ...validSwaps.map(s => game.actions.option({ id: s.id, title: s.label })),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
     const selection = game.actions.choose(player, choices, {
       title: 'Retraining',
       min: 1,
       max: 1,
     })
 
-    const chosen = validSwaps.find(s => s.label === selection[0])
+    const chosen = validSwaps.find(s => s.id === selection[0].id)
     if (chosen) {
       const oldId = player.majorImprovements.find(id => chosen.from.includes(id))
       const newId = commonIds.find(id => chosen.to.includes(id))

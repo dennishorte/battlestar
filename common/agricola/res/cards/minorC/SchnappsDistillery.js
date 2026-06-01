@@ -13,14 +13,14 @@ module.exports = {
   },
   onFeedingPhase(game, player) {
     const selection = game.actions.choose(player, [
-      'Convert 1 vegetable into 5 food',
-      'Skip',
+      game.actions.option({ id: 'convert', title: 'Convert 1 vegetable into 5 food' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
     ], {
       title: 'Schnapps Distillery',
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       player.payCost({ vegetables: 1 })
       player.addResource('food', 5)
       game.log.add({

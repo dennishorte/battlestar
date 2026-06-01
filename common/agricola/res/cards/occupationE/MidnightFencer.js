@@ -21,16 +21,19 @@ module.exports = {
         const canSteal = Math.min(2, unbuilt)
         const choices = []
         for (let i = canSteal; i >= 1; i--) {
-          choices.push(`Take ${i} fence${i > 1 ? 's' : ''} from ${opponent.name}`)
+          choices.push(game.actions.option({
+            id: `take-${i}`,
+            title: `Take ${i} fence${i > 1 ? 's' : ''} from ${opponent.name}`,
+          }))
         }
-        choices.push('Skip')
+        choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
         const selection = game.actions.choose(player, choices, {
           title: `Midnight Fencer: Steal fences from ${opponent.name}?`,
           min: 1,
           max: 1,
         })
-        if (selection[0] !== 'Skip') {
-          const count = parseInt(selection[0].match(/Take (\d+)/)[1])
+        if (selection[0].id !== 'skip') {
+          const count = parseInt(selection[0].id.match(/^take-(\d+)$/)[1])
           for (let i = 0; i < count; i++) {
             opponent.useFenceFromSupply()
           }

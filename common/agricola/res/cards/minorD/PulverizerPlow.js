@@ -22,14 +22,14 @@ module.exports = {
     }
 
     const selection = game.actions.choose(player, [
-      'Pay 1 clay to plow 1 field',
-      'Skip',
+      game.actions.option({ id: 'plow', title: 'Pay 1 clay to plow 1 field' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
     ], {
       title: 'Pulverizer Plow',
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       player.payCost({ clay: 1 })
       game.actions.plowField(player)
       // Place the clay back on the accumulation space

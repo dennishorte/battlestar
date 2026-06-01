@@ -12,14 +12,17 @@ module.exports = {
     const card = this
     const currentRound = game.state.round
 
-    const selection = game.actions.choose(player, ['Start with wood', 'Start with boar'], {
+    const selection = game.actions.choose(player, [
+      game.actions.option({ id: 'wood', title: 'Start with wood' }),
+      game.actions.option({ id: 'boar', title: 'Start with boar' }),
+    ], {
       title: 'Hauberg: Choose what to start with',
       min: 1,
       max: 1,
     })
 
     const sel = Array.isArray(selection) ? selection[0] : selection
-    const startWithWood = sel === 'Start with wood'
+    const startWithWood = sel.id === 'wood'
 
     for (let i = 0; i < 4; i++) {
       const round = currentRound + 1 + i

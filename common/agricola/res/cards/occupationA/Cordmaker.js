@@ -10,11 +10,11 @@ module.exports = {
     if (actionId === 'take-reed' && resources && resources.reed >= 2) {
       const player = cardOwner
       const card = this
-      const choices = ['Take 1 grain']
+      const choices = [game.actions.option({ id: 'grain', title: 'Take 1 grain' })]
       if (player.food >= 2) {
-        choices.push('Buy 1 vegetable for 2 food')
+        choices.push(game.actions.option({ id: 'vegetable', title: 'Buy 1 vegetable for 2 food' }))
       }
-      choices.push('Skip')
+      choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
 
       const selection = game.actions.choose(player, choices, {
         title: `${card.name}: Take 1 grain or buy 1 vegetable for 2 food?`,
@@ -22,14 +22,14 @@ module.exports = {
         max: 1,
       })
 
-      if (selection[0] === 'Take 1 grain') {
+      if (selection[0].id === 'grain') {
         player.addResource('grain', 1)
         game.log.add({
           template: '{player} takes 1 grain via {card}',
           args: { player, card },
         })
       }
-      else if (selection[0] === 'Buy 1 vegetable for 2 food') {
+      else if (selection[0].id === 'vegetable') {
         player.payCost({ food: 2 })
         player.addResource('vegetables', 1)
         game.log.add({

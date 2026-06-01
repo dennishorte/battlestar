@@ -18,13 +18,16 @@ module.exports = {
     // Offer sow action if player has fields and crops to sow
     const emptyFields = player.getEmptyFields()
     if (emptyFields.length > 0 && (player.grain > 0 || player.vegetables > 0)) {
-      const choices = ['Sow fields', 'Skip sowing']
+      const choices = [
+        game.actions.option({ id: 'sow', title: 'Sow fields' }),
+        game.actions.option({ id: 'skip', title: 'Skip sowing' }),
+      ]
       const selection = game.actions.choose(player, choices, {
         title: 'Young Farmer: Sow?',
         min: 1,
         max: 1,
       })
-      if (selection[0] === 'Sow fields') {
+      if (selection[0].id === 'sow') {
         game.actions.sow(player)
       }
     }

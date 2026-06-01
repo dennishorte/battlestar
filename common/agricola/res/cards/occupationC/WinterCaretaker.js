@@ -16,10 +16,10 @@ module.exports = {
   onHarvestEnd(game, player) {
     if (player.food >= 2) {
       const selection = game.actions.choose(player, () => [
-        'Pay 2 food for 1 vegetable',
-        'Do not buy vegetable',
+        game.actions.option({ id: 'buy', title: 'Pay 2 food for 1 vegetable' }),
+        game.actions.option({ id: 'skip', title: 'Do not buy vegetable' }),
       ], { title: 'Winter Caretaker', min: 1, max: 1 })
-      if (selection[0] === 'Pay 2 food for 1 vegetable') {
+      if (selection[0].id === 'buy') {
         player.payCost({ food: 2 })
         player.addResource('vegetables', 1)
         game.log.add({

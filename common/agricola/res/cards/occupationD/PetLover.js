@@ -26,13 +26,16 @@ module.exports = {
         animalType = resource
       }
     }
-    const choices = [`Leave ${animalType} on space: get 1 ${animalType} + 3 food + 1 grain`, 'Skip']
+    const choices = [
+      game.actions.option({ id: 'leave', title: `Leave ${animalType} on space: get 1 ${animalType} + 3 food + 1 grain` }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
     const selection = game.actions.choose(player, choices, {
       title: 'Pet Lover',
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       // Undo the animal that was already placed from the accumulation space
       player.removeAnimals(animalType, 1)
       // Restore animal to accumulation space

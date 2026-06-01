@@ -23,26 +23,26 @@ module.exports = {
     }
     else if (round >= 6 && round <= 8) {
       const selection = game.actions.choose(player, [
-        'Take 1 vegetable',
-        'Take 1 wild boar',
-        'Take 1 cattle',
+        game.actions.option({ id: 'vegetable', title: 'Take 1 vegetable' }),
+        game.actions.option({ id: 'boar', title: 'Take 1 wild boar' }),
+        game.actions.option({ id: 'cattle', title: 'Take 1 cattle' }),
       ], {
         title: 'Pioneering Spirit',
         min: 1,
         max: 1,
       })
-      if (selection[0] === 'Take 1 vegetable') {
+      if (selection[0].id === 'vegetable') {
         player.addResource('vegetables', 1)
       }
-      else if (selection[0] === 'Take 1 wild boar') {
+      else if (selection[0].id === 'boar') {
         game.actions.handleAnimalPlacement(player, { boar: 1 })
       }
-      else if (selection[0] === 'Take 1 cattle') {
+      else if (selection[0].id === 'cattle') {
         game.actions.handleAnimalPlacement(player, { cattle: 1 })
       }
       game.log.add({
         template: '{player} uses {card} to get {choice}',
-        args: { player, choice: selection[0].toLowerCase() , card: this},
+        args: { player, choice: selection[0].title.toLowerCase() , card: this},
       })
     }
   },

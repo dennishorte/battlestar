@@ -30,13 +30,16 @@ module.exports = {
       if (!canAffordWithDiscount) {
         return
       }
-      const choices = ['Build a room', 'Skip']
+      const choices = [
+        game.actions.option({ id: 'build', title: 'Build a room' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
+      ]
       const selection = game.actions.choose(player, choices, {
         title: `${card.name}: Build a room (clay/stone discount)?`,
         min: 1,
         max: 1,
       })
-      if (selection[0] === 'Build a room') {
+      if (selection[0].id === 'build') {
         game.actions.buildRoom(player, { riparianBuilderCard: card })
       }
     }

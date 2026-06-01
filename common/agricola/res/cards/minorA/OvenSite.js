@@ -21,12 +21,12 @@ module.exports = {
     const availableMajors = game.getAvailableMajorImprovements()
 
     if (availableMajors.includes('clay-oven') && player.canAffordCost(cost)) {
-      choices.push('Build Clay Oven')
+      choices.push(game.actions.option({ id: 'clay-oven', title: 'Build Clay Oven' }))
     }
     if (availableMajors.includes('stone-oven') && player.canAffordCost(cost)) {
-      choices.push('Build Stone Oven')
+      choices.push(game.actions.option({ id: 'stone-oven', title: 'Build Stone Oven' }))
     }
-    choices.push('Skip')
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
 
     if (choices.length === 1) {
       return
@@ -43,10 +43,10 @@ module.exports = {
       logTemplate: '{player} builds {card} at discount using {source}',
       logArgs: { source: card },
     }
-    if (selection[0] === 'Build Clay Oven') {
+    if (selection[0].id === 'clay-oven') {
       game.actions._completeMajorPurchase(player, 'clay-oven', ovenOpts)
     }
-    else if (selection[0] === 'Build Stone Oven') {
+    else if (selection[0].id === 'stone-oven') {
       game.actions._completeMajorPurchase(player, 'stone-oven', ovenOpts)
     }
   },

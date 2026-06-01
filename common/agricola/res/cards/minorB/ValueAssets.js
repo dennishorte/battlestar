@@ -12,14 +12,14 @@ module.exports = {
       const card = this
       const choices = []
       if (player.food >= 1) {
-        choices.push('Buy 1 wood for 1 food')
-        choices.push('Buy 1 clay for 1 food')
+        choices.push(game.actions.option({ id: 'wood', title: 'Buy 1 wood for 1 food' }))
+        choices.push(game.actions.option({ id: 'clay', title: 'Buy 1 clay for 1 food' }))
       }
       if (player.food >= 2) {
-        choices.push('Buy 1 reed for 2 food')
-        choices.push('Buy 1 stone for 2 food')
+        choices.push(game.actions.option({ id: 'reed', title: 'Buy 1 reed for 2 food' }))
+        choices.push(game.actions.option({ id: 'stone', title: 'Buy 1 stone for 2 food' }))
       }
-      choices.push('Skip')
+      choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
 
       const selection = game.actions.choose(player, choices, {
         title: `${card.name}: Buy building resource after harvest?`,
@@ -27,28 +27,28 @@ module.exports = {
         max: 1,
       })
 
-      if (selection[0] === 'Buy 1 wood for 1 food') {
+      const choiceId = selection[0].id
+      if (choiceId === 'wood') {
         player.payCost({ food: 1 })
         player.addResource('wood', 1)
       }
-      else if (selection[0] === 'Buy 1 clay for 1 food') {
+      else if (choiceId === 'clay') {
         player.payCost({ food: 1 })
         player.addResource('clay', 1)
       }
-      else if (selection[0] === 'Buy 1 reed for 2 food') {
+      else if (choiceId === 'reed') {
         player.payCost({ food: 2 })
         player.addResource('reed', 1)
       }
-      else if (selection[0] === 'Buy 1 stone for 2 food') {
+      else if (choiceId === 'stone') {
         player.payCost({ food: 2 })
         player.addResource('stone', 1)
       }
 
-      if (selection[0] !== 'Skip') {
-        const resource = selection[0].match(/Buy 1 (\w+)/)[1]
+      if (choiceId !== 'skip') {
         game.log.add({
           template: '{player} buys 1 {resource} via {card}',
-          args: { player, resource, card: card },
+          args: { player, resource: choiceId, card: card },
         })
       }
     }

@@ -36,11 +36,14 @@ module.exports = {
       return
     }
 
-    const choices = spaces.map(s => {
+    const choices = spaces.map((s, i) => {
       const acc = game.state.actionSpaces[s.actionId].accumulated
-      return `Take 1 ${s.resource} from ${s.name} (${acc} available)`
+      return game.actions.option({
+        id: `space-${i}`,
+        title: `Take 1 ${s.resource} from ${s.name} (${acc} available)`,
+      })
     })
-    choices.push('Skip')
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
 
     const selection = game.actions.choose(player, choices, {
       title: `${card.name}: Take 1 building resource?`,
@@ -48,8 +51,9 @@ module.exports = {
       max: 1,
     })
 
-    if (selection[0] !== 'Skip') {
-      const idx = choices.indexOf(selection[0])
+    if (selection[0].id !== 'skip') {
+      const match = selection[0].id.match(/space-(\d+)/)
+      const idx = parseInt(match[1])
       const space = spaces[idx]
       game.state.actionSpaces[space.actionId].accumulated -= 1
       player.addResource(space.resource, 1)

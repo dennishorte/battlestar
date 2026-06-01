@@ -29,42 +29,42 @@ module.exports = {
 
       for (const [type, count] of Object.entries(animals)) {
         if (count > 0 && rates[type]) {
-          options.push(`Cook 1 ${type} for ${rates[type] * 2} food`)
+          options.push(game.actions.option({ id: type, title: `Cook 1 ${type} for ${rates[type] * 2} food` }))
         }
       }
       if (player.vegetables > 0 && rates.vegetables) {
-        options.push(`Cook 1 vegetable for ${rates.vegetables * 2} food`)
+        options.push(game.actions.option({ id: 'vegetables', title: `Cook 1 vegetable for ${rates.vegetables * 2} food` }))
       }
 
       if (options.length === 0) {
         continue
       }
 
-      options.push('Skip')
+      options.push(game.actions.option({ id: 'skip', title: 'Skip' }))
 
       const selection = game.actions.choose(player, options, {
         title: `Cooking Hearth Extension: Use ${imp.name} for double food`,
         min: 1, max: 1,
       })
 
-      const choice = selection[0]
-      if (choice === 'Skip') {
+      const choice = selection[0].id
+      if (choice === 'skip') {
         continue
       }
 
-      if (choice.includes('sheep')) {
+      if (choice === 'sheep') {
         player.removeAnimals('sheep', 1)
         player.addResource('food', rates.sheep * 2)
       }
-      else if (choice.includes('boar')) {
+      else if (choice === 'boar') {
         player.removeAnimals('boar', 1)
         player.addResource('food', rates.boar * 2)
       }
-      else if (choice.includes('cattle')) {
+      else if (choice === 'cattle') {
         player.removeAnimals('cattle', 1)
         player.addResource('food', rates.cattle * 2)
       }
-      else if (choice.includes('vegetable')) {
+      else if (choice === 'vegetables') {
         player.removeResource('vegetables', 1)
         player.addResource('food', rates.vegetables * 2)
       }

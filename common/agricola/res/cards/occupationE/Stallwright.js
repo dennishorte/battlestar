@@ -24,15 +24,18 @@ module.exports = {
       if (validSpaces.length === 0) {
         return
       }
-      const choices = validSpaces.map(s => `Build stable at ${s.row},${s.col}`)
-      choices.push('Skip')
+      const choices = validSpaces.map(s => game.actions.option({
+        id: `space-${s.row}-${s.col}`,
+        title: `Build stable at ${s.row},${s.col}`,
+      }))
+      choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
       const selection = game.actions.choose(player, choices, {
         title: `${this.name}: Build a free stable?`,
         min: 1,
         max: 1,
       })
-      if (selection[0] !== 'Skip') {
-        const match = selection[0].match(/(\d+),(\d+)/)
+      if (selection[0].id !== 'skip') {
+        const match = selection[0].id.match(/^space-(\d+)-(\d+)$/)
         if (match) {
           const row = parseInt(match[1])
           const col = parseInt(match[2])

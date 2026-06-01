@@ -12,12 +12,12 @@ module.exports = {
       const card = this
       const choices = []
       if (player.wood >= 1) {
-        choices.push('1 wood \u2192 2 food')
+        choices.push(game.actions.option({ id: 'wood', title: '1 wood \u2192 2 food' }))
       }
       if (player.stone >= 1) {
-        choices.push('1 stone \u2192 4 food')
+        choices.push(game.actions.option({ id: 'stone', title: '1 stone \u2192 4 food' }))
       }
-      choices.push('Skip')
+      choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
 
       if (choices.length === 1) {
         return
@@ -30,7 +30,7 @@ module.exports = {
       })
       const sel = Array.isArray(selection) ? selection[0] : selection
 
-      if (sel === '1 wood \u2192 2 food') {
+      if (sel.id === 'wood') {
         player.removeResource('wood', 1)
         player.addResource('food', 2)
         game.log.add({
@@ -38,7 +38,7 @@ module.exports = {
           args: { player, card },
         })
       }
-      else if (sel === '1 stone \u2192 4 food') {
+      else if (sel.id === 'stone') {
         player.removeResource('stone', 1)
         player.addResource('food', 4)
         game.log.add({

@@ -20,16 +20,19 @@ module.exports = {
     const maxStore = Math.min(2, player.wood)
     const choices = []
     for (let i = maxStore; i >= 1; i--) {
-      choices.push(`Store ${i} wood on Rod Collection`)
+      choices.push(game.actions.option({
+        id: `store-${i}`,
+        title: `Store ${i} wood on Rod Collection`,
+      }))
     }
-    choices.push('Skip')
+    choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
     const selection = game.actions.choose(player, choices, {
       title: 'Rod Collection',
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
-      const amount = parseInt(selection[0].match(/\d+/)[0])
+    if (selection[0].id !== 'skip') {
+      const amount = parseInt(selection[0].id.split('-')[1])
       player.payCost({ wood: amount })
       const s = game.cardState(this.id)
       s.stored = (s.stored || 0) + amount

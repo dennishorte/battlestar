@@ -12,12 +12,15 @@ module.exports = {
     return player.reed >= 1
   },
   onHarvest(game, player) {
-    const selection = game.actions.choose(player, ['Convert 1 reed to 2 food', 'Skip'], {
+    const selection = game.actions.choose(player, [
+      game.actions.option({ id: 'convert', title: 'Convert 1 reed to 2 food' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ], {
       title: 'Braid Maker: Convert?',
       min: 1,
       max: 1,
     })
-    if (selection[0] !== 'Skip') {
+    if (selection[0].id !== 'skip') {
       player.removeResource('reed', 1)
       player.addResource('food', 2)
       game.log.add({
