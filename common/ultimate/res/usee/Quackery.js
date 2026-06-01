@@ -11,26 +11,33 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
+      const drawAge = game.getEffectAge(self, 4)
       const choices = [
-        'Draw a ' + game.getEffectAge(self, 4),
+        game.actions.option({ id: 'draw', title: 'Draw a ' + drawAge }),
       ]
 
-      const hand = game.cards.byPlayer(player, 'hand').map(c => c.name)
-      if (hand.length > 0) {
+      const handCards = game.cards.byPlayer(player, 'hand')
+      if (handCards.length > 0) {
         choices.push({
           title: 'Score',
-          choices: hand,
+          id: 'score',
+          choices: handCards.map(c => game.actions.cardOption(c)),
           min: 0,
         })
       }
 
       const selected = game.actions.choose(player, choices, { title: 'Choose an option:' })[0]
+      const selectedId = (selected && typeof selected === 'object')
+        ? (selected.id ?? selected.title)
+        : selected
 
-      if (selected === 'Draw a 4') {
-        game.actions.draw(player, { age: game.getEffectAge(self, 4) })
+      if (selectedId === 'draw' || (typeof selectedId === 'string' && selectedId.startsWith('Draw a '))) {
+        game.actions.draw(player, { age: drawAge })
       }
       else {
-        const card = game.cards.byId(selected.selection[0])
+        const inner = selected.selection[0]
+        const cardId = (inner && typeof inner === 'object') ? inner.id : inner
+        const card = game.cards.byId(cardId)
         game.actions.score(player, card)
       }
     },

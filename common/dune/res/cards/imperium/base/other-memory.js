@@ -41,14 +41,16 @@ module.exports = {
     const bgCards = discardZone.cardlist().filter(c =>
       constants.getFactionAffiliations(c).includes('bene-gesserit')
     )
-    const choices = ['Draw 1 card from deck']
+    const choices = [game.actions.option({ id: 'deck', title: 'Draw 1 card from deck' })]
     if (bgCards.length > 0) {
-      choices.push('Draw 1 Bene Gesserit card from discard')
+      choices.push(game.actions.option({ id: 'discard', title: 'Draw 1 Bene Gesserit card from discard' }))
     }
     const [choice] = game.actions.choose(player, choices, {
       title: 'Other Memory: Choose draw source',
     })
-    if (choice.includes('deck')) {
+    const chId = typeof choice === 'object' ? choice.id : choice
+    const isDeck = chId === 'deck' || (typeof choice === 'string' && choice.includes('deck'))
+    if (isDeck) {
       deckEngine.drawCards(game, player, 1)
     }
     else {

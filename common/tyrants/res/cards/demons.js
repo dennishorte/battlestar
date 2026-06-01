@@ -110,16 +110,28 @@ const cardData = [
           game.aChooseAndAssassinate(player)
           game.aChooseAndAssassinate(player)
 
-          // Select two troops from any trophy halls.
-          const choices = game
+          // Select two troops from any trophy halls. Distinct ids per token
+          // so duplicates (e.g. two captured neutrals) are addressable.
+          const entries = game
             .players.all()
-            .flatMap(player => {
-              const trophies = game
-                .cards.byPlayer(player, 'trophyHall')
-                .map(troop => troop.getOwnerName())
-              return trophies.map(ownerName => `${player.name}: ${ownerName}`)
+            .flatMap(p => {
+              return game
+                .cards.byPlayer(p, 'trophyHall')
+                .map((troop, idx) => ({
+                  trophyPlayerName: p.name,
+                  ownerName: troop.getOwnerName(),
+                  troopId: troop.id,
+                  idx,
+                }))
             })
-            .sort()
+          const choices = entries
+            .map(e => game.actions.option({
+              id: `${e.trophyPlayerName}::${e.troopId}`,
+              title: `${e.trophyPlayerName}: ${e.ownerName}`,
+              kind: 'troop',
+              meta: { trophyPlayerName: e.trophyPlayerName, ownerName: e.ownerName },
+            }))
+            .sort((a, b) => a.title.localeCompare(b.title))
 
           const selected = game.actions.choose(player, choices, {
             title: `Choose up to two trophies to deploy`,
@@ -127,12 +139,22 @@ const cardData = [
             max: 2,
           })
 
+          const consumed = []
           for (const selection of selected) {
-            const [trophyName, ownerName] = selection.split(': ')
+            let trophyName, ownerName
+            if (selection && typeof selection === 'object' && selection.meta) {
+              trophyName = selection.meta.trophyPlayerName
+              ownerName = selection.meta.ownerName
+            }
+            else {
+              const title = (selection && typeof selection === 'object') ? selection.title : selection
+              ;[trophyName, ownerName] = title.split(': ')
+            }
             const trophyPlayer = game.players.byName(trophyName)
             const troop = game
               .cards.byPlayer(trophyPlayer, 'trophyHall')
-              .find(c => c.getOwnerName() === ownerName)
+              .find(c => c.getOwnerName() === ownerName && !consumed.includes(c))
+            consumed.push(troop)
             game.aChooseAndDeploy(player, {
               troop,
               anywhere: true,

@@ -52,9 +52,14 @@ module.exports = {
   },
 
   revealEffect(game, player) {
-    const choices = ['+1 Spy', '+2 Swords']
+    const choices = [
+      game.actions.option({ id: 'spy', title: '+1 Spy' }),
+      game.actions.option({ id: 'swords', title: '+2 Swords' }),
+    ]
     const [choice] = game.actions.choose(player, choices, { title: 'Undercover Asset' })
-    if (choice.includes('Spy')) {
+    const chId = typeof choice === 'object' ? choice.id : choice
+    const isSpy = chId === 'spy' || (typeof choice === 'string' && choice.includes('Spy'))
+    if (isSpy) {
       spies.placeSpy(game, player)
     }
     else {

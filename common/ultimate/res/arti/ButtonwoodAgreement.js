@@ -10,7 +10,11 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const colors = game.actions.choose(player, game.util.colors(), { count: 3 })
+      const colorOptions = game.util.colors().map(c =>
+        game.actions.option({ id: c, title: c, kind: 'color' })
+      )
+      const selections = game.actions.choose(player, colorOptions, { count: 3 })
+      const colors = selections.map(s => (s && typeof s === 'object') ? s.id : s)
       const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 8))
 
       if (colors.includes(card.color)) {

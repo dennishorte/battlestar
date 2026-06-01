@@ -37,9 +37,11 @@ module.exports = {
 
   agentEffect(game, player, card) {
     // +1 Influence with a Faction. Trash this card.
-    const [faction] = game.actions.choose(player, constants.FACTIONS, {
+    const fc = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+    const [fChoice] = game.actions.choose(player, fc, {
       title: 'Choose faction for +1 Influence',
     })
+    const faction = typeof fChoice === 'object' ? fChoice.id : fChoice
     factions.gainInfluence(game, player, faction)
     deckEngine.trashCard(game, card)
   },

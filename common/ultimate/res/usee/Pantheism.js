@@ -21,9 +21,11 @@ module.exports = {
         game.actions.tuck(player, secondCard)
 
         const colorChoices = util.array.distinct([firstCard.color, secondCard.color])
-        const colorToScore = game.actions.choose(player, colorChoices, {
+          .map(c => game.actions.option({ id: c, title: c, kind: 'color' }))
+        const colorPick = game.actions.choose(player, colorChoices, {
           title: 'Choose a color to score',
         })[0]
+        const colorToScore = (colorPick && typeof colorPick === 'object') ? colorPick.id : colorPick
 
         const cardsToScore = game.cards.byPlayer(player, colorToScore)
         game.actions.scoreMany(player, cardsToScore)

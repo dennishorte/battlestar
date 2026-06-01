@@ -9,10 +9,10 @@ module.exports = {
   onAnyAction(game, actingPlayer, actionId, cardOwner) {
     if ((actionId === 'traveling-players' || actionId === 'traveling-players-5') && actingPlayer.name !== cardOwner.name && cardOwner.food >= 1) {
       const selection = game.actions.choose(cardOwner, () => [
-        'Pay 1 food to play an occupation (free)',
-        'Skip',
+        game.actions.option({ id: 'pay', title: 'Pay 1 food to play an occupation (free)' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: 'Puppeteer', min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         cardOwner.payCost({ food: 1 })
         actingPlayer.addResource('food', 1)
         game.actions.offerPlayOccupation(cardOwner, this, { cost: {} })

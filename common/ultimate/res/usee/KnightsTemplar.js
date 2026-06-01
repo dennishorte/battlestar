@@ -14,8 +14,10 @@ module.exports = {
       const splayedColors = game
         .util.colors()
         .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
+        .map(c => game.actions.option({ id: c, title: c, kind: 'color' }))
 
-      const color = game.actions.choose(player, splayedColors)[0]
+      const colorPick = game.actions.choose(player, splayedColors)[0]
+      const color = (colorPick && typeof colorPick === 'object') ? colorPick.id : colorPick
       if (color) {
         const unsplayed = game.actions.unsplay(player, color)
         if (unsplayed) {

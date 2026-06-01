@@ -23,25 +23,31 @@ module.exports = {
   plotEffect(game, player) {
     const choices = []
     if (game.state.shieldWall) {
-      choices.push('Blow the Shield Wall')
+      choices.push(game.actions.option({ id: 'shield', title: 'Blow the Shield Wall' }))
     }
     if (player.troopsInGarrison > 0) {
-      choices.push('Deploy up to 4 Troops to Conflict')
+      choices.push(game.actions.option({ id: 'deploy', title: 'Deploy up to 4 Troops to Conflict' }))
     }
-    choices.push('Pass')
+    choices.push(game.actions.option({ id: 'pass', title: 'Pass' }))
     const [choice] = game.actions.choose(player, choices, { title: 'Detonation' })
-    if (choice.includes('Shield Wall')) {
+    const chId = typeof choice === 'object' ? choice.id : choice
+    const isShield = chId === 'shield' || (typeof choice === 'string' && choice.includes('Shield Wall'))
+    const isDeploy = chId === 'deploy' || (typeof choice === 'string' && choice.includes('Deploy'))
+    if (isShield) {
       game.state.shieldWall = false
       game.log.add({ template: '{player} destroys the Shield Wall!', args: { player } })
     }
-    else if (choice.includes('Deploy')) {
+    else if (isDeploy) {
       const max = Math.min(4, player.troopsInGarrison)
       const deployChoices = []
       for (let i = 1; i <= max; i++) {
-        deployChoices.push(`Deploy ${i}`)
+        deployChoices.push(game.actions.option({ id: `deploy-${i}`, title: `Deploy ${i}` }))
       }
       const [dc] = game.actions.choose(player, deployChoices, { title: 'How many?' })
-      const count = parseInt(dc.match(/\d+/)[0])
+      const dcId = typeof dc === 'object' ? dc.id : null
+      const count = dcId
+        ? parseInt(dcId.replace('deploy-', ''))
+        : parseInt(String(dc).match(/\d+/)[0])
       player.decrementCounter('troopsInGarrison', count, { silent: true })
       require('../../../systems/deploy.js').deployToConflict(game, player, count)
       game.log.add({ template: '{player} deploys {count} troops to Conflict', args: { player, count } })

@@ -20,16 +20,29 @@ module.exports = {
         .map(other => {
           return {
             title: other.name,
+            id: other.name,
             choices: game.util.colors().map(color => {
               const splay = game.zones.byPlayer(other, color).splay
-              return `${color} ${splay}`
+              return game.actions.option({
+                id: `${color}-${splay}`,
+                title: `${color} ${splay}`,
+                kind: 'splay-target',
+              })
             }),
             min: 0,
           }
         })
 
-      const choice = game.actions.choose(player, choices, { min: 0, max: 1 })[0].selection[0]
-      const [color, direction] = choice.split(' ')
+      const sel = game.actions.choose(player, choices, { min: 0, max: 1 })[0].selection[0]
+      let color, direction
+      if (sel && typeof sel === 'object' && sel.id) {
+        ;[color, direction] = sel.id.split('-')
+      }
+      else {
+        // Legacy / bare-title selection from tests: title format is "color splay"
+        const title = (sel && typeof sel === 'object') ? sel.title : sel
+        ;[color, direction] = title.split(' ')
+      }
       game.actions.splay(player, color, direction)
     },
 

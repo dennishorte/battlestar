@@ -13,7 +13,11 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const colors = game.actions.choose(player, game.util.colors(), { count: 2, title: 'Choose Two Colors' })
+      const colorOptions = game.util.colors().map(c =>
+        game.actions.option({ id: c, title: c, kind: 'color' })
+      )
+      const selections = game.actions.choose(player, colorOptions, { count: 2, title: 'Choose Two Colors' })
+      const colors = selections.map(s => (s && typeof s === 'object') ? s.id : s)
       game.log.add({
         template: '{player} chooses {color1} and {color2}',
         args: {

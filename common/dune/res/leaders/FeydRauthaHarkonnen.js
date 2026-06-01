@@ -41,10 +41,14 @@ module.exports = {
     if (!hasSpy) {
       return
     }
-    const [choice] = game.actions.choose(player, ['Pass', 'Recall a Spy for +2 Strength'], {
+    const [choice] = game.actions.choose(player, [
+      game.actions.option({ id: 'pass', title: 'Pass' }),
+      game.actions.option({ id: 'recall', title: 'Recall a Spy for +2 Strength' }),
+    ], {
       title: 'Devious Strength: Recall a Spy for +2 Strength?',
     })
-    if (choice === 'Pass') {
+    const chId = typeof choice === 'object' ? choice.id : choice
+    if (chId === 'pass' || choice === 'Pass') {
       return
     }
     const recalled = spies.recallSpy(game, player)
@@ -80,11 +84,18 @@ module.exports = {
       nextNode = node.next[0]
     }
     else {
-      const labels = node.next.map(n => `${n}: ${FEYD_TRACK[n].label}`)
+      const labels = node.next.map(n => game.actions.option({
+        id: `feyd-${n}`,
+        title: `${n}: ${FEYD_TRACK[n].label}`,
+      }))
       const [choice] = game.actions.choose(player, labels, {
         title: 'Feyd Training: Choose your path',
       })
-      nextNode = node.next[labels.indexOf(choice)]
+      const chId = typeof choice === 'object' ? choice.id : null
+      const chTitle = typeof choice === 'object' ? choice.title : choice
+      nextNode = chId
+        ? node.next.find(n => `feyd-${n}` === chId)
+        : node.next[labels.findIndex(l => l.title === chTitle)]
     }
 
     game.state.feydTrack[player.name] = nextNode

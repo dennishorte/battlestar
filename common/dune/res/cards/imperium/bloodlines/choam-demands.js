@@ -40,9 +40,13 @@ module.exports = {
   revealEffect(game, player, card) {
     const choam = require('../../../../systems/choam.js')
     if (choam.getCompletedContractCount(game, player) >= 4) {
-      const choices = ['Pass', 'Trash this card for +1 Influence with every Faction']
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'trash', title: 'Trash this card for +1 Influence with every Faction' }),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'CHOAM Demands' })
-      if (choice !== 'Pass') {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
         deckEngine.trashCard(game, card)
         for (const faction of constants.FACTIONS) {
           factions.gainInfluence(game, player, faction)

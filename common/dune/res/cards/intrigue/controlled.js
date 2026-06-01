@@ -26,15 +26,21 @@ module.exports = {
     const topCards = deckZone.cardlist()
     if (topCards.length > 0) {
       const topCard = topCards[0]
-      const choices = [`Put ${topCard.name} back`, `Discard ${topCard.name}`]
+      const choices = [
+        game.actions.option({ id: 'putback', title: `Put ${topCard.name} back` }),
+        game.actions.option({ id: 'discard', title: `Discard ${topCard.name}` }),
+      ]
       if (player.solari >= 1) {
-        choices.push(`Pay 1 Solari: Draw ${topCard.name}`)
+        choices.push(game.actions.option({ id: 'draw', title: `Pay 1 Solari: Draw ${topCard.name}` }))
       }
       const [choice] = game.actions.choose(player, choices, { title: 'Controlled: Top card' })
-      if (choice.includes('Discard')) {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      const isDiscard = chId === 'discard' || (typeof choice === 'string' && choice.includes('Discard'))
+      const isDraw = chId === 'draw' || (typeof choice === 'string' && choice.includes('Draw'))
+      if (isDiscard) {
         deckEngine.discardCard(game, player, topCard)
       }
-      else if (choice.includes('Draw')) {
+      else if (isDraw) {
         player.decrementCounter('solari', 1, { silent: true })
         const handZone = game.zones.byId(`${player.name}.hand`)
         topCard.moveTo(handZone)

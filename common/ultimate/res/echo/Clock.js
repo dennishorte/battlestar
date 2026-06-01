@@ -13,11 +13,18 @@ module.exports = {
     (game, player, { leader }) => {
       const choices = game.util.colors().map(color => {
         const count = game.zones.byPlayer(leader, color).numVisibleCards()
-        return `${color} (${count})`
+        return game.actions.option({
+          id: color,
+          title: `${color} (${count})`,
+          kind: 'color',
+        })
       })
 
       const selected = game.actions.choose(leader, choices, { title: 'Choose a color' })
-      const color = selected[0].split(' ')[0]
+      const pick = selected[0]
+      const color = (pick && typeof pick === 'object' && pick.id)
+        ? pick.id
+        : ((pick && typeof pick === 'object') ? pick.title : pick).split(' ')[0]
       const count = game.zones.byPlayer(leader, color).numVisibleCards()
 
       game.log.add({

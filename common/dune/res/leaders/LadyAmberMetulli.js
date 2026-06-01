@@ -15,11 +15,15 @@ module.exports = {
     if (deployedTroops === 0) {
       return
     }
-    const choices = ['Pass', 'Retreat 1 troop']
+    const choices = [
+      game.actions.option({ id: 'pass', title: 'Pass' }),
+      game.actions.option({ id: 'retreat', title: 'Retreat 1 troop' }),
+    ]
     const [choice] = game.actions.choose(player, choices, {
       title: 'Desert Scouts: Retreat a troop?',
     })
-    if (choice === 'Pass') {
+    const chId = typeof choice === 'object' ? choice.id : choice
+    if (chId === 'pass' || choice === 'Pass') {
       return
     }
     game.state.conflict.deployedTroops[player.name]--

@@ -11,7 +11,11 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { foreseen, self }) => {
-      const color = game.actions.choose(player, game.util.colors(), { title: 'Choose a Color' })[0]
+      const colorOptions = game.util.colors().map(c =>
+        game.actions.option({ id: c, title: c, kind: 'color' })
+      )
+      const colorPick = game.actions.choose(player, colorOptions, { title: 'Choose a Color' })[0]
+      const color = (colorPick && typeof colorPick === 'object') ? colorPick.id : colorPick
       const cards = [
         game.actions.drawAndReveal(player, game.getEffectAge(self, 1)),
         game.actions.drawAndReveal(player, game.getEffectAge(self, 1)),

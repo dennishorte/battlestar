@@ -20,13 +20,16 @@ module.exports = {
     if (!canBuyVegetable) {
       return
     }
-    const choices = ['Buy 1 vegetable for 2 food', 'Skip']
+    const choices = [
+      game.actions.option({ id: 'buy', title: 'Buy 1 vegetable for 2 food' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
     const selection = game.actions.choose(cardOwner, choices, {
       title: 'Lutenist: Buy 1 vegetable for 2 food?',
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
     cardOwner.payCost({ food: 2 })

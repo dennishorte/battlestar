@@ -36,9 +36,17 @@ module.exports = {
   agentEffect(game, player) {
     // Block 1 board space for Opponents this round
     const boardSpacesData = require('../../../boardSpaces.js')
-    const spaceChoices = boardSpacesData.map(s => s.name)
+    const spaceChoices = boardSpacesData.map(s => game.actions.option({
+      id: s.id,
+      title: s.name,
+      kind: 'board-space',
+    }))
     const [choice] = game.actions.choose(player, spaceChoices, { title: 'Block a board space' })
-    const space = boardSpacesData.find(s => s.name === choice)
+    const chId = typeof choice === 'object' ? choice.id : null
+    const chTitle = typeof choice === 'object' ? choice.title : choice
+    const space = chId
+      ? boardSpacesData.find(s => s.id === chId)
+      : boardSpacesData.find(s => s.name === chTitle)
     if (space) {
       if (!game.state.blockedSpaces) {
         game.state.blockedSpaces = []

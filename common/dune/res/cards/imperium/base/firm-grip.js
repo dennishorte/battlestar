@@ -39,13 +39,23 @@ module.exports = {
   agentEffect(game, player) {
     // Pay 2 Solari: +1 Influence with: Spacing Guild OR Bene Gesserit OR Fremen
     if (player.solari >= 2) {
-      const factionChoices = ['Pass', 'Spacing Guild', 'Bene Gesserit', 'Fremen']
+      const factionChoices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'guild', title: 'Spacing Guild', kind: 'faction' }),
+        game.actions.option({ id: 'bene-gesserit', title: 'Bene Gesserit', kind: 'faction' }),
+        game.actions.option({ id: 'fremen', title: 'Fremen', kind: 'faction' }),
+      ]
       const [choice] = game.actions.choose(player, factionChoices, {
         title: 'Firm Grip: Pay 2 Solari for +1 Influence? (choose faction)',
       })
-      if (choice !== 'Pass') {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      const chTitle = typeof choice === 'object' ? choice.title : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
         player.decrementCounter('solari', 2, { silent: true })
-        factions.gainInfluence(game, player, constants.normalizeFactionId(choice))
+        const factionId = ['guild', 'bene-gesserit', 'fremen'].includes(chId)
+          ? chId
+          : constants.normalizeFactionId(chTitle)
+        factions.gainInfluence(game, player, factionId)
       }
     }
   },

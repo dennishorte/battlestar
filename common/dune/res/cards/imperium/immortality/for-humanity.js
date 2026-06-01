@@ -41,10 +41,14 @@ module.exports = {
     if (game.state.alliances['bene-gesserit'] === player.name) {
       const loseFactions = constants.FACTIONS.filter(f => player.getInfluence(f) >= 2)
       if (loseFactions.length > 0) {
-        const choices = ['Pass', ...loseFactions]
+        const choices = [
+          game.actions.option({ id: 'pass', title: 'Pass' }),
+          ...loseFactions.map(f => game.actions.option({ id: f, title: f, kind: 'faction' })),
+        ]
         const [choice] = game.actions.choose(player, choices, { title: 'Lose 2 Influence for +1 VP?' })
-        if (choice !== 'Pass') {
-          factions.loseInfluence(game, player, choice, 2)
+        const chId = typeof choice === 'object' ? choice.id : choice
+        if (chId !== 'pass' && choice !== 'Pass') {
+          factions.loseInfluence(game, player, chId, 2)
           player.incrementCounter('vp', 1, { silent: true, source: 'For Humanity' })
           game.log.add({ template: '{player}: +1 VP', args: { player } })
         }

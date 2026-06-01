@@ -86,15 +86,22 @@ function placeSpy(game, player, options = {}) {
       const space = boardSpaces.find(s => s.id === id)
       return space ? space.name : id
     })
-    return `Post ${post.id} (${spaceNames.join(', ')})`
+    return game.actions.option({
+      id: `post-${post.id}`,
+      title: `Post ${post.id} (${spaceNames.join(', ')})`,
+      kind: 'observation-post',
+    })
   })
 
   const [choice] = game.actions.choose(player, choices, {
     title: 'Choose an observation post for your Spy',
   })
 
-  const postIndex = choices.indexOf(choice)
-  const post = availablePosts[postIndex]
+  const choiceId = typeof choice === 'object' ? choice.id : null
+  const choiceTitle = typeof choice === 'object' ? choice.title : choice
+  const post = choiceId
+    ? availablePosts.find(p => `post-${p.id}` === choiceId)
+    : availablePosts[choices.findIndex(c => c.title === choiceTitle)]
 
   player.decrementCounter('spiesInSupply', 1, { silent: true })
 
@@ -125,13 +132,20 @@ function recallSpy(game, player) {
     return null
   }
 
-  const choices = playerPosts.map(post => `Post ${post.id}`)
+  const choices = playerPosts.map(post => game.actions.option({
+    id: `post-${post.id}`,
+    title: `Post ${post.id}`,
+    kind: 'observation-post',
+  }))
   const [choice] = game.actions.choose(player, choices, {
     title: 'Choose a Spy to recall',
   })
 
-  const postIndex = choices.indexOf(choice)
-  const post = playerPosts[postIndex]
+  const choiceId = typeof choice === 'object' ? choice.id : null
+  const choiceTitle = typeof choice === 'object' ? choice.title : choice
+  const post = choiceId
+    ? playerPosts.find(p => `post-${p.id}` === choiceId)
+    : playerPosts.find(p => `Post ${p.id}` === choiceTitle)
 
   const occupants = game.state.spyPosts[post.id]
   occupants.splice(occupants.indexOf(player.name), 1)
@@ -187,11 +201,19 @@ function recallSpyAt(game, player, spaceId) {
     post = connectedPosts[0]
   }
   else {
-    const choices = connectedPosts.map(p => `Post ${p.id}`)
+    const choices = connectedPosts.map(p => game.actions.option({
+      id: `post-${p.id}`,
+      title: `Post ${p.id}`,
+      kind: 'observation-post',
+    }))
     const [choice] = game.actions.choose(player, choices, {
       title: 'Choose which Spy to recall',
     })
-    post = connectedPosts[choices.indexOf(choice)]
+    const choiceId = typeof choice === 'object' ? choice.id : null
+    const choiceTitle = typeof choice === 'object' ? choice.title : choice
+    post = choiceId
+      ? connectedPosts.find(p => `post-${p.id}` === choiceId)
+      : connectedPosts.find(p => `Post ${p.id}` === choiceTitle)
   }
 
   const occupants = game.state.spyPosts[post.id]

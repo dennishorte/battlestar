@@ -37,9 +37,13 @@ module.exports = {
 
   revealEffect(game, player, card) {
     if (player.getCounter('persuasion') >= 6) {
-      const choices = ['Pass', 'Trash this card to acquire from Imperium Row']
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'trash', title: 'Trash this card to acquire from Imperium Row' }),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Engineered Miracle' })
-      if (choice !== 'Pass') {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
         deckEngine.trashCard(game, card)
         game.log.add({ template: '{player}: Acquires from Imperium Row (special)', args: { player }, event: 'memo' })
       }

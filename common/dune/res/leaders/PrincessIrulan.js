@@ -35,12 +35,12 @@ module.exports = {
     const rowZone = game.zones.byId('common.imperiumRow')
     const acquirable = rowZone.cardlist().filter(c => (c.definition?.persuasionCost || 0) === 1)
 
-    const options = ['Pass']
+    const options = [game.actions.option({ id: 'pass', title: 'Pass' })]
     if (acquirable.length > 0) {
-      options.push('Acquire a card costing 1 Persuasion')
+      options.push(game.actions.option({ id: 'acquire', title: 'Acquire a card costing 1 Persuasion' }))
     }
     if (hand.length > 0) {
-      options.push('Trash a card from hand')
+      options.push(game.actions.option({ id: 'trash', title: 'Trash a card from hand' }))
     }
 
     if (options.length === 1) {
@@ -50,11 +50,12 @@ module.exports = {
     const [choice] = game.actions.choose(player, options, {
       title: "Chronicler's Insight",
     })
-    if (choice === 'Pass') {
+    const choiceId = typeof choice === 'object' ? choice.id : choice
+    if (choiceId === 'pass' || choice === 'Pass') {
       return
     }
 
-    if (choice.startsWith('Acquire')) {
+    if (choiceId === 'acquire' || (typeof choice === 'string' && choice.startsWith('Acquire'))) {
       const card = game.actions.chooseCard(player, acquirable, {
         title: 'Acquire which card?',
         kind: 'imperium-card',

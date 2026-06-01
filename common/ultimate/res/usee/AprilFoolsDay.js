@@ -26,9 +26,13 @@ module.exports = {
       }
     },
     (game, player) => {
-      const selected = game.actions.choose(player, ['yellow', 'purple'], {
+      const pick = game.actions.choose(player, [
+        game.actions.option({ id: 'yellow', title: 'yellow', kind: 'color' }),
+        game.actions.option({ id: 'purple', title: 'purple', kind: 'color' }),
+      ], {
         title: 'Choose a color to splay right',
       })[0]
+      const selected = (pick && typeof pick === 'object') ? pick.id : pick
 
       if (selected === 'yellow') {
         game.actions.splay(player, 'yellow', 'right')

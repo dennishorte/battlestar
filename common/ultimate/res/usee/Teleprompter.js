@@ -20,7 +20,11 @@ module.exports = {
 
       while (true) {
         // Prompt player to choose an age (value) deck
-        const exp = game.actions.choose(player, game.getExpansionList())[0]
+        const expChoices = game.getExpansionList().map(e =>
+          game.actions.option({ id: e, title: e, kind: 'expansion' })
+        )
+        const expPick = game.actions.choose(player, expChoices)[0]
+        const exp = (expPick && typeof expPick === 'object') ? expPick.id : expPick
         const age = game.actions.chooseAge(player)
 
         const key = `${exp}-${age}`

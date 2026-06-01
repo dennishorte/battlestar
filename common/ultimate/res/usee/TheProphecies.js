@@ -19,18 +19,23 @@ module.exports = {
       const revealChoices = util.array.distinct(secretAges).sort().map(age => age + 1)
 
       const drawOption = 'Draw and safeguard a ' + drawAge
-      const choices = [drawOption]
+      const choices = [game.actions.option({ id: 'safeguard', title: drawOption })]
       if (revealChoices.length > 0) {
         choices.push({
           title: 'Draw and reveal',
+          id: 'reveal',
+          // revealChoices are numbers — they don't trigger bare-string warnings.
           choices: revealChoices,
           min: 0,
         })
       }
 
       const selected = game.actions.choose(player, choices)[0]
+      const selectedId = (selected && typeof selected === 'object')
+        ? (selected.id ?? selected.title)
+        : selected
 
-      if (selected === drawOption) {
+      if (selectedId === 'safeguard' || selectedId === drawOption) {
         game.actions.drawAndSafeguard(player, drawAge)
       }
       else {

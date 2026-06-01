@@ -62,13 +62,18 @@ function gemFixture(opts = {}) {
   game.run()
   submitRotations(game, {})
 
-  // Choose starting locations
+  // Choose starting locations. Locations are now structured options
+  // ({title, id, kind}); extract title for the '*' bypass.
   const r1 = game.waiting
-  t.choose(game, '*' + r1.selectors[0].choices[0])
+  t.choose(game, '*' + _titleOf(r1.selectors[0].choices[0]))
   const r2 = game.waiting
-  t.choose(game, '*' + r2.selectors[0].choices[0])
+  t.choose(game, '*' + _titleOf(r2.selectors[0].choices[0]))
 
   return game
+}
+
+function _titleOf(choice) {
+  return (choice && typeof choice === 'object') ? choice.title : choice
 }
 
 // Helper: submit rotations then choose starting locations for 2 players
@@ -79,10 +84,10 @@ function demonwebGameFixture(options = {}) {
   // Choose starting locations — pick the first two available
   // Prefix with '*' to bypass dot-splitting in t.choose (location names contain dots)
   const request1 = game.waiting
-  const loc1 = request1.selectors[0].choices[0]
+  const loc1 = _titleOf(request1.selectors[0].choices[0])
   t.choose(game, '*' + loc1)
   const request2 = game.waiting
-  const loc2 = request2.selectors[0].choices[0]
+  const loc2 = _titleOf(request2.selectors[0].choices[0])
   t.choose(game, '*' + loc2)
 
   return game
@@ -381,7 +386,7 @@ describe('Demonweb', () => {
 
       // micah chooses first
       const request1 = game.waiting
-      t.choose(game, '*' + request1.selectors[0].choices[0])
+      t.choose(game, '*' + _titleOf(request1.selectors[0].choices[0]))
 
       // dennis (rotator) chooses second
       const request2 = game.waiting
@@ -397,9 +402,9 @@ describe('Demonweb', () => {
 
       // Choose starting locations
       const r1 = game.waiting
-      t.choose(game, '*' + r1.selectors[0].choices[0])
+      t.choose(game, '*' + _titleOf(r1.selectors[0].choices[0]))
       const r2 = game.waiting
-      t.choose(game, '*' + r2.selectors[0].choices[0])
+      t.choose(game, '*' + _titleOf(r2.selectors[0].choices[0]))
 
       // micah should take the first main loop turn
       game.run()
@@ -442,9 +447,9 @@ describe('Demonweb', () => {
 
       // Choose starting locations (prefix with '*' to bypass dot-splitting)
       const r1 = game.waiting
-      t.choose(game, '*' + r1.selectors[0].choices[0])
+      t.choose(game, '*' + _titleOf(r1.selectors[0].choices[0]))
       const r2 = game.waiting
-      t.choose(game, '*' + r2.selectors[0].choices[0])
+      t.choose(game, '*' + _titleOf(r2.selectors[0].choices[0]))
 
       // Re-run the game (replay)
       game.run()
@@ -739,7 +744,7 @@ describe('Demonweb', () => {
 
       const request = game.waiting
       expect(request.selectors[0].title).toBe('Choose starting location')
-      const choices = request.selectors[0].choices
+      const choices = request.selectors[0].choices.map(_titleOf)
       expect(choices).toEqual(EXPECTED_STARTS)
     })
 
@@ -748,7 +753,7 @@ describe('Demonweb', () => {
       submitRotations(game, {})
 
       const request = game.waiting
-      const choices = request.selectors[0].choices
+      const choices = request.selectors[0].choices.map(_titleOf)
 
       // Each choice maps to a different C tile
       const tileIds = choices.map(c => c.split('.')[0])
@@ -761,12 +766,12 @@ describe('Demonweb', () => {
       submitRotations(game, {})
 
       const request1 = game.waiting
-      const choices1 = [...request1.selectors[0].choices]
+      const choices1 = request1.selectors[0].choices.map(_titleOf)
       const firstChoice = choices1[0]
       t.choose(game, '*' + firstChoice)
 
       const request2 = game.waiting
-      const choices2 = request2.selectors[0].choices
+      const choices2 = request2.selectors[0].choices.map(_titleOf)
       expect(choices2).not.toContain(firstChoice)
       expect(choices2).toHaveLength(choices1.length - 1)
     })
@@ -776,7 +781,7 @@ describe('Demonweb', () => {
       submitRotations(game, {})
 
       const request1 = game.waiting
-      const chosenName = request1.selectors[0].choices[0]
+      const chosenName = _titleOf(request1.selectors[0].choices[0])
       t.choose(game, '*' + chosenName)
 
       const loc = game.getLocationByName(chosenName)
@@ -800,7 +805,7 @@ describe('Demonweb', () => {
       submitRotations(game, {})
 
       const request = game.waiting
-      const choices = request.selectors[0].choices
+      const choices = request.selectors[0].choices.map(_titleOf)
       expect(choices).toContain('A9.wells-of-darkness')
       expect(choices).toHaveLength(7)  // 6 from C tiles + 1 from A9
     })
@@ -811,7 +816,7 @@ describe('Demonweb', () => {
       submitRotations(game, {})
 
       const request = game.waiting
-      const choices = request.selectors[0].choices
+      const choices = request.selectors[0].choices.map(_titleOf)
       const a1Choices = choices.filter(c => c.startsWith('A1.'))
       expect(a1Choices).toHaveLength(0)
     })
@@ -821,7 +826,7 @@ describe('Demonweb', () => {
       submitRotations(game, {})
 
       const request = game.waiting
-      const choices = request.selectors[0].choices
+      const choices = request.selectors[0].choices.map(_titleOf)
       const bChoices = choices.filter(c => c.startsWith('B1.') || c.startsWith('B2.'))
       expect(bChoices).toHaveLength(0)
     })
@@ -932,9 +937,9 @@ describe('Demonweb', () => {
 
       // Choose starting locations
       const r1 = game.waiting
-      t.choose(game, '*' + r1.selectors[0].choices[0])
+      t.choose(game, '*' + _titleOf(r1.selectors[0].choices[0]))
       const r2 = game.waiting
-      t.choose(game, '*' + r2.selectors[0].choices[0])
+      t.choose(game, '*' + _titleOf(r2.selectors[0].choices[0]))
 
       return game
     }
@@ -981,9 +986,9 @@ describe('Demonweb', () => {
       game.run()
       submitRotations(game, {})
       const r1 = game.waiting
-      t.choose(game, '*' + r1.selectors[0].choices[0])
+      t.choose(game, '*' + _titleOf(r1.selectors[0].choices[0]))
       const r2 = game.waiting
-      t.choose(game, '*' + r2.selectors[0].choices[0])
+      t.choose(game, '*' + _titleOf(r2.selectors[0].choices[0]))
 
       const dennis = game.players.byName('dennis')
       const vpBefore = dennis.getCounter('points')
@@ -1253,10 +1258,10 @@ describe('Demonweb', () => {
       // Choose starting locations
       const r1 = game.waiting
       expect(r1.selectors[0].title).toBe('Choose starting location')
-      t.choose(game, '*' + r1.selectors[0].choices[0])
+      t.choose(game, '*' + _titleOf(r1.selectors[0].choices[0]))
 
       const r2 = game.waiting
-      t.choose(game, '*' + r2.selectors[0].choices[0])
+      t.choose(game, '*' + _titleOf(r2.selectors[0].choices[0]))
 
       // Should reach main game loop
       game.run()
@@ -1372,10 +1377,10 @@ describe('Demonweb', () => {
       // Choose starting locations
       const r1 = game.waiting
       expect(r1.selectors[0].title).toBe('Choose starting location')
-      t.choose(game, '*' + r1.selectors[0].choices[0])
+      t.choose(game, '*' + _titleOf(r1.selectors[0].choices[0]))
 
       const r2 = game.waiting
-      t.choose(game, '*' + r2.selectors[0].choices[0])
+      t.choose(game, '*' + _titleOf(r2.selectors[0].choices[0]))
 
       // Should reach main game loop
       game.run()

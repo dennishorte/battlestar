@@ -116,13 +116,21 @@ function takeContract(game, player) {
   }
 
   const playerContracts = game.zones.byId(`${player.name}.contracts`)
-  const choices = availableContracts.map(c => `${c.name} (${c.definition.reward})`)
+  const choices = availableContracts.map(c => game.actions.option({
+    id: c.id,
+    title: `${c.name} (${c.definition.reward})`,
+    defId: c.defId,
+    kind: 'contract',
+  }))
   const [choice] = game.actions.choose(player, choices, {
     title: 'Choose a Contract to take',
   })
 
-  const index = choices.indexOf(choice)
-  const card = availableContracts[index]
+  const choiceId = typeof choice === 'object' ? choice.id : null
+  const choiceTitle = typeof choice === 'object' ? choice.title : choice
+  const card = choiceId
+    ? availableContracts.find(c => c.id === choiceId)
+    : availableContracts.find(c => `${c.name} (${c.definition.reward})` === choiceTitle)
   card.moveTo(playerContracts)
 
   game.log.add({

@@ -35,9 +35,13 @@ module.exports = {
   agentEffect(game, player) {
     // Maker Hooks: 2 Spice -> Destroy Shield Wall & Deploy a Worm
     if (game.state.makerHooks?.[player.name] && player.spice >= 2) {
-      const choices = ['Pass', 'Pay 2 Spice: Destroy Shield Wall & Deploy Sandworm']
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'pay', title: 'Pay 2 Spice: Destroy Shield Wall & Deploy Sandworm' }),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Arrakis Revolt' })
-      if (choice !== 'Pass') {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
         player.decrementCounter('spice', 2, { silent: true })
         game.state.shieldWall = false
         game.log.add({ template: '{player} destroys the Shield Wall!', args: { player } })

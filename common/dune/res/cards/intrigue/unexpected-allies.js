@@ -22,9 +22,13 @@ module.exports = {
 
   plotEffect(game, player) {
     if (player.water >= 2) {
-      const choices = ['Pass', 'Pay 2 Water: Blow Shield Wall + 1 Sandworm']
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'pay', title: 'Pay 2 Water: Blow Shield Wall + 1 Sandworm' }),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Unexpected Allies' })
-      if (choice !== 'Pass') {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
         player.decrementCounter('water', 2, { silent: true })
         game.state.shieldWall = false
         game.state.conflict.deployedSandworms[player.name] =

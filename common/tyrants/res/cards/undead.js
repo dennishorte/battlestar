@@ -290,15 +290,29 @@ const cardData = [
 
         if (targetPlayer) {
           const troopZone = game.zones.byPlayer(targetPlayer, 'trophyHall')
-          const choices = troopZone.cardlist().map(troop => troop.getOwnerName()).sort()
+          const troopList = troopZone.cardlist()
+          // Multiple captured troops of the same owner are possible (e.g.
+          // several neutral troops). Generate distinct ids per token so the
+          // structured options round-trip cleanly.
+          const choices = troopList
+            .map((troop, idx) => game.actions.option({
+              id: `troop-${idx}`,
+              title: troop.getOwnerName(),
+              kind: 'troop',
+              meta: { ownerName: troop.getOwnerName() },
+            }))
+            .sort((a, b) => a.title.localeCompare(b.title))
           const selections = game.actions.choose(player, choices, {
             title: 'Choose up to 2 troops to reanimate',
             min: 0,
             max: 2,
           })
 
-          for (const selection of selections) {
-            const troop = troopZone.cardlist().find(c => c.getOwnerName() === selection)
+          const consumed = []
+          for (const sel of selections) {
+            const ownerName = (sel && typeof sel === 'object') ? (sel.meta?.ownerName ?? sel.title) : sel
+            const troop = troopList.find(c => c.getOwnerName() === ownerName && !consumed.includes(c))
+            consumed.push(troop)
             game.aChooseAndDeploy(player, { troop })
           }
         }
@@ -341,7 +355,15 @@ const cardData = [
             const loc = game.aChooseLocation(player, game.getPresence(player))
             if (loc) {
               const troops = loc.getTroops().filter(troop => troop.isNeutral())
-              const chosen = game.actions.choose(player, troops.map(() => 'neutral'), {
+              // All choices are identical "neutral" — give each a distinct
+              // id so the prompt has unique structured options while keeping
+              // the displayed title identical.
+              const choices = troops.map((_, idx) => game.actions.option({
+                id: `neutral-${idx}`,
+                title: 'neutral',
+                kind: 'troop',
+              }))
+              const chosen = game.actions.choose(player, choices, {
                 title: 'Choose which troops to deploy your Minotaur Skeleton against',
                 min: 0,
                 max: 3,
@@ -428,7 +450,7 @@ const cardData = [
           impl: () => {
             const choices = [{
               title: 'this card',
-              choices: [card.name],
+              choices: [game.actions.cardOption(card)],
               min: 0,
               max: 1,
             }]
@@ -436,7 +458,7 @@ const cardData = [
             if (game.cards.byPlayer(player, 'hand').length > 0) {
               choices.push({
                 title: 'hand',
-                choices: game.cards.byPlayer(player, 'hand').map(c => c.name),
+                choices: game.cards.byPlayer(player, 'hand').map(c => game.actions.cardOption(c)),
                 min: 0,
                 max: 1,
               })
@@ -445,7 +467,7 @@ const cardData = [
             if (game.cards.byPlayer(player, 'discard').length > 0) {
               choices.push({
                 title: 'discard',
-                choices: game.cards.byPlayer(player, 'discard').map(c => c.name),
+                choices: game.cards.byPlayer(player, 'discard').map(c => game.actions.cardOption(c)),
                 min: 0,
                 max: 1,
               })
@@ -459,7 +481,12 @@ const cardData = [
 
             else {
               const zone = game.zones.byPlayer(player, selection.title)
-              const card = zone.cardlist().find(c => c.name === selection.selection[0])
+              const inner = selection.selection[0]
+              const innerId = (inner && typeof inner === 'object') ? inner.id : null
+              const innerName = (inner && typeof inner === 'object') ? inner.title : inner
+              const card = innerId
+                ? zone.cardlist().find(c => c.id === innerId)
+                : zone.cardlist().find(c => c.name === innerName)
               game.aPromote(player, card)
             }
           }

@@ -33,12 +33,13 @@ module.exports = {
   ],
   echoImpl: (game, player, { self }) => {
     const choices = [
-      `Draw a ${game.getEffectAge(self, 3)}`,
-      `Draw and foreshadow a ${game.getEffectAge(self, 4)}`,
+      game.actions.option({ id: 'draw', title: `Draw a ${game.getEffectAge(self, 3)}` }),
+      game.actions.option({ id: 'foreshadow', title: `Draw and foreshadow a ${game.getEffectAge(self, 4)}` }),
     ]
-    const choice = game.actions.choose(player, choices)[0]
+    const pick = game.actions.choose(player, choices)[0]
+    const choice = (pick && typeof pick === 'object') ? pick.id : pick
 
-    if (choice.includes('foreshadow')) {
+    if (choice === 'foreshadow' || (typeof choice === 'string' && choice.includes('foreshadow'))) {
       game.actions.drawAndForeshadow(player, game.getEffectAge(self, 4))
     }
     else {

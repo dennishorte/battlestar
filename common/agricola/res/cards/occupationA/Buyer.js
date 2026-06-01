@@ -20,13 +20,16 @@ module.exports = {
     }
     const cardName = 'Buyer'
     const label = good === 'boar' ? 'wild boar' : good
-    const choices = [`Pay 1 food to ${actingPlayer.name} to get 1 ${label}`, 'Skip']
+    const choices = [
+      game.actions.option({ id: 'pay', title: `Pay 1 food to ${actingPlayer.name} to get 1 ${label}` }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
     const selection = game.actions.choose(cardOwner, choices, {
       title: `${cardName}: Pay 1 food to get 1 ${label}?`,
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
     cardOwner.payCost({ food: 1 })

@@ -102,7 +102,7 @@ function playerTurnsPhase(game) {
             choices: playableCards.map(c => game.actions.cardOption(c, 'imperium-card')),
           })
         }
-        choices.push('Reveal Turn')
+        choices.push(game.actions.option({ id: 'reveal', title: 'Reveal Turn' }))
 
         const [choice] = game.actions.choose(player, choices, {
           title: 'Choose Turn',
@@ -181,11 +181,15 @@ function agentTurn(game, player, card) {
   }
   else if (!spaceOccupied && hasSpyOnPost) {
     // Offer Gather Intelligence — recall spy to draw a card
-    const giChoices = ['No', 'Yes — recall Spy to draw a card']
+    const giChoices = [
+      game.actions.option({ id: 'no', title: 'No' }),
+      game.actions.option({ id: 'yes', title: 'Yes — recall Spy to draw a card' }),
+    ]
     const [giChoice] = game.actions.choose(player, giChoices, {
       title: 'Gather Intelligence?',
     })
-    if (giChoice !== 'No') {
+    const giId = typeof giChoice === 'object' ? giChoice.id : giChoice
+    if (giId !== 'no' && giChoice !== 'No') {
       spies.recallSpyAt(game, player, space.id)
       game.state.turnTracking.recalledSpy = true
       deckEngine.drawCards(game, player, 1)
@@ -682,14 +686,17 @@ function deployUnits(game, player) {
   const maxDeploy = Math.min(garrisoned, recruited + Math.min(2, preExisting))
   const choices = []
   for (let i = 0; i <= maxDeploy; i++) {
-    choices.push(`Deploy ${i} troop(s) from garrison`)
+    choices.push(game.actions.option({ id: `deploy-${i}`, title: `Deploy ${i} troop(s) from garrison` }))
   }
 
   const [choice] = game.actions.choose(player, choices, {
     title: 'Deploy troops to the Conflict',
   })
 
-  const count = parseInt(choice.match(/\d+/)[0])
+  const choiceId = typeof choice === 'object' ? choice.id : null
+  const count = choiceId
+    ? parseInt(choiceId.replace('deploy-', ''))
+    : parseInt(String(choice).match(/\d+/)[0])
   if (count > 0) {
     player.decrementCounter('troopsInGarrison', count, { silent: true })
     deploy.deployToConflict(game, player, count)
@@ -705,12 +712,16 @@ function deployUnits(game, player) {
           p.name !== player.name && (game.state.conflict.deployedTroops[p.name] || 0) > 0
         )
         if (opponents.length > 0) {
-          const targetChoices = ['Pass', ...opponents.map(p => game.actions.playerOption(p))]
+          const targetChoices = [
+            game.actions.option({ id: 'pass', title: 'Pass' }),
+            ...opponents.map(p => game.actions.playerOption(p)),
+          ]
           const [targetChoice] = game.actions.choose(player, targetChoices, {
             title: 'Force an enemy troop to retreat?',
           })
-          if (targetChoice !== 'Pass') {
-            const targetName = typeof targetChoice === 'object' ? targetChoice.id : targetChoice
+          const targetId = typeof targetChoice === 'object' ? targetChoice.id : targetChoice
+          if (targetId !== 'pass' && targetChoice !== 'Pass') {
+            const targetName = targetId
             game.state.conflict.deployedTroops[targetName]--
             const target = game.players.byName(targetName)
             target.incrementCounter('troopsInSupply', 1, { silent: true })
@@ -957,11 +968,18 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
         break
       }
 
-      const labels = available.map(c => c.label)
+      const labels = available.map((c, idx) => game.actions.option({
+        id: c.id || `choice-${idx}`,
+        title: c.label,
+      }))
       const [selected] = game.actions.choose(player, labels, {
         title: 'Choose an option',
       })
-      const chosen = available.find(c => c.label === selected)
+      const selId = typeof selected === 'object' ? selected.id : null
+      const selTitle = typeof selected === 'object' ? selected.title : selected
+      const chosen = selId
+        ? available.find((c, idx) => (c.id || `choice-${idx}`) === selId)
+        : available.find(c => c.label === selTitle)
 
       // Pay choice cost
       if (chosen.cost) {
@@ -982,10 +1000,11 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
     }
 
     case 'influence-choice': {
-      const factionChoices = constants.FACTIONS.map(f => f)
-      const [faction] = game.actions.choose(player, factionChoices, {
+      const factionChoices = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+      const [factionChoice] = game.actions.choose(player, factionChoices, {
         title: 'Choose a faction to gain Influence',
       })
+      const faction = typeof factionChoice === 'object' ? factionChoice.id : factionChoice
       factions.gainInfluence(game, player, faction, effect.amount)
       break
     }
@@ -1041,16 +1060,20 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
         }
       }
       if (entries.length > 0) {
-        const choices = ['Pass', ...entries.map(e => ({
-          title: `${e.card.name} (${e.label})`,
-          id: `${e.card.id}:${e.label}`,
-          defId: e.card.defId,
-          kind: 'imperium-card',
-        }))]
+        const choices = [
+          game.actions.option({ id: 'pass', title: 'Pass' }),
+          ...entries.map(e => ({
+            title: `${e.card.name} (${e.label})`,
+            id: `${e.card.id}:${e.label}`,
+            defId: e.card.defId,
+            kind: 'imperium-card',
+          })),
+        ]
         const [choice] = game.actions.choose(player, choices, {
           title: 'Choose a card to trash',
         })
-        if (choice !== 'Pass') {
+        const chId = typeof choice === 'object' ? choice.id : choice
+        if (chId !== 'pass' && choice !== 'Pass') {
           const entry = typeof choice === 'object'
             ? entries.find(e => `${e.card.id}:${e.label}` === choice.id)
             : entries.find(e => `${e.card.name} (${e.label})` === choice)
@@ -1110,11 +1133,15 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
       const intrigueZone = game.zones.byId(`${player.name}.intrigue`)
       const intrigueCards = intrigueZone.cardlist()
       if (intrigueCards.length > 0) {
-        const trashChoices = ['Pass', ...intrigueCards.map(c => game.actions.cardOption(c, 'intrigue-card'))]
+        const trashChoices = [
+          game.actions.option({ id: 'pass', title: 'Pass' }),
+          ...intrigueCards.map(c => game.actions.cardOption(c, 'intrigue-card')),
+        ]
         const [trashChoice] = game.actions.choose(player, trashChoices, {
           title: 'Choose an Intrigue card to trash',
         })
-        if (trashChoice !== 'Pass') {
+        const trashId = typeof trashChoice === 'object' ? trashChoice.id : trashChoice
+        if (trashId !== 'pass' && trashChoice !== 'Pass') {
           const card = typeof trashChoice === 'object'
             ? intrigueCards.find(c => c.id === trashChoice.id)
             : intrigueCards.find(c => c.name === trashChoice)
@@ -1137,14 +1164,16 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
         const boardSpaces = getBoardSpaces()
         const recallChoices = occupiedSpaces.map(([id]) => {
           const bs = boardSpaces.find(s => s.id === id)
-          return bs ? bs.name : id
+          return game.actions.option({ id, title: bs ? bs.name : id, kind: 'board-space' })
         })
         const [recallChoice] = game.actions.choose(player, recallChoices, {
           title: 'Choose an Agent to recall',
         })
-        const spaceId = occupiedSpaces.find(([id]) => {
+        const recallId = typeof recallChoice === 'object' ? recallChoice.id : null
+        const recallTitle = typeof recallChoice === 'object' ? recallChoice.title : recallChoice
+        const spaceId = recallId || occupiedSpaces.find(([id]) => {
           const bs = boardSpaces.find(s => s.id === id)
-          return (bs ? bs.name : id) === recallChoice
+          return (bs ? bs.name : id) === recallTitle
         })?.[0]
         if (spaceId) {
           const occupants = game.state.boardSpaces[spaceId]
@@ -1153,9 +1182,10 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
             occupants.splice(idx, 1)
           }
           player.decrementCounter('agentsPlaced', 1, { silent: true })
+          const space = boardSpaces.find(s => s.id === spaceId)
           game.log.add({
             template: '{player} recalls an Agent from {space}',
-            args: { player, space: recallChoice },
+            args: { player, space: space ? space.name : spaceId },
           })
         }
       }
@@ -1286,11 +1316,14 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
     }
 
     case 'lose-influence': {
-      const factionChoices = constants.FACTIONS.filter(f => player.getInfluence(f) > 0)
+      const factionChoices = constants.FACTIONS
+        .filter(f => player.getInfluence(f) > 0)
+        .map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
       if (factionChoices.length > 0) {
-        const [faction] = game.actions.choose(player, factionChoices, {
+        const [factionChoice] = game.actions.choose(player, factionChoices, {
           title: 'Choose faction to lose Influence',
         })
+        const faction = typeof factionChoice === 'object' ? factionChoice.id : factionChoice
         factions.loseInfluence(game, player, faction, effect.amount)
       }
       break
@@ -1302,12 +1335,15 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
       if (maxDeploy > 0) {
         const deployChoices = []
         for (let i = 0; i <= maxDeploy; i++) {
-          deployChoices.push(`Deploy ${i} troop(s) to Conflict`)
+          deployChoices.push(game.actions.option({ id: `deploy-${i}`, title: `Deploy ${i} troop(s) to Conflict` }))
         }
         const [deployChoice] = game.actions.choose(player, deployChoices, {
           title: 'Deploy troops to the Conflict',
         })
-        const count = parseInt(deployChoice.match(/\d+/)[0])
+        const deployId = typeof deployChoice === 'object' ? deployChoice.id : null
+        const count = deployId
+          ? parseInt(deployId.replace('deploy-', ''))
+          : parseInt(String(deployChoice).match(/\d+/)[0])
         if (count > 0) {
           player.decrementCounter('troopsInGarrison', count, { silent: true })
           deploy.deployToConflict(game, player, count)
@@ -1402,10 +1438,14 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
         const hasCards = oppHand.cardlist().length > 0
         const hasTroops = opponent.troopsInGarrison > 0
         if (hasCards && hasTroops) {
-          const [choice] = game.actions.choose(opponent, ['Discard a card', 'Lose a troop'], {
+          const [choice] = game.actions.choose(opponent, [
+            game.actions.option({ id: 'discard-card', title: 'Discard a card' }),
+            game.actions.option({ id: 'lose-troop', title: 'Lose a troop' }),
+          ], {
             title: 'Choose: discard a card or lose a troop',
           })
-          if (choice === 'Discard a card') {
+          const cId = typeof choice === 'object' ? choice.id : choice
+          if (cId === 'discard-card' || choice === 'Discard a card') {
             resolveEffect(game, opponent, { type: 'opponent-discard', amount: 1 }, null)
           }
           else {
@@ -1656,12 +1696,16 @@ function offerPlotIntrigue(game, player) {
       return
     }
 
-    const choices = ['Pass', ...plotCards.map(c => game.actions.cardOption(c, 'intrigue-card'))]
+    const choices = [
+      game.actions.option({ id: 'pass', title: 'Pass' }),
+      ...plotCards.map(c => game.actions.cardOption(c, 'intrigue-card')),
+    ]
     const [choice] = game.actions.choose(player, choices, {
       title: 'Play a Plot Intrigue card?',
     })
 
-    if (choice === 'Pass') {
+    const choiceId = typeof choice === 'object' ? choice.id : choice
+    if (choiceId === 'pass' || choice === 'Pass') {
       return
     }
 

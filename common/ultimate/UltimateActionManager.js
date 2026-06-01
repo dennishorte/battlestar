@@ -199,6 +199,9 @@ class UltimateActionManager extends BaseActionManager {
       ages = [...ages]
     }
 
+    // Ages are bare numbers — _warnOnBareStrings is string-only so this is silent,
+    // and bare numbers flow through selector validation untouched (tests pass
+    // numeric ages directly).
     const selected = this.choose(player, ages, { min: 1, max: 1, ...opts, title: 'Choose Age' })
     if (selected) {
       return selected[0]
@@ -263,18 +266,22 @@ class UltimateActionManager extends BaseActionManager {
       opts.max = 1
     }
 
-    const colors = this.choose(
+    const colorOptions = choices.map(color =>
+      this.actions.option({ id: color, title: color, kind: 'color' })
+    )
+    const selections = this.choose(
       player,
-      choices,
+      colorOptions,
       { ...opts, title: `Choose a color to splay ${direction}` }
     )
-    if (colors.length === 0) {
+    if (selections.length === 0) {
       this.log.addDoNothing(player, 'splay')
       return []
     }
     else {
       const splayed = []
-      for (const color of colors) {
+      for (const sel of selections) {
+        const color = (sel && typeof sel === 'object') ? sel.id : sel
         splayed.push(this.actions.splay(player, color, direction))
       }
       return splayed
@@ -282,11 +289,15 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   chooseAndUnsplay(player, choices, opts={}) {
-    const colors = this.choose(player, choices, {
+    const colorOptions = choices.map(color =>
+      this.actions.option({ id: color, title: color, kind: 'color' })
+    )
+    const selections = this.choose(player, colorOptions, {
       title: 'Choose a color',
       ...opts
     })
-    for (const color of colors) {
+    for (const sel of selections) {
+      const color = (sel && typeof sel === 'object') ? sel.id : sel
       this.unsplay(player, color)
     }
   }
@@ -323,7 +334,11 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   chooseBiscuit(player) {
-    const biscuitName = this.actions.choose(player, this.util.biscuitNames())[0]
+    const choices = this.util.biscuitNames().map(name =>
+      this.actions.option({ id: name, title: name, kind: 'biscuit' })
+    )
+    const selection = this.actions.choose(player, choices)[0]
+    const biscuitName = (selection && typeof selection === 'object') ? selection.id : selection
     return this.util.biscuitNameToIcon(biscuitName)
   }
 
@@ -358,12 +373,12 @@ class UltimateActionManager extends BaseActionManager {
 
     opts.title = opts.title || 'Choose Cards(s)'
 
-    // Emit structured options: 'auto' stays bare (sentinel handled below),
+    // Emit structured options: 'auto' becomes a sentinel-style option;
     // real cards carry {title, id, kind:'card'} so the engine dev warning
     // stays silent and the UI can route the chip without name fallback.
     const choices = choiceMap.map(m =>
       m.card === 'auto'
-        ? 'auto'
+        ? { title: 'auto', id: 'auto', kind: 'sentinel' }
         : { title: m.name, id: m.name, kind: 'card' }
     )
 
@@ -416,7 +431,11 @@ class UltimateActionManager extends BaseActionManager {
     if (!choices) {
       choices = this.util.colors()
     }
-    return this.choose(player, choices, { title: 'Choose a color' })[0]
+    const options = choices.map(color =>
+      this.actions.option({ id: color, title: color, kind: 'color' })
+    )
+    const selection = this.choose(player, options, { title: 'Choose a color' })[0]
+    return (selection && typeof selection === 'object') ? selection.id : selection
   }
 
   chooseZone(player, zones) {
@@ -424,10 +443,13 @@ class UltimateActionManager extends BaseActionManager {
       return undefined
     }
 
-    const zoneIds = zones.map(zone => zone.id)
-    const selectedId = this.game.actions.choose(player, zoneIds, {
+    const options = zones.map(zone =>
+      this.actions.option({ id: zone.id, title: zone.id, kind: 'zone' })
+    )
+    const selection = this.game.actions.choose(player, options, {
       title: 'Choose a zone',
     })[0]
+    const selectedId = (selection && typeof selection === 'object') ? selection.id : selection
 
     return this.game.zones.byId(selectedId)
   }
@@ -531,7 +553,7 @@ class UltimateActionManager extends BaseActionManager {
       })
     }
     else {
-      choices.push('dig')
+      choices.push(this.actions.option({ id: 'dig', title: 'dig' }))
     }
 
     // Seize options use the original age — that's the value of the
@@ -545,8 +567,9 @@ class UltimateActionManager extends BaseActionManager {
 
     if (canSeize.length > 0) {
       choices.push({
+        id: 'seize',
         title: 'seize',
-        choices: canSeize.map(c => c.id),
+        choices: canSeize.map(c => this.actions.cardOption(c)),
         min: 0
       })
     }
@@ -559,7 +582,10 @@ class UltimateActionManager extends BaseActionManager {
       title: 'Choose artifact option'
     })[0]
 
-    if (chosen === 'dig') {
+    const chosenId = (chosen && typeof chosen === 'object')
+      ? (chosen.id ?? chosen.title)
+      : chosen
+    if (chosenId === 'dig') {
       const card = this.zones.byDeck('arti', digAge).peek()
       this.log.add({
         template: '{player} digs {card}',
@@ -568,8 +594,9 @@ class UltimateActionManager extends BaseActionManager {
       card.moveTo(this.zones.byPlayer(player, 'artifact'))
       this.acted(player)
     }
-    else if (chosen.title === 'seize') {
-      const cardName = chosen.selection[0]
+    else if (chosenId === 'seize') {
+      const seizePick = chosen.selection[0]
+      const cardName = (seizePick && typeof seizePick === 'object') ? seizePick.id : seizePick
       const card = this.cards.byId(cardName)
       const museum = card.zone.cardlist().find(card => card.isMuseum)
       const originalOwner = card.owner

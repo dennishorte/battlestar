@@ -25,12 +25,20 @@ module.exports = {
   plotEffect(game, player) {
     const loseFactions = constants.FACTIONS.filter(f => player.getInfluence(f) > 0)
     if (loseFactions.length > 0) {
-      const choices = ['Pass', ...loseFactions.map(f => `Lose 1 ${f}`)]
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        ...loseFactions.map(f => game.actions.option({ id: `lose-${f}`, title: `Lose 1 ${f}`, kind: 'faction' })),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Swap influence?' })
-      if (choice !== 'Pass') {
-        const loseFaction = loseFactions.find(f => choice.includes(f))
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
+        const loseFaction = (typeof chId === 'string' && chId.startsWith('lose-'))
+          ? chId.slice('lose-'.length)
+          : loseFactions.find(f => (typeof choice === 'string' ? choice : choice.title).includes(f))
         factions.loseInfluence(game, player, loseFaction, 1)
-        const [gf] = game.actions.choose(player, constants.FACTIONS, { title: '+1 Influence' })
+        const fc = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+        const [gChoice] = game.actions.choose(player, fc, { title: '+1 Influence' })
+        const gf = typeof gChoice === 'object' ? gChoice.id : gChoice
         factions.gainInfluence(game, player, gf)
       }
     }

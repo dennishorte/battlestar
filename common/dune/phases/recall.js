@@ -169,12 +169,16 @@ function offerEndgameIntrigue(game, player) {
       return
     }
 
-    const choices = ['Pass', ...endgameCards.map(c => game.actions.cardOption(c, 'intrigue-card'))]
+    const choices = [
+      game.actions.option({ id: 'pass', title: 'Pass' }),
+      ...endgameCards.map(c => game.actions.cardOption(c, 'intrigue-card')),
+    ]
     const [choice] = game.actions.choose(player, choices, {
       title: 'Play an Endgame Intrigue card?',
     })
 
-    if (choice === 'Pass') {
+    const choiceId = typeof choice === 'object' ? choice.id : choice
+    if (choiceId === 'pass' || choice === 'Pass') {
       return
     }
 

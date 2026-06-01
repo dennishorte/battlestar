@@ -36,11 +36,23 @@ module.exports = {
     const choices = game
       .players.all()
       .flatMap(player => game.util.colors().map(color => ({ player, color })))
-      .map(x => `${x.player.name} ${x.color}`)
+      .map(x => game.actions.option({
+        id: `${x.player.name}-${x.color}`,
+        title: `${x.player.name} ${x.color}`,
+        kind: 'splay-target',
+      }))
 
     const toSplayLeft = game.actions.choose(player, choices, { title: 'Choose a stack to splay left' })
     if (toSplayLeft && toSplayLeft.length > 0) {
-      const [playerName, color] = toSplayLeft[0].split(' ')
+      const pick = toSplayLeft[0]
+      let playerName, color
+      if (pick && typeof pick === 'object' && pick.id) {
+        ;[playerName, color] = pick.id.split('-')
+      }
+      else {
+        const title = (pick && typeof pick === 'object') ? pick.title : pick
+        ;[playerName, color] = title.split(' ')
+      }
       const target = game.players.byName(playerName)
       game.actions.splay(player, color, 'left', { owner: target })
     }

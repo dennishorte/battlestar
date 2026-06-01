@@ -24,10 +24,15 @@ module.exports = {
       const purpleChoices = util.array.distinct(existingSplays)
 
       const choices = []
+      const mkOpt = (color, direction) => game.actions.option({
+        id: `${color}-${direction}`,
+        title: `${color} ${direction}`,
+        kind: 'splay-target',
+      })
 
       if (game.cards.byPlayer(player, 'purple').length > 1) {
         purpleChoices
-          .map(splay => `purple ${splay}`)
+          .map(splay => mkOpt('purple', splay))
           .forEach(choice => choices.push(choice))
       }
 
@@ -38,14 +43,21 @@ module.exports = {
           }
           const splay = game.zones.byPlayer(player, color).splay
           if (splay !== purpleSplay) {
-            choices.push(`${color} ${purpleSplay}`)
+            choices.push(mkOpt(color, purpleSplay))
           }
         }
       }
 
       const action = game.actions.choose(player, choices, { title: 'Choose a color to splay', min: 0, max: 1 })[0]
       if (action) {
-        const [color, direction] = action.split(' ')
+        let color, direction
+        if (action && typeof action === 'object' && action.id) {
+          ;[color, direction] = action.id.split('-')
+        }
+        else {
+          const title = (action && typeof action === 'object') ? action.title : action
+          ;[color, direction] = title.split(' ')
+        }
         game.actions.splay(player, color, direction)
       }
     }

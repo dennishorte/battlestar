@@ -23,9 +23,13 @@ module.exports = {
 
   plotEffect(game, player) {
     if (player.spice >= 2) {
-      const choices = ['Pass', 'Pay 2 Spice for +1 Influence per faction with agents']
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'pay', title: 'Pay 2 Spice for +1 Influence per faction with agents' }),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Quid Pro Quo' })
-      if (choice !== 'Pass') {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
         player.decrementCounter('spice', 2, { silent: true })
         // Gain influence with each faction that has at least one of your agents
         const boardSpacesData = require('../../boardSpaces.js')

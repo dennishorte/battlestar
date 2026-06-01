@@ -17,10 +17,12 @@ module.exports = {
         const colors = game
           .util.colors()
           .filter(color => game.zones.byPlayer(other, color).splay !== 'none')
+          .map(c => game.actions.option({ id: c, title: c, kind: 'color' }))
 
         if (colors.length > 0) {
           choices.push({
             title: other.name,
+            id: other.name,
             choices: colors,
             min: 0
           })
@@ -34,7 +36,8 @@ module.exports = {
       if (selected) {
         const otherName = selected.title
         const other = game.players.byName(otherName)
-        const color = selected.selection[0]
+        const inner = selected.selection[0]
+        const color = (inner && typeof inner === 'object') ? inner.id : inner
 
         game.actions.unsplay(other, color)
       }
@@ -42,13 +45,14 @@ module.exports = {
 
     (game, player) => {
       const choices = [
-        'Safeguard achievements',
-        'Achieve secrets'
+        game.actions.option({ id: 'safeguard-achievements', title: 'Safeguard achievements' }),
+        game.actions.option({ id: 'achieve-secrets', title: 'Achieve secrets' }),
       ]
 
-      const choice = game.actions.choose(player, choices)[0]
+      const pick = game.actions.choose(player, choices)[0]
+      const choice = (pick && typeof pick === 'object') ? pick.id : pick
 
-      if (choice === choices[0]) {
+      if (choice === 'safeguard-achievements' || choice === 'Safeguard achievements') {
         // Safeguard achievements
         const available = player.availableStandardAchievements()
 
@@ -60,7 +64,7 @@ module.exports = {
           hidden: true,
         })
       }
-      else if (choice === choices[1]) {
+      else if (choice === 'achieve-secrets' || choice === 'Achieve secrets') {
         // Achieve secrets
         const secrets = game.cards.byPlayer(player, 'safe')
         const toAchieve = game.actions.chooseCards(player, secrets, {

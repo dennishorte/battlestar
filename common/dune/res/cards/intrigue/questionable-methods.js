@@ -28,10 +28,20 @@ module.exports = {
     addStrength(game, player, 'intrigue', 'Questionable Methods', 1 * constants.SWORD_STRENGTH)
     const loseFactions = constants.FACTIONS.filter(f => player.getInfluence(f) > 0)
     if (loseFactions.length > 0) {
-      const choices = ['Pass', ...loseFactions.map(f => `Lose 1 ${f} for +4 Swords`)]
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        ...loseFactions.map(f => game.actions.option({
+          id: `lose-${f}`,
+          title: `Lose 1 ${f} for +4 Swords`,
+          kind: 'faction',
+        })),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Questionable Methods' })
-      if (choice !== 'Pass') {
-        const faction = loseFactions.find(f => choice.includes(f))
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
+        const faction = chId.startsWith('lose-')
+          ? chId.slice('lose-'.length)
+          : loseFactions.find(f => (typeof choice === 'string' ? choice : choice.title).includes(f))
         factions.loseInfluence(game, player, faction, 1)
         addStrength(game, player, 'intrigue', 'Questionable Methods', 4 * constants.SWORD_STRENGTH)
       }

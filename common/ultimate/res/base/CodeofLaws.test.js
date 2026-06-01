@@ -22,7 +22,7 @@ describe('Code of Laws', () => {
 
     const result3 = t.choose(game, 'Writing')
 
-    expect(result3.selectors[0].choices.sort()).toEqual(['blue'])
+    expect(result3.selectors[0].choices.map(c => c.title || c).sort()).toEqual(['blue'])
 
     t.choose(game, 'blue')
 

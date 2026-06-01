@@ -42,10 +42,16 @@ module.exports = {
       deckEngine.discardCard(game, player, discardCard)
     }
 
-    const [factionChoice] = game.actions.choose(player, ['Bene Gesserit', 'Fremen'], {
+    const [factionChoice] = game.actions.choose(player, [
+      game.actions.option({ id: 'bene-gesserit', title: 'Bene Gesserit', kind: 'faction' }),
+      game.actions.option({ id: 'fremen', title: 'Fremen', kind: 'faction' }),
+    ], {
       title: 'Choose a faction',
     })
-    const faction = factionChoice === 'Bene Gesserit' ? 'bene-gesserit' : 'fremen'
+    const chId = typeof factionChoice === 'object' ? factionChoice.id : null
+    const faction = chId
+      ? chId
+      : (factionChoice === 'Bene Gesserit' ? 'bene-gesserit' : 'fremen')
     factions.gainInfluence(game, player, faction, 1)
   },
 }

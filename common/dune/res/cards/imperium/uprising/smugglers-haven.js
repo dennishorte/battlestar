@@ -37,9 +37,13 @@ module.exports = {
   agentEffect(game, player) {
     // Pay 4 Spice -> +1 VP
     if (player.spice >= 4) {
-      const choices = ['Pass', 'Pay 4 Spice for +1 Victory Point']
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'pay', title: 'Pay 4 Spice for +1 Victory Point' }),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Smuggler\'s Haven' })
-      if (choice !== 'Pass') {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
         player.decrementCounter('spice', 4, { silent: true })
         player.incrementCounter('vp', 1, { silent: true, source: "Smuggler's Haven" })
         game.log.add({ template: '{player} gains 1 Victory Point', args: { player } })

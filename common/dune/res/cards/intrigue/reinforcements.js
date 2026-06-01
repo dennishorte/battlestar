@@ -22,9 +22,13 @@ module.exports = {
 
   plotEffect(game, player) {
     if (player.solari >= 3) {
-      const choices = ['Pass', 'Pay 3 Solari for +3 Troops']
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'pay', title: 'Pay 3 Solari for +3 Troops' }),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Reinforcements' })
-      if (choice !== 'Pass') {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
         player.decrementCounter('solari', 3, { silent: true })
         const recruit = Math.min(3, player.troopsInSupply)
         if (recruit > 0) {

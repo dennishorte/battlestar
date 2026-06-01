@@ -27,11 +27,12 @@ module.exports = {
       const players = game
         .players.all(player)
         .filter(p => game.cards.byPlayer(p, 'score').length > 0)
-        .map(p => p.name)
+        .map(p => game.actions.option({ id: p.name, title: p.name, kind: 'player' }))
 
-      const targetName = game.actions.choose(player, players, {
+      const targetPick = game.actions.choose(player, players, {
         title: 'Choose a player to tuck from'
       })[0]
+      const targetName = (targetPick && typeof targetPick === 'object') ? targetPick.id : targetPick
 
       if (targetName) {
         const target = game.players.byName(targetName)

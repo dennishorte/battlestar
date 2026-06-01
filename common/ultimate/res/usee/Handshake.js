@@ -22,7 +22,9 @@ module.exports = {
         .cards.byPlayer(player, 'hand')
         .map(c => c.color)
       const uniqueColors = util.array.distinct(handColors).sort()
-      const chosenColors = game.actions.choose(player, uniqueColors, { count: 2 })
+        .map(c => game.actions.option({ id: c, title: c, kind: 'color' }))
+      const selections = game.actions.choose(player, uniqueColors, { count: 2 })
+      const chosenColors = selections.map(s => (s && typeof s === 'object') ? s.id : s)
 
       // Transfer all cards of chosen colors from player's hand to leader's hand
       const playerHand = game.zones.byPlayer(player, 'hand')

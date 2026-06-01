@@ -39,10 +39,14 @@ module.exports = {
     if (player.spice < 2) {
       return
     }
-    const [choice] = game.actions.choose(player, ['Pay 2 Spice', 'Pass'], {
+    const [choice] = game.actions.choose(player, [
+      game.actions.option({ id: 'pay', title: 'Pay 2 Spice' }),
+      game.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Spice Smugglers: Pay 2 Spice for +1 Spacing Guild Influence and +3 Solari?',
     })
-    if (choice === 'Pass') {
+    const chId = typeof choice === 'object' ? choice.id : choice
+    if (chId === 'pass' || choice === 'Pass') {
       return
     }
     player.decrementCounter('spice', 2, { silent: true })

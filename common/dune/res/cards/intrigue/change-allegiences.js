@@ -24,24 +24,37 @@ module.exports = {
 
   plotEffect(game, player) {
     // Lose 1 Influence -> +1 Influence; Pay 3 Spice -> +1 Influence
+    const pickFaction = (title) => {
+      const fc = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+      const [gChoice] = game.actions.choose(player, fc, { title })
+      return typeof gChoice === 'object' ? gChoice.id : gChoice
+    }
     const loseFactions = constants.FACTIONS.filter(f => player.getInfluence(f) > 0)
     if (loseFactions.length > 0) {
-      const choices = ['Pass', ...loseFactions.map(f => `Lose 1 ${f}`)]
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        ...loseFactions.map(f => game.actions.option({ id: `lose-${f}`, title: `Lose 1 ${f}`, kind: 'faction' })),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Swap influence?' })
-      if (choice !== 'Pass') {
-        const loseFaction = loseFactions.find(f => choice.includes(f))
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
+        const loseFaction = (typeof chId === 'string' && chId.startsWith('lose-'))
+          ? chId.slice('lose-'.length)
+          : loseFactions.find(f => (typeof choice === 'string' ? choice : choice.title).includes(f))
         factions.loseInfluence(game, player, loseFaction, 1)
-        const [gf] = game.actions.choose(player, constants.FACTIONS, { title: 'Gain +1 Influence' })
-        factions.gainInfluence(game, player, gf)
+        factions.gainInfluence(game, player, pickFaction('Gain +1 Influence'))
       }
     }
     if (player.spice >= 3) {
-      const choices2 = ['Pass', 'Pay 3 Spice for +1 Influence']
+      const choices2 = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'pay', title: 'Pay 3 Spice for +1 Influence' }),
+      ]
       const [c2] = game.actions.choose(player, choices2, { title: 'Also pay 3 Spice?' })
-      if (c2 !== 'Pass') {
+      const c2Id = typeof c2 === 'object' ? c2.id : c2
+      if (c2Id !== 'pass' && c2 !== 'Pass') {
         player.decrementCounter('spice', 3, { silent: true })
-        const [gf] = game.actions.choose(player, constants.FACTIONS, { title: 'Gain +1 Influence' })
-        factions.gainInfluence(game, player, gf)
+        factions.gainInfluence(game, player, pickFaction('Gain +1 Influence'))
       }
     }
   },

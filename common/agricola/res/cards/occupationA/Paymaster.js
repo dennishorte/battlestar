@@ -12,13 +12,16 @@ module.exports = {
       return
     }
     const cardName = 'Paymaster'
-    const choices = [`Give 1 grain to ${actingPlayer.name} for 1 bonus point`, 'Skip']
+    const choices = [
+      game.actions.option({ id: 'give', title: `Give 1 grain to ${actingPlayer.name} for 1 bonus point` }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
     const selection = game.actions.choose(cardOwner, choices, {
       title: `${cardName}: Give grain for bonus point?`,
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
     cardOwner.payCost({ grain: 1 })

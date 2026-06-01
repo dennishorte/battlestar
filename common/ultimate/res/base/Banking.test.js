@@ -70,7 +70,7 @@ describe('Banking', () => {
     game.run()
     const result2 = t.choose(game, 'Dogma.Banking')
 
-    expect(result2.selectors[0].choices).toEqual(['green'])
+    expect(result2.selectors[0].choices.map(c => c.title || c)).toEqual(['green'])
     expect(result2.selectors[0].min).toBe(0)
   })
 })

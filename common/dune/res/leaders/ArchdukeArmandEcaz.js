@@ -18,11 +18,15 @@ module.exports = {
     if (playedCards.length === 0) {
       return
     }
-    const choices = ['Pass', ...playedCards.map(c => game.actions.cardOption(c, 'imperium-card'))]
+    const choices = [
+      game.actions.option({ id: 'pass', title: 'Pass' }),
+      ...playedCards.map(c => game.actions.cardOption(c, 'imperium-card')),
+    ]
     const [choice] = game.actions.choose(player, choices, {
       title: 'Coordination: Trash a card in play?',
     })
-    if (choice !== 'Pass') {
+    const choiceId = typeof choice === 'object' ? choice.id : choice
+    if (choiceId !== 'pass' && choice !== 'Pass') {
       const card = typeof choice === 'object'
         ? playedCards.find(c => c.id === choice.id)
         : playedCards.find(c => c.name === choice)

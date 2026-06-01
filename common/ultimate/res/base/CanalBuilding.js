@@ -10,10 +10,14 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const choices = ["Exchange highest cards between hand and score pile", "Junk all cards in the 3 deck"]
-      const decision = game.actions.choose(player, choices, { title: "Choose one" })[0]
+      const choices = [
+        game.actions.option({ id: 'exchange', title: 'Exchange highest cards between hand and score pile' }),
+        game.actions.option({ id: 'junk', title: 'Junk all cards in the 3 deck' }),
+      ]
+      const pick = game.actions.choose(player, choices, { title: "Choose one" })[0]
+      const decision = (pick && typeof pick === 'object') ? pick.id : pick
 
-      if (decision === choices[0]) {
+      if (decision === 'exchange' || decision === 'Exchange highest cards between hand and score pile') {
         game.log.add({
           template: '{player} exchanges the highest cards in their hand and score pile',
           args: { player }

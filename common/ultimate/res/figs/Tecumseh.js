@@ -28,7 +28,8 @@ module.exports = {
 
             return {
               title: player.name,
-              choices: cards.map(card => card.id),
+              id: player.name,
+              choices: cards.map(card => game.actions.cardOption(card)),
               count: 1,
             }
           })
@@ -39,7 +40,11 @@ module.exports = {
           count: choices.length
         })
 
-        const toReturn = chosen.map(selection => game.cards.byId(selection.selection[0]))
+        const toReturn = chosen.map(selection => {
+          const inner = selection.selection[0]
+          const cardId = (inner && typeof inner === 'object') ? inner.id : inner
+          return game.cards.byId(cardId)
+        })
         game.actions.returnMany(player, toReturn)
 
         game.actions.junkAvailableAchievement(player, value)

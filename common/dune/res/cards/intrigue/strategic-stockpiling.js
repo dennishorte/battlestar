@@ -23,9 +23,13 @@ module.exports = {
   plotEffect(game, player) {
     // First leg: Pay 5 Spice -> +1 VP (optional)
     if (player.getCounter('spice') >= 5) {
-      const choices = ['Pass', 'Pay 5 Spice: +1 VP']
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'pay', title: 'Pay 5 Spice: +1 VP' }),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Strategic Stockpiling: Spice' })
-      if (choice !== 'Pass') {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
         player.decrementCounter('spice', 5, { silent: true })
         player.incrementCounter('vp', 1, { silent: true, source: 'Strategic Stockpiling' })
         game.log.add({ template: '{player}: pays 5 Spice, +1 VP', args: { player } })
@@ -34,9 +38,13 @@ module.exports = {
 
     // Second leg: gated on Fremen influence — Pay 3 Water -> +1 VP (optional)
     if (player.getInfluence('fremen') >= 3 && player.getCounter('water') >= 3) {
-      const choices = ['Pass', 'Pay 3 Water: +1 VP']
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'pay', title: 'Pay 3 Water: +1 VP' }),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Strategic Stockpiling: Water' })
-      if (choice !== 'Pass') {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
         player.decrementCounter('water', 3, { silent: true })
         player.incrementCounter('vp', 1, { silent: true, source: 'Strategic Stockpiling' })
         game.log.add({ template: '{player}: pays 3 Water, +1 VP', args: { player } })

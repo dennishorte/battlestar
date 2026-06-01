@@ -23,9 +23,13 @@ module.exports = {
 
   plotEffect(game, player) {
     if (player.spice >= 2) {
-      const choices = ['Pass', 'Pay 2 Spice for +3 Troops']
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'pay', title: 'Pay 2 Spice for +3 Troops' }),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Depart for Arrakis' })
-      if (choice !== 'Pass') {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
         player.decrementCounter('spice', 2, { silent: true })
         const recruit = Math.min(3, player.troopsInSupply)
         if (recruit > 0) {

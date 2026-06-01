@@ -18,11 +18,15 @@ module.exports = {
           return zone.cardlist().length > 1 && zone.splay === 'none'
         })
 
-      const selected = game.actions.choose(player, choices, {
+      const colorOptions = choices.map(c =>
+        game.actions.option({ id: c, title: c, kind: 'color' })
+      )
+      const selected = game.actions.choose(player, colorOptions, {
         title: 'Choose a color to splay right',
         count: 1,
       })
-      const color = selected[0]
+      const pick = selected[0]
+      const color = (pick && typeof pick === 'object') ? pick.id : pick
 
       if (color) {
         game.actions.splay(player, color, 'right')

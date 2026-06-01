@@ -29,9 +29,13 @@ module.exports = {
         const chosenCard = game.actions.chooseCard(player, options)
 
         if (chosenCard) {
-          const action = game.actions.choose(player, ['score it', 'transfer it to the avaiable achievements'])[0]
+          const pick = game.actions.choose(player, [
+            game.actions.option({ id: 'score', title: 'score it' }),
+            game.actions.option({ id: 'transfer', title: 'transfer it to the avaiable achievements' }),
+          ])[0]
+          const action = (pick && typeof pick === 'object') ? pick.id : pick
 
-          if (action === 'score it') {
+          if (action === 'score' || action === 'score it') {
             game.actions.score(player, chosenCard)
           }
           else {

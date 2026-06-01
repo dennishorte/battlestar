@@ -39,9 +39,13 @@ module.exports = {
     // Discard two cards and pay 5 Solari -> +1 VP
     const handZone = game.zones.byId(`${player.name}.hand`)
     if (handZone.cardlist().length >= 2 && player.solari >= 5) {
-      const choices = ['Pass', 'Discard 2 cards and pay 5 Solari for +1 VP']
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'pay', title: 'Discard 2 cards and pay 5 Solari for +1 VP' }),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Corrinth City' })
-      if (choice !== 'Pass') {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
         for (let i = 0; i < 2; i++) {
           const cards = handZone.cardlist()
           if (cards.length > 0) {
@@ -59,16 +63,17 @@ module.exports = {
   },
 
   revealEffect(game, player) {
-    const choices = ['+5 Solari']
+    const choices = [game.actions.option({ id: 'solari', title: '+5 Solari' })]
     if (!player.hasHighCouncil && player.solari >= 5) {
-      choices.push('Pay 5 Solari for High Council seat')
+      choices.push(game.actions.option({ id: 'council', title: 'Pay 5 Solari for High Council seat' }))
     }
     const [choice] = game.actions.choose(player, choices, { title: 'Corrinth City' })
-    if (choice === '+5 Solari') {
+    const chId = typeof choice === 'object' ? choice.id : choice
+    if (chId === 'solari' || choice === '+5 Solari') {
       player.incrementCounter('solari', 5, { silent: true })
       game.log.add({ template: '{player} gains 5 Solari', args: { player } })
     }
-    else if (choice === 'Pay 5 Solari for High Council seat') {
+    else if (chId === 'council' || choice === 'Pay 5 Solari for High Council seat') {
       player.decrementCounter('solari', 5, { silent: true })
       player.setCounter('hasHighCouncil', 1, { silent: true })
       game.log.add({ template: '{player} takes High Council seat', args: { player } })

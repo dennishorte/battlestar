@@ -41,16 +41,23 @@ module.exports = {
       const handZone = game.zones.byId(`${player.name}.hand`)
       const handCards = handZone.cardlist()
       if (handCards.length > 0) {
-        const choices = ['Pass', ...handCards.map(c => game.actions.cardOption(c, 'imperium-card'))]
+        const choices = [
+          game.actions.option({ id: 'pass', title: 'Pass' }),
+          ...handCards.map(c => game.actions.cardOption(c, 'imperium-card')),
+        ]
         const [choice] = game.actions.choose(player, choices, { title: 'Discard a card?' })
-        if (choice !== 'Pass') {
+        const chId = typeof choice === 'object' ? choice.id : choice
+        if (chId !== 'pass' && choice !== 'Pass') {
           const card = typeof choice === 'object'
             ? handCards.find(c => c.id === choice.id)
             : handCards.find(c => c.name === choice)
           if (card) {
             deckEngine.discardCard(game, player, card)
-            const factionChoices = ['emperor', 'guild', 'fremen']
-            const [faction] = game.actions.choose(player, factionChoices, { title: '+1 Influence with:' })
+            const factionChoices = ['emperor', 'guild', 'fremen'].map(f =>
+              game.actions.option({ id: f, title: f, kind: 'faction' })
+            )
+            const [fChoice] = game.actions.choose(player, factionChoices, { title: '+1 Influence with:' })
+            const faction = typeof fChoice === 'object' ? fChoice.id : fChoice
             factions.gainInfluence(game, player, faction)
           }
         }

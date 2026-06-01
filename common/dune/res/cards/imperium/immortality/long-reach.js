@@ -36,9 +36,11 @@ module.exports = {
     // If you have another BG card in play: this card gets all access. +1 Influence with 2 Factions.
     if (constants.hasOtherFactionAffiliatedCardInPlay(game, player, card, 'bene-gesserit')) {
       for (let i = 0; i < 2; i++) {
-        const [faction] = game.actions.choose(player, constants.FACTIONS, {
+        const fc = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+        const [fChoice] = game.actions.choose(player, fc, {
           title: `+1 Influence (${i + 1} of 2)`,
         })
+        const faction = typeof fChoice === 'object' ? fChoice.id : fChoice
         factions.gainInfluence(game, player, faction)
       }
     }

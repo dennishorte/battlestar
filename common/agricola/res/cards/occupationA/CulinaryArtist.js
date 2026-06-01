@@ -12,36 +12,36 @@ module.exports = {
     }
     const options = []
     if (cardOwner.grain >= 1) {
-      options.push('Exchange 1 grain for 4 food')
+      options.push(game.actions.option({ id: 'grain', title: 'Exchange 1 grain for 4 food' }))
     }
     if (cardOwner.getTotalAnimals('sheep') >= 1) {
-      options.push('Exchange 1 sheep for 5 food')
+      options.push(game.actions.option({ id: 'sheep', title: 'Exchange 1 sheep for 5 food' }))
     }
     if (cardOwner.vegetables >= 1) {
-      options.push('Exchange 1 vegetable for 7 food')
+      options.push(game.actions.option({ id: 'vegetable', title: 'Exchange 1 vegetable for 7 food' }))
     }
     if (options.length === 0) {
       return
     }
-    options.push('Skip')
+    options.push(game.actions.option({ id: 'skip', title: 'Skip' }))
     const selection = game.actions.choose(cardOwner, options, {
       title: 'Culinary Artist: Exchange for food?',
       min: 1,
       max: 1,
     })
     const choice = selection[0]
-    if (choice === 'Skip') {
+    if (choice.id === 'skip') {
       return
     }
-    if (choice === 'Exchange 1 grain for 4 food') {
+    if (choice.id === 'grain') {
       cardOwner.payCost({ grain: 1 })
       cardOwner.addResource('food', 4)
     }
-    else if (choice === 'Exchange 1 sheep for 5 food') {
+    else if (choice.id === 'sheep') {
       cardOwner.removeAnimals('sheep', 1)
       cardOwner.addResource('food', 5)
     }
-    else if (choice === 'Exchange 1 vegetable for 7 food') {
+    else if (choice.id === 'vegetable') {
       cardOwner.payCost({ vegetables: 1 })
       cardOwner.addResource('food', 7)
     }

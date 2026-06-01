@@ -29,7 +29,11 @@ module.exports = {
       }
 
       // I demand you choose...
-      const chosenBiscuitName = game.actions.choose(player, mostBiscuits)[0]
+      const biscuitOptions = mostBiscuits.map(name =>
+        game.actions.option({ id: name, title: name, kind: 'biscuit' })
+      )
+      const chosenPick = game.actions.choose(player, biscuitOptions)[0]
+      const chosenBiscuitName = (chosenPick && typeof chosenPick === 'object') ? chosenPick.id : chosenPick
       const chosenBiscuit = game.util.biscuitNameToIcon(chosenBiscuitName)
 
       game.log.add({

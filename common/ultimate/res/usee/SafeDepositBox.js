@@ -10,16 +10,20 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const options = ['Draw and junk', 'Exchange']
-      const choice = game.actions.choose(player, options, {
+      const options = [
+        game.actions.option({ id: 'draw-junk', title: 'Draw and junk' }),
+        game.actions.option({ id: 'exchange', title: 'Exchange' }),
+      ]
+      const pick = game.actions.choose(player, options, {
         title: 'Choose an option'
       })[0]
+      const choice = (pick && typeof pick === 'object') ? pick.id : pick
 
-      if (choice === 'Draw and junk') {
+      if (choice === 'draw-junk' || choice === 'Draw and junk') {
         game.actions.drawAndJunk(player, game.getEffectAge(self, 7))
         game.actions.drawAndJunk(player, game.getEffectAge(self, 7))
       }
-      else if (choice === 'Exchange') {
+      else if (choice === 'exchange' || choice === 'Exchange') {
         const scoreCards = game.cards.byPlayer(player, 'score')
         const valuedJunkCards = game
           .zones.byId('junk')

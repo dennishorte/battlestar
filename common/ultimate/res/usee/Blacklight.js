@@ -10,16 +10,22 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const unsplayChoices = ['yellow', 'red', 'blue', 'green', 'purple']
-        .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
+      const allColors = ['yellow', 'red', 'blue', 'green', 'purple']
+      const mkColor = c => game.actions.option({ id: c, title: c, kind: 'color' })
 
-      const splayChoices = ['yellow', 'red', 'blue', 'green', 'purple']
+      const unsplayChoices = allColors
+        .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
+        .map(mkColor)
+
+      const splayChoices = allColors
         .filter(color => game.zones.byPlayer(player, color).splay === 'none')
+        .map(mkColor)
 
       const choices = []
       if (unsplayChoices.length > 0) {
         choices.push({
           title: 'Unsplay',
+          id: 'unsplay',
           choices: unsplayChoices,
           min: 0,
           max: 1,
@@ -28,6 +34,7 @@ module.exports = {
       if (splayChoices.length > 0) {
         choices.push({
           title: 'Splay up and draw',
+          id: 'splay-up-draw',
           choices: splayChoices,
           min: 0,
           max: 1,
@@ -35,16 +42,19 @@ module.exports = {
       }
 
       const choice = game.actions.choose(player, choices)[0]
+      const choiceId = choice.id ?? choice.title
+      const inner = choice.selection[0]
+      const color = (inner && typeof inner === 'object') ? inner.id : inner
 
-      if (choice.title === 'Unsplay') {
-        game.actions.unsplay(player, choice.selection[0])
+      if (choiceId === 'unsplay' || choiceId === 'Unsplay') {
+        game.actions.unsplay(player, color)
       }
-      else if (choice.title === 'Splay up and draw') {
-        game.actions.splay(player, choice.selection[0], 'up')
+      else if (choiceId === 'splay-up-draw' || choiceId === 'Splay up and draw') {
+        game.actions.splay(player, color, 'up')
         game.actions.draw(player, { age: game.getEffectAge(self, 9) })
       }
       else {
-        throw new Error('Invalid option: ' + choice)
+        throw new Error('Invalid option: ' + JSON.stringify(choice))
       }
     },
   ],

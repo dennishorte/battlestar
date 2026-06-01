@@ -14,16 +14,25 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const color = game.actions.choose(player, game.util.colors(), {
+      const colorOptions = game.util.colors().map(c =>
+        game.actions.option({ id: c, title: c, kind: 'color' })
+      )
+      const colorSel = game.actions.choose(player, colorOptions, {
         title: 'Choose a color for scoring bottom cards',
         min: 0,
         max: 1
       })
 
-      if (!color || color.length === 0) {
+      if (!colorSel || colorSel.length === 0) {
         game.log.addDoNothing(player, 'score')
         return
       }
+
+      // Preserve legacy shape: original code used the selection array directly
+      // in template strings and as a "color" string, but the actual color
+      // resolves through the first pick.
+      const colorPick = colorSel[0]
+      const color = (colorPick && typeof colorPick === 'object') ? colorPick.id : colorPick
 
       const count = game.actions.choose(player, [1, 2], { title: `Score your bottom 1 or 2 ${color} cards?` })
 

@@ -35,21 +35,24 @@ module.exports = {
   hasSardaukar: false,
 
   revealEffect(game, player) {
-    const choices = ['Pass']
+    const choices = [game.actions.option({ id: 'pass', title: 'Pass' })]
     if (player.troopsInGarrison > 0) {
-      choices.push('Deploy 1 troop to Conflict')
+      choices.push(game.actions.option({ id: 'deploy', title: 'Deploy 1 troop to Conflict' }))
     }
     const deployed = game.state.conflict.deployedTroops[player.name] || 0
     if (deployed > 0) {
-      choices.push('Retreat 1 troop')
+      choices.push(game.actions.option({ id: 'retreat', title: 'Retreat 1 troop' }))
     }
     if (choices.length > 1) {
       const [choice] = game.actions.choose(player, choices, { title: 'Shadout Mapes' })
-      if (choice.includes('Deploy')) {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      const isDeploy = chId === 'deploy' || (typeof choice === 'string' && choice.includes('Deploy'))
+      const isRetreat = chId === 'retreat' || (typeof choice === 'string' && choice.includes('Retreat'))
+      if (isDeploy) {
         player.decrementCounter('troopsInGarrison', 1, { silent: true })
         require('../../../../systems/deploy.js').deployToConflict(game, player, 1)
       }
-      else if (choice.includes('Retreat')) {
+      else if (isRetreat) {
         game.state.conflict.deployedTroops[player.name]--
         player.incrementCounter('troopsInSupply', 1, { silent: true })
       }

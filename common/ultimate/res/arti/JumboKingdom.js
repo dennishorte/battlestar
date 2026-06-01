@@ -13,10 +13,14 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const choices = game.cards.tops(player).map(card => card.color)
-      const color = game.actions.choose(player, choices, {
+      const choices = game.cards.tops(player).map(card =>
+        game.actions.option({ id: card.color, title: card.color, kind: 'color' })
+      )
+      const selection = game.actions.choose(player, choices, {
         title: 'Choose a color',
       })
+      const colorPick = selection[0]
+      const color = (colorPick && typeof colorPick === 'object') ? colorPick.id : colorPick
 
       const toJunk = game.players.all().flatMap(player => game.cards.byPlayer(player, color))
       game.actions.junkMany(player, toJunk, { ordered: true })

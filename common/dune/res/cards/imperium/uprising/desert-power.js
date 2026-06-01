@@ -34,12 +34,14 @@ module.exports = {
 
   revealEffect(game, player) {
     const hasMaker = game.state.makerHooks?.[player.name]
-    const choices = ['+2 Persuasion']
+    const choices = [game.actions.option({ id: 'persuasion', title: '+2 Persuasion' })]
     if (hasMaker && player.water >= 1) {
-      choices.push('Pay 1 Water for 1 Sandworm')
+      choices.push(game.actions.option({ id: 'sandworm', title: 'Pay 1 Water for 1 Sandworm' }))
     }
     const [choice] = game.actions.choose(player, choices, { title: 'Desert Power' })
-    if (choice.includes('Persuasion')) {
+    const chId = typeof choice === 'object' ? choice.id : choice
+    const isPersuasion = chId === 'persuasion' || (typeof choice === 'string' && choice.includes('Persuasion'))
+    if (isPersuasion) {
       player.incrementCounter('persuasion', 2, { silent: true })
     }
     else {

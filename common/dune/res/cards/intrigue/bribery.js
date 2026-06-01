@@ -25,7 +25,9 @@ module.exports = {
   plotEffect(game, player) {
     if (player.solari >= 2) {
       player.decrementCounter('solari', 2, { silent: true })
-      const [faction] = game.actions.choose(player, constants.FACTIONS, { title: '+1 Influence with:' })
+      const fc = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+      const [fChoice] = game.actions.choose(player, fc, { title: '+1 Influence with:' })
+      const faction = typeof fChoice === 'object' ? fChoice.id : fChoice
       factions.gainInfluence(game, player, faction)
     }
   },

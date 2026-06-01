@@ -32,13 +32,22 @@ module.exports = {
           template: '{player} chooses {age}',
           args: { player, age }
         })
-        const location = game.actions.choose(player, ['from scores', 'from hands'])[0]
+        const locationPick = game.actions.choose(player, [
+          game.actions.option({ id: 'from-scores', title: 'from scores' }),
+          game.actions.option({ id: 'from-hands', title: 'from hands' }),
+        ])[0]
+        const location = (locationPick && typeof locationPick === 'object')
+          ? locationPick.title
+          : locationPick
         game.log.add({
           template: '{player} chooses {location}',
           args: { player, location }
         })
 
-        const zoneName = location === 'from scores' ? 'score' : 'hand'
+        const locationId = (locationPick && typeof locationPick === 'object')
+          ? locationPick.id
+          : locationPick
+        const zoneName = (locationId === 'from-scores' || locationId === 'from scores') ? 'score' : 'hand'
         const otherPlayers = game.players.other(player)
         const cards = otherPlayers
           .flatMap(other => game.cards.byPlayer(other, zoneName))
@@ -59,8 +68,12 @@ module.exports = {
       game.actions.score(player, green[0])
     }
     else {
-      const topOrBottom = game.actions.choose(player, ['score top green', 'score bottom green'])[0]
-      if (topOrBottom === 'score top green') {
+      const pick = game.actions.choose(player, [
+        game.actions.option({ id: 'top', title: 'score top green' }),
+        game.actions.option({ id: 'bottom', title: 'score bottom green' }),
+      ])[0]
+      const topOrBottom = (pick && typeof pick === 'object') ? pick.id : pick
+      if (topOrBottom === 'top' || topOrBottom === 'score top green') {
         game.actions.score(player, green[0])
       }
       else {

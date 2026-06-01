@@ -27,12 +27,15 @@ module.exports = {
     if (retreatMax > 0) {
       const choices = []
       for (let i = 1; i <= retreatMax; i++) {
-        choices.push(`Retreat ${i}`)
+        choices.push(game.actions.option({ id: `retreat-${i}`, title: `Retreat ${i}` }))
       }
-      choices.push('Pass')
+      choices.push(game.actions.option({ id: 'pass', title: 'Pass' }))
       const [choice] = game.actions.choose(player, choices, { title: 'Retreat for +1 Spy?' })
-      if (choice !== 'Pass') {
-        const count = parseInt(choice.match(/\d+/)[0])
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
+        const count = (typeof chId === 'string' && chId.startsWith('retreat-'))
+          ? parseInt(chId.replace('retreat-', ''))
+          : parseInt(String(choice).match(/\d+/)[0])
         game.state.conflict.deployedTroops[player.name] -= count
         player.incrementCounter('troopsInSupply', count, { silent: true })
         spies.placeSpy(game, player)

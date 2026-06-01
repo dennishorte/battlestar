@@ -24,9 +24,13 @@ module.exports = {
         })
 
         if (card) {
-          const meldOrScore = game.actions.choose(player, ['meld', 'score'], {
+          const choicePick = game.actions.choose(player, [
+            game.actions.option({ id: 'meld', title: 'meld' }),
+            game.actions.option({ id: 'score', title: 'score' }),
+          ], {
             title: `Meld or score ${card.name}`
           })[0]
+          const meldOrScore = (choicePick && typeof choicePick === 'object') ? choicePick.id : choicePick
           if (meldOrScore === 'meld') {
             game.actions.meld(player, card)
           }

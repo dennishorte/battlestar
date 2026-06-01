@@ -13,29 +13,32 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = [
-        'Transfer bottom cards to hand',
-        'Tuck score pile',
-        'Score cards of chosen value from hand'
+        game.actions.option({ id: 'bottoms-to-hand', title: 'Transfer bottom cards to hand' }),
+        game.actions.option({ id: 'tuck-score', title: 'Tuck score pile' }),
+        game.actions.option({ id: 'score-by-value', title: 'Score cards of chosen value from hand' }),
       ]
 
-      const choice = game.actions.choose(player, choices)[0]
+      const pick = game.actions.choose(player, choices)[0]
+      const choice = (pick && typeof pick === 'object')
+        ? (pick.id ?? pick.title)
+        : pick
 
-      if (choice === choices[0]) {
+      if (choice === 'bottoms-to-hand' || choice === 'Transfer bottom cards to hand') {
         const cards = game.cards.bottoms(player)
         game.actions.transferMany(player, cards, game.zones.byPlayer(player, 'hand'))
       }
-      else if (choice === choices[1]) {
+      else if (choice === 'tuck-score' || choice === 'Tuck score pile') {
         const cards = game.cards.byPlayer(player, 'score')
         game.actions.tuckMany(player, cards)
       }
-      else if (choice === choices[2]) {
+      else if (choice === 'score-by-value' || choice === 'Score cards of chosen value from hand') {
         const values = game.cards.byPlayer(player, 'hand').map(c => c.getAge())
         const value = game.actions.chooseAge(player, util.array.distinct(values).sort())
         const toScore = game.cards.byPlayer(player, 'hand').filter(c => c.getAge() === value)
         game.actions.scoreMany(player, toScore)
       }
       else {
-        throw new Error('Invalid choice: ' + choice)
+        throw new Error('Invalid choice: ' + JSON.stringify(pick))
       }
     },
   ],

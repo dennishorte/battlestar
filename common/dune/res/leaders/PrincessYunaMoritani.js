@@ -32,18 +32,24 @@ module.exports = {
     if (player.solari < 7) {
       return
     }
-    const [choice] = game.actions.choose(player, ['Pass', 'Pay 7 Solari → +1 Influence, +1 Troop, +1 Spice'], {
+    const [choice] = game.actions.choose(player, [
+      game.actions.option({ id: 'pass', title: 'Pass' }),
+      game.actions.option({ id: 'pay', title: 'Pay 7 Solari → +1 Influence, +1 Troop, +1 Spice' }),
+    ], {
       title: 'Final Delivery',
     })
-    if (choice === 'Pass') {
+    const chId = typeof choice === 'object' ? choice.id : choice
+    if (chId === 'pass' || choice === 'Pass') {
       return
     }
     player.decrementCounter('solari', 7, { silent: true })
     const constants = require('../constants.js')
     const factions = require('../../systems/factions.js')
-    const [faction] = game.actions.choose(player, constants.FACTIONS, {
+    const factionChoices = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+    const [factionChoice] = game.actions.choose(player, factionChoices, {
       title: 'Final Delivery: Choose faction for +1 Influence',
     })
+    const faction = typeof factionChoice === 'object' ? factionChoice.id : factionChoice
     factions.gainInfluence(game, player, faction)
     player.incrementCounter('troopsInSupply', 1, { silent: true })
     player.incrementCounter('spice', 1, { silent: true })

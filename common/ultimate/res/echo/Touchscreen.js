@@ -39,12 +39,23 @@ module.exports = {
       const splayed = []
 
       while (todo.length > 0) {
-        const options = todo.map(([color, direction]) => `${color} ${direction}`)
+        const options = todo.map(([color, direction]) => game.actions.option({
+          id: `${color}-${direction}`,
+          title: `${color} ${direction}`,
+          kind: 'splay-target',
+        }))
         const selected = game.actions.choose(player, options, {
           title: 'Choose a color to splay next'
         })[0]
 
-        const [color, direction] = selected.split(' ')
+        let color, direction
+        if (selected && typeof selected === 'object' && selected.id) {
+          ;[color, direction] = selected.id.split('-')
+        }
+        else {
+          const title = (selected && typeof selected === 'object') ? selected.title : selected
+          ;[color, direction] = title.split(' ')
+        }
         const splayedColor = game.actions.splay(player, color, direction)
 
         if (splayedColor) {

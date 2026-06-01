@@ -15,13 +15,15 @@ module.exports = {
       game.actions.chooseAndSplay(player, ['green'], 'up')
     },
     (game, player, { self }) => {
+      const drawTitle = 'Draw a ' + game.getEffectAge(self, 11)
       const choices = [
-        'Draw a ' + game.getEffectAge(self, 11),
-        'Safeguard a standard achievement',
+        game.actions.option({ id: 'draw', title: drawTitle }),
+        game.actions.option({ id: 'safeguard', title: 'Safeguard a standard achievement' }),
       ]
-      const choice = game.actions.choose(player, choices)[0]
+      const pick = game.actions.choose(player, choices)[0]
+      const choice = (pick && typeof pick === 'object') ? pick.id : pick
 
-      if (choice === choices[0]) {
+      if (choice === 'draw' || choice === drawTitle) {
         game.actions.draw(player, { age: game.getEffectAge(self, 11) })
       }
       else {

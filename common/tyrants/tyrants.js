@@ -1008,11 +1008,15 @@ Tyrants.prototype.doActions = function() {
 
     const name = chosenAction.title
     const arg = chosenAction.selection[0]
+    // Inner option may arrive as a structured {title, id, meta} object (UI /
+    // structured Recruit) or as a bare title string (legacy / nested-group
+    // tests like t.choose(game, 'Use Power.Deploy a Troop')).
+    const argTitle = (arg && typeof arg === 'object') ? arg.title : arg
 
     if (name === 'Play Card') {
       const card = this
         .cards.byPlayer(player, 'hand')
-        .find(c => c.name === arg)
+        .find(c => c.name === argTitle)
       this.aPlayCard(player, card)
       continue
     }
@@ -1023,17 +1027,18 @@ Tyrants.prototype.doActions = function() {
         event: 'recruit',
       })
       this.log.indent()
-      this.aRecruit(player, arg)
+      // For recruit, the title for "devoured: X" is what aRecruit expects.
+      this.aRecruit(player, argTitle)
       this.log.outdent()
       continue
     }
     else if (name === 'Use Power') {
-      if (arg === 'Deploy a Troop') {
+      if (argTitle === 'Deploy a Troop') {
         this.aDeployWithPowerAt(player)
         continue
       }
 
-      else if (arg === 'Assassinate a Troop') {
+      else if (argTitle === 'Assassinate a Troop') {
         this.log.add({
           template: '{player} power: Assassinate a Troop',
           args: { player },
@@ -1046,7 +1051,7 @@ Tyrants.prototype.doActions = function() {
         continue
       }
 
-      else if (arg === 'Return an Enemy Spy') {
+      else if (argTitle === 'Return an Enemy Spy') {
         this.log.add({
           template: '{player} power: Return an Enemy Spy',
           args: { player },
@@ -1060,24 +1065,24 @@ Tyrants.prototype.doActions = function() {
       }
 
       else {
-        throw new Error(`Unknown power action: ${arg}`)
+        throw new Error(`Unknown power action: ${argTitle}`)
       }
     }
     else if (name === 'Gem' || name.startsWith('Gem (')) {
-      if (arg === 'Acquire Gem') {
+      if (argTitle === 'Acquire Gem') {
         this.aAcquireGem(player)
         continue
       }
-      else if (arg === 'Spend Gem for Power') {
+      else if (argTitle === 'Spend Gem for Power') {
         this.aSpendGem(player, 'power')
         continue
       }
-      else if (arg === 'Spend Gem for Influence') {
+      else if (argTitle === 'Spend Gem for Influence') {
         this.aSpendGem(player, 'influence')
         continue
       }
       else {
-        throw new Error(`Unknown gem action: ${arg}`)
+        throw new Error(`Unknown gem action: ${argTitle}`)
       }
     }
     else {
@@ -1168,10 +1173,22 @@ Tyrants.prototype._generateBuyActions = function(maxCost=0, opts={}) {
     .filter(choice => opts.aspect ? choice.card.aspect === opts.aspect : true)
     .map(choice => {
       if (choice.devoured) {
-        return 'devoured: ' + choice.card.name
+        return this.actions.option({
+          id: `devoured:${choice.card.id}`,
+          title: 'devoured: ' + choice.card.name,
+          kind: 'card',
+          defId: choice.card.defId,
+          meta: { cardName: choice.card.name, devoured: true },
+        })
       }
       else {
-        return choice.card.name
+        return this.actions.option({
+          id: choice.card.id,
+          title: choice.card.name,
+          kind: 'card',
+          defId: choice.card.defId,
+          meta: { cardName: choice.card.name },
+        })
       }
     })
 
@@ -1657,8 +1674,12 @@ Tyrants.prototype.aChooseColor = function(player) {
 
 Tyrants.prototype.aChooseLocation = function(player, locations, opts={}) {
   const choices = locations
-    .map(loc => loc.name())
-    .sort()
+    .map(loc => this.actions.option({
+      id: loc.id,
+      title: loc.name(),
+      kind: 'location',
+    }))
+    .sort((a, b) => a.title.localeCompare(b.title))
 
   if (!opts.title) {
     opts.title = 'Choose a location'
@@ -1666,7 +1687,14 @@ Tyrants.prototype.aChooseLocation = function(player, locations, opts={}) {
 
   const selection = this.actions.choose(player, choices, opts)
   if (selection.length > 0) {
-    return locations.find(loc => loc.name() === selection[0])
+    const sel = selection[0]
+    // Selection may be structured {title, id} or a bare title string (from
+    // tests using '*'-prefixed names that bypass id-matching).
+    if (sel && typeof sel === 'object' && sel.id) {
+      return locations.find(loc => loc.id === sel.id)
+    }
+    const title = (sel && typeof sel === 'object') ? sel.title : sel
+    return locations.find(loc => loc.name() === title)
   }
 }
 
@@ -1674,11 +1702,30 @@ Tyrants.prototype.aChooseAndAssassinate = function(player, opts={}) {
   const choices = this.getAssassinateChoices(player, opts)
   const selection = this.actions.choose(player, choices)
   if (selection.length > 0) {
-    const [locName, ownerName] = selection[0].split(', ')
+    const { locName, ownerName } = this._parseTroopSelection(selection[0], choices)
     const loc = this.getLocationByName(locName)
     const owner = ownerName === 'neutral' ? 'neutral' : this.players.byName(ownerName)
     return this.aAssassinate(player, loc, owner)
   }
+}
+
+// Resolve a troop/spy selection back to {locName, ownerName}. Handles:
+//   - new structured options with .meta (live UI / when option is preserved),
+//   - {title, id} (TestCommon-emitted), match by id back to the original option,
+//   - bare title string (legacy stored responses), parse the "locName, ownerName" title.
+Tyrants.prototype._parseTroopSelection = function(sel, originalChoices) {
+  if (sel && typeof sel === 'object' && sel.meta) {
+    return { locName: sel.meta.locName, ownerName: sel.meta.ownerName }
+  }
+  if (sel && typeof sel === 'object' && sel.id && originalChoices) {
+    const match = originalChoices.find(c => c.id === sel.id)
+    if (match && match.meta) {
+      return { locName: match.meta.locName, ownerName: match.meta.ownerName }
+    }
+  }
+  const title = (sel && typeof sel === 'object') ? sel.title : sel
+  const [locName, ownerName] = title.split(', ')
+  return { locName, ownerName }
 }
 
 Tyrants.prototype.aChooseAndDevour = function(player, opts={}) {
@@ -1785,7 +1832,7 @@ Tyrants.prototype.aChooseAndSupplant = function(player, opts={}) {
   const choices = this._collectTargets(player, opts).troops
   const selection = this.actions.choose(player, choices)
   if (selection.length > 0) {
-    const [locName, ownerName] = selection[0].split(', ')
+    const { locName, ownerName } = this._parseTroopSelection(selection[0], choices)
     const loc = this.getLocationByName(locName)
     const owner = ownerName === 'neutral' ? 'neutral' : this.players.byName(ownerName)
     this.aSupplant(player, loc, owner)
@@ -1827,7 +1874,7 @@ Tyrants.prototype.aChooseAndMoveTroop = function(player, opts={}) {
   const choices = this._collectTargets(player, opts).troops
   const toMove = this.actions.choose(player, choices, { title: "Choose a troop to move" })[0]
   if (toMove) {
-    const [locName, ownerName] = toMove.split(', ')
+    const { locName, ownerName } = this._parseTroopSelection(toMove, choices)
     const source = this.getLocationByName(locName)
     const owner = ownerName === 'neutral' ? 'neutral' : this.players.byName(ownerName)
     const troop = source.getTroops(owner)[0]
@@ -1844,7 +1891,7 @@ Tyrants.prototype.aChooseAndMoveTroop = function(player, opts={}) {
       return
     }
 
-    util.assert(!!troop, `Invalid selection for moving a troop: ${toMove}`)
+    util.assert(!!troop, `Invalid selection for moving a troop: ${locName}, ${ownerName}`)
 
     troop.moveTo(dest)
     this.log.add({
@@ -1886,6 +1933,8 @@ Tyrants.prototype.aChooseAndPromote = function(player, cardsToChoose, opts={}) {
   const choiceObjects = cardsToChoose
     .map(c => ({
       title: c.name,
+      id: c.id,
+      kind: 'card',
       subtitles: [`${c.points} / ${c.innerPoints}`],
     }))
     .sort((a, b) => a.title.localeCompare(b.title))
@@ -1894,7 +1943,12 @@ Tyrants.prototype.aChooseAndPromote = function(player, cardsToChoose, opts={}) {
 
   const done = []
   for (const choice of choices) {
-    const card = cardsToChoose.find(c => c.name === choice && !done.includes(c))
+    // Prefer matching by stable id; fall back to name for legacy bare-string responses.
+    const cid = choice && typeof choice === 'object' ? choice.id : null
+    const cname = choice && typeof choice === 'object' ? choice.title : choice
+    const card = cid
+      ? cardsToChoose.find(c => c.id === cid && !done.includes(c))
+      : cardsToChoose.find(c => c.name === cname && !done.includes(c))
     done.push(card)
     this.aPromote(player, card)
   }
@@ -1904,8 +1958,9 @@ Tyrants.prototype.aChooseAndRecruit = function(player, maxCost, opts) {
   const choices = this._generateBuyActions(maxCost, opts)
 
   if (choices) {
-    const cardNames = this.actions.choose(player, choices.choices, { ...opts, title: 'Choose cards to recruit' })
-    for (const name of cardNames) {
+    const selections = this.actions.choose(player, choices.choices, { ...opts, title: 'Choose cards to recruit' })
+    for (const sel of selections) {
+      const name = (sel && typeof sel === 'object') ? sel.title : sel
       this.aRecruit(player, name, { noCost: true })
     }
   }
@@ -1926,21 +1981,50 @@ Tyrants.prototype._collectTargets = function(player, opts={}) {
     baseLocations = this.getPresence(player)
   }
 
-  const troops = baseLocations
+  const troopEntries = baseLocations
     .flatMap(loc => loc.getTroops().map(troop => [loc, troop]))
     .filter(([, troop]) => troop.owner !== player)
     .filter(([, troop]) => opts.whiteOnly ? !troop.owner : true)
     .filter(([, troop]) => opts.noWhite ? !!troop.owner : true)
-    .map(([loc, troop]) => `${loc.name()}, ${troop.getOwnerName()}`)
+    .map(([loc, troop]) => ({
+      locName: loc.name(),
+      locId: loc.id,
+      ownerName: troop.getOwnerName(),
+    }))
 
-  const spies = baseLocations
+  const spyEntries = baseLocations
     .flatMap(loc => loc.getSpies().map(spy => [loc, spy]))
     .filter(([, spy]) => spy.owner !== player)
-    .map(([loc, spy]) => `${loc.name()}, ${spy.getOwnerName()}`)
+    .map(([loc, spy]) => ({
+      locName: loc.name(),
+      locId: loc.id,
+      ownerName: spy.getOwnerName(),
+    }))
+
+  const toOptions = (entries, kind) => {
+    const seen = new Set()
+    const distinct = []
+    for (const e of entries) {
+      const key = `${e.locId}::${e.ownerName}`
+      if (seen.has(key)) {
+        continue
+      }
+      seen.add(key)
+      distinct.push(e)
+    }
+    return distinct
+      .map(e => this.actions.option({
+        id: `${e.locId}::${e.ownerName}`,
+        title: `${e.locName}, ${e.ownerName}`,
+        kind,
+        meta: { locName: e.locName, ownerName: e.ownerName },
+      }))
+      .sort((a, b) => a.title.localeCompare(b.title))
+  }
 
   return {
-    troops: opts.noTroops ? [] : util.array.distinct(troops).sort(),
-    spies: opts.noSpies ? [] : util.array.distinct(spies).sort(),
+    troops: opts.noTroops ? [] : toOptions(troopEntries, 'troop'),
+    spies: opts.noSpies ? [] : toOptions(spyEntries, 'spy'),
   }
 }
 
@@ -1971,7 +2055,9 @@ Tyrants.prototype.aChooseAndReturn = function(player, opts={}) {
 
   if (selection.length > 0) {
     const kind = selection[0].title
-    const [locName, ownerName] = selection[0].selection[0].split(', ')
+    const inner = selection[0].selection[0]
+    const innerChoices = kind === 'spy' ? targets.spies : targets.troops
+    const { locName, ownerName } = this._parseTroopSelection(inner, innerChoices)
     const loc = this.getLocationByName(locName)
     const owner = ownerName === 'neutral' ? 'neutral' : this.players.byName(ownerName)
 
@@ -1988,12 +2074,20 @@ Tyrants.prototype.aChooseAndReturn = function(player, opts={}) {
 }
 
 Tyrants.prototype.aChooseOne = function(player, choices, opts={}) {
-  const selection = this.actions.choose(player, choices.map(c => c.title))[0]
-  const impl = choices.find(c => c.title === selection).impl
+  const choiceOptions = choices.map((c, idx) => this.actions.option({
+    id: `choice-${idx}`,
+    title: c.title,
+    kind: 'option',
+  }))
+  const selection = this.actions.choose(player, choiceOptions)[0]
+  // Selection may be the structured option (from UI / TestCommon upgrade) or
+  // a bare title string (legacy stored responses).
+  const selTitle = (selection && typeof selection === 'object') ? selection.title : selection
+  const impl = choices.find(c => c.title === selTitle).impl
 
   this.log.add({
     template: '{player} chooses {selection}',
-    args: { player, selection }
+    args: { player, selection: selTitle }
   })
   impl(this, player, opts)
 }
@@ -2002,11 +2096,14 @@ Tyrants.prototype.aChooseToDiscard = function(player) {
   const opponents = this
     .players.opponents(player)
     .filter(p => this.cards.byPlayer(p, 'hand').length > 3)
-    .map(p => p.name)
 
-  const choice = this.actions.choose(player, opponents, { title: 'Choose an opponent to discard' })
+  const choices = opponents.map(p => this.actions.playerOption(p))
+
+  const choice = this.actions.choose(player, choices, { title: 'Choose an opponent to discard' })
   if (choice.length > 0) {
-    const opponent = this.players.byName(choice[0])
+    const sel = choice[0]
+    const name = (sel && typeof sel === 'object') ? sel.id : sel
+    const opponent = this.players.byName(name)
     this.aChooseAndDiscard(opponent, { forced: true, forcedBy: player.name })
   }
   else {
@@ -2407,14 +2504,38 @@ Tyrants.prototype.aWithFocusInsaneOutcast = function(player, fn) {
 Tyrants.prototype.getAssassinateChoices = function(player, opts={}) {
   const presence = opts.loc ? [opts.loc] : this.getPresence(player)
 
-  const troops = presence
+  const entries = presence
     .filter(loc => opts.loc ? loc === opts.loc : true)
     .flatMap(loc => loc.getTroops().map(troop => [loc, troop]))
     .filter(([, troop]) => troop.owner !== player)
     .filter(([, troop]) => opts.whiteOnly ? !troop.owner : true)
-    .map(([loc, troop]) => `${loc.name()}, ${troop.getOwnerName()}`)
-  const choices = util.array.distinct(troops).sort()
-  return choices
+    .map(([loc, troop]) => ({
+      locName: loc.name(),
+      locId: loc.id,
+      ownerName: troop.getOwnerName(),
+    }))
+
+  // De-duplicate by (locId, ownerName) — multiple identical troops at a
+  // location collapse to one choice, matching the legacy bare-string behavior.
+  const seen = new Set()
+  const distinct = []
+  for (const e of entries) {
+    const key = `${e.locId}::${e.ownerName}`
+    if (seen.has(key)) {
+      continue
+    }
+    seen.add(key)
+    distinct.push(e)
+  }
+
+  return distinct
+    .map(e => this.actions.option({
+      id: `${e.locId}::${e.ownerName}`,
+      title: `${e.locName}, ${e.ownerName}`,
+      kind: 'troop',
+      meta: { locName: e.locName, ownerName: e.ownerName },
+    }))
+    .sort((a, b) => a.title.localeCompare(b.title))
 }
 
 Tyrants.prototype.getCardById = function(cardId) {

@@ -39,12 +39,18 @@ module.exports = {
   revealEffect(game, player) {
     const deployed = game.state.conflict.deployedTroops[player.name] || 0
     if (deployed >= 3) {
-      const choices = ['Pass', 'Retreat 3 troops for +1 Influence']
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'retreat', title: 'Retreat 3 troops for +1 Influence' }),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Negotiated Withdrawal' })
-      if (choice !== 'Pass') {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
         game.state.conflict.deployedTroops[player.name] -= 3
         player.incrementCounter('troopsInSupply', 3, { silent: true })
-        const [faction] = game.actions.choose(player, constants.FACTIONS, { title: '+1 Influence with:' })
+        const fc = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+        const [fChoice] = game.actions.choose(player, fc, { title: '+1 Influence with:' })
+        const faction = typeof fChoice === 'object' ? fChoice.id : fChoice
         factions.gainInfluence(game, player, faction)
       }
     }

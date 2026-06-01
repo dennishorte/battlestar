@@ -14,11 +14,17 @@ module.exports = {
       const splayChoices = game
         .players.all()
         .flatMap(player => game.util.colors().map(color => ({ player, color })))
-        .map(x => `${x.player.name}-${x.color}`)
+        .map(x => game.actions.option({
+          id: `${x.player.name}-${x.color}`,
+          title: `${x.player.name}-${x.color}`,
+          kind: 'splay-target',
+        }))
 
       const selections = game.actions.choose(player, splayChoices)
       if (selections && selections.length > 0) {
-        const [playerName, color] = selections[0].split('-')
+        const pick = selections[0]
+        const pickId = (pick && typeof pick === 'object') ? pick.id : pick
+        const [playerName, color] = pickId.split('-')
         const other = game.players.byName(playerName)
         game.actions.splay(player, color, 'left', { owner: other })
       }

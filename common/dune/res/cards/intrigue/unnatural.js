@@ -25,9 +25,13 @@ module.exports = {
     const intrigueZone = game.zones.byId(`${player.name}.intrigue`)
     const cards = intrigueZone.cardlist()
     if (cards.length > 0) {
-      const choices = ['Pass', ...cards.map(c => game.actions.cardOption(c, 'intrigue-card'))]
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        ...cards.map(c => game.actions.cardOption(c, 'intrigue-card')),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Trash an Intrigue card?' })
-      if (choice !== 'Pass') {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
         const card = typeof choice === 'object'
           ? cards.find(c => c.id === choice.id)
           : cards.find(c => c.name === choice)

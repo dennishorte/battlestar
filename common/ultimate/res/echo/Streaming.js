@@ -10,10 +10,13 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { foreseen, self }) => {
-      const colorChoices = game.cards.tops(player).map(card => card.color)
-      const color = game.actions.choose(player, colorChoices, {
+      const colorChoices = game.cards.tops(player).map(card =>
+        game.actions.option({ id: card.color, title: card.color, kind: 'color' })
+      )
+      const colorPick = game.actions.choose(player, colorChoices, {
         title: 'Choose a color'
       })[0]
+      const color = (colorPick && typeof colorPick === 'object') ? colorPick.id : colorPick
 
       while (true) {
         const card = game.cards.top(player, color)
@@ -25,13 +28,14 @@ module.exports = {
           break
         }
 
-        const options = ['score']
+        const options = [game.actions.option({ id: 'score', title: 'score' })]
         const canAchieve = player.canClaimAchievement(card)
         if (canAchieve) {
-          options.push('achieve')
+          options.push(game.actions.option({ id: 'achieve', title: 'achieve' }))
         }
 
-        const action = game.actions.choose(player, options)[0]
+        const actionPick = game.actions.choose(player, options)[0]
+        const action = (actionPick && typeof actionPick === 'object') ? actionPick.id : actionPick
         if (action === 'score') {
           const scored = game.actions.score(player, card)
           game.log.addForeseen(foreseen, self)

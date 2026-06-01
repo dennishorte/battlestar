@@ -64,15 +64,18 @@ module.exports = {
       return
     }
 
-    const choices = ['Pass', ...s.pairs.map(p => pairLabel(p))]
+    const choices = [
+      game.actions.option({ id: 'pass', title: 'Pass' }),
+      ...s.pairs.map(p => game.actions.option({ id: `pair-${pairLabel(p)}`, title: pairLabel(p) })),
+    ]
     const selection = game.actions.choose(cardOwner, choices, {
       title: 'Workshop Assistant: Take a resource pair?',
       min: 1,
       max: 1,
     })
 
-    if (selection[0] !== 'Pass') {
-      const pairIndex = s.pairs.findIndex(p => pairLabel(p) === selection[0])
+    if (selection[0].id !== 'pass') {
+      const pairIndex = s.pairs.findIndex(p => `pair-${pairLabel(p)}` === selection[0].id)
       if (pairIndex >= 0) {
         const pair = s.pairs.splice(pairIndex, 1)[0]
         cardOwner.addResource(pair[0], 1)

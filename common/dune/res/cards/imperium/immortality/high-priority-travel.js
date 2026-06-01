@@ -37,9 +37,14 @@ module.exports = {
   agentEffect(game, player) {
     // With 2 Guild Influence: Draw a card OR Turn space into Combat space
     if (player.getInfluence('guild') >= 2) {
-      const choices = ['Draw a card', 'Turn space into a Combat space']
+      const choices = [
+        game.actions.option({ id: 'draw', title: 'Draw a card' }),
+        game.actions.option({ id: 'combat', title: 'Turn space into a Combat space' }),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'High Priority Travel' })
-      if (choice.includes('Draw')) {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      const isDraw = chId === 'draw' || (typeof choice === 'string' && choice.includes('Draw'))
+      if (isDraw) {
         deckEngine.drawCards(game, player, 1)
       }
       else if (game.state.turnTracking) {

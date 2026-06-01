@@ -16,14 +16,14 @@ module.exports = {
       kind: 'would-first',
       matches: (game, player, { owner }) => player.isOpponent(owner),
       func: (game, player, { self, owner }) => {
-        const choices = game
+        const cardChoices = game
           .players
           .opponents(owner)
           .map(opponent => game.cards.top(opponent, 'red'))
           .filter(card => Boolean(card))
-          .map(card => card.id)
+          .map(card => game.actions.cardOption(card))
 
-        if (choices.length === 0) {
+        if (cardChoices.length === 0) {
           game.log.add({
             template: 'No opponent has a top red card',
           })
@@ -33,20 +33,25 @@ module.exports = {
         const actions = [
           {
             title: 'score',
-            choices,
+            id: 'score',
+            choices: cardChoices,
             min: 0,
           },
           {
             title: 'self-execute',
-            choices,
+            id: 'self-execute',
+            choices: cardChoices,
             min: 0,
           }
         ]
 
         const selected = game.actions.choose(owner, actions)[0]
-        const card = game.cards.byId(selected.selection[0])
+        const inner = selected.selection[0]
+        const cardId = (inner && typeof inner === 'object') ? inner.id : inner
+        const card = game.cards.byId(cardId)
 
-        if (selected.title === 'score') {
+        const selectedId = selected.id ?? selected.title
+        if (selectedId === 'score') {
           game.actions.score(owner, card)
         }
         else {

@@ -22,9 +22,13 @@ module.exports = {
 
   plotEffect(game, player) {
     if (player.spice >= 1) {
-      const choices = ['Pass', 'Spend 1 Spice for +1 Troop and Combat space']
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'pay', title: 'Spend 1 Spice for +1 Troop and Combat space' }),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Adaptive Tactics' })
-      if (choice !== 'Pass') {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
         player.decrementCounter('spice', 1, { silent: true })
         const recruit = Math.min(1, player.troopsInSupply)
         if (recruit > 0) {

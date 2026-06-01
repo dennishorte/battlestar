@@ -18,11 +18,14 @@ module.exports = {
         return
       }
 
-      const choices = ['left', 'right', 'up'].filter(x => x !== red.splay)
+      const choices = ['left', 'right', 'up']
+        .filter(x => x !== red.splay)
+        .map(d => game.actions.option({ id: d, title: d, kind: 'direction' }))
 
-      const direction = game.actions.choose(player, choices, {
+      const directionPick = game.actions.choose(player, choices, {
         title: 'Choose a direction to splay red',
       })[0]
+      const direction = (directionPick && typeof directionPick === 'object') ? directionPick.id : directionPick
       game.actions.splay(player, 'red', direction)
     },
     (game, player, { self }) => {

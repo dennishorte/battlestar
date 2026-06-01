@@ -29,10 +29,13 @@ module.exports = {
     if (max > 0) {
       const choices = []
       for (let i = 0; i <= max; i++) {
-        choices.push(`Deploy ${i}`)
+        choices.push(game.actions.option({ id: `deploy-${i}`, title: `Deploy ${i}` }))
       }
       const [choice] = game.actions.choose(player, choices, { title: 'Deploy to Conflict?' })
-      const count = parseInt(choice.match(/\d+/)[0])
+      const chId = typeof choice === 'object' ? choice.id : null
+      const count = chId
+        ? parseInt(chId.replace('deploy-', ''))
+        : parseInt(String(choice).match(/\d+/)[0])
       if (count > 0) {
         player.decrementCounter('troopsInGarrison', count, { silent: true })
         require('../../../systems/deploy.js').deployToConflict(game, player, count)

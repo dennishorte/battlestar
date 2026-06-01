@@ -41,9 +41,13 @@ module.exports = {
   revealEffect(game, player, card, allRevealedCards) {
     const deployed = game.state.conflict.deployedTroops[player.name] || 0
     if (deployed >= 2) {
-      const choices = ['Pass', 'Retreat 2 troops for +4 Swords']
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'retreat', title: 'Retreat 2 troops for +4 Swords' }),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Chani' })
-      if (choice !== 'Pass') {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
         game.state.conflict.deployedTroops[player.name] -= 2
         player.incrementCounter('troopsInSupply', 2, { silent: true })
         addStrength(game, player, 'card', 'Chani, Clever Tactician', 4 * constants.SWORD_STRENGTH)

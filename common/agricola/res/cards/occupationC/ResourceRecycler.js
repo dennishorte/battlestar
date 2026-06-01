@@ -9,10 +9,10 @@ module.exports = {
   onAnyRenovate(game, actingPlayer, cardOwner, { newType }) {
     if (newType === 'stone' && actingPlayer.name !== cardOwner.name && cardOwner.roomType === 'clay' && cardOwner.food >= 2) {
       const selection = game.actions.choose(cardOwner, () => [
-        'Pay 2 food to build a free clay room',
-        'Skip',
+        game.actions.option({ id: 'build', title: 'Pay 2 food to build a free clay room' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: 'Resource Recycler', min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         cardOwner.payCost({ food: 2 })
         game.actions.buildRoom(cardOwner, { costOverride: {} })
         game.log.add({

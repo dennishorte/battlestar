@@ -24,20 +24,26 @@ module.exports = {
     if (game.state.leaderBonusTriggered[key]) {
       return
     }
-    const choices = ['Pass', 'Activate Masterstroke (+1 Influence to 2 Factions)']
+    const choices = [
+      game.actions.option({ id: 'pass', title: 'Pass' }),
+      game.actions.option({ id: 'activate', title: 'Activate Masterstroke (+1 Influence to 2 Factions)' }),
+    ]
     const [choice] = game.actions.choose(player, choices, {
       title: 'Baron Vladimir: Use Masterstroke? (once per game)',
     })
-    if (choice === 'Pass') {
+    const chId = typeof choice === 'object' ? choice.id : choice
+    if (chId === 'pass' || choice === 'Pass') {
       return
     }
     game.state.leaderBonusTriggered[key] = true
     const constants = require('../constants.js')
     const factionsModule = require('../../systems/factions.js')
     for (let i = 0; i < 2; i++) {
-      const [faction] = game.actions.choose(player, constants.FACTIONS, {
+      const factionChoices = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+      const [factionChoice] = game.actions.choose(player, factionChoices, {
         title: `Masterstroke: Choose faction ${i + 1} of 2`,
       })
+      const faction = typeof factionChoice === 'object' ? factionChoice.id : factionChoice
       factionsModule.gainInfluence(game, player, faction)
     }
     game.log.add({

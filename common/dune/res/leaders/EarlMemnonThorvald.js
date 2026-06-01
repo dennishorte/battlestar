@@ -13,9 +13,11 @@ module.exports = {
   onGainHighCouncil(game, player) {
     const constants = require('../constants.js')
     const factions = require('../../systems/factions.js')
-    const [faction] = game.actions.choose(player, constants.FACTIONS, {
+    const factionChoices = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+    const [factionChoice] = game.actions.choose(player, factionChoices, {
       title: 'Connections: Choose faction for +1 Influence',
     })
+    const faction = typeof factionChoice === 'object' ? factionChoice.id : factionChoice
     factions.gainInfluence(game, player, faction)
     game.log.add({
       template: '{player}: Connections — +1 Influence with {faction}',

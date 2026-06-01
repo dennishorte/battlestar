@@ -24,11 +24,17 @@ module.exports = {
 
   plotEffect(game, player) {
     if (player.troopsInGarrison >= 3) {
-      const choices = ['Pass', 'Lose 3 troops for +1 Influence']
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'pay', title: 'Lose 3 troops for +1 Influence' }),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Ambitious' })
-      if (choice !== 'Pass') {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
         player.decrementCounter('troopsInGarrison', 3, { silent: true })
-        const [faction] = game.actions.choose(player, constants.FACTIONS, { title: '+1 Influence with:' })
+        const fc = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+        const [fChoice] = game.actions.choose(player, fc, { title: '+1 Influence with:' })
+        const faction = typeof fChoice === 'object' ? fChoice.id : fChoice
         factions.gainInfluence(game, player, faction)
       }
     }

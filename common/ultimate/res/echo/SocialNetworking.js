@@ -13,9 +13,15 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const biscuit = game.actions.choose(player, ['{k}', '{c}', '{s}', '{l}', '{f}', '{i}'], {
+      const biscuitOptions = ['k', 'c', 's', 'l', 'f', 'i'].map(letter =>
+        game.actions.option({ id: letter, title: `{${letter}}`, kind: 'biscuit' })
+      )
+      const biscuitPick = game.actions.choose(player, biscuitOptions, {
         title: 'Choose a biscuit',
-      })[0][1]
+      })[0]
+      const biscuit = (biscuitPick && typeof biscuitPick === 'object')
+        ? biscuitPick.id
+        : biscuitPick[1]
       const toTransfer = game
         .cards
         .tops(player)

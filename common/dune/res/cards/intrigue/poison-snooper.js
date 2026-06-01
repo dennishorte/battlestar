@@ -26,9 +26,14 @@ module.exports = {
     const topCards = deckZone.cardlist()
     if (topCards.length > 0) {
       const topCard = topCards[0]
-      const choices = [`Draw ${topCard.name}`, `Trash ${topCard.name}`]
+      const choices = [
+        game.actions.option({ id: 'draw', title: `Draw ${topCard.name}` }),
+        game.actions.option({ id: 'trash', title: `Trash ${topCard.name}` }),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Poison Snooper: Top card' })
-      if (choice.includes('Draw')) {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      const isDraw = chId === 'draw' || (typeof choice === 'string' && choice.includes('Draw'))
+      if (isDraw) {
         const handZone = game.zones.byId(`${player.name}.hand`)
         topCard.moveTo(handZone)
       }

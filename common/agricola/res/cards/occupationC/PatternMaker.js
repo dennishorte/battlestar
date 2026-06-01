@@ -9,10 +9,10 @@ module.exports = {
   onAnyRenovate(game, actingPlayer, cardOwner) {
     if (actingPlayer.name !== cardOwner.name && cardOwner.wood >= 2) {
       const selection = game.actions.choose(cardOwner, () => [
-        'Exchange 2 wood for 1 grain, 1 food, 1 BP',
-        'Skip',
+        game.actions.option({ id: 'exchange', title: 'Exchange 2 wood for 1 grain, 1 food, 1 BP' }),
+        game.actions.option({ id: 'skip', title: 'Skip' }),
       ], { title: 'Pattern Maker', min: 1, max: 1 })
-      if (selection[0] !== 'Skip') {
+      if (selection[0].id !== 'skip') {
         cardOwner.payCost({ wood: 2 })
         cardOwner.addResource('grain', 1)
         cardOwner.addResource('food', 1)

@@ -17,22 +17,25 @@ module.exports = {
       func: (game, player, { self }) => {
         game.actions.junkDeck(player, 6)
 
-        const drawChoice = game.actions.choose(player, [
-          'draw one ' + game.getEffectAge(self, 7),
-          'draw two ' + game.getEffectAge(self, 8),
-          'draw three ' + game.getEffectAge(self, 9),
+        const drawPick = game.actions.choose(player, [
+          game.actions.option({ id: 'one', title: 'draw one ' + game.getEffectAge(self, 7) }),
+          game.actions.option({ id: 'two', title: 'draw two ' + game.getEffectAge(self, 8) }),
+          game.actions.option({ id: 'three', title: 'draw three ' + game.getEffectAge(self, 9) }),
         ], {
           title: 'What would you like to draw?'
         })[0]
+        const drawChoice = (drawPick && typeof drawPick === 'object')
+          ? (drawPick.id ?? drawPick.title)
+          : drawPick
 
         let count
         let age
 
-        if (drawChoice.startsWith('draw one')) {
+        if (drawChoice === 'one' || (typeof drawChoice === 'string' && drawChoice.startsWith('draw one'))) {
           count = 1
           age = game.getEffectAge(self, 7)
         }
-        else if (drawChoice.startsWith('draw two')) {
+        else if (drawChoice === 'two' || (typeof drawChoice === 'string' && drawChoice.startsWith('draw two'))) {
           count = 2
           age = game.getEffectAge(self, 8)
         }

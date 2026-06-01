@@ -44,9 +44,13 @@ module.exports = {
       c !== card && constants.getFactionAffiliations(c).includes('emperor')
     )
     if (emperorCards.length > 0) {
-      const choices = ['Pass', ...emperorCards.map(c => game.actions.cardOption(c, 'imperium-card'))]
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        ...emperorCards.map(c => game.actions.cardOption(c, 'imperium-card')),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Trash Emperor card for +3 Swords?' })
-      if (choice !== 'Pass') {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
         const card = typeof choice === 'object'
           ? emperorCards.find(c => c.id === choice.id)
           : emperorCards.find(c => c.name === choice)

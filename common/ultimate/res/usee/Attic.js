@@ -21,9 +21,13 @@ module.exports = {
         max: 1
       })
       if (card) {
-        const action = game.actions.choose(player, ['score', 'safeguard'], {
+        const pick = game.actions.choose(player, [
+          game.actions.option({ id: 'score', title: 'score' }),
+          game.actions.option({ id: 'safeguard', title: 'safeguard' }),
+        ], {
           title: 'Choose an action'
         })[0]
+        const action = (pick && typeof pick === 'object') ? pick.id : pick
         if (action === 'score') {
           game.actions.score(player, card)
         }

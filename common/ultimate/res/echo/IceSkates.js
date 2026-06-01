@@ -23,12 +23,13 @@ module.exports = {
 
       if (returned) {
         for (let i = 0; i < returned.length; i++) {
-          const choice = game.actions.choose(player, [
-            'draw and meld a {2}',
-            'draw and foreshadow a {3}',
+          const choicePick = game.actions.choose(player, [
+            game.actions.option({ id: 'meld', title: 'draw and meld a {2}' }),
+            game.actions.option({ id: 'foreshadow', title: 'draw and foreshadow a {3}' }),
           ])[0]
+          const choice = (choicePick && typeof choicePick === 'object') ? choicePick.id : choicePick
 
-          if (choice.includes('meld')) {
+          if (choice === 'meld' || (typeof choice === 'string' && choice.includes('meld'))) {
             game.actions.drawAndMeld(player, game.getEffectAge(self, 2))
           }
           else {

@@ -219,11 +219,20 @@ const cardData = [
       const troops = loc
         .getTroops()
         .filter(troop => troop.owner !== player)
-        .map(troop => troop.getOwnerName())
-      const targets = game.actions.choose(player, troops, { min: 0, max: 3, title: 'Choose up to three troops to assassinate' })
+      // Multiple troops at one location may share the same owner. Generate
+      // distinct ids per-token so the prompt has unique structured options
+      // while preserving the original by-title behavior.
+      const choices = troops.map((troop, idx) => game.actions.option({
+        id: `troop-${idx}`,
+        title: troop.getOwnerName(),
+        kind: 'troop',
+        meta: { ownerName: troop.getOwnerName() },
+      }))
+      const targets = game.actions.choose(player, choices, { min: 0, max: 3, title: 'Choose up to three troops to assassinate' })
 
       for (const target of targets) {
-        const owner = target === 'neutral' ? 'neutral' : game.players.byName(target)
+        const ownerName = (target && typeof target === 'object') ? (target.meta?.ownerName ?? target.title) : target
+        const owner = ownerName === 'neutral' ? 'neutral' : game.players.byName(ownerName)
         game.aAssassinate(player, loc, owner)
       }
 

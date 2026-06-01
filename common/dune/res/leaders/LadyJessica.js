@@ -30,11 +30,15 @@ module.exports = {
       if (space.icon === 'bene-gesserit') {
         const memories = game.state.jessicaMemories?.[player.name] || 0
         if (memories > 0) {
-          const choices = ['Pass', `Return ${memories} Memories → Draw ${memories} cards and flip Leader`]
+          const choices = [
+            game.actions.option({ id: 'pass', title: 'Pass' }),
+            game.actions.option({ id: 'activate', title: `Return ${memories} Memories → Draw ${memories} cards and flip Leader` }),
+          ]
           const [choice] = game.actions.choose(player, choices, {
             title: 'Lady Jessica: Activate Other Memories?',
           })
-          if (choice !== 'Pass') {
+          const chId = typeof choice === 'object' ? choice.id : choice
+          if (chId !== 'pass' && choice !== 'Pass') {
             player.incrementCounter('troopsInSupply', memories, { silent: true })
             game.state.jessicaMemories[player.name] = 0
             deckEngine.drawCards(game, player, memories)
@@ -50,11 +54,15 @@ module.exports = {
     else {
       if ((space.icon === 'bene-gesserit' || space.icon === 'fremen') && player.water >= 1) {
         if (!game.state.turnTracking?.jessicaUsedRepeat) {
-          const choices = ['Pass', `Pay 1 Water to repeat ${space.name} effects`]
+          const choices = [
+            game.actions.option({ id: 'pass', title: 'Pass' }),
+            game.actions.option({ id: 'repeat', title: `Pay 1 Water to repeat ${space.name} effects` }),
+          ]
           const [choice] = game.actions.choose(player, choices, {
             title: 'Reverend Mother: Repeat board space effects?',
           })
-          if (choice !== 'Pass') {
+          const chId = typeof choice === 'object' ? choice.id : choice
+          if (chId !== 'pass' && choice !== 'Pass') {
             player.decrementCounter('water', 1, { silent: true })
             game.log.add({
               template: '{player}: Reverend Mother — pays 1 Water, repeats {space} effects',
@@ -74,11 +82,15 @@ module.exports = {
     const isFlipped = game.state.jessicaFlipped?.[player.name]
     if (!isFlipped) {
       if (player.spice >= 1 && player.troopsInSupply > 0) {
-        const choices = ['Pass', 'Spice Agony (1 Spice → 1 Intrigue + 1 Memory)']
+        const choices = [
+          game.actions.option({ id: 'pass', title: 'Pass' }),
+          game.actions.option({ id: 'agony', title: 'Spice Agony (1 Spice → 1 Intrigue + 1 Memory)' }),
+        ]
         const [choice] = game.actions.choose(player, choices, {
           title: 'Lady Jessica: Activate Spice Agony?',
         })
-        if (choice !== 'Pass') {
+        const chId = typeof choice === 'object' ? choice.id : choice
+        if (chId !== 'pass' && choice !== 'Pass') {
           player.decrementCounter('spice', 1, { silent: true })
           deckEngine.drawIntrigueCard(game, player, 1)
           player.decrementCounter('troopsInSupply', 1, { silent: true })

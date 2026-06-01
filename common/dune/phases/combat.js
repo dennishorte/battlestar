@@ -74,13 +74,17 @@ function combatIntrigueRound(game, combatants) {
     )
 
     if (allCards.length > 0) {
-      const choices = ['Pass', ...combatCards.map(c => game.actions.cardOption(c, 'intrigue-card'))]
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        ...combatCards.map(c => game.actions.cardOption(c, 'intrigue-card')),
+      ]
       const [choice] = game.actions.choose(player, choices, {
         title: 'Play Combat Intrigue card or Pass',
         noAutoRespond: (game.settings.version || 1) >= 2,
       })
 
-      if (choice === 'Pass') {
+      const choiceId = typeof choice === 'object' ? choice.id : choice
+      if (choiceId === 'pass' || choice === 'Pass') {
         game.log.add({
           template: '{player} chooses not to play an intrigue card',
           args: { player },
@@ -477,10 +481,13 @@ function awardReward(game, player, rewardText, rank) {
       const constants = require('../res/constants.js')
       const factions = require('../systems/factions.js')
       for (let i = 0; i < 2; i++) {
-        const remaining = constants.FACTIONS
-        const [faction] = game.actions.choose(player, remaining, {
+        const remaining = constants.FACTIONS.map(f =>
+          game.actions.option({ id: f, title: f, kind: 'faction' })
+        )
+        const [factionChoice] = game.actions.choose(player, remaining, {
           title: `Choose faction for Influence (${i + 1} of 2)`,
         })
+        const faction = typeof factionChoice === 'object' ? factionChoice.id : factionChoice
         factions.gainInfluence(game, player, faction)
       }
     }
@@ -494,11 +501,18 @@ function awardReward(game, player, rewardText, rank) {
       }, 0)
 
       if (playerSpyCount >= effect.spyCount) {
-        const choices = [`Return ${effect.spyCount} Spies for +${effect.vpAmount} Victory point`, 'Pass']
+        const choices = [
+          game.actions.option({
+            id: 'return',
+            title: `Return ${effect.spyCount} Spies for +${effect.vpAmount} Victory point`,
+          }),
+          game.actions.option({ id: 'pass', title: 'Pass' }),
+        ]
         const [choice] = game.actions.choose(player, choices, {
           title: `Return ${effect.spyCount} Spies for +${effect.vpAmount} VP?`,
         })
-        if (choice !== 'Pass') {
+        const chId = typeof choice === 'object' ? choice.id : choice
+        if (chId !== 'pass' && choice !== 'Pass') {
           for (let i = 0; i < effect.spyCount; i++) {
             spies.recallSpy(game, player)
           }
@@ -599,20 +613,28 @@ function resolveWinnerBonuses(game, winner) {
 
   // Demand Respect: +1 Influence OR Pay 2 Spice -> +2 Influence
   if (game.state.turnTracking?.demandRespect) {
-    const choices = ['+1 Influence with any Faction']
+    const choices = [
+      game.actions.option({ id: 'plus1', title: '+1 Influence with any Faction' }),
+    ]
     if (winner.spice >= 2) {
-      choices.push('Pay 2 Spice for +2 Influence')
+      choices.push(game.actions.option({ id: 'pay2', title: 'Pay 2 Spice for +2 Influence' }))
     }
     const [choice] = game.actions.choose(winner, choices, { title: 'Demand Respect' })
-    if (choice.includes('+2')) {
+    const chId = typeof choice === 'object' ? choice.id : choice
+    const isPay2 = chId === 'pay2' || (typeof choice === 'string' && choice.includes('+2'))
+    if (isPay2) {
       winner.decrementCounter('spice', 2, { silent: true })
       for (let i = 0; i < 2; i++) {
-        const [f] = game.actions.choose(winner, constants.FACTIONS, { title: `+1 Influence (${i + 1}/2)` })
+        const factionChoices = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+        const [fChoice] = game.actions.choose(winner, factionChoices, { title: `+1 Influence (${i + 1}/2)` })
+        const f = typeof fChoice === 'object' ? fChoice.id : fChoice
         factionsMod.gainInfluence(game, winner, f)
       }
     }
     else {
-      const [f] = game.actions.choose(winner, constants.FACTIONS, { title: '+1 Influence' })
+      const factionChoices = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+      const [fChoice] = game.actions.choose(winner, factionChoices, { title: '+1 Influence' })
+      const f = typeof fChoice === 'object' ? fChoice.id : fChoice
       factionsMod.gainInfluence(game, winner, f)
     }
   }
@@ -633,7 +655,9 @@ function resolveWinnerBonuses(game, winner) {
   if (game.state.conflict.bonusFirstPlaceInfluence) {
     const bonusAmt = game.state.conflict.bonusFirstPlaceInfluence
     for (let i = 0; i < bonusAmt; i++) {
-      const [f] = game.actions.choose(winner, constants.FACTIONS, { title: 'Bonus +1 Influence (Pivotal Gambit)' })
+      const factionChoices = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+      const [fChoice] = game.actions.choose(winner, factionChoices, { title: 'Bonus +1 Influence (Pivotal Gambit)' })
+      const f = typeof fChoice === 'object' ? fChoice.id : fChoice
       factionsMod.gainInfluence(game, winner, f)
     }
   }

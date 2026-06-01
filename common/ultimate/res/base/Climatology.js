@@ -15,7 +15,9 @@ module.exports = {
         .util
         .biscuitNames()
         .filter(b => b !== 'leaf')
-      const iconName = game.actions.choose(leader, validIcons, { title: 'Choose an icon' })[0]
+        .map(name => game.actions.option({ id: name, title: name, kind: 'biscuit' }))
+      const iconPick = game.actions.choose(leader, validIcons, { title: 'Choose an icon' })[0]
+      const iconName = (iconPick && typeof iconPick === 'object') ? iconPick.id : iconPick
       const icon = game.util.biscuitNameToIcon(iconName)
 
       game.log.add({

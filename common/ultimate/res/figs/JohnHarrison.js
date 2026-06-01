@@ -22,10 +22,15 @@ module.exports = {
       func: (game, player) => {
         const returnedCard = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), { count: 1 })[0]
         if (returnedCard) {
-          const expansion = game.actions.choose(player, game.settings.expansions, {
+          const expChoices = game.settings.expansions.map(e =>
+            game.actions.option({ id: e, title: e, kind: 'expansion' })
+          )
+          const expansion = game.actions.choose(player, expChoices, {
             title: 'Choose a deck to draw from',
           })
-          game.actions.draw(player, { age: returnedCard.getAge(), exp: expansion})
+          // Preserve legacy shape: original code passed the selection array directly.
+          const exp = expansion.map(s => (s && typeof s === 'object') ? s.id : s)
+          game.actions.draw(player, { age: returnedCard.getAge(), exp })
         }
       }
     }

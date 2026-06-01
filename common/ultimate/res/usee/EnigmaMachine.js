@@ -12,21 +12,24 @@ module.exports = {
   dogmaImpl: [
     (game, player) => {
       const choices = [
-        'Safeguard all available standard achievements',
-        'Transfer all your secrets to your hand',
-        'Transfer all cards in your hand to the available achievements'
+        game.actions.option({ id: 'safeguard-achievements', title: 'Safeguard all available standard achievements' }),
+        game.actions.option({ id: 'secrets-to-hand', title: 'Transfer all your secrets to your hand' }),
+        game.actions.option({ id: 'hand-to-achievements', title: 'Transfer all cards in your hand to the available achievements' }),
       ]
-      const choice = game.actions.choose(player, choices)[0]
+      const pick = game.actions.choose(player, choices)[0]
+      const choice = (pick && typeof pick === 'object')
+        ? (pick.id ?? pick.title)
+        : pick
 
-      if (choice === choices[0]) {
+      if (choice === 'safeguard-achievements' || choice === 'Safeguard all available standard achievements') {
         const achievements = player.availableStandardAchievements()
         game.actions.safeguardMany(player, achievements)
       }
-      else if (choice === choices[1]) {
+      else if (choice === 'secrets-to-hand' || choice === 'Transfer all your secrets to your hand') {
         const secrets = game.zones.byPlayer(player, 'safe').cardlist()
         game.actions.transferMany(player, secrets, game.zones.byPlayer(player, 'hand'))
       }
-      else if (choice === choices[2]) {
+      else if (choice === 'hand-to-achievements' || choice === 'Transfer all cards in your hand to the available achievements') {
         const hand = game.zones.byPlayer(player, 'hand').cardlist()
         game.actions.transferMany(player, hand, game.zones.byId('achievements'))
       }

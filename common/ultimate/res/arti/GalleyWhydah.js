@@ -18,19 +18,22 @@ module.exports = {
           const mine = game.zones.byPlayer(leader, color).numVisibleCards()
           return yours > mine
         })
+        .map(c => game.actions.option({ id: c, title: c, kind: 'color' }))
       const colors = game.actions.choose(player, choices, { title: 'Choose a Color' })
       if (colors && colors.length > 0) {
+        const pick = colors[0]
+        const color = (pick && typeof pick === 'object') ? pick.id : pick
         // Transfer my cards to my score
         game.actions.transferMany(
           player,
-          game.cards.byPlayer(leader, colors[0]).reverse(),
+          game.cards.byPlayer(leader, color).reverse(),
           game.zones.byPlayer(leader, 'score'),
           { ordered: true }
         )
 
         // Transfer your cards to me
-        const toTransfer = game.cards.byPlayer(player, colors[0]).reverse()
-        const dest = game.zones.byPlayer(leader, colors[0])
+        const toTransfer = game.cards.byPlayer(player, color).reverse()
+        const dest = game.zones.byPlayer(leader, color)
         game.actions.transferMany(player, toTransfer, dest, { ordered: true })
       }
     }

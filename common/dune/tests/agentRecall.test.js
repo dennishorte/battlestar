@@ -51,8 +51,9 @@ describe('Agent Recall', () => {
 
     const sel = game.waiting.selectors[0]
     expect(sel.title).toBe('Choose an Agent to recall')
-    expect(sel.choices).toEqual(expect.arrayContaining(['Assembly Hall', 'Gather Support']))
-    expect(sel.choices).not.toContain('Imperial Privilege')
+    const titles = sel.choices.map(c => typeof c === 'object' ? c.title : c)
+    expect(titles).toEqual(expect.arrayContaining(['Assembly Hall', 'Gather Support']))
+    expect(titles).not.toContain('Imperial Privilege')
   })
 
   test('Imperial Privilege recall is skipped when no other agent is placed', () => {

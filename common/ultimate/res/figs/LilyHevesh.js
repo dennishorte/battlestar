@@ -26,11 +26,17 @@ module.exports = {
               const deck = game.cards.byDeck(exp, age)
               return deck && deck.length > 0
             })
-            .map(({ exp, age }) => `${exp} ${age}`)
+            .map(({ exp, age }) => game.actions.option({
+              id: `${exp}-${age}`,
+              title: `${exp} ${age}`,
+              kind: 'deck',
+              meta: { exp, age },
+            }))
 
-          const chosenDeckCode = game.actions.choose(player, decks, { title: 'Choose a deck' })[0]
-          if (chosenDeckCode) {
-            const [exp, ageString] = chosenDeckCode.split(' ')
+          const chosen = game.actions.choose(player, decks, { title: 'Choose a deck' })[0]
+          if (chosen) {
+            const chosenId = (chosen && typeof chosen === 'object') ? chosen.id : chosen
+            const [exp, ageString] = chosenId.split('-')
             const age = parseInt(ageString)
             const card = game.cards.byDeck(exp, age)[0]
             game.actions.reveal(player, card)

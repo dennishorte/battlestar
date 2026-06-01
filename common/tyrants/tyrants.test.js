@@ -93,7 +93,7 @@ describe('Tyrants', () => {
       const request1 = game.run()
       const request2 = t.choose(game, 'Use Power.Deploy a Troop')
 
-      expect(request2.selectors[0].choices).toStrictEqual([
+      expect(request2.selectors[0].choices.map(c => c.title || c)).toStrictEqual([
         "ched-halls a",
         "ched-llace a"
       ])

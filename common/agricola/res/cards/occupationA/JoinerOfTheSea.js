@@ -12,13 +12,16 @@ module.exports = {
     }
     const cardName = 'Joiner of the Sea'
     const food = actionId === 'fishing' ? 2 : 3
-    const choices = [`Give 1 wood to ${actingPlayer.name} to get ${food} food`, 'Skip']
+    const choices = [
+      game.actions.option({ id: 'give', title: `Give 1 wood to ${actingPlayer.name} to get ${food} food` }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
     const selection = game.actions.choose(cardOwner, choices, {
       title: `${cardName}: Give 1 wood to get ${food} food?`,
       min: 1,
       max: 1,
     })
-    if (selection[0] === 'Skip') {
+    if (selection[0].id === 'skip') {
       return
     }
     cardOwner.payCost({ wood: 1 })

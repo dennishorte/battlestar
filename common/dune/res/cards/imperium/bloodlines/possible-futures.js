@@ -38,11 +38,16 @@ module.exports = {
 
   agentEffect(game, player, card) {
     // +1 Influence with any Faction OR +2 Troops. If you have another BG card in play, get both.
-    if (constants.hasOtherFactionAffiliatedCardInPlay(game, player, card, 'bene-gesserit')) {
-      // Get both
-      const [faction] = game.actions.choose(player, constants.FACTIONS, {
+    const pickFaction = () => {
+      const fc = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+      const [fChoice] = game.actions.choose(player, fc, {
         title: 'Choose faction for +1 Influence',
       })
+      return typeof fChoice === 'object' ? fChoice.id : fChoice
+    }
+    if (constants.hasOtherFactionAffiliatedCardInPlay(game, player, card, 'bene-gesserit')) {
+      // Get both
+      const faction = pickFaction()
       factions.gainInfluence(game, player, faction)
       const recruit = Math.min(2, player.troopsInSupply)
       if (recruit > 0) {
@@ -52,12 +57,15 @@ module.exports = {
       }
     }
     else {
-      const choices = ['+1 Influence with any Faction', '+2 Troops']
+      const choices = [
+        game.actions.option({ id: 'influence', title: '+1 Influence with any Faction' }),
+        game.actions.option({ id: 'troops', title: '+2 Troops' }),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Choose one' })
-      if (choice.includes('Influence')) {
-        const [faction] = game.actions.choose(player, constants.FACTIONS, {
-          title: 'Choose faction for +1 Influence',
-        })
+      const chId = typeof choice === 'object' ? choice.id : choice
+      const isInfluence = chId === 'influence' || (typeof choice === 'string' && choice.includes('Influence'))
+      if (isInfluence) {
+        const faction = pickFaction()
         factions.gainInfluence(game, player, faction)
       }
       else {

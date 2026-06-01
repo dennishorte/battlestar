@@ -22,11 +22,15 @@ module.exports = {
     if (rowCards.length === 0) {
       return
     }
-    const choices = ['Pass', ...rowCards.map(c => game.actions.cardOption(c, 'imperium-card'))]
+    const choices = [
+      game.actions.option({ id: 'pass', title: 'Pass' }),
+      ...rowCards.map(c => game.actions.cardOption(c, 'imperium-card')),
+    ]
     const [choice] = game.actions.choose(player, choices, {
       title: 'Manipulate: Remove a card from the Imperium Row',
     })
-    if (choice === 'Pass') {
+    const chId = typeof choice === 'object' ? choice.id : choice
+    if (chId === 'pass' || choice === 'Pass') {
       return
     }
     const card = typeof choice === 'object'

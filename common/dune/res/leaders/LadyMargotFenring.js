@@ -49,12 +49,20 @@ module.exports = {
         const space = boardSpaces.find(s => s.id === id)
         return space ? space.name : id
       })
-      return `Post ${post.id} (${spaceNames.join(', ')})`
+      return game.actions.option({
+        id: `post-${post.id}`,
+        title: `Post ${post.id} (${spaceNames.join(', ')})`,
+        kind: 'observation-post',
+      })
     })
     const [pick] = game.actions.choose(player, labels, {
       title: 'Arrakis Informant: Place Spy on which purple post?',
     })
-    const post = purplePosts[labels.indexOf(pick)]
+    const pickId = typeof pick === 'object' ? pick.id : null
+    const pickTitle = typeof pick === 'object' ? pick.title : pick
+    const post = pickId
+      ? purplePosts.find(p => `post-${p.id}` === pickId)
+      : purplePosts[labels.findIndex(l => l.title === pickTitle)]
     spies.placeSpyAt(game, player, post.id)
   },
 }

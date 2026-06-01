@@ -12,7 +12,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const choices = ['Draw and foreshadow']
+      const choices = [game.actions.option({ id: 'foreshadow', title: 'Draw and foreshadow' })]
 
       const forecast = game
         .cards
@@ -20,12 +20,13 @@ module.exports = {
         .filter(card => card.getAge() === game.getEffectAge(self, 2))
 
       if (forecast.length > 0) {
-        choices.push('Tuck from forecast')
+        choices.push(game.actions.option({ id: 'tuck', title: 'Tuck from forecast' }))
       }
 
-      const choice = game.actions.choose(player, choices)[0]
+      const pick = game.actions.choose(player, choices)[0]
+      const choice = (pick && typeof pick === 'object') ? pick.id : pick
 
-      if (choice === 'Draw and foreshadow') {
+      if (choice === 'foreshadow' || choice === 'Draw and foreshadow') {
         game.actions.drawAndForeshadow(player, game.getEffectAge(self, 2))
       }
       else {

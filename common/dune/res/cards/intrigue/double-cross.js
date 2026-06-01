@@ -26,10 +26,14 @@ module.exports = {
         p.name !== player.name && (game.state.conflict.deployedTroops[p.name] || 0) > 0
       )
       if (opponents.length > 0) {
-        const choices = ['Pass', ...opponents.map(p => game.actions.playerOption(p))]
+        const choices = [
+          game.actions.option({ id: 'pass', title: 'Pass' }),
+          ...opponents.map(p => game.actions.playerOption(p)),
+        ]
         const [choice] = game.actions.choose(player, choices, { title: 'Pay 1 Solari — which opponent loses a troop?' })
-        if (choice !== 'Pass') {
-          const opponentId = typeof choice === 'object' ? choice.id : choice
+        const chId = typeof choice === 'object' ? choice.id : choice
+        if (chId !== 'pass' && choice !== 'Pass') {
+          const opponentId = chId
           player.decrementCounter('solari', 1, { silent: true })
           game.state.conflict.deployedTroops[opponentId]--
           const target = game.players.byName(opponentId)

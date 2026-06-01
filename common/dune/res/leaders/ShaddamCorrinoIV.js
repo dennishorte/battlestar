@@ -44,14 +44,16 @@ module.exports = {
     const factions = require('../../systems/factions.js')
 
     const choices = []
-    choices.push('+1 Solari and +1 Troop')
+    choices.push(game.actions.option({ id: 'gain', title: '+1 Solari and +1 Troop' }))
     if (player.solari >= 3) {
-      choices.push('Pay 3 Solari → +1 Influence')
+      choices.push(game.actions.option({ id: 'pay-influence', title: 'Pay 3 Solari → +1 Influence' }))
     }
     const [choice] = game.actions.choose(player, choices, {
       title: 'Emperor of the Known Universe',
     })
-    if (choice.startsWith('+1 Solari')) {
+    const chId = typeof choice === 'object' ? choice.id : choice
+    const isGain = chId === 'gain' || (typeof choice === 'string' && choice.startsWith('+1 Solari'))
+    if (isGain) {
       player.incrementCounter('solari', 1, { silent: true })
       player.incrementCounter('troopsInSupply', 1, { silent: true })
       game.log.add({
@@ -61,9 +63,11 @@ module.exports = {
     }
     else {
       player.decrementCounter('solari', 3, { silent: true })
-      const [faction] = game.actions.choose(player, constants.FACTIONS, {
+      const factionChoices = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+      const [factionChoice] = game.actions.choose(player, factionChoices, {
         title: 'Emperor: Choose faction for +1 Influence',
       })
+      const faction = typeof factionChoice === 'object' ? factionChoice.id : factionChoice
       factions.gainInfluence(game, player, faction)
       game.log.add({
         template: '{player}: Emperor — pays 3 Solari, +1 Influence with {faction} (units cannot deploy this turn)',

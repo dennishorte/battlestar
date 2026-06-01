@@ -10,7 +10,13 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const exp = game.actions.choose(player, game.getExpansionList(), { title: 'Choose a card type' })
+      const expChoices = game.getExpansionList().map(e =>
+        game.actions.option({ id: e, title: e, kind: 'expansion' })
+      )
+      const expSelection = game.actions.choose(player, expChoices, { title: 'Choose a card type' })
+      // Original code returned the full selection array; keep that shape so
+      // downstream draw({ exp }) behaves identically (legacy duck typing).
+      const exp = expSelection.map(s => (s && typeof s === 'object') ? s.id : s)
       const cards = [
         game.actions.draw(player, { age: game.getEffectAge(self, 2), exp }),
         game.actions.draw(player, { age: game.getEffectAge(self, 2), exp }),

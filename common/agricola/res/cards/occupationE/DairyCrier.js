@@ -9,12 +9,15 @@ module.exports = {
   onPlay(game, player) {
     // Each player (including the card owner) chooses 2 sheep or 2 food
     for (const p of game.players.all()) {
-      const selection = game.actions.choose(p, ['2 sheep', '2 food'], {
+      const selection = game.actions.choose(p, [
+        game.actions.option({ id: 'sheep', title: '2 sheep' }),
+        game.actions.option({ id: 'food', title: '2 food' }),
+      ], {
         title: 'Dairy Crier: Choose 2 sheep or 2 food',
         min: 1,
         max: 1,
       })
-      if (selection[0] === '2 sheep') {
+      if (selection[0].id === 'sheep') {
         game.actions.handleAnimalPlacement(p, { sheep: 2 })
         game.log.add({
           template: '{player} gets 2 sheep from {card}',

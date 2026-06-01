@@ -46,17 +46,19 @@ module.exports = {
       }
 
       const options = [
-        'Junk and safeguard',
-        'Score secrets',
+        game.actions.option({ id: 'junk-safeguard', title: 'Junk and safeguard' }),
+        game.actions.option({ id: 'score-secrets', title: 'Score secrets' }),
       ]
 
-      const choice = game.actions.choose(player, options, { title: 'Choose an action' })[0]
+      const pick = game.actions.choose(player, options, { title: 'Choose an action' })[0]
+      const choice = (pick && typeof pick === 'object') ? pick.id : pick
+      const choiceTitle = (pick && typeof pick === 'object') ? pick.title : pick
       game.log.add({
         template: '{player} will {action}',
-        args: { player, action: choice.toLowerCase() }
+        args: { player, action: (choiceTitle || '').toLowerCase() }
       })
 
-      if (choice === 'Junk and safeguard') {
+      if (choice === 'junk-safeguard' || choice === 'Junk and safeguard') {
         const cards = game.actions.chooseCards(player, junkOptions, {
           count: 2,
           guard: (cards) => cards.every(c => c.getAge() === cards[0].getAge())
@@ -64,7 +66,7 @@ module.exports = {
         game.actions.junkMany(player, cards)
         game.actions.safeguardMany(player, cards)
       }
-      else if (choice === 'Score secrets') {
+      else if (choice === 'score-secrets' || choice === 'Score secrets') {
         const cards = game.actions.chooseCards(player, scoreOptions, {
           count: 2,
           guard: (cards) => cards.every(c => c.getAge() === cards[0].getAge())

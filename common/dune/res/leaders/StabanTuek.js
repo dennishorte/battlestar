@@ -61,12 +61,20 @@ module.exports = {
         const space = boardSpaces.find(s => s.id === id)
         return space ? space.name : id
       })
-      return `Post ${post.id} (${spaceNames.join(', ')})`
+      return game.actions.option({
+        id: `post-${post.id}`,
+        title: `Post ${post.id} (${spaceNames.join(', ')})`,
+        kind: 'observation-post',
+      })
     })
     const [pick] = game.actions.choose(player, labels, {
       title: 'Unseen Network: Place Spy on which post?',
     })
-    const post = availablePosts[labels.indexOf(pick)]
+    const pickId = typeof pick === 'object' ? pick.id : null
+    const pickTitle = typeof pick === 'object' ? pick.title : pick
+    const post = pickId
+      ? availablePosts.find(p => `post-${p.id}` === pickId)
+      : availablePosts[labels.findIndex(l => l.title === pickTitle)]
     spies.placeSpyAt(game, player, post.id)
 
     // The post's connected spaces determine bonus eligibility.
@@ -77,10 +85,14 @@ module.exports = {
 
     game.log.indent()
     if (icons.has('green') && player.spice >= 1) {
-      const [tradeChoice] = game.actions.choose(player, ['Pass', 'Trade 1 Spice → 3 Solari'], {
+      const [tradeChoice] = game.actions.choose(player, [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'trade', title: 'Trade 1 Spice → 3 Solari' }),
+      ], {
         title: 'Unseen Network: Green bonus',
       })
-      if (tradeChoice !== 'Pass') {
+      const tradeId = typeof tradeChoice === 'object' ? tradeChoice.id : tradeChoice
+      if (tradeId !== 'pass' && tradeChoice !== 'Pass') {
         player.decrementCounter('spice', 1, { silent: true })
         player.incrementCounter('solari', 3, { silent: true })
         game.log.add({
@@ -91,10 +103,14 @@ module.exports = {
     }
     const hasFactionSpace = connectedSpaces.some(s => constants.FACTIONS.includes(s.icon))
     if (hasFactionSpace && player.solari >= 2) {
-      const [tradeChoice] = game.actions.choose(player, ['Pass', 'Trade 2 Solari → 1 Intrigue'], {
+      const [tradeChoice] = game.actions.choose(player, [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'trade', title: 'Trade 2 Solari → 1 Intrigue' }),
+      ], {
         title: 'Unseen Network: Faction bonus',
       })
-      if (tradeChoice !== 'Pass') {
+      const tradeId = typeof tradeChoice === 'object' ? tradeChoice.id : tradeChoice
+      if (tradeId !== 'pass' && tradeChoice !== 'Pass') {
         const deckEngine = require('../../systems/deckEngine.js')
         player.decrementCounter('solari', 2, { silent: true })
         deckEngine.drawIntrigueCard(game, player, 1)

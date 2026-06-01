@@ -59,10 +59,14 @@ function roundStartPhase(game) {
       const controllerName = game.state.controlMarkers[location]
       const controller = game.players.byName(controllerName)
       if (controller && controller.troopsInSupply > 0) {
-        const [choice] = game.actions.choose(controller, ['Deploy', 'Decline'], {
+        const [choice] = game.actions.choose(controller, [
+          game.actions.option({ id: 'deploy', title: 'Deploy' }),
+          game.actions.option({ id: 'decline', title: 'Decline' }),
+        ], {
           title: `Defensive bonus (${location}): deploy 1 troop from supply to Conflict?`,
         })
-        if (choice === 'Deploy') {
+        const chId = typeof choice === 'object' ? choice.id : choice
+        if (chId === 'deploy' || choice === 'Deploy') {
           controller.decrementCounter('troopsInSupply', 1, { silent: true })
           deploy.deployToConflict(game, controller, 1)
           game.log.add({

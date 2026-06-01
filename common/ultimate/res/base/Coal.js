@@ -20,12 +20,15 @@ module.exports = {
     },
 
     (game, player) => {
-      const validColors = game.cards.tops(player).map(c => c.color)
-      const color = game.actions.choose(player, validColors, {
+      const validColors = game.cards.tops(player).map(c =>
+        game.actions.option({ id: c.color, title: c.color, kind: 'color' })
+      )
+      const colorPick = game.actions.choose(player, validColors, {
         title: 'Choose a color to score, twice',
         min: 0,
         max: 1,
       })[0]
+      const color = (colorPick && typeof colorPick === 'object') ? colorPick.id : colorPick
 
       if (color) {
         for (let i = 0; i < 2; i++) {

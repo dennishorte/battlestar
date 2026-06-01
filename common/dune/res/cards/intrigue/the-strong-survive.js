@@ -21,13 +21,15 @@ module.exports = {
   combatText: "+3 Troops OR Retreat one of your troops → Trash a card",
 
   combatEffect(game, player, card, { resolveEffect }) {
-    const choices = ['+3 Troops']
+    const choices = [game.actions.option({ id: 'troops', title: '+3 Troops' })]
     const deployed = game.state.conflict.deployedTroops[player.name] || 0
     if (deployed > 0) {
-      choices.push('Retreat 1 troop -> Trash a card')
+      choices.push(game.actions.option({ id: 'retreat', title: 'Retreat 1 troop -> Trash a card' }))
     }
     const [choice] = game.actions.choose(player, choices, { title: 'The Strong Survive' })
-    if (choice.includes('+3')) {
+    const chId = typeof choice === 'object' ? choice.id : choice
+    const isTroops = chId === 'troops' || (typeof choice === 'string' && choice.includes('+3'))
+    if (isTroops) {
       const recruit = Math.min(3, player.troopsInSupply)
       if (recruit > 0) {
         player.decrementCounter('troopsInSupply', recruit, { silent: true })

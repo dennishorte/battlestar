@@ -38,9 +38,13 @@ module.exports = {
   agentEffect(game, player) {
     // Pay 1 Spice -> +1 BG Influence and Draw 1 card
     if (player.spice >= 1) {
-      const choices = ['Pass', 'Pay 1 Spice for +1 BG Influence and Draw 1 card']
+      const choices = [
+        game.actions.option({ id: 'pass', title: 'Pass' }),
+        game.actions.option({ id: 'pay', title: 'Pay 1 Spice for +1 BG Influence and Draw 1 card' }),
+      ]
       const [choice] = game.actions.choose(player, choices, { title: 'Esmar Tuek' })
-      if (choice !== 'Pass') {
+      const chId = typeof choice === 'object' ? choice.id : choice
+      if (chId !== 'pass' && choice !== 'Pass') {
         player.decrementCounter('spice', 1, { silent: true })
         factions.gainInfluence(game, player, 'bene-gesserit')
         deckEngine.drawCards(game, player, 1)

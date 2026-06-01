@@ -26,7 +26,9 @@ module.exports = {
     if (player.solari >= 5) {
       player.decrementCounter('solari', 5, { silent: true })
       for (let i = 0; i < 2; i++) {
-        const [faction] = game.actions.choose(player, constants.FACTIONS, { title: `+1 Influence (${i + 1}/2)` })
+        const fc = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+        const [fChoice] = game.actions.choose(player, fc, { title: `+1 Influence (${i + 1}/2)` })
+        const faction = typeof fChoice === 'object' ? fChoice.id : fChoice
         factions.gainInfluence(game, player, faction)
       }
     }

@@ -52,9 +52,13 @@ module.exports = {
     if (spiesOnBoard < 2) {
       return
     }
-    const choices = ['Pass', 'Recall 2 Spies for +3 Persuasion']
+    const choices = [
+      game.actions.option({ id: 'pass', title: 'Pass' }),
+      game.actions.option({ id: 'recall', title: 'Recall 2 Spies for +3 Persuasion' }),
+    ]
     const [choice] = game.actions.choose(player, choices, { title: 'In High Places' })
-    if (choice === 'Pass') {
+    const chId = typeof choice === 'object' ? choice.id : choice
+    if (chId === 'pass' || choice === 'Pass') {
       return
     }
     spyMod.recallSpy(game, player)

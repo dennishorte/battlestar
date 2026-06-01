@@ -10,13 +10,18 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const selection = game.actions.choose(player, ['Draw and Score and Return', 'Draw a Higher Card'])[0]
+      const pick = game.actions.choose(player, [
+        game.actions.option({ id: 'draw-score-return', title: 'Draw and Score and Return' }),
+        game.actions.option({ id: 'draw-higher', title: 'Draw a Higher Card' }),
+      ])[0]
+      const selection = (pick && typeof pick === 'object') ? pick.id : pick
+      const selectionTitle = (pick && typeof pick === 'object') ? pick.title : pick
       game.log.add({
         template: '{player} chooses {option}',
-        args: { player, option: selection }
+        args: { player, option: selectionTitle }
       })
 
-      if (selection === 'Draw and Score and Return') {
+      if (selection === 'draw-score-return' || selection === 'Draw and Score and Return') {
         game.actions.drawAndScore(player, game.getEffectAge(self, 8))
         game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'))
       }
