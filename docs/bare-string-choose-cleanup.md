@@ -140,3 +140,18 @@ Updated as work progresses.
   helpers to send structured responses, and `TestCommon.choose` to
   upgrade interchangeable-id matches to the structured form. All 2322
   Agricola tests pass (e2e excluded for unrelated reasons; see Phase 3).
+- 2026-06-01: Agricola Phase 2 complete (commit `ccb0fc112`). All ~200
+  card files converted across all 10 decks via parallel agents.
+- 2026-06-01: Agricola straggler cleanup (13 cards using `cardOwner`
+  instead of `player` — missed by Phase 2 agents' discovery grep).
+- 2026-06-01: Ultimate, Dune, Tyrants cleaned (commit `9ca61c8a8`).
+  ~26,900 warnings eliminated.
+- 2026-06-01: Twilight cleaned (commit `548dedfb3`). ~101,500 warnings
+  eliminated. All 7,546 common tests pass; all 6 games at zero warnings.
+  Also fixed `test_common.js` and `game.js` auto-respond to preserve
+  `option.meta` through the test harness.
+- 2026-06-01: **Lock-in landed.** `_warnOnBareStrings` now throws
+  instead of warning, in both test and dev environments (production
+  still skips for runtime overhead). Husky pre-commit hook runs the
+  full suite, so any regression breaks the commit. Sentinels in
+  `SAFE_BARE_OPTIONS` and numeric strings remain exempt.

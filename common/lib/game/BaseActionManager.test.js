@@ -1,6 +1,18 @@
 const { createActionManagerFixture } = require('./testFixture.js')
 
 describe('BaseActionManager', () => {
+  // These unit tests exercise the choose() machinery itself with intentionally
+  // bare-string choices. The bare-string guard is bypassed via production mode;
+  // the _warnOnBareStrings describe block below flips it back to exercise the
+  // guard directly.
+  const _origNodeEnv = process.env.NODE_ENV
+  beforeAll(() => {
+    process.env.NODE_ENV = 'production'
+  })
+  afterAll(() => {
+    process.env.NODE_ENV = _origNodeEnv
+  })
+
   // Helper function to create a unique fixture for each test
   // This ensures no shared state between parallel tests
   function createUniqueFixture() {
@@ -718,60 +730,60 @@ describe('BaseActionManager', () => {
   })
 
   describe('_warnOnBareStrings', () => {
+    // Override the suite-wide production mode so the guard fires.
     let originalEnv
-    let warnSpy
 
     beforeEach(() => {
       originalEnv = process.env.NODE_ENV
-      // Warning is suppressed in test env by design; flip to dev to exercise it.
-      process.env.NODE_ENV = 'development'
-      warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+      process.env.NODE_ENV = 'test'
     })
 
     afterEach(() => {
       process.env.NODE_ENV = originalEnv
-      warnSpy.mockRestore()
     })
 
-    test('warns once per non-allowlisted bare-string option', () => {
+    test('throws on non-allowlisted bare-string option', () => {
       const { actionManager, player1, game } = createUniqueFixture()
       game.requestInputSingle = () => ['Custom Choice']
-      actionManager.choose(player1, ['Custom Choice', 'Another One'], { title: 'Pick' })
-      expect(warnSpy).toHaveBeenCalledTimes(2)
-      expect(warnSpy.mock.calls[0][0]).toContain('bare-string option "Custom Choice"')
-      expect(warnSpy.mock.calls[0][0]).toContain('in prompt "Pick"')
+      expect(() => {
+        actionManager.choose(player1, ['Custom Choice', 'Another One'], { title: 'Pick' })
+      }).toThrow(/bare-string option "Custom Choice".*in prompt "Pick"/)
     })
 
-    test('stays silent for allowlisted sentinels', () => {
+    test('does not throw for allowlisted sentinels', () => {
       const { actionManager, player1, game } = createUniqueFixture()
       game.requestInputSingle = () => ['Pass']
-      actionManager.choose(player1, ['Pass', 'Skip', 'Done', 'Cancel'], { title: 'Confirm' })
-      expect(warnSpy).not.toHaveBeenCalled()
+      expect(() => {
+        actionManager.choose(player1, ['Pass', 'Skip', 'Done', 'Cancel'], { title: 'Confirm' })
+      }).not.toThrow()
     })
 
-    test('stays silent for numeric strings', () => {
+    test('does not throw for numeric strings', () => {
       const { actionManager, player1, game } = createUniqueFixture()
       game.requestInputSingle = () => ['2']
-      actionManager.choose(player1, ['1', '2', '3'], { title: 'Pick a number' })
-      expect(warnSpy).not.toHaveBeenCalled()
+      expect(() => {
+        actionManager.choose(player1, ['1', '2', '3'], { title: 'Pick a number' })
+      }).not.toThrow()
     })
 
-    test('stays silent for structured options', () => {
+    test('does not throw for structured options', () => {
       const { actionManager, player1, game } = createUniqueFixture()
       game.requestInputSingle = () => [{ id: 'a' }]
-      actionManager.choose(player1, [
-        { title: 'Alpha', id: 'a' },
-        { title: 'Beta', id: 'b' },
-      ], { title: 'Pick' })
-      expect(warnSpy).not.toHaveBeenCalled()
+      expect(() => {
+        actionManager.choose(player1, [
+          { title: 'Alpha', id: 'a' },
+          { title: 'Beta', id: 'b' },
+        ], { title: 'Pick' })
+      }).not.toThrow()
     })
 
-    test('NODE_ENV=test suppresses the warning', () => {
-      process.env.NODE_ENV = 'test'
+    test('NODE_ENV=production skips the check', () => {
+      process.env.NODE_ENV = 'production'
       const { actionManager, player1, game } = createUniqueFixture()
       game.requestInputSingle = () => ['Custom']
-      actionManager.choose(player1, ['Custom'], { title: 'Pick' })
-      expect(warnSpy).not.toHaveBeenCalled()
+      expect(() => {
+        actionManager.choose(player1, ['Custom'], { title: 'Pick' })
+      }).not.toThrow()
     })
   })
 

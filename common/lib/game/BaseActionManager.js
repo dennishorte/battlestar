@@ -103,15 +103,18 @@ class BaseActionManager {
     return true
   }
 
-  // Dev-time warning when a non-structured option slips through. Skips test
-  // runs to avoid spamming Jest output; surfaces during dev play through the
-  // browser console. Numeric strings are also exempt (1, 2, … are common as
-  // count-style selections).
+  // Hard error when a non-structured choice slips through. Skipped in
+  // production to avoid runtime overhead, but enforced everywhere else
+  // (dev and test) so regressions surface immediately.
+  //
+  // Allowed exemptions:
+  //   - non-string values (objects, numbers)
+  //   - sentinels in SAFE_BARE_OPTIONS (Pass/Skip/Done/Yes/No/...)
+  //   - numeric strings ('1', '2', ...) — common as count-style selections
+  //
+  // To add a new option, emit `{title, id, kind?}` via actions.option(...).
   _warnOnBareStrings(choices, title) {
     if (process.env.NODE_ENV === 'production') {
-      return
-    }
-    if (process.env.NODE_ENV === 'test') {
       return
     }
     for (const c of choices) {
@@ -124,8 +127,10 @@ class BaseActionManager {
       if (/^\d+$/.test(c)) {
         continue
       }
-      console.warn(
-        `[choose] bare-string option "${c}" in prompt "${title ?? 'Choose'}" — emit {title, id, kind?} instead`
+      throw new Error(
+        `[choose] bare-string option "${c}" in prompt "${title ?? 'Choose'}" — `
+        + `emit actions.option({id, title, kind?}) instead. `
+        + `(Sentinels Pass/Skip/Done/Yes/No are exempt; otherwise wrap.)`
       )
     }
   }
