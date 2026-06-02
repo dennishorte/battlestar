@@ -24,11 +24,14 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Deploy Mech', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'deploy', title: 'Deploy Mech' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Reclaimer: Deploy 1 mech on ${planetId}?`,
     })
 
-    if (choice[0] === 'Pass') {
+    if (choice[0]?.id !== 'deploy') {
       return
     }
 
@@ -79,39 +82,43 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(winnuPlayer, ['Exhaust Rickar Rickani', 'Pass'], {
+    const choice = ctx.actions.choose(winnuPlayer, [
+      ctx.actions.option({ id: 'exhaust', title: 'Exhaust Rickar Rickani' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Rickar Rickani: Exhaust to repair or move a mech?',
     })
 
-    if (choice[0] !== 'Exhaust Rickar Rickani') {
+    if (choice[0]?.id !== 'exhaust') {
       return
     }
 
     winnuPlayer.exhaustAgent()
 
     // Choose: repair or move
-    const options = ['Repair Mech']
+    const options = [ctx.actions.option({ id: 'repair', title: 'Repair Mech' })]
     const adjacentSystems = ctx.game._getAdjacentSystems(systemId)
     if (adjacentSystems.length > 0) {
-      options.push('Move Mech')
+      options.push(ctx.actions.option({ id: 'move', title: 'Move Mech' }))
     }
 
     const actionChoice = ctx.actions.choose(winnuPlayer, options, {
       title: 'Rickar Rickani: Repair or move?',
     })
 
-    if (actionChoice[0] === 'Repair Mech') {
+    if (actionChoice[0]?.id === 'repair') {
       // Choose which mech to repair (remove sustained damage)
       let target
       if (winnerMechs.length === 1) {
         target = winnerMechs[0]
       }
       else {
-        const mechChoices = winnerMechs.map(m => m.planetId)
+        const mechChoices = winnerMechs.map(m => ctx.actions.planetOption(m.planetId))
         const mechSel = ctx.actions.choose(winnuPlayer, mechChoices, {
           title: 'Rickar Rickani: Repair mech on which planet?',
         })
-        target = winnerMechs.find(m => m.planetId === mechSel[0])
+        const selectedPlanetId = typeof mechSel[0] === 'object' ? mechSel[0].id : mechSel[0]
+        target = winnerMechs.find(m => m.planetId === selectedPlanetId)
       }
 
       if (target.unit.sustainedDamage) {
@@ -130,11 +137,12 @@ module.exports = {
         target = winnerMechs[0]
       }
       else {
-        const mechChoices = winnerMechs.map(m => m.planetId)
+        const mechChoices = winnerMechs.map(m => ctx.actions.planetOption(m.planetId))
         const mechSel = ctx.actions.choose(winnuPlayer, mechChoices, {
           title: 'Rickar Rickani: Move mech from which planet?',
         })
-        target = winnerMechs.find(m => m.planetId === mechSel[0])
+        const selectedPlanetId = typeof mechSel[0] === 'object' ? mechSel[0].id : mechSel[0]
+        target = winnerMechs.find(m => m.planetId === selectedPlanetId)
       }
 
       // Choose destination planet in adjacent system
@@ -165,11 +173,12 @@ module.exports = {
         dest = destPlanets[0]
       }
       else {
-        const destChoices = destPlanets.map(d => d.planetId)
+        const destChoices = destPlanets.map(d => ctx.actions.planetOption(d.planetId))
         const destSel = ctx.actions.choose(winnuPlayer, destChoices, {
           title: 'Rickar Rickani: Move mech to which planet?',
         })
-        dest = destPlanets.find(d => d.planetId === destSel[0])
+        const selectedPlanetId = typeof destSel[0] === 'object' ? destSel[0].id : destSel[0]
+        dest = destPlanets.find(d => d.planetId === selectedPlanetId)
       }
 
       // Remove mech from current planet
@@ -407,15 +416,16 @@ module.exports = {
 
     const choices = scorable.map(id => {
       const obj = res.getObjective(id)
-      return `${id}: ${obj.name}`
+      return ctx.actions.option({ id, title: `${id}: ${obj.name}`, kind: 'objective' })
     })
 
     const selection = ctx.actions.choose(player, choices, {
       title: 'Mathis Mathinus: Score 1 public objective',
     })
 
-    const chosen = selection[0]
-    ctx.game._recordObjectiveScore(player, chosen)
+    const pick = selection[0]
+    const chosenId = typeof pick === 'object' ? pick.id : pick
+    ctx.game._recordObjectiveScore(player, chosenId)
 
     player.purgeHero()
     ctx.log.add({

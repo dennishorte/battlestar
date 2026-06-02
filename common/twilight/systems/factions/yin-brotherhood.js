@@ -54,14 +54,22 @@ module.exports = {
     const chosenPlanets = []
     const available = [...eligiblePlanets]
     for (let i = 0; i < 3 && available.length > 0; i++) {
-      const choices = [...available.map(p => p.planetId), 'Done']
+      const choices = [
+        ...available.map(p => ctx.actions.planetOption(p.planetId)),
+        ctx.actions.option({ id: 'done', title: 'Done' }),
+      ]
       const selection = ctx.actions.choose(player, choices, {
         title: `Quantum Dissemination: Choose planet ${i + 1}/3 (or Done)`,
       })
-      if (selection[0] === 'Done') {
+      const pick = selection[0]
+      const pickId = (pick && typeof pick === 'object') ? pick.id : pick
+      if (pickId === 'done' || pickId === 'Done') {
         break
       }
-      const target = available.find(p => p.planetId === selection[0])
+      const target = available.find(p => p.planetId === pickId)
+      if (!target) {
+        break
+      }
       chosenPlanets.push(target)
       // Remove from available so can't choose same planet twice
       const idx = available.indexOf(target)
@@ -123,26 +131,28 @@ module.exports = {
       return
     }
 
-    const choices = ['Pass']
+    const choices = [ctx.actions.option({ id: 'pass', title: 'Pass' })]
     const cruisers = sacrificeShips.filter(u => u.type === 'cruiser')
     const destroyers = sacrificeShips.filter(u => u.type === 'destroyer')
     if (destroyers.length > 0) {
-      choices.unshift('Destroy destroyer')
+      choices.unshift(ctx.actions.option({ id: 'destroyer', title: 'Destroy destroyer' }))
     }
     if (cruisers.length > 0) {
-      choices.unshift('Destroy cruiser')
+      choices.unshift(ctx.actions.option({ id: 'cruiser', title: 'Destroy cruiser' }))
     }
 
     const selection = ctx.actions.choose(player, choices, {
       title: 'Impulse Core: Destroy a ship to produce 1 hit against a non-fighter?',
     })
 
-    if (selection[0] === 'Pass') {
+    const ipick = selection[0]
+    const ipickId = (ipick && typeof ipick === 'object') ? ipick.id : ipick
+    if (ipickId === 'pass' || ipickId === 'Pass') {
       return
     }
 
     // Destroy the sacrificed ship
-    const shipType = selection[0] === 'Destroy cruiser' ? 'cruiser' : 'destroyer'
+    const shipType = ipickId === 'cruiser' || ipickId === 'Destroy cruiser' ? 'cruiser' : 'destroyer'
     const shipIdx = systemUnits.space.findIndex(u => u.owner === player.name && u.type === shipType)
     if (shipIdx !== -1) {
       systemUnits.space.splice(shipIdx, 1)
@@ -186,25 +196,27 @@ module.exports = {
       return
     }
 
-    const choices = ['Pass']
+    const choices = [ctx.actions.option({ id: 'pass', title: 'Pass' })]
     const cruisers = sacrificeShips.filter(u => u.type === 'cruiser')
     const destroyers = sacrificeShips.filter(u => u.type === 'destroyer')
     if (destroyers.length > 0) {
-      choices.unshift('Destroy destroyer')
+      choices.unshift(ctx.actions.option({ id: 'destroyer', title: 'Destroy destroyer' }))
     }
     if (cruisers.length > 0) {
-      choices.unshift('Destroy cruiser')
+      choices.unshift(ctx.actions.option({ id: 'cruiser', title: 'Destroy cruiser' }))
     }
 
     const selection = ctx.actions.choose(player, choices, {
       title: 'Devotion: Destroy a ship to produce 1 hit?',
     })
 
-    if (selection[0] === 'Pass') {
+    const dpick = selection[0]
+    const dpickId = (dpick && typeof dpick === 'object') ? dpick.id : dpick
+    if (dpickId === 'pass' || dpickId === 'Pass') {
       return
     }
 
-    const shipType = selection[0] === 'Destroy cruiser' ? 'cruiser' : 'destroyer'
+    const shipType = dpickId === 'cruiser' || dpickId === 'Destroy cruiser' ? 'cruiser' : 'destroyer'
     const shipIdx = systemUnits.space.findIndex(u => u.owner === player.name && u.type === shipType)
     if (shipIdx !== -1) {
       systemUnits.space.splice(shipIdx, 1)
@@ -247,11 +259,16 @@ module.exports = {
     const isShip = unitDef.category === 'ship'
     const unitLabel = isShip ? '2 fighters' : '2 infantry'
 
-    const choice = ctx.actions.choose(player, ['Exhaust Brother Milor', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'exhaust', title: 'Exhaust Brother Milor' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Brother Milor: Exhaust to place ${unitLabel} for ${unit.owner}?`,
     })
 
-    if (choice[0] === 'Pass') {
+    const mpick = choice[0]
+    const mpickId = (mpick && typeof mpick === 'object') ? mpick.id : mpick
+    if (mpickId === 'pass' || mpickId === 'Pass') {
       return
     }
 
@@ -371,11 +388,13 @@ module.exports = {
       target = planetsWithInfantry[0]
     }
     else {
-      const planetChoices = planetsWithInfantry.map(p => p.planetId)
+      const planetChoices = planetsWithInfantry.map(p => ctx.actions.planetOption(p.planetId))
       const selection = ctx.actions.choose(player, planetChoices, {
         title: 'Brother Omar: Return 1 infantry from which planet?',
       })
-      target = planetsWithInfantry.find(p => p.planetId === selection[0])
+      const opick = selection[0]
+      const opickId = (opick && typeof opick === 'object') ? opick.id : opick
+      target = planetsWithInfantry.find(p => p.planetId === opickId)
     }
 
     // Remove 1 infantry from the planet
@@ -403,11 +422,16 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Indoctrinate', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'indoctrinate', title: 'Indoctrinate' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Indoctrination: Spend 2 influence to replace 1 enemy infantry?',
     })
 
-    if (choice[0] === 'Pass') {
+    const cpick = choice[0]
+    const cpickId = (cpick && typeof cpick === 'object') ? cpick.id : cpick
+    if (cpickId === 'pass' || cpickId === 'Pass') {
       return
     }
 
@@ -415,10 +439,15 @@ module.exports = {
     // influence to replace with mech instead of infantry
     let deployMech = false
     if (player.getTotalInfluence() >= 3 && ctx.game._hasReinforcementsAvailable(player.name, 'mech')) {
-      const mechChoice = ctx.actions.choose(player, ['Deploy Mech (+1 influence)', 'Infantry only'], {
+      const mechChoice = ctx.actions.choose(player, [
+        ctx.actions.option({ id: 'mech', title: 'Deploy Mech (+1 influence)' }),
+        ctx.actions.option({ id: 'infantry', title: 'Infantry only' }),
+      ], {
         title: "Moyin's Ashes: Spend 1 extra influence to deploy mech instead of infantry?",
       })
-      if (mechChoice[0] === 'Deploy Mech (+1 influence)') {
+      const mpick = mechChoice[0]
+      const mpickId = (mpick && typeof mpick === 'object') ? mpick.id : mpick
+      if (mpickId === 'mech' || mpickId === 'Deploy Mech (+1 influence)') {
         deployMech = true
       }
     }
@@ -523,9 +552,10 @@ module.exports = {
     }
 
     const choices = [
-      'Pass',
-      ...placements.map(p =>
-        p.type === 'planet' ? `Planet: ${p.planetId}` : `Space: system ${p.systemId}`
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+      ...placements.map(p => p.type === 'planet'
+        ? ctx.actions.option({ id: `planet:${p.planetId}`, title: `Planet: ${p.planetId}` })
+        : ctx.actions.option({ id: `space:${p.systemId}`, title: `Space: system ${p.systemId}` })
       ),
     ]
 
@@ -536,12 +566,19 @@ module.exports = {
         title: `Yin Spinner: Place infantry (${remaining} remaining)`,
       })
 
-      if (selection[0] === 'Pass') {
+      const spick = selection[0]
+      const spickId = (spick && typeof spick === 'object') ? spick.id : spick
+      if (spickId === 'pass' || spickId === 'Pass') {
         break
       }
 
-      const idx = choices.indexOf(selection[0])
-      const target = placements[idx - 1]  // -1 for 'Pass' offset
+      const target = placements.find(p =>
+        (p.type === 'planet' && spickId === `planet:${p.planetId}`) ||
+        (p.type === 'space' && spickId === `space:${p.systemId}`)
+      )
+      if (!target) {
+        break
+      }
 
       if (target.type === 'planet') {
         const sysId = ctx.game._findSystemForPlanet(target.planetId)

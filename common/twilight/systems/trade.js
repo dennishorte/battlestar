@@ -72,13 +72,16 @@ module.exports = function(Twilight) {
         break
       }
 
-      const choices = ['Skip Transaction', ...neighbors]
+      const choices = [
+        this.actions.option({ id: 'skip-transaction', title: 'Skip Transaction' }),
+        ...neighbors.map(n => this.actions.option({ id: n, title: n, kind: 'player' })),
+      ]
       const selection = this.actions.choose(player, choices, {
         title: 'Propose Transaction?',
       })
 
-      const targetName = selection[0]
-      if (targetName === 'Skip Transaction') {
+      const targetName = selection[0].id
+      if (targetName === 'skip-transaction') {
         break
       }
 
@@ -107,7 +110,10 @@ module.exports = function(Twilight) {
     this.state.transactionsThisTurn[targetName] = true
 
     // Active player proposes: what they offer
-    const offerSelection = this.actions.choose(player, ['Done', 'Cancel'], {
+    const offerSelection = this.actions.choose(player, [
+      this.actions.option({ id: 'done', title: 'Done' }),
+      this.actions.option({ id: 'cancel', title: 'Cancel' }),
+    ], {
       title: `Offer to ${targetName}`,
       allowsAction: 'trade-offer',
       context: { targetName },
@@ -207,7 +213,11 @@ module.exports = function(Twilight) {
 
     // Target player accepts, rejects, or counter-offers (loop so cancel returns here)
     while (true) {
-      const response = this.actions.choose(target, ['Accept', 'Reject', 'Counter'], {
+      const response = this.actions.choose(target, [
+        this.actions.option({ id: 'accept', title: 'Accept' }),
+        this.actions.option({ id: 'reject', title: 'Reject' }),
+        this.actions.option({ id: 'counter', title: 'Counter' }),
+      ], {
         title: `Transaction from ${player.name}`,
         context: {
           offering,
@@ -215,7 +225,7 @@ module.exports = function(Twilight) {
         },
       })
 
-      if (response[0] === 'Accept') {
+      if (response[0].id === 'accept') {
         // Validate the target can afford what's requested
         if ((requesting.tradeGoods || 0) > target.tradeGoods) {
           return
@@ -232,8 +242,11 @@ module.exports = function(Twilight) {
         return
       }
 
-      if (response[0] === 'Counter') {
-        const counterSelection = this.actions.choose(target, ['Done', 'Cancel'], {
+      if (response[0].id === 'counter') {
+        const counterSelection = this.actions.choose(target, [
+          this.actions.option({ id: 'done', title: 'Done' }),
+          this.actions.option({ id: 'cancel', title: 'Cancel' }),
+        ], {
           title: `Counter-offer to ${player.name}`,
           allowsAction: 'trade-offer',
           context: {
@@ -262,7 +275,10 @@ module.exports = function(Twilight) {
         this._logOffer(targetName, player.name, counterOffering, counterRequesting, true)
 
         // Original player accepts or rejects the counter
-        const counterResponse = this.actions.choose(player, ['Accept', 'Reject'], {
+        const counterResponse = this.actions.choose(player, [
+          this.actions.option({ id: 'accept', title: 'Accept' }),
+          this.actions.option({ id: 'reject', title: 'Reject' }),
+        ], {
           title: `Counter-offer from ${targetName}`,
           context: {
             offering: counterOffering,
@@ -270,7 +286,7 @@ module.exports = function(Twilight) {
           },
         })
 
-        if (counterResponse[0] !== 'Accept') {
+        if (counterResponse[0].id !== 'accept') {
           this.log.add({
             template: '{player} rejects counter-offer',
             args: { player },
@@ -441,10 +457,10 @@ module.exports = function(Twilight) {
           destPlanet = otherPlanets[0]
         }
         else {
-          const sel = this.actions.choose(giver, otherPlanets, {
+          const sel = this.actions.choose(giver, otherPlanets.map(p => this.actions.planetOption(p)), {
             title: 'Pride of Kenara: Move units to which planet?',
           })
-          destPlanet = sel[0]
+          destPlanet = sel[0].id
         }
 
         const destSystem = this._findSystemForPlanet(destPlanet)
@@ -496,13 +512,16 @@ module.exports = function(Twilight) {
         break
       }
 
-      const choices = ['Skip Transaction', ...partners]
+      const choices = [
+        this.actions.option({ id: 'skip-transaction', title: 'Skip Transaction' }),
+        ...partners.map(n => this.actions.option({ id: n, title: n, kind: 'player' })),
+      ]
       const selection = this.actions.choose(player, choices, {
         title: 'Propose Transaction? (Agenda)',
       })
 
-      const targetName = selection[0]
-      if (targetName === 'Skip Transaction') {
+      const targetName = selection[0].id
+      if (targetName === 'skip-transaction') {
         break
       }
 

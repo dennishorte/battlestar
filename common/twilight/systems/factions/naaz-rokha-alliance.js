@@ -33,11 +33,16 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Explore', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'explore', title: 'Explore' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Dart and Tai: Explore ${planetId}?`,
     })
 
-    if (choice[0] === 'Explore') {
+    const dtPick = choice[0]
+    const dtPickId = (dtPick && typeof dtPick === 'object') ? dtPick.id : dtPick
+    if (dtPickId === 'explore' || dtPick === 'Explore') {
       ctx.game._explorePlanet(planetId, player.name)
 
       ctx.log.add({
@@ -64,11 +69,16 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Exhaust Supercharge', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'exhaust', title: 'Exhaust Supercharge' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Supercharge: Exhaust to apply +1 to all combat rolls this round?',
     })
 
-    if (choice[0] === 'Exhaust Supercharge') {
+    const scPick = choice[0]
+    const scPickId = (scPick && typeof scPick === 'object') ? scPick.id : scPick
+    if (scPickId === 'exhaust' || scPick === 'Exhaust Supercharge') {
       ctx.game._exhaustTech(player, 'supercharge')
       if (!ctx.state._superchargeActive) {
         ctx.state._superchargeActive = {}
@@ -150,11 +160,16 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Deploy Eidolon', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'deploy', title: 'Deploy Eidolon' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Eidolon DEPLOY: Place 1 mech on a planet you control?',
     })
 
-    if (choice[0] !== 'Deploy Eidolon') {
+    const edPick = choice[0]
+    const edPickId = (edPick && typeof edPick === 'object') ? edPick.id : edPick
+    if (edPickId !== 'deploy' && edPick !== 'Deploy Eidolon') {
       return
     }
 
@@ -163,10 +178,15 @@ module.exports = {
       targetPlanet = controlledPlanets[0]
     }
     else {
-      const sel = ctx.actions.choose(player, controlledPlanets, {
-        title: 'Eidolon DEPLOY: Choose planet',
-      })
-      targetPlanet = sel[0]
+      const sel = ctx.actions.choose(
+        player,
+        controlledPlanets.map(p => ctx.actions.option({ id: p, title: p, kind: 'planet' })),
+        {
+          title: 'Eidolon DEPLOY: Choose planet',
+        },
+      )
+      const edpPick = sel[0]
+      targetPlanet = (edpPick && typeof edpPick === 'object') ? edpPick.id : edpPick
     }
 
     const systemId = ctx.game._findSystemForPlanet(targetPlanet)
@@ -193,25 +213,33 @@ module.exports = {
     const hasPair = Object.values(counts).some(c => c >= 2)
 
     if (hasPair) {
-      choices.push('Purge 2 fragments for relic')
+      choices.push(ctx.actions.option({ id: 'relic', title: 'Purge 2 fragments for relic' }))
     }
-    choices.push('Purge 1 fragment for command token')
+    choices.push(ctx.actions.option({ id: 'token', title: 'Purge 1 fragment for command token' }))
 
     const selection = ctx.actions.choose(player, choices, {
       title: 'Fabrication: Choose action',
     })
 
-    if (selection[0] === 'Purge 1 fragment for command token') {
+    const fabPick = selection[0]
+    const fabPickId = (fabPick && typeof fabPick === 'object') ? fabPick.id : fabPick
+    const fabPickTitle = (fabPick && typeof fabPick === 'object') ? fabPick.title : fabPick
+    if (fabPickId === 'token' || fabPickTitle === 'Purge 1 fragment for command token') {
       const uniqueTypes = [...new Set(fragments)]
       let fragType
       if (uniqueTypes.length === 1) {
         fragType = uniqueTypes[0]
       }
       else {
-        const fragSelection = ctx.actions.choose(player, uniqueTypes, {
-          title: 'Choose fragment type to purge',
-        })
-        fragType = fragSelection[0]
+        const fragSelection = ctx.actions.choose(
+          player,
+          uniqueTypes.map(t => ctx.actions.option({ id: t, title: t, kind: 'fragment' })),
+          {
+            title: 'Choose fragment type to purge',
+          },
+        )
+        const ftPick = fragSelection[0]
+        fragType = (ftPick && typeof ftPick === 'object') ? ftPick.id : ftPick
       }
 
       const idx = player.relicFragments.indexOf(fragType)
@@ -226,17 +254,22 @@ module.exports = {
         args: { player, type: fragType },
       })
     }
-    else if (selection[0] === 'Purge 2 fragments for relic') {
+    else if (fabPickId === 'relic' || fabPickTitle === 'Purge 2 fragments for relic') {
       const pairTypes = Object.entries(counts).filter(([, c]) => c >= 2).map(([t]) => t)
       let fragType
       if (pairTypes.length === 1) {
         fragType = pairTypes[0]
       }
       else {
-        const fragSelection = ctx.actions.choose(player, pairTypes, {
-          title: 'Choose fragment type to purge (2)',
-        })
-        fragType = fragSelection[0]
+        const fragSelection = ctx.actions.choose(
+          player,
+          pairTypes.map(t => ctx.actions.option({ id: t, title: t, kind: 'fragment' })),
+          {
+            title: 'Choose fragment type to purge (2)',
+          },
+        )
+        const ft2Pick = fragSelection[0]
+        fragType = (ft2Pick && typeof ft2Pick === 'object') ? ft2Pick.id : ft2Pick
       }
 
       for (let i = 0; i < 2; i++) {
@@ -295,16 +328,22 @@ module.exports = {
 
     let secondariesUsed = 0
     while (secondariesUsed < 2 && eligibleCards.length > 0) {
-      const choices = [...eligibleCards, 'Done']
+      const choices = [
+        ...eligibleCards.map(id => ctx.actions.option({ id, title: id, kind: 'strategy-card' })),
+        ctx.actions.option({ id: 'done', title: 'Done' }),
+      ]
       const selection = ctx.actions.choose(player, choices, {
         title: `Perfect Synthesis: Choose strategy card secondary (${secondariesUsed}/2)`,
       })
 
-      if (selection[0] === 'Done') {
+      const psPick = selection[0]
+      const psPickId = (psPick && typeof psPick === 'object') ? psPick.id : psPick
+      const psPickTitle = (psPick && typeof psPick === 'object') ? psPick.title : psPick
+      if (psPickId === 'done' || psPickTitle === 'Done') {
         break
       }
 
-      const cardId = selection[0]
+      const cardId = psPickId
 
       // Perform the secondary — tokens come from reinforcements instead of strategy pool
       // We simulate "free" secondary by not spending strategy token
@@ -352,11 +391,16 @@ module.exports = {
         continue
       }
 
-      const choice = ctx.actions.choose(player, ['Flip Absolute Synergy', 'Pass'], {
+      const choice = ctx.actions.choose(player, [
+        ctx.actions.option({ id: 'flip', title: 'Flip Absolute Synergy' }),
+        ctx.actions.option({ id: 'pass', title: 'Pass' }),
+      ], {
         title: `Absolute Synergy: Return 3 mechs in system ${systemId} to flip this card?`,
       })
 
-      if (choice[0] !== 'Flip Absolute Synergy') {
+      const asPick = choice[0]
+      const asPickId = (asPick && typeof asPick === 'object') ? asPick.id : asPick
+      if (asPickId !== 'flip' && asPick !== 'Flip Absolute Synergy') {
         return
       }
 
@@ -426,11 +470,16 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(naazRokhaPlayer, ['Exhaust Garv and Gunn', 'Pass'], {
+    const choice = ctx.actions.choose(naazRokhaPlayer, [
+      ctx.actions.option({ id: 'exhaust', title: 'Exhaust Garv and Gunn' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Garv and Gunn: Exhaust to let ${activatingPlayer.name} explore a planet in the active system?`,
     })
 
-    if (choice[0] !== 'Exhaust Garv and Gunn') {
+    const ggPick = choice[0]
+    const ggPickId = (ggPick && typeof ggPick === 'object') ? ggPick.id : ggPick
+    if (ggPickId !== 'exhaust' && ggPick !== 'Exhaust Garv and Gunn') {
       return
     }
 
@@ -442,10 +491,15 @@ module.exports = {
       targetPlanet = explorablePlanets[0]
     }
     else {
-      const planetChoice = ctx.actions.choose(naazRokhaPlayer, explorablePlanets, {
-        title: 'Garv and Gunn: Choose planet to explore',
-      })
-      targetPlanet = planetChoice[0]
+      const planetChoice = ctx.actions.choose(
+        naazRokhaPlayer,
+        explorablePlanets.map(p => ctx.actions.option({ id: p, title: p, kind: 'planet' })),
+        {
+          title: 'Garv and Gunn: Choose planet to explore',
+        },
+      )
+      const ggpPick = planetChoice[0]
+      targetPlanet = (ggpPick && typeof ggpPick === 'object') ? ggpPick.id : ggpPick
     }
 
     ctx.game._explorePlanet(targetPlanet, activatingPlayer.name)

@@ -41,13 +41,22 @@ class TwilightActionManager extends BaseActionManager {
 
       let augmentedChoices = choices
       if (shouldInject) {
-        augmentedChoices = [...choices, 'Propose Transaction']
+        augmentedChoices = [
+          ...choices,
+          this.option({ id: 'propose-transaction', title: 'Propose Transaction' }),
+        ]
       }
 
       const result = super.choose(player, augmentedChoices, opts)
 
       // If the player selected a regular choice, return it
-      if (!result || result.action || result[0] !== 'Propose Transaction') {
+      if (!result || result.action) {
+        return result
+      }
+      const picked = result[0]
+      const pickedTitle = typeof picked === 'object' ? picked.title : picked
+      const pickedId = typeof picked === 'object' ? picked.id : null
+      if (pickedTitle !== 'Propose Transaction' && pickedId !== 'propose-transaction') {
         return result
       }
 
@@ -100,12 +109,16 @@ class TwilightActionManager extends BaseActionManager {
     const partnerOptions = partners.map(name => ({
       title: name, id: name, kind: 'player',
     }))
-    const selection = super.choose(player, ['Cancel', ...partnerOptions], {
+    const selection = super.choose(player, [
+      this.option({ id: 'cancel', title: 'Cancel' }),
+      ...partnerOptions,
+    ], {
       title: 'Propose Transaction',
     })
 
     const pick = selection[0]
-    if (pick === 'Cancel') {
+    const pickId = typeof pick === 'object' ? pick.id : pick
+    if (pickId === 'cancel' || pick === 'Cancel') {
       return
     }
     const targetName = typeof pick === 'object' ? pick.id : pick

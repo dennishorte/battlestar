@@ -90,11 +90,16 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Exhaust Jae Mir Kan', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'exhaust', title: 'Exhaust Jae Mir Kan' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Jae Mir Kan: Exhaust to use ${activePlayerName}'s command token instead of your own?`,
     })
 
-    if (choice[0] !== 'Exhaust Jae Mir Kan') {
+    const choicePick = choice[0]
+    const choicePickId = (choicePick && typeof choicePick === 'object') ? choicePick.id : choicePick
+    if (choicePickId !== 'exhaust' && choicePick !== 'Exhaust Jae Mir Kan') {
       return
     }
 
@@ -109,10 +114,15 @@ module.exports = {
       targetSystem = activePlayerSystems[0]
     }
     else {
-      const sysChoice = ctx.actions.choose(player, activePlayerSystems, {
-        title: `Jae Mir Kan: Choose system to remove ${activePlayerName}'s command token`,
-      })
-      targetSystem = sysChoice[0]
+      const sysChoice = ctx.actions.choose(
+        player,
+        activePlayerSystems.map(sid => ctx.actions.option({ id: sid, title: sid, kind: 'system' })),
+        {
+          title: `Jae Mir Kan: Choose system to remove ${activePlayerName}'s command token`,
+        },
+      )
+      const sysPick = sysChoice[0]
+      targetSystem = (sysPick && typeof sysPick === 'object') ? sysPick.id : sysPick
     }
 
     // Remove the active player's command token from the system
@@ -196,28 +206,43 @@ module.exports = {
       return null
     }
 
-    const choice = ctx.actions.choose(mahactPlayer, ['Use Genetic Recombination', 'Pass'], {
+    const choice = ctx.actions.choose(mahactPlayer, [
+      ctx.actions.option({ id: 'use', title: 'Use Genetic Recombination' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Genetic Recombination: Force ${votingPlayer.name}'s vote or fleet token loss?`,
     })
 
-    if (choice[0] !== 'Use Genetic Recombination') {
+    const genChoicePick = choice[0]
+    const genChoiceId = (genChoicePick && typeof genChoicePick === 'object') ? genChoicePick.id : genChoicePick
+    if (genChoiceId !== 'use' && genChoicePick !== 'Use Genetic Recombination') {
       return null
     }
 
     ctx.game._exhaustTech(mahactPlayer, 'genetic-recombination')
 
     // Choose which outcome to force
-    const outcomeChoice = ctx.actions.choose(mahactPlayer, outcomes, {
-      title: `Genetic Recombination: Choose outcome ${votingPlayer.name} must vote for`,
-    })
-    const forcedOutcome = outcomeChoice[0]
+    const outcomeChoice = ctx.actions.choose(
+      mahactPlayer,
+      outcomes.map(o => ctx.actions.option({ id: o, title: o, kind: 'outcome' })),
+      {
+        title: `Genetic Recombination: Choose outcome ${votingPlayer.name} must vote for`,
+      },
+    )
+    const outcomePick = outcomeChoice[0]
+    const forcedOutcome = (outcomePick && typeof outcomePick === 'object') ? outcomePick.id : outcomePick
 
     // The voting player must comply or lose a fleet token
-    const voteOrLose = ctx.actions.choose(votingPlayer, [`Vote ${forcedOutcome}`, 'Remove Fleet Token'], {
+    const voteOrLose = ctx.actions.choose(votingPlayer, [
+      ctx.actions.option({ id: 'vote', title: `Vote ${forcedOutcome}` }),
+      ctx.actions.option({ id: 'remove', title: 'Remove Fleet Token' }),
+    ], {
       title: `Genetic Recombination: Vote "${forcedOutcome}" or remove 1 fleet supply token`,
     })
 
-    if (voteOrLose[0] === 'Remove Fleet Token') {
+    const voteOrLosePick = voteOrLose[0]
+    const voteOrLoseId = (voteOrLosePick && typeof voteOrLosePick === 'object') ? voteOrLosePick.id : voteOrLosePick
+    if (voteOrLoseId === 'remove' || voteOrLosePick === 'Remove Fleet Token') {
       if (votingPlayer.commandTokens.fleet > 0) {
         votingPlayer.commandTokens.fleet -= 1
       }
@@ -257,28 +282,31 @@ module.exports = {
     // Offer commodity gain or conversion
     const choices = []
     if (player.commodities < player.maxCommodities) {
-      choices.push('Gain 1 commodity')
+      choices.push(ctx.actions.option({ id: 'gain', title: 'Gain 1 commodity' }))
     }
     if (player.commodities > 0) {
-      choices.push('Convert 1 commodity to trade good')
+      choices.push(ctx.actions.option({ id: 'convert', title: 'Convert 1 commodity to trade good' }))
     }
     if (choices.length === 0) {
       return
     }
-    choices.push('Decline')
+    choices.push(ctx.actions.option({ id: 'decline', title: 'Decline' }))
 
     const choice = ctx.actions.choose(player, choices, {
       title: 'Crimson Legionnaire destroyed: gain commodity or convert?',
     })
 
-    if (choice[0] === 'Gain 1 commodity') {
+    const clPick = choice[0]
+    const clPickId = (clPick && typeof clPick === 'object') ? clPick.id : clPick
+    const clPickTitle = (clPick && typeof clPick === 'object') ? clPick.title : clPick
+    if (clPickId === 'gain' || clPickTitle === 'Gain 1 commodity') {
       player.commodities = Math.min(player.commodities + 1, player.maxCommodities)
       ctx.log.add({
         template: 'Crimson Legionnaire: {player} gains 1 commodity',
         args: { player: player.name },
       })
     }
-    else if (choice[0] === 'Convert 1 commodity to trade good') {
+    else if (clPickId === 'convert' || clPickTitle === 'Convert 1 commodity to trade good') {
       player.commodities -= 1
       player.addTradeGoods(1)
       ctx.log.add({
@@ -437,18 +465,28 @@ module.exports = {
 
     // Choose source system
     const sourceSystemIds = [...new Set(candidateSystems.map(c => c.fromSystem))]
-    const sourceChoice = ctx.actions.choose(player, sourceSystemIds, {
-      title: 'Benediction: Choose system to move units FROM',
-    })
-    const fromSystem = sourceChoice[0]
+    const sourceChoice = ctx.actions.choose(
+      player,
+      sourceSystemIds.map(sid => ctx.actions.option({ id: sid, title: sid, kind: 'system' })),
+      {
+        title: 'Benediction: Choose system to move units FROM',
+      },
+    )
+    const sourcePick = sourceChoice[0]
+    const fromSystem = (sourcePick && typeof sourcePick === 'object') ? sourcePick.id : sourcePick
 
     // Choose target system (adjacent with different player's ships)
     const validTargets = candidateSystems.filter(c => c.fromSystem === fromSystem)
     const targetSystemIds = [...new Set(validTargets.map(c => c.toSystem))]
-    const targetChoice = ctx.actions.choose(player, targetSystemIds, {
-      title: 'Benediction: Choose adjacent system to move units TO',
-    })
-    const toSystem = targetChoice[0]
+    const targetChoice = ctx.actions.choose(
+      player,
+      targetSystemIds.map(sid => ctx.actions.option({ id: sid, title: sid, kind: 'system' })),
+      {
+        title: 'Benediction: Choose adjacent system to move units TO',
+      },
+    )
+    const targetPick = targetChoice[0]
+    const toSystem = (targetPick && typeof targetPick === 'object') ? targetPick.id : targetPick
 
     // Move ALL units from source space area to target space area
     const sourceUnits = ctx.state.units[fromSystem]
@@ -500,10 +538,15 @@ module.exports = {
       return
     }
 
-    const techChoice = ctx.actions.choose(player, techIds, {
-      title: 'Vaults of the Heir: Choose technology to purge',
-    })
-    const purgedTechId = techChoice[0]
+    const techChoice = ctx.actions.choose(
+      player,
+      techIds.map(tid => ctx.actions.option({ id: tid, title: tid, kind: 'tech' })),
+      {
+        title: 'Vaults of the Heir: Choose technology to purge',
+      },
+    )
+    const techPick = techChoice[0]
+    const purgedTechId = (techPick && typeof techPick === 'object') ? techPick.id : techPick
 
     // Remove the technology from the player
     const techZone = ctx.game.zones.byPlayer(player, 'technologies')
@@ -562,11 +605,16 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Spend Token (End Turn)', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'spend', title: 'Spend Token (End Turn)' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Starlancer: Spend ${activatingPlayer.name}'s token to end their turn?`,
     })
 
-    if (choice[0] !== 'Spend Token (End Turn)') {
+    const slPick = choice[0]
+    const slPickId = (slPick && typeof slPick === 'object') ? slPick.id : slPick
+    if (slPickId !== 'spend' && slPick !== 'Spend Token (End Turn)') {
       return
     }
 

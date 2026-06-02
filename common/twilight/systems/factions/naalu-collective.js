@@ -12,11 +12,14 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ["Exhaust Z'eu", 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'exhaust', title: "Exhaust Z'eu" }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Z'eu: Exhaust to return ${placerName}'s command token from system ${systemId}?`,
     })
 
-    if (choice[0] !== "Exhaust Z'eu") {
+    if (choice[0]?.id !== 'exhaust') {
       return
     }
 
@@ -122,16 +125,21 @@ module.exports = {
       return
     }
 
-    const choices = ['Pass', ...adjacentSystems]
+    const choices = [
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+      ...adjacentSystems.map(s => ctx.actions.systemOption(s)),
+    ]
     const selection = ctx.actions.choose(player, choices, {
       title: 'Foresight: Place token and move 1 ship to adjacent system?',
     })
 
-    if (selection[0] === 'Pass') {
+    const pick = selection[0]
+    const pickId = typeof pick === 'object' ? pick.id : pick
+    if (pickId === 'pass' || pick === 'Pass') {
       return
     }
 
-    const targetSystem = selection[0]
+    const targetSystem = pickId
 
     player.commandTokens.strategy -= 1
 
@@ -194,11 +202,11 @@ module.exports = {
     }
 
     // Choose a neighbor to peek at
-    const neighborNames = neighbors.map(p => p.name)
-    const neighborSel = ctx.actions.choose(player, neighborNames, {
+    const neighborOpts = neighbors.map(p => ctx.actions.playerOption(p))
+    const neighborSel = ctx.actions.choose(player, neighborOpts, {
       title: "M'aban: Choose a neighbor to view promissory notes",
     })
-    const targetName = neighborSel[0]
+    const targetName = typeof neighborSel[0] === 'object' ? neighborSel[0].id : neighborSel[0]
     const target = ctx.players.byName(targetName)
 
     if (target) {
@@ -218,11 +226,16 @@ module.exports = {
     // Peek at agenda deck (top or bottom)
     const agendaDeck = ctx.state.agendaDeck || []
     if (agendaDeck.length > 0) {
-      const peekChoice = ctx.actions.choose(player, ['Top', 'Bottom', 'Pass'], {
+      const peekChoice = ctx.actions.choose(player, [
+        ctx.actions.option({ id: 'top', title: 'Top' }),
+        ctx.actions.option({ id: 'bottom', title: 'Bottom' }),
+        ctx.actions.option({ id: 'pass', title: 'Pass' }),
+      ], {
         title: "M'aban: Peek at top or bottom of agenda deck?",
       })
 
-      if (peekChoice[0] === 'Top') {
+      const peekId = typeof peekChoice[0] === 'object' ? peekChoice[0].id : peekChoice[0]
+      if (peekId === 'top') {
         const topCard = agendaDeck[0]
         ctx.log.add({
           template: "M'aban: {player} peeks at top of agenda deck: {card}",
@@ -231,7 +244,7 @@ module.exports = {
           redacted: "M'aban: {player} peeks at top of agenda deck",
         })
       }
-      else if (peekChoice[0] === 'Bottom') {
+      else if (peekId === 'bottom') {
         const bottomCard = agendaDeck[agendaDeck.length - 1]
         ctx.log.add({
           template: "M'aban: {player} peeks at bottom of agenda deck: {card}",
@@ -260,11 +273,23 @@ module.exports = {
           noteToGive = notes[0]
         }
         else {
-          const noteChoices = notes.map(n => `${n.id}:${n.owner}`)
+          const noteChoices = notes.map(n => ctx.actions.option({
+            id: `${n.id}__${n.owner}`,
+            title: `${n.id}:${n.owner}`,
+            kind: 'promissory-note',
+          }))
           const noteSel = ctx.actions.choose(otherPlayer, noteChoices, {
             title: `The Oracle: Give ${player.name} 1 promissory note`,
           })
-          const [noteId, noteOwner] = noteSel[0].split(':')
+          const pick = noteSel[0]
+          const pickId = typeof pick === 'object' ? pick.id : pick
+          let noteId, noteOwner
+          if (pickId.includes('__')) {
+            [noteId, noteOwner] = pickId.split('__')
+          }
+          else {
+            [noteId, noteOwner] = pickId.split(':')
+          }
           noteToGive = otherPlayer.removePromissoryNote(noteId, noteOwner)
         }
 
@@ -323,16 +348,21 @@ module.exports = {
       return
     }
 
-    const choices = ['Pass', ...controlledPlanets]
+    const choices = [
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+      ...controlledPlanets.map(p => ctx.actions.planetOption(p)),
+    ]
     const sel = ctx.actions.choose(player, choices, {
       title: `Iconoclast: ${gainingPlayer.name} gained a relic. Place 1 mech?`,
     })
 
-    if (sel[0] === 'Pass') {
+    const pick = sel[0]
+    const pickId = typeof pick === 'object' ? pick.id : pick
+    if (pickId === 'pass' || pick === 'Pass') {
       return
     }
 
-    const targetPlanet = sel[0]
+    const targetPlanet = pickId
     const systemId = ctx.game._findSystemForPlanet(targetPlanet)
     if (systemId) {
       ctx.game._addUnit(systemId, targetPlanet, 'mech', player.name)

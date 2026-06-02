@@ -118,13 +118,14 @@ module.exports = function(Twilight) {
     // Faction selection: each player picks from available factions
       const available = [...allFactions]
       for (const player of this.players.all()) {
-        const choices = available.map(id => res.getFaction(id).name)
+        const choices = available.map(id =>
+          this.actions.option({ id, title: res.getFaction(id).name, kind: 'faction' })
+        )
         const selection = this.actions.choose(player, choices, {
           title: 'Choose your faction',
           noAutoRespond: true,
         })
-        const chosenName = selection[0]
-        const chosenId = available.find(id => res.getFaction(id).name === chosenName)
+        const chosenId = selection[0].id
         available.splice(available.indexOf(chosenId), 1)
         assignedFactions.push(chosenId)
       }
@@ -209,11 +210,14 @@ module.exports = function(Twilight) {
       chosenId = this.settings.keleresSubFaction
     }
     else {
-      const selection = this.actions.choose(player, subFactionChoices, {
+      const subChoices = subFactionChoices.map(id => this.actions.option({
+        id, title: id, kind: 'faction',
+      }))
+      const selection = this.actions.choose(player, subChoices, {
         title: 'The Tribunii: Choose a sub-faction to inherit their home system',
         noAutoRespond: true,
       })
-      chosenId = selection[0]
+      chosenId = selection[0].id
     }
 
     player.keleresSubFaction = chosenId
@@ -475,19 +479,19 @@ module.exports = function(Twilight) {
       const player = this.players.byName(currentName)
       const categories = miltyDraft.getAvailableCategories(draftState, currentName)
 
-      // Build choices: "category: option" for each available combo
+      // Build choices: structured options carrying category+value in meta
       const choices = []
-      const choiceMap = []
       for (const category of categories) {
         const options = miltyDraft.getAvailableOptions(draftState, category)
         for (const option of options) {
           let label
+          let id
           if (category === 'slice') {
             const slice = slices[option]
-            const tileNames = slice.tiles.map(id => {
-              const tile = res.getSystemTile(id)
+            const tileNames = slice.tiles.map(tid => {
+              const tile = res.getSystemTile(tid)
               if (!tile || tile.planets.length === 0) {
-                return `Tile ${id}`
+                return `Tile ${tid}`
               }
               return tile.planets.map(pid => {
                 const planet = res.getPlanet(pid)
@@ -495,16 +499,20 @@ module.exports = function(Twilight) {
               }).join('/')
             }).join(', ')
             label = `Slice ${option + 1}: ${tileNames} (${slice.stats.optimalTotal} optimal)`
+            id = `slice:${option}`
           }
           else if (category === 'faction') {
             const faction = res.getFaction(option)
             label = `Faction: ${faction ? faction.name : option}`
+            id = `faction:${option}`
           }
           else {
             label = `Speaker Position: ${option}`
+            id = `position:${option}`
           }
-          choices.push(label)
-          choiceMap.push({ category, value: option })
+          choices.push(this.actions.option({
+            id, title: label, kind: 'milty-pick', meta: { category, value: option },
+          }))
         }
       }
 
@@ -512,9 +520,9 @@ module.exports = function(Twilight) {
         title: 'Milty Draft',
         noAutoRespond: true,
       })
-      const chosenLabel = selection[0]
-      const chosenIndex = choices.indexOf(chosenLabel)
-      const { category, value } = choiceMap[chosenIndex]
+      const chosen = selection[0]
+      const { category, value } = chosen.meta
+      const chosenLabel = chosen.title
 
       miltyDraft.applyPick(draftState, currentName, category, value)
 

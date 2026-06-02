@@ -40,16 +40,20 @@ module.exports = function(Twilight) {
       return
     }
 
-    const choices = ['Decline', ...available.map(lp => lp.name)]
+    const choices = [
+      this.actions.option({ id: 'decline', title: 'Decline' }),
+      ...available.map(lp => this.actions.option({ id: `legendary:${lp.id}`, title: lp.name })),
+    ]
     const sel = this.actions.choose(player, choices, {
       title: 'Legendary Planet Ability',
     })
 
-    if (sel[0] === 'Decline') {
+    if (sel[0].id === 'decline') {
       return
     }
 
-    const chosen = available.find(lp => lp.name === sel[0])
+    const chosenPlanetId = sel[0].id.slice(10)
+    const chosen = available.find(lp => lp.id === chosenPlanetId)
     if (chosen) {
       this._exhaustLegendaryAbility(player, chosen.id)
       chosen.execute(player)
@@ -62,11 +66,14 @@ module.exports = function(Twilight) {
   // Exhaust: Place 1 mech on any planet you control, OR draw 1 action card
 
   Twilight.prototype._executeImperialArmsVault = function(player) {
-    const sel = this.actions.choose(player, ['Place 1 Mech', 'Draw 1 Action Card'], {
+    const sel = this.actions.choose(player, [
+      this.actions.option({ id: 'mech', title: 'Place 1 Mech' }),
+      this.actions.option({ id: 'card', title: 'Draw 1 Action Card' }),
+    ], {
       title: "Imperial Arms Vault (Hope's End)",
     })
 
-    if (sel[0] === 'Place 1 Mech') {
+    if (sel[0].id === 'mech') {
       const controlledPlanets = player.getControlledPlanets()
       if (controlledPlanets.length === 0) {
         return
@@ -77,10 +84,10 @@ module.exports = function(Twilight) {
         targetPlanet = controlledPlanets[0]
       }
       else {
-        const planetSel = this.actions.choose(player, controlledPlanets, {
+        const planetSel = this.actions.choose(player, controlledPlanets.map(p => this.actions.planetOption(p)), {
           title: 'Imperial Arms Vault: Place mech on which planet?',
         })
-        targetPlanet = planetSel[0]
+        targetPlanet = planetSel[0].id
       }
 
       const systemId = this._findSystemForPlanet(targetPlanet)
@@ -128,11 +135,14 @@ module.exports = function(Twilight) {
   // Exhaust: Gain 2 trade goods, OR convert all commodities to trade goods
 
   Twilight.prototype._executeExterrixHeadquarters = function(player) {
-    const sel = this.actions.choose(player, ['Gain 2 Trade Goods', 'Convert Commodities'], {
+    const sel = this.actions.choose(player, [
+      this.actions.option({ id: 'tg', title: 'Gain 2 Trade Goods' }),
+      this.actions.option({ id: 'convert', title: 'Convert Commodities' }),
+    ], {
       title: 'Exterrix Headquarters (Mallice)',
     })
 
-    if (sel[0] === 'Gain 2 Trade Goods') {
+    if (sel[0].id === 'tg') {
       player.tradeGoods += 2
       this.log.add({
         template: '{player} uses Exterrix Headquarters (Mallice): gains 2 trade goods',

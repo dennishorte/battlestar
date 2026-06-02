@@ -58,11 +58,14 @@ module.exports = {
       // Filter to non-delta wormholes
       const nonDeltaWormholes = wormholes.filter(w => w !== 'delta')
       if (nonDeltaWormholes.length > 0) {
-        const choice = ctx.actions.choose(creussPlayer, ['Exhaust Emissary Taivra', 'Pass'], {
+        const choice = ctx.actions.choose(creussPlayer, [
+          ctx.actions.option({ id: 'exhaust', title: 'Exhaust Emissary Taivra' }),
+          ctx.actions.option({ id: 'pass', title: 'Pass' }),
+        ], {
           title: `Emissary Taivra: Make system ${systemId} adjacent to all wormhole systems?`,
         })
 
-        if (choice[0] === 'Exhaust Emissary Taivra') {
+        if (choice[0]?.id === 'exhaust') {
           creussPlayer.exhaustAgent()
 
           // Find all systems with wormholes
@@ -125,11 +128,14 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(creussPlayer, ['Remove Mech (Icarus Drive)', 'Pass'], {
+    const choice = ctx.actions.choose(creussPlayer, [
+      ctx.actions.option({ id: 'remove', title: 'Remove Mech (Icarus Drive)' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Icarus Drive: Remove a mech to place Creuss wormhole token in system ${systemId}?`,
     })
 
-    if (choice[0] !== 'Remove Mech (Icarus Drive)') {
+    if (choice[0]?.id !== 'remove') {
       return
     }
 
@@ -139,11 +145,14 @@ module.exports = {
       target = mechLocations[0]
     }
     else {
-      const mechChoices = mechLocations.map(m => `${m.planetId} (system ${m.systemId})`)
+      const mechChoices = mechLocations.map(m => ctx.actions.option({
+        id: `mech-${m.systemId}-${m.planetId}`,
+        title: `${m.planetId} (system ${m.systemId})`,
+      }))
       const mechSel = ctx.actions.choose(creussPlayer, mechChoices, {
         title: 'Icarus Drive: Which mech to remove?',
       })
-      target = mechLocations[mechChoices.indexOf(mechSel[0])]
+      target = mechLocations.find(m => `mech-${m.systemId}-${m.planetId}` === mechSel[0].id)
     }
 
     // Remove the mech from the planet
@@ -266,17 +275,21 @@ module.exports = {
     }
 
     // Choose first system
-    const first = ctx.actions.choose(player, eligibleSystems, {
+    const first = ctx.actions.choose(player, eligibleSystems.map(s =>
+      ctx.actions.option({ id: String(s), title: String(s), kind: 'system' })
+    ), {
       title: 'Singularity Reactor: Choose first system to swap',
     })
-    const firstSystem = first[0]
+    const firstSystem = typeof first[0] === 'object' ? first[0].id : String(first[0])
 
     // Choose second system (cannot be the same)
-    const secondOptions = eligibleSystems.filter(s => s !== firstSystem)
+    const secondOptions = eligibleSystems
+      .filter(s => s !== firstSystem)
+      .map(s => ctx.actions.option({ id: String(s), title: String(s), kind: 'system' }))
     const second = ctx.actions.choose(player, secondOptions, {
       title: 'Singularity Reactor: Choose second system to swap',
     })
-    const secondSystem = second[0]
+    const secondSystem = typeof second[0] === 'object' ? second[0].id : String(second[0])
 
     // Swap positions
     const pos1 = ctx.state.systems[firstSystem].position

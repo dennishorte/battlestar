@@ -84,13 +84,15 @@ module.exports = {
       const available = player.getTechIds().filter(id => {
         return !(player.exhaustedTechs || []).includes(id)
       })
-      const selection = ctx.actions.choose(player, available, {
+      const techOptions = available.map(id => ctx.actions.option({ id, title: id, kind: 'tech' }))
+      const selection = ctx.actions.choose(player, techOptions, {
         title: `Brilliant: Exhaust technology (${i + 1}/2)`,
       })
       if (!player.exhaustedTechs) {
         player.exhaustedTechs = []
       }
-      player.exhaustedTechs.push(selection[0])
+      const pick = selection[0]
+      player.exhaustedTechs.push(typeof pick === 'object' ? pick.id : pick)
     }
 
     ctx.log.add({
@@ -169,11 +171,14 @@ module.exports = {
       }
 
       // Ask if player wants to exhaust Spatial Conduit Cylinder
-      const choice = ctx.actions.choose(player, ['Exhaust Spatial Conduit Cylinder', 'Pass'], {
+      const choice = ctx.actions.choose(player, [
+        ctx.actions.option({ id: 'exhaust', title: 'Exhaust Spatial Conduit Cylinder' }),
+        ctx.actions.option({ id: 'pass', title: 'Pass' }),
+      ], {
         title: 'Spatial Conduit Cylinder: Make this system adjacent to all your other systems?',
       })
 
-      if (choice[0] !== 'Exhaust Spatial Conduit Cylinder') {
+      if (choice[0]?.id !== 'exhaust') {
         return
       }
 
@@ -224,11 +229,14 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(jolNarPlayer, ['Exhaust Doctor Sucaban', 'Pass'], {
+    const choice = ctx.actions.choose(jolNarPlayer, [
+      ctx.actions.option({ id: 'exhaust', title: 'Exhaust Doctor Sucaban' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Doctor Sucaban: ${researchingPlayer.name} researched a technology. Exhaust agent?`,
     })
 
-    if (choice[0] !== 'Exhaust Doctor Sucaban') {
+    if (choice[0]?.id !== 'exhaust') {
       return
     }
 
@@ -348,13 +356,18 @@ module.exports = {
         continue
       }
 
-      const choices = ['Keep', ...available]
+      const choices = [
+        ctx.actions.option({ id: 'keep', title: 'Keep' }),
+        ...available.map(id => ctx.actions.option({ id, title: id, kind: 'tech' })),
+      ]
       const selection = ctx.actions.choose(player, choices, {
         title: `Genetic Memory: Replace ${currentTech.name} (${currentTech.color})?`,
       })
 
-      if (selection[0] !== 'Keep') {
-        replacements.push({ from: techId, to: selection[0] })
+      const pick = selection[0]
+      const pickId = typeof pick === 'object' ? pick.id : pick
+      if (pickId !== 'keep' && pick !== 'Keep') {
+        replacements.push({ from: techId, to: pickId })
       }
     }
 

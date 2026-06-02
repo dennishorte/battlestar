@@ -163,11 +163,14 @@ Twilight.prototype._offerUnitAbilityReroll = function(shooterName, missCombatVal
     return 0
   }
 
-  const choice = this.actions.choose(shooterPlayer, [`Reroll ${missCombatValues.length} dice`, 'Pass'], {
+  const choice = this.actions.choose(shooterPlayer, [
+    this.actions.option({ id: 'reroll', title: `Reroll ${missCombatValues.length} dice` }),
+    this.actions.option({ id: 'pass', title: 'Pass' }),
+  ], {
     title: 'Agnlan Oln: Reroll missed unit ability dice?',
   })
 
-  if (choice[0] === 'Pass') {
+  if (choice[0].id === 'pass') {
     return 0
   }
 
@@ -694,11 +697,13 @@ Twilight.prototype.strategyPhase = function() {
         event: 'turn-start',
       })
 
-      const available = this.state.availableStrategyCards
+      const available = this.state.availableStrategyCards.map(id =>
+        this.actions.option({ id, title: id, kind: 'strategy-card' })
+      )
       const selection = this.actions.choose(player, available, {
         title: 'Choose Strategy Card',
       })
-      const cardId = selection[0]
+      const cardId = selection[0].id
 
       player.pickStrategyCard(cardId)
       this.state.availableStrategyCards = this.state.availableStrategyCards.filter(id => id !== cardId)
@@ -1025,11 +1030,11 @@ Twilight.prototype.statusPhase = function() {
     const limit = this.factionAbilities.getActionCardHandLimit(player)
     const cards = player.actionCards || []
     while (cards.length > limit) {
-      const choices = cards.map(c => c.id)
+      const choices = cards.map(c => this.actions.cardOption(c, 'action-card'))
       const selection = this.actions.choose(player, choices, {
         title: `Discard to hand limit (${cards.length}/${limit})`,
       })
-      const cardId = selection[0]
+      const cardId = selection[0].id
       player.actionCards = player.actionCards.filter(c => c.id !== cardId)
     }
   }
@@ -1247,19 +1252,27 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
       while (true) {
         const agendaPartners = this._getAgendaTradePartners(player)
         const hasPartners = agendaPartners.length > 0
-        const voteChoices = ['Abstain', ...outcomes]
+        const voteChoices = [
+          this.actions.option({ id: 'abstain', title: 'Abstain' }),
+          ...outcomes.map(o => this.actions.option({ id: `outcome:${o}`, title: o, kind: 'agenda-outcome' })),
+        ]
         if (hasPartners) {
-          voteChoices.push('Transaction')
+          voteChoices.push(this.actions.option({ id: 'transaction', title: 'Transaction' }))
         }
         const selection = this.actions.choose(player, voteChoices, {
           title: `Vote on ${agenda.name} (${availableInfluence} influence available)`,
           noAutoRespond: true,
         })
-        chosen = selection[0]
-
-        if (chosen === 'Transaction') {
+        const pick = selection[0]
+        if (pick.id === 'transaction') {
           this._offerAgendaTransactions(player)
           continue
+        }
+        if (pick.id === 'abstain') {
+          chosen = 'Abstain'
+        }
+        else {
+          chosen = pick.title
         }
         break
       }
@@ -1329,12 +1342,17 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
       const maxTG = player.tradeGoods
       const tgChoices = []
       for (let n = 0; n <= maxTG; n++) {
-        tgChoices.push(`Spend ${n} TG (+${n * tgVoteRate} votes)`)
+        tgChoices.push(this.actions.option({
+          id: `tg-${n}`,
+          title: `Spend ${n} TG (+${n * tgVoteRate} votes)`,
+        }))
       }
       const tgSel = this.actions.choose(player, tgChoices, {
         title: `Spend trade goods for extra votes? (${tgVoteRate} votes per TG)`,
       })
-      const tgSpent = parseInt(tgSel[0].match(/\d+/)?.[0]) || 0
+      const tgPick = tgSel[0]
+      const tgPickId = typeof tgPick === 'object' ? tgPick.id : tgPick
+      const tgSpent = tgPickId?.startsWith('tg-') ? parseInt(tgPickId.slice('tg-'.length), 10) : 0
       if (tgSpent > 0) {
         player.spendTradeGoods(tgSpent)
         totalInfluence += tgSpent * tgVoteRate
@@ -1373,11 +1391,14 @@ Twilight.prototype._resolveAgenda = function(agendaNumber) {
   // Speaker breaks ties
   if (tiedOutcomes.length > 1 || maxVotes === 0) {
     const speaker = this.players.byName(speakerName)
-    const tieSelection = this.actions.choose(speaker, tiedOutcomes, {
+    const tieChoices = tiedOutcomes.map(o =>
+      this.actions.option({ id: `outcome:${o}`, title: o, kind: 'agenda-outcome' })
+    )
+    const tieSelection = this.actions.choose(speaker, tieChoices, {
       title: 'Speaker breaks tie',
       noAutoRespond: true,
     })
-    winningOutcome = tieSelection[0]
+    winningOutcome = tieSelection[0].title
   }
 
   this.log.add({

@@ -75,10 +75,13 @@ class FactionAbilities {
     // Self-use favors: direct prompt (no negotiation needed)
     const selfFavors = availableFavors.filter(f => f.agentOwner.name === beneficiary.name)
     for (const { favor, agentOwner, context } of selfFavors) {
-      const choice = this.actions.choose(beneficiary, [`Exhaust ${favor.name}`, 'Pass'], {
+      const choice = this.actions.choose(beneficiary, [
+        this.actions.option({ id: 'exhaust', title: `Exhaust ${favor.name}` }),
+        this.actions.option({ id: 'pass', title: 'Pass' }),
+      ], {
         title: `${favor.name}: ${context.description || ''}`,
       })
-      if (choice[0] === `Exhaust ${favor.name}`) {
+      if (choice[0].id === 'exhaust') {
         favor.execute(agentOwner, beneficiary, this, hookArgs, context)
       }
     }
@@ -86,24 +89,30 @@ class FactionAbilities {
     // Requestable favors from other players
     const otherFavors = availableFavors.filter(f => f.agentOwner.name !== beneficiary.name)
     if (otherFavors.length > 0) {
-      const choices = otherFavors.map(({ favor, agentOwner }) =>
-        `Request ${favor.name} from ${agentOwner.name}`
+      const choices = otherFavors.map(({ favor, agentOwner }, idx) =>
+        this.actions.option({
+          id: `favor:${idx}`,
+          title: `Request ${favor.name} from ${agentOwner.name}`,
+        })
       )
-      choices.push('Skip Favors')
+      choices.push(this.actions.option({ id: 'skip', title: 'Skip Favors' }))
 
       const selection = this.actions.choose(beneficiary, choices, {
         title: 'Request an agent favor?',
       })
 
-      if (selection[0] !== 'Skip Favors') {
-        const selectedIndex = choices.indexOf(selection[0])
+      if (selection[0].id !== 'skip') {
+        const selectedIndex = parseInt(selection[0].id.slice(6), 10)
         const selected = otherFavors[selectedIndex]
 
-        const response = this.actions.choose(selected.agentOwner, ['Accept', 'Decline'], {
+        const response = this.actions.choose(selected.agentOwner, [
+          this.actions.option({ id: 'accept', title: 'Accept' }),
+          this.actions.option({ id: 'decline', title: 'Decline' }),
+        ], {
           title: `${beneficiary.name} requests ${selected.favor.name}: ${selected.description}`,
         })
 
-        if (response[0] === 'Accept') {
+        if (response[0].id === 'accept') {
           selected.favor.execute(selected.agentOwner, beneficiary, this, hookArgs, selected.context)
         }
       }
@@ -379,10 +388,13 @@ class FactionAbilities {
         n => n.id === 'strike-wing-ambuscade' && n.owner !== player.name
       )
       if (pn) {
-        const choice = this.actions.choose(player, ['Play Strike Wing Ambuscade', 'Pass'], {
+        const choice = this.actions.choose(player, [
+          this.actions.option({ id: 'play', title: 'Play Strike Wing Ambuscade' }),
+          this.actions.option({ id: 'pass', title: 'Pass' }),
+        ], {
           title: 'Strike Wing Ambuscade: One unit rolls 1 additional die?',
         })
-        if (choice[0] === 'Play Strike Wing Ambuscade') {
+        if (choice[0].id === 'play') {
           bonus += 1
           this.state._ambuscadeUsed = true
 
@@ -593,11 +605,14 @@ class FactionAbilities {
     }
 
     // Yssaril must approve
-    const approval = this.actions.choose(yssarilPlayer, ['Allow', 'Deny'], {
+    const approval = this.actions.choose(yssarilPlayer, [
+      this.actions.option({ id: 'allow', title: 'Allow' }),
+      this.actions.option({ id: 'deny', title: 'Deny' }),
+    ], {
       title: `Deepgloom Executable: Allow ${player.name} to use Stall Tactics?`,
     })
 
-    if (approval[0] !== 'Allow') {
+    if (approval[0].id !== 'allow') {
       return
     }
 
@@ -612,10 +627,13 @@ class FactionAbilities {
     })
 
     // Offer optional transaction between Yssaril and the player
-    const transact = this.actions.choose(yssarilPlayer, ['Transact', 'Pass'], {
+    const transact = this.actions.choose(yssarilPlayer, [
+      this.actions.option({ id: 'transact', title: 'Transact' }),
+      this.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Deepgloom Executable: Transact with ${player.name}?`,
     })
-    if (transact[0] === 'Transact') {
+    if (transact[0].id === 'transact') {
       this.game._resolveTransaction(yssarilPlayer, player.name)
     }
   }
@@ -733,10 +751,12 @@ class FactionAbilities {
       fragType = pairTypes[0]
     }
     else {
-      const fragSelection = this.actions.choose(player, pairTypes, {
+      const fragSelection = this.actions.choose(player, pairTypes.map(t => this.actions.option({
+        id: t, title: t, kind: 'fragment-type',
+      })), {
         title: 'Choose fragment type to purge (2)',
       })
-      fragType = fragSelection[0]
+      fragType = fragSelection[0].id
     }
 
     // Purge 2 fragments
@@ -797,10 +817,10 @@ class FactionAbilities {
       planetId = eligible[0]
     }
     else {
-      const selection = this.actions.choose(player, eligible, {
+      const selection = this.actions.choose(player, eligible.map(p => this.actions.planetOption(p)), {
         title: 'Terraform: Attach to a non-home planet',
       })
-      planetId = selection[0]
+      planetId = selection[0].id
     }
 
     // Attach permanently — no return to Titans
@@ -925,10 +945,13 @@ class FactionAbilities {
         continue
       }
 
-      const choice = this.actions.choose(participant, ['Play Antivirus', 'Pass'], {
+      const choice = this.actions.choose(participant, [
+        this.actions.option({ id: 'play', title: 'Play Antivirus' }),
+        this.actions.option({ id: 'pass', title: 'Pass' }),
+      ], {
         title: 'Antivirus: Prevent Nekro from using Technological Singularity?',
       })
-      if (choice[0] !== 'Play Antivirus') {
+      if (choice[0].id !== 'play') {
         continue
       }
 
@@ -978,10 +1001,13 @@ class FactionAbilities {
         continue
       }
 
-      const choice = this.actions.choose(holder, ['Play The Cavalry', 'Pass'], {
+      const choice = this.actions.choose(holder, [
+        this.actions.option({ id: 'play', title: 'Play The Cavalry' }),
+        this.actions.option({ id: 'pass', title: 'Pass' }),
+      ], {
         title: 'The Cavalry: Treat one of your ships as having Nomad flagship stats?',
       })
-      if (choice[0] !== 'Play The Cavalry') {
+      if (choice[0].id !== 'play') {
         continue
       }
 
@@ -991,11 +1017,23 @@ class FactionAbilities {
         targetShip = nonFighterShips[0]
       }
       else {
-        const shipChoices = nonFighterShips.map(s => s.type)
+        // Use unit instance id for disambiguation; title is the type for test ergonomics.
+        const shipChoices = nonFighterShips.map(s => this.actions.option({
+          id: `ship:${s.id}`, title: s.type,
+        }))
         const sel = this.actions.choose(holder, shipChoices, {
           title: 'Choose ship to treat as Nomad flagship:',
         })
-        targetShip = nonFighterShips[shipChoices.indexOf(sel[0])]
+        const pick = sel[0]
+        if (pick && typeof pick === 'object' && pick.id) {
+          const unitId = pick.id.slice(5)
+          targetShip = nonFighterShips.find(s => s.id === unitId) || nonFighterShips[0]
+        }
+        else {
+          // Bare-string fallback: t.choose(game, 'cruiser') matches first ship of that type
+          const type = typeof pick === 'object' ? pick.title : pick
+          targetShip = nonFighterShips.find(s => s.type === type) || nonFighterShips[0]
+        }
       }
 
       // Get Nomad's current flagship stats (base or upgraded)
@@ -1086,10 +1124,13 @@ class FactionAbilities {
         p.faction?.id === 'yssaril-tribes' && p.hasTechnology('deepgloom-executable')
       )
       if (yssarilPlayer) {
-        const approval = this.actions.choose(yssarilPlayer, ['Share Scheming', 'Pass'], {
+        const approval = this.actions.choose(yssarilPlayer, [
+          this.actions.option({ id: 'share', title: 'Share Scheming' }),
+          this.actions.option({ id: 'pass', title: 'Pass' }),
+        ], {
           title: `Deepgloom Executable: Share Scheming with ${player.name}?`,
         })
-        if (approval[0] === 'Share Scheming') {
+        if (approval[0].id === 'share') {
           const { getHandler } = require('./factions/index.js')
           const yssarilHandler = getHandler('yssaril-tribes')
           yssarilHandler.onActionCardDraw(player, this, drawn)
@@ -1100,10 +1141,13 @@ class FactionAbilities {
           })
 
           // Offer optional transaction
-          const transact = this.actions.choose(yssarilPlayer, ['Transact', 'Pass'], {
+          const transact = this.actions.choose(yssarilPlayer, [
+            this.actions.option({ id: 'transact', title: 'Transact' }),
+            this.actions.option({ id: 'pass', title: 'Pass' }),
+          ], {
             title: `Deepgloom Executable: Transact with ${player.name}?`,
           })
-          if (transact[0] === 'Transact') {
+          if (transact[0].id === 'transact') {
             this.game._resolveTransaction(yssarilPlayer, player.name)
           }
         }
@@ -1181,11 +1225,14 @@ class FactionAbilities {
         continue
       }
 
-      const choice = this.actions.choose(holder, ['Play Stymie', 'Pass'], {
+      const choice = this.actions.choose(holder, [
+        this.actions.option({ id: 'play', title: 'Play Stymie' }),
+        this.actions.option({ id: 'pass', title: 'Pass' }),
+      ], {
         title: `Stymie: Place ${moverName}'s command token in a non-home system?`,
       })
 
-      if (choice[0] !== 'Play Stymie') {
+      if (choice[0].id !== 'play') {
         continue
       }
 
@@ -1197,10 +1244,11 @@ class FactionAbilities {
       })
 
       if (nonHomeSystems.length > 0) {
-        const sel = this.actions.choose(holder, nonHomeSystems, {
+        const sel = this.actions.choose(holder, nonHomeSystems.map(s => this.actions.systemOption(s)), {
           title: 'Stymie: Choose system for command token',
         })
-        const targetSystem = sel[0]
+        const targetPick = sel[0]
+        const targetSystem = (targetPick && typeof targetPick === 'object') ? targetPick.id : targetPick
         if (this.state.systems[targetSystem]) {
           this.state.systems[targetSystem].commandTokens.push({ playerName: moverName })
         }
@@ -1299,10 +1347,13 @@ class FactionAbilities {
       if (holder.hasPromissoryNote('tekklar-legion')) {
         const pn = holder.getPromissoryNotes().find(n => n.id === 'tekklar-legion')
         if (pn && pn.owner !== holderName) {
-          const choice = this.actions.choose(holder, ['Play Tekklar Legion', 'Pass'], {
+          const choice = this.actions.choose(holder, [
+            this.actions.option({ id: 'play', title: 'Play Tekklar Legion' }),
+            this.actions.option({ id: 'pass', title: 'Pass' }),
+          ], {
             title: 'Tekklar Legion: Return for +1 combat this invasion?',
           })
-          if (choice[0] === 'Play Tekklar Legion') {
+          if (choice[0].id === 'play') {
             if (!this.state._tekklarLegionActive) {
               this.state._tekklarLegionActive = {}
             }
@@ -1347,10 +1398,13 @@ class FactionAbilities {
           )
 
           if (opponentForces.length >= 2 && opponentInfantry.length > 0) {
-            const choice = this.actions.choose(holder, ['Play Greyfire Mutagen', 'Pass'], {
+            const choice = this.actions.choose(holder, [
+              this.actions.option({ id: 'play', title: 'Play Greyfire Mutagen' }),
+              this.actions.option({ id: 'pass', title: 'Pass' }),
+            ], {
               title: 'Greyfire Mutagen: Replace 1 opponent infantry with your own?',
             })
-            if (choice[0] === 'Play Greyfire Mutagen') {
+            if (choice[0].id === 'play') {
               // Replace 1 opponent infantry with holder's infantry
               opponentInfantry[0].owner = holderName
 
@@ -1396,10 +1450,13 @@ class FactionAbilities {
         continue
       }
 
-      const choice = this.actions.choose(holder, ["Play Ragh's Call", 'Pass'], {
+      const choice = this.actions.choose(holder, [
+        this.actions.option({ id: 'play', title: "Play Ragh's Call" }),
+        this.actions.option({ id: 'pass', title: 'Pass' }),
+      ], {
         title: "Ragh's Call: Remove Saar ground forces from this planet?",
       })
-      if (choice[0] !== "Play Ragh's Call") {
+      if (choice[0].id !== 'play') {
         continue
       }
 
@@ -1416,10 +1473,10 @@ class FactionAbilities {
           targetPlanet = validTargets[0]
         }
         else {
-          const sel = this.actions.choose(saarPlayer, validTargets, {
+          const sel = this.actions.choose(saarPlayer, validTargets.map(p => this.actions.planetOption(p)), {
             title: "Ragh's Call: Choose planet for relocated ground forces",
           })
-          targetPlanet = sel[0]
+          targetPlanet = sel[0].id
         }
 
         const targetSystem = this.game._findSystemForPlanet(targetPlanet)
@@ -1573,10 +1630,13 @@ class FactionAbilities {
         continue
       }
 
-      const choice = this.actions.choose(player, ['Play Political Favor', 'Pass'], {
+      const choice = this.actions.choose(player, [
+        this.actions.option({ id: 'play', title: 'Play Political Favor' }),
+        this.actions.option({ id: 'pass', title: 'Pass' }),
+      ], {
         title: `Political Favor: Discard ${agenda.name} and reveal new agenda?`,
       })
-      if (choice[0] !== 'Play Political Favor') {
+      if (choice[0].id !== 'play') {
         continue
       }
 
@@ -1622,19 +1682,24 @@ class FactionAbilities {
         continue
       }
 
-      const choice = this.actions.choose(player, ['Play Keleres Rider', 'Pass'], {
+      const choice = this.actions.choose(player, [
+        this.actions.option({ id: 'play', title: 'Play Keleres Rider' }),
+        this.actions.option({ id: 'pass', title: 'Pass' }),
+      ], {
         title: `Keleres Rider: Predict outcome of "${agenda.name}"?`,
       })
-      if (choice[0] !== 'Play Keleres Rider') {
+      if (choice[0].id !== 'play') {
         continue
       }
 
       // Player predicts an outcome
-      const predictionChoices = outcomes.map(o => `Predict: ${o}`)
+      const predictionChoices = outcomes.map(o => this.actions.option({
+        id: `predict:${o}`, title: `Predict: ${o}`,
+      }))
       const predSel = this.actions.choose(player, predictionChoices, {
         title: 'Choose your prediction:',
       })
-      const predicted = predSel[0].replace('Predict: ', '')
+      const predicted = predSel[0].id.slice(8)
 
       this.state._keleresRiderPrediction = {
         holder: player.name,
@@ -2169,10 +2234,10 @@ class FactionAbilities {
             targetPlanet = controlledPlanets[0]
           }
           else {
-            const sel = this.actions.choose(holder, controlledPlanets, {
+            const sel = this.actions.choose(holder, controlledPlanets.map(p => this.actions.planetOption(p)), {
               title: 'Military Support: Choose planet for 2 infantry',
             })
-            targetPlanet = sel[0]
+            targetPlanet = sel[0].id
           }
           const systemId = this.game._findSystemForPlanet(targetPlanet)
           if (systemId) {
@@ -2202,16 +2267,20 @@ class FactionAbilities {
         const yssaril = this.players.byName(pn.owner)
         const yssarilHand = yssaril?.actionCards || []
         if (yssarilHand.length > 0) {
-          const choice = this.actions.choose(activePlayer, ['Play Spy Net', 'Pass'], {
+          const choice = this.actions.choose(activePlayer, [
+            this.actions.option({ id: 'play', title: 'Play Spy Net' }),
+            this.actions.option({ id: 'pass', title: 'Pass' }),
+          ], {
             title: `Spy Net: Take 1 action card from ${pn.owner}?`,
           })
-          if (choice[0] === 'Play Spy Net') {
-            const cardChoices = yssarilHand.map(c => c.name || c.id)
+          if (choice[0].id === 'play') {
+            const cardChoices = yssarilHand.map((c, idx) => this.actions.option({
+              id: `card:${idx}`, title: c.name || c.id,
+            }))
             const cardSelection = this.actions.choose(activePlayer, cardChoices, {
               title: 'Spy Net: Choose action card to take',
             })
-            const chosenName = cardSelection[0]
-            const cardIdx = yssarilHand.findIndex(c => (c.name || c.id) === chosenName)
+            const cardIdx = parseInt(cardSelection[0].id.slice(5), 10)
             if (cardIdx !== -1) {
               const [taken] = yssarilHand.splice(cardIdx, 1)
               if (!activePlayer.actionCards) {
@@ -2278,19 +2347,23 @@ class FactionAbilities {
         }
 
         if (validSystems.length > 0) {
-          const choice = this.actions.choose(activePlayer, ['Play Creuss IFF', 'Pass'], {
+          const choice = this.actions.choose(activePlayer, [
+            this.actions.option({ id: 'play', title: 'Play Creuss IFF' }),
+            this.actions.option({ id: 'pass', title: 'Pass' }),
+          ], {
             title: 'Creuss IFF: Place or move Creuss wormhole token?',
           })
-          if (choice[0] === 'Play Creuss IFF') {
+          if (choice[0].id === 'play') {
             let targetSystem
             if (validSystems.length === 1) {
               targetSystem = validSystems[0]
             }
             else {
-              const sel = this.actions.choose(activePlayer, validSystems, {
+              const sel = this.actions.choose(activePlayer, validSystems.map(s => this.actions.systemOption(s)), {
                 title: 'Creuss IFF: Place wormhole token in which system?',
               })
-              targetSystem = sel[0]
+              const pickSys = sel[0]
+              targetSystem = (pickSys && typeof pickSys === 'object') ? pickSys.id : pickSys
             }
 
             this.state.creussWormholeToken = String(targetSystem)
@@ -2346,19 +2419,22 @@ class FactionAbilities {
           }
 
           if (validSystems.length > 0) {
-            const choice = this.actions.choose(player, ['Play Scepter of Dominion', 'Pass'], {
+            const choice = this.actions.choose(player, [
+              this.actions.option({ id: 'play', title: 'Play Scepter of Dominion' }),
+              this.actions.option({ id: 'pass', title: 'Pass' }),
+            ], {
               title: 'Scepter of Dominion: Force captured players to place tokens?',
             })
-            if (choice[0] === 'Play Scepter of Dominion') {
+            if (choice[0].id === 'play') {
               let targetSystem
               if (validSystems.length === 1) {
                 targetSystem = validSystems[0]
               }
               else {
-                const sel = this.actions.choose(player, validSystems, {
+                const sel = this.actions.choose(player, validSystems.map(s => this.actions.systemOption(s)), {
                   title: 'Choose system for command tokens:',
                 })
-                targetSystem = sel[0]
+                targetSystem = sel[0].id
               }
 
               // Each captured player places a command token
@@ -2401,10 +2477,13 @@ class FactionAbilities {
     if (player.hasPromissoryNote('gift-of-prescience')) {
       const pn = player.getPromissoryNotes().find(n => n.id === 'gift-of-prescience' && n.owner !== player.name)
       if (pn) {
-        const choice = this.actions.choose(player, ['Play Gift of Prescience', 'Pass'], {
+        const choice = this.actions.choose(player, [
+          this.actions.option({ id: 'play', title: 'Play Gift of Prescience' }),
+          this.actions.option({ id: 'pass', title: 'Pass' }),
+        ], {
           title: 'Gift of Prescience: Gain initiative 0 this round?',
         })
-        if (choice[0] === 'Play Gift of Prescience') {
+        if (choice[0].id === 'play') {
           this.state._giftOfPrescience = { holder: player.name, owner: pn.owner }
           player.removePromissoryNote('gift-of-prescience', pn.owner)
 

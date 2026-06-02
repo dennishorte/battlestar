@@ -4,12 +4,17 @@ module.exports = {
       return
     }
 
-    const choices = ['Place sleeper', 'Pass']
+    const choices = [
+      ctx.actions.option({ id: 'place', title: 'Place sleeper' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ]
     const selection = ctx.actions.choose(player, choices, {
       title: `Terragenesis: Place a sleeper token on ${planetId}?`,
     })
 
-    if (selection[0] === 'Place sleeper') {
+    const tgPick = selection[0]
+    const tgPickId = (tgPick && typeof tgPick === 'object') ? tgPick.id : tgPick
+    if (tgPickId === 'place' || tgPick === 'Place sleeper') {
       ctx.state.sleeperTokens[planetId] = player.name
 
       ctx.log.add({
@@ -37,11 +42,16 @@ module.exports = {
       // Hecatoncheires DEPLOY: when placing a PDS on a planet,
       // may place 1 mech and 1 infantry instead
       if (ctx.game._hasReinforcementsAvailable(player.name, 'mech')) {
-        const deployChoice = ctx.actions.choose(player, ['Deploy Mech + Infantry', 'Place PDS'], {
+        const deployChoice = ctx.actions.choose(player, [
+          ctx.actions.option({ id: 'mech-inf', title: 'Deploy Mech + Infantry' }),
+          ctx.actions.option({ id: 'pds', title: 'Place PDS' }),
+        ], {
           title: `Hecatoncheires: Place mech + infantry on ${planetId} instead of PDS?`,
         })
 
-        if (deployChoice[0] === 'Deploy Mech + Infantry') {
+        const hcPick = deployChoice[0]
+        const hcPickId = (hcPick && typeof hcPick === 'object') ? hcPick.id : hcPick
+        if (hcPickId === 'mech-inf' || hcPick === 'Deploy Mech + Infantry') {
           ctx.game._addUnitToPlanet(systemId, planetId, 'mech', player.name)
           ctx.game._addUnitToPlanet(systemId, planetId, 'infantry', player.name)
 
@@ -85,23 +95,30 @@ module.exports = {
       }
 
       if (pdsUnits.length > 0) {
-        const deployChoices = ['Deploy Ouranos', 'Pass']
+        const deployChoices = [
+          ctx.actions.option({ id: 'deploy', title: 'Deploy Ouranos' }),
+          ctx.actions.option({ id: 'pass', title: 'Pass' }),
+        ]
         const choice = ctx.actions.choose(player, deployChoices, {
           title: 'Ouranos: Replace a PDS with your flagship?',
         })
 
-        if (choice[0] === 'Deploy Ouranos') {
+        const ouPick = choice[0]
+        const ouPickId = (ouPick && typeof ouPick === 'object') ? ouPick.id : ouPick
+        if (ouPickId === 'deploy' || ouPick === 'Deploy Ouranos') {
           // Choose which PDS to replace if multiple
           let targetPDS
           if (pdsUnits.length === 1) {
             targetPDS = pdsUnits[0]
           }
           else {
-            const pdsChoices = pdsUnits.map(p => p.planetId)
+            const pdsChoices = pdsUnits.map(p => ctx.actions.option({ id: p.planetId, title: p.planetId, kind: 'planet' }))
             const pdsSel = ctx.actions.choose(player, pdsChoices, {
               title: 'Choose PDS to replace with Ouranos',
             })
-            targetPDS = pdsUnits.find(p => p.planetId === pdsSel[0])
+            const pdsPick = pdsSel[0]
+            const pdsPickId = (pdsPick && typeof pdsPick === 'object') ? pdsPick.id : pdsPick
+            targetPDS = pdsUnits.find(p => p.planetId === pdsPickId)
           }
 
           if (targetPDS) {
@@ -174,11 +191,16 @@ module.exports = {
       return hits
     }
 
-    const choice = ctx.actions.choose(player, ['Exhaust Tellurian', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'exhaust', title: 'Exhaust Tellurian' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Tellurian: Exhaust to cancel 1 hit against your units in system ${systemId}?`,
     })
 
-    if (choice[0] === 'Exhaust Tellurian') {
+    const tlPick = choice[0]
+    const tlPickId = (tlPick && typeof tlPick === 'object') ? tlPick.id : tlPick
+    if (tlPickId === 'exhaust' || tlPick === 'Exhaust Tellurian') {
       player.exhaustAgent()
 
       ctx.log.add({
@@ -262,19 +284,28 @@ module.exports = {
       return
     }
 
-    const targetNames = eligibleTargets.map(p => p.name)
-    const targetSel = ctx.actions.choose(player, targetNames, {
-      title: 'Slumberstate Computing: Ask which player to allow sleeper placement?',
-    })
-    const targetName = targetSel[0]
+    const targetSel = ctx.actions.choose(
+      player,
+      eligibleTargets.map(p => ctx.actions.playerOption(p)),
+      {
+        title: 'Slumberstate Computing: Ask which player to allow sleeper placement?',
+      },
+    )
+    const tspPick = targetSel[0]
+    const targetName = (tspPick && typeof tspPick === 'object') ? tspPick.id : tspPick
     const target = ctx.players.byName(targetName)
 
     // Target player can accept or decline
-    const response = ctx.actions.choose(target, ['Allow Sleeper', 'Decline'], {
+    const response = ctx.actions.choose(target, [
+      ctx.actions.option({ id: 'allow', title: 'Allow Sleeper' }),
+      ctx.actions.option({ id: 'decline', title: 'Decline' }),
+    ], {
       title: `${player.name} requests to place a sleeper token on one of your planets.`,
     })
 
-    if (response[0] !== 'Allow Sleeper') {
+    const respPick = response[0]
+    const respPickId = (respPick && typeof respPick === 'object') ? respPick.id : respPick
+    if (respPickId !== 'allow' && respPick !== 'Allow Sleeper') {
       ctx.log.add({
         template: '{target} declines sleeper placement from {player}',
         args: { target: targetName, player: player.name },
@@ -291,10 +322,15 @@ module.exports = {
       targetPlanet = eligiblePlanets[0]
     }
     else {
-      const planetSel = ctx.actions.choose(player, eligiblePlanets, {
-        title: 'Slumberstate Computing: Place sleeper on which planet?',
-      })
-      targetPlanet = planetSel[0]
+      const planetSel = ctx.actions.choose(
+        player,
+        eligiblePlanets.map(p => ctx.actions.option({ id: p, title: p, kind: 'planet' })),
+        {
+          title: 'Slumberstate Computing: Place sleeper on which planet?',
+        },
+      )
+      const slPick = planetSel[0]
+      targetPlanet = (slPick && typeof slPick === 'object') ? slPick.id : slPick
     }
 
     ctx.state.sleeperTokens[targetPlanet] = player.name
@@ -392,11 +428,16 @@ function _checkSlumberstateCoexistence(player, ctx, systemId, tile) {
         u.type === 'infantry' || u.type === 'mech'
       )
       if (otherGroundForces.length > 0) {
-        const coexistChoice = ctx.actions.choose(player, ['Coexist', 'Fight'], {
+        const coexistChoice = ctx.actions.choose(player, [
+          ctx.actions.option({ id: 'coexist', title: 'Coexist' }),
+          ctx.actions.option({ id: 'fight', title: 'Fight' }),
+        ], {
           title: `Slumberstate Computing: Coexist on ${planetId} instead of ground combat?`,
         })
 
-        if (coexistChoice[0] === 'Coexist') {
+        const cxPick = coexistChoice[0]
+        const cxPickId = (cxPick && typeof cxPick === 'object') ? cxPick.id : cxPick
+        if (cxPickId === 'coexist' || cxPick === 'Coexist') {
           if (!ctx.state.coexistence) {
             ctx.state.coexistence = []
           }

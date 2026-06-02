@@ -628,7 +628,11 @@ Game.prototype._tryToAutomaticallyRespond = function(selectors) {
       const selection = sel.choices.map(choice => {
         if (typeof choice === 'object' && choice.title) {
           if (choice.id) {
-            return { title: choice.title, id: choice.id }
+            const out = { title: choice.title, id: choice.id }
+            if (choice.meta != null) {
+              out.meta = choice.meta
+            }
+            return out
           }
           return choice.title
         }

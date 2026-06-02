@@ -44,12 +44,13 @@ module.exports = {
       return
     }
 
-    const choices = cards.map(c => c.id)
+    const choices = cards.map(c => ctx.actions.option({ id: c.id, title: c.id, kind: 'action-card' }))
     const selection = ctx.actions.choose(player, choices, {
       title: 'Discard Action Card (Stall Tactics)',
     })
 
-    const cardId = selection[0]
+    const selPick = selection[0]
+    const cardId = (selPick && typeof selPick === 'object') ? selPick.id : selPick
     player.actionCards = cards.filter(c => c.id !== cardId)
 
     ctx.log.add({
@@ -73,11 +74,16 @@ module.exports = {
       return
     }
 
-    const mechChoice = ctx.actions.choose(player, ['Deploy Blackshade Infiltrator', 'Pass'], {
+    const mechChoice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'deploy', title: 'Deploy Blackshade Infiltrator' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Blackshade Infiltrator DEPLOY: Place 1 mech on a controlled planet?',
     })
 
-    if (mechChoice[0] !== 'Deploy Blackshade Infiltrator') {
+    const mechPick = mechChoice[0]
+    const mechPickId = (mechPick && typeof mechPick === 'object') ? mechPick.id : mechPick
+    if (mechPickId !== 'deploy' && mechPick !== 'Deploy Blackshade Infiltrator') {
       return
     }
 
@@ -86,10 +92,15 @@ module.exports = {
       targetPlanet = controlledPlanets[0]
     }
     else {
-      const planetSelection = ctx.actions.choose(player, controlledPlanets, {
-        title: 'Blackshade Infiltrator: Choose planet',
-      })
-      targetPlanet = planetSelection[0]
+      const planetSelection = ctx.actions.choose(
+        player,
+        controlledPlanets.map(p => ctx.actions.option({ id: p, title: p, kind: 'planet' })),
+        {
+          title: 'Blackshade Infiltrator: Choose planet',
+        },
+      )
+      const planetPick = planetSelection[0]
+      targetPlanet = (planetPick && typeof planetPick === 'object') ? planetPick.id : planetPick
     }
 
     const systemId = ctx.game._findSystemForPlanet(targetPlanet)
@@ -181,21 +192,36 @@ module.exports = {
       return
     }
 
-    const choices = available.map(a => `Ssruu as ${a.label}`)
-    choices.push('Pass')
+    const choices = available.map((a, i) => ctx.actions.option({
+      id: `ssruu:${a.factionId}:${i}`,
+      title: `Ssruu as ${a.label}`,
+      kind: 'ssruu',
+    }))
+    choices.push(ctx.actions.option({ id: 'pass', title: 'Pass' }))
 
     const sel = ctx.actions.choose(yssarilPlayer, choices, {
       title: "Ssruu: Copy an agent's ability?",
     })
 
-    if (sel[0] === 'Pass') {
+    const ssruuPick = sel[0]
+    const ssruuPickId = (ssruuPick && typeof ssruuPick === 'object') ? ssruuPick.id : ssruuPick
+    const ssruuPickTitle = (ssruuPick && typeof ssruuPick === 'object') ? ssruuPick.title : ssruuPick
+    if (ssruuPickId === 'pass' || ssruuPickTitle === 'Pass') {
       return
     }
 
     yssarilPlayer.exhaustAgent()
 
-    const idx = choices.indexOf(sel[0])
-    const chosen = available[idx]
+    let chosen
+    if (typeof ssruuPickId === 'string' && ssruuPickId.startsWith('ssruu:')) {
+      const parts = ssruuPickId.split(':')
+      const idx = parseInt(parts[2], 10)
+      chosen = available[idx]
+    }
+    else {
+      const idx = choices.findIndex(c => c.title === ssruuPickTitle)
+      chosen = available[idx]
+    }
     this._executeSsruuEffect(yssarilPlayer, ctx, chosen.factionId, { systemId, activatingPlayer })
   },
 
@@ -204,14 +230,17 @@ module.exports = {
       case 'empyrean': {
         // Acamar: gain 1 TG or give activating player 1 command token
         const effectChoices = [
-          'Gain 1 Trade Good',
-          `Give ${activatingPlayer.name} 1 Command Token`,
+          ctx.actions.option({ id: 'tg', title: 'Gain 1 Trade Good' }),
+          ctx.actions.option({ id: 'token', title: `Give ${activatingPlayer.name} 1 Command Token` }),
         ]
         const effectChoice = ctx.actions.choose(yssarilPlayer, effectChoices, {
           title: 'Ssruu (Acamar): Choose effect',
         })
 
-        if (effectChoice[0] === 'Gain 1 Trade Good') {
+        const effPick = effectChoice[0]
+        const effPickId = (effPick && typeof effPick === 'object') ? effPick.id : effPick
+        const effPickTitle = (effPick && typeof effPick === 'object') ? effPick.title : effPick
+        if (effPickId === 'tg' || effPickTitle === 'Gain 1 Trade Good') {
           yssarilPlayer.addTradeGoods(1)
         }
         else {
@@ -222,7 +251,7 @@ module.exports = {
         }
         ctx.log.add({
           template: 'Ssruu (as Acamar): {player} chose {effect}',
-          args: { player: yssarilPlayer.name, effect: effectChoice[0] },
+          args: { player: yssarilPlayer.name, effect: effPickTitle },
         })
         break
       }
@@ -256,24 +285,28 @@ module.exports = {
       }
 
       // Opponent shows 1 card (game chooses first card; in real game opponent chooses)
-      const showChoices = opponentCards.map(c => c.id)
+      const showChoices = opponentCards.map(c => ctx.actions.option({ id: c.id, title: c.id, kind: 'action-card' }))
       const shown = ctx.actions.choose(opponent, showChoices, {
         title: 'Guild of Spies: Choose 1 action card to show',
       })
-      const shownCardId = shown[0]
+      const shownPick = shown[0]
+      const shownCardId = (shownPick && typeof shownPick === 'object') ? shownPick.id : shownPick
 
       // Yssaril player decides: take it, or force discard 3
-      const actionChoices = [`Take ${shownCardId}`]
+      const actionChoices = [ctx.actions.option({ id: 'take', title: `Take ${shownCardId}` })]
       if (opponentCards.length >= 3) {
-        actionChoices.push('Force Discard 3')
+        actionChoices.push(ctx.actions.option({ id: 'discard', title: 'Force Discard 3' }))
       }
-      actionChoices.push('Pass')
+      actionChoices.push(ctx.actions.option({ id: 'pass', title: 'Pass' }))
 
       const decision = ctx.actions.choose(player, actionChoices, {
         title: `Guild of Spies: ${opponent.name} shows ${shownCardId}`,
       })
 
-      if (decision[0].startsWith('Take ')) {
+      const decPick = decision[0]
+      const decPickId = (decPick && typeof decPick === 'object') ? decPick.id : decPick
+      const decPickTitle = (decPick && typeof decPick === 'object') ? decPick.title : decPick
+      if (decPickId === 'take' || (typeof decPickTitle === 'string' && decPickTitle.startsWith('Take '))) {
         // Take the shown card
         const cardIdx = opponent.actionCards.findIndex(c => c.id === shownCardId)
         if (cardIdx !== -1) {
@@ -288,7 +321,7 @@ module.exports = {
           })
         }
       }
-      else if (decision[0] === 'Force Discard 3') {
+      else if (decPickId === 'discard' || decPickTitle === 'Force Discard 3') {
         // Force opponent to discard 3 random action cards
         const discardCount = Math.min(3, opponent.actionCards.length)
         for (let i = 0; i < discardCount; i++) {
@@ -327,11 +360,11 @@ module.exports = {
       return
     }
 
-    const opponentNames = opponents.map(p => p.name)
-    const targetSelection = ctx.actions.choose(player, opponentNames, {
+    const targetSelection = ctx.actions.choose(player, opponents.map(p => ctx.actions.playerOption(p)), {
       title: 'Mageon Implants: Choose opponent to look at',
     })
-    const targetName = targetSelection[0]
+    const targetPick = targetSelection[0]
+    const targetName = (targetPick && typeof targetPick === 'object') ? targetPick.id : targetPick
     const target = ctx.game.players.byName(targetName)
 
     const targetCards = target.actionCards || []
@@ -339,12 +372,13 @@ module.exports = {
       return
     }
 
-    const cardChoices = targetCards.map(c => c.id)
+    const cardChoices = targetCards.map(c => ctx.actions.option({ id: c.id, title: c.id, kind: 'action-card' }))
     const cardSelection = ctx.actions.choose(player, cardChoices, {
       title: `Mageon Implants: Take 1 action card from ${targetName}`,
     })
 
-    const cardId = cardSelection[0]
+    const cardPick = cardSelection[0]
+    const cardId = (cardPick && typeof cardPick === 'object') ? cardPick.id : cardPick
     const cardIdx = target.actionCards.findIndex(c => c.id === cardId)
     if (cardIdx !== -1) {
       const stolenCard = target.actionCards.splice(cardIdx, 1)[0]
@@ -383,12 +417,13 @@ module.exports = {
       return
     }
 
-    const choices = cards.map(c => c.id)
+    const choices = cards.map(c => ctx.actions.option({ id: c.id, title: c.id, kind: 'action-card' }))
     const selection = ctx.actions.choose(player, choices, {
       title: 'Scheming: Discard 1 action card',
     })
 
-    const cardId = selection[0]
+    const schemPick = selection[0]
+    const cardId = (schemPick && typeof schemPick === 'object') ? schemPick.id : schemPick
     const discarded = cards.find(c => c.id === cardId)
     player.actionCards = player.actionCards.filter(c => c.id !== cardId)
 

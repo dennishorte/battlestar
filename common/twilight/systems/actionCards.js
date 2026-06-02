@@ -101,11 +101,14 @@ module.exports = function(Twilight) {
       return
     }
 
-    const choice = this.actions.choose(player, ['Spend 1 TG to unlock commander', 'Pass'], {
+    const choice = this.actions.choose(player, [
+      this.actions.option({ id: 'spend', title: 'Spend 1 TG to unlock commander' }),
+      this.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Suffi An: Spend 1 trade good to unlock your commander?',
     })
 
-    if (choice[0] === 'Spend 1 TG to unlock commander') {
+    if (choice[0].id === 'spend') {
       player.addTradeGoods(-1)
       player.unlockCommander()
       this.log.add({
@@ -157,11 +160,11 @@ module.exports = function(Twilight) {
       return
     }
 
-    const selection = this.actions.choose(player, planets, {
+    const selection = this.actions.choose(player, planets.map(p => this.actions.planetOption(p)), {
       title: 'Choose planet (Mining Initiative)',
     })
 
-    const planetId = selection[0]
+    const planetId = selection[0].id
     const planet = res.getPlanet(planetId)
     if (planet) {
       player.addTradeGoods(planet.resources)
@@ -201,11 +204,11 @@ module.exports = function(Twilight) {
       return
     }
 
-    const selection = this.actions.choose(player, systemsWithTokens, {
+    const selection = this.actions.choose(player, systemsWithTokens.map(s => this.actions.systemOption(s)), {
       title: 'Remove command token from system',
     })
 
-    const systemId = selection[0]
+    const systemId = selection[0].id
     const tokens = this.state.systems[systemId].commandTokens
     const idx = tokens.indexOf(player.name)
     if (idx !== -1) {
@@ -241,11 +244,11 @@ module.exports = function(Twilight) {
       return
     }
 
-    const selection = this.actions.choose(player, validSystems, {
+    const selection = this.actions.choose(player, validSystems.map(s => this.actions.systemOption(s)), {
       title: 'Place destroyer (Ghost Ship)',
     })
 
-    const systemId = selection[0]
+    const systemId = selection[0].id
     this._addUnit(systemId, 'space', 'destroyer', player.name)
     this.log.add({
       template: '{player} places a destroyer in system {system}',
@@ -270,11 +273,11 @@ module.exports = function(Twilight) {
       return
     }
 
-    const selection = this.actions.choose(player, planetsWithInfantry, {
+    const selection = this.actions.choose(player, planetsWithInfantry.map(p => this.actions.planetOption(p)), {
       title: 'Choose planet (Plague)',
     })
 
-    const planetId = selection[0]
+    const planetId = selection[0].id
     const systemId = this._findSystemForPlanet(planetId)
     if (!systemId) {
       return
@@ -331,11 +334,11 @@ module.exports = function(Twilight) {
       return
     }
 
-    const selection = this.actions.choose(player, targetPlanets, {
+    const selection = this.actions.choose(player, targetPlanets.map(p => this.actions.planetOption(p)), {
       title: 'Choose planet (Uprising)',
     })
 
-    const planetId = selection[0]
+    const planetId = selection[0].id
     this.state.planets[planetId].exhausted = true
     const planet = res.getPlanet(planetId)
     if (planet) {

@@ -86,10 +86,13 @@ module.exports = function(Twilight) {
               victimType = targetTypes[0]
             }
             else {
-              const selection = this.actions.choose(targetPlayer, targetTypes, {
+              const typeChoices = targetTypes.map(t =>
+                this.actions.option({ id: t, title: t, kind: 'unit-type' })
+              )
+              const selection = this.actions.choose(targetPlayer, typeChoices, {
                 title: 'Assault Cannon: Choose a non-fighter ship to destroy',
               })
-              victimType = selection[0]
+              victimType = selection[0].id
             }
             const idx = systemUnits.space.findIndex(
               u => u.owner === acTarget && u.type === victimType
@@ -363,12 +366,17 @@ module.exports = function(Twilight) {
     if (defenderTargets.length > 0) {
       const defenderPlayer = this.players.byName(defender)
       if (defenderPlayer) {
-        const defOptions = ['Continue', ...defenderTargets.map(t => `Retreat to ${t}`)]
+        const defOptions = [
+          this.actions.option({ id: 'continue', title: 'Continue' }),
+          ...defenderTargets.map(t => this.actions.option({
+            id: `retreat:${t}`, title: `Retreat to ${t}`, kind: 'retreat-target', meta: { systemId: t },
+          })),
+        ]
         const defChoice = this.actions.choose(defenderPlayer, defOptions, {
           title: 'Announce retreat? (defender)',
         })
-        if (defChoice[0] !== 'Continue') {
-          const targetSystem = defChoice[0].replace('Retreat to ', '')
+        if (defChoice[0].id !== 'continue') {
+          const targetSystem = defChoice[0].meta?.systemId
           this.state.retreatAnnounced[defender] = targetSystem
           this.log.add({
             template: '{player} announces retreat',
@@ -384,12 +392,17 @@ module.exports = function(Twilight) {
     if (attackerTargets.length > 0) {
       const attackerPlayer = this.players.byName(attacker)
       if (attackerPlayer) {
-        const atkOptions = ['Continue', ...attackerTargets.map(t => `Retreat to ${t}`)]
+        const atkOptions = [
+          this.actions.option({ id: 'continue', title: 'Continue' }),
+          ...attackerTargets.map(t => this.actions.option({
+            id: `retreat:${t}`, title: `Retreat to ${t}`, kind: 'retreat-target', meta: { systemId: t },
+          })),
+        ]
         const atkChoice = this.actions.choose(attackerPlayer, atkOptions, {
           title: 'Announce retreat? (attacker)',
         })
-        if (atkChoice[0] !== 'Continue') {
-          const targetSystem = atkChoice[0].replace('Retreat to ', '')
+        if (atkChoice[0].id !== 'continue') {
+          const targetSystem = atkChoice[0].meta?.systemId
           this.state.retreatAnnounced[attacker] = targetSystem
           this.log.add({
             template: '{player} announces retreat',
@@ -419,20 +432,25 @@ module.exports = function(Twilight) {
         continue
       }
 
-      const choice = this.actions.choose(player, ['Pass', 'Play Skilled Retreat'], {
+      const choice = this.actions.choose(player, [
+        this.actions.option({ id: 'pass', title: 'Pass' }),
+        this.actions.option({ id: 'play', title: 'Play Skilled Retreat' }),
+      ], {
         title: 'Skilled Retreat: Move all ships to an adjacent system?',
         noAutoRespond: true,
       })
 
-      if (choice[0] === 'Pass') {
+      if (choice[0].id === 'pass') {
         continue
       }
 
       // Choose destination
-      const destChoice = this.actions.choose(player, adjacentSystems, {
-        title: 'Skilled Retreat: Choose destination system',
-      })
-      const destSystem = destChoice[0]
+      const destChoice = this.actions.choose(
+        player,
+        adjacentSystems.map(s => this.actions.systemOption(s)),
+        { title: 'Skilled Retreat: Choose destination system' }
+      )
+      const destSystem = destChoice[0].id
 
       // Remove action card from hand and discard
       const card = player.actionCards.splice(cardIdx, 1)[0]
@@ -704,10 +722,13 @@ module.exports = function(Twilight) {
         continue
       }
 
-      const choice = this.actions.choose(holder, ['Play War Funding', 'Pass'], {
+      const choice = this.actions.choose(holder, [
+        this.actions.option({ id: 'play', title: 'Play War Funding' }),
+        this.actions.option({ id: 'pass', title: 'Pass' }),
+      ], {
         title: 'War Funding: Reroll opponent\'s dice and optionally your own?',
       })
-      if (choice[0] !== 'Play War Funding') {
+      if (choice[0].id !== 'play') {
         continue
       }
 
@@ -726,10 +747,13 @@ module.exports = function(Twilight) {
       opponentRoll.hits = opponentHits
 
       // Offer to reroll own dice
-      const rerollChoice = this.actions.choose(holder, ['Reroll my dice', 'Keep my dice'], {
+      const rerollChoice = this.actions.choose(holder, [
+        this.actions.option({ id: 'reroll', title: 'Reroll my dice' }),
+        this.actions.option({ id: 'keep', title: 'Keep my dice' }),
+      ], {
         title: 'War Funding: Reroll your own dice too?',
       })
-      if (rerollChoice[0] === 'Reroll my dice') {
+      if (rerollChoice[0].id === 'reroll') {
         let ownHits = 0
         for (const entry of ownRoll.rolls) {
           for (let i = 0; i < entry.diceResults.length; i++) {
@@ -777,14 +801,14 @@ module.exports = function(Twilight) {
     )
 
     const choice = this.actions.choose(player, [
-      `Reroll ${totalMisses} missed dice (+1 each)`,
-      'Pass',
+      this.actions.option({ id: 'reroll', title: `Reroll ${totalMisses} missed dice (+1 each)` }),
+      this.actions.option({ id: 'pass', title: 'Pass' }),
     ], {
       title: 'Crown of Thalnos: Reroll dice? Units that miss are destroyed.',
       noAutoRespond: true,
     })
 
-    if (choice[0] === 'Pass') {
+    if (choice[0].id === 'pass') {
       return 0
     }
 
@@ -884,10 +908,11 @@ module.exports = function(Twilight) {
           sustainOrder.push(...remaining)
           break
         }
-        const selection = this.actions.choose(owner, types, {
+        const typeChoices = types.map(t => this.actions.option({ id: t, title: t, kind: 'unit-type' }))
+        const selection = this.actions.choose(owner, typeChoices, {
           title: 'Choose ship type to sustain damage',
         })
-        const chosenType = selection[0]
+        const chosenType = selection[0].id
         const chosen = remaining.find(u => u.type === chosenType)
         if (chosen) {
           sustainOrder.push(chosen)
@@ -929,10 +954,11 @@ module.exports = function(Twilight) {
         typeToDestroy = shipTypes[0]
       }
       else {
-        const selection = this.actions.choose(owner, shipTypes, {
+        const typeChoices = shipTypes.map(t => this.actions.option({ id: t, title: t, kind: 'unit-type' }))
+        const selection = this.actions.choose(owner, typeChoices, {
           title: 'Choose a ship type to take a hit',
         })
-        typeToDestroy = selection[0]
+        typeToDestroy = selection[0].id
       }
 
       const idx = systemUnits.space.findIndex(
@@ -1005,13 +1031,18 @@ module.exports = function(Twilight) {
         break
       }
 
-      const options = ['Pass', ...eligibleTargets.map(u => `Direct Hit: ${u.type}`)]
+      const options = [
+        this.actions.option({ id: 'pass', title: 'Pass' }),
+        ...eligibleTargets.map(u => this.actions.option({
+          id: `direct-hit:${u.type}`, title: `Direct Hit: ${u.type}`, kind: 'unit-type', meta: { type: u.type },
+        })),
+      ]
       const choice = this.actions.choose(attacker, options, {
         title: 'Play Direct Hit to destroy a ship that sustained damage?',
         noAutoRespond: true,
       })
 
-      if (choice[0] === 'Pass') {
+      if (choice[0].id === 'pass') {
         break
       }
 
@@ -1027,7 +1058,7 @@ module.exports = function(Twilight) {
       this.state.actionCardDiscard.push(card)
 
       // Determine which ship to destroy
-      const chosenType = choice[0].replace('Direct Hit: ', '')
+      const chosenType = choice[0].meta?.type
       const victimIdx = systemUnits.space.findIndex(u =>
         u.owner === targetOwner && u.type === chosenType && justSustainedIds.has(u.id)
       )
@@ -1381,10 +1412,11 @@ module.exports = function(Twilight) {
           typeToRemove = remainingTypes[0]
         }
         else {
-          const selection = this.actions.choose(player, remainingTypes, {
+          const typeChoices = remainingTypes.map(t => this.actions.option({ id: t, title: t, kind: 'unit-type' }))
+          const selection = this.actions.choose(player, typeChoices, {
             title: 'Choose unit type to remove (excess capacity)',
           })
-          typeToRemove = selection[0]
+          typeToRemove = selection[0].id
         }
 
         const idx = systemUnits.space.findIndex(

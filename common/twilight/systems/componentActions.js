@@ -54,12 +54,14 @@ module.exports = function(Twilight) {
       actionId = selectedActionId
     }
     else {
-      const choices = actions.map(a => a.id)
+      const choices = actions.map(a => this.actions.option({
+        id: a.id, title: a.id, kind: 'component-action', meta: { name: a.name },
+      }))
       const selection = this.actions.choose(player, choices, {
         title: 'Choose Component Action',
         noAutoRespond: true,
       })
-      actionId = selection[0]
+      actionId = selection[0].id
     }
 
     const actionDef = actions.find(a => a.id === actionId)
@@ -240,24 +242,29 @@ module.exports = function(Twilight) {
         break
       }
 
-      const fromChoices = ['Done', ...remaining.map(p => `from:${p}`)]
+      const fromChoices = [
+        this.actions.option({ id: 'done', title: 'Done' }),
+        ...remaining.map(p => this.actions.option({
+          id: `from:${p}`, title: `from:${p}`, kind: 'planet', meta: { planetId: p },
+        })),
+      ]
       const fromSel = this.actions.choose(player, fromChoices, {
         title: `Transit Diodes: Move ground force ${i + 1}/${moveCount}`,
       })
-      if (fromSel[0] === 'Done') {
+      if (fromSel[0].id === 'done') {
         break
       }
 
-      const fromPlanet = fromSel[0].replace('from:', '')
+      const fromPlanet = fromSel[0].meta?.planetId
       const fromSystem = this._findSystemForPlanet(fromPlanet)
       if (!fromSystem) {
         continue
       }
 
-      const toSel = this.actions.choose(player, controlledPlanets, {
+      const toSel = this.actions.choose(player, controlledPlanets.map(p => this.actions.planetOption(p)), {
         title: 'Transit Diodes: Choose destination',
       })
-      const toPlanet = toSel[0]
+      const toPlanet = toSel[0].id
       const toSystem = this._findSystemForPlanet(toPlanet)
       if (!toSystem) {
         continue
@@ -312,14 +319,17 @@ module.exports = function(Twilight) {
       return
     }
 
-    const systemSel = this.actions.choose(player, dockSystems, {
+    const systemSel = this.actions.choose(player, dockSystems.map(s => this.actions.systemOption(s)), {
       title: 'Sling Relay: Choose system',
     })
-    const targetSystem = systemSel[0]
+    const systemPick = systemSel[0]
+    const targetSystem = (systemPick && typeof systemPick === 'object') ? systemPick.id : systemPick
 
     // Use produce-units UI, constrained to 1 ship
     const shipTypes = ['fighter', 'destroyer', 'cruiser', 'carrier', 'dreadnought', 'war-sun']
-    const produceSelection = this.actions.choose(player, ['Done'], {
+    const produceSelection = this.actions.choose(player, [
+      this.actions.option({ id: 'done', title: 'Done' }),
+    ], {
       title: 'Sling Relay',
       allowsAction: 'produce-units',
       context: {
@@ -365,8 +375,12 @@ module.exports = function(Twilight) {
       .filter(id => id !== 'bio-stims')  // can't ready itself
 
     const choices = [
-      ...exhaustedPlanets.map(p => `planet:${p}`),
-      ...exhaustedTechs.map(t => `tech:${t}`),
+      ...exhaustedPlanets.map(p => this.actions.option({
+        id: `planet:${p}`, title: `planet:${p}`, kind: 'planet', meta: { kind: 'planet', planetId: p },
+      })),
+      ...exhaustedTechs.map(t => this.actions.option({
+        id: `tech:${t}`, title: `tech:${t}`, kind: 'technology', meta: { kind: 'tech', techId: t },
+      })),
     ]
 
     if (choices.length === 0) {
@@ -379,16 +393,16 @@ module.exports = function(Twilight) {
     })
 
     const choice = sel[0]
-    if (choice.startsWith('planet:')) {
-      const planetId = choice.replace('planet:', '')
+    if (choice.meta?.kind === 'planet') {
+      const planetId = choice.meta.planetId
       this.state.planets[planetId].exhausted = false
       this.log.add({
         template: '{player} uses Bio-Stims to ready {planet}',
         args: { player, planet: planetId },
       })
     }
-    else if (choice.startsWith('tech:')) {
-      const techId = choice.replace('tech:', '')
+    else if (choice.meta?.kind === 'tech') {
+      const techId = choice.meta.techId
       player.exhaustedTechs = player.exhaustedTechs.filter(t => t !== techId)
       this.log.add({
         template: '{player} uses Bio-Stims to ready {tech}',
@@ -401,7 +415,9 @@ module.exports = function(Twilight) {
     this._exhaustTech(player, 'predictive-intelligence')
 
     // Redistribute command tokens
-    const sel = this.actions.choose(player, ['Done'], {
+    const sel = this.actions.choose(player, [
+      this.actions.option({ id: 'done', title: 'Done' }),
+    ], {
       title: 'Predictive Intelligence: Redistribute Command Tokens',
       allowsAction: 'redistribute-tokens',
     })
@@ -425,10 +441,10 @@ module.exports = function(Twilight) {
       return
     }
 
-    const sel = this.actions.choose(player, controlledPlanets, {
+    const sel = this.actions.choose(player, controlledPlanets.map(p => this.actions.planetOption(p)), {
       title: 'Self Assembly Routines: Place 1 mech',
     })
-    const targetPlanet = sel[0]
+    const targetPlanet = sel[0].id
     const systemId = this._findSystemForPlanet(targetPlanet)
 
     if (systemId) {
@@ -518,10 +534,10 @@ module.exports = function(Twilight) {
       return
     }
 
-    const systemSel = this.actions.choose(player, validSystems, {
+    const systemSel = this.actions.choose(player, validSystems.map(s => this.actions.systemOption(s)), {
       title: 'Psychospore: Remove command token from which system?',
     })
-    const targetSystem = systemSel[0]
+    const targetSystem = systemSel[0].id
 
     // Remove the command token
     const tokenIdx = this.state.systems[targetSystem].commandTokens.indexOf(player.name)
@@ -541,10 +557,10 @@ module.exports = function(Twilight) {
         targetPlanet = controlled[0]
       }
       else if (controlled.length > 1) {
-        const sel = this.actions.choose(player, controlled, {
+        const sel = this.actions.choose(player, controlled.map(p => this.actions.planetOption(p)), {
           title: 'Psychospore: Place infantry on which planet?',
         })
-        targetPlanet = sel[0]
+        targetPlanet = sel[0].id
       }
       else {
         targetPlanet = tile.planets[0]
@@ -615,10 +631,10 @@ module.exports = function(Twilight) {
       return
     }
 
-    const sel = this.actions.choose(player, validSystems, {
+    const sel = this.actions.choose(player, validSystems.map(s => this.actions.systemOption(s)), {
       title: 'Wormhole Generator: Place Creuss wormhole token in which system?',
     })
-    const targetSystem = sel[0]
+    const targetSystem = sel[0].id
 
     // Place or move the Creuss wormhole token
     this.state.creussWormholeToken = targetSystem
@@ -710,12 +726,13 @@ module.exports = function(Twilight) {
       return null
     }
 
-    const selection = this.actions.choose(player, available, {
+    const techChoices = available.map(id => this.actions.option({ id, title: id, kind: 'technology' }))
+    const selection = this.actions.choose(player, techChoices, {
       title: 'Research Technology (Enigmatic Device — no prerequisites)',
       noAutoRespond: true,
     })
 
-    const techId = selection[0]
+    const techId = selection[0].id
     const tech = res.getTechnology(techId)
     if (!tech) {
       return null
@@ -789,10 +806,13 @@ module.exports = function(Twilight) {
       fragType = purgeableTypes[0]
     }
     else {
-      const sel = this.actions.choose(player, purgeableTypes, {
+      const fragChoices = purgeableTypes.map(t => this.actions.option({
+        id: t, title: t, kind: 'fragment-type',
+      }))
+      const sel = this.actions.choose(player, fragChoices, {
         title: 'Choose fragment type to purge (3)',
       })
-      fragType = sel[0]
+      fragType = sel[0].id
     }
 
     // Remove 3 fragments: prefer typed fragments first, then unknown as needed

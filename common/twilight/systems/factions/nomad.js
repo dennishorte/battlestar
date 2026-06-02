@@ -15,11 +15,14 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Exhaust Artuno', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'exhaust', title: 'Exhaust Artuno' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Artuno the Betrayer: Exhaust to gain 1 trade good?',
     })
 
-    if (choice[0] === 'Exhaust Artuno') {
+    if (choice[0]?.id === 'exhaust') {
       player.exhaustAgent('artuno')
       player.addTradeGoods(1)
       ctx.log.add({
@@ -37,11 +40,14 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Exhaust Thundarian', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'exhaust', title: 'Exhaust Thundarian' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'The Thundarian: Exhaust to place 1 cruiser in this system?',
     })
 
-    if (choice[0] === 'Exhaust Thundarian') {
+    if (choice[0]?.id === 'exhaust') {
       player.exhaustAgent('thundarian')
       ctx.game._addUnit(systemId, 'space', 'cruiser', player.name)
       ctx.log.add({
@@ -76,11 +82,14 @@ module.exports = {
     const agentLabel = agentId || 'agent'
     const isOwnAgent = exhaustedPlayer.name === nomadPlayer.name
 
-    const choice = ctx.actions.choose(nomadPlayer, ['Exhaust Temporal Command Suite', 'Pass'], {
+    const choice = ctx.actions.choose(nomadPlayer, [
+      ctx.actions.option({ id: 'exhaust', title: 'Exhaust Temporal Command Suite' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Temporal Command Suite: Exhaust to ready ${exhaustedPlayer.name}'s ${agentLabel}?`,
     })
 
-    if (choice[0] !== 'Exhaust Temporal Command Suite') {
+    if (choice[0]?.id !== 'exhaust') {
       return
     }
 
@@ -94,11 +103,14 @@ module.exports = {
 
     // If readying another player's agent, may perform a transaction
     if (!isOwnAgent) {
-      const transactChoice = ctx.actions.choose(nomadPlayer, ['Transact', 'Pass'], {
+      const transactChoice = ctx.actions.choose(nomadPlayer, [
+        ctx.actions.option({ id: 'transact', title: 'Transact' }),
+        ctx.actions.option({ id: 'pass', title: 'Pass' }),
+      ], {
         title: `Temporal Command Suite: Perform a transaction with ${exhaustedPlayer.name}?`,
       })
 
-      if (transactChoice[0] === 'Transact') {
+      if (transactChoice[0]?.id === 'transact') {
         ctx.game._resolveTransaction(nomadPlayer, exhaustedPlayer.name)
 
         ctx.log.add({
@@ -136,11 +148,14 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(nomadPlayer, ["Use Thunder's Paradox", 'Pass'], {
+    const choice = ctx.actions.choose(nomadPlayer, [
+      ctx.actions.option({ id: 'use', title: "Use Thunder's Paradox" }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: "Thunder's Paradox: Exhaust 1 agent to ready another?",
     })
 
-    if (choice[0] !== "Use Thunder's Paradox") {
+    if (choice[0]?.id !== 'use') {
       return
     }
 
@@ -150,11 +165,12 @@ module.exports = {
       agentToExhaust = readyAgents[0]
     }
     else {
-      const exhaustChoices = readyAgents.map(a => a.id)
+      const exhaustChoices = readyAgents.map(a => ctx.actions.option({ id: a.id, title: a.id, kind: 'agent' }))
       const selection = ctx.actions.choose(nomadPlayer, exhaustChoices, {
         title: 'Choose agent to exhaust:',
       })
-      agentToExhaust = readyAgents.find(a => a.id === selection[0])
+      const pickId = typeof selection[0] === 'object' ? selection[0].id : selection[0]
+      agentToExhaust = readyAgents.find(a => a.id === pickId)
     }
 
     // Choose which exhausted agent to ready
@@ -163,11 +179,12 @@ module.exports = {
       agentToReady = exhaustedAgents[0]
     }
     else {
-      const readyChoices = exhaustedAgents.map(a => a.id)
+      const readyChoices = exhaustedAgents.map(a => ctx.actions.option({ id: a.id, title: a.id, kind: 'agent' }))
       const selection = ctx.actions.choose(nomadPlayer, readyChoices, {
         title: 'Choose agent to ready:',
       })
-      agentToReady = exhaustedAgents.find(a => a.id === selection[0])
+      const pickId = typeof selection[0] === 'object' ? selection[0].id : selection[0]
+      agentToReady = exhaustedAgents.find(a => a.id === pickId)
     }
 
     // Directly manipulate agent status (bypass exhaustAgent to avoid triggering
@@ -252,11 +269,14 @@ module.exports = {
       return hits
     }
 
-    const choice = ctx.actions.choose(player, ['Sustain Mech to Cancel Hit', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'sustain', title: 'Sustain Mech to Cancel Hit' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Quantum Manipulator: Sustain damage on mech to cancel 1 hit against ships?',
     })
 
-    if (choice[0] === 'Sustain Mech to Cancel Hit') {
+    if (choice[0]?.id === 'sustain') {
       // Sustain damage on the mech
       mechsInSpace[0].damaged = true
       ctx.log.add({
@@ -281,11 +301,14 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Exhaust Mercer', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'exhaust', title: 'Exhaust Mercer' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Field Marshal Mercer: Exhaust to remove 1 enemy ground force?',
     })
 
-    if (choice[0] === 'Exhaust Mercer') {
+    if (choice[0]?.id === 'exhaust') {
       player.exhaustAgent('mercer')
       const target = enemyForces.find(u => u.type === 'infantry') || enemyForces[0]
       const idx = planetUnits.indexOf(target)

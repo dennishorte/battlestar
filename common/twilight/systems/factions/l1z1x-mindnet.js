@@ -51,11 +51,14 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(l1z1xPlayer, ['Exhaust I48S', 'Pass'], {
+    const choice = ctx.actions.choose(l1z1xPlayer, [
+      ctx.actions.option({ id: 'exhaust', title: 'Exhaust I48S' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `I48S: ${activatingPlayer.name} activated a system with your units. Exhaust to remove 1 fleet token?`,
     })
 
-    if (choice[0] !== 'Exhaust I48S') {
+    if (choice[0]?.id !== 'exhaust') {
       return
     }
 
@@ -105,20 +108,24 @@ module.exports = {
       return
     }
 
-    const systemSelection = ctx.actions.choose(player, eligibleSystems, {
+    const systemOpts = eligibleSystems.map(s => ctx.actions.systemOption(s))
+    const systemSelection = ctx.actions.choose(player, systemOpts, {
       title: 'Dark Space Navigation: Choose system to place flagship + dreadnoughts',
     })
-    const targetSystem = systemSelection[0]
+    const targetSystem = typeof systemSelection[0] === 'object' ? systemSelection[0].id : systemSelection[0]
 
     // Place flagship
     ctx.game._addUnit(targetSystem, 'space', 'flagship', player.name)
 
     // Place up to 2 dreadnoughts
     for (let i = 0; i < 2; i++) {
-      const choice = ctx.actions.choose(player, ['Place Dreadnought', 'Done'], {
+      const choice = ctx.actions.choose(player, [
+        ctx.actions.option({ id: 'place', title: 'Place Dreadnought' }),
+        ctx.actions.option({ id: 'done', title: 'Done' }),
+      ], {
         title: `Dark Space Navigation: Place dreadnought ${i + 1}/2?`,
       })
-      if (choice[0] === 'Done') {
+      if (choice[0]?.id === 'done') {
         break
       }
       ctx.game._addUnit(targetSystem, 'space', 'dreadnought', player.name)
@@ -358,11 +365,14 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Deploy Annihilator', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'deploy', title: 'Deploy Annihilator' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Annihilator DEPLOY: Spend 2 resources to place 1 mech on the bombarded planet?',
     })
 
-    if (choice[0] !== 'Deploy Annihilator') {
+    if (choice[0]?.id !== 'deploy') {
       return
     }
 
@@ -454,12 +464,12 @@ module.exports = {
       return
     }
 
-    const choices = available.map(t => t.id)
+    const choices = available.map(t => ctx.actions.option({ id: t.id, title: t.id, kind: 'tech' }))
     const selection = ctx.actions.choose(player, choices, {
       title: 'Inheritance Systems: Choose a technology to gain',
     })
 
-    const chosenTechId = selection[0]
+    const chosenTechId = typeof selection[0] === 'object' ? selection[0].id : selection[0]
     ctx.game._grantTechnology(player, chosenTechId)
 
     ctx.log.add({

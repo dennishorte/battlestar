@@ -9,10 +9,13 @@ module.exports = {
     // At the start of space combat: purge to place copies of destroyed enemy
     // ships during this combat
     if (player.isHeroUnlocked() && !player.isHeroPurged()) {
-      const heroChoice = ctx.actions.choose(player, ['Activate Sleeper Cell', 'Pass'], {
+      const heroChoice = ctx.actions.choose(player, [
+        ctx.actions.option({ id: 'activate', title: 'Activate Sleeper Cell' }),
+        ctx.actions.option({ id: 'pass', title: 'Pass' }),
+      ], {
         title: 'Ipswitch, Loose Cannon: Purge to copy destroyed enemy ships during this combat?',
       })
-      if (heroChoice[0] === 'Activate Sleeper Cell') {
+      if (heroChoice[0]?.id === 'activate') {
         ctx.state._mentakSleeperCell = player.name
         player.purgeHero()
         ctx.log.add({
@@ -112,19 +115,21 @@ module.exports = {
       return
     }
 
-    const choices = ['Pass']
+    const choices = [ctx.actions.option({ id: 'pass', title: 'Pass' })]
     if (transactionPlayer.tradeGoods > 0) {
-      choices.unshift('Steal Trade Good')
+      choices.unshift(ctx.actions.option({ id: 'steal-tg', title: 'Steal Trade Good' }))
     }
     if (transactionPlayer.commodities > 0) {
-      choices.unshift('Steal Commodity')
+      choices.unshift(ctx.actions.option({ id: 'steal-commodity', title: 'Steal Commodity' }))
     }
 
     const selection = ctx.actions.choose(player, choices, {
       title: `Pillage ${transactionPlayer.name}?`,
     })
 
-    if (selection[0] === 'Steal Trade Good') {
+    const pick = selection[0]
+    const pickId = typeof pick === 'object' ? pick.id : pick
+    if (pickId === 'steal-tg') {
       transactionPlayer.spendTradeGoods(1)
       player.addTradeGoods(1)
       ctx.log.add({
@@ -133,7 +138,7 @@ module.exports = {
       })
       this._offerAgent(player, ctx, transactionPlayer)
     }
-    else if (selection[0] === 'Steal Commodity') {
+    else if (pickId === 'steal-commodity') {
       transactionPlayer.commodities -= 1
       player.addTradeGoods(1)
       ctx.log.add({
@@ -151,11 +156,14 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Exhaust Suffi An', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'exhaust', title: 'Exhaust Suffi An' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Suffi An: Exhaust to draw 1 action card each?',
     })
 
-    if (choice[0] !== 'Exhaust Suffi An') {
+    if (choice[0]?.id !== 'exhaust') {
       return
     }
 
@@ -200,13 +208,18 @@ module.exports = {
       }
 
       if (allDestroyed.size > 0) {
-        const choices = ['Pass', ...allDestroyed]
+        const choices = [
+          ctx.actions.option({ id: 'pass', title: 'Pass' }),
+          ...[...allDestroyed].map(t => ctx.actions.option({ id: `unit-${t}`, title: t, kind: 'unit' })),
+        ]
         const selection = ctx.actions.choose(player, choices, {
           title: 'Salvage Operations: Produce 1 ship of a destroyed type?',
         })
 
-        if (selection[0] !== 'Pass') {
-          const shipType = selection[0]
+        const pick = selection[0]
+        const pickId = typeof pick === 'object' ? pick.id : pick
+        if (pickId !== 'pass' && pick !== 'Pass') {
+          const shipType = pickId.startsWith('unit-') ? pickId.slice('unit-'.length) : pickId
           ctx.game._addUnit(systemId, 'space', shipType, player.name)
           ctx.log.add({
             template: 'Salvage Operations: {player} produces 1 {ship}',
@@ -245,12 +258,18 @@ module.exports = {
       noteToGive = loserNotes[0]
     }
     else {
-      const noteChoices = loserNotes.map(n => `${n.id} (from ${n.owner})`)
+      const noteChoices = loserNotes.map(n => ctx.actions.option({
+        id: `${n.id}__${n.owner}`,
+        title: `${n.id} (from ${n.owner})`,
+        kind: 'promissory-note',
+      }))
       const selection = ctx.actions.choose(loser, noteChoices, {
         title: `S'Ula Mentarion: Give ${player.name} 1 promissory note`,
       })
-      const idx = noteChoices.indexOf(selection[0])
-      noteToGive = loserNotes[idx]
+      const pick = selection[0]
+      const pickId = typeof pick === 'object' ? pick.id : pick
+      noteToGive = loserNotes.find(n => `${n.id}__${n.owner}` === pickId)
+        || loserNotes[noteChoices.findIndex(c => c.title === pickId)]
     }
 
     loser.removePromissoryNote(noteToGive.id, noteToGive.owner)

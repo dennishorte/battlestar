@@ -30,11 +30,16 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Blank Laws', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'blank', title: 'Blank Laws' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: "Law's Order: Spend 1 influence to blank all laws this turn?",
     })
 
-    if (choice[0] === 'Blank Laws') {
+    const loPick = choice[0]
+    const loPickId = (loPick && typeof loPick === 'object') ? loPick.id : loPick
+    if (loPickId === 'blank' || loPick === 'Blank Laws') {
       ctx.game._payInfluence(player, 1)
       ctx.state.lawsBlankedByPlayer = player.name
 
@@ -75,11 +80,16 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(keleresPlayer, ['Exhaust Xander', 'Pass'], {
+    const choice = ctx.actions.choose(keleresPlayer, [
+      ctx.actions.option({ id: 'exhaust', title: 'Exhaust Xander' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Xander: ${activePlayer.name} has ${target.commodities} commodities. Exhaust to convert to TG?`,
     })
 
-    if (choice[0] !== 'Exhaust Xander') {
+    const xanPick = choice[0]
+    const xanPickId = (xanPick && typeof xanPick === 'object') ? xanPick.id : xanPick
+    if (xanPickId !== 'exhaust' && xanPick !== 'Exhaust Xander') {
       return
     }
 
@@ -106,7 +116,10 @@ module.exports = {
   executiveOrder(ctx, player) {
     ctx.game._exhaustTech(player, 'executive-order')
 
-    const drawChoice = ctx.actions.choose(player, ['Top', 'Bottom'], {
+    const drawChoice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'top', title: 'Top' }),
+      ctx.actions.option({ id: 'bottom', title: 'Bottom' }),
+    ], {
       title: 'Executive Order: Draw from top or bottom of agenda deck?',
     })
 
@@ -127,7 +140,9 @@ module.exports = {
     }
 
     // If drawing from bottom, move it to the front
-    if (drawChoice[0] === 'Bottom') {
+    const drawPick = drawChoice[0]
+    const drawPickId = (drawPick && typeof drawPick === 'object') ? drawPick.id : drawPick
+    if (drawPickId === 'bottom' || drawPick === 'Bottom') {
       const bottomCard = ctx.state.agendaDeck.pop()
       ctx.state.agendaDeck.unshift(bottomCard)
     }
@@ -277,10 +292,15 @@ module.exports = {
       targetSystem = eligibleSystems[0]
     }
     else {
-      const selection = ctx.actions.choose(player, eligibleSystems, {
-        title: 'Overwing Zeta: Choose system',
-      })
-      targetSystem = selection[0]
+      const selection = ctx.actions.choose(
+        player,
+        eligibleSystems.map(s => ctx.actions.option({ id: s, title: s, kind: 'system' })),
+        {
+          title: 'Overwing Zeta: Choose system',
+        },
+      )
+      const owPick = selection[0]
+      targetSystem = (owPick && typeof owPick === 'object') ? owPick.id : owPick
     }
 
     // Place flagship
@@ -288,14 +308,21 @@ module.exports = {
 
     // Place up to 2 cruisers or destroyers
     for (let i = 0; i < 2; i++) {
-      const choices = ['cruiser', 'destroyer', 'Done']
+      const choices = [
+        ctx.actions.option({ id: 'cruiser', title: 'cruiser', kind: 'unit' }),
+        ctx.actions.option({ id: 'destroyer', title: 'destroyer', kind: 'unit' }),
+        ctx.actions.option({ id: 'done', title: 'Done' }),
+      ]
       const unitChoice = ctx.actions.choose(player, choices, {
         title: `Overwing Zeta: Place ship ${i + 1}/2`,
       })
-      if (unitChoice[0] === 'Done') {
+      const ucPick = unitChoice[0]
+      const ucPickId = (ucPick && typeof ucPick === 'object') ? ucPick.id : ucPick
+      const ucPickTitle = (ucPick && typeof ucPick === 'object') ? ucPick.title : ucPick
+      if (ucPickId === 'done' || ucPickTitle === 'Done') {
         break
       }
-      ctx.game._addUnit(targetSystem, 'space', unitChoice[0], player.name)
+      ctx.game._addUnit(targetSystem, 'space', ucPickId, player.name)
     }
 
     ctx.log.add({
@@ -315,10 +342,19 @@ module.exports = {
   _odlynnHero(ctx, player) {
     // This hero triggers "after an agenda is revealed" — as a component action
     // we simulate it by allowing the player to predict and gain resources
-    const extraVotes = ctx.actions.choose(player, ['1 vote', '2 votes', '3 votes', '4 votes', '5 votes', '6 votes'], {
+    const voteOptions = [1, 2, 3, 4, 5, 6].map(n => ctx.actions.option({
+      id: `votes:${n}`,
+      title: n === 1 ? '1 vote' : `${n} votes`,
+      kind: 'votes',
+    }))
+    const extraVotes = ctx.actions.choose(player, voteOptions, {
       title: 'Operation Archon: Cast how many extra votes? (up to 6)',
     })
-    const votes = parseInt(extraVotes[0])
+    const evPick = extraVotes[0]
+    const evPickId = (evPick && typeof evPick === 'object') ? evPick.id : evPick
+    const evPickTitle = (evPick && typeof evPick === 'object') ? evPick.title : evPick
+    const evTok = typeof evPickId === 'string' ? evPickId : (evPickTitle || '')
+    const votes = parseInt(String(evTok).match(/\d+/)?.[0]) || 0
 
     ctx.log.add({
       template: 'Operation Archon: {player} casts {votes} extra votes',
@@ -365,7 +401,7 @@ module.exports = {
       return
     }
 
-    const choices = ['Tactical Action']
+    const choices = [ctx.actions.option({ id: 'tactical', title: 'Tactical Action' })]
     if (!player.hasUsedStrategyCard()) {
       const unusedCards = player.strategyCards.filter(c => !c.used)
       choices.push({
@@ -396,7 +432,7 @@ module.exports = {
         min: 0,
       })
     }
-    choices.push('Decline')
+    choices.push(ctx.actions.option({ id: 'decline', title: 'Decline' }))
 
     const selection = ctx.actions.choose(player, choices, {
       title: 'Suffi An: Perform an additional action?',
@@ -562,22 +598,27 @@ module.exports = {
       return
     }
 
-    const choices = [...eligibleSystems, 'Pass']
+    const choices = [
+      ...eligibleSystems.map(s => ctx.actions.option({ id: s, title: s, kind: 'system' })),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ]
     const selection = ctx.actions.choose(player, choices, {
       title: 'Agency Supply Network: Resolve PRODUCTION in another system?',
     })
 
-    if (selection[0] === 'Pass') {
+    const asnPick = selection[0]
+    const asnPickId = (asnPick && typeof asnPick === 'object') ? asnPick.id : asnPick
+    if (asnPickId === 'pass' || asnPick === 'Pass') {
       return
     }
 
     ctx.log.add({
       template: 'Agency Supply Network: {player} resolves PRODUCTION in {system}',
-      args: { player: player.name, system: selection[0] },
+      args: { player: player.name, system: asnPickId },
     })
 
     ctx.state._agencySupplyNetworkActive = true
-    ctx.game._productionStep(player, selection[0])
+    ctx.game._productionStep(player, asnPickId)
     delete ctx.state._agencySupplyNetworkActive
   },
 }

@@ -36,11 +36,16 @@ module.exports = {
 
     // Choose a target player (can be self)
     const allPlayers = ctx.game.players.all()
-    const targetNames = allPlayers.map(p => p.name)
-    const targetSelection = ctx.actions.choose(player, targetNames, {
-      title: 'Umbat: Choose a player to produce units',
-    })
-    const targetPlayer = ctx.game.players.byName(targetSelection[0])
+    const targetSelection = ctx.actions.choose(
+      player,
+      allPlayers.map(p => ctx.actions.playerOption(p)),
+      {
+        title: 'Umbat: Choose a player to produce units',
+      },
+    )
+    const umbatPick = targetSelection[0]
+    const umbatTargetName = (umbatPick && typeof umbatPick === 'object') ? umbatPick.id : umbatPick
+    const targetPlayer = ctx.game.players.byName(umbatTargetName)
 
     // Find systems with target's war suns or flagship
     const eligibleSystems = []
@@ -66,25 +71,36 @@ module.exports = {
       targetSystem = eligibleSystems[0]
     }
     else {
-      const sysChoice = ctx.actions.choose(targetPlayer, eligibleSystems, {
-        title: 'Umbat: Choose system to produce in',
-      })
-      targetSystem = sysChoice[0]
+      const sysChoice = ctx.actions.choose(
+        targetPlayer,
+        eligibleSystems.map(s => ctx.actions.option({ id: s, title: s, kind: 'system' })),
+        {
+          title: 'Umbat: Choose system to produce in',
+        },
+      )
+      const umsPick = sysChoice[0]
+      targetSystem = (umsPick && typeof umsPick === 'object') ? umsPick.id : umsPick
     }
 
     // Produce up to 2 units with cost <= 4
     const unitTypes = ['fighter', 'destroyer', 'infantry', 'mech']
     for (let i = 0; i < 2; i++) {
-      const choices = ['Pass', ...unitTypes]
+      const choices = [
+        ctx.actions.option({ id: 'pass', title: 'Pass' }),
+        ...unitTypes.map(t => ctx.actions.option({ id: t, title: t, kind: 'unit' })),
+      ]
       const unitChoice = ctx.actions.choose(targetPlayer, choices, {
         title: `Umbat: Produce unit ${i + 1}/2 (cost 4 or less)`,
       })
 
-      if (unitChoice[0] === 'Pass') {
+      const umuPick = unitChoice[0]
+      const umuPickId = (umuPick && typeof umuPick === 'object') ? umuPick.id : umuPick
+      const umuPickTitle = (umuPick && typeof umuPick === 'object') ? umuPick.title : umuPick
+      if (umuPickId === 'pass' || umuPickTitle === 'Pass') {
         break
       }
 
-      const unitType = unitChoice[0]
+      const unitType = umuPickId
       const unitDef = ctx.game.res.getUnit(unitType)
       if (unitDef) {
         if (unitDef.category === 'ship') {
@@ -123,7 +139,10 @@ module.exports = {
 
     player.commandTokens.strategy -= 1
 
-    const unitChoice = ctx.actions.choose(player, ['2 Fighters', '1 Destroyer'], {
+    const unitChoice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'fighters', title: '2 Fighters' }),
+      ctx.actions.option({ id: 'destroyer', title: '1 Destroyer' }),
+    ], {
       title: 'Star Forge: Choose units to place',
     })
 
@@ -132,13 +151,20 @@ module.exports = {
       targetSystem = warSunSystems[0]
     }
     else {
-      const sysChoice = ctx.actions.choose(player, warSunSystems, {
-        title: 'Star Forge: Choose system',
-      })
-      targetSystem = sysChoice[0]
+      const sysChoice = ctx.actions.choose(
+        player,
+        warSunSystems.map(s => ctx.actions.option({ id: s, title: s, kind: 'system' })),
+        {
+          title: 'Star Forge: Choose system',
+        },
+      )
+      const sfsPick = sysChoice[0]
+      targetSystem = (sfsPick && typeof sfsPick === 'object') ? sfsPick.id : sfsPick
     }
 
-    if (unitChoice[0] === '2 Fighters') {
+    const sfPick = unitChoice[0]
+    const sfPickId = (sfPick && typeof sfPick === 'object') ? sfPick.id : sfPick
+    if (sfPickId === 'fighters' || sfPick === '2 Fighters') {
       ctx.game._addUnit(targetSystem, 'space', 'fighter', player.name)
       ctx.game._addUnit(targetSystem, 'space', 'fighter', player.name)
       ctx.log.add({
@@ -269,10 +295,15 @@ module.exports = {
       targetSystem = warSunSystems[0]
     }
     else {
-      const selection = ctx.actions.choose(player, warSunSystems, {
-        title: 'Nova Seed: Choose system to destroy',
-      })
-      targetSystem = selection[0]
+      const selection = ctx.actions.choose(
+        player,
+        warSunSystems.map(s => ctx.actions.option({ id: s, title: s, kind: 'system' })),
+        {
+          title: 'Nova Seed: Choose system to destroy',
+        },
+      )
+      const nsPick = selection[0]
+      targetSystem = (nsPick && typeof nsPick === 'object') ? nsPick.id : nsPick
     }
 
     // Destroy all other players' units in the system (space and planets)
@@ -369,10 +400,15 @@ module.exports = {
       targetSystem = eligible[0]
     }
     else {
-      const selection = ctx.actions.choose(player, eligible, {
-        title: 'Stellar Genesis: Place Avernus token in which system?',
-      })
-      targetSystem = selection[0]
+      const selection = ctx.actions.choose(
+        player,
+        eligible.map(s => ctx.actions.option({ id: s, title: s, kind: 'system' })),
+        {
+          title: 'Stellar Genesis: Place Avernus token in which system?',
+        },
+      )
+      const sgPick = selection[0]
+      targetSystem = (sgPick && typeof sgPick === 'object') ? sgPick.id : sgPick
     }
 
     // Place Avernus token

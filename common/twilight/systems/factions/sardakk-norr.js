@@ -47,10 +47,15 @@ module.exports = {
       targetSystem = targetableSystems[0]
     }
     else {
-      const sysChoice = ctx.actions.choose(player, targetableSystems, {
-        title: "Sh'val: Choose system to invade",
-      })
-      targetSystem = sysChoice[0]
+      const sysChoice = ctx.actions.choose(
+        player,
+        targetableSystems.map(s => ctx.actions.option({ id: s, title: s, kind: 'system' })),
+        {
+          title: "Sh'val: Choose system to invade",
+        },
+      )
+      const shvSPick = sysChoice[0]
+      targetSystem = (shvSPick && typeof shvSPick === 'object') ? shvSPick.id : shvSPick
     }
 
     const tile = ctx.game.res.getSystemTile(targetSystem) || ctx.game.res.getSystemTile(Number(targetSystem))
@@ -61,11 +66,19 @@ module.exports = {
 
     // Place ground forces from reinforcements on each target planet
     for (const planetId of invasionPlanets) {
-      const countChoices = ['Place 1 infantry', 'Place 2 infantry', 'Place 3 infantry', 'Place 4 infantry', 'Place 5 infantry']
+      const countChoices = [1, 2, 3, 4, 5].map(n => ctx.actions.option({
+        id: `infantry:${n}`,
+        title: `Place ${n} infantry`,
+        kind: 'count',
+      }))
       const countChoice = ctx.actions.choose(player, countChoices, {
         title: `Sh'val: How many infantry to commit to ${planetId}?`,
       })
-      const count = parseInt(countChoice[0].match(/\d+/)?.[0]) || 0
+      const ccPick = countChoice[0]
+      const ccPickId = (ccPick && typeof ccPick === 'object') ? ccPick.id : ccPick
+      const ccPickTitle = (ccPick && typeof ccPick === 'object') ? ccPick.title : ccPick
+      const ccTok = typeof ccPickId === 'string' ? ccPickId : (ccPickTitle || '')
+      const count = parseInt(String(ccTok).match(/\d+/)?.[0]) || 0
       for (let i = 0; i < count; i++) {
         ctx.game._addUnit(targetSystem, planetId, 'infantry', player.name)
       }
@@ -122,11 +135,16 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(sardakkPlayer, ["Exhaust T'ro", 'Pass'], {
+    const choice = ctx.actions.choose(sardakkPlayer, [
+      ctx.actions.option({ id: 'exhaust', title: "Exhaust T'ro" }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: "T'ro: Exhaust to place 2 infantry on a planet in the active system?",
     })
 
-    if (choice[0] !== "Exhaust T'ro") {
+    const troPick = choice[0]
+    const troPickId = (troPick && typeof troPick === 'object') ? troPick.id : troPick
+    if (troPickId !== 'exhaust' && troPick !== "Exhaust T'ro") {
       return
     }
 
@@ -138,10 +156,15 @@ module.exports = {
       targetPlanet = controlledPlanets[0]
     }
     else {
-      const planetChoice = ctx.actions.choose(sardakkPlayer, controlledPlanets, {
-        title: "T'ro: Choose planet for 2 infantry",
-      })
-      targetPlanet = planetChoice[0]
+      const planetChoice = ctx.actions.choose(
+        sardakkPlayer,
+        controlledPlanets.map(p => ctx.actions.option({ id: p, title: p, kind: 'planet' })),
+        {
+          title: "T'ro: Choose planet for 2 infantry",
+        },
+      )
+      const tpPick = planetChoice[0]
+      targetPlanet = (tpPick && typeof tpPick === 'object') ? tpPick.id : tpPick
     }
 
     // Place 2 infantry belonging to the activating player
@@ -188,11 +211,16 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Sacrifice Dreadnought', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'sacrifice', title: 'Sacrifice Dreadnought' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Exotrireme II: Destroy a dreadnought to destroy up to 2 enemy ships?',
     })
 
-    if (choice[0] !== 'Sacrifice Dreadnought') {
+    const exoPick = choice[0]
+    const exoPickId = (exoPick && typeof exoPick === 'object') ? exoPick.id : exoPick
+    if (exoPickId !== 'sacrifice' && exoPick !== 'Sacrifice Dreadnought') {
       return
     }
 
@@ -289,38 +317,48 @@ module.exports = {
       return
     }
 
-    const choices = ['Gain Command Token', 'Pass']
+    const choices = [
+      ctx.actions.option({ id: 'token', title: 'Gain Command Token' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ]
 
     // Check if player has any unit upgrade techs available to research
     const availableUpgrades = ctx.game._getResearchableTechs?.(player)
       ?.filter(t => t.unitUpgrade) || []
     if (availableUpgrades.length > 0) {
-      choices.splice(1, 0, 'Research Unit Upgrade')
+      choices.splice(1, 0, ctx.actions.option({ id: 'upgrade', title: 'Research Unit Upgrade' }))
     }
 
     const choice = ctx.actions.choose(player, choices, {
       title: "N'orr Supremacy: Choose reward for winning combat",
     })
 
-    if (choice[0] === 'Gain Command Token') {
+    const norrPick = choice[0]
+    const norrPickId = (norrPick && typeof norrPick === 'object') ? norrPick.id : norrPick
+    const norrPickTitle = (norrPick && typeof norrPick === 'object') ? norrPick.title : norrPick
+    if (norrPickId === 'token' || norrPickTitle === 'Gain Command Token') {
       const poolChoice = ctx.actions.choose(player, ['tactics', 'fleet', 'strategy'], {
         title: 'Place command token in:',
       })
-      player.commandTokens[poolChoice[0]]++
+      const poolPick = poolChoice[0]
+      const poolId = (poolPick && typeof poolPick === 'object') ? poolPick.id : poolPick
+      player.commandTokens[poolId]++
       ctx.log.add({
         template: "N'orr Supremacy: {player} gains 1 command token in {pool}",
-        args: { player: player.name, pool: poolChoice[0] },
+        args: { player: player.name, pool: poolId },
       })
     }
-    else if (choice[0] === 'Research Unit Upgrade') {
-      const upgradeChoices = availableUpgrades.map(t => t.id)
+    else if (norrPickId === 'upgrade' || norrPickTitle === 'Research Unit Upgrade') {
+      const upgradeChoices = availableUpgrades.map(t => ctx.actions.option({ id: t.id, title: t.id, kind: 'tech' }))
       const techChoice = ctx.actions.choose(player, upgradeChoices, {
         title: "N'orr Supremacy: Research a unit upgrade technology",
       })
-      ctx.game._grantTechnology(player, techChoice[0])
+      const techPick = techChoice[0]
+      const techId = (techPick && typeof techPick === 'object') ? techPick.id : techPick
+      ctx.game._grantTechnology(player, techId)
       ctx.log.add({
         template: "N'orr Supremacy: {player} researches {tech}",
-        args: { player: player.name, tech: techChoice[0] },
+        args: { player: player.name, tech: techId },
       })
     }
   },

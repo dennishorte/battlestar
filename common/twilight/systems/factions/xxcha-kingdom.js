@@ -34,16 +34,21 @@ module.exports = {
       return
     }
 
-    const choices = ['Pass', ...adjacentPlanets]
+    const choices = [
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+      ...[...adjacentPlanets].map(p => ctx.actions.planetOption(p)),
+    ]
     const selection = ctx.actions.choose(player, choices, {
       title: 'Peace Accords: Gain control of an unoccupied adjacent planet?',
     })
 
-    if (selection[0] === 'Pass') {
+    const pick = selection[0]
+    const pickId = typeof pick === 'object' ? pick.id : pick
+    if (pickId === 'pass' || pick === 'Pass') {
       return
     }
 
-    const targetPlanet = selection[0]
+    const targetPlanet = pickId
     const targetSystemId = ctx.game._findSystemForPlanet(targetPlanet)
     if (targetSystemId) {
       ctx.state.planets[targetPlanet].controller = player.name
@@ -61,11 +66,16 @@ module.exports = {
       return null
     }
 
-    const choice = ctx.actions.choose(player, ['Quash', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'quash', title: 'Quash' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Quash agenda "${agenda.name}"? (Spend 1 strategy token)`,
     })
 
-    if (choice[0] === 'Quash') {
+    const qaPick = choice[0]
+    const qaPickId = (qaPick && typeof qaPick === 'object') ? qaPick.id : qaPick
+    if (qaPickId === 'quash' || qaPick === 'Quash') {
       player.commandTokens.strategy -= 1
 
       ctx.log.add({
@@ -92,11 +102,16 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Exhaust Ggrocuto Rinn', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'exhaust', title: 'Exhaust Ggrocuto Rinn' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Ggrocuto Rinn: Exhaust agent so readied planets count as 2 extra votes for "${agenda.name}"?`,
     })
 
-    if (choice[0] !== 'Exhaust Ggrocuto Rinn') {
+    const grPick = choice[0]
+    const grPickId = (grPick && typeof grPick === 'object') ? grPick.id : grPick
+    if (grPickId !== 'exhaust' && grPick !== 'Exhaust Ggrocuto Rinn') {
       return
     }
 
@@ -177,16 +192,21 @@ module.exports = {
       return
     }
 
-    const choices = ['Pass', ...controlledPlanets]
+    const choices = [
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+      ...controlledPlanets.map(p => ctx.actions.option({ id: p, title: p, kind: 'planet' })),
+    ]
     const selection = ctx.actions.choose(player, choices, {
       title: 'Indomitus: Deploy 1 mech on a controlled planet?',
     })
 
-    if (selection[0] === 'Pass') {
+    const idPick = selection[0]
+    const idPickId = (idPick && typeof idPick === 'object') ? idPick.id : idPick
+    if (idPickId === 'pass' || idPick === 'Pass') {
       return
     }
 
-    const targetPlanet = selection[0]
+    const targetPlanet = idPickId
     const systemId = ctx.game._findSystemForPlanet(targetPlanet)
     if (systemId) {
       ctx.game._addUnitToPlanet(systemId, targetPlanet, 'mech', player.name)
@@ -227,11 +247,16 @@ module.exports = {
       return false
     }
 
-    const choice = ctx.actions.choose(xxchaPlayer, ['Cancel', 'Pass'], {
+    const choice = ctx.actions.choose(xxchaPlayer, [
+      ctx.actions.option({ id: 'cancel', title: 'Cancel' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Instinct Training: Cancel "${card.name}"? (Exhaust tech + spend 1 strategy token)`,
     })
 
-    if (choice[0] === 'Cancel') {
+    const itPick = choice[0]
+    const itPickId = (itPick && typeof itPick === 'object') ? itPick.id : itPick
+    if (itPickId === 'cancel' || itPick === 'Cancel') {
       ctx.game._exhaustTech(xxchaPlayer, 'instinct-training')
       xxchaPlayer.commandTokens.strategy -= 1
 
@@ -280,11 +305,16 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(xxchaPlayer, ['Nullify', 'Pass'], {
+    const choice = ctx.actions.choose(xxchaPlayer, [
+      ctx.actions.option({ id: 'nullify', title: 'Nullify' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Nullification Field: End ${activatingPlayer.name}'s turn? (Exhaust tech + spend 1 strategy token)`,
     })
 
-    if (choice[0] === 'Nullify') {
+    const nfPick = choice[0]
+    const nfPickId = (nfPick && typeof nfPick === 'object') ? nfPick.id : nfPick
+    if (nfPickId === 'nullify' || nfPick === 'Nullify') {
       ctx.game._exhaustTech(xxchaPlayer, 'nullification-field')
       xxchaPlayer.commandTokens.strategy -= 1
 
@@ -329,16 +359,24 @@ module.exports = {
     const readiedPlanets = new Set()
 
     for (let i = 0; i < 4; i++) {
-      const choices = ['Done', ...controlledPlanets.map(p => `pds:${p}`), ...controlledPlanets.map(p => `mech:${p}`)]
+      const choices = [
+        ctx.actions.option({ id: 'done', title: 'Done' }),
+        ...controlledPlanets.map(p => ctx.actions.option({ id: `pds:${p}`, title: `pds:${p}`, kind: 'unit-place' })),
+        ...controlledPlanets.map(p => ctx.actions.option({ id: `mech:${p}`, title: `mech:${p}`, kind: 'unit-place' })),
+      ]
       const selection = ctx.actions.choose(player, choices, {
         title: `Xxekir Grom: Place unit ${i + 1}/4 (PDS or Mech)`,
       })
 
-      if (selection[0] === 'Done') {
+      const xgPick = selection[0]
+      const xgPickId = (xgPick && typeof xgPick === 'object') ? xgPick.id : xgPick
+      const xgPickTitle = (xgPick && typeof xgPick === 'object') ? xgPick.title : xgPick
+      if (xgPickId === 'done' || xgPickTitle === 'Done') {
         break
       }
 
-      const [unitType, planetId] = selection[0].split(':')
+      const xgTok = xgPickId || xgPickTitle || ''
+      const [unitType, planetId] = String(xgTok).split(':')
       const systemId = ctx.game._findSystemForPlanet(planetId)
 
       if (systemId) {

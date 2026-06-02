@@ -46,12 +46,15 @@ module.exports = {
 
     // Agent: Viscount Unlenn — exhaust to give 1 ship an additional combat die
     if (player.isAgentReady()) {
-      const agentChoices = ['Exhaust Viscount Unlenn', 'Pass']
+      const agentChoices = [
+        ctx.actions.option({ id: 'exhaust', title: 'Exhaust Viscount Unlenn' }),
+        ctx.actions.option({ id: 'pass', title: 'Pass' }),
+      ]
       const agentChoice = ctx.actions.choose(player, agentChoices, {
         title: 'Viscount Unlenn: Exhaust to give 1 ship +1 die this round?',
       })
 
-      if (agentChoice[0] === 'Exhaust Viscount Unlenn') {
+      if (agentChoice[0]?.id === 'exhaust') {
         player.exhaustAgent()
 
         // Choose which ship gets the bonus die
@@ -64,10 +67,18 @@ module.exports = {
             label: s.type + (s.damaged ? ' (damaged)' : ''),
             value: i,
           }))
-          const shipChoice = ctx.actions.choose(player, shipChoices.map(c => c.label), {
+          const shipOpts = shipChoices.map((c, i) => ctx.actions.option({
+            id: `ship-${i}`,
+            title: c.label,
+            kind: 'ship',
+          }))
+          const shipChoice = ctx.actions.choose(player, shipOpts, {
             title: 'Choose ship for +1 die:',
           })
-          const idx = shipChoices.findIndex(c => c.label === shipChoice[0])
+          const pickId = typeof shipChoice[0] === 'object' ? shipChoice[0].id : shipChoice[0]
+          const idx = pickId?.startsWith?.('ship-')
+            ? Number(pickId.slice('ship-'.length))
+            : shipChoices.findIndex(c => c.label === pickId)
           targetShip = playerShips[idx >= 0 ? idx : 0]
         }
 
@@ -81,11 +92,14 @@ module.exports = {
 
     // Munitions Reserves: spend 2 TG to reroll dice
     if (player.tradeGoods >= 2) {
-      const choice = ctx.actions.choose(player, ['Reroll', 'Pass'], {
+      const choice = ctx.actions.choose(player, [
+        ctx.actions.option({ id: 'reroll', title: 'Reroll' }),
+        ctx.actions.option({ id: 'pass', title: 'Pass' }),
+      ], {
         title: 'Munitions Reserves: Spend 2 trade goods to reroll dice?',
       })
 
-      if (choice[0] === 'Reroll') {
+      if (choice[0]?.id === 'reroll') {
         player.spendTradeGoods(2)
         ctx.log.add({
           template: '{player} spends 2 trade goods for Munitions Reserves reroll',
@@ -127,11 +141,14 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Deploy Mech', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'deploy', title: 'Deploy Mech' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Dunlain Reaper: Spend 2 resources to replace 1 infantry with 1 mech?',
     })
 
-    if (choice[0] === 'Pass') {
+    if (choice[0]?.id !== 'deploy') {
       return
     }
 

@@ -145,17 +145,20 @@ module.exports = function(Twilight) {
         break
       }
 
-      const choices = ['Done', ...remaining.map(c => c.name)]
+      const choices = [
+        this.actions.option({ id: 'done', title: 'Done' }),
+        ...remaining.map(c => this.actions.cardOption(c, 'action-card')),
+      ]
       const sel = this.actions.choose(player, choices, {
         title: `The Codex: Take action card ${i + 1}/3`,
       })
 
-      if (sel[0] === 'Done') {
+      if (sel[0].id === 'done') {
         break
       }
 
-      const cardName = sel[0]
-      const cardIdx = this.state.actionCardDiscard.findIndex(c => c.name === cardName)
+      const cardId = sel[0].id
+      const cardIdx = this.state.actionCardDiscard.findIndex(c => c.id === cardId)
       if (cardIdx !== -1) {
         const card = this.state.actionCardDiscard.splice(cardIdx, 1)[0]
         if (!player.actionCards) {
@@ -259,10 +262,10 @@ module.exports = function(Twilight) {
       return
     }
 
-    const sel = this.actions.choose(player, targets, {
+    const sel = this.actions.choose(player, targets.map(p => this.actions.planetOption(p)), {
       title: 'Stellar Converter: Choose planet to destroy',
     })
-    const planetId = sel[0]
+    const planetId = sel[0].id
     const systemId = this._findSystemForPlanet(planetId)
 
     this._purgeRelic(player, 'stellar-converter')
@@ -315,11 +318,11 @@ module.exports = function(Twilight) {
     this._exhaustRelic(player, 'jr-xs455-o')
 
     const allPlayers = this.players.all()
-    const targetChoices = allPlayers.map(p => p.name)
+    const targetChoices = allPlayers.map(p => this.actions.playerOption(p))
     const targetSel = this.actions.choose(player, targetChoices, {
       title: 'JR-XS455-O: Choose a player',
     })
-    const targetPlayer = this.players.byName(targetSel[0])
+    const targetPlayer = this.players.byName(targetSel[0].id)
 
     // Target player chooses: spend 3 resources for a structure, or gain 1 TG
     const canAfford = (targetPlayer.tradeGoods + this._getAvailableResources(targetPlayer)) >= 3
@@ -327,31 +330,37 @@ module.exports = function(Twilight) {
 
     let choices
     if (canAfford && controlledPlanets.length > 0) {
-      choices = ['Place Structure (3 resources)', 'Gain 1 Trade Good']
+      choices = [
+        this.actions.option({ id: 'place-structure', title: 'Place Structure (3 resources)' }),
+        this.actions.option({ id: 'gain-tg', title: 'Gain 1 Trade Good' }),
+      ]
     }
     else {
-      choices = ['Gain 1 Trade Good']
+      choices = [this.actions.option({ id: 'gain-tg', title: 'Gain 1 Trade Good' })]
     }
 
     const sel = this.actions.choose(targetPlayer, choices, {
       title: 'JR-XS455-O: Choose benefit',
     })
 
-    if (sel[0] === 'Place Structure (3 resources)') {
+    if (sel[0].id === 'place-structure') {
       // Spend 3 resources
       this._payResources(targetPlayer, 3)
 
       // Choose planet for structure
-      const planetSel = this.actions.choose(targetPlayer, controlledPlanets, {
+      const planetSel = this.actions.choose(targetPlayer, controlledPlanets.map(p => this.actions.planetOption(p)), {
         title: 'JR-XS455-O: Place structure on which planet?',
       })
-      const structPlanet = planetSel[0]
+      const structPlanet = planetSel[0].id
 
       // Choose structure type (PDS or space dock)
-      const structSel = this.actions.choose(targetPlayer, ['pds', 'space-dock'], {
+      const structSel = this.actions.choose(targetPlayer, [
+        this.actions.option({ id: 'pds', title: 'pds', kind: 'structure' }),
+        this.actions.option({ id: 'space-dock', title: 'space-dock', kind: 'structure' }),
+      ], {
         title: 'JR-XS455-O: Choose structure type',
       })
-      const structType = structSel[0]
+      const structType = structSel[0].id
       const structSystem = this._findSystemForPlanet(structPlanet)
 
       if (structSystem) {
@@ -419,10 +428,10 @@ module.exports = function(Twilight) {
       return
     }
 
-    const sel = this.actions.choose(player, targets, {
+    const sel = this.actions.choose(player, targets.map(p => this.actions.planetOption(p)), {
       title: 'Nano-Forge: Attach to which planet?',
     })
-    const planetId = sel[0]
+    const planetId = sel[0].id
 
     // Attach nano-forge to the planet
     if (!this.state.planets[planetId]) {
@@ -486,10 +495,10 @@ module.exports = function(Twilight) {
       targetSystem = targets[0]
     }
     else {
-      const sel = this.actions.choose(player, targets, {
+      const sel = this.actions.choose(player, targets.map(s => this.actions.systemOption(s)), {
         title: 'Circlet of the Void: Explore which frontier?',
       })
-      targetSystem = sel[0]
+      targetSystem = sel[0].id
     }
 
     this._exploreFrontier(targetSystem, player.name, 'Circlet of the Void')
@@ -515,19 +524,22 @@ module.exports = function(Twilight) {
         break
       }
 
-      const choices = ['Done', ...noPrereq]
+      const choices = [
+        this.actions.option({ id: 'done', title: 'Done' }),
+        ...noPrereq.map(id => this.actions.option({ id, title: id, kind: 'technology' })),
+      ]
       const sel = this.actions.choose(player, choices, {
         title: `Book of Latvinia: Research no-prereq tech ${i + 1}/2`,
       })
 
-      if (sel[0] === 'Done') {
+      if (sel[0].id === 'done') {
         break
       }
 
-      this._grantTechnology(player, sel[0])
+      this._grantTechnology(player, sel[0].id)
       this.log.add({
         template: 'Book of Latvinia: {player} gains {tech}',
-        args: { player, tech: sel[0] },
+        args: { player, tech: sel[0].id },
       })
     }
   }
@@ -575,11 +587,14 @@ module.exports = function(Twilight) {
       return false
     }
 
-    const choice = this.actions.choose(player, ['Exhaust Scepter of Emelpar', 'Spend Strategy Token'], {
+    const choice = this.actions.choose(player, [
+      this.actions.option({ id: 'exhaust-scepter', title: 'Exhaust Scepter of Emelpar' }),
+      this.actions.option({ id: 'spend-token', title: 'Spend Strategy Token' }),
+    ], {
       title: 'Scepter of Emelpar: Avoid spending strategy token?',
     })
 
-    if (choice[0] === 'Exhaust Scepter of Emelpar') {
+    if (choice[0].id === 'exhaust-scepter') {
       this._exhaustRelic(player, 'scepter-of-emelpar')
       this.log.add({
         template: '{player} exhausts Scepter of Emelpar instead of spending strategy token',
@@ -599,11 +614,14 @@ module.exports = function(Twilight) {
       return
     }
 
-    const choice = this.actions.choose(player, ['Draw 1 Action Card', 'Pass'], {
+    const choice = this.actions.choose(player, [
+      this.actions.option({ id: 'draw', title: 'Draw 1 Action Card' }),
+      this.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: "Prophet's Tears: Exhaust for a bonus?",
     })
 
-    if (choice[0] === 'Draw 1 Action Card') {
+    if (choice[0].id === 'draw') {
       this._exhaustRelic(player, 'the-prophets-tears')
       this._drawActionCards(player, 1)
       this.log.add({
@@ -634,17 +652,20 @@ module.exports = function(Twilight) {
       return
     }
 
-    const choices = ['Pass', ...unexplored]
+    const choices = [
+      this.actions.option({ id: 'pass', title: 'Pass' }),
+      ...unexplored.map(p => this.actions.planetOption(p)),
+    ]
     const sel = this.actions.choose(player, choices, {
       title: 'Crown of Emphidia: Explore a planet you control?',
     })
 
-    if (sel[0] !== 'Pass') {
+    if (sel[0].id !== 'pass') {
       this._exhaustRelic(player, 'the-crown-of-emphidia')
-      this._explorePlanet(sel[0], player.name)
+      this._explorePlanet(sel[0].id, player.name)
       this.log.add({
         template: '{player} exhausts Crown of Emphidia to explore {planet}',
-        args: { player, planet: sel[0] },
+        args: { player, planet: sel[0].id },
       })
     }
   }
@@ -659,11 +680,14 @@ module.exports = function(Twilight) {
       return
     }
 
-    const choice = this.actions.choose(player, ['Purge for 1 VP', 'Keep'], {
+    const choice = this.actions.choose(player, [
+      this.actions.option({ id: 'purge', title: 'Purge for 1 VP' }),
+      this.actions.option({ id: 'keep', title: 'Keep' }),
+    ], {
       title: 'Crown of Emphidia: Control Tomb of Emphidia — purge for 1 VP?',
     })
 
-    if (choice[0] === 'Purge for 1 VP') {
+    if (choice[0].id === 'purge') {
       this._purgeRelic(player, 'the-crown-of-emphidia')
       player.addVictoryPoints(1)
       this.log.add({
@@ -682,11 +706,14 @@ module.exports = function(Twilight) {
       return false
     }
 
-    const choice = this.actions.choose(player, ['Purge Dominus Orb', 'Pass'], {
+    const choice = this.actions.choose(player, [
+      this.actions.option({ id: 'purge', title: 'Purge Dominus Orb' }),
+      this.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Dominus Orb: Purge to move from systems with your command tokens?',
     })
 
-    if (choice[0] === 'Purge Dominus Orb') {
+    if (choice[0].id === 'purge') {
       this._purgeRelic(player, 'dominus-orb')
       this.state._dominusOrbActive = true
       this.log.add({
@@ -707,11 +734,14 @@ module.exports = function(Twilight) {
       return
     }
 
-    const choice = this.actions.choose(player, ['Purge Maw of Worlds', 'Pass'], {
+    const choice = this.actions.choose(player, [
+      this.actions.option({ id: 'purge', title: 'Purge Maw of Worlds' }),
+      this.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Maw of Worlds: Purge + exhaust all planets to gain any 1 technology?',
     })
 
-    if (choice[0] !== 'Purge Maw of Worlds') {
+    if (choice[0].id !== 'purge') {
       return
     }
 
@@ -737,11 +767,12 @@ module.exports = function(Twilight) {
       return
     }
 
-    const sel = this.actions.choose(player, available, {
+    const techChoices = available.map(id => this.actions.option({ id, title: id, kind: 'technology' }))
+    const sel = this.actions.choose(player, techChoices, {
       title: 'Maw of Worlds: Choose any technology to gain',
     })
 
-    const techId = sel[0]
+    const techId = sel[0].id
     const tech = res.getTechnology(techId)
     if (tech) {
       this.factionAbilities.onPreResearch(player, tech)

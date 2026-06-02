@@ -106,7 +106,9 @@ module.exports = function(Twilight) {
 
     // Ask player what to produce
     this.log.add({ template: 'Produce Units', event: 'step' })
-    const produceSelection = this.actions.choose(player, ['Done'], {
+    const produceSelection = this.actions.choose(player, [
+      this.actions.option({ id: 'done', title: 'Done' }),
+    ], {
       title: 'Produce Units',
       allowsAction: 'produce-units',
     })

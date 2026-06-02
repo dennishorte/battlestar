@@ -29,10 +29,11 @@ module.exports = {
       return
     }
 
-    const selection = ctx.actions.choose(player, controlledPlanets, {
+    const planetOpts = controlledPlanets.map(p => ctx.actions.planetOption(p))
+    const selection = ctx.actions.choose(player, planetOpts, {
       title: 'Choose planet for Orbital Drop',
     })
-    const targetPlanet = selection[0]
+    const targetPlanet = typeof selection[0] === 'object' ? selection[0].id : selection[0]
     const systemId = ctx.game._findSystemForPlanet(targetPlanet)
 
     if (systemId) {
@@ -47,10 +48,13 @@ module.exports = {
       // Mech DEPLOY: after Orbital Drop, may spend 3 resources to place 1 mech
       const availableResources = player.getTotalResources() + (player.tradeGoods || 0)
       if (availableResources >= 3 && ctx.game._hasReinforcementsAvailable(player.name, 'mech')) {
-        const mechChoice = ctx.actions.choose(player, ['Deploy Mech', 'Pass'], {
+        const mechChoice = ctx.actions.choose(player, [
+          ctx.actions.option({ id: 'deploy', title: 'Deploy Mech' }),
+          ctx.actions.option({ id: 'pass', title: 'Pass' }),
+        ], {
           title: 'ZS Thunderbolt M2 DEPLOY: Spend 3 resources to place 1 mech?',
         })
-        if (mechChoice[0] === 'Deploy Mech') {
+        if (mechChoice[0]?.id === 'deploy') {
           // Pay 3 resources: exhaust planets first, then trade goods
           let remaining = 3
           const readyPlanets = player.getReadyPlanets()
@@ -129,10 +133,13 @@ module.exports = {
       const planetUnits = ctx.state.units[systemId]?.planets[planetId] || []
       const ownGroundForces = planetUnits.filter(u => u.owner === player.name)
       if (ownGroundForces.length > 0) {
-        const choice = ctx.actions.choose(player, ['Exhaust Evelyn Delouis', 'Pass'], {
+        const choice = ctx.actions.choose(player, [
+          ctx.actions.option({ id: 'exhaust', title: 'Exhaust Evelyn Delouis' }),
+          ctx.actions.option({ id: 'pass', title: 'Pass' }),
+        ], {
           title: 'Evelyn Delouis: Exhaust agent for +1 die to 1 ground force?',
         })
-        if (choice[0] === 'Exhaust Evelyn Delouis') {
+        if (choice[0]?.id === 'exhaust') {
           if (!ctx.state._evelynDelouisActive) {
             ctx.state._evelynDelouisActive = {}
           }
@@ -214,10 +221,11 @@ module.exports = {
         targetPlanet = controlled[0]
       }
       else {
-        const sel = ctx.actions.choose(player, controlled, {
+        const planetOpts = controlled.map(p => ctx.actions.planetOption(p))
+        const sel = ctx.actions.choose(player, planetOpts, {
           title: `Spec Ops II: Place ${revivalCount} revived infantry on which planet?`,
         })
-        targetPlanet = sel[0]
+        targetPlanet = typeof sel[0] === 'object' ? sel[0].id : sel[0]
       }
     }
 
@@ -294,10 +302,11 @@ module.exports = {
         unitType = choices[0]
       }
       else {
-        const sel = ctx.actions.choose(player, choices, {
+        const unitOpts = choices.map(c => ctx.actions.option({ id: c, title: c, kind: 'unit' }))
+        const sel = ctx.actions.choose(player, unitOpts, {
           title: `Bellum Gloriosum: Place free unit ${i + 1}/${freeUnits}`,
         })
-        unitType = sel[0]
+        unitType = typeof sel[0] === 'object' ? sel[0].id : sel[0]
       }
 
       if (unitType === 'fighter') {

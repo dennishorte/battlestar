@@ -127,7 +127,11 @@ TestCommon.choose = function(game, ...selections) {
           // Emit structured selection when the choice has an id, so replay
           // stays collision-safe even if the prompt later gains duplicates.
           if (typeof match === 'object' && match.id) {
-            return { title: match.title, id: match.id }
+            const out = { title: match.title, id: match.id }
+            if (match.meta != null) {
+              out.meta = match.meta
+            }
+            return out
           }
           return val
         }
@@ -138,7 +142,11 @@ TestCommon.choose = function(game, ...selections) {
           const ids = new Set(exactMatches.map(c => (typeof c === 'object' ? c.id : null)).filter(Boolean))
           if (ids.size === 1) {
             const match = exactMatches[0]
-            return { title: match.title, id: match.id }
+            const out = { title: match.title, id: match.id }
+            if (match.meta != null) {
+              out.meta = match.meta
+            }
+            return out
           }
         }
         // No exact match — try prefix match (legacy behavior):

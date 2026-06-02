@@ -105,12 +105,15 @@ module.exports = function(Twilight) {
     const tgValue = this.factionAbilities.getTradeGoodResourceValue(player)
     const availableResources = this._getAvailableResources(player) + player.tradeGoods * tgValue
     if (availableResources >= 6) {
-      const choice = this.actions.choose(player, ['Research Additional Tech (6 resources)', 'Skip'], {
+      const choice = this.actions.choose(player, [
+        this.actions.option({ id: 'research', title: 'Research Additional Tech (6 resources)' }),
+        this.actions.option({ id: 'skip', title: 'Skip' }),
+      ], {
         title: 'Spend 6 resources for additional research?',
         noAutoRespond: true,
       })
 
-      if (choice[0] !== 'Skip') {
+      if (choice[0].id !== 'skip') {
         this._payResources(player, 6)
         this._researchTech(player)
       }
@@ -148,11 +151,15 @@ module.exports = function(Twilight) {
       return null
     }
 
-    const selection = this.actions.choose(player, available, {
+    const techChoices = available.map(id => {
+      const t = res.getTechnology(id)
+      return this.actions.option({ id, title: id, kind: 'technology', meta: t ? { name: t.name } : undefined })
+    })
+    const selection = this.actions.choose(player, techChoices, {
       title: 'Research Technology',
     })
 
-    const techId = selection[0]
+    const techId = selection[0].id
     const tech = res.getTechnology(techId)
     if (!tech) {
       return null
@@ -263,10 +270,13 @@ module.exports = function(Twilight) {
       })
 
       if (scorable.length > 0) {
-        const choices = ['Skip', ...scorable.map(id => {
-          const obj = res.getObjective(id)
-          return `${id}: ${obj.name}`
-        })]
+        const choices = [
+          this.actions.option({ id: 'skip', title: 'Skip' }),
+          ...scorable.map(id => {
+            const obj = res.getObjective(id)
+            return this.actions.option({ id, title: `${id}: ${obj.name}`, kind: 'objective' })
+          }),
+        ]
 
         const selection = this.actions.choose(player, choices, {
           title: 'Score Public Objective (Imperial)',
@@ -274,8 +284,8 @@ module.exports = function(Twilight) {
         })
 
         const chosen = selection[0]
-        if (chosen !== 'Skip') {
-          this._recordObjectiveScore(player, chosen)
+        if (chosen.id !== 'skip') {
+          this._recordObjectiveScore(player, chosen.id)
           scoredVP = true
         }
       }
@@ -303,13 +313,18 @@ module.exports = function(Twilight) {
       if (cvOwner !== player.name && this.state.planets['custodia-vigilia']?.controller === cvOwner) {
         const keleresPlayer = this.players.byName(cvOwner)
         if (keleresPlayer) {
-          const poolChoice = this.actions.choose(keleresPlayer, ['tactics', 'fleet', 'strategy'], {
+          const poolChoice = this.actions.choose(keleresPlayer, [
+            this.actions.option({ id: 'tactics', title: 'tactics', kind: 'token-pool' }),
+            this.actions.option({ id: 'fleet', title: 'fleet', kind: 'token-pool' }),
+            this.actions.option({ id: 'strategy', title: 'strategy', kind: 'token-pool' }),
+          ], {
             title: 'Custodia Vigilia: Gain 1 command token — choose pool',
           })
-          keleresPlayer.commandTokens[poolChoice[0]]++
+          const pool = poolChoice[0].id
+          keleresPlayer.commandTokens[pool]++
           this.log.add({
             template: 'Custodia Vigilia: {player} gains 1 command token ({pool})',
-            args: { player: keleresPlayer, pool: poolChoice[0] },
+            args: { player: keleresPlayer, pool },
           })
         }
       }
@@ -341,11 +356,12 @@ module.exports = function(Twilight) {
       return
     }
 
-    const selection = this.actions.choose(player, filteredSystems, {
+    const systemChoices = filteredSystems.map(s => this.actions.systemOption(s))
+    const selection = this.actions.choose(player, systemChoices, {
       title: 'Choose System (Diplomacy)',
       noAutoRespond: true,
     })
-    const chosenSystem = selection[0]
+    const chosenSystem = selection[0].id
 
     // Each other player places a command token from reinforcements in that system
     // Rule 32.1a: skip if player already has a command token there
@@ -391,10 +407,11 @@ module.exports = function(Twilight) {
     const allPlayers = this.players.all()
     const playerNames = allPlayers.map(p => p.name).filter(n => n !== this.state.speaker)
 
-    const selection = this.actions.choose(player, playerNames, {
+    const playerChoices = playerNames.map(n => this.actions.option({ id: n, title: n, kind: 'player' }))
+    const selection = this.actions.choose(player, playerChoices, {
       title: 'Choose New Speaker (Politics)',
     })
-    const newSpeaker = selection[0]
+    const newSpeaker = selection[0].id
     this.state.speaker = newSpeaker
 
     this.log.add({
@@ -441,19 +458,24 @@ module.exports = function(Twilight) {
         card = remaining[0]
       }
       else {
-        const cardChoices = remaining.map(c => cardLabel(c))
+        const cardChoices = remaining.map(c =>
+          this.actions.option({ id: c.id, title: cardLabel(c), kind: 'agenda-card' })
+        )
         const pick = this.actions.choose(player, cardChoices, {
           title: 'Choose an agenda card to place',
         })
-        card = remaining.find(c => cardLabel(c) === pick[0])
+        card = remaining.find(c => c.id === pick[0].id)
       }
 
       // Choose top or bottom
-      const placement = this.actions.choose(player, ['Top of deck', 'Bottom of deck'], {
+      const placement = this.actions.choose(player, [
+        this.actions.option({ id: 'top', title: 'Top of deck' }),
+        this.actions.option({ id: 'bottom', title: 'Bottom of deck' }),
+      ], {
         title: `Place ${card.name}:`,
       })
 
-      if (placement[0] === 'Top of deck') {
+      if (placement[0].id === 'top') {
         this.state.agendaDeck.unshift(card)
       }
       else {
@@ -462,7 +484,7 @@ module.exports = function(Twilight) {
 
       remaining.splice(remaining.indexOf(card), 1)
 
-      const position = placement[0] === 'Top of deck' ? 'top' : 'bottom'
+      const position = placement[0].id === 'top' ? 'top' : 'bottom'
       this.log.add({
         template: '{player} places {card} on the {position} of the deck',
         args: { player, card: card.name, position },
@@ -522,10 +544,13 @@ module.exports = function(Twilight) {
       // Determine mode: if both available, ask; otherwise pick the only option
       let mode
       if (canPlaceStructure && canUseProduction) {
-        const modeSelection = this.actions.choose(player, ['Place Structure', 'Use Production'], {
+        const modeSelection = this.actions.choose(player, [
+          this.actions.option({ id: 'place-structure', title: 'Place Structure' }),
+          this.actions.option({ id: 'use-production', title: 'Use Production' }),
+        ], {
           title: 'Construction',
         })
-        mode = modeSelection[0]
+        mode = modeSelection[0].title
       }
       else {
         mode = canPlaceStructure ? 'Place Structure' : 'Use Production'
@@ -551,10 +576,11 @@ module.exports = function(Twilight) {
       }
       else {
         // Use production: choose which system's space dock to use
-        const systemSelection = this.actions.choose(player, systemsWithDocks, {
+        const systemChoices = systemsWithDocks.map(s => this.actions.systemOption(s))
+        const systemSelection = this.actions.choose(player, systemChoices, {
           title: 'Use Production (Construction)',
         })
-        this._productionStep(player, systemSelection[0])
+        this._productionStep(player, systemSelection[0].id)
       }
     }
 
@@ -562,18 +588,24 @@ module.exports = function(Twilight) {
     if (controlledPlanets.length > 0) {
       const { choices: secondChoices, labelToPlanet: secondLabelToPlanet } = _buildStructureChoices(controlledPlanets, ['pds', 'space-dock'])
       if (secondChoices.length > 0) {
-        const planetLabels = secondChoices.map(c => c.title)
-        const planetSelection = this.actions.choose(player, ['Done', ...planetLabels], {
+        const planetChoices = [
+          this.actions.option({ id: 'done', title: 'Done' }),
+          ...secondChoices.map(c => this.actions.option({ id: c.title, title: c.title, kind: 'planet-slot' })),
+        ]
+        const planetSelection = this.actions.choose(player, planetChoices, {
           title: 'Place Structure (Construction)',
           noAutoRespond: true,
         })
-        if (planetSelection[0] !== 'Done') {
-          const secondPlanet = secondLabelToPlanet[planetSelection[0]]
+        if (planetSelection[0].id !== 'done') {
+          const secondPlanet = secondLabelToPlanet[planetSelection[0].id]
           // Ask which structure type
-          const typeSelection = this.actions.choose(player, ['pds', 'space-dock'], {
+          const typeSelection = this.actions.choose(player, [
+            this.actions.option({ id: 'pds', title: 'pds', kind: 'structure' }),
+            this.actions.option({ id: 'space-dock', title: 'space-dock', kind: 'structure' }),
+          ], {
             title: 'Choose Structure Type',
           })
-          const secondType = typeSelection[0]
+          const secondType = typeSelection[0].id
           const secondSystemId = this._findSystemForPlanet(secondPlanet)
           if (secondSystemId) {
             if (secondType === 'space-dock' && player.faction?.unitOverrides?.['space-dock']?.move > 0) {
@@ -744,9 +776,13 @@ module.exports = function(Twilight) {
           continue
         }
 
-        const choices = ['Pass']
+        const choices = [this.actions.option({ id: 'pass', title: 'Pass' })]
         for (let i = 1; i <= maxTokens; i++) {
-          choices.push(`${i} token${i > 1 ? 's' : ''} (${i * 3} influence)`)
+          choices.push(this.actions.option({
+            id: `tokens-${i}`,
+            title: `${i} token${i > 1 ? 's' : ''} (${i * 3} influence)`,
+            meta: { count: i },
+          }))
         }
         this.log.add({
           template: '{player}: {secondary}',
@@ -757,8 +793,8 @@ module.exports = function(Twilight) {
           title: 'Spend Influence for Command Tokens (free, 1 per 3 influence)',
         })
 
-        if (selection[0] !== 'Pass') {
-          const tokenCount = parseInt(selection[0])
+        if (selection[0].id !== 'pass') {
+          const tokenCount = selection[0].meta?.count ?? 0
           const influenceCost = tokenCount * 3
           this._payInfluence(player, influenceCost)
 
@@ -795,7 +831,10 @@ module.exports = function(Twilight) {
         }
 
         const costLabel = isFree ? 'free' : 'costs 1 strategy token'
-        const choices = ['Pass', ...exhaustedPlanets]
+        const choices = [
+          this.actions.option({ id: 'pass', title: 'Pass' }),
+          ...exhaustedPlanets.map(p => this.actions.planetOption(p)),
+        ]
         this.log.add({
           template: '{player}: {secondary}',
           args: { player, secondary: secondaryAvailable },
@@ -805,7 +844,7 @@ module.exports = function(Twilight) {
           title: `Ready up to 2 exhausted planets (${costLabel})`,
         })
 
-        if (first[0] !== 'Pass') {
+        if (first[0].id !== 'pass') {
           // Spend strategy token (or Scepter)
           if (!isFree) {
             const scepterUsed = this._offerScepterOfEmelpar(player)
@@ -815,15 +854,19 @@ module.exports = function(Twilight) {
             }
           }
 
-          this.state.planets[first[0]].exhausted = false
-          const remaining = exhaustedPlanets.filter(p => p !== first[0])
+          const firstPlanetId = first[0].id
+          this.state.planets[firstPlanetId].exhausted = false
+          const remaining = exhaustedPlanets.filter(p => p !== firstPlanetId)
           if (remaining.length > 0) {
-            const secondChoices = ['Done', ...remaining]
+            const secondChoices = [
+              this.actions.option({ id: 'done', title: 'Done' }),
+              ...remaining.map(p => this.actions.planetOption(p)),
+            ]
             const second = this.actions.choose(player, secondChoices, {
               title: 'Ready another planet? (Diplomacy)',
             })
-            if (second[0] !== 'Done') {
-              this.state.planets[second[0]].exhausted = false
+            if (second[0].id !== 'done') {
+              this.state.planets[second[0].id].exhausted = false
             }
           }
 
@@ -848,11 +891,16 @@ module.exports = function(Twilight) {
         args: { player, secondary: secondaryAvailable },
         event: 'step',
       })
-      const choice = this.actions.choose(player, ['Use Secondary', 'Pass'], {
+      const choice = this.actions.choose(player, [
+        this.actions.option({ id: 'use-secondary', title: 'Use Secondary' }),
+        this.actions.option({ id: 'pass', title: 'Pass' }),
+      ], {
         title: `${secondaryAvailable} (${costLabel})`,
       })
 
-      if (choice[0] === 'Use Secondary') {
+      const choicePick = Array.isArray(choice) ? choice[0] : null
+      const choiceId = (choicePick && typeof choicePick === 'object') ? choicePick.id : choicePick
+      if (choiceId === 'use-secondary') {
         if (!isFree) {
           // Scepter of Emelpar: offer to exhaust instead of spending strategy token
           const scepterUsed = this._offerScepterOfEmelpar(player)
@@ -953,16 +1001,17 @@ module.exports = function(Twilight) {
     }
     else {
       // Let player choose which 2 planets to ready
-      const first = this.actions.choose(player, exhaustedPlanets, {
+      const first = this.actions.choose(player, exhaustedPlanets.map(p => this.actions.planetOption(p)), {
         title: 'Ready planet 1 of 2 (Diplomacy)',
       })
-      this.state.planets[first[0]].exhausted = false
+      const firstId = first[0].id
+      this.state.planets[firstId].exhausted = false
 
-      const remaining = exhaustedPlanets.filter(p => p !== first[0])
-      const second = this.actions.choose(player, remaining, {
+      const remaining = exhaustedPlanets.filter(p => p !== firstId)
+      const second = this.actions.choose(player, remaining.map(p => this.actions.planetOption(p)), {
         title: 'Ready planet 2 of 2 (Diplomacy)',
       })
-      this.state.planets[second[0]].exhausted = false
+      this.state.planets[second[0].id].exhausted = false
     }
   }
 
@@ -1002,10 +1051,11 @@ module.exports = function(Twilight) {
     }
 
     // Choose system to place command token in
-    const systemSelection = this.actions.choose(player, systemsWithPlanets, {
+    const systemChoices = systemsWithPlanets.map(s => this.actions.systemOption(s))
+    const systemSelection = this.actions.choose(player, systemChoices, {
       title: 'Place Command Token in System (Construction Secondary)',
     })
-    const chosenSystem = systemSelection[0]
+    const chosenSystem = systemSelection[0].id
 
     // Place the command token (the spent strategy token goes on the board)
     if (!this.state.systems[chosenSystem].commandTokens.includes(player.name)) {
@@ -1070,17 +1120,21 @@ module.exports = function(Twilight) {
       return
     }
 
-    const choices = ['Skip']
+    const choices = [this.actions.option({ id: 'skip', title: 'Skip' })]
     for (let i = 1; i <= maxTokens; i++) {
-      choices.push(`${i} token${i > 1 ? 's' : ''} (${i * 3} influence)`)
+      choices.push(this.actions.option({
+        id: `tokens-${i}`,
+        title: `${i} token${i > 1 ? 's' : ''} (${i * 3} influence)`,
+        meta: { count: i },
+      }))
     }
 
     const selection = this.actions.choose(player, choices, {
       title: 'Spend Influence for Command Tokens (1 per 3 influence)',
     })
 
-    if (selection[0] !== 'Skip') {
-      const tokenCount = parseInt(selection[0])
+    if (selection[0].id !== 'skip') {
+      const tokenCount = selection[0].meta?.count ?? 0
       const influenceCost = tokenCount * 3
       this._payInfluence(player, influenceCost)
 

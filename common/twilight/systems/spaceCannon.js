@@ -578,7 +578,9 @@ module.exports = function(Twilight) {
     }
 
     // Multiple enemy planets: player chooses distribution across all available planets
-    const selection = this.actions.choose(player, ['Done'], {
+    const selection = this.actions.choose(player, [
+      this.actions.option({ id: 'done', title: 'Done' }),
+    ], {
       title: 'Commit Ground Forces',
       allowsAction: 'commit-ground-forces',
       planets: availablePlanets,
@@ -627,7 +629,9 @@ module.exports = function(Twilight) {
     }
 
     // Multiple planets: player chooses distribution
-    const selection = this.actions.choose(player, ['Done'], {
+    const selection = this.actions.choose(player, [
+      this.actions.option({ id: 'done', title: 'Done' }),
+    ], {
       title: 'Commit Ground Forces',
       allowsAction: 'commit-ground-forces',
       planets: landablePlanets,
@@ -902,12 +906,15 @@ module.exports = function(Twilight) {
         continue
       }
 
-      const choice = this.actions.choose(player, ['Pass', `Play Fire Team (+${additionalHits} hits)`], {
+      const choice = this.actions.choose(player, [
+        this.actions.option({ id: 'pass', title: 'Pass' }),
+        this.actions.option({ id: 'play', title: `Play Fire Team (+${additionalHits} hits)` }),
+      ], {
         title: 'Fire Team: Apply +1 to each ground combat roll this round?',
         noAutoRespond: true,
       })
 
-      if (choice[0] === 'Pass') {
+      if (choice[0].id === 'pass') {
         continue
       }
 
@@ -1155,7 +1162,9 @@ module.exports = function(Twilight) {
       if (iePlayer && iePlayer.hasTechnology('integrated-economy')) {
         const planet = res.getPlanet(planetId)
         if (planet && planet.resources > 0) {
-          const prodSel = this.actions.choose(iePlayer, ['Done'], {
+          const prodSel = this.actions.choose(iePlayer, [
+            this.actions.option({ id: 'done', title: 'Done' }),
+          ], {
             title: `Integrated Economy: Free production (up to ${planet.resources} cost)`,
             allowsAction: 'produce-units',
           })

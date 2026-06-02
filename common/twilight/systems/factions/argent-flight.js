@@ -117,11 +117,16 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(argentPlayer, ['Exhaust Trillossa Aun Mirik', 'Pass'], {
+    const choice = ctx.actions.choose(argentPlayer, [
+      ctx.actions.option({ id: 'exhaust', title: 'Exhaust Trillossa Aun Mirik' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Trillossa Aun Mirik: Exhaust to place 1 infantry on a planet you control?',
     })
 
-    if (choice[0] !== 'Exhaust Trillossa Aun Mirik') {
+    const tamPick = choice[0]
+    const tamPickId = (tamPick && typeof tamPick === 'object') ? tamPick.id : tamPick
+    if (tamPickId !== 'exhaust' && tamPick !== 'Exhaust Trillossa Aun Mirik') {
       return
     }
 
@@ -133,11 +138,13 @@ module.exports = {
       target = eligiblePlanets[0]
     }
     else {
-      const planetChoices = eligiblePlanets.map(p => p.planetId)
+      const planetChoices = eligiblePlanets.map(p => ctx.actions.option({ id: p.planetId, title: p.planetId, kind: 'planet' }))
       const planetChoice = ctx.actions.choose(argentPlayer, planetChoices, {
         title: 'Trillossa Aun Mirik: Choose planet for 1 infantry',
       })
-      target = eligiblePlanets.find(p => p.planetId === planetChoice[0])
+      const tppPick = planetChoice[0]
+      const tppPickId = (tppPick && typeof tppPick === 'object') ? tppPick.id : tppPick
+      target = eligiblePlanets.find(p => p.planetId === tppPickId)
     }
 
     ctx.game._addUnit(target.systemId, target.planetId, 'infantry', argentPlayer.name)
@@ -224,11 +231,16 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Place Tokens (Wing Transfer)', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'place', title: 'Place Tokens (Wing Transfer)' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Wing Transfer: Place command tokens in adjacent systems with only your units?',
     })
 
-    if (choice[0] !== 'Place Tokens (Wing Transfer)') {
+    const wt1Pick = choice[0]
+    const wt1PickId = (wt1Pick && typeof wt1Pick === 'object') ? wt1Pick.id : wt1Pick
+    if (wt1PickId !== 'place' && wt1Pick !== 'Place Tokens (Wing Transfer)') {
       return
     }
 
@@ -282,11 +294,16 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Redistribute Ships (Wing Transfer)', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'redistribute', title: 'Redistribute Ships (Wing Transfer)' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Wing Transfer: Move ships among active system and adjacent systems with your tokens?',
     })
 
-    if (choice[0] !== 'Redistribute Ships (Wing Transfer)') {
+    const wt2Pick = choice[0]
+    const wt2PickId = (wt2Pick && typeof wt2Pick === 'object') ? wt2Pick.id : wt2Pick
+    if (wt2PickId !== 'redistribute' && wt2Pick !== 'Redistribute Ships (Wing Transfer)') {
       return
     }
 
@@ -311,10 +328,14 @@ module.exports = {
         shipCounts[ship.type] = (shipCounts[ship.type] || 0) + 1
       }
 
-      const moveChoices = ['Skip']
+      const moveChoices = [ctx.actions.option({ id: 'skip', title: 'Skip' })]
       for (const [type, count] of Object.entries(shipCounts)) {
         for (let n = 1; n <= count; n++) {
-          moveChoices.push(`Move ${n} ${type}`)
+          moveChoices.push(ctx.actions.option({
+            id: `move:${n}:${type}`,
+            title: `Move ${n} ${type}`,
+            kind: 'ship-move',
+          }))
         }
       }
 
@@ -322,26 +343,43 @@ module.exports = {
         title: `Wing Transfer: Move ships from system ${sourceId}?`,
       })
 
-      if (sel[0] === 'Skip') {
+      const wtsPick = sel[0]
+      const wtsPickId = (wtsPick && typeof wtsPick === 'object') ? wtsPick.id : wtsPick
+      const wtsPickTitle = (wtsPick && typeof wtsPick === 'object') ? wtsPick.title : wtsPick
+      if (wtsPickId === 'skip' || wtsPickTitle === 'Skip') {
         continue
       }
 
-      const match = sel[0].match(/^Move (\d+) (.+)$/)
-      if (!match) {
-        continue
+      let count, unitType
+      if (typeof wtsPickId === 'string' && wtsPickId.startsWith('move:')) {
+        const parts = wtsPickId.split(':')
+        count = parseInt(parts[1])
+        unitType = parts[2]
       }
-      const count = parseInt(match[1])
-      const unitType = match[2]
+      else {
+        const wtsTok = typeof wtsPickId === 'string' ? wtsPickId : (wtsPickTitle || '')
+        const match = String(wtsTok).match(/^Move (\d+) (.+)$/)
+        if (!match) {
+          continue
+        }
+        count = parseInt(match[1])
+        unitType = match[2]
+      }
 
       let destSystem
       if (destSystems.length === 1) {
         destSystem = destSystems[0]
       }
       else {
-        const destChoice = ctx.actions.choose(player, destSystems, {
-          title: `Wing Transfer: Move ${count} ${unitType} to which system?`,
-        })
-        destSystem = destChoice[0]
+        const destChoice = ctx.actions.choose(
+          player,
+          destSystems.map(s => ctx.actions.option({ id: s, title: s, kind: 'system' })),
+          {
+            title: `Wing Transfer: Move ${count} ${unitType} to which system?`,
+          },
+        )
+        const dcPick = destChoice[0]
+        destSystem = (dcPick && typeof dcPick === 'object') ? dcPick.id : dcPick
       }
 
       for (let i = 0; i < count; i++) {
@@ -445,10 +483,14 @@ module.exports = {
       }
 
       // For each source system, ask what to move (or skip)
-      const moveChoices = ['Skip this system']
+      const moveChoices = [ctx.actions.option({ id: 'skip', title: 'Skip this system' })]
       for (const [type, count] of Object.entries(shipCounts)) {
         for (let n = 1; n <= count; n++) {
-          moveChoices.push(`Move ${n} ${type} from ${sourceSystem}`)
+          moveChoices.push(ctx.actions.option({
+            id: `helix:${n}:${type}:${sourceSystem}`,
+            title: `Move ${n} ${type} from ${sourceSystem}`,
+            kind: 'ship-move',
+          }))
         }
       }
 
@@ -456,17 +498,29 @@ module.exports = {
         title: `Helix Protocol: Move ships from system ${sourceSystem}?`,
       })
 
-      if (selection[0] === 'Skip this system') {
+      const hpPick = selection[0]
+      const hpPickId = (hpPick && typeof hpPick === 'object') ? hpPick.id : hpPick
+      const hpPickTitle = (hpPick && typeof hpPick === 'object') ? hpPick.title : hpPick
+      if (hpPickId === 'skip' || hpPickTitle === 'Skip this system') {
         continue
       }
 
-      // Parse selection: "Move N type from systemId"
-      const match = selection[0].match(/^Move (\d+) (.+) from (.+)$/)
-      if (!match) {
-        continue
+      // Parse selection
+      let count, unitType
+      if (typeof hpPickId === 'string' && hpPickId.startsWith('helix:')) {
+        const parts = hpPickId.split(':')
+        count = parseInt(parts[1])
+        unitType = parts[2]
       }
-      const count = parseInt(match[1])
-      const unitType = match[2]
+      else {
+        const hpTok = typeof hpPickId === 'string' ? hpPickId : (hpPickTitle || '')
+        const match = String(hpTok).match(/^Move (\d+) (.+) from (.+)$/)
+        if (!match) {
+          continue
+        }
+        count = parseInt(match[1])
+        unitType = match[2]
+      }
 
       // Choose destination among target systems
       let destSystem
@@ -474,10 +528,15 @@ module.exports = {
         destSystem = targetSystems[0]
       }
       else {
-        const destChoice = ctx.actions.choose(player, targetSystems, {
-          title: `Helix Protocol: Choose destination for ${count} ${unitType}`,
-        })
-        destSystem = destChoice[0]
+        const destChoice = ctx.actions.choose(
+          player,
+          targetSystems.map(s => ctx.actions.option({ id: s, title: s, kind: 'system' })),
+          {
+            title: `Helix Protocol: Choose destination for ${count} ${unitType}`,
+          },
+        )
+        const hpDestPick = destChoice[0]
+        destSystem = (hpDestPick && typeof hpDestPick === 'object') ? hpDestPick.id : hpDestPick
       }
 
       // Move the ships

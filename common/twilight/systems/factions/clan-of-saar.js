@@ -22,11 +22,16 @@ module.exports = {
     // Mech DEPLOY: Scavenger Zeta — after gaining control of a planet,
     // may spend 1 trade good to place 1 mech on that planet
     if (player.tradeGoods >= 1 && ctx.game._hasReinforcementsAvailable(player.name, 'mech')) {
-      const mechChoice = ctx.actions.choose(player, ['Deploy Scavenger Zeta', 'Pass'], {
+      const mechChoice = ctx.actions.choose(player, [
+        ctx.actions.option({ id: 'deploy', title: 'Deploy Scavenger Zeta' }),
+        ctx.actions.option({ id: 'pass', title: 'Pass' }),
+      ], {
         title: 'Scavenger Zeta DEPLOY: Spend 1 trade good to place 1 mech?',
       })
 
-      if (mechChoice[0] === 'Deploy Scavenger Zeta') {
+      const szPick = mechChoice[0]
+      const szPickId = (szPick && typeof szPick === 'object') ? szPick.id : szPick
+      if (szPickId === 'deploy' || szPick === 'Deploy Scavenger Zeta') {
         player.addTradeGoods(-1)
         ctx.game._addUnit(systemId, planetId, 'mech', player.name)
         ctx.log.add({
@@ -123,10 +128,15 @@ module.exports = {
       targetSystem = targetSystems[0]
     }
     else {
-      const selection = ctx.actions.choose(player, targetSystems, {
-        title: 'Armageddon Relay: Choose target system',
-      })
-      targetSystem = selection[0]
+      const selection = ctx.actions.choose(
+        player,
+        targetSystems.map(s => ctx.actions.option({ id: s, title: s, kind: 'system' })),
+        {
+          title: 'Armageddon Relay: Choose target system',
+        },
+      )
+      const arPick = selection[0]
+      targetSystem = (arPick && typeof arPick === 'object') ? arPick.id : arPick
     }
 
     // Destroy all other players' infantry and fighters in that system
@@ -247,11 +257,13 @@ module.exports = {
       target = targetPlanets[0]
     }
     else {
-      const planetChoices = targetPlanets.map(p => p.planetId)
+      const planetChoices = targetPlanets.map(p => ctx.actions.option({ id: p.planetId, title: p.planetId, kind: 'planet' }))
       const sel = ctx.actions.choose(player, planetChoices, {
         title: 'Deorbit Barrage: Choose target planet',
       })
-      target = targetPlanets.find(p => p.planetId === sel[0])
+      const dbPick = sel[0]
+      const dbPickId = (dbPick && typeof dbPick === 'object') ? dbPick.id : dbPick
+      target = targetPlanets.find(p => p.planetId === dbPickId)
     }
 
     // Choose how many resources to spend (1 to max available)
@@ -266,12 +278,20 @@ module.exports = {
 
     const spendChoices = []
     for (let i = 1; i <= Math.min(maxResources, 10); i++) {
-      spendChoices.push(`Spend ${i}`)
+      spendChoices.push(ctx.actions.option({
+        id: `spend:${i}`,
+        title: `Spend ${i}`,
+        kind: 'spend',
+      }))
     }
     const spendSel = ctx.actions.choose(player, spendChoices, {
       title: 'Deorbit Barrage: Spend how many resources?',
     })
-    const amount = parseInt(spendSel[0].match(/\d+/)[0])
+    const ssPick = spendSel[0]
+    const ssPickId = (ssPick && typeof ssPick === 'object') ? ssPick.id : ssPick
+    const ssPickTitle = (ssPick && typeof ssPick === 'object') ? ssPick.title : ssPick
+    const ssTok = typeof ssPickId === 'string' ? ssPickId : (ssPickTitle || '')
+    const amount = parseInt(String(ssTok).match(/\d+/)[0])
 
     // Pay resources: exhaust planets first, then trade goods
     let remaining = amount
@@ -408,11 +428,16 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Chaos Mapping: Produce 1 Unit', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'produce', title: 'Chaos Mapping: Produce 1 Unit' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Chaos Mapping: Produce 1 unit in a system with a Production unit?',
     })
 
-    if (choice[0] !== 'Chaos Mapping: Produce 1 Unit') {
+    const cmPick = choice[0]
+    const cmPickId = (cmPick && typeof cmPick === 'object') ? cmPick.id : cmPick
+    if (cmPickId !== 'produce' && cmPick !== 'Chaos Mapping: Produce 1 Unit') {
       return
     }
 
@@ -422,10 +447,15 @@ module.exports = {
       targetSystem = productionSystems[0]
     }
     else {
-      const systemChoice = ctx.actions.choose(player, productionSystems, {
-        title: 'Chaos Mapping: Choose system to produce in',
-      })
-      targetSystem = systemChoice[0]
+      const systemChoice = ctx.actions.choose(
+        player,
+        productionSystems.map(s => ctx.actions.option({ id: s, title: s, kind: 'system' })),
+        {
+          title: 'Chaos Mapping: Choose system to produce in',
+        },
+      )
+      const cmsPick = systemChoice[0]
+      targetSystem = (cmsPick && typeof cmsPick === 'object') ? cmsPick.id : cmsPick
     }
 
     // Check for blockade (enemy ships in space)
@@ -453,10 +483,15 @@ module.exports = {
       return
     }
 
-    const unitChoice = ctx.actions.choose(player, unitChoices, {
-      title: 'Chaos Mapping: Choose unit type to produce',
-    })
-    const unitType = unitChoice[0]
+    const unitChoice = ctx.actions.choose(
+      player,
+      unitChoices.map(u => ctx.actions.option({ id: u, title: u, kind: 'unit' })),
+      {
+        title: 'Chaos Mapping: Choose unit type to produce',
+      },
+    )
+    const cmuPick = unitChoice[0]
+    const unitType = (cmuPick && typeof cmuPick === 'object') ? cmuPick.id : cmuPick
 
     const unitDef = ctx.game.res.getUnit(unitType)
     if (!unitDef) {
@@ -567,11 +602,16 @@ module.exports = {
     }
 
     // Offer to redistribute each fighter/infantry
-    const choice = ctx.actions.choose(player, ['Redistribute Units', 'Pass'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'redistribute', title: 'Redistribute Units' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: 'Rowl Sarrig: Redistribute produced fighters/infantry across space docks?',
     })
 
-    if (choice[0] !== 'Redistribute Units') {
+    const rsPick = choice[0]
+    const rsPickId = (rsPick && typeof rsPick === 'object') ? rsPick.id : rsPick
+    if (rsPickId !== 'redistribute' && rsPick !== 'Redistribute Units') {
       return
     }
 
@@ -603,10 +643,15 @@ module.exports = {
       }
 
       // Choose destination dock
-      const destChoice = ctx.actions.choose(player, dockSystems, {
-        title: `Rowl Sarrig: Place ${unitDef.type} at which space dock?`,
-      })
-      const destSystem = destChoice[0]
+      const destChoice = ctx.actions.choose(
+        player,
+        dockSystems.map(s => ctx.actions.option({ id: s, title: s, kind: 'system' })),
+        {
+          title: `Rowl Sarrig: Place ${unitDef.type} at which space dock?`,
+        },
+      )
+      const rsdPick = destChoice[0]
+      const destSystem = (rsdPick && typeof rsdPick === 'object') ? rsdPick.id : rsdPick
 
       // Move unit if destination is different from source
       if (destSystem !== systemId) {
@@ -738,10 +783,15 @@ module.exports = {
           targetShipType = beneficialShipTypes[0]
         }
         else {
-          const typeChoice = ctx.actions.choose(agentOwner, beneficialShipTypes, {
-            title: `Captain Mendosa: Choose ship type to set to move ${highestMove}`,
-          })
-          targetShipType = typeChoice[0]
+          const typeChoice = ctx.actions.choose(
+            agentOwner,
+            beneficialShipTypes.map(t => ctx.actions.option({ id: t, title: t, kind: 'ship' })),
+            {
+              title: `Captain Mendosa: Choose ship type to set to move ${highestMove}`,
+            },
+          )
+          const cmtPick = typeChoice[0]
+          targetShipType = (cmtPick && typeof cmtPick === 'object') ? cmtPick.id : cmtPick
         }
 
         // Store the bonus on the current tactical action

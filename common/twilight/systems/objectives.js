@@ -78,10 +78,13 @@ module.exports = function(Twilight) {
         })
 
         if (scorable.length > 0) {
-          const choices = ['Skip', ...scorable.map(id => {
-            const obj = res.getObjective(id)
-            return `${id}: ${obj.name}`
-          })]
+          const choices = [
+            this.actions.option({ id: 'skip', title: 'Skip' }),
+            ...scorable.map(id => {
+              const obj = res.getObjective(id)
+              return this.actions.option({ id: `obj:${id}`, title: `${id}: ${obj.name}` })
+            }),
+          ]
 
           this.log.add({
             template: '{player}: Score Objectives',
@@ -93,9 +96,9 @@ module.exports = function(Twilight) {
             noAutoRespond: true,
           })
 
-          const chosen = selection[0]
-          if (chosen !== 'Skip') {
-            this._recordObjectiveScore(player, chosen)
+          const chosenId = selection[0].id
+          if (chosenId !== 'skip') {
+            this._recordObjectiveScore(player, chosenId.slice(4))
           }
         }
       }
@@ -114,10 +117,13 @@ module.exports = function(Twilight) {
       })
 
       if (scorableSecrets.length > 0) {
-        const secretChoices = ['Skip', ...scorableSecrets.map(id => {
-          const obj = res.getObjective(id)
-          return `${id}: ${obj.name}`
-        })]
+        const secretChoices = [
+          this.actions.option({ id: 'skip', title: 'Skip' }),
+          ...scorableSecrets.map(id => {
+            const obj = res.getObjective(id)
+            return this.actions.option({ id: `obj:${id}`, title: `${id}: ${obj.name}` })
+          }),
+        ]
 
         this.log.add({
           template: '{player}: Score Objectives',
@@ -129,16 +135,16 @@ module.exports = function(Twilight) {
           noAutoRespond: true,
         })
 
-        const secretChosen = secretSelection[0]
-        if (secretChosen !== 'Skip') {
-          this._recordObjectiveScore(player, secretChosen)
+        const secretChosenId = secretSelection[0].id
+        if (secretChosenId !== 'skip') {
+          this._recordObjectiveScore(player, secretChosenId.slice(4))
         }
       }
     }
   }
 
   Twilight.prototype._recordObjectiveScore = function(player, choiceString) {
-  // Extract objective ID from choice (format: "id: Name")
+  // Backward-compat: accept either bare objId or legacy "id: Name" format
     const objId = choiceString.split(':')[0]
     const obj = res.getObjective(objId)
     if (!obj) {
@@ -196,19 +202,22 @@ module.exports = function(Twilight) {
       })
 
       if (scorable.length > 0) {
-        const choices = ['Skip', ...scorable.map(id => {
-          const obj = res.getObjective(id)
-          return `${id}: ${obj.name}`
-        })]
+        const choices = [
+          this.actions.option({ id: 'skip', title: 'Skip' }),
+          ...scorable.map(id => {
+            const obj = res.getObjective(id)
+            return this.actions.option({ id: `obj:${id}`, title: `${id}: ${obj.name}` })
+          }),
+        ]
 
         const selection = this.actions.choose(player, choices, {
           title: 'Score Secret Objective',
           noAutoRespond: true,
         })
 
-        const chosen = selection[0]
-        if (chosen !== 'Skip') {
-          this._recordObjectiveScore(player, chosen)
+        const chosenId = selection[0].id
+        if (chosenId !== 'skip') {
+          this._recordObjectiveScore(player, chosenId.slice(4))
         }
       }
     }
@@ -363,17 +372,20 @@ module.exports = function(Twilight) {
         continue
       }
 
-      const choices = ['Pass', ...otherRelics]
+      const choices = [
+        this.actions.option({ id: 'pass', title: 'Pass' }),
+        ...otherRelics.map(r => this.actions.option({ id: `relic:${r}`, title: r })),
+      ]
       const sel = this.actions.choose(player, choices, {
         title: `Neuraloop: Purge a relic to replace the revealed objective?`,
         noAutoRespond: true,
       })
 
-      if (sel[0] === 'Pass') {
+      if (sel[0].id === 'pass') {
         continue
       }
 
-      const purgedRelicId = sel[0]
+      const purgedRelicId = sel[0].id.slice(6)
 
       // Purge the chosen relic
       this._purgeRelic(player, purgedRelicId)

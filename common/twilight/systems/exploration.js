@@ -108,11 +108,15 @@ module.exports = function(Twilight) {
     }
     else {
       // Player chooses which card to keep
-      const cardChoices = cards.map(c => c.name || c.id)
+      const cardChoices = cards.map(c => this.actions.option({
+        id: `card:${c.id}`,
+        title: c.name || c.id,
+      }))
       const selection = this.actions.choose(player, cardChoices, {
         title: 'Choose exploration card to keep',
       })
-      card = cards.find(c => (c.name || c.id) === selection[0]) || cards[0]
+      const pickedCardId = selection[0].id.slice(5)
+      card = cards.find(c => c.id === pickedCardId) || cards[0]
     }
 
     this.log.add({
@@ -223,17 +227,20 @@ module.exports = function(Twilight) {
           break
         }
 
-        const choices = ['Pass', ...affordable]
+        const choices = [
+          this.actions.option({ id: 'pass', title: 'Pass' }),
+          ...affordable.map(u => this.actions.option({ id: `unit:${u}`, title: u })),
+        ]
         const sel = this.actions.choose(player, choices, {
           title: 'Freelancers: Produce 1 unit (influence counts as resources)',
           noAutoRespond: true,
         })
 
-        if (sel[0] === 'Pass') {
+        if (sel[0].id === 'pass') {
           break
         }
 
-        const unitType = sel[0]
+        const unitType = sel[0].id.slice(5)
         const unitDef = this._getUnitStats(ownerName, unitType)
         const unitCategory = res.getUnit(unitType)?.category
 
@@ -274,9 +281,9 @@ module.exports = function(Twilight) {
       // === Industrial ===
 
       case 'abandoned-warehouses': {
-        const choices = ['Gain 2 Commodities']
+        const choices = [this.actions.option({ id: 'gain', title: 'Gain 2 Commodities' })]
         if (player.commodities > 0) {
-          choices.push('Convert Commodities to Trade Goods')
+          choices.push(this.actions.option({ id: 'convert', title: 'Convert Commodities to Trade Goods' }))
         }
         if (choices.length === 1) {
           player.commodities = Math.min(player.commodities + 2, player.maxCommodities)
@@ -289,7 +296,7 @@ module.exports = function(Twilight) {
           const sel = this.actions.choose(player, choices, {
             title: 'Abandoned Warehouses',
           })
-          if (sel[0] === 'Gain 2 Commodities') {
+          if (sel[0].id === 'gain') {
             player.commodities = Math.min(player.commodities + 2, player.maxCommodities)
             this.log.add({
               template: '{player} gains 2 commodities',
@@ -310,9 +317,9 @@ module.exports = function(Twilight) {
       }
 
       case 'functioning-base': {
-        const choices = ['Gain 1 Commodity']
+        const choices = [this.actions.option({ id: 'gain', title: 'Gain 1 Commodity' })]
         if (player.tradeGoods > 0 || player.commodities > 0) {
-          choices.push('Spend 1 to Draw Action Card')
+          choices.push(this.actions.option({ id: 'spend-draw', title: 'Spend 1 to Draw Action Card' }))
         }
         if (choices.length === 1) {
           player.commodities = Math.min(player.commodities + 1, player.maxCommodities)
@@ -325,7 +332,7 @@ module.exports = function(Twilight) {
           const sel = this.actions.choose(player, choices, {
             title: 'Functioning Base',
           })
-          if (sel[0] === 'Gain 1 Commodity') {
+          if (sel[0].id === 'gain') {
             player.commodities = Math.min(player.commodities + 1, player.maxCommodities)
             this.log.add({
               template: '{player} gains 1 commodity',
@@ -346,9 +353,9 @@ module.exports = function(Twilight) {
       }
 
       case 'local-fabricators': {
-        const choices = ['Gain 1 Commodity']
+        const choices = [this.actions.option({ id: 'gain', title: 'Gain 1 Commodity' })]
         if ((player.tradeGoods > 0 || player.commodities > 0) && planetId && systemId) {
-          choices.push('Spend 1 to Place Mech')
+          choices.push(this.actions.option({ id: 'spend-mech', title: 'Spend 1 to Place Mech' }))
         }
         if (choices.length === 1) {
           player.commodities = Math.min(player.commodities + 1, player.maxCommodities)
@@ -361,7 +368,7 @@ module.exports = function(Twilight) {
           const sel = this.actions.choose(player, choices, {
             title: 'Local Fabricators',
           })
-          if (sel[0] === 'Gain 1 Commodity') {
+          if (sel[0].id === 'gain') {
             player.commodities = Math.min(player.commodities + 1, player.maxCommodities)
             this.log.add({
               template: '{player} gains 1 commodity',
@@ -405,10 +412,13 @@ module.exports = function(Twilight) {
           eligible = true
         }
         else if (infantry) {
-          const remove = this.actions.choose(player, ['Yes', 'No'], {
+          const remove = this.actions.choose(player, [
+            this.actions.option({ id: 'yes', title: 'Yes' }),
+            this.actions.option({ id: 'no', title: 'No' }),
+          ], {
             title: `Remove 1 infantry from ${planetId}?`,
           })
-          if (remove[0] === 'Yes') {
+          if (remove[0].id === 'yes') {
             this._removeUnit(systemId, planetId, infantry.id)
             this.log.add({
               template: '{player} removes 1 infantry from {planet}',
@@ -434,13 +444,18 @@ module.exports = function(Twilight) {
             })
           }
           else if (baseId === 'volatile-fuel-source') {
-            const poolChoice = this.actions.choose(player, ['tactics', 'fleet', 'strategy'], {
+            const poolChoice = this.actions.choose(player, [
+              this.actions.option({ id: 'tactics', title: 'tactics' }),
+              this.actions.option({ id: 'fleet', title: 'fleet' }),
+              this.actions.option({ id: 'strategy', title: 'strategy' }),
+            ], {
               title: 'Volatile Fuel Source: Place command token in:',
             })
-            player.commandTokens[poolChoice[0]]++
+            const pool = poolChoice[0].id
+            player.commandTokens[pool]++
             this.log.add({
               template: '{player} gains 1 command token in {pool}',
-              args: { player: ownerName, pool: poolChoice[0] },
+              args: { player: ownerName, pool },
             })
           }
         }
@@ -460,11 +475,14 @@ module.exports = function(Twilight) {
       }
 
       case 'merchant-station': {
-        const choices = ['Replenish Commodities', 'Convert Commodities to Trade Goods']
+        const choices = [
+          this.actions.option({ id: 'replenish', title: 'Replenish Commodities' }),
+          this.actions.option({ id: 'convert', title: 'Convert Commodities to Trade Goods' }),
+        ]
         const sel = this.actions.choose(player, choices, {
           title: 'Merchant Station',
         })
-        if (sel[0] === 'Replenish Commodities') {
+        if (sel[0].id === 'replenish') {
           player.replenishCommodities()
           this.log.add({
             template: '{player} replenishes commodities',
@@ -492,24 +510,33 @@ module.exports = function(Twilight) {
             : 1
         player.addTradeGoods(tgAmount)
 
-        const poolChoice = this.actions.choose(player, ['tactics', 'fleet', 'strategy'], {
+        const poolChoice = this.actions.choose(player, [
+          this.actions.option({ id: 'tactics', title: 'tactics' }),
+          this.actions.option({ id: 'fleet', title: 'fleet' }),
+          this.actions.option({ id: 'strategy', title: 'strategy' }),
+        ], {
           title: `${card.name}: Place command token in:`,
         })
-        player.commandTokens[poolChoice[0]]++
+        const pool = poolChoice[0].id
+        player.commandTokens[pool]++
 
         this.log.add({
           template: '{player} gains {tg} trade goods and 1 command token in {pool}',
-          args: { player: ownerName, tg: tgAmount, pool: poolChoice[0] },
+          args: { player: ownerName, tg: tgAmount, pool },
         })
         break
       }
 
       case 'keleres-ship': {
         for (let i = 0; i < 2; i++) {
-          const poolChoice = this.actions.choose(player, ['tactics', 'fleet', 'strategy'], {
+          const poolChoice = this.actions.choose(player, [
+            this.actions.option({ id: 'tactics', title: 'tactics' }),
+            this.actions.option({ id: 'fleet', title: 'fleet' }),
+            this.actions.option({ id: 'strategy', title: 'strategy' }),
+          ], {
             title: `Keleres Ship: Place command token ${i + 1} of 2 in:`,
           })
-          player.commandTokens[poolChoice[0]]++
+          player.commandTokens[poolChoice[0].id]++
         }
         this.log.add({
           template: '{player} gains 2 command tokens',
@@ -558,10 +585,13 @@ module.exports = function(Twilight) {
         }
 
         // Choose which wormhole side to start with
-        const sideSel = this.actions.choose(player, ['alpha', 'beta'], {
+        const sideSel = this.actions.choose(player, [
+          this.actions.option({ id: 'alpha', title: 'alpha' }),
+          this.actions.option({ id: 'beta', title: 'beta' }),
+        ], {
           title: 'Ion Storm: Choose wormhole side',
         })
-        const side = sideSel[0]
+        const side = sideSel[0].id
 
         this.state.ionStormToken = { systemId: String(systemId), side }
 

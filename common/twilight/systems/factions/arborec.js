@@ -38,10 +38,15 @@ module.exports = {
         targetPlanet = controlled[0]
       }
       else {
-        const sel = ctx.actions.choose(player, controlled, {
-          title: `Letani Warrior II: Place ${revivalCount} revived infantry on which planet?`,
-        })
-        targetPlanet = sel[0]
+        const sel = ctx.actions.choose(
+          player,
+          controlled.map(p => ctx.actions.option({ id: p, title: p, kind: 'planet' })),
+          {
+            title: `Letani Warrior II: Place ${revivalCount} revived infantry on which planet?`,
+          },
+        )
+        const lwPick = sel[0]
+        targetPlanet = (lwPick && typeof lwPick === 'object') ? lwPick.id : lwPick
       }
     }
 
@@ -96,10 +101,15 @@ module.exports = {
       targetPlanet = dockPlanets[0]
     }
     else {
-      const selection = ctx.actions.choose(player, dockPlanets, {
-        title: 'Dirzuga Rophal: Place 1 infantry on which planet?',
-      })
-      targetPlanet = selection[0]
+      const selection = ctx.actions.choose(
+        player,
+        dockPlanets.map(p => ctx.actions.option({ id: p, title: p, kind: 'planet' })),
+        {
+          title: 'Dirzuga Rophal: Place 1 infantry on which planet?',
+        },
+      )
+      const drPick = selection[0]
+      targetPlanet = (drPick && typeof drPick === 'object') ? drPick.id : drPick
     }
 
     ctx.game._addUnitToPlanet(systemId, targetPlanet, 'infantry', player.name)
@@ -118,16 +128,22 @@ module.exports = {
       return
     }
 
-    const choices = ['Pass', ...controlledPlanets]
+    const choices = [
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+      ...controlledPlanets.map(p => ctx.actions.option({ id: p, title: p, kind: 'planet' })),
+    ]
     const selection = ctx.actions.choose(player, choices, {
       title: 'Mitosis: Place 1 infantry on a planet you control?',
     })
 
-    if (selection[0] === 'Pass') {
+    const mtPick = selection[0]
+    const mtPickId = (mtPick && typeof mtPick === 'object') ? mtPick.id : mtPick
+    const mtPickTitle = (mtPick && typeof mtPick === 'object') ? mtPick.title : mtPick
+    if (mtPickId === 'pass' || mtPickTitle === 'Pass') {
       return
     }
 
-    const targetPlanet = selection[0]
+    const targetPlanet = mtPickId
     const systemId = ctx.game._findSystemForPlanet(targetPlanet)
     if (!systemId) {
       return
@@ -139,11 +155,17 @@ module.exports = {
     const hasInfantry = planetUnits.some(u => u.owner === player.name && u.type === 'infantry')
 
     if (hasInfantry && ctx.game._hasReinforcementsAvailable(player.name, 'mech')) {
-      const mechChoice = ctx.actions.choose(player, ['Place infantry', 'Deploy Mech (replace infantry)'], {
+      const mechChoice = ctx.actions.choose(player, [
+        ctx.actions.option({ id: 'infantry', title: 'Place infantry' }),
+        ctx.actions.option({ id: 'mech', title: 'Deploy Mech (replace infantry)' }),
+      ], {
         title: 'Letani Behemoth: Deploy mech instead? (replaces 1 existing infantry)',
       })
 
-      if (mechChoice[0] === 'Deploy Mech (replace infantry)') {
+      const lbPick = mechChoice[0]
+      const lbPickId = (lbPick && typeof lbPick === 'object') ? lbPick.id : lbPick
+      const lbPickTitle = (lbPick && typeof lbPick === 'object') ? lbPick.title : lbPick
+      if (lbPickId === 'mech' || lbPickTitle === 'Deploy Mech (replace infantry)') {
         const infIdx = planetUnits.findIndex(u => u.owner === player.name && u.type === 'infantry')
         if (infIdx !== -1) {
           planetUnits.splice(infIdx, 1)
@@ -219,16 +241,23 @@ module.exports = {
         break
       }
 
-      const fromChoices = ['Done', ...sources.map(p => `from:${p}`)]
+      const fromChoices = [
+        ctx.actions.option({ id: 'done', title: 'Done' }),
+        ...sources.map(p => ctx.actions.option({ id: `from:${p}`, title: `from:${p}`, kind: 'planet' })),
+      ]
       const fromSel = ctx.actions.choose(player, fromChoices, {
         title: `Bioplasmosis: Move infantry (${moved} moved so far)`,
       })
 
-      if (fromSel[0] === 'Done') {
+      const bpPick = fromSel[0]
+      const bpPickId = (bpPick && typeof bpPick === 'object') ? bpPick.id : bpPick
+      const bpPickTitle = (bpPick && typeof bpPick === 'object') ? bpPick.title : bpPick
+      if (bpPickId === 'done' || bpPickTitle === 'Done') {
         break
       }
 
-      const fromPlanet = fromSel[0].replace('from:', '')
+      const fromTok = bpPickId || bpPickTitle || ''
+      const fromPlanet = String(fromTok).replace('from:', '')
       const fromSystem = ctx.game._findSystemForPlanet(fromPlanet)
       if (!fromSystem) {
         continue
@@ -248,10 +277,15 @@ module.exports = {
         continue
       }
 
-      const toSel = ctx.actions.choose(player, validDestinations, {
-        title: 'Bioplasmosis: Choose destination planet',
-      })
-      const toPlanet = toSel[0]
+      const toSel = ctx.actions.choose(
+        player,
+        validDestinations.map(p => ctx.actions.option({ id: p, title: p, kind: 'planet' })),
+        {
+          title: 'Bioplasmosis: Choose destination planet',
+        },
+      )
+      const toPick = toSel[0]
+      const toPlanet = (toPick && typeof toPick === 'object') ? toPick.id : toPick
       const toSystem = ctx.game._findSystemForPlanet(toPlanet)
       if (!toSystem) {
         continue
@@ -322,11 +356,16 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(arborecPlayer, ['Exhaust Letani Ospha', 'Pass'], {
+    const choice = ctx.actions.choose(arborecPlayer, [
+      ctx.actions.option({ id: 'exhaust', title: 'Exhaust Letani Ospha' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Letani Ospha: ${activatingPlayer.name} activated system with structures. Replace infantry with mech?`,
     })
 
-    if (choice[0] !== 'Exhaust Letani Ospha') {
+    const loPick = choice[0]
+    const loPickId = (loPick && typeof loPick === 'object') ? loPick.id : loPick
+    if (loPickId !== 'exhaust' && loPick !== 'Exhaust Letani Ospha') {
       return
     }
 
@@ -338,10 +377,15 @@ module.exports = {
       targetPlanet = planetsWithInfantry[0]
     }
     else {
-      const planetSel = ctx.actions.choose(arborecPlayer, planetsWithInfantry, {
-        title: 'Letani Ospha: Choose planet to replace infantry with mech',
-      })
-      targetPlanet = planetSel[0]
+      const planetSel = ctx.actions.choose(
+        arborecPlayer,
+        planetsWithInfantry.map(p => ctx.actions.option({ id: p, title: p, kind: 'planet' })),
+        {
+          title: 'Letani Ospha: Choose planet to replace infantry with mech',
+        },
+      )
+      const lopPick = planetSel[0]
+      targetPlanet = (lopPick && typeof lopPick === 'object') ? lopPick.id : lopPick
     }
 
     // Remove 1 infantry and add 1 mech for the activating player
@@ -415,7 +459,9 @@ module.exports = {
         continue
       }
 
-      const produceSelection = ctx.actions.choose(player, ['Done'], {
+      const produceSelection = ctx.actions.choose(player, [
+        ctx.actions.option({ id: 'done', title: 'Done' }),
+      ], {
         title: `Ultrasonic Emitter: Produce in system ${systemId}`,
         allowsAction: 'produce-units',
       })

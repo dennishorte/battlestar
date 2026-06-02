@@ -105,10 +105,14 @@ module.exports = {
     }
 
     // Build choice list: each assimilator token × each faction tech, plus Pass
-    const choices = ['Gain technology normally']
+    const choices = [ctx.actions.option({ id: 'normal', title: 'Gain technology normally' })]
     for (const token of availableTokens) {
       for (const techId of eligibleFactionTechs) {
-        choices.push(`Place ${token.toUpperCase()} token on ${techId}`)
+        choices.push(ctx.actions.option({
+          id: `place:${token}:${techId}`,
+          title: `Place ${token.toUpperCase()} token on ${techId}`,
+          kind: 'assimilator',
+        }))
       }
     }
 
@@ -116,18 +120,29 @@ module.exports = {
       title: 'Valefar Assimilator: Place token on a faction technology instead?',
     })
 
-    if (selection[0] === 'Gain technology normally') {
+    const vaPick = selection[0]
+    const vaPickId = (vaPick && typeof vaPick === 'object') ? vaPick.id : vaPick
+    const vaPickTitle = (vaPick && typeof vaPick === 'object') ? vaPick.title : vaPick
+    if (vaPickId === 'normal' || vaPickTitle === 'Gain technology normally') {
       return false
     }
 
-    // Parse the selection: "Place X token on tech-id"
-    const match = selection[0].match(/^Place ([XY]) token on (.+)$/)
-    if (!match) {
-      return false
+    let tokenLetter, targetTechId
+    if (typeof vaPickId === 'string' && vaPickId.startsWith('place:')) {
+      const parts = vaPickId.split(':')
+      tokenLetter = parts[1]
+      targetTechId = parts.slice(2).join(':')
     }
-
-    const tokenLetter = match[1].toLowerCase()
-    const targetTechId = match[2]
+    else {
+      // Parse the title: "Place X token on tech-id"
+      const vaTok = typeof vaPickId === 'string' ? vaPickId : (vaPickTitle || '')
+      const match = String(vaTok).match(/^Place ([XY]) token on (.+)$/)
+      if (!match) {
+        return false
+      }
+      tokenLetter = match[1].toLowerCase()
+      targetTechId = match[2]
+    }
 
     if (!ctx.state.assimilatorTokens) {
       ctx.state.assimilatorTokens = {}
@@ -182,25 +197,29 @@ module.exports = {
     player.exhaustAgent()
 
     const others = ctx.players.all().filter(p => p.name !== player.name)
-    const targetChoices = others.map(p => p.name)
 
-    const targetSelection = ctx.actions.choose(player, targetChoices, {
-      title: 'Nekro Malleon: Choose a player',
-    })
-    const targetName = targetSelection[0]
+    const targetSelection = ctx.actions.choose(
+      player,
+      others.map(p => ctx.actions.playerOption(p)),
+      {
+        title: 'Nekro Malleon: Choose a player',
+      },
+    )
+    const nmtPick = targetSelection[0]
+    const targetName = (nmtPick && typeof nmtPick === 'object') ? nmtPick.id : nmtPick
     const target = ctx.players.byName(targetName)
 
     // The chosen player decides: discard action card, spend command token, or decline
     const options = []
     const hasActionCards = (target.actionCards || []).length > 0
     if (hasActionCards) {
-      options.push('Discard Action Card')
+      options.push(ctx.actions.option({ id: 'discard', title: 'Discard Action Card' }))
     }
     const totalTokens = target.commandTokens.tactics + target.commandTokens.fleet + target.commandTokens.strategy
     if (totalTokens > 0) {
-      options.push('Spend Command Token')
+      options.push(ctx.actions.option({ id: 'spend', title: 'Spend Command Token' }))
     }
-    options.push('Decline')
+    options.push(ctx.actions.option({ id: 'decline', title: 'Decline' }))
 
     if (options.length === 1) {
       // Only 'Decline' available — no action cards, no tokens
@@ -215,13 +234,17 @@ module.exports = {
       title: 'Nekro Malleon: Discard 1 action card or spend 1 command token to gain 2 trade goods?',
     })
 
-    if (choice[0] === 'Discard Action Card') {
+    const nmPick = choice[0]
+    const nmPickId = (nmPick && typeof nmPick === 'object') ? nmPick.id : nmPick
+    const nmPickTitle = (nmPick && typeof nmPick === 'object') ? nmPick.title : nmPick
+    if (nmPickId === 'discard' || nmPickTitle === 'Discard Action Card') {
       const cards = target.actionCards || []
-      const cardChoices = cards.map(c => c.id)
+      const cardChoices = cards.map(c => ctx.actions.option({ id: c.id, title: c.id, kind: 'action-card' }))
       const cardSelection = ctx.actions.choose(target, cardChoices, {
         title: 'Choose action card to discard',
       })
-      const cardId = cardSelection[0]
+      const ncPick = cardSelection[0]
+      const cardId = (ncPick && typeof ncPick === 'object') ? ncPick.id : ncPick
       target.actionCards = target.actionCards.filter(c => c.id !== cardId)
       target.addTradeGoods(2)
 
@@ -230,7 +253,7 @@ module.exports = {
         args: { player: player.name, target: targetName },
       })
     }
-    else if (choice[0] === 'Spend Command Token') {
+    else if (nmPickId === 'spend' || nmPickTitle === 'Spend Command Token') {
       const poolChoices = []
       if (target.commandTokens.tactics > 0) {
         poolChoices.push('tactics')
@@ -245,7 +268,8 @@ module.exports = {
       const poolSelection = ctx.actions.choose(target, poolChoices, {
         title: 'Spend command token from which pool?',
       })
-      const pool = poolSelection[0]
+      const npPick = poolSelection[0]
+      const pool = (npPick && typeof npPick === 'object') ? npPick.id : npPick
       target.commandTokens[pool]--
       target.addTradeGoods(2)
 
@@ -267,15 +291,29 @@ module.exports = {
   // ---------------------------------------------------------------------------
 
   onAgendaVotingStart(player, ctx, { agenda, outcomes }) {
-    const choices = outcomes.map(o => `Predict: ${o}`)
-    choices.push('No prediction')
+    const choices = outcomes.map(o => ctx.actions.option({
+      id: `predict:${o}`,
+      title: `Predict: ${o}`,
+      kind: 'prediction',
+    }))
+    choices.push(ctx.actions.option({ id: 'no-prediction', title: 'No prediction' }))
 
     const selection = ctx.actions.choose(player, choices, {
       title: `Galactic Threat: Predict outcome of "${agenda.name}"`,
     })
 
-    if (selection[0] !== 'No prediction') {
-      const predicted = selection[0].replace('Predict: ', '')
+    const gtPick = selection[0]
+    const gtPickId = (gtPick && typeof gtPick === 'object') ? gtPick.id : gtPick
+    const gtPickTitle = (gtPick && typeof gtPick === 'object') ? gtPick.title : gtPick
+    if (gtPickId !== 'no-prediction' && gtPickTitle !== 'No prediction') {
+      let predicted
+      if (typeof gtPickId === 'string' && gtPickId.startsWith('predict:')) {
+        predicted = gtPickId.slice('predict:'.length)
+      }
+      else {
+        const gtTok = typeof gtPickId === 'string' ? gtPickId : (gtPickTitle || '')
+        predicted = String(gtTok).replace('Predict: ', '')
+      }
       ctx.state.nekroPrediction = { playerName: player.name, outcome: predicted }
 
       ctx.log.add({
@@ -354,11 +392,16 @@ module.exports = {
       }
     }
 
-    const selection = ctx.actions.choose(player, unique, {
-      title: 'Galactic Threat: Correct prediction — choose technology to copy',
-    })
+    const selection = ctx.actions.choose(
+      player,
+      unique.map(t => ctx.actions.option({ id: t, title: t, kind: 'tech' })),
+      {
+        title: 'Galactic Threat: Correct prediction — choose technology to copy',
+      },
+    )
 
-    const techId = selection[0]
+    const gtcPick = selection[0]
+    const techId = (gtcPick && typeof gtcPick === 'object') ? gtcPick.id : gtcPick
     ctx.game._grantTechnology(player, techId)
 
     ctx.log.add({
@@ -405,49 +448,57 @@ module.exports = {
 
     if (availableTokens.length > 0 && eligibleFactionTechs.length > 0 || zAvailable) {
       // Build combined choices: normal techs + assimilator placements + Pass
-      const choices = ['Pass']
+      const choices = [ctx.actions.option({ id: 'pass', title: 'Pass' })]
 
       // Normal tech copy choices
       for (const techId of ownerTechs) {
-        choices.push(techId)
+        choices.push(ctx.actions.option({ id: `tech:${techId}`, title: techId, kind: 'technology' }))
       }
 
       // X/Y assimilator placement choices (on faction techs)
       for (const token of availableTokens) {
         for (const techId of eligibleFactionTechs) {
-          choices.push(`Place ${token.toUpperCase()} token on ${techId}`)
+          choices.push(ctx.actions.option({
+            id: `assim-xy:${token}:${techId}`,
+            title: `Place ${token.toUpperCase()} token on ${techId}`,
+          }))
         }
       }
 
       // Z assimilator placement choice (on faction sheet)
       if (zAvailable) {
-        choices.push(`Place Z on ${owner.faction.id}`)
+        choices.push(ctx.actions.option({
+          id: `assim-z:${owner.faction.id}`,
+          title: `Place Z on ${owner.faction.id}`,
+        }))
       }
 
       const selection = ctx.actions.choose(player, choices, {
         title: `Technological Singularity: Copy a technology from ${unit.owner}?`,
       })
 
-      if (selection[0] === 'Pass') {
+      const npick = selection[0]
+      const npickId = (npick && typeof npick === 'object') ? npick.id : npick
+      if (npickId === 'pass' || npickId === 'Pass') {
         return
       }
 
       ctx.state._singularityUsedThisCombat = true
 
       // Check if Z assimilator placement was chosen
-      const zMatch = selection[0].match(/^Place Z on (.+)$/)
-      if (zMatch) {
+      if (typeof npickId === 'string' && npickId.startsWith('assim-z:')) {
+        const factionId = npickId.slice('assim-z:'.length)
         if (!ctx.state.assimilatorTokens) {
           ctx.state.assimilatorTokens = {}
         }
         ctx.state.assimilatorTokens.z = {
-          factionId: zMatch[1],
+          factionId,
           ownerName: unit.owner,
         }
 
         ctx.log.add({
           template: '{player} places Valefar Assimilator Z on {faction} faction sheet (Technological Singularity)',
-          args: { player: player.name, faction: zMatch[1] },
+          args: { player: player.name, faction: factionId },
         })
 
         this._commanderDrawCard(player, ctx)
@@ -455,10 +506,8 @@ module.exports = {
       }
 
       // Check if X/Y assimilator placement was chosen
-      const match = selection[0].match(/^Place ([XY]) token on (.+)$/)
-      if (match) {
-        const tokenLetter = match[1].toLowerCase()
-        const targetTechId = match[2]
+      if (typeof npickId === 'string' && npickId.startsWith('assim-xy:')) {
+        const [, tokenLetter, targetTechId] = npickId.split(':')
 
         if (!ctx.state.assimilatorTokens) {
           ctx.state.assimilatorTokens = {}
@@ -478,7 +527,9 @@ module.exports = {
       }
 
       // Normal tech copy
-      const techId = selection[0]
+      const techId = typeof npickId === 'string' && npickId.startsWith('tech:')
+        ? npickId.slice('tech:'.length)
+        : npickId
       ctx.game._grantTechnology(player, techId)
 
       ctx.log.add({
@@ -491,17 +542,22 @@ module.exports = {
     }
 
     // No assimilator available — original flow
-    const choices = ['Pass', ...ownerTechs]
+    const choices = [
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+      ...ownerTechs.map(t => ctx.actions.option({ id: t, title: t, kind: 'technology' })),
+    ]
     const selection = ctx.actions.choose(player, choices, {
       title: `Technological Singularity: Copy a technology from ${unit.owner}?`,
     })
 
-    if (selection[0] === 'Pass') {
+    const pick = selection[0]
+    const pickId = (pick && typeof pick === 'object') ? pick.id : pick
+    if (pickId === 'pass' || pickId === 'Pass') {
       return
     }
 
     ctx.state._singularityUsedThisCombat = true
-    const techId = selection[0]
+    const techId = pickId
     ctx.game._grantTechnology(player, techId)
 
     ctx.log.add({
@@ -560,16 +616,17 @@ module.exports = {
     }
 
     // Choose planet
-    const planetChoices = validPlanets.map(p => p.planetId)
+    const planetChoiceObjs = validPlanets.map(p => ctx.actions.planetOption(p.planetId))
     let chosenPlanetId
-    if (planetChoices.length === 1) {
-      chosenPlanetId = planetChoices[0]
+    if (planetChoiceObjs.length === 1) {
+      chosenPlanetId = validPlanets[0].planetId
     }
     else {
-      const selection = ctx.actions.choose(player, planetChoices, {
+      const selection = ctx.actions.choose(player, planetChoiceObjs, {
         title: 'POLYMORPHIC ALGORITHM: Choose planet with tech specialty',
       })
-      chosenPlanetId = selection[0]
+      const ppick = selection[0]
+      chosenPlanetId = (ppick && typeof ppick === 'object') ? ppick.id : ppick
     }
 
     const chosen = validPlanets.find(p => p.planetId === chosenPlanetId)
@@ -634,10 +691,13 @@ module.exports = {
         chosenTechId = uniqueMatching[0]
       }
       else {
-        const techSelection = ctx.actions.choose(player, uniqueMatching, {
-          title: `POLYMORPHIC ALGORITHM: Gain a ${specialty} technology`,
-        })
-        chosenTechId = techSelection[0]
+        const techSelection = ctx.actions.choose(
+          player,
+          uniqueMatching.map(t => ctx.actions.option({ id: t, title: t, kind: 'technology' })),
+          { title: `POLYMORPHIC ALGORITHM: Gain a ${specialty} technology` },
+        )
+        const tpick = techSelection[0]
+        chosenTechId = (tpick && typeof tpick === 'object') ? tpick.id : tpick
       }
 
       ctx.game._grantTechnology(player, chosenTechId)

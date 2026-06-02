@@ -15,11 +15,14 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(player, ['Allow Passage', 'Deny'], {
+    const choice = ctx.actions.choose(player, [
+      ctx.actions.option({ id: 'allow', title: 'Allow Passage' }),
+      ctx.actions.option({ id: 'deny', title: 'Deny' }),
+    ], {
       title: `Aetherpassage: Allow ${activatingPlayer.name} to move through your systems?`,
     })
 
-    if (choice[0] === 'Allow Passage') {
+    if (choice[0]?.id === 'allow') {
       ctx.state.aetherpassageGrant = player.name
 
       ctx.log.add({
@@ -40,11 +43,14 @@ module.exports = {
     if (player.isCommanderUnlocked()) {
       const tokens = ctx.state.systems[systemId]?.commandTokens || []
       if (tokens.includes(player.name)) {
-        const choice = ctx.actions.choose(player, ['Return Token', 'Pass'], {
+        const choice = ctx.actions.choose(player, [
+          ctx.actions.option({ id: 'return', title: 'Return Token' }),
+          ctx.actions.option({ id: 'pass', title: 'Pass' }),
+        ], {
           title: `Xuange: ${moverName} moved ships into a system with your token. Return it?`,
         })
 
-        if (choice[0] === 'Return Token') {
+        if (choice[0]?.id === 'return') {
           const idx = tokens.indexOf(player.name)
           if (idx !== -1) {
             tokens.splice(idx, 1)
@@ -79,12 +85,18 @@ module.exports = {
                 noteToGive = moverNotes[0]
               }
               else {
-                const noteChoices = moverNotes.map(n => `${n.id} (from ${n.owner})`)
+                const noteChoices = moverNotes.map(n => ctx.actions.option({
+                  id: `${n.id}__${n.owner}`,
+                  title: `${n.id} (from ${n.owner})`,
+                  kind: 'promissory-note',
+                }))
                 const selection = ctx.actions.choose(mover, noteChoices, {
                   title: `Voidwatch: Give ${player.name} 1 promissory note`,
                 })
-                const idx = noteChoices.indexOf(selection[0])
-                noteToGive = moverNotes[idx]
+                const pick = selection[0]
+                const pickId = typeof pick === 'object' ? pick.id : pick
+                noteToGive = moverNotes.find(n => `${n.id}__${n.owner}` === pickId)
+                  || moverNotes[noteChoices.findIndex(c => c.title === pickId)]
               }
 
               mover.removePromissoryNote(noteToGive.id, noteToGive.owner)
@@ -276,11 +288,14 @@ module.exports = {
       return false
     }
 
-    const choice = ctx.actions.choose(empyreanPlayer, ['Cancel Action Card', 'Pass'], {
+    const choice = ctx.actions.choose(empyreanPlayer, [
+      ctx.actions.option({ id: 'cancel', title: 'Cancel Action Card' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Watcher: Remove mech to cancel ${playingPlayer.name}'s ${card.name}?`,
     })
 
-    if (choice[0] !== 'Cancel Action Card') {
+    if (choice[0]?.id !== 'cancel') {
       return false
     }
 
@@ -320,23 +335,26 @@ module.exports = {
   onAnySystemActivated(empyreanPlayer, ctx, { systemId, activatingPlayer }) {
     // Agent: Acamar
     if (empyreanPlayer.isAgentReady()) {
-      const choices = ['Exhaust Acamar', 'Pass']
+      const choices = [
+        ctx.actions.option({ id: 'exhaust', title: 'Exhaust Acamar' }),
+        ctx.actions.option({ id: 'pass', title: 'Pass' }),
+      ]
       const choice = ctx.actions.choose(empyreanPlayer, choices, {
         title: `Acamar: ${activatingPlayer.name} activated a system. Exhaust agent?`,
       })
 
-      if (choice[0] === 'Exhaust Acamar') {
+      if (choice[0]?.id === 'exhaust') {
         empyreanPlayer.exhaustAgent()
 
         const effectChoices = [
-          'Gain 1 Trade Good',
-          `Give ${activatingPlayer.name} 1 Command Token`,
+          ctx.actions.option({ id: 'trade-good', title: 'Gain 1 Trade Good' }),
+          ctx.actions.option({ id: 'command-token', title: `Give ${activatingPlayer.name} 1 Command Token` }),
         ]
         const effectChoice = ctx.actions.choose(empyreanPlayer, effectChoices, {
           title: 'Acamar: Choose effect',
         })
 
-        if (effectChoice[0] === 'Gain 1 Trade Good') {
+        if (effectChoice[0]?.id === 'trade-good') {
           empyreanPlayer.addTradeGoods(1)
           ctx.log.add({
             template: 'Acamar: {player} gains 1 trade good',
@@ -369,11 +387,14 @@ module.exports = {
         })
 
         if (adjacentToAnomaly) {
-          const choice = ctx.actions.choose(empyreanPlayer, ['Apply Aetherstream', 'Pass'], {
+          const choice = ctx.actions.choose(empyreanPlayer, [
+            ctx.actions.option({ id: 'apply', title: 'Apply Aetherstream' }),
+            ctx.actions.option({ id: 'pass', title: 'Pass' }),
+          ], {
             title: `Aetherstream: Apply +1 move to ${activatingPlayer.name}'s ships?`,
           })
 
-          if (choice[0] === 'Apply Aetherstream') {
+          if (choice[0]?.id === 'apply') {
             ctx.state.currentTacticalAction = ctx.state.currentTacticalAction || {}
             ctx.state.currentTacticalAction.aetherstreamBonus = activatingPlayer.name
 
@@ -404,22 +425,29 @@ module.exports = {
     }
 
     // Get borders the activated system shares with other systems
-    const borderChoices = adjacentSystems.map(adjId => `Border ${systemId}-${adjId}`)
+    const borderChoices = adjacentSystems.map(adjId => ctx.actions.option({
+      id: `border-${systemId}-${adjId}`,
+      title: `Border ${systemId}-${adjId}`,
+      kind: 'border',
+    }))
     if (borderChoices.length === 0) {
       return
     }
 
-    const choices = [...borderChoices, 'Pass']
+    const choices = [...borderChoices, ctx.actions.option({ id: 'pass', title: 'Pass' })]
     const selection = ctx.actions.choose(player, choices, {
       title: 'Void Tether: Place or move a void tether token on which border?',
     })
 
-    if (selection[0] === 'Pass') {
+    const pick = selection[0]
+    const pickId = typeof pick === 'object' ? pick.id : pick
+    if (pickId === 'pass' || pick === 'Pass') {
       return
     }
 
     // Parse the selected border
-    const parts = selection[0].replace('Border ', '').split('-')
+    const borderTitle = typeof pick === 'object' ? pick.title : pick
+    const parts = borderTitle.replace('Border ', '').split('-')
     const sysA = parts[0]
     const sysB = parts[1]
 

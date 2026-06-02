@@ -53,11 +53,16 @@ module.exports = {
       return
     }
 
-    const choice = ctx.actions.choose(cabalPlayer, ['Exhaust Stillness of Stars', 'Pass'], {
+    const choice = ctx.actions.choose(cabalPlayer, [
+      ctx.actions.option({ id: 'exhaust', title: 'Exhaust Stillness of Stars' }),
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+    ], {
       title: `Stillness of Stars: ${target.name} replenished ${target.commodities} commodities. Exhaust to convert and capture?`,
     })
 
-    if (choice[0] !== 'Exhaust Stillness of Stars') {
+    const sosPick = choice[0]
+    const sosPickId = (sosPick && typeof sosPick === 'object') ? sosPick.id : sosPick
+    if (sosPickId !== 'exhaust' && sosPick !== 'Exhaust Stillness of Stars') {
       return
     }
 
@@ -81,22 +86,29 @@ module.exports = {
 
     // Capture 1 unit from their reinforcements (choose unit type)
     const unitTypes = ['infantry', 'fighter', 'destroyer', 'cruiser', 'carrier', 'dreadnought']
-    const captureChoice = ctx.actions.choose(cabalPlayer, unitTypes, {
-      title: `Stillness of Stars: Capture 1 unit from ${updatedTarget.name}'s reinforcements`,
-    })
+    const captureChoice = ctx.actions.choose(
+      cabalPlayer,
+      unitTypes.map(t => ctx.actions.option({ id: t, title: t, kind: 'unit' })),
+      {
+        title: `Stillness of Stars: Capture 1 unit from ${updatedTarget.name}'s reinforcements`,
+      },
+    )
+
+    const capPick = captureChoice[0]
+    const capPickId = (capPick && typeof capPick === 'object') ? capPick.id : capPick
 
     if (!ctx.state.capturedUnits[cabalPlayer.name]) {
       ctx.state.capturedUnits[cabalPlayer.name] = []
     }
 
     ctx.state.capturedUnits[cabalPlayer.name].push({
-      type: captureChoice[0],
+      type: capPickId,
       originalOwner: updatedTarget.name,
     })
 
     ctx.log.add({
       template: 'Stillness of Stars: {player} captures {type} from {target} reinforcements',
-      args: { player: cabalPlayer.name, type: captureChoice[0], target: updatedTarget.name },
+      args: { player: cabalPlayer.name, type: capPickId, target: updatedTarget.name },
     })
   },
 
@@ -207,13 +219,26 @@ module.exports = {
       return
     }
 
-    const choices = captured.map(c => `${c.type} (from ${c.originalOwner})`)
+    const choices = captured.map((c, i) => ctx.actions.option({
+      id: `cap:${i}`,
+      title: `${c.type} (from ${c.originalOwner})`,
+      kind: 'captured-unit',
+    }))
     const selection = ctx.actions.choose(player, choices, {
       title: 'Amalgamation: Choose captured unit to return',
     })
 
-    const idx = choices.indexOf(selection[0])
-    if (idx === -1) {
+    const amPick = selection[0]
+    const amPickId = (amPick && typeof amPick === 'object') ? amPick.id : amPick
+    const amPickTitle = (amPick && typeof amPick === 'object') ? amPick.title : amPick
+    let idx
+    if (typeof amPickId === 'string' && amPickId.startsWith('cap:')) {
+      idx = parseInt(amPickId.slice(4), 10)
+    }
+    else {
+      idx = choices.findIndex(c => c.title === amPickTitle)
+    }
+    if (idx === -1 || isNaN(idx)) {
       return
     }
 
@@ -235,10 +260,15 @@ module.exports = {
       targetSystem = validSystems[0]
     }
     else {
-      const sysSelection = ctx.actions.choose(player, validSystems, {
-        title: 'Choose system to place unit',
-      })
-      targetSystem = sysSelection[0]
+      const sysSelection = ctx.actions.choose(
+        player,
+        validSystems.map(s => ctx.actions.option({ id: s, title: s, kind: 'system' })),
+        {
+          title: 'Choose system to place unit',
+        },
+      )
+      const sysPick = sysSelection[0]
+      targetSystem = (sysPick && typeof sysPick === 'object') ? sysPick.id : sysPick
     }
 
     ctx.game._addUnit(targetSystem, 'space', removed.type, player.name)
@@ -255,13 +285,26 @@ module.exports = {
       return
     }
 
-    const choices = captured.map(c => `${c.type} (from ${c.originalOwner})`)
+    const choices = captured.map((c, i) => ctx.actions.option({
+      id: `cap:${i}`,
+      title: `${c.type} (from ${c.originalOwner})`,
+      kind: 'captured-unit',
+    }))
     const selection = ctx.actions.choose(player, choices, {
       title: 'Riftmeld: Choose captured unit to return',
     })
 
-    const idx = choices.indexOf(selection[0])
-    if (idx === -1) {
+    const rmPick = selection[0]
+    const rmPickId = (rmPick && typeof rmPick === 'object') ? rmPick.id : rmPick
+    const rmPickTitle = (rmPick && typeof rmPick === 'object') ? rmPick.title : rmPick
+    let idx
+    if (typeof rmPickId === 'string' && rmPickId.startsWith('cap:')) {
+      idx = parseInt(rmPickId.slice(4), 10)
+    }
+    else {
+      idx = choices.findIndex(c => c.title === rmPickTitle)
+    }
+    if (idx === -1 || isNaN(idx)) {
       return
     }
 
@@ -279,11 +322,16 @@ module.exports = {
       return
     }
 
-    const techSelection = ctx.actions.choose(player, unitUpgrades, {
-      title: 'Riftmeld: Research unit upgrade (ignoring prerequisites)',
-    })
+    const techSelection = ctx.actions.choose(
+      player,
+      unitUpgrades.map(t => ctx.actions.option({ id: t, title: t, kind: 'tech' })),
+      {
+        title: 'Riftmeld: Research unit upgrade (ignoring prerequisites)',
+      },
+    )
 
-    const techId = techSelection[0]
+    const techPick = techSelection[0]
+    const techId = (techPick && typeof techPick === 'object') ? techPick.id : techPick
     ctx.game._grantTechnology(player, techId)
 
     ctx.log.add({
@@ -406,13 +454,26 @@ module.exports = {
       return
     }
 
-    const choices = nonBlockadedTargets.map(t => `${t.type} from ${t.owner}`)
+    const choices = nonBlockadedTargets.map((t, i) => ctx.actions.option({
+      id: `target:${i}`,
+      title: `${t.type} from ${t.owner}`,
+      kind: 'vortex-target',
+    }))
     const selection = ctx.actions.choose(player, choices, {
       title: 'Vortex: Choose unit type to capture from reinforcements',
     })
 
-    const idx = choices.indexOf(selection[0])
-    if (idx === -1) {
+    const vxPick = selection[0]
+    const vxPickId = (vxPick && typeof vxPick === 'object') ? vxPick.id : vxPick
+    const vxPickTitle = (vxPick && typeof vxPick === 'object') ? vxPick.title : vxPick
+    let idx
+    if (typeof vxPickId === 'string' && vxPickId.startsWith('target:')) {
+      idx = parseInt(vxPickId.slice(7), 10)
+    }
+    else {
+      idx = choices.findIndex(c => c.title === vxPickTitle)
+    }
+    if (idx === -1 || isNaN(idx)) {
       return
     }
 
@@ -671,10 +732,15 @@ module.exports = {
         targetSystem = remaining[0]
       }
       else {
-        const sel = ctx.actions.choose(player, remaining, {
-          title: `Place ingress token ${i + 1}/${tokensToPlace} on a gravity rift`,
-        })
-        targetSystem = sel[0]
+        const sel = ctx.actions.choose(
+          player,
+          remaining.map(s => ctx.actions.option({ id: s, title: s, kind: 'system' })),
+          {
+            title: `Place ingress token ${i + 1}/${tokensToPlace} on a gravity rift`,
+          },
+        )
+        const igPick = sel[0]
+        targetSystem = (igPick && typeof igPick === 'object') ? igPick.id : igPick
       }
 
       ctx.state.theFracture.ingressTokens.push(targetSystem)

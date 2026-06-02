@@ -48,13 +48,18 @@ module.exports = {
     player.exhaustAgent()
 
     const others = ctx.players.all().filter(p => p.name !== player.name).map(p => p.name)
-    const options = ['Gain 2 Commodities', ...others.map(n => `Replenish ${n}`)]
+    const options = [
+      ctx.actions.option({ id: 'gain', title: 'Gain 2 Commodities' }),
+      ...others.map(n => ctx.actions.option({ id: `replenish-${n}`, title: `Replenish ${n}` })),
+    ]
 
     const choice = ctx.actions.choose(player, options, {
       title: 'Carth of Golden Sands: Gain 2 commodities or replenish another player?',
     })
 
-    if (choice[0] === 'Gain 2 Commodities') {
+    const pick = choice[0]
+    const pickId = typeof pick === 'object' ? pick.id : pick
+    if (pickId === 'gain') {
       const toGain = Math.min(2, player.maxCommodities - player.commodities)
       player.commodities += toGain
       ctx.log.add({
@@ -64,7 +69,7 @@ module.exports = {
     }
     else {
       // Replenish another player's commodities
-      const targetName = choice[0].replace('Replenish ', '')
+      const targetName = pickId.startsWith('replenish-') ? pickId.slice('replenish-'.length) : pickId
       const target = ctx.players.byName(targetName)
       if (target) {
         target.commodities = target.maxCommodities
@@ -92,16 +97,21 @@ module.exports = {
       return
     }
 
-    const choices = ['Pass', ...others.map(p => p.name)]
+    const choices = [
+      ctx.actions.option({ id: 'pass', title: 'Pass' }),
+      ...others.map(p => ctx.actions.playerOption(p)),
+    ]
     const selection = ctx.actions.choose(player, choices, {
       title: 'Quantum Datahub Node: Spend 1 strategy token and give 3 TG to swap strategy cards?',
     })
 
-    if (selection[0] === 'Pass') {
+    const pick = selection[0]
+    const pickId = typeof pick === 'object' ? pick.id : pick
+    if (pickId === 'pass') {
       return
     }
 
-    const targetName = selection[0]
+    const targetName = pickId
     const target = ctx.players.byName(targetName)
     if (!target) {
       return
@@ -122,10 +132,11 @@ module.exports = {
       giveCard = playerCards[0]
     }
     else {
-      const cardSel = ctx.actions.choose(player, playerCards, {
+      const cardOpts = playerCards.map(c => ctx.actions.option({ id: c, title: c, kind: 'strategy' }))
+      const cardSel = ctx.actions.choose(player, cardOpts, {
         title: 'Choose your strategy card to give:',
       })
-      giveCard = cardSel[0]
+      giveCard = typeof cardSel[0] === 'object' ? cardSel[0].id : cardSel[0]
     }
 
     // Choose which of their cards to take
@@ -134,10 +145,11 @@ module.exports = {
       takeCard = targetCards[0]
     }
     else {
-      const cardSel = ctx.actions.choose(player, targetCards, {
+      const cardOpts = targetCards.map(c => ctx.actions.option({ id: c, title: c, kind: 'strategy' }))
+      const cardSel = ctx.actions.choose(player, cardOpts, {
         title: 'Choose their strategy card to take:',
       })
-      takeCard = cardSel[0]
+      takeCard = typeof cardSel[0] === 'object' ? cardSel[0].id : cardSel[0]
     }
 
     // Perform the swap
