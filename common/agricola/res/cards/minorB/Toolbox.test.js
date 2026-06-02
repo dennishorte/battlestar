@@ -52,7 +52,7 @@ describe('Toolbox', () => {
     t.action(game, 'build-pasture', { spaces: [{ row: 2, col: 0 }] })
     t.choose(game, 'Done building fences')
     // Toolbox offers Joinery (2 wood, 2 stone)
-    t.choose(game, 'Joinery')
+    t.choose(game, 'Joinery (joinery)')
 
     t.testBoard(game, {
       dennis: {

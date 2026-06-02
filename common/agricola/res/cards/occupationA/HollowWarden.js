@@ -19,7 +19,7 @@ module.exports = {
 
     const choices = available.map(id => {
       const imp = game.cards.byId(id)
-      return game.actions.option({ id, title: imp.name, kind: 'major-improvement' })
+      return game.actions.option({ id, title: `${imp.name} (${id})`, kind: 'major-improvement' })
     })
     choices.push(game.actions.option({ id: 'do-not-build', title: 'Do not build' }))
 
