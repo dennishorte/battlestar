@@ -615,10 +615,15 @@ export default {
       if (!this.isBabyEligible[type]) {
         return
       }
+      // Only auto-place into a location that already holds at least one animal of the
+      // same type. Joining the parents' group is the rule of breeding. If no existing
+      // group has room, leave the baby pending — the user can place it manually via the
+      // banner, or accept that it will be released at confirm time.
       for (const loc of this.locations) {
-        // canPlaceTypeAtState already enforces capacity, type rules, and perTypeLimits.
-        // Don't gate on maxDropCount here — that's bounded by the pool, but babies live
-        // outside the pool in breeding mode.
+        const state = this.animalState[loc.id]
+        if (!state || state[type] <= 0) {
+          continue
+        }
         if (this.canPlaceTypeAtState(loc, type)) {
           this.animalState[loc.id][type] += 1
           this.babyState[type] = 'placed'
@@ -633,9 +638,11 @@ export default {
         return
       }
 
-      // Toggling: if already in select-mode for this baby, cancel.
+      // Toggling: if already in select-mode for this baby, cancel. Use the same
+      // reconcile-on-cancel path as the × button so the baby snaps back into a valid
+      // slot rather than being left pending.
       if (this.selectingBabyType === type) {
-        this.selectingBabyType = null
+        this.cancelBabySelection()
         return
       }
 
@@ -685,6 +692,12 @@ export default {
 
     hasRoomForBaby(type) {
       return this.locations.some(loc => this.canPlaceTypeAtState(loc, type))
+    },
+
+    babyTypeAt(locId) {
+      return this.animalTypes.find(t =>
+        this.babyState[t] === 'placed' && this.babyLocation[t] === locId
+      ) || null
     },
 
     resetAll() {
@@ -784,6 +797,14 @@ export default {
       // If a baby is waiting for placement, the click commits it.
       if (this.selectingBabyType) {
         this.dropBabyAtLocation(loc)
+        return
+      }
+
+      // Clicking a cell that holds a placed baby is equivalent to clicking that baby's
+      // banner row: extract just the baby into select-mode without disturbing parents.
+      const babyTypeHere = this.babyTypeAt(loc.id)
+      if (babyTypeHere) {
+        this.handleBabyClick(babyTypeHere)
         return
       }
 
@@ -929,6 +950,12 @@ export default {
       // Card holdings can also be a placement target for a pending baby.
       if (this.selectingBabyType) {
         this.dropBabyAtLocation(loc)
+        return
+      }
+
+      const babyTypeHere = this.babyTypeAt(loc.id)
+      if (babyTypeHere) {
+        this.handleBabyClick(babyTypeHere)
         return
       }
 
