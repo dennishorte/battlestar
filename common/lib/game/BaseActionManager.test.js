@@ -233,6 +233,71 @@ describe('BaseActionManager', () => {
         fixture.assertAllResponsesConsumed()
       })
     })
+
+    describe('legacy bare-string response back-compat', () => {
+      test('upgrades a bare-string selection to its matching structured choice', () => {
+        const { fixture, actionManager, player1 } = createUniqueFixture()
+
+        // Stored response from a game recorded before structured options shipped.
+        fixture.queueResponse(player1, ['Reduce wood by 1'])
+
+        const choices = [
+          { id: 'wood', title: 'Reduce wood by 1', kind: 'resource' },
+          { id: 'clay', title: 'Reduce clay by 1', kind: 'resource' },
+        ]
+        const result = actionManager.choose(player1, choices)
+
+        // Downstream call sites read `.id` directly — verify it resolves.
+        expect(result).toHaveLength(1)
+        expect(result[0].id).toBe('wood')
+        expect(result[0].title).toBe('Reduce wood by 1')
+
+        fixture.assertAllResponsesConsumed()
+      })
+
+      test('leaves structured-response items untouched', () => {
+        const { fixture, actionManager, player1 } = createUniqueFixture()
+
+        fixture.queueResponse(player1, [{ id: 'clay', title: 'Reduce clay by 1' }])
+
+        const choices = [
+          { id: 'wood', title: 'Reduce wood by 1' },
+          { id: 'clay', title: 'Reduce clay by 1' },
+        ]
+        const result = actionManager.choose(player1, choices)
+
+        expect(result[0].id).toBe('clay')
+      })
+
+      test('upgrades repeated bare-string selections to distinct duplicate-title choices', () => {
+        const { fixture, actionManager, player1 } = createUniqueFixture()
+
+        fixture.queueResponse(player1, ['House Guard', 'House Guard'])
+
+        const choices = [
+          { id: 'hg-1', title: 'House Guard' },
+          { id: 'hg-2', title: 'House Guard' },
+          { id: 'other', title: 'Other' },
+        ]
+        const result = actionManager.choose(player1, choices, { min: 2, max: 2 })
+
+        expect(result).toHaveLength(2)
+        // Distinct choice objects — the two selections must not collapse onto the first.
+        expect(result[0].id).toBe('hg-1')
+        expect(result[1].id).toBe('hg-2')
+      })
+
+      test('passes through bare-string responses when choices are also bare strings', () => {
+        const { fixture, actionManager, player1 } = createUniqueFixture()
+
+        fixture.queueResponse(player1, ['option2'])
+
+        const result = actionManager.choose(player1, ['option1', 'option2', 'option3'])
+
+        // No structured choice to upgrade to — preserve the legacy bare-string shape.
+        expect(result).toEqual(['option2'])
+      })
+    })
   })
 
   describe('chooseCard()', () => {

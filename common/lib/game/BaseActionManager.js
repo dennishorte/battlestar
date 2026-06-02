@@ -83,8 +83,37 @@ class BaseActionManager {
       return []
     }
     else {
+      return this._upgradeLegacySelections(selected, choices)
+    }
+  }
+
+  // Replays of games recorded before structured {id, title} choices shipped store their
+  // selections as bare strings (e.g. 'Reduce wood by 1'). Validation already accepts those
+  // via title matching, but converted call sites now read `.id` off the selection — which
+  // is undefined for a bare string. Resolve each legacy item back to its matching
+  // structured choice so downstream code sees the same shape regardless of when the game
+  // was recorded.
+  _upgradeLegacySelections(selected, choices) {
+    if (!Array.isArray(selected)) {
       return selected
     }
+    // Track choices already consumed so that repeated bare-string selections (e.g. two
+    // 'House Guard' picks from a hand with two House Guards) map to distinct choice
+    // objects, matching the chooseCards semantics.
+    const used = new Set()
+    return selected.map(sel => {
+      if (sel == null || typeof sel !== 'string') {
+        return sel
+      }
+      const match = choices.find(c =>
+        c && typeof c === 'object' && c.title === sel && !used.has(c)
+      )
+      if (match) {
+        used.add(match)
+        return match
+      }
+      return sel
+    })
   }
 
   _validateChooseResponse(selected, chooseSelector) {
