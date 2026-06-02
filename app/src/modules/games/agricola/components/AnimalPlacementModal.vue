@@ -694,12 +694,6 @@ export default {
       return this.locations.some(loc => this.canPlaceTypeAtState(loc, type))
     },
 
-    babyTypeAt(locId) {
-      return this.animalTypes.find(t =>
-        this.babyState[t] === 'placed' && this.babyLocation[t] === locId
-      ) || null
-    },
-
     resetAll() {
       this.reset()
     },
@@ -797,14 +791,6 @@ export default {
       // If a baby is waiting for placement, the click commits it.
       if (this.selectingBabyType) {
         this.dropBabyAtLocation(loc)
-        return
-      }
-
-      // Clicking a cell that holds a placed baby is equivalent to clicking that baby's
-      // banner row: extract just the baby into select-mode without disturbing parents.
-      const babyTypeHere = this.babyTypeAt(loc.id)
-      if (babyTypeHere) {
-        this.handleBabyClick(babyTypeHere)
         return
       }
 
@@ -950,12 +936,6 @@ export default {
       // Card holdings can also be a placement target for a pending baby.
       if (this.selectingBabyType) {
         this.dropBabyAtLocation(loc)
-        return
-      }
-
-      const babyTypeHere = this.babyTypeAt(loc.id)
-      if (babyTypeHere) {
-        this.handleBabyClick(babyTypeHere)
         return
       }
 
