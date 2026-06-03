@@ -1,14 +1,5 @@
 <template>
   <div class="action-spaces">
-    <div class="control-row" v-if="!factions && hasControl">
-      <span v-for="(owner, loc) in game.state.controlMarkers"
-            :key="loc"
-            v-show="owner"
-            class="control-chip">
-        {{ formatName(loc) }}: {{ owner }}
-      </span>
-    </div>
-
     <div class="board-layout">
       <div class="spaces-column" ref="spacesColumn">
         <div class="section-header">
@@ -28,10 +19,16 @@
                :class="{ occupied: spaceOccupants(space.id).length > 0 }"
                :data-space-id="space.id">
             <div class="space-row">
-              <DuneFactionIcon v-if="isFaction(space.icon)"
-                               :faction="space.icon"
-                               size=".85em" />
-              <DuneAgentIcon v-else :type="space.icon" size=".85em" />
+              <div class="icon-col">
+                <DuneFactionIcon v-if="isFaction(space.icon)"
+                                 :faction="space.icon"
+                                 size=".85em" />
+                <DuneAgentIcon v-else :type="space.icon" size=".85em" />
+                <div v-if="controlColor(space.id)"
+                     class="control-flag"
+                     :style="{ backgroundColor: controlColor(space.id) }"
+                     :title="`Controlled by ${game.state.controlMarkers[space.id]}`" />
+              </div>
               <span class="space-name">{{ space.name }}</span>
               <span class="space-occupant" v-if="spaceOccupants(space.id).length > 0">
                 {{ spaceOccupants(space.id).join(', ') }}
@@ -157,10 +154,6 @@ export default {
         ...g,
         spaces: boardSpaces.filter(s => g.icons.includes(s.icon)),
       })).filter(g => g.spaces.length > 0)
-    },
-
-    hasControl() {
-      return Object.values(this.game.state.controlMarkers).some(v => v != null)
     },
 
     playerColorMap() {
@@ -418,6 +411,14 @@ export default {
       })
     },
 
+    controlColor(spaceId) {
+      const owner = this.game.state.controlMarkers[spaceId]
+      if (!owner) {
+        return null
+      }
+      return this.playerColorMap[owner] || '#6a5a48'
+    },
+
     formatName(id) {
       return id.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')
     },
@@ -442,21 +443,6 @@ export default {
   font-size: .9em;
   color: #8b6914;
   margin-bottom: .3em;
-}
-
-.control-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .3em;
-  margin-bottom: .5em;
-}
-
-.control-chip {
-  font-size: .8em;
-  background-color: #f5f0e8;
-  border: 1px solid #d4c8a8;
-  padding: .1em .4em;
-  border-radius: .15em;
 }
 
 .board-layout {
@@ -518,6 +504,20 @@ export default {
   gap: .3em;
   padding: .15em .3em;
   font-size: .85em;
+}
+
+.icon-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  flex-shrink: 0;
+}
+
+.control-flag {
+  width: 10px;
+  height: 4px;
+  border-radius: 1px;
 }
 
 .space-effects {
