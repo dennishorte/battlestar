@@ -524,7 +524,8 @@ export default {
 <style scoped>
 .twilight {
   width: 100vw;
-  height: calc(100vh - 60px);
+  height: 100vh;
+  height: 100dvh;
   font-size: .8rem;
   overflow-x: auto;
   overflow-y: hidden;
@@ -546,7 +547,8 @@ export default {
 .history-column {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 60px);
+  height: 100vh;
+  height: 100dvh;
   min-width: 400px;
   max-width: 400px;
   overflow: hidden;
@@ -557,7 +559,8 @@ export default {
 .center-column {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 60px);
+  height: 100vh;
+  height: 100dvh;
   min-width: 280px;
   max-width: 360px;
   overflow-y: auto;
@@ -570,7 +573,8 @@ export default {
 .players-column {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 60px);
+  height: 100vh;
+  height: 100dvh;
   min-width: 220px;
   max-width: 280px;
   overflow-y: auto;
@@ -583,7 +587,8 @@ export default {
 .map-column {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 60px);
+  height: 100vh;
+  height: 100dvh;
   flex: 0 0 auto;
   overflow: hidden;
   padding: 0;

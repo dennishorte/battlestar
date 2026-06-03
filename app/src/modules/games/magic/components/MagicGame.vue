@@ -130,6 +130,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
   min-width: 400px;
   max-width: 400px;
   overflow: hidden;

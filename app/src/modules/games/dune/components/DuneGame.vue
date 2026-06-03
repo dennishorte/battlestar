@@ -304,7 +304,8 @@ export default {
 <style scoped>
 .dune {
   width: 100vw;
-  height: calc(100vh - 60px);
+  height: 100vh;
+  height: 100dvh;
   font-size: .8rem;
   overflow: auto;
   color: #2c2416;
@@ -320,14 +321,16 @@ export default {
 .history-column {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 60px);
+  height: 100vh;
+  height: 100dvh;
   min-width: 400px;
   max-width: 400px;
   overflow: hidden;
 }
 
 .game-column {
-  height: calc(100vh - 60px);
+  height: 100vh;
+  height: 100dvh;
   min-width: 280px;
   max-width: 380px;
   overflow-x: hidden;
@@ -337,7 +340,8 @@ export default {
 }
 
 .market-column {
-  height: calc(100vh - 60px);
+  height: 100vh;
+  height: 100dvh;
   min-width: 220px;
   max-width: 300px;
   overflow-x: hidden;
@@ -347,7 +351,8 @@ export default {
 }
 
 .player-column {
-  height: calc(100vh - 60px);
+  height: 100vh;
+  height: 100dvh;
   min-width: 220px;
   max-width: 300px;
   overflow-x: hidden;
@@ -357,7 +362,8 @@ export default {
 }
 
 .spaces-column {
-  height: calc(100vh - 60px);
+  height: 100vh;
+  height: 100dvh;
   min-width: 200px;
   max-width: 240px;
   overflow-x: hidden;

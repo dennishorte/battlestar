@@ -156,7 +156,8 @@ export default {
 <style>
 .innovation {
   width: 100vw;
-  height: calc(100vh - 60px);
+  height: 100vh;
+  height: 100dvh;
   font-size: .8rem;
   overflow: auto;
 
@@ -168,7 +169,8 @@ export default {
 }
 
 .game-column {
-  height: calc(100vh - 60px);
+  height: 100vh;
+  height: 100dvh;
   min-width: 220px;
   max-width: 400px;
   overflow-x: hidden;
@@ -179,7 +181,8 @@ export default {
 .history-column {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 60px);
+  height: 100vh;
+  height: 100dvh;
   min-width: 400px;
   max-width: 400px;
   overflow: hidden;
