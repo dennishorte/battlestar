@@ -3,6 +3,7 @@
 module.exports = {
   id: 'harvest',
   name: 'Harvest',
+  trigger: { type: 'harvest', threshold: 1 },
   source: 'Bloodlines',
   compatibility: 'Uprising',
   count: 1,

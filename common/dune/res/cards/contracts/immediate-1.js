@@ -3,6 +3,7 @@
 module.exports = {
   id: 'immediate-1',
   name: 'Immediate',
+  trigger: { type: 'immediate' },
   source: 'Uprising',
   compatibility: 'Uprising',
   count: 1,

@@ -1478,7 +1478,7 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
       if (contracts.length > 0) {
         const card = game.actions.chooseCard(player, contracts, {
           title: 'Choose a contract to complete',
-          kind: 'imperium-card',
+          kind: 'contract',
         })
         if (card) {
           choamComplete.completeContract(game, player, card)

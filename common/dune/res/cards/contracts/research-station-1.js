@@ -3,6 +3,7 @@
 module.exports = {
   id: 'research-station-1',
   name: 'Research Station',
+  trigger: { type: 'board-space', spaceId: 'research-station' },
   source: 'Uprising',
   compatibility: 'Uprising',
   count: 1,

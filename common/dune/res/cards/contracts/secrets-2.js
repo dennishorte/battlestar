@@ -3,6 +3,7 @@
 module.exports = {
   id: 'secrets-2',
   name: 'Secrets',
+  trigger: { type: 'board-space', spaceId: 'secrets' },
   source: 'Bloodlines',
   compatibility: 'Uprising',
   count: 1,

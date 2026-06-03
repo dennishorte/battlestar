@@ -52,7 +52,8 @@ function cardClick(card, name) {
 
 function convertArg(arg, value) {
   if (arg === 'contract') {
-    return `card(${value.value})`
+    const cardRef = value.cardId ?? value.value
+    return `card(${cardRef})`
   }
   if (arg === 'space' || arg === 'boardSpace') {
     return `loc(${value.value})`

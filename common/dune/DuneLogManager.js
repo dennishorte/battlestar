@@ -32,6 +32,13 @@ class DuneLogManager extends BaseLogManager {
       classes: ['resource-name'],
     }))
 
+    this.registerHandler('contract*', (card) => {
+      if (typeof card === 'string') {
+        return { value: card, classes: ['card-name'] }
+      }
+      return { value: card.name, classes: ['card-name'], cardId: card.id || null, defId: card.defId || null }
+    })
+
     this.registerHandler('boardSpace*', (space) => ({
       value: typeof space === 'string' ? space : space.name,
       classes: ['board-space-name'],

@@ -3,6 +3,7 @@
 module.exports = {
   id: 'smuggling',
   name: 'Smuggling',
+  trigger: { type: 'board-space', spaceId: 'shipping' },
   source: 'Uprising',
   compatibility: 'Uprising',
   count: 1,

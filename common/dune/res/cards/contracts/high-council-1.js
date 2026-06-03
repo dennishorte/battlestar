@@ -3,6 +3,7 @@
 module.exports = {
   id: 'high-council-1',
   name: 'High Council',
+  trigger: { type: 'board-space', spaceId: 'high-council' },
   source: 'Uprising',
   compatibility: 'Uprising',
   count: 1,

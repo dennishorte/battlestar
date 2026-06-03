@@ -1,42 +1,11 @@
 const { DuneCard } = require('../DuneCard.js')
 
-// Map contract names to board space IDs for board-space-visit triggers
-const BOARD_SPACE_CONTRACTS = {
-  'Arakeen': 'arrakeen',
-  'Deliver Supplies': 'deliver-supplies',
-  'Espionage': 'espionage',
-  'Heighliner': 'heighliner',
-  'High Council': 'high-council',
-  'Research Station': 'research-station',
-  'Sardaukar': 'sardaukar',
-  'Secrets': 'secrets',
-  'Spice Refinery': 'spice-refinery',
-  'Interstellar Shipping': 'shipping',
-  'Smuggling': 'shipping',
-}
-
 /**
- * Get the trigger type for a contract based on its name.
+ * Get the trigger for a contract from its definition.
+ * Returns the trigger object or null if no trigger is defined.
  */
-function getContractTrigger(contractName) {
-  if (BOARD_SPACE_CONTRACTS[contractName]) {
-    return { type: 'board-space', spaceId: BOARD_SPACE_CONTRACTS[contractName] }
-  }
-  if (contractName === 'Immediate') {
-    return { type: 'immediate' }
-  }
-  if (contractName === 'Acquire The Spice Must Flow') {
-    return { type: 'acquire-tsmf' }
-  }
-  if (contractName === 'Earn Any Alliance') {
-    return { type: 'earn-alliance' }
-  }
-  if (contractName.startsWith('Harvest')) {
-    const thresholdMatch = contractName.match(/(\d+)\+/)
-    return { type: 'harvest', threshold: thresholdMatch ? parseInt(thresholdMatch[1]) : 1 }
-  }
-  // Tech/Dreadnought — Rise of Ix specific, not implemented yet
-  return null
+function getContractTrigger(contractDef) {
+  return contractDef.trigger || null
 }
 
 /**
@@ -135,13 +104,13 @@ function takeContract(game, player) {
 
   game.log.add({
     template: '{player} takes contract: {contract}',
-    args: { player, contract: card.name },
+    args: { player, contract: card },
   })
 
   refillContractMarket(game)
 
   // Check if this is an Immediate contract — complete it right away
-  const trigger = getContractTrigger(card.name)
+  const trigger = getContractTrigger(card.definition)
   if (trigger && trigger.type === 'immediate') {
     completeContract(game, player, card)
   }
@@ -157,7 +126,7 @@ function completeContract(game, player, card) {
 
   game.log.add({
     template: '{player} completes contract: {contract}',
-    args: { player, contract: card.name },
+    args: { player, contract: card },
   })
 
   if (game.state.turnTracking) {
@@ -203,7 +172,7 @@ function checkContractCompletion(game, player, triggerType, triggerData) {
   const contracts = playerContracts.cardlist()
 
   for (const card of contracts) {
-    const trigger = getContractTrigger(card.name)
+    const trigger = getContractTrigger(card.definition)
     if (!trigger) {
       continue
     }

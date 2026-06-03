@@ -3,6 +3,7 @@
 module.exports = {
   id: 'deliver-supplies-1',
   name: 'Deliver Supplies',
+  trigger: { type: 'board-space', spaceId: 'deliver-supplies' },
   source: 'Uprising',
   compatibility: 'Uprising',
   count: 1,

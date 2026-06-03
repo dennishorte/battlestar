@@ -3,6 +3,7 @@
 module.exports = {
   id: 'heighliner-3',
   name: 'Heighliner',
+  trigger: { type: 'board-space', spaceId: 'heighliner' },
   source: 'Uprising',
   compatibility: 'Uprising',
   count: 1,

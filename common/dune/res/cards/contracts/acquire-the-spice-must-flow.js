@@ -3,6 +3,7 @@
 module.exports = {
   id: 'acquire-the-spice-must-flow',
   name: 'Acquire The Spice Must Flow',
+  trigger: { type: 'acquire-tsmf' },
   source: 'Uprising',
   compatibility: 'Uprising',
   count: 1,

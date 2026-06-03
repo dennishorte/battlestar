@@ -3,6 +3,7 @@
 module.exports = {
   id: 'earn-any-alliance',
   name: 'Earn Any Alliance',
+  trigger: { type: 'earn-alliance' },
   source: 'Bloodlines',
   compatibility: 'Uprising',
   count: 1,

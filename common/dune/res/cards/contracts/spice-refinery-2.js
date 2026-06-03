@@ -3,6 +3,7 @@
 module.exports = {
   id: 'spice-refinery-2',
   name: 'Spice Refinery',
+  trigger: { type: 'board-space', spaceId: 'spice-refinery' },
   source: 'Uprising',
   compatibility: 'Uprising',
   count: 1,

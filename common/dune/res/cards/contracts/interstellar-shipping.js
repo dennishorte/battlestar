@@ -3,6 +3,7 @@
 module.exports = {
   id: 'interstellar-shipping',
   name: 'Interstellar Shipping',
+  trigger: { type: 'board-space', spaceId: 'shipping' },
   source: 'Uprising',
   compatibility: 'Uprising',
   count: 1,

@@ -3,6 +3,7 @@
 module.exports = {
   id: 'arakeen-1',
   name: 'Arakeen',
+  trigger: { type: 'board-space', spaceId: 'arrakeen' },
   source: 'Uprising',
   compatibility: 'Uprising',
   count: 1,
