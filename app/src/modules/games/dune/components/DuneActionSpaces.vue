@@ -1,6 +1,6 @@
 <template>
   <div class="action-spaces">
-    <div class="control-row" v-if="hasControl">
+    <div class="control-row" v-if="!factions && hasControl">
       <span v-for="(owner, loc) in game.state.controlMarkers"
             :key="loc"
             v-show="owner"
@@ -12,9 +12,9 @@
     <div class="board-layout">
       <div class="spaces-column" ref="spacesColumn">
         <div class="section-header">
-          Action Spaces
+          {{ factions ? 'Factions' : 'Action Spaces' }}
         </div>
-        <div v-for="group in spaceGroups" :key="group.label" class="space-group">
+        <div v-for="group in visibleGroups" :key="group.label" class="space-group">
           <div class="group-label" :class="`group-${group.icon}`">
             <DuneFactionIcon v-if="isFaction(group.icon)"
                              :faction="group.icon"
@@ -123,6 +123,13 @@ export default {
 
   inject: ['actor', 'bus', 'game', 'ui'],
 
+  props: {
+    factions: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
   data() {
     return {
       trackWidth: 30,
@@ -133,18 +140,20 @@ export default {
   },
 
   computed: {
-    spaceGroups() {
-      const groups = [
-        { label: 'City', icon: 'purple', icons: ['purple'] },
-        { label: 'Desert', icon: 'yellow', icons: ['yellow'] },
-        { label: 'Landsraad', icon: 'green', icons: ['green'] },
-        { label: 'Emperor', icon: 'emperor', icons: ['emperor'] },
-        { label: 'Spacing Guild', icon: 'guild', icons: ['guild'] },
-        { label: 'Bene Gesserit', icon: 'bene-gesserit', icons: ['bene-gesserit'] },
-        { label: 'Fremen', icon: 'fremen', icons: ['fremen'] },
-      ]
-
-      return groups.map(g => ({
+    visibleGroups() {
+      const defs = this.factions
+        ? [
+          { label: 'Emperor', icon: 'emperor', icons: ['emperor'] },
+          { label: 'Spacing Guild', icon: 'guild', icons: ['guild'] },
+          { label: 'Bene Gesserit', icon: 'bene-gesserit', icons: ['bene-gesserit'] },
+          { label: 'Fremen', icon: 'fremen', icons: ['fremen'] },
+        ]
+        : [
+          { label: 'City', icon: 'purple', icons: ['purple'] },
+          { label: 'Desert', icon: 'yellow', icons: ['yellow'] },
+          { label: 'Landsraad', icon: 'green', icons: ['green'] },
+        ]
+      return defs.map(g => ({
         ...g,
         spaces: boardSpaces.filter(s => g.icons.includes(s.icon)),
       })).filter(g => g.spaces.length > 0)

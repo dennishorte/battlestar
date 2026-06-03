@@ -16,17 +16,21 @@
           <WaitingPanel />
         </div>
 
-        <div class="col market-column">
-          <DuneImperiumRow />
-          <DuneContractMarket />
-        </div>
-
         <div class="col player-column">
           <DunePlayerSummary />
         </div>
 
         <div class="col spaces-column">
           <DuneActionSpaces />
+        </div>
+
+        <div class="col faction-column">
+          <DuneActionSpaces :factions="true" />
+        </div>
+
+        <div class="col imperium-column">
+          <DuneImperiumRow />
+          <DuneContractMarket />
         </div>
 
       </div>
@@ -339,17 +343,6 @@ export default {
   padding-bottom: 3em;
 }
 
-.market-column {
-  height: 100vh;
-  height: 100dvh;
-  min-width: 220px;
-  max-width: 300px;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding-top: .5em;
-  padding-bottom: 3em;
-}
-
 .player-column {
   height: 100vh;
   height: 100dvh;
@@ -366,6 +359,28 @@ export default {
   height: 100dvh;
   min-width: 200px;
   max-width: 240px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-top: .5em;
+  padding-bottom: 3em;
+}
+
+.faction-column {
+  height: 100vh;
+  height: 100dvh;
+  min-width: 180px;
+  max-width: 220px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-top: .5em;
+  padding-bottom: 3em;
+}
+
+.imperium-column {
+  height: 100vh;
+  height: 100dvh;
+  min-width: 220px;
+  max-width: 300px;
   overflow-x: hidden;
   overflow-y: auto;
   padding-top: .5em;
