@@ -65,9 +65,7 @@ module.exports = {
   getSardaukarCards: settings => getCards(cards.sardaukarCards, settings),
   getLeaders: settings => getCards(leaderData, settings),
 
-  getContractCards() {
-    return cards.contractCards
-  },
+  getContractCards: settings => getCards(cards.contractCards, settings),
 
   ...livingRules,
 }

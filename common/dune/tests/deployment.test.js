@@ -154,7 +154,7 @@ describe('Units and Deployment', () => {
   })
 
   test('troops from a contract completed this turn are deployable', () => {
-    const game = t.fixture()
+    const game = t.fixture({ useBloodlines: true })
     t.setBoard(game, {
       dennis: { troopsInGarrison: 2, troopsInSupply: 9 },
     })
