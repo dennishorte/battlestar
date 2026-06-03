@@ -13,7 +13,7 @@
         <span class="first-player" v-if="entry.isFirstPlayer" title="First Player">1st</span>
       </div>
 
-      <div class="stat-label">Victory Points</div>
+      <div class="stat-label">VP</div>
       <div v-for="entry in entries"
            :key="`vp-${entry.name}`"
            class="stat-cell vp-cell clickable"
@@ -23,7 +23,7 @@
         {{ entry.vp }}
       </div>
 
-      <div class="stat-label">Leader</div>
+      <div class="stat-label">Leadr</div>
       <div v-for="entry in entries"
            :key="`ldr-${entry.name}`"
            class="stat-cell leader-cell"
@@ -36,7 +36,7 @@
         <span v-else class="dim">—</span>
       </div>
 
-      <div class="stat-label">Battle Icons</div>
+      <div class="stat-label">Icons</div>
       <div v-for="entry in entries"
            :key="`icn-${entry.name}`"
            class="stat-cell icons-cell"
@@ -51,7 +51,7 @@
         <span v-else>—</span>
       </div>
 
-      <div class="stat-label">Solari</div>
+      <div class="stat-label">Sol</div>
       <div v-for="entry in entries"
            :key="`sol-${entry.name}`"
            class="stat-cell resource-cell"
@@ -78,7 +78,7 @@
         <span>{{ entry.water }}</span>
       </div>
 
-      <div class="stat-label">Agents</div>
+      <div class="stat-label">Agnts</div>
       <div v-for="entry in entries"
            :key="`agt-${entry.name}`"
            class="stat-cell"
@@ -95,7 +95,7 @@
         <span>{{ entry.spiesInSupply }}</span>
       </div>
 
-      <div class="stat-label">Intrigue</div>
+      <div class="stat-label">Intg</div>
       <div v-for="entry in entries"
            :key="`int-${entry.name}`"
            class="stat-cell"
@@ -105,7 +105,7 @@
         {{ entry.intrigueCount }}
       </div>
 
-      <div class="stat-label">Contracts</div>
+      <div class="stat-label">Cntrx</div>
       <div v-for="entry in entries"
            :key="`con-${entry.name}`"
            class="stat-cell"
@@ -115,7 +115,7 @@
         {{ entry.contractsCount }}
       </div>
 
-      <div class="stat-label">High Council</div>
+      <div class="stat-label">HC</div>
       <div v-for="entry in entries"
            :key="`hc-${entry.name}`"
            class="stat-cell"
