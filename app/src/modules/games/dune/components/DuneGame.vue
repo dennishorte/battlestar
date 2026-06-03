@@ -1,7 +1,7 @@
 <template>
   <div class="dune">
     <div class="container-fluid">
-      <div class="row flex-nowrap main-row">
+      <div class="row flex-nowrap main-row" style="--bs-gutter-x: 0.75rem">
 
         <div class="col history-column">
           <GameMenu>
@@ -346,7 +346,7 @@ export default {
 .player-column {
   height: 100vh;
   height: 100dvh;
-  min-width: 220px;
+  min-width: 280px;
   max-width: 300px;
   overflow-x: hidden;
   overflow-y: auto;
