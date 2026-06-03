@@ -932,6 +932,7 @@ AgricolaPlayer.prototype.applyAnimalPlacements = function(plan) {
       const space = this.getSpace(row, col)
       if (space) {
         space.animal = p.animalType
+        space.animalCount = (space.animalCount || 0) + p.count
       }
     }
     else if (loc.type === 'card') {
