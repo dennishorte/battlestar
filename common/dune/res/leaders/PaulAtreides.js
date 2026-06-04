@@ -6,11 +6,14 @@ module.exports = {
   compatibility: 'All',
   house: 'Atreides',
   startingEffect: null,
-  leaderAbility: 'Prescience\nYou may look at the top card of your deck at any time.',
+  leaderAbility: 'Prescience\nYou may look at the top card of your deck at any time. (Open your tableau to see it.)',
   signetRingAbility: 'Discipline\n· Draw 1 card',
   complexity: 1,
 
   onAgentTurnStart(game, player) {
+    if (game.settings.version >= 3) {
+      return
+    }
     const deckZone = game.zones.byId(`${player.name}.deck`)
     const topCards = deckZone.cardlist()
     if (topCards.length > 0) {

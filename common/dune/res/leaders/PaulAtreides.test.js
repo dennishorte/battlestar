@@ -8,8 +8,8 @@ describe('Paul Atreides', () => {
     expect(leader.signetRingAbility).toContain('Discipline')
   })
 
-  test('Prescience logs the top card of the deck on agent turn', () => {
-    const game = t.fixture()
+  test('Prescience logs the top card of the deck on agent turn (v2)', () => {
+    const game = t.fixture({ version: 2 })
     t.setBoard(game, { leaders: { dennis: leader } })
     game.run()
 
@@ -17,5 +17,16 @@ describe('Paul Atreides', () => {
 
     const logText = JSON.stringify(game.log._log)
     expect(logText).toMatch(/Prescience/)
+  })
+
+  test('Prescience does not log on agent turn (v3+)', () => {
+    const game = t.fixture()
+    t.setBoard(game, { leaders: { dennis: leader } })
+    game.run()
+
+    t.choose(game, 'Agent Turn.Dagger')
+
+    const logText = JSON.stringify(game.log._log)
+    expect(logText).not.toMatch(/Prescience/)
   })
 })

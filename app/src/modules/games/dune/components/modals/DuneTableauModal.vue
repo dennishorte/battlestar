@@ -52,6 +52,7 @@
       </div>
 
       <div class="sections">
+        <TableauSection v-if="prescienceCard" title="Prescience — Top of Deck" :cards="[prescienceCard]" />
         <TableauSection :title="deckTitle" :cards="deckCards" />
         <TableauSection v-if="isOwner" title="Hand + Played" :cards="handPlayed" />
         <TableauSection v-else title="Played" :cards="playedCards" />
@@ -155,6 +156,18 @@ export default {
         return 'Deck'
       }
       return 'Deck + Hand'
+    },
+
+    prescienceCard() {
+      if (!this.isOwner) {
+        return null
+      }
+      const leader = this.game.state.leaders?.[this.player.name]
+      if (!leader || leader.name !== 'Paul Atreides') {
+        return null
+      }
+      const deck = this.zone('deck')
+      return deck.length > 0 ? deck[0] : null
     },
 
     handPlayed() {
