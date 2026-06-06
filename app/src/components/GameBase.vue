@@ -20,7 +20,6 @@
 
     <BAlert :model-value="game && game.paused" variant="danger">
       This game is paused.
-      <button class="btn btn-sm btn-outline-light ms-2" @click="openBugReport">report bug</button>
     </BAlert>
 
     <AgricolaGame v-if="gameType === 'Agricola'" />
@@ -36,7 +35,6 @@
     </div>
   </template>
 
-  <BugReportModal />
   <SavingOverlay />
 </template>
 
@@ -53,7 +51,6 @@ import TwilightGame from '@/modules/games/twilight/components/TwilightGame.vue'
 import TyrantsGame from '@/modules/games/tyrants/components/TyrantsGame.vue'
 import DuneGame from '@/modules/games/dune/components/DuneGame.vue'
 
-import BugReportModal from '@/modules/games/common/components/BugReportModal.vue'
 import SavingOverlay from '@/modules/games/common/components/SavingOverlay.vue'
 
 
@@ -62,7 +59,6 @@ export default {
 
   components: {
     AgricolaGame,
-    BugReportModal,
     CubeDraft,
     DuneGame,
     MtgGame,
@@ -122,9 +118,6 @@ export default {
       await this.$store.dispatch('game/next', { actor: this.actor })
     },
 
-    openBugReport() {
-      this.$modal('bug-report-modal').show()
-    },
   },
 
   watch: {
