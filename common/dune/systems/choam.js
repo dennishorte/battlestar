@@ -170,6 +170,7 @@ function completeContract(game, player, card) {
 function checkContractCompletion(game, player, triggerType, triggerData) {
   const playerContracts = game.zones.byId(`${player.name}.contracts`)
   const contracts = playerContracts.cardlist()
+  const toComplete = []
 
   for (const card of contracts) {
     const trigger = getContractTrigger(card.definition)
@@ -203,9 +204,12 @@ function checkContractCompletion(game, player, triggerType, triggerData) {
     }
 
     if (shouldComplete) {
-      completeContract(game, player, card)
-      return // Complete one at a time (re-check needed since zone changed)
+      toComplete.push(card)
     }
+  }
+
+  for (const card of toComplete) {
+    completeContract(game, player, card)
   }
 }
 
