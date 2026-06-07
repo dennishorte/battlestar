@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 159,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "In the feeding phase of each harvest, each of your people requires 1 less food. During scoring, your people are worth 2 points each instead of 3.",
   onFeedingPhase(game, player) {
     const reduction = player.getFamilySize()

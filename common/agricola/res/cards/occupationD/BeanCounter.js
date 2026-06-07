@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 158,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Each time you use an action space on round spaces 1 to 8, place 1 food on this card. Each time this card has 3 food on it, move the food to your supply.",
   onPlay(game, _player) {
     game.cardState(this.id).food = 0

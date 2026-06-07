@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 136,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "If there are still 3/6/9 complete rounds left to play, you immediately get 2/3/4 wood and a \"Build Fences\" action. During scoring, each player with the most pastures gets 2 bonus points.",
   onPlay(game, player) {
     const roundsLeft = 14 - game.state.round

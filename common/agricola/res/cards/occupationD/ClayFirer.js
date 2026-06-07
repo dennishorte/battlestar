@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 162,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "When you play this card, you immediately get 2 clay. At any time, you can turn clay into stone: you get 1 stone for 2 clay, and 2 stone for 3 clay.",
   allowsAnytimeConversion: [
     {

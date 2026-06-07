@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 166,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Each time you use the \"Traveling Players\" or \"Fishing\" accumulation spaces, you can move exactly 1 food from that space to the other to get 1 cattle.",
   matches_onAction(game, player, actionId) {
     return actionId === 'traveling-players' || actionId === 'traveling-players-5' || actionId === 'fishing'

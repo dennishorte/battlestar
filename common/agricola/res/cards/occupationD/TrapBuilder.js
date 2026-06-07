@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 147,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each time you use the \"Day Laborer\" action space, place 1 food, 1 food, and 1 wild boar on the next 3 round spaces, respectively. At the start of these rounds, you get the good.",
   matches_onAction(game, player, actionId) {
     return actionId === 'day-laborer'

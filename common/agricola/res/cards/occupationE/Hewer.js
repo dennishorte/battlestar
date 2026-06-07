@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 143,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "From round 3 on, at the end of each work phase in which all clay accumulation spaces are unoccupied, you get 1 stone and 1 food.",
   onWorkPhaseEnd(game, player) {
     if (game.state.round >= 3 && game.allClayAccumulationSpacesUnoccupied()) {

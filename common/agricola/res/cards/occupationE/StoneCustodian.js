@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 158,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "At the end of each work phase, you get 1 food for each stone accumulation space with stone on it.",
   onWorkPhaseEnd(game, player) {
     const stoneSpacesWithStone = game.getStoneAccumulationSpacesWithStone()

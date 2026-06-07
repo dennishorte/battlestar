@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 168,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "At the start of each round, you get 1 sheep/wild boar/cattle for each unoccupied wood/clay/stone room in your house.",
   onRoundStart(game, player) {
     const woodRooms = player.getUnoccupiedRoomsByType('wood')

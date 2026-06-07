@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 146,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Once this game, immediately after playing or building an improvement, you can choose to get its printed cost from the general supply.",
   onPlay(game, _player) {
     game.cardState(this.id).used = false

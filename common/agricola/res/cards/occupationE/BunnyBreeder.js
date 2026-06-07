@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 139,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Select a future round space, subtract the number of the current round from it, and place this many food on that space. At the start of that round, you get the food.",
   onPlay(game, player) {
     const currentRound = game.state.round

@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationB",
   number: 134,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "After playing this card, if you renovate to stone in round 13/12/11 or before, you immediately get 1/2/3 food and 1/2/3 bonus points.",
   matches_onRenovate(_game, _player, _fromType, toType) {
     return toType === 'stone'

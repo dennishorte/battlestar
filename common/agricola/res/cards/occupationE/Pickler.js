@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 135,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "If there are still 1/3/6/9 complete rounds left to play, you immediately get 1/2/3/4 wood. During scoring, each player with the most total vegetables gets 3 bonus points.",
   onPlay(game, player) {
     const roundsLeft = 14 - game.state.round

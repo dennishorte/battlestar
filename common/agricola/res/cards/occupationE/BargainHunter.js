@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 152,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "At the start of each round, you can place 1 food from your supply on the \"Traveling Players\" accumulation space to play a minor improvement by paying its cost.",
   onRoundStart(game, player) {
     if (player.food >= 1) {

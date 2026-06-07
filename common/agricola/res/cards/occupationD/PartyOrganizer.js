@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 157,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "As soon as the next player but you gains their 5th person, you immediately get 8 food (not retroactively). During scoring, if only you have 5 people, you get 3 bonus points.",
   onAnyFamilyGrowth(game, actingPlayer, cardOwner) {
     if (actingPlayer.name === cardOwner.name) {

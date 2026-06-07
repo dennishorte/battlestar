@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationC",
   number: 151,
   type: "occupation",
-  players: "3+",
+  players: "4+",
   text: "Each time after another player uses the \"Grain Utilization\" action space, you get a \"Sow\" action.",
   onAnyAction(game, actingPlayer, actionId, cardOwner) {
     if (actionId === 'sow-bake' && actingPlayer.name !== cardOwner.name) {

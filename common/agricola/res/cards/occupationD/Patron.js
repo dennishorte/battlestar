@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 152,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Immediately before each time you play an occupation after this one (even before paying the occupation cost), you get 2 food.",
   onBeforePlayOccupation(game, player) {
     player.addResource('food', 2)

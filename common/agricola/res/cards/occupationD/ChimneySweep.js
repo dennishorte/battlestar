@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 154,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Renovating to stone costs you 2 stone less. During scoring, you get 1 bonus point for each other player living in a stone house.",
   modifyRenovationCost(game, player, cost, { toType }) {
     if (toType === 'stone' && cost.stone && cost.stone > 0) {

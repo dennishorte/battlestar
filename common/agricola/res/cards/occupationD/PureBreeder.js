@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 167,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "You immediately get 1 wood. After each round that does not end with a harvest, you can breed exactly one type of animal. (This is not considered a breeding phase.)",
   onPlay(game, player) {
     player.addResource('wood', 1)

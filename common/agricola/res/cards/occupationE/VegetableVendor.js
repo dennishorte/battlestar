@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 141,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each time you use the \"Major Improvement\" or \"Vegetable Seeds\" action space, you also get 1 vegetable or a \"Major or Minor Improvement\" action, respectively.",
   matches_onAction(game, player, actionId) {
     return actionId === 'major-minor-improvement' || actionId === 'take-vegetable'

@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 137,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each time after you use a \"Lesson\" action space, you can buy up to 2 different goods: grain, stone, sheep, and wild boar for 1 food each; cattle and vegetable for 2 food each.",
   matches_onAction(game, player, actionId) {
     return actionId === 'occupation' || (typeof actionId === 'string' && actionId.startsWith('lessons-'))

@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationC",
   number: 150,
   type: "occupation",
-  players: "3+",
+  players: "4+",
   text: "On your turn, if you pay 1 grain to the general supply, you can use the same action space that the player to your right has just used on their turn.",
   canUseOccupiedActionSpace(game, player, actionId, _action, state) {
     if (player.grain < 1) {

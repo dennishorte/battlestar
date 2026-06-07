@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 155,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "If you play this card in round 4 or before, you get 1 stone, 1 vegetable, and 2 wild boar. You cannot grow your family until round 11, unless all other players already have.",
   onPlay(game, player) {
     if (game.state.round <= 4) {

@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 144,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each time any player (including you) plays or builds a card that lets them turn building resources into food, you get exactly 1 corresponding building resource and 1 reed.",
   onAnyPlayImprovement(game, _actingPlayer, cardOwner, improvement) {
     const craftMap = {

@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 146,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each time you take at least 4 of the same building resource from an accumulation space, you get 1 additional building resource of the accumulating type and 1 food.",
   matches_onAction(game, player, actionId) {
     return game.isAccumulationSpace(actionId)

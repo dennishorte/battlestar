@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 151,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Once this game, if you have all types of animals, use any \"Family Growth\" action space even without room.",
   onPlay(game, _player) {
     game.cardState(this.id).used = false

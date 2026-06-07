@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationC",
   number: 129,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "You can use the \"Urgent Wish for Children\" action space (from round 12-13) even if it is occupied by the first person another player placed.",
   canUseOccupiedActionSpace(game, player, actionId, _action, state) {
     if (actionId !== 'family-growth-urgent') {

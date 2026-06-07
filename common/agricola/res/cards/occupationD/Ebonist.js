@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 155,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Each harvest, you can use this card to turn exactly 1 wood into 1 food and 1 grain.",
   matches_onHarvest(_game, player) {
     return player.wood >= 1

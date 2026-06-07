@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 137,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each time you use the \"Reed Bank\" accumulation space, you also get 1 grain. Each time you use the \"Grain Seeds\" action space, you also get 1 reed.",
   matches_onAction(game, player, actionId) {
     return actionId === 'take-reed' || actionId === 'take-grain'

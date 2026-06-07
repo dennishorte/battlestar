@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 153,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Each harvest, you can use this card to exchange exactly 1 stone for 1 bonus point and 1 food.",
   matches_onHarvest(_game, player) {
     return player.stone >= 1

@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 166,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Each time you build at least 2 stables on the same turn, you also get 1 cattle.",
   onBuildStable(game, player) {
     const s = game.cardState(this.id)

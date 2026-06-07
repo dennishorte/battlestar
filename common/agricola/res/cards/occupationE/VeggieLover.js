@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 132,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "In each harvest, you can use this card to exchange a pair of 1 grain and 1 vegetable into 6 food. During scoring, you can exchange 1/2/3 pairs of 1 grain and 1 vegetable for 2/4/6 bonus points.",
   matches_onHarvest(_game, player) {
     return player.grain >= 1 && player.vegetables >= 1

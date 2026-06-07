@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 129,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "If you have a person on the \"Day Laborer\" action space, you can use non-accumulating round 1-9 action spaces even if they are occupied.",
   allowsIgnoreOccupied(player, actionId, game) {
     return player.occupiesActionSpace('day-laborer') &&

@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 161,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Each time any player (including you) renovates and then builds no / 1 minor / 1 major improvement, you can buy 1 vegetable for 3/2/1 food.",
   onAnyRenovate(game, actingPlayer, cardOwner) {
     // The hook doesn't pass improvement info, so use base cost of 2 food

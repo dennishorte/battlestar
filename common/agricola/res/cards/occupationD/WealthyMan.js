@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 153,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "At the start of each of the 1st/2nd/3rd/4th/5th/6th harvest, if you have at least 1/2/3/4/5/6 grain fields, you get 1 bonus point.",
   onHarvestStart(game, player) {
     const harvestNumber = game.getHarvestNumber()

@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 133,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "In the feeding phase of each harvest, you can use this card to turn 1 wood plus 1 grain into 1 bonus point and 2 food.",
   matches_onFeedingPhase(_game, player) {
     return player.wood >= 1 && player.grain >= 1

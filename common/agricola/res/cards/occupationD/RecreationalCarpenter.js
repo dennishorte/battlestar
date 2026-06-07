@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 130,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "At the end of each work phase in which you did not use the \"Meeting Place\" action space, you can take a \"Build Rooms\" action without placing a person.",
   onWorkPhaseEnd(game, player) {
     const meetingPlace = game.state.actionSpaces['starting-player']

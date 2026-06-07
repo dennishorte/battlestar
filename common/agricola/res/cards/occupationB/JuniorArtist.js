@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationB",
   number: 152,
   type: "occupation",
-  players: "3+",
+  players: "4+",
   text: "Each time after you use the \"Day Laborer\" action space, you can pay 1 food to use an unoccupied \"Traveling Players\" or \"Lessons\" action space with the same person.",
   matches_onAction(game, player, actionId) {
     return actionId === 'day-laborer'

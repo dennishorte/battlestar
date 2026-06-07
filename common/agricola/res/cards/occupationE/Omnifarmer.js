@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 134,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each harvest, you can place 1 harvested crop or 1 newborn animal on this card, irretrievably. Once this game, exchange 2/3/4/5 different goods on this for 3/5/7/9 bonus points.",
   allowsAnytimeAction: true,
   onPlay(game, _player) {

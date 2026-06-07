@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 127,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "This card is an action space for you only. If each other player has more rooms than you, it provides the \"Day Laborer\", \"Build Rooms\", and \"Major Improvement\" actions (all three).",
   createsActionSpace: 'hardworking-man-d127-action',
   actionSpaceAvailable(game, owner) {

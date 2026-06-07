@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 132,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "During scoring, you can pay 1 food each for any number of unused farmyard spaces. You do not lose points for these spaces.",
   getEndGamePoints(player, game) {
     const unusedSpaces = player.getUnusedSpaceCount()

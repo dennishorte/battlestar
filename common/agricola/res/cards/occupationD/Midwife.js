@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 160,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Each time another player uses the first person they place in a round to take a \"Family Growth\" action, you get 1 grain from the general supply.",
   onAnyAction(game, actingPlayer, actionId, cardOwner) {
     if ((actionId === 'family-growth-minor' || actionId === 'family-growth-urgent') &&

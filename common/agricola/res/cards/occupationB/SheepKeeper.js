@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationB",
   number: 154,
   type: "occupation",
-  players: "3+",
+  players: "4+",
   text: "You can only play this card if you have less than 7 sheep. Once this game, when you have 7 sheep in your farmyard, you immediately get 3 bonus points and 2 food.",
   canPlay(player) {
     return player.getTotalAnimals('sheep') < 7

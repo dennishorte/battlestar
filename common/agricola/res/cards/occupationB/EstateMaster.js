@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationB",
   number: 132,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Once you have no unused farmyard spaces left, you get 1 bonus point for each vegetable that you harvest.",
   onHarvestVegetables(game, player, count) {
     if (player.getUnusedSpaceCount() === 0) {

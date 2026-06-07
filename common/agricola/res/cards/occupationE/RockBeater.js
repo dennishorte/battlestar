@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 150,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "You can use an action space providing both stone and a different building resource even if it is occupied by another player. Stone rooms cost you 2 stone less each.",
   allowsIgnoreOccupied(player, actionId, game) {
     return game.actionSpaceProvidesStoneAndOther(actionId)

@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationC",
   number: 131,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each time you use the \"Grain Seeds\" action space when any \"Lessons\" action space is occupied, you can also play an occupation for an occupation cost of 1 food.",
   matches_onAction(game, player, actionId) {
     return actionId === 'take-grain'

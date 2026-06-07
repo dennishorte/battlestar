@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationB",
   number: 148,
   type: "occupation",
-  players: "3+",
+  players: "4+",
   text: "When you play this card, you immediately get 1 sheep. You can keep 1 sheep on each occupation in front of you.",
   holdsAnimals: { sheep: true },
   onPlay(game, player) {

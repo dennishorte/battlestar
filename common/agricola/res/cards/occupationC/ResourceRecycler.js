@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationC",
   number: 149,
   type: "occupation",
-  players: "3+",
+  players: "4+",
   text: "Each time another player renovates to stone, if you live in a clay house, you can pay 2 food to build a clay room at no additional cost.",
   onAnyRenovate(game, actingPlayer, cardOwner, { newType }) {
     if (newType === 'stone' && actingPlayer.name !== cardOwner.name && cardOwner.roomType === 'clay' && cardOwner.food >= 2) {

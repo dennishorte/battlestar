@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 156,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Each time another player plays or builds an improvement with a printed clay cost, you get 1 food and 1 clay.",
   onAnyPlayImprovement(game, actingPlayer, cardOwner, improvement) {
     if (actingPlayer.name !== cardOwner.name && improvement.cost && improvement.cost.clay) {

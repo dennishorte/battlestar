@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 157,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "When you play this card as your first occupation, you immediately get 1 food for every other occupation in play (by any player), up to a maximum of 7 food.",
   onPlay(game, player) {
     if (player.getOccupationCount() === 1) {

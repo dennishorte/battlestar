@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationA",
   number: 153,
   type: "occupation",
-  players: "3+",
+  players: "4+",
   text: "The first time after you play this card that you have 5 wild boars on your farm, you immediately get 3 bonus points.",
   checkTrigger(game, player) {
     if (!player.pigOwnerTriggered && player.getTotalAnimals('boar') >= 5) {

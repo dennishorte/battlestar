@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 164,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Each time you plow at least 1 field tile, you get 1 sheep for each field tile that you just plowed.",
   onPlowField(game, player) {
     if (player.canPlaceAnimals('sheep', 1)) {

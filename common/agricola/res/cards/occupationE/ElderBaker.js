@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 161,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "This card is an action space for you only. When you use it, you get 3 grain. You can build the \"Stone Oven\" major improvement even when taking a \"Minor Improvement\" action.",
   providesActionSpace: true,
   actionSpaceId: 'elder-baker-action',

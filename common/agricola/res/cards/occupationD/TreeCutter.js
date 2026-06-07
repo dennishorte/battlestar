@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 143,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each time you use an accumulation space providing at least 3 goods of the same type except wood, you get an additional 1 wood. (Food is also considered a good.)",
   matches_onAction(game, player, actionId) {
     return game.isAccumulationSpace(actionId)

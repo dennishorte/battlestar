@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 163,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "When you play this card, you immediately get 2 stone. Each time another player renovates to stone or builds a stone room, you get 1 stone.",
   onPlay(game, player) {
     player.addResource('stone', 2)

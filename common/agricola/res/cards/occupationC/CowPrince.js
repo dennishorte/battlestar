@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationC",
   number: 134,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "During scoring, you get 1 bonus point for each space in your farmyard (including rooms) holding at least 1 cattle.",
   requiresAnimalArrangement: true,
   getEndGamePoints(player) {

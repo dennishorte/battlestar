@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationB",
   number: 151,
   type: "occupation",
-  players: "3+",
+  players: "4+",
   text: "You immediately get 1 stone. As long as you live in a wooden house with exactly 2 rooms, action spaces - excluding Meeting Place - are not considered occupied for you.",
   onPlay(game, player) {
     player.addResource('stone', 1)

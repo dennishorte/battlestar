@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationA",
   number: 154,
   type: "occupation",
-  players: "3+",
+  players: "4+",
   text: "Each time another player uses a food accumulation space, you can give them 1 grain from your supply to get 1 bonus point.",
   onAnyAction(game, actingPlayer, actionId, cardOwner) {
     const foodSpaces = ['fishing', 'traveling-players', 'traveling-players-5']

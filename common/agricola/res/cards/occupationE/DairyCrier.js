@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 167,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "When you play this card, each player (including you) can choose to get 2 sheep or 2 food; you also get 1 cattle.",
   onPlay(game, player) {
     // Each player (including the card owner) chooses 2 sheep or 2 food

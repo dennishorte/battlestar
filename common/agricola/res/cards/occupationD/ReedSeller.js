@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 159,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "At any time, you can turn 1 reed into 3 food. Any other player can prevent this by buying the reed for 2 food from you. If multiple players are interested, choose one.",
   allowsAnytimeAction: true,
   getAnytimeActions(_game, player) {

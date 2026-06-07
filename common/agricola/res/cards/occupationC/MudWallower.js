@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationC",
   number: 148,
   type: "occupation",
-  players: "3+",
+  players: "4+",
   text: "Each time you use an accumulation space, place 1 clay from the general supply on this card. You must immediately exchange 4 clay on this card for 1 wild boar, held by this card.",
   holdsAnimals: { boar: true },
   onPlay(game, _player) {

@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationB",
   number: 128,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each time after you use the \"Major Improvement\" action space, you can take a \"Renovation\" action for 2 clay or 2 stone less.",
   modifyRenovationCost(game, player, cost) {
     if (!player._plumberActive) {

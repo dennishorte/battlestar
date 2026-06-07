@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 156,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Place 3 grain and 3 food on this card. Each time you use the \"Resource Market\" action space, you also get 1 grain and 1 food from this card.",
   onPlay(game, _player) {
     const s = game.cardState(this.id)

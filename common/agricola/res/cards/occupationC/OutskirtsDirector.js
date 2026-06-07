@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationC",
   number: 130,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each time you use the \"Grove\" or \"Hollow\" accumulation space, you can place 2 reed from the general supply on the other space. If you do, you can immediately place another person.",
   matches_onAction(game, player, actionId) {
     const action = game.getActionById(actionId)

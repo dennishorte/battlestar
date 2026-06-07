@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationA",
   number: 132,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each time before another player takes an unconditional \"Sow\" action, you can give them 1 grain from your supply to get 1 bonus point.",
   onAnyBeforeSow(game, actingPlayer, cardOwner) {
     if (actingPlayer.name !== cardOwner.name && cardOwner.grain >= 1) {

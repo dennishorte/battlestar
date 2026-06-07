@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationB",
   number: 133,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "At the start of scoring, you get a number of vegetables equal to the smallest of the numbers of major improvements, minor improvements, and occupations you have.",
   // onScoring hook doesn't exist in engine; use getEndGamePoints to compute
   // the score difference from extra vegetables.

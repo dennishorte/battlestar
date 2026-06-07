@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 138,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each time you use an accumulation space providing exactly 1 animal, you can leave it on the space and get one from the general supply instead, as well as 3 food and 1 grain.",
   matches_onActionReplace(game, _player, actionId) {
     const accumulated = game.getAccumulatedResources(actionId)

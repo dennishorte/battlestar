@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 164,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Each time you use an animal accumulation space, if afterward you have no animal in your house, you also get 1 sheep.",
   forceManualAnimalPlacement: true,
   matches_onAction(game, player, actionId) {

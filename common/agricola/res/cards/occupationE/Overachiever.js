@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 130,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each time you use a \"Wish for Children\" action space, you can play 1 additional minor improvement by paying its cost less 1 resource of your choice.",
   matches_onActionAnnounce(game, player, actionId) {
     if (actionId === 'family-growth-minor') {

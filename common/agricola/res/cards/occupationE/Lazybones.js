@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 148,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Place (up to) 1 stable each on \"Grain Seeds\", \"Farmland\", \"Day Laborer\", and \"Farm Expansion\". Build the stable at no cost when another player uses that action space.",
   onPlay(game, _player) {
     game.cardState(this.id).stables = {

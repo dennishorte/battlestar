@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 160,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Each time another player uses the \"Fishing\" accumulation space, they get 1 additional food and you get 1 vegetable.",
   onAnyAction(game, actingPlayer, actionId, cardOwner) {
     if (actionId === 'fishing' && actingPlayer.name !== cardOwner.name) {

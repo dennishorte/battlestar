@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 154,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Once you live in a stone house, you get 2 food each time any player renovates and, during scoring, 1 bonus point for each wood house and clay house.",
   onAnyRenovate(game, actingPlayer, cardOwner) {
     if (cardOwner.roomType === 'stone') {

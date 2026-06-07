@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationB",
   number: 135,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "At the start of each round, you can exchange a set comprised of 1 animal of any type, 1 grain, and 1 vegetable for 5 food and 2 bonus points.",
   onRoundStart(game, player) {
     const hasAnimal = player.getTotalAnimals('sheep') >= 1 || player.getTotalAnimals('boar') >= 1 || player.getTotalAnimals('cattle') >= 1

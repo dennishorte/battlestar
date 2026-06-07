@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 149,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Each time another player uses a \"Quarry\" accumulation space, you can choose to get 1 food or build a stable without paying wood.",
   onAnyAction(game, actingPlayer, actionId, cardOwner) {
     if (actingPlayer.name === cardOwner.name) {

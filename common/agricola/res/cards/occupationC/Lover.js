@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationC",
   number: 127,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "When you play this card, immediately pay an amount of food equal to the number of complete rounds left to play to take a \"Family Growth Even without Room\" action.",
   onPlay(game, player) {
     const roundsLeft = 14 - game.state.round

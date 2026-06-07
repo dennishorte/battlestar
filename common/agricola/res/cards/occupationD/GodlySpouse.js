@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 150,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Each time you take a \"Family Growth\" action with the second person you place in a round, return the first person you placed home.",
   matches_onAction(game, player, actionId) {
     return actionId === 'family-growth' || actionId === 'family-growth-urgent'

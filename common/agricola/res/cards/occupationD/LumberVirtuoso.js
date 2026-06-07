@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 129,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each harvest in which you have at least 5 wood in your supply, you can discard down to 5 wood to take a \"Build Stables\" or \"Build Wood Rooms\" action by paying the usual costs.",
   matches_onHarvest(_game, player) {
     return player.wood >= 5

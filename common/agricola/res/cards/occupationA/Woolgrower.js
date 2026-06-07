@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationA",
   number: 148,
   type: "occupation",
-  players: "3+",
+  players: "4+",
   text: "This card can hold a number of sheep equal to the number of completed feeding phases.",
   holdsAnimals: { sheep: true },
   getAnimalCapacity(game) {

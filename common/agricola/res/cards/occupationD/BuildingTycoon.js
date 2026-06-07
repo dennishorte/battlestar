@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 128,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each time after another player builds 1 or more rooms, you can give them 1 food to build exactly 1 room yourself. (You must pay the building cost of the room.)",
   onAnyBuildRoom(game, cardOwner, actingPlayer) {
     if (actingPlayer.name === cardOwner.name) {

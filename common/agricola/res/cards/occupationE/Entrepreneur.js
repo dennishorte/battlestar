@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 162,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "At the start of each round, you can move 1 food to this card or discard 1 food from it. If you do either, you get 1 building resource of a type you currently do not have.",
   onPlay(game, _player) {
     game.cardState(this.id).food = 0

@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationB",
   number: 150,
   type: "occupation",
-  players: "3+",
+  players: "4+",
   text: "Each time after you use the \"Farm Expansion\" or \"Major Improvement\" action space while the other is unoccupied, you can pay 1 food to use that other space with the same person.",
   matches_onAction(game, player, actionId) {
     return actionId === 'build-room-stable' || actionId === 'major-minor-improvement'

@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 133,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each time you place 2 or 3+ newborn animals on your farm during the breeding phase of the harvest, you get 1 or 2 bonus points, respectively.",
   matches_onBreedingPhaseEnd(_game, _player, newbornCount) {
     return newbornCount >= 2

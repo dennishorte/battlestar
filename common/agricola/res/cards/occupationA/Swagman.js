@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationA",
   number: 129,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Immediately after each time you use the \"Farm Expansion\" or \"Grain Seeds\" action space, you can use the respective other space with the same person (even if it is occupied).",
   matches_onAction(game, player, actionId) {
     return actionId === 'build-room-stable' || actionId === 'take-grain'

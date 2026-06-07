@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationA",
   number: 150,
   type: "occupation",
-  players: "3+",
+  players: "4+",
   text: "Each time another player uses the \"Traveling Players\" accumulation space, you can take your choice of a \"Build Fences\", \"Build Stables\", or \"Build Rooms\" action.",
   onAnyAction(game, actingPlayer, actionId, cardOwner) {
     if ((actionId !== 'traveling-players' && actionId !== 'traveling-players-5') || actingPlayer.name === cardOwner.name) {

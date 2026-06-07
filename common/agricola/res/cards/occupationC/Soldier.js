@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationC",
   number: 133,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "During scoring, you get 1 bonus point for each stone-wood pair in your supply. You cannot score additional points for the resources scored with this card.",
   resourcesUsedForScoring: ["stone", "wood"],
   getEndGamePoints(player) {

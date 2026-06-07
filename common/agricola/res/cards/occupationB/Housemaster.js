@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationB",
   number: 153,
   type: "occupation",
-  players: "3+",
+  players: "4+",
   text: "During scoring, total the values of your major improvements. The smallest value counts double. If the total is at least 5/7/9/11, you get 1/2/3/4 bonus points.",
   getEndGamePoints(player) {
     const majorValues = []

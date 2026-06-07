@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 136,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "If there are still 3/6/9 complete rounds left to play, you immediately get 2/3/4 wood. During scoring, each player with the most fenced stables gets 2 bonus points.",
   onPlay(game, player) {
     const roundsLeft = 14 - game.state.round

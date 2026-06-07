@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 141,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "When you play this card, you immediately get 1 grain. Each time you use the \"Grain Seeds\" action space, you get 1 additional grain.",
   onPlay(game, player) {
     player.addResource('grain', 1)

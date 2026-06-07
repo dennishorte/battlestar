@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 148,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "You can keep 2 sheep on the border between each pair of orthogonally adjacent rooms.",
   holdsAnimals: { sheep: true },
   getAnimalCapacity(_game, player) {

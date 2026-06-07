@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 151,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Immediately after each time you use the \"Traveling Players\" accumulation space, you can place another person on an action space of your choice, regardless whether or not the action space is occupied.",
   matches_onAction(game, player, actionId) {
     return actionId === 'traveling-players' || actionId === 'traveling-players-5'

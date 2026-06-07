@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 165,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "When you play this card and each time you build a major improvement, you get 1 wild boar.",
   onPlay(game, player) {
     if (player.canPlaceAnimals('boar', 1)) {

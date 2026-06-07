@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 168,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "When you build your 2nd/3rd/4th stable, you immediately get 1 cattle/wild boar/sheep, even if built on the same turn (but not retroactively).",
   onBuildStable(game, player, stableNumber) {
     const animals = { 2: 'cattle', 3: 'boar', 4: 'sheep' }

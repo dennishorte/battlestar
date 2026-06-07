@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 139,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each time another player uses the \"Meeting Place\" action space, both they and you get 1 food (before taking the actions). If you use it, you get 1 food.",
   onAnyAction(game, actingPlayer, actionId, cardOwner) {
     if (actionId === 'starting-player') {

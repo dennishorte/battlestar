@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 144,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each time after you use Fishing, Day Laborer, Reed Bank, or the Round 4 action space, you get 1 additional reed.",
   matches_onAction(game, player, actionId) {
     const round4Card = game.state.roundCardDeck[3]

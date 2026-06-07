@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 145,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "When you play this card, if you have 1/2/3/4 major improvements, you immediately get 2/3/4/5 reed.",
   onPlay(game, player) {
     const majorCount = player.getMajorImprovementCount()

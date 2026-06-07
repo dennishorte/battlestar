@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 147,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "At the start of each harvest, if you have 1/2/3+ fenced stables, you get 1 sheep/wild boar/cattle.",
   onHarvestStart(game, player) {
     const fencedStables = player.getFencedStableCount()

@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 131,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Immediately after each time you place your last person in a round on the \"Traveling Players\" accumulation space, you can play 1 occupation for an occupation cost of 1 food.",
   matches_onAction(game, player, actionId) {
     return actionId === 'traveling-players' || actionId === 'traveling-players-5'

@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationD",
   number: 142,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "At the end of each work phase in which you occupy the \"Clay Pit\" or \"Reed Bank\" accumulation space while the respective other is unoccupied, you get 1 vegetable.",
   onWorkPhaseEnd(game, player) {
     const usedClayPit = player.occupiesActionSpace('take-clay')

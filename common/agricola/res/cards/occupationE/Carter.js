@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 140,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Next round, each time you use a building resource accumulation space, you also get 1 food for each building resource that you take from the space.",
   onPlay(game, _player) {
     game.cardState(this.id).activeRound = game.state.round + 1

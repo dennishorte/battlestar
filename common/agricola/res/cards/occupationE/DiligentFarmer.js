@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 127,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "When you play this card, if you would score the maximum 4 points in 3 scoring categories (including fenced stables), you can extend your house by 1 room at no cost.",
   onPlay(game, player) {
     if (player.getCategoriesWithMaxScore() >= 3) {

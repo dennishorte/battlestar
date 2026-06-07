@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 128,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Each time after you build a major improvement, you can pay 1 food to plow 1 field.",
   onBuildMajor(game, player) {
     if (player.food >= 1 || game.getAnytimeFoodConversionOptions(player).length > 0) {

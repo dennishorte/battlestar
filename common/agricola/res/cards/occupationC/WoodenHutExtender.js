@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationC",
   number: 128,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "Wood rooms now cost you 1 reed, and additionally 5 wood through round 5, 4 wood in rounds 6 and 7, and 3 wood in round 8 and later.",
   modifyRoomCost(player, cost, round) {
     if (player.roomType === 'wood') {

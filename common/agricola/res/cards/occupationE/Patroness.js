@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationE",
   number: 163,
   type: "occupation",
-  players: "1+",
+  players: "4+",
   text: "Each time after you play an occupation after this one, you get 1 building resource of your choice.",
   onPlayOccupation(game, player, playedCard) {
     if (playedCard && playedCard.id === this.id) {

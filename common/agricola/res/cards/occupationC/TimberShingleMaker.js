@@ -4,7 +4,7 @@ module.exports = {
   deck: "occupationC",
   number: 132,
   type: "occupation",
-  players: "1+",
+  players: "3+",
   text: "When you renovate to stone, you can place up to 1 wood from your supply in each of your rooms. During scoring, each such wood is worth 1 bonus point.",
   matches_onRenovate(_game, player, _fromType, toType) {
     return toType === 'stone' && player.wood > 0
