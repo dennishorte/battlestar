@@ -379,8 +379,16 @@ export default {
       return this.cell.animalCount || (this.cell.animal ? 1 : 0)
     },
 
+    isFirstPastureCell() {
+      if (!this.pasture) {
+        return false
+      }
+      const first = this.pasture.spaces[0]
+      return first && first.row === this.row && first.col === this.col
+    },
+
     pastureAnimals() {
-      return this.pasture && this.effectivePastureAnimalType && this.effectivePastureAnimalCount > 0
+      return this.isFirstPastureCell && this.effectivePastureAnimalType && this.effectivePastureAnimalCount > 0
     },
 
     pastureAnimalCount() {
