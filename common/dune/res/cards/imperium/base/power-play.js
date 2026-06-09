@@ -37,10 +37,12 @@ module.exports = {
   hasSardaukar: false,
 
   agentEffect(game, player, card) {
-    // +2 Influence instead of +1 Influence and Trash this card
-    // The "instead of +1" modifies the faction space influence gain
-    if (game.state.turnTracking) {
-      game.state.turnTracking.extraInfluence = true
+    // Standard +1 already applied at agent placement; grant 1 more directly
+    const factions = require('../../../../systems/factions.js')
+    const constants = require('../../../constants.js')
+    const faction = game.state.turnTracking?.spaceIcon
+    if (faction && constants.FACTIONS.includes(faction)) {
+      factions.gainInfluence(game, player, faction, 1)
     }
     deckEngine.trashCard(game, card)
   },
