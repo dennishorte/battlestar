@@ -10,6 +10,7 @@ module.exports = {
   text: "Immediately after each time you use a clay accumulation space, you can pay 1 clay to plow 1 field. If you do, place that 1 clay on the accumulation space.",
   matches_onAction(game, player, actionId) {
     return actionId === 'take-clay' || actionId === 'take-clay-2'
+      || actionId === 'hollow' || actionId === 'hollow-5' || actionId === 'hollow-6'
   },
   onAction(game, player, actionId) {
     if (player.clay < 1) {
