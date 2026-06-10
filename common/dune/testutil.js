@@ -18,7 +18,7 @@ TestUtil.fixture = function(options = {}) {
 
   const game = DuneFactory({
     game: 'Dune Imperium: Uprising',
-    version: 3,
+    version: 4,
     name: options.name || 'test_game',
     seed: options.seed || 'test_seed',
     players: activePlayers,

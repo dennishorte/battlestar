@@ -69,7 +69,7 @@ function DuneFactory(settings, viewerName) {
 function factoryFromLobby(lobby) {
   return DuneFactory({
     game: 'Dune Imperium: Uprising',
-    version: 3,
+    version: 4,
     name: lobby.name,
     players: lobby.users,
     seed: lobby.seed,

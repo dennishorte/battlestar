@@ -42,16 +42,34 @@ module.exports = {
         if (opponent.name === player.name) {
           continue
         }
-        for (let i = 0; i < 2; i++) {
-          const oppHand = game.zones.byId(`${opponent.name}.hand`)
-          const oppCards = oppHand.cardlist()
+        const oppHand = game.zones.byId(`${opponent.name}.hand`)
+        const oppCards = oppHand.cardlist()
+        if (game.settings.version >= 4) {
+          // Ask the opponent to select both discards in a single prompt
           if (oppCards.length > 0) {
-            const card = game.actions.chooseCard(opponent, oppCards, {
-              title: 'Discard a card',
+            const chosen = game.actions.chooseCards(opponent, oppCards, {
+              title: 'Discard 2 cards',
               kind: 'imperium-card',
+              count: 2,
             })
-            if (card) {
-              deckEngine.discardCard(game, opponent, card)
+            for (const c of chosen) {
+              if (c) {
+                deckEngine.discardCard(game, opponent, c)
+              }
+            }
+          }
+        }
+        else {
+          for (let i = 0; i < 2; i++) {
+            const currentCards = oppHand.cardlist()
+            if (currentCards.length > 0) {
+              const chosen = game.actions.chooseCard(opponent, currentCards, {
+                title: 'Discard a card',
+                kind: 'imperium-card',
+              })
+              if (chosen) {
+                deckEngine.discardCard(game, opponent, chosen)
+              }
             }
           }
         }
