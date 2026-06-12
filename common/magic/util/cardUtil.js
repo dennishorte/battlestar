@@ -506,6 +506,10 @@ CardUtil.parseCardlist = function(cardlist) {
       line = line.slice(0, line.length - 1)
     }
 
+    if (line.startsWith('#')) {
+      line = line.slice(1)
+    }
+
     if (line.length === 0) {
       continue
     }
