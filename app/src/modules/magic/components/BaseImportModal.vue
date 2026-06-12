@@ -32,7 +32,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
-import { mag, util } from 'battlestar-common'
+import { mag } from 'battlestar-common'
 
 import ModalBase from '@/components/ModalBase.vue'
 
@@ -70,7 +70,7 @@ const parsedUpdate = computed(() => {
       // Try to find the item in the list of all cards
       const versions = cardData.value.byName[item.name]
       if (versions && versions.length > 0) {
-        item.card = util.array.last(versions)
+        item.card = versions[0]
       }
     }
   }
