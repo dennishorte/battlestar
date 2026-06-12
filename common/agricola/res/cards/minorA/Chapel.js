@@ -22,14 +22,14 @@ module.exports = {
       actingPlayer.payCost({ grain: 1 })
       cardOwner.addResource('grain', 1)
       game.log.add({
-        template: '{actingPlayer} pays 1 grain to {owner} to use {card}',
-        args: { actingPlayer, owner: cardOwner , card: this},
+        template: '{player} pays 1 grain to {playerOwner} to use {card}',
+        args: { player: actingPlayer, playerOwner: cardOwner, card: this},
       })
     }
     actingPlayer.addBonusPoints(3)
     game.log.add({
       template: '{player} gets 3 bonus points from {card}',
-      args: { player: actingPlayer , card: this},
+      args: { player: actingPlayer, card: this},
     })
   },
 }
