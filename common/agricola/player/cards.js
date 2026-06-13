@@ -562,9 +562,16 @@ AgricolaPlayer.prototype._meetsCardPrereqsCore = function(cardId, wildcardRole =
     }
   }
 
+  if (prereqs.hasFireplaceOrCookingHearth) {
+    const fireplaceIds = ['fireplace-2', 'fireplace-3', 'fireplace-4', 'cooking-hearth-4', 'cooking-hearth-5', 'cooking-hearth-6']
+    if (!fireplaceIds.some(id => this.majorImprovements.includes(id))) {
+      return false
+    }
+  }
+
   // --- Deferred prereq checks (complex game-state checks not yet implemented) ---
   // TODO: bakingImprovement, cookingImprovement, hasPotteryOrUpgrade,
-  //   hasFireplaceAndCookingHearth, returnFireplaceOrCookingHearth, returnMajor,
+  //   returnFireplaceOrCookingHearth, returnMajor,
   //   personOnAction, personYetToPlace,
   //   fencedStables, woodGteRound,
   //   cardsInPlay, maxCardsInPlay, exactlyAdults, majorImprovement (specific card),

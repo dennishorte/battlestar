@@ -5,7 +5,7 @@ module.exports = {
   number: 27,
   type: "minor",
   cost: {},
-  prereqs: { hasFireplaceAndCookingHearth: true },
+  prereqs: { hasFireplaceOrCookingHearth: true },
   category: "Building Resource Provider",
   text: "When you play this card, you get 2 wood and you can immediately build the \"Clay Oven\" or \"Stone Oven\" major improvement. Either way, it only costs you 1 clay and 1 stone.",
   onPlay(game, player) {
