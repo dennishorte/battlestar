@@ -562,20 +562,104 @@ AgricolaPlayer.prototype._meetsCardPrereqsCore = function(cardId, wildcardRole =
     }
   }
 
+  const hearthIds = ['fireplace-2', 'fireplace-3', 'fireplace-4', 'cooking-hearth-4', 'cooking-hearth-5', 'cooking-hearth-6']
+
   if (prereqs.hasFireplaceOrCookingHearth) {
-    const fireplaceIds = ['fireplace-2', 'fireplace-3', 'fireplace-4', 'cooking-hearth-4', 'cooking-hearth-5', 'cooking-hearth-6']
-    if (!fireplaceIds.some(id => this.majorImprovements.includes(id))) {
+    if (!hearthIds.some(id => this.majorImprovements.includes(id))) {
       return false
     }
   }
 
-  // --- Deferred prereq checks (complex game-state checks not yet implemented) ---
-  // TODO: bakingImprovement, cookingImprovement, hasPotteryOrUpgrade,
-  //   returnFireplaceOrCookingHearth, returnMajor,
-  //   personOnAction, personYetToPlace,
-  //   fencedStables, woodGteRound,
-  //   cardsInPlay, maxCardsInPlay, exactlyAdults, majorImprovement (specific card),
-  //   roundsLeftGreaterThanUnusedSpaces
+  if (prereqs.returnFireplaceOrCookingHearth) {
+    if (!hearthIds.some(id => this.majorImprovements.includes(id))) {
+      return false
+    }
+  }
+
+  if (prereqs.bakingImprovement) {
+    if (!this.hasBakingAbility()) {
+      return false
+    }
+  }
+
+  if (prereqs.cookingImprovement) {
+    if (!this.hasCookingAbility()) {
+      return false
+    }
+  }
+
+  if (prereqs.hasPotteryOrUpgrade) {
+    if (!['pottery', 'pottery-2'].some(id => this.majorImprovements.includes(id))) {
+      return false
+    }
+  }
+
+  if (prereqs.majorImprovement !== undefined) {
+    if (!this.majorImprovements.includes(prereqs.majorImprovement)) {
+      return false
+    }
+  }
+
+  if (prereqs.returnMajor !== undefined) {
+    if (!prereqs.returnMajor.some(id => this.majorImprovements.includes(id))) {
+      return false
+    }
+  }
+
+  if (prereqs.fencedStables !== undefined) {
+    if (this.getFencedStableCount() < prereqs.fencedStables) {
+      return false
+    }
+  }
+
+  if (prereqs.woodGteRound) {
+    if (this.wood < this.game.state.round) {
+      return false
+    }
+  }
+
+  if (prereqs.cardsInPlay !== undefined) {
+    const count = this.getImprovementCount() + this.getOccupationCount()
+    if (count < prereqs.cardsInPlay) {
+      return false
+    }
+  }
+
+  if (prereqs.maxCardsInPlay !== undefined) {
+    const anyExceeds = this.game.players.all().some(p =>
+      p.getImprovementCount() + p.getOccupationCount() >= prereqs.maxCardsInPlay
+    )
+    if (anyExceeds) {
+      return false
+    }
+  }
+
+  if (prereqs.exactlyAdults !== undefined) {
+    const adults = this.familyMembers - this.newborns.length
+    if (adults !== prereqs.exactlyAdults) {
+      return false
+    }
+  }
+
+  if (prereqs.personYetToPlace) {
+    if (this.getAvailableWorkers() === 0) {
+      return false
+    }
+  }
+
+  if (prereqs.personOnAction !== undefined) {
+    const space = this.game.state.actionSpaces[prereqs.personOnAction]
+    if (!space || space.occupiedBy !== this.name) {
+      return false
+    }
+  }
+
+  if (prereqs.roundsLeftGreaterThanUnusedSpaces) {
+    const roundsLeft = res.constants.totalRounds - this.game.state.round
+    if (roundsLeft <= this.getUnusedSpaceCount()) {
+      return false
+    }
+  }
 
   return true
 }

@@ -8,6 +8,7 @@ describe('Muddy Waters', () => {
       firstPlayer: 'dennis',
       dennis: {
         hand: ['muddy-waters-e041'],
+        occupations: ['test-occupation-1', 'test-occupation-2', 'test-occupation-3', 'test-occupation-4', 'test-occupation-5'],
       },
     })
     game.run()
@@ -21,6 +22,7 @@ describe('Muddy Waters', () => {
       currentPlayer: 'micah',
       dennis: {
         food: 1, // Meeting Place
+        occupations: ['test-occupation-1', 'test-occupation-2', 'test-occupation-3', 'test-occupation-4', 'test-occupation-5'],
         minorImprovements: ['muddy-waters-e041'],
         scheduled: {
           food: { 6: 1, 10: 1, 14: 1 },

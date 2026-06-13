@@ -10,6 +10,8 @@ describe('Churchyard', () => {
         hand: ['churchyard-d047'],
         stone: 1,
         reed: 1,
+        occupations: ['test-occupation-1', 'test-occupation-2', 'test-occupation-3', 'test-occupation-4', 'test-occupation-5', 'test-occupation-6', 'test-occupation-7'],
+        minorImprovements: ['test-minor-1', 'test-minor-2', 'test-minor-3'],
       },
     })
     game.run()
@@ -22,7 +24,8 @@ describe('Churchyard', () => {
       currentPlayer: 'micah',
       dennis: {
         food: 1, // Meeting Place
-        minorImprovements: ['churchyard-d047'],
+        occupations: ['test-occupation-1', 'test-occupation-2', 'test-occupation-3', 'test-occupation-4', 'test-occupation-5', 'test-occupation-6', 'test-occupation-7'],
+        minorImprovements: ['churchyard-d047', 'test-minor-1', 'test-minor-2', 'test-minor-3'],
         scheduled: {
           food: { 12: 2, 13: 2, 14: 2 },
         },

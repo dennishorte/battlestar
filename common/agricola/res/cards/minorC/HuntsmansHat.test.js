@@ -7,6 +7,7 @@ describe("Huntsman's Hat", () => {
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['huntsmans-hat-c052'],
+        majorImprovements: ['cooking-hearth-4'],
         farmyard: {
           pastures: [
             { spaces: [{ row: 2, col: 0 }, { row: 2, col: 1 }] },
@@ -29,6 +30,7 @@ describe("Huntsman's Hat", () => {
           ],
         },
         minorImprovements: ['huntsmans-hat-c052'],
+        majorImprovements: ['cooking-hearth-4'],
       },
     })
   })
@@ -39,6 +41,7 @@ describe("Huntsman's Hat", () => {
       firstPlayer: 'dennis',
       dennis: {
         minorImprovements: ['huntsmans-hat-c052'],
+        majorImprovements: ['cooking-hearth-4'],
       },
       actionSpaces: ['Sheep Market'],
     })
@@ -52,6 +55,7 @@ describe("Huntsman's Hat", () => {
         pet: 'sheep',
         animals: { sheep: 1 },
         minorImprovements: ['huntsmans-hat-c052'],
+        majorImprovements: ['cooking-hearth-4'],
       },
     })
   })

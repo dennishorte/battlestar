@@ -85,19 +85,20 @@ describe('Sour Dough', () => {
     expect(t.currentChoices(game)).not.toContain('Bake Bread (Sour Dough)')
   })
 
-  test('not offered without baking improvement', () => {
+  test('not playable without baking improvement', () => {
     const game = t.fixture()
     t.setBoard(game, {
       firstPlayer: 'dennis',
       dennis: {
         occupations: ['test-occupation-1', 'test-occupation-2', 'test-occupation-3'],
-        minorImprovements: ['sour-dough-e062'],
+        hand: ['sour-dough-e062'],
         // No baking improvement
         grain: 3,
       },
     })
     game.run()
 
-    expect(t.currentChoices(game)).not.toContain('Bake Bread (Sour Dough)')
+    t.choose(game, 'Meeting Place')
+    expect(t.currentChoices(game)).not.toContain('Minor Improvement.Sour Dough')
   })
 })

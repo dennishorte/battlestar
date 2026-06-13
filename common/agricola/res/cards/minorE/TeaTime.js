@@ -5,7 +5,7 @@ module.exports = {
   number: 3,
   type: "minor",
   cost: { food: 1 },
-  prereqs: { personOnAction: "grain-utilization" },
+  prereqs: { personOnAction: "sow-bake" },
   text: "Immediately return your person on the \"Grain Utilization\" action space home; you can place it again later this round.",
   onPlay(game, player) {
     const actionId = 'sow-bake' // Grain Utilization

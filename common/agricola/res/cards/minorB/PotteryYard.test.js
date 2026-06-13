@@ -7,6 +7,7 @@ describe('Pottery Yard', () => {
       round: 1,
       dennis: {
         minorImprovements: ['pottery-yard-b031'],
+        majorImprovements: ['pottery'],
       },
     })
     game.run()
@@ -15,8 +16,9 @@ describe('Pottery Yard', () => {
     // Score: -14 base + 1 VP card + 2 bonus = -11
     t.testBoard(game, {
       dennis: {
-        score: -11,
+        score: -9,
         minorImprovements: ['pottery-yard-b031'],
+        majorImprovements: ['pottery'],
       },
     })
   })
@@ -27,6 +29,7 @@ describe('Pottery Yard', () => {
       round: 1,
       dennis: {
         minorImprovements: ['pottery-yard-b031'],
+        majorImprovements: ['pottery'],
         farmyard: {
           fields: [
             { row: 0, col: 1 },
@@ -51,11 +54,12 @@ describe('Pottery Yard', () => {
     game.run()
 
     // All non-room spaces are fields or pasture, no adjacent unused pair
-    // Score: fields(5+)=+4, 1 pasture=+1, unused(0)=0, rooms=0, family=+6, 1VP card, 5 categories:-5 = +7
+    // Score: fields(5+)=+4, 1 pasture=+1, unused(0)=0, rooms=0, family=+6, 1VP card, pottery=+2, 5 categories:-5 = +9
     t.testBoard(game, {
       dennis: {
-        score: 7,
+        score: 9,
         minorImprovements: ['pottery-yard-b031'],
+        majorImprovements: ['pottery'],
         farmyard: {
           fields: [
             { row: 0, col: 1 },
@@ -85,6 +89,7 @@ describe('Pottery Yard', () => {
       round: 1,
       dennis: {
         minorImprovements: ['pottery-yard-b031'],
+        majorImprovements: ['pottery'],
         farmyard: {
           fields: [
             { row: 0, col: 1 },
@@ -107,11 +112,12 @@ describe('Pottery Yard', () => {
     game.run()
 
     // 2 unused spaces (2,3) and (2,4) are adjacent → bonus applies
-    // Score: fields(5+)=+4, 1 pasture=+1, unused(2)=-2, rooms=0, family=+6, 1VP card, +2 bonus, 5 categories:-5 = +7
+    // Score: fields(5+)=+4, 1 pasture=+1, unused(2)=-2, rooms=0, family=+6, 1VP card, +2 bonus, pottery=+2, 5 categories:-5 = +9
     t.testBoard(game, {
       dennis: {
-        score: 7,
+        score: 9,
         minorImprovements: ['pottery-yard-b031'],
+        majorImprovements: ['pottery'],
         farmyard: {
           fields: [
             { row: 0, col: 1 },

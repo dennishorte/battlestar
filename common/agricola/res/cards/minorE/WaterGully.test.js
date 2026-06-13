@@ -9,6 +9,7 @@ describe('Water Gully', () => {
       dennis: {
         hand: ['water-gully-e042'],
         stone: 1,
+        majorImprovements: ['well'],
       },
     })
     game.run()
@@ -21,6 +22,7 @@ describe('Water Gully', () => {
       currentPlayer: 'micah',
       dennis: {
         food: 1, // Meeting Place
+        majorImprovements: ['well'],
         minorImprovements: ['water-gully-e042'],
         scheduled: {
           cattle: { 6: 1, 8: 1 },
