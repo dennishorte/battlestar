@@ -27,6 +27,7 @@ module.exports = {
             .players
             .all()
             .map(p => game.cards.top(p, card.color))
+            .filter(Boolean)
           game.actions.returnMany(player, toReturn)
         }
       }

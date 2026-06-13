@@ -12,6 +12,7 @@ module.exports = defineConfig([
       '**/build/**',
       '**/test/**',
       '**/test/**',
+      'ik*',
     ],
   },
   {
