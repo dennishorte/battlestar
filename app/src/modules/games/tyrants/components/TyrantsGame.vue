@@ -538,6 +538,11 @@ export default {
       return this.ui.selectableUnits.includes(`${loc.name()}, ${ownerName}`)
     },
 
+    // Returns the display title of a choice, whether it's a structured option or bare string.
+    choiceTitle(c) {
+      return typeof c === 'object' ? c.title : c
+    },
+
     // Check if the current waiting selector has a flat choice matching this location name.
     // Also handles "Place a spy" vs "Return spy" choices by inferring the right option
     // based on whether the current player has a spy at the clicked location.
@@ -549,19 +554,20 @@ export default {
       const selector = waiting.selectors[0]
       const locName = loc.name()
 
-      // Direct location name match
-      if (selector.choices.some(c => typeof c === 'string' && c === locName)) {
+      // Direct location name match (structured option or bare string)
+      const directMatch = selector.choices.find(c => this.choiceTitle(c) === locName)
+      if (directMatch) {
         return {
           actor: this.resolvedActorName,
           title: selector.title,
-          selection: [locName],
+          selection: [directMatch],
         }
       }
 
       // Prefix match: choices like "LocationName, OwnerName" (assassinate/supplant/return targets)
       // Auto-submit only if there's exactly one match at this location
       const prefixMatches = selector.choices.filter(c =>
-        typeof c === 'string' && c.startsWith(locName + ', ')
+        this.choiceTitle(c).startsWith(locName + ', ')
       )
       if (prefixMatches.length === 1) {
         return {
@@ -572,9 +578,9 @@ export default {
       }
 
       // Spy place/return choice: pick the right option based on board state
-      const placeSpyChoice = selector.choices.find(c => c === 'Place a spy')
+      const placeSpyChoice = selector.choices.find(c => this.choiceTitle(c) === 'Place a spy')
       const returnSpyChoice = selector.choices.find(c =>
-        typeof c === 'string' && c.startsWith('Return one of your spies')
+        this.choiceTitle(c).startsWith('Return one of your spies')
       )
       if (placeSpyChoice || returnSpyChoice) {
         const player = this.game.players.current()
@@ -616,23 +622,25 @@ export default {
       const choiceStr = this.troopChoiceString(troop, loc)
 
       // Flat choices (e.g. aChooseAndAssassinate, aChooseAndSupplant)
-      if (selector.choices.some(c => typeof c === 'string' && c === choiceStr)) {
+      const flatMatch = selector.choices.find(c => this.choiceTitle(c) === choiceStr)
+      if (flatMatch) {
         return {
           actor: this.resolvedActorName,
           title: selector.title,
-          selection: [choiceStr],
+          selection: [flatMatch],
         }
       }
 
       // Nested choices with a 'troop' group (e.g. aChooseAndReturn)
       const troopGroup = selector.choices.find(c => c.title === 'troop')
-      if (troopGroup && troopGroup.choices.includes(choiceStr)) {
+      const troopMatch = troopGroup && troopGroup.choices.find(c => this.choiceTitle(c) === choiceStr)
+      if (troopMatch) {
         return {
           actor: this.resolvedActorName,
           title: selector.title,
           selection: [{
             title: 'troop',
-            selection: [choiceStr],
+            selection: [troopMatch],
           }],
         }
       }
@@ -652,13 +660,14 @@ export default {
 
       // Nested choices with a 'spy' group (e.g. aChooseAndReturn)
       const spyGroup = selector.choices.find(c => c.title === 'spy')
-      if (spyGroup && spyGroup.choices.includes(choiceStr)) {
+      const spyMatch = spyGroup && spyGroup.choices.find(c => this.choiceTitle(c) === choiceStr)
+      if (spyMatch) {
         return {
           actor: this.resolvedActorName,
           title: selector.title,
           selection: [{
             title: 'spy',
-            selection: [choiceStr],
+            selection: [spyMatch],
           }],
         }
       }
