@@ -48,7 +48,7 @@ module.exports = {
   },
 
   previewReveal(game, player, handCards) {
-    const self = handCards.find(c => (c.definition || c).id === 'southern-elders')
+    const self = handCards.find(c => c.defId === 'southern-elders')
     const others = handCards.filter(c => c !== self)
     const playedCards = game.zones.byId(`${player.name}.played`).cardlist()
     const hasFremen = [...others, ...playedCards].some(c =>

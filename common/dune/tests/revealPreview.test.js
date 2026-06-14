@@ -369,4 +369,55 @@ describe('previewReveal', () => {
     expect(preview.hasUnits).toBe(false)
     expect(preview.strength).toBe(0)
   })
+
+  test('Holy War alone: bond NOT pending (no other Fremen card)', () => {
+    const game = t.fixture({ useBloodlines: true })
+    t.setBoard(game, {
+      dennis: { handExact: ['Holy War', 'Dagger'], troopsInSupply: 5 },
+    })
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    const preview = previewReveal(game, dennis)
+    expect(preview.totals.troops).toBe(1)
+    expect(preview.pending).toEqual([])
+  })
+
+  test('Chani alone: bond NOT applied (no other Fremen card)', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { handExact: ['Chani, Clever Tactician', 'Dagger'] },
+    })
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    const preview = previewReveal(game, dennis)
+    expect(preview.totals.persuasion).toBe(0)
+  })
+
+  test('Southern Elders alone: +1 Water but no bond persuasion', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { handExact: ['Southern Elders', 'Dagger'] },
+    })
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    const preview = previewReveal(game, dennis)
+    expect(preview.totals.water).toBe(1)
+    expect(preview.totals.persuasion).toBe(0)
+  })
+
+  test('Unswerving Loyalty alone: +1 Troop but bond NOT pending', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { handExact: ['Unswerving Loyalty', 'Dagger'] },
+    })
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    const preview = previewReveal(game, dennis)
+    expect(preview.totals.troops).toBe(1)
+    expect(preview.pending).toEqual([])
+  })
 })
