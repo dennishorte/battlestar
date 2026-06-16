@@ -36,7 +36,8 @@ module.exports = {
   revealEffects: [
     {
       type: 'retreat-troops',
-      amount: 2
+      amount: 2,
+      choice: true,
     }
   ],
 }

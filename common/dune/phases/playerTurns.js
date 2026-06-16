@@ -1250,14 +1250,33 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
 
     case 'retreat-troops': {
       const deployedTroops = game.state.conflict.deployedTroops[player.name] || 0
-      const retreatCount = Math.min(effect.amount, deployedTroops)
-      if (retreatCount > 0) {
-        game.state.conflict.deployedTroops[player.name] -= retreatCount
-        player.incrementCounter('troopsInSupply', retreatCount, { silent: true })
-        game.log.add({
-          template: '{player} retreats {count} troop(s)',
-          args: { player, count: retreatCount },
-        })
+      const maxRetreat = Math.min(effect.amount, deployedTroops)
+      if (maxRetreat > 0) {
+        let retreatCount
+        if (effect.choice) {
+          const retreatChoices = []
+          for (let i = 0; i <= maxRetreat; i++) {
+            retreatChoices.push(game.actions.option({ id: `retreat-${i}`, title: `Retreat ${i} troop(s)` }))
+          }
+          const [retreatChoice] = game.actions.choose(player, retreatChoices, {
+            title: 'Retreat troops from the Conflict',
+          })
+          const retreatId = typeof retreatChoice === 'object' ? retreatChoice.id : null
+          retreatCount = retreatId
+            ? parseInt(retreatId.replace('retreat-', ''))
+            : parseInt(String(retreatChoice).match(/\d+/)[0])
+        }
+        else {
+          retreatCount = maxRetreat
+        }
+        if (retreatCount > 0) {
+          game.state.conflict.deployedTroops[player.name] -= retreatCount
+          player.incrementCounter('troopsInSupply', retreatCount, { silent: true })
+          game.log.add({
+            template: '{player} retreats {count} troop(s)',
+            args: { player, count: retreatCount },
+          })
+        }
       }
       break
     }

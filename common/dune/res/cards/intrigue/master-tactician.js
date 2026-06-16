@@ -38,7 +38,8 @@ module.exports = {
           effects: [
             {
               type: 'retreat-troops',
-              amount: 3
+              amount: 3,
+              choice: true,
             }
           ]
         }

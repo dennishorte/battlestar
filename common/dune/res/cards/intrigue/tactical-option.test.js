@@ -69,6 +69,7 @@ describe("tactical-option", () => {
     driveToDennisCombatIntrigue(game)
     t.choose(game, 'Tactical Option')
     t.choose(game, 'Retreat any number of your Troops')
+    t.choose(game, 'Retreat 2 troop(s)')
 
     const dennis = game.players.byName('dennis')
     // Recon recruited 1 to garrison, 2 deployed: troopsInSupply 0 -> after retreat += 2 = 2
