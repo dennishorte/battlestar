@@ -32,31 +32,18 @@ module.exports = {
     if (!isFlipped) {
       if (space.icon === 'bene-gesserit') {
         const memories = game.state.jessicaMemories?.[player.name] || 0
-        const activateTitle = memories > 0
-          ? `Return ${memories} Memories → Draw ${memories} cards and flip Leader`
-          : 'Flip Leader'
-        const choices = [
-          game.actions.option({ id: 'pass', title: 'Pass' }),
-          game.actions.option({ id: 'activate', title: activateTitle }),
-        ]
-        const [choice] = game.actions.choose(player, choices, {
-          title: 'Lady Jessica: Activate Other Memories?',
-        })
-        const chId = typeof choice === 'object' ? choice.id : choice
-        if (chId !== 'pass' && choice !== 'Pass') {
-          if (memories > 0) {
-            player.incrementCounter('troopsInSupply', memories, { silent: true })
-            game.state.jessicaMemories[player.name] = 0
-            deckEngine.drawCards(game, player, memories)
-          }
-          game.state.jessicaFlipped[player.name] = true
-          game.log.add({
-            template: memories > 0
-              ? '{player}: Other Memories — returns {count} Memories, draws {count} cards, becomes Reverend Mother'
-              : '{player}: Other Memories — becomes Reverend Mother',
-            args: { player, count: memories },
-          })
+        if (memories > 0) {
+          player.incrementCounter('troopsInSupply', memories, { silent: true })
+          game.state.jessicaMemories[player.name] = 0
+          deckEngine.drawCards(game, player, memories)
         }
+        game.state.jessicaFlipped[player.name] = true
+        game.log.add({
+          template: memories > 0
+            ? '{player}: Other Memories — returns {count} Memories, draws {count} cards, becomes Reverend Mother'
+            : '{player}: Other Memories — becomes Reverend Mother',
+          args: { player, count: memories },
+        })
       }
     }
     else {

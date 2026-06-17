@@ -101,7 +101,7 @@ describe('Lady Jessica', () => {
       t.choose(game, 'Secrets')
     }
 
-    test('activation returns memories, draws cards, flips leader', () => {
+    test('automatically returns memories, draws cards, flips leader', () => {
       const game = t.fixture()
       t.setBoard(game, {
         leaders: { dennis: leader },
@@ -114,46 +114,16 @@ describe('Lady Jessica', () => {
       const handBefore = game.zones.byId('dennis.hand').cardlist().length
 
       playSeekAlliesToBG(game)
-      t.choose(game, 'Return 2 Memories → Draw 2 cards and flip Leader')
 
       const dennis = game.players.byName('dennis')
       expect(dennis.troopsInSupply).toBe(supplyBefore + 2)
-      // Seek Allies left hand (-1) and Other Memories drew 2 cards. The board
-      // space itself does not draw cards.
+      // Seek Allies left hand (-1) and Other Memories drew 2 cards.
       expect(game.zones.byId('dennis.hand').cardlist().length).toBe(handBefore + 1)
       expect(game.state.jessicaMemories.dennis).toBe(0)
       expect(game.state.jessicaFlipped.dennis).toBe(true)
     })
 
-    test('Pass leaves memories and unflipped', () => {
-      const game = t.fixture()
-      t.setBoard(game, {
-        leaders: { dennis: leader },
-        dennis: { hand: ['Seek Allies'] },
-        jessicaMemories: { dennis: 1 },
-      })
-      game.run()
-
-      playSeekAlliesToBG(game)
-      t.choose(game, 'Pass')
-
-      expect(game.state.jessicaMemories.dennis).toBe(1)
-      expect(game.state.jessicaFlipped.dennis).toBe(false)
-    })
-
-    test('zero memories: flip is still offered', () => {
-      const game = t.fixture()
-      t.setBoard(game, {
-        leaders: { dennis: leader },
-        dennis: { hand: ['Seek Allies'] },
-      })
-      game.run()
-
-      playSeekAlliesToBG(game)
-      expect(game.waiting?.selectors[0].title).toContain('Other Memories')
-    })
-
-    test('zero memories: activating flips leader without drawing', () => {
+    test('zero memories: flips leader without drawing', () => {
       const game = t.fixture()
       t.setBoard(game, {
         leaders: { dennis: leader },
@@ -163,10 +133,8 @@ describe('Lady Jessica', () => {
 
       const handBefore = game.zones.byId('dennis.hand').cardlist().length
       playSeekAlliesToBG(game)
-      t.choose(game, 'Flip Leader')
 
       expect(game.state.jessicaFlipped.dennis).toBe(true)
-      // No cards drawn (0 memories), only Seek Allies removed from hand
       expect(game.zones.byId('dennis.hand').cardlist().length).toBe(handBefore - 1)
     })
   })
