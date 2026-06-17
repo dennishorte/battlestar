@@ -6,6 +6,9 @@ describe('Lady Jessica', () => {
     expect(leader.name).toBe('Lady Jessica')
     expect(leader.leaderAbility).toContain('Other Memories')
     expect(leader.signetRingAbility).toContain('Spice Agony')
+    expect(leader.flippedName).toBe('Reverend Mother')
+    expect(leader.flippedLeaderAbility).toBeTruthy()
+    expect(leader.flippedSignetRingAbility).toContain('Water of Life')
   })
 
   test('onAssign initializes jessicaMemories / jessicaFlipped', () => {
@@ -210,6 +213,79 @@ describe('Lady Jessica', () => {
       // 1 water spent for the repeat; Secrets' +1 intrigue effect runs twice.
       expect(game.players.byName('dennis').water).toBe(1)
       expect(game.zones.byId('dennis.intrigue').cardlist().length).toBe(intrigueBefore + 2)
+    })
+
+    test('may pay 1 Water to repeat Fremen space effects', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        leaders: { dennis: leader },
+        dennis: { water: 2, hand: ['Seek Allies'] },
+        jessicaFlipped: { dennis: true },
+      })
+      game.run()
+
+      const handBefore = game.zones.byId('dennis.hand').cardlist().length
+
+      t.choose(game, 'Agent Turn.Seek Allies')
+      t.choose(game, 'Fremkit')
+      t.choose(game, 'Fremkit') // resolve Fremkit before Seek Allies
+      t.choose(game, 'Pay 1 Water to repeat Fremkit effects')
+
+      // 1 water spent; Fremkit draws 1 card twice. Net: -1 played +2 drawn = +1.
+      expect(game.players.byName('dennis').water).toBe(1)
+      expect(game.zones.byId('dennis.hand').cardlist().length).toBe(handBefore + 1)
+    })
+
+    test('Pass skips repeat and leaves water unchanged', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        leaders: { dennis: leader },
+        dennis: { water: 1, hand: ['Seek Allies'] },
+        jessicaFlipped: { dennis: true },
+      })
+      game.run()
+
+      t.choose(game, 'Agent Turn.Seek Allies')
+      t.choose(game, 'Secrets')
+      t.choose(game, 'Secrets')
+      t.choose(game, 'Pass')
+
+      expect(game.players.byName('dennis').water).toBe(1)
+    })
+
+    test('no repeat prompt when flipped with 0 water', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        leaders: { dennis: leader },
+        dennis: { water: 0, hand: ['Seek Allies'] },
+        jessicaFlipped: { dennis: true },
+      })
+      game.run()
+
+      t.choose(game, 'Agent Turn.Seek Allies')
+      t.choose(game, 'Secrets')
+      t.choose(game, 'Secrets')
+
+      expect(game.waiting?.selectors[0].title).not.toContain('Reverend Mother')
+    })
+
+    test('Other Memories does not re-trigger after flip', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        leaders: { dennis: leader },
+        dennis: { water: 2, hand: ['Seek Allies'] },
+        jessicaFlipped: { dennis: true },
+        jessicaMemories: { dennis: 3 },
+      })
+      game.run()
+
+      t.choose(game, 'Agent Turn.Seek Allies')
+      t.choose(game, 'Secrets')
+      t.choose(game, 'Secrets')
+
+      // Should get Reverend Mother prompt, not Other Memories
+      expect(game.waiting?.selectors[0].title).not.toContain('Other Memories')
+      expect(game.waiting?.selectors[0].title).toContain('Reverend Mother')
     })
   })
 })

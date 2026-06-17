@@ -32,6 +32,7 @@
                         :name="entry.leader.name"
                         :leader="entry.leader"
                         :feyd-position="entry.feydPosition"
+                        :jessica-flipped="entry.jessicaFlipped"
                         class="leader-chip" />
         <span v-else class="dim">—</span>
       </div>
@@ -279,6 +280,7 @@ export default {
           hasHighCouncil: !!player.hasHighCouncil,
           leader: this.game.state.leaders?.[player.name] || null,
           feydPosition: this.game.state.feydTrack?.[player.name] || null,
+          jessicaFlipped: this.game.state.jessicaFlipped?.[player.name] || false,
           icons,
         }
       })

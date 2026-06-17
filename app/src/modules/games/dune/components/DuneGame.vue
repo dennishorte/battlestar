@@ -177,7 +177,7 @@ export default {
         return null
       }
       if (kind === 'leader') {
-        return leadersById[id] || null
+        return leadersById[id] || leadersByName[id] || null
       }
       if (kind === 'board-space') {
         return spacesById[id] || null

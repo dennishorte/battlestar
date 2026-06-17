@@ -33,14 +33,15 @@ function selectLeaders(game) {
   const selectors = game.players.all().map(player => ({
     actor: player.name,
     title: 'Choose a Leader',
-    choices: dealt[player.name].map(l => l.name),
+    choices: dealt[player.name].map(l => game.actions.option({ id: l.name, title: l.name, kind: 'leader' })),
   }))
 
   const responses = game.requestInputMany(selectors)
 
   for (const response of responses) {
     const player = game.players.byName(response.actor)
-    const chosenName = response.selection[0]
+    const sel = response.selection[0]
+    const chosenName = typeof sel === 'object' ? sel.id || sel.title : sel
     const leader = dealt[player.name].find(l => l.name === chosenName)
     assignLeader(game, player, leader)
   }

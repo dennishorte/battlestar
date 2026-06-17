@@ -6,7 +6,7 @@
                          :faction="spaceIcon"
                          size=".85em" />
         <DuneAgentIcon v-else-if="spaceIcon" :type="spaceIcon" size=".85em" />
-        <span class="chip-name">{{ name }}</span>
+        <span class="chip-name">{{ isJessica && jessicaFlipped && leader.flippedName ? leader.flippedName : name }}</span>
         <span class="chip-combat" v-if="boardSpace?.isCombatSpace" title="Combat">C</span>
         <span class="chip-detail" v-if="detail">{{ detail }}</span>
       </span>
@@ -22,7 +22,7 @@
     <div v-if="showModal" class="dune-modal-backdrop" @click="showModal = false">
       <div class="dune-modal" @click.stop>
         <div class="modal-header" v-if="!card">
-          <strong>{{ name }}</strong>
+          <strong>{{ modalTitle }}</strong>
           <button class="modal-close" @click="showModal = false">&times;</button>
         </div>
         <div class="modal-body">
@@ -37,6 +37,17 @@
               <span class="label">Training Track:</span>
               <DuneFeydTrack :current-position="feydPosition || 'start'" />
             </div>
+            <template v-if="leaderBackSections.length">
+              <div class="flip-divider">
+                <span>{{ jessicaFlipped ? 'Front Side (Lady Jessica)' : 'Back Side (Reverend Mother)' }}</span>
+              </div>
+              <div v-for="(section, i) in leaderBackSections" :key="'back-' + i" class="field back-side">
+                <span class="label">{{ section.label }}:</span>
+                <div v-for="(line, li) in section.lines"
+                     :key="li"
+                     :class="line.startsWith('·') ? 'bullet' : ''">{{ line }}</div>
+              </div>
+            </template>
           </template>
           <template v-else-if="boardSpace">
             <div class="field" v-if="boardSpace.cost">
@@ -98,6 +109,7 @@ export default {
     boardSpace: { type: Object, default: null },
     subtitle: { type: String, default: null },
     feydPosition: { type: String, default: null },
+    jessicaFlipped: { type: Boolean, default: false },
   },
 
   data() {
@@ -143,6 +155,17 @@ export default {
       return this.leader?.name === 'Feyd-Rautha Harkonnen'
     },
 
+    isJessica() {
+      return this.leader?.name === 'Lady Jessica'
+    },
+
+    modalTitle() {
+      if (this.isJessica && this.jessicaFlipped && this.leader.flippedName) {
+        return this.leader.flippedName
+      }
+      return this.name
+    },
+
     subtitleLines() {
       const lines = this.subtitle
         ? this.subtitle.split('\n').map(l => l.trim()).filter(Boolean)
@@ -163,14 +186,34 @@ export default {
       }
       const sections = []
       sections.push({ label: 'House', lines: [this.leader.house || 'None'] })
-      if (this.leader.startingEffect) {
+      const flipped = this.isJessica && this.jessicaFlipped
+      const ability = flipped ? this.leader.flippedLeaderAbility : this.leader.leaderAbility
+      const signet = flipped ? this.leader.flippedSignetRingAbility : this.leader.signetRingAbility
+      if (!flipped && this.leader.startingEffect) {
         sections.push({ label: 'Starting', lines: textLines(this.leader.startingEffect) })
       }
-      if (this.leader.leaderAbility) {
-        sections.push({ label: 'Ability', lines: textLines(this.leader.leaderAbility) })
+      if (ability) {
+        sections.push({ label: 'Ability', lines: textLines(ability) })
       }
-      if (this.leader.signetRingAbility) {
-        sections.push({ label: 'Signet Ring', lines: textLines(this.leader.signetRingAbility) })
+      if (signet) {
+        sections.push({ label: 'Signet Ring', lines: textLines(signet) })
+      }
+      return sections
+    },
+
+    leaderBackSections() {
+      if (!this.isJessica || !this.leader.flippedLeaderAbility) {
+        return []
+      }
+      const sections = []
+      const flipped = this.jessicaFlipped
+      const ability = flipped ? this.leader.leaderAbility : this.leader.flippedLeaderAbility
+      const signet = flipped ? this.leader.signetRingAbility : this.leader.flippedSignetRingAbility
+      if (ability) {
+        sections.push({ label: 'Ability', lines: textLines(ability) })
+      }
+      if (signet) {
+        sections.push({ label: 'Signet Ring', lines: textLines(signet) })
       }
       return sections
     },
@@ -394,5 +437,31 @@ export default {
   font-weight: 600;
   color: #8b6914;
   margin-right: .3em;
+}
+
+.flip-divider {
+  display: flex;
+  align-items: center;
+  gap: .5em;
+  margin: .6em 0 .4em;
+  color: #8a7a68;
+  font-size: .8em;
+  font-style: italic;
+}
+
+.flip-divider::before,
+.flip-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #d4c8a8;
+}
+
+.back-side .label {
+  color: #8a7a68;
+}
+
+.back-side {
+  opacity: .75;
 }
 </style>

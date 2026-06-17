@@ -11,6 +11,9 @@ module.exports = {
   leaderAbility: 'Other Memories\nWhen you send an Agent to a Bene Gesserit board space:\n· Return all your memories to your supply\n· Draw a card for each one\n· Flip this Leader over',
   signetRingAbility: 'Spice Agony\nPay 1 Spice:\n· +1 Intrigue card\n· Move a troop from your supply to the BG area (becomes a memory)',
   complexity: 2,
+  flippedName: 'Reverend Mother',
+  flippedLeaderAbility: 'Voice of Memory\nWhen you send an Agent to a Bene Gesserit or Fremen board space:\n· Pay 1 Water to repeat that space\'s effects',
+  flippedSignetRingAbility: 'Water of Life\nPay 1 Spice:\n· +1 Water',
 
   onAssign(game, _player) {
     if (!game.state.jessicaMemories) {
