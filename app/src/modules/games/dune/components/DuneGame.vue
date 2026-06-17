@@ -127,33 +127,53 @@ export default {
     document.title = this.game.settings.name || 'Dune Imperium: Uprising'
 
     // Canonical lookup path: resolve by id when a structured choice provides
-    // one (see BaseActionManager.chooseCards). Card ids are globally unique
-    // across Dune decks, so a single flat by-id table is sufficient.
+    // one (see BaseActionManager.chooseCards).
     //
-    // Name-based lookup remains as a fallback for engine sites that still
-    // emit bare strings; within that fallback, decks are scanned in priority
-    // order so the most commonly selected deck wins collisions (e.g.
+    // Card definition ids are NOT globally unique — the same name/id can exist
+    // in more than one deck (e.g. "Crysknife" is both an imperium card and an
+    // intrigue card). So the option's `kind` decides which deck(s) to search,
+    // and per-deck id tables keep the collisions apart. A flat id table would
+    // be ambiguous: whichever deck was scanned last would silently win, which
+    // is exactly how the intrigue chip used to show for the imperium card.
+    //
+    // Within a kind, and for the bare-name fallback, decks are scanned in
+    // priority order so the most commonly selected deck wins collisions (e.g.
     // imperium "Desert Power" beats conflict "Desert Power").
-    const deckPriority = [
-      dune.res.cards.imperiumCards,
-      dune.res.cards.reserveCards,
-      dune.res.cards.starterCards,
-      dune.res.cards.contractCards,
-      dune.res.cards.techCards,
-      dune.res.cards.intrigueCards,
-      dune.res.cards.conflictCards,
-    ]
-    const cardsById = {}
+    const decksByName = {
+      imperium: dune.res.cards.imperiumCards,
+      reserve: dune.res.cards.reserveCards,
+      starter: dune.res.cards.starterCards,
+      contract: dune.res.cards.contractCards,
+      tech: dune.res.cards.techCards,
+      intrigue: dune.res.cards.intrigueCards,
+      conflict: dune.res.cards.conflictCards,
+    }
+    const deckPriority = ['imperium', 'reserve', 'starter', 'contract', 'tech', 'intrigue', 'conflict']
+
+    // Map the engine's option `kind` to the ordered set of decks it can name.
+    // Anything not listed here (or a card option with no kind) falls back to
+    // the full priority scan.
+    const decksByKind = {
+      'imperium-card': ['imperium', 'reserve', 'starter', 'contract', 'tech'],
+      'intrigue-card': ['intrigue'],
+      'conflict-card': ['conflict'],
+      'tech-card': ['tech'],
+      'contract-card': ['contract', 'imperium'],
+    }
+
+    const idMapsByDeck = {}
     const cardsByName = {}
-    for (const deck of deckPriority) {
-      for (const card of deck) {
-        if (card.id) {
-          cardsById[card.id] = card
+    for (const deckName of deckPriority) {
+      const map = {}
+      for (const card of decksByName[deckName]) {
+        if (card.id && !(card.id in map)) {
+          map[card.id] = card
         }
         if (!(card.name in cardsByName)) {
           cardsByName[card.name] = card
         }
       }
+      idMapsByDeck[deckName] = map
     }
     const leadersByName = {}
     const leadersById = {}
@@ -172,6 +192,25 @@ export default {
       }
     }
 
+    const resolveCardById = (kind, id) => {
+      const order = decksByKind[kind] || deckPriority
+      for (const deckName of order) {
+        const hit = idMapsByDeck[deckName]?.[id]
+        if (hit) {
+          return hit
+        }
+      }
+      // Last resort: the kind's decks didn't have it, so scan everything in
+      // priority order rather than return nothing.
+      for (const deckName of deckPriority) {
+        const hit = idMapsByDeck[deckName]?.[id]
+        if (hit) {
+          return hit
+        }
+      }
+      return null
+    }
+
     const resolveByKindId = (kind, id) => {
       if (!id) {
         return null
@@ -182,8 +221,7 @@ export default {
       if (kind === 'board-space') {
         return spacesById[id] || null
       }
-      // Default: card-like. Card ids are unique across all Dune decks.
-      return cardsById[id] || null
+      return resolveCardById(kind, id)
     }
 
     function spaceSubtitle(space) {
