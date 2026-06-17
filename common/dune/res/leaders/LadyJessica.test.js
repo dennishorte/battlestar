@@ -141,7 +141,7 @@ describe('Lady Jessica', () => {
       expect(game.state.jessicaFlipped.dennis).toBe(false)
     })
 
-    test('zero memories: no prompt', () => {
+    test('zero memories: flip is still offered', () => {
       const game = t.fixture()
       t.setBoard(game, {
         leaders: { dennis: leader },
@@ -150,9 +150,24 @@ describe('Lady Jessica', () => {
       game.run()
 
       playSeekAlliesToBG(game)
-      // No Other Memories prompt offered — game proceeds.
-      expect(game.waiting?.selectors[0].title).not.toContain('Other Memories')
-      expect(game.state.jessicaFlipped.dennis).toBe(false)
+      expect(game.waiting?.selectors[0].title).toContain('Other Memories')
+    })
+
+    test('zero memories: activating flips leader without drawing', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        leaders: { dennis: leader },
+        dennis: { hand: ['Seek Allies'] },
+      })
+      game.run()
+
+      const handBefore = game.zones.byId('dennis.hand').cardlist().length
+      playSeekAlliesToBG(game)
+      t.choose(game, 'Flip Leader')
+
+      expect(game.state.jessicaFlipped.dennis).toBe(true)
+      // No cards drawn (0 memories), only Seek Allies removed from hand
+      expect(game.zones.byId('dennis.hand').cardlist().length).toBe(handBefore - 1)
     })
   })
 
