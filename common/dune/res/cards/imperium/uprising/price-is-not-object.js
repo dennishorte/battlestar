@@ -33,19 +33,12 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
 
-  agentEffect(game, player) {
-    if (game.state.turnTracking) {
-      game.state.turnTracking.acquireWithSolari = true
-      game.state.turnTracking.acquireToHand = true
-    }
-    // Persist across the Agent → Reveal turn boundary (turnTracking is
-    // reset at the start of every turn, including the player's own Reveal
-    // Turn where acquireCardsPhase actually consumes these flags).
-    game.state.persistentFlags = game.state.persistentFlags || {}
-    const flags = game.state.persistentFlags[player.name] || {}
-    flags.acquireWithSolari = true
-    flags.acquireToHand = true
-    game.state.persistentFlags[player.name] = flags
+  // Agent ability: immediately acquire one card to your hand, paying with
+  // Solari instead of Persuasion. This resolves inline during the Agent Turn
+  // (the card text overrides the normal Reveal-Turn acquisition rule); it
+  // does NOT carry over to the player's Reveal Turn.
+  agentEffect(game, player, card, { acquireCard }) {
+    acquireCard(game, player, { useSolari: true, toHand: true })
   },
 
   onAcquire(game, player, card, { resolveEffect }) {

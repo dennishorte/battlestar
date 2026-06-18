@@ -44,26 +44,21 @@ describe("price-is-not-object", () => {
     }
   }
 
-  test('agent ability: next acquire spends Solari (not Persuasion) and lands in hand', () => {
+  test('agent ability: acquires inline (during the Agent Turn) for Solari, into hand', () => {
     const game = t.fixture()
     // Reliable Informant is cost-3 and "All"-compatible, so it'll be in the
     // imperium deck for our default fixture.
     injectIntoRow(game, 'Reliable Informant')
     t.setBoard(game, {
-      // Empty opponent hands so their turns auto-resolve to Reveal Turn —
-      // keeps the flow short enough to assert dennis's reveal-turn acquire
-      // behavior without driving every other player's prompts.
+      // Empty opponent hands so their turns auto-resolve to Reveal Turn.
       dennis: { handExact: ['Price is Not Object', 'Dagger', 'Diplomacy', 'Convincing Argument', 'Reconnaissance'], solari: 10 },
       micah: { handExact: [] },
       scott: { handExact: [] },
     })
     game.run()
 
+    // Playing the card on the Agent Turn immediately offers the acquisition.
     resolveAgentToSecrets(game)
-
-    // After agent turn, dennis still has 1 agent. Take a Reveal Turn now —
-    // acquireWithSolari is still set, so the acquire phase uses Solari.
-    t.choose(game, 'Reveal Turn')
 
     let choices = t.currentChoices(game)
     expect(choices).toContain('Reliable Informant')
@@ -71,10 +66,8 @@ describe("price-is-not-object", () => {
     const persuasionBeforeAcquire = game.players.byName('dennis').getCounter('persuasion')
 
     t.choose(game, 'Reliable Informant')
-    // Reliable Informant costs 2 persuasion; with the flag set, that 2 is
-    // taken from solari (10 - 2 = 8) and persuasion is unchanged. Capture
-    // both immediately — passing through the rest of the acquire phase will
-    // eventually advance to the next round, which resets persuasion.
+    // Reliable Informant costs 2; with the agent ability that 2 is taken from
+    // Solari (10 - 2 = 8) and Persuasion is unchanged.
     const dennis = game.players.byName('dennis')
     expect(dennis.getCounter('solari')).toBe(8)
     expect(dennis.getCounter('persuasion')).toBe(persuasionBeforeAcquire)
@@ -87,7 +80,11 @@ describe("price-is-not-object", () => {
     ).toBe(false)
   })
 
-  test('agent ability: flag clears after one acquisition', () => {
+  test('agent ability: acquisition does not carry over to the Reveal Turn', () => {
+    // Regression: the ability used to defer to acquireCardsPhase via persisted
+    // flags that only cleared after a successful acquire — passing leaked the
+    // Solari-acquire offer into every future Reveal Turn. It must now resolve
+    // entirely inline on the Agent Turn and spend Solari only once.
     const game = t.fixture()
     injectIntoRow(game, 'Reliable Informant')
     t.setBoard(game, {
@@ -97,19 +94,24 @@ describe("price-is-not-object", () => {
     })
     game.run()
 
+    // Acquire inline during the Agent Turn (10 - 2 = 8 Solari).
     resolveAgentToSecrets(game)
-    t.choose(game, 'Reveal Turn')
     t.choose(game, 'Reliable Informant')
-    // Pass remaining acquire budget (solari + persuasion).
+    expect(game.players.byName('dennis').getCounter('solari')).toBe(8)
+
+    // Now take the Reveal Turn. Acquisition here is Persuasion-only; Solari is
+    // never offered again, so it can only go up (turn income), never down from
+    // a leaked second Solari acquisition.
+    const solariBeforeReveal = game.players.byName('dennis').getCounter('solari')
+    t.choose(game, 'Reveal Turn')
     let choices = t.currentChoices(game)
     while (game.waiting && choices.includes('Pass')) {
       t.choose(game, 'Pass')
       choices = t.currentChoices(game)
     }
 
-    // After the acquire, both flags should clear.
-    expect(game.state.turnTracking.acquireWithSolari).toBeFalsy()
-    expect(game.state.turnTracking.acquireToHand).toBeFalsy()
+    expect(game.players.byName('dennis').getCounter('solari')).toBeGreaterThanOrEqual(solariBeforeReveal)
+    expect(game.state.persistentFlags).toBeUndefined()
   })
 
   test('reveal: +2 Persuasion, +2 Solari', () => {

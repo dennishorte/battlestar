@@ -57,13 +57,11 @@ function playerTurnsPhase(game) {
 
       // Initialize per-turn tracking state up front so Plot Intrigue at
       // start of turn reads sensible defaults (recalledSpy: false, etc.).
-      // A few flags must span Agent Turn → Reveal Turn (e.g. Price is Not
-      // Object sets them on Agent Turn but they're consumed in
-      // acquireCardsPhase during the same player's Reveal Turn, possibly
-      // several other-player turns later). Pull those off persistent
-      // per-player state so they survive turnTracking resets.
-      game.state.persistentFlags = game.state.persistentFlags || {}
-      const persisted = game.state.persistentFlags[player.name] || {}
+      // The acquire-placement flags (acquireToHand / acquireToTopOfDeck) are
+      // set by plot intrigues played during the same turn as the Reveal and
+      // consumed in acquireCardsPhase that same turn, so they reset cleanly
+      // here. Agent-turn acquisition (Price is Not Object) resolves inline
+      // during the Agent Turn and needs no cross-turn bridging.
       game.state.turnTracking = {
         recalledSpy: false,
         completedContract: false,
@@ -72,9 +70,8 @@ function playerTurnsPhase(game) {
         sentToFactionSpace: false,
         spaceIcon: null,
         garrisonAtTurnStart: player.troopsInGarrison,
-        acquireWithSolari: !!persisted.acquireWithSolari,
-        acquireToHand: !!persisted.acquireToHand,
-        acquireToTopOfDeck: !!persisted.acquireToTopOfDeck,
+        acquireToHand: false,
+        acquireToTopOfDeck: false,
         unitsDeployedThisTurn: 0,
         distractionArmed: false,
         distractionFired: false,
@@ -406,123 +403,121 @@ function revealTurn(game, player) {
 }
 
 /**
- * Let player spend persuasion to acquire cards.
+ * Acquire a single Imperium card, paying with Persuasion (default) or Solari.
+ * Returns true if a card was acquired, false if the player passed or had no
+ * affordable card. Handles reserved-card discounts, placement (discard /
+ * hand / top of deck), troop-on-acquire, and per-card onAcquire side effects.
+ *
+ * `opts.useSolari` pays from Solari instead of Persuasion (Price is Not
+ * Object's Agent ability). `opts.toHand` / `opts.toTopOfDeck` override the
+ * default discard-pile placement; if neither is passed they fall back to the
+ * current turn's placement flags so reveal-turn intrigues still apply.
+ */
+function acquireOneCard(game, player, opts = {}) {
+  const useSolari = !!opts.useSolari
+  const toTopOfDeck = opts.toTopOfDeck ?? !!game.state.turnTracking?.acquireToTopOfDeck
+  const toHand = opts.toHand ?? !!game.state.turnTracking?.acquireToHand
+
+  const budget = useSolari ? player.solari : player.getCounter('persuasion')
+  if (budget <= 0) {
+    return false
+  }
+
+  const acquirableCards = getAcquirableCards(game, player, budget)
+  if (acquirableCards.length === 0) {
+    return false
+  }
+
+  const resource = useSolari ? 'Solari' : 'Persuasion'
+  // Use chooseCards so name collisions (e.g. imperium + reserve cards
+  // happening to share a title) resolve by card id rather than by
+  // iteration order. Pass is represented as a sentinel entry so it
+  // mixes cleanly into the card list.
+  const passSentinel = { name: 'Pass', id: '__pass__' }
+  const [chosen] = game.actions.chooseCards(player, [passSentinel, ...acquirableCards], {
+    title: `Acquire cards (${budget} ${resource} available)`,
+    kind: 'imperium-card',
+  })
+
+  if (!chosen || chosen.id === '__pass__') {
+    return false
+  }
+
+  const card = chosen
+  const effectiveCost = acquireCost(game, player, card)
+  player.decrementCounter(useSolari ? 'solari' : 'persuasion', effectiveCost, { silent: true })
+
+  // If this was a reserved card, clear that reservation entry
+  if (isReservedFor(game, player, card)) {
+    game.log.add({
+      template: '{player}: acquires reserved {card} at -1 Persuasion (Manipulate)',
+      args: { player, card },
+    })
+    game.state.reservedCards = game.state.reservedCards.filter(
+      entry => !(entry.player === player.name && entry.cardId === card.id)
+    )
+  }
+
+  // Acquire to top of deck, hand, or discard pile
+  if (toTopOfDeck) {
+    const deckZone = game.zones.byId(`${player.name}.deck`)
+    card.moveTo(deckZone)
+    game.log.add({ template: '{player} acquires {card} to top of deck', args: { player, card }, summary: true })
+    deckEngine.refillImperiumRow(game)
+  }
+  else if (toHand) {
+    const handZone = game.zones.byId(`${player.name}.hand`)
+    card.moveTo(handZone)
+    game.log.add({ template: '{player} acquires {card} to hand', args: { player, card }, summary: true })
+    deckEngine.refillImperiumRow(game)
+  }
+  else {
+    deckEngine.acquireCard(game, player, card)
+  }
+
+  // Troop on acquire (Call to Arms)
+  if (game.state.turnTracking?.troopOnAcquire) {
+    const recruit = Math.min(1, player.troopsInSupply)
+    if (recruit > 0) {
+      player.decrementCounter('troopsInSupply', recruit, { silent: true })
+      player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+      game.log.add({ template: '{player}: +1 Troop (Call to Arms)', args: { player } })
+    }
+  }
+
+  // Per-card onAcquire hook lives on the card definition.
+  if (typeof card.definition?.onAcquire === 'function') {
+    card.definition.onAcquire(game, player, card, { resolveEffect })
+  }
+
+  // Guild Spy: if you acquire The Spice Must Flow this turn, gain +1
+  // influence with each faction you are spying on.
+  if (card.defId === 'the-spice-must-flow' && game.state.turnTracking?.guildSpyTSMF) {
+    const spyMod = require('../systems/spies.js')
+    const boardSpaces = getBoardSpaces()
+    const connectedSpaceIds = spyMod.getSpyConnectedSpaces(game, player)
+    const spiedFactions = new Set()
+    for (const spaceId of connectedSpaceIds) {
+      const space = boardSpaces.find(s => s.id === spaceId)
+      if (space?.faction) {
+        spiedFactions.add(space.faction)
+      }
+    }
+    for (const faction of spiedFactions) {
+      factions.gainInfluence(game, player, faction, 1)
+    }
+    game.state.turnTracking.guildSpyTSMF = false
+  }
+
+  return true
+}
+
+/**
+ * Let player spend persuasion to acquire cards during their Reveal Turn.
  */
 function acquireCardsPhase(game, player) {
-  while (true) {
-    const useSolari = game.state.turnTracking?.acquireWithSolari
-    const budget = useSolari ? player.solari : player.getCounter('persuasion')
-    if (budget <= 0) {
-      break
-    }
-
-    const acquirableCards = getAcquirableCards(game, player, budget)
-    if (acquirableCards.length === 0) {
-      break
-    }
-
-    const resource = useSolari ? 'Solari' : 'Persuasion'
-    // Use chooseCards so name collisions (e.g. imperium + reserve cards
-    // happening to share a title) resolve by card id rather than by
-    // iteration order. Pass is represented as a sentinel entry so it
-    // mixes cleanly into the card list.
-    const passSentinel = { name: 'Pass', id: '__pass__' }
-    const [chosen] = game.actions.chooseCards(player, [passSentinel, ...acquirableCards], {
-      title: `Acquire cards (${budget} ${resource} available)`,
-      kind: 'imperium-card',
-    })
-
-    if (!chosen || chosen.id === '__pass__') {
-      break
-    }
-
-    const card = chosen
-    if (card) {
-      const effectiveCost = acquireCost(game, player, card)
-
-      // Pay with persuasion (or solari if Price is Not Object active)
-      if (game.state.turnTracking?.acquireWithSolari) {
-        player.decrementCounter('solari', effectiveCost, { silent: true })
-      }
-      else {
-        player.decrementCounter('persuasion', effectiveCost, { silent: true })
-      }
-
-      // If this was a reserved card, clear that reservation entry
-      if (isReservedFor(game, player, card)) {
-        game.log.add({
-          template: '{player}: acquires reserved {card} at -1 Persuasion (Manipulate)',
-          args: { player, card },
-        })
-        game.state.reservedCards = game.state.reservedCards.filter(
-          entry => !(entry.player === player.name && entry.cardId === card.id)
-        )
-      }
-
-      // Acquire to top of deck, hand, or discard pile
-      if (game.state.turnTracking?.acquireToTopOfDeck) {
-        const deckZone = game.zones.byId(`${player.name}.deck`)
-        card.moveTo(deckZone)
-        game.log.add({ template: '{player} acquires {card} to top of deck', args: { player, card }, summary: true })
-        deckEngine.refillImperiumRow(game)
-      }
-      else if (game.state.turnTracking?.acquireToHand) {
-        const handZone = game.zones.byId(`${player.name}.hand`)
-        card.moveTo(handZone)
-        game.log.add({ template: '{player} acquires {card} to hand', args: { player, card }, summary: true })
-        deckEngine.refillImperiumRow(game)
-      }
-      else {
-        deckEngine.acquireCard(game, player, card)
-      }
-
-      // Price is Not Object: solari-acquire applies to one acquisition only.
-      // Clear both turnTracking AND persistent storage so the flag doesn't
-      // leak into the next round.
-      if (game.state.turnTracking?.acquireWithSolari) {
-        game.state.turnTracking.acquireWithSolari = false
-        game.state.turnTracking.acquireToHand = false
-        const flags = game.state.persistentFlags?.[player.name]
-        if (flags) {
-          flags.acquireWithSolari = false
-          flags.acquireToHand = false
-        }
-      }
-
-      // Troop on acquire (Call to Arms)
-      if (game.state.turnTracking?.troopOnAcquire) {
-        const recruit = Math.min(1, player.troopsInSupply)
-        if (recruit > 0) {
-          player.decrementCounter('troopsInSupply', recruit, { silent: true })
-          player.incrementCounter('troopsInGarrison', recruit, { silent: true })
-          game.log.add({ template: '{player}: +1 Troop (Call to Arms)', args: { player } })
-        }
-      }
-
-      // Per-card onAcquire hook lives on the card definition.
-      if (typeof card.definition?.onAcquire === 'function') {
-        card.definition.onAcquire(game, player, card, { resolveEffect })
-      }
-
-      // Guild Spy: if you acquire The Spice Must Flow this turn, gain +1
-      // influence with each faction you are spying on.
-      if (card.defId === 'the-spice-must-flow' && game.state.turnTracking?.guildSpyTSMF) {
-        const spyMod = require('../systems/spies.js')
-        const boardSpaces = getBoardSpaces()
-        const connectedSpaceIds = spyMod.getSpyConnectedSpaces(game, player)
-        const spiedFactions = new Set()
-        for (const spaceId of connectedSpaceIds) {
-          const space = boardSpaces.find(s => s.id === spaceId)
-          if (space?.faction) {
-            spiedFactions.add(space.faction)
-          }
-        }
-        for (const faction of spiedFactions) {
-          factions.gainInfluence(game, player, faction, 1)
-        }
-        game.state.turnTracking.guildSpyTSMF = false
-      }
-    }
+  while (acquireOneCard(game, player)) {
+    // keep offering acquisitions until the player passes or can't afford one
   }
 }
 
@@ -757,7 +752,7 @@ function resolveCardAgentAbility(game, player, card) {
 
   // Per-card agentEffect method lives on the card definition.
   if (typeof card.definition?.agentEffect === 'function') {
-    card.definition.agentEffect(game, player, card, { resolveEffect })
+    card.definition.agentEffect(game, player, card, { resolveEffect, acquireCard: acquireOneCard })
     return
   }
 
