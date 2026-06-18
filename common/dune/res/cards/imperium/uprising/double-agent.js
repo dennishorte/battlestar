@@ -17,11 +17,11 @@ module.exports = {
   ],
   factionAccess: [],
   spyAccess: false,
-  agentAbility: "+1 Spy on the board space your sent an Agent to this turn. You may place this Spy ont he same observation post as another player's Spy",
+  agentAbility: "+1 Spy on the board space you sent an Agent to this turn. You may place this Spy on the same observation post as another player's Spy",
   revealPersuasion: 1,
   revealSwords: 1,
   revealAbility: null,
-  factionAffiliation: null,
+  factionAffiliation: ["emperor", "guild"],
   vpsAvailable: 0,
   hasTech: false,
   hasShipping: false,
@@ -36,7 +36,10 @@ module.exports = {
   hasSardaukar: false,
 
   agentEffect(game, player) {
-    spies.placeSpy(game, player, { allowOccupied: true })
+    spies.placeSpy(game, player, {
+      allowOccupied: true,
+      spaceId: game.state.turnTracking?.agentSpaceId,
+    })
   },
 
 }

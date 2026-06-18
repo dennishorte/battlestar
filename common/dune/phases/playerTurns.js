@@ -69,6 +69,7 @@ function playerTurnsPhase(game) {
         sentToMakerSpace: false,
         sentToFactionSpace: false,
         spaceIcon: null,
+        agentSpaceId: null,
         garrisonAtTurnStart: player.troopsInGarrison,
         acquireToHand: false,
         acquireToTopOfDeck: false,
@@ -236,6 +237,7 @@ function agentTurn(game, player, card) {
 
   // Track space type for conditional cards
   game.state.turnTracking.spaceIcon = space.icon
+  game.state.turnTracking.agentSpaceId = space.id
   if (space.isMakerSpace) {
     game.state.turnTracking.sentToMakerSpace = true
   }

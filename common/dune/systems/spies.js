@@ -30,13 +30,15 @@ function postIcons(post) {
  *     (used by abilities like Double Agent that explicitly grant this).
  *   - factions: array of faction ids; restrict to posts connected to a space
  *     of one of those factions (e.g. Reliable Informant: emperor/BG/fremen).
+ *   - spaceId: board space id; restrict to posts connected to that space
+ *     (e.g. Double Agent: the space the agent was sent to this turn).
  */
 function placeSpy(game, player, options = {}) {
   if (player.spiesInSupply <= 0) {
     return false
   }
 
-  const { allowOccupied = false, factions = null, icons = null } = options
+  const { allowOccupied = false, factions = null, icons = null, spaceId = null } = options
   const factionFilter = factions ? new Set(factions) : null
   const iconFilter = icons ? new Set(icons) : null
 
@@ -46,6 +48,9 @@ function placeSpy(game, player, options = {}) {
       return false
     }
     if (!allowOccupied && occupants.length > 0) {
+      return false
+    }
+    if (spaceId && !post.spaces.includes(spaceId)) {
       return false
     }
     if (factionFilter) {
