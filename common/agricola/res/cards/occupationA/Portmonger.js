@@ -6,6 +6,9 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you take 1/2/3+ food from a food accumulation space, you also get 1 vegetable/grain/reed.",
+  matches_onAction(game, player, actionId, resources) {
+    return !!(resources && resources.food > 0)
+  },
   onAction(game, player, actionId, resources) {
     if (resources && resources.food > 0) {
       const foodTaken = resources.food
