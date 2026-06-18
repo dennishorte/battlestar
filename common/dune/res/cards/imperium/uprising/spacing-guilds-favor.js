@@ -11,8 +11,12 @@ module.exports = {
   persuasionCost: 5,
   acquisitionBonus: null,
   passiveAbility: "When this card is discarded:\n· +2 Spice",
-  agentIcons: [],
-  factionAccess: [],
+  agentIcons: [
+    "green"
+  ],
+  factionAccess: [
+    "guild"
+  ],
   spyAccess: false,
   agentAbility: "Draw 1 card",
   revealPersuasion: 2,

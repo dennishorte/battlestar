@@ -21,8 +21,10 @@ describe('spacing-guilds-favor', () => {
     })
     game.run()
 
-    // No agent-icon/faction-access cards in hand → "Choose Turn" auto-resolves
-    // to Reveal Turn. With <3 spice, the reveal-effect prompt does not fire.
+    // Card has a green agent icon + Spacing Guild access, so "Choose Turn"
+    // offers an Agent Turn; choose Reveal instead. With <3 spice, the
+    // reveal-effect prompt does not fire.
+    t.choose(game, 'Reveal Turn')
 
     const dennis = game.players.byName('dennis')
     expect(dennis.getCounter('persuasion')).toBe(2)
@@ -36,7 +38,8 @@ describe('spacing-guilds-favor', () => {
     })
     game.run()
 
-    // Choose Turn auto-resolves; reveal-effect prompt fires next.
+    // Choose Reveal Turn; reveal-effect prompt fires next.
+    t.choose(game, 'Reveal Turn')
     t.choose(game, 'Pay 3 Spice for +1 Influence')
     t.choose(game, 'fremen')
 
@@ -53,7 +56,8 @@ describe('spacing-guilds-favor', () => {
     })
     game.run()
 
-    // Choose Turn auto-resolves; reveal-effect prompt fires next.
+    // Choose Reveal Turn; reveal-effect prompt fires next.
+    t.choose(game, 'Reveal Turn')
     t.choose(game, 'Pass')
 
     const dennis = game.players.byName('dennis')
