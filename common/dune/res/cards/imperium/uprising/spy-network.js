@@ -16,7 +16,7 @@ module.exports = {
   revealPersuasion: 2,
   revealSwords: 1,
   revealAbility: "If you have two or more Spies on the board:\n· Recall a Spy → Get an Intrigue card",
-  factionAffiliation: ["emperor", "spacing-guild"],
+  factionAffiliation: ["emperor", "guild"],
   vpsAvailable: 0,
   hasTech: false,
   hasShipping: false,

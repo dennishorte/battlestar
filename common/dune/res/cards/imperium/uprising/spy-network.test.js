@@ -11,7 +11,7 @@ describe('spy-network', () => {
     expect(card.source).toBe('Uprising')
     expect(card.compatibility).toBe('Uprising')
     expect(card.persuasionCost).toBe(2)
-    expect(card.factionAffiliation).toEqual(['emperor', 'spacing-guild'])
+    expect(card.factionAffiliation).toEqual(['emperor', 'guild'])
     expect(card.agentIcons).toEqual([])
     expect(card.revealPersuasion).toBe(2)
     expect(card.revealSwords).toBe(1)
