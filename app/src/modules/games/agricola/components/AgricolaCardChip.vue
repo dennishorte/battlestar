@@ -396,13 +396,13 @@ export default {
       return this.cardResources.length > 0 || this.pileContents.length > 0 || this.isUsed || this.customState !== null || this.cardAnimals !== null
     },
 
-    // Preview of pile contents (top 3 items)
+    // Preview of pile contents (top 8 items)
     pilePreview() {
       if (this.pileContents.length === 0) {
         return []
       }
-      // Show top 3 items (from end of array, since pile is bottom-to-top)
-      return [...this.pileContents].slice(-3).reverse()
+      // Show top 8 items (from end of array, since pile is bottom-to-top)
+      return [...this.pileContents].slice(-8).reverse()
     },
   },
 
