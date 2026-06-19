@@ -368,15 +368,16 @@ export default {
       return this.runtimeDefinition?.used === true
     },
 
-    // Get pile contents if card has a pile
+    // Get pile contents if card has a pile/stack/goods
     pileContents() {
-      // Check cardState first (newer pattern)
+      // Check cardState first (newer pattern). Cards use one of pile/stack/goods.
       const cardState = this.getCardState()
-      if (cardState?.pile) {
-        return cardState.pile
+      const fromState = cardState?.pile || cardState?.stack || cardState?.goods
+      if (fromState) {
+        return fromState
       }
       // Fall back to definition (legacy pattern)
-      return this.runtimeDefinition?.pile || []
+      return this.runtimeDefinition?.pile || this.runtimeDefinition?.stack || this.runtimeDefinition?.goods || []
     },
 
     // Tooltip for pile contents

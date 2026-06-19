@@ -263,13 +263,14 @@ export default {
     },
 
     pileContents() {
-      // Check cardState first (newer pattern)
+      // Check cardState first (newer pattern). Cards use one of pile/stack/goods.
       const cardState = this.getCardState()
-      if (cardState?.pile) {
-        return cardState.pile
+      const fromState = cardState?.pile || cardState?.stack || cardState?.goods
+      if (fromState) {
+        return fromState
       }
       // Fall back to definition (legacy pattern)
-      return this.runtimeDefinition?.pile || []
+      return this.runtimeDefinition?.pile || this.runtimeDefinition?.stack || this.runtimeDefinition?.goods || []
     },
 
     // Check if card has any state data in game.cardState
