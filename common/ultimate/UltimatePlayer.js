@@ -363,7 +363,7 @@ class UltimatePlayer extends BasePlayer {
    * Get formatted list of achievements this player is eligible to claim.
    */
   eligibleAchievementChoices(opts = {}) {
-    const formatted = this.game.formatAchievements(this.eligibleAchievementCards(opts))
+    const formatted = this.game.formatAchievements(this.eligibleAchievementCards(opts), this)
     const standard = util.array.distinct(formatted).sort((l, r) => {
       if (l.exp === r.exp) {
         return l.age < r.age

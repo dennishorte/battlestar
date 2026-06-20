@@ -910,14 +910,15 @@ Innovation.prototype.getAvailableSpecialAchievements = function() {
     .filter(c => c.isSpecialAchievement)
 }
 
-Innovation.prototype.formatAchievements = function(array) {
+Innovation.prototype.formatAchievements = function(array, player) {
   return array
     .map(ach => {
       if (ach.zone.id === 'achievements') {
         return ach.getHiddenName()
       }
       else {
-        return ach.id
+        const title = (player && ach.visible(player)) ? ach.id : ach.getHiddenName()
+        return { title, subtitles: [ach.zone.id] }
       }
     })
     .sort()
