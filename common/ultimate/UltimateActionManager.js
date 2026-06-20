@@ -587,11 +587,11 @@ class UltimateActionManager extends BaseActionManager {
       : chosen
     if (chosenId === 'dig') {
       const card = this.zones.byDeck('arti', digAge).peek()
+      card.moveTo(this.zones.byPlayer(player, 'artifact'))
       this.log.add({
         template: '{player} digs {card}',
         args: { player, card },
       })
-      card.moveTo(this.zones.byPlayer(player, 'artifact'))
       this.acted(player)
     }
     else if (chosenId === 'seize') {
