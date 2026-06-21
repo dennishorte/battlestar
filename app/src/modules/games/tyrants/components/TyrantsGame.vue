@@ -53,6 +53,11 @@
       <GemHelp />
     </ModalBase>
 
+    <ModalBase id="triad-help">
+      <template #header>Zelatar Triad Bonuses</template>
+      <TriadHelp />
+    </ModalBase>
+
   </div>
 </template>
 
@@ -75,6 +80,7 @@ import GameMap from './map/GameMap.vue'
 import MarketZone from './MarketZone.vue'
 import PlayerTableau from './PlayerTableau.vue'
 import GemHelp from './GemHelp.vue'
+import TriadHelp from './TriadHelp.vue'
 import ScoreTable from './ScoreTable.vue'
 
 
@@ -94,6 +100,7 @@ export default {
     DropdownButton,
     DropdownDivider,
     GemHelp,
+    TriadHelp,
     GameLogTyrants,
     GameMap,
     GameMenu,
@@ -117,6 +124,7 @@ export default {
           clickSpy: this.clickSpy,
           insertSelectorSubtitles: this.insertSelectorSubtitles,
           showGemHelp: this.showGemHelp,
+          showTriadHelp: this.showTriadHelp,
           isUnitSelectable: this.isUnitSelectable,
           troopStyle: this.troopStyle,
           getActionTypeHandler: this.getActionTypeHandler,
@@ -400,6 +408,10 @@ export default {
 
     showGemHelp() {
       this.$modal('gem-help').show()
+    },
+
+    showTriadHelp() {
+      this.$modal('triad-help').show()
     },
 
     showScores() {

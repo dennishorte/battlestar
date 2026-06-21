@@ -40,6 +40,7 @@
         v-if="triadStatus && !rotationMode"
         class="triad-indicator"
         :style="triadStyle"
+        @click.stop="ui.fn.showTriadHelp()"
       >
         <div class="triad-header">Triad</div>
         <div
@@ -345,8 +346,14 @@ export default {
   border-radius: 4px;
   padding: 4px 6px;
   z-index: 15;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
   min-width: 60px;
+}
+
+.triad-indicator:hover {
+  border-color: #c9a84c;
+  background: rgba(30, 18, 8, 0.95);
 }
 
 .triad-header {
