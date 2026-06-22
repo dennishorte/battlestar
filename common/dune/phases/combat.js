@@ -477,19 +477,25 @@ function awardReward(game, player, rewardText, rank) {
     }
 
     if (effect.type === 'influence-choice-two') {
-      // Special: choose N factions for +1 influence each (N=2, doubled to 4 by sandworms)
+      // Special: choose 2 different factions per round; sandworms double the rounds (1→2)
       const constants = require('../res/constants.js')
       const factions = require('../systems/factions.js')
-      const picks = effect.amount || 2
-      for (let i = 0; i < picks; i++) {
-        const remaining = constants.FACTIONS.map(f =>
-          game.actions.option({ id: f, title: f, kind: 'faction' })
-        )
-        const [factionChoice] = game.actions.choose(player, remaining, {
-          title: `Choose faction for Influence (${i + 1} of ${picks})`,
-        })
-        const faction = typeof factionChoice === 'object' ? factionChoice.id : factionChoice
-        factions.gainInfluence(game, player, faction)
+      const rounds = (effect.amount || 2) / 2
+      for (let r = 0; r < rounds; r++) {
+        const chosen = []
+        for (let i = 0; i < 2; i++) {
+          const options = constants.FACTIONS
+            .filter(f => !chosen.includes(f))
+            .map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+          const [factionChoice] = game.actions.choose(player, options, {
+            title: rounds > 1
+              ? `Choose faction for Influence (round ${r + 1}, pick ${i + 1} of 2)`
+              : `Choose faction for Influence (${i + 1} of 2)`,
+          })
+          const faction = typeof factionChoice === 'object' ? factionChoice.id : factionChoice
+          chosen.push(faction)
+          factions.gainInfluence(game, player, faction)
+        }
       }
     }
     else if (effect.type === 'return-spies-for-vp') {
