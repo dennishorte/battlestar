@@ -13,17 +13,17 @@
         <tr>
           <td class="tier-presence">Presence</td>
           <td>Troops in all 3 sites</td>
-          <td>+1 Power</td>
+          <td>+1 Influence</td>
         </tr>
         <tr>
           <td class="tier-control">Control</td>
           <td>Most troops in all 3 sites</td>
-          <td>+1 Power, +1 Trophy, +1 VP</td>
+          <td>+1 Influence, +1 Power, +1 VP</td>
         </tr>
         <tr>
           <td class="tier-total">Total Control</td>
           <td>Only your troops in all 3 sites</td>
-          <td>+2 Power, +2 Trophies, +4 VP</td>
+          <td>+2 Influence, +2 Power, +4 VP</td>
         </tr>
       </tbody>
     </table>
