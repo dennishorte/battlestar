@@ -349,7 +349,7 @@ function parseSingleReward(text) {
 
   // "Choose two of the 4 Factions. Gain +1 Influence in each."
   if (text.includes('Choose two') && text.includes('Influence')) {
-    return { type: 'influence-choice-two' }
+    return { type: 'influence-choice-two', amount: 2 }
   }
 
   // "+N Intrigue card(s)" / "+N Intrigue"
@@ -477,15 +477,16 @@ function awardReward(game, player, rewardText, rank) {
     }
 
     if (effect.type === 'influence-choice-two') {
-      // Special: choose 2 factions for +1 influence each
+      // Special: choose N factions for +1 influence each (N=2, doubled to 4 by sandworms)
       const constants = require('../res/constants.js')
       const factions = require('../systems/factions.js')
-      for (let i = 0; i < 2; i++) {
+      const picks = effect.amount || 2
+      for (let i = 0; i < picks; i++) {
         const remaining = constants.FACTIONS.map(f =>
           game.actions.option({ id: f, title: f, kind: 'faction' })
         )
         const [factionChoice] = game.actions.choose(player, remaining, {
-          title: `Choose faction for Influence (${i + 1} of 2)`,
+          title: `Choose faction for Influence (${i + 1} of ${picks})`,
         })
         const faction = typeof factionChoice === 'object' ? factionChoice.id : factionChoice
         factions.gainInfluence(game, player, faction)
