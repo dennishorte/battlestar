@@ -7,10 +7,22 @@ module.exports = {
   players: "1+",
   text: "Each time you use the \"Farmland\" or \"Cultivation\" action space with the first person you place in a round, you can plow 1 additional field for 1 food.",
   matches_onAction(game, player, actionId) {
-    return actionId === 'plow-field' || actionId === 'plow-sow'
+    return actionId === 'plow-field'
   },
   onAction(game, player, _actionId) {
+    this._offerExtraPlow(game, player)
+  },
+  onBeforeSow(game, player) {
+    if (game.state.currentActionId === 'plow-sow') {
+      this._offerExtraPlow(game, player)
+    }
+  },
+  _offerExtraPlow(game, player) {
     if (player.getPersonPlacedThisRound() === 1 && player.food >= 1) {
+      const validSpaces = player.getValidPlowSpaces()
+      if (validSpaces.length === 0) {
+        return
+      }
       const selection = game.actions.choose(player, () => [
         game.actions.option({ id: 'plow', title: 'Pay 1 food to plow 1 additional field' }),
         game.actions.option({ id: 'skip', title: 'Do not plow extra' }),
