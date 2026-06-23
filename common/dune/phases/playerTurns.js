@@ -1097,8 +1097,10 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
           const playerIntrigue = game.zones.byId(`${player.name}.intrigue`)
           stolen.moveTo(playerIntrigue)
           game.log.add({
-            template: '{player} steals an Intrigue card from {opponent}',
-            args: { player, opponent },
+            template: '{player} steals {card} from {playerOpponent}',
+            args: { player, card: stolen, playerOpponent: opponent },
+            visibility: [player.name, opponent.name],
+            redacted: '{player} steals an Intrigue card from {playerOpponent}',
           })
         }
       }
