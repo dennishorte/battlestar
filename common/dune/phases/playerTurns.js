@@ -83,16 +83,31 @@ function playerTurnsPhase(game) {
       // an Agent Turn card or to a Reveal Turn.
       offerPlotIntrigue(game, player)
 
-      if (player.availableAgents > 0) {
-        // Build playable card list for nested Agent Turn choice (after any
-        // plot intrigue has resolved, which may have added cards). A card is
-        // playable only if there exists at least one board space the player
-        // could actually send an agent to with it — otherwise the player
-        // would commit to the card and waste the turn with "no valid spaces".
-        const handZone = game.zones.byId(`${player.name}.hand`)
-        const handCards = handZone.cardlist()
-        const playableCards = handCards.filter(c => hasAgentTurnAccess(c) && hasValidPlacement(game, player, c))
+      // Build playable card list after Plot Intrigue offers. A card is
+      // playable only if there exists at least one board space the player
+      // could actually send an agent to with it — otherwise the player
+      // would commit to the card and waste the turn with "no valid spaces".
+      const handZone = game.zones.byId(`${player.name}.hand`)
+      const handCards = handZone.cardlist()
+      let playableCards
 
+      if (player.availableAgents > 0) {
+        playableCards = handCards.filter(c => hasAgentTurnAccess(c) && hasValidPlacement(game, player, c))
+      }
+      else {
+        // Cards that relocate an existing agent (e.g. Kwisatz Haderach) can still
+        // be played when all agent slots are occupied, as long as there is an
+        // agent already on the board to serve as the source of the move.
+        const hasAgentOnBoard = Object.values(game.state.boardSpaces)
+          .some(occupants => (occupants || []).includes(player.name))
+        playableCards = hasAgentOnBoard
+          ? handCards.filter(c =>
+            c.definition?.movesExistingAgent && hasAgentTurnAccess(c) && hasValidPlacement(game, player, c)
+          )
+          : []
+      }
+
+      if (player.availableAgents > 0 || playableCards.length > 0) {
         const choices = []
         if (playableCards.length > 0) {
           choices.push({
@@ -596,9 +611,34 @@ function hasAgentTurnAccess(card) {
  * Whether the player has at least one valid board space they could send
  * an agent to with this card given current game state (occupancy, costs,
  * influence requirements, spy connections, blocked spaces, etc.).
+ *
+ * For cards that move an existing agent (e.g. Kwisatz Haderach), the source
+ * agent is removed before the destination is chosen, so we temporarily remove
+ * each possible source to check whether a valid destination would exist.
  */
 function hasValidPlacement(game, player, card) {
   const boardSpaces = getBoardSpaces()
+
+  if (card.definition?.movesExistingAgent) {
+    const playerOccupied = Object.entries(game.state.boardSpaces)
+      .filter(([, occ]) => (occ || []).includes(player.name))
+
+    if (playerOccupied.length === 0) {
+      return boardSpaces.some(space => canSendAgentTo(game, player, card, space))
+    }
+
+    for (const [, occupants] of playerOccupied) {
+      const idx = occupants.indexOf(player.name)
+      occupants.splice(idx, 1)
+      const hasValid = boardSpaces.some(space => canSendAgentTo(game, player, card, space))
+      occupants.splice(idx, 0, player.name)
+      if (hasValid) {
+        return true
+      }
+    }
+    return false
+  }
+
   return boardSpaces.some(space => canSendAgentTo(game, player, card, space))
 }
 

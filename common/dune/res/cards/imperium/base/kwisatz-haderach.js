@@ -38,17 +38,16 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+  movesExistingAgent: true,
 
-  agentEffect(game, player) {
-    // The normal agentTurn flow already placed the agent at the destination and
-    // incremented agentsPlaced. KH moves an existing agent instead of adding one,
-    // so we pick a source, remove it, and decrement agentsPlaced back (net: no change).
-    const destSpaceId = game.state.turnTracking?.agentSpaceId
+  prePlacementEffect(game, player) {
+    // Choose which existing agent to recall before the destination is selected.
+    // Removing it first means the vacated space is available as a destination
+    // (e.g. the player can send the agent back to the same space it just left).
     const occupiedSpaces = Object.entries(game.state.boardSpaces)
-      .filter(([id, occupants]) => (occupants || []).includes(player.name) && id !== destSpaceId)
+      .filter(([, occupants]) => (occupants || []).includes(player.name))
 
     if (occupiedSpaces.length === 0) {
-      game.log.add({ template: '{player}: Kwisatz Haderach — no other Agents to move', args: { player }, event: 'memo' })
       return
     }
 
@@ -79,16 +78,27 @@ module.exports = {
       }
       player.decrementCounter('agentsPlaced', 1, { silent: true })
       const sourceSpace = boardSpaces.find(s => s.id === spaceId)
-      const destSpace = boardSpaces.find(s => s.id === destSpaceId)
-      game.log.add({
-        template: '{player}: Kwisatz Haderach — moves Agent from {source} to {dest}',
-        args: {
-          player,
-          source: sourceSpace ? sourceSpace.name : spaceId,
-          dest: destSpace ? destSpace.name : destSpaceId,
-        },
-      })
+      game.state.turnTracking.khSourceSpace = sourceSpace ? sourceSpace.name : spaceId
     }
+  },
+
+  agentEffect(game, player) {
+    const sourceSpaceName = game.state.turnTracking?.khSourceSpace
+    if (!sourceSpaceName) {
+      game.log.add({ template: '{player}: Kwisatz Haderach — no Agents to move', args: { player }, event: 'memo' })
+      return
+    }
+    const boardSpaces = require('../../../boardSpaces.js')
+    const destSpaceId = game.state.turnTracking?.agentSpaceId
+    const destSpace = boardSpaces.find(s => s.id === destSpaceId)
+    game.log.add({
+      template: '{player}: Kwisatz Haderach — moves Agent from {source} to {dest}',
+      args: {
+        player,
+        source: sourceSpaceName,
+        dest: destSpace ? destSpace.name : destSpaceId,
+      },
+    })
   },
 
 }
