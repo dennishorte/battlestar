@@ -364,6 +364,9 @@ export default {
       if (prereqs.hasFireplaceAndCookingHearth) {
         parts.push('Fireplace and Cooking Hearth')
       }
+      if (prereqs.hasFireplaceOrCookingHearth) {
+        parts.push('Fireplace or Cooking Hearth')
+      }
       if (prereqs.returnFireplaceOrCookingHearth) {
         parts.push('Return Fireplace or Cooking Hearth')
       }
