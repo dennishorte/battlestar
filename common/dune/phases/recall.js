@@ -268,8 +268,8 @@ function pairEndgameWildIcons(game, player) {
     flipped.add(partner.id)
     player.incrementCounter('vp', 1, { silent: true, source: `Wild battle icon: ${wild.name} + ${partner.name}` })
     game.log.add({
-      template: '{player} pairs Wild battle icon ({wild}) with {partner}: +1 Victory Point',
-      args: { player, wild, partner },
+      template: '{player} pairs Wild battle icon ({cardWild}) with {cardPartner}: +1 Victory Point',
+      args: { player, cardWild: wild, cardPartner: partner },
     })
   }
 
