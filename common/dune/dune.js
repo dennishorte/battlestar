@@ -62,6 +62,7 @@ function DuneFactory(settings, viewerName) {
   data.settings.useImmortality = settings.useImmortality || false
   data.settings.useBloodlines = settings.useBloodlines || false
   data.settings.usePromo = settings.usePromo || false
+  data.settings.imperiumRowRefresh = settings.imperiumRowRefresh || 'none'
 
   return new Dune(data, viewerName)
 }
@@ -80,6 +81,7 @@ function factoryFromLobby(lobby) {
     useImmortality: lobby.options?.useImmortality || false,
     useBloodlines: lobby.options?.useBloodlines || false,
     usePromo: lobby.options?.usePromo || false,
+    imperiumRowRefresh: lobby.options?.imperiumRowRefresh || 'none',
   })
 }
 
@@ -149,6 +151,9 @@ Dune.prototype._reset = function() {
     deployedSandworms: {}, // { playerName: count }
     strengthBreakdown: {}, // { playerName: [{ source, label, amount }] }
   }
+
+  // Nuke availability (Nuke variant of Imperium Row refresh)
+  this.state.nukesAvailable = {}
 
   // Bonus spice on Maker spaces
   this.state.bonusSpice = {
@@ -231,6 +236,9 @@ Dune.prototype.initializePlayers = function() {
     player.setCounter('water', constants.STARTING_WATER, { silent: true })
     const startingVp = constants.STARTING_VP[this.settings.numPlayers] || 0
     player.setCounter('vp', startingVp, { silent: true, source: 'Starting VP' })
+    if (this.settings.imperiumRowRefresh === 'nuke') {
+      this.state.nukesAvailable[player.name] = true
+    }
   }
 }
 

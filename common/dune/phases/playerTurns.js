@@ -4,6 +4,7 @@ const spies = require('../systems/spies.js')
 const deploy = require('../systems/deploy.js')
 const leaderAbilities = require('../systems/leaderAbilities.js')
 const constants = require('../res/constants.js')
+const { applyNukeRefresh } = require('../systems/imperiumRowRefresh.js')
 
 /**
  * Build a structured choice option for a board space. The engine provides
@@ -435,13 +436,16 @@ function acquireOneCard(game, player, opts = {}) {
   const toTopOfDeck = opts.toTopOfDeck ?? !!game.state.turnTracking?.acquireToTopOfDeck
   const toHand = opts.toHand ?? !!game.state.turnTracking?.acquireToHand
 
+  const nukeAvailable = game.settings.imperiumRowRefresh === 'nuke' &&
+    !!game.state.nukesAvailable?.[player.name]
+
   const budget = useSolari ? player.solari : player.getCounter('persuasion')
-  if (budget <= 0) {
+  if (budget <= 0 && !nukeAvailable) {
     return false
   }
 
-  const acquirableCards = getAcquirableCards(game, player, budget)
-  if (acquirableCards.length === 0) {
+  const acquirableCards = budget > 0 ? getAcquirableCards(game, player, budget) : []
+  if (acquirableCards.length === 0 && !nukeAvailable) {
     return false
   }
 
@@ -451,13 +455,20 @@ function acquireOneCard(game, player, opts = {}) {
   // iteration order. Pass is represented as a sentinel entry so it
   // mixes cleanly into the card list.
   const passSentinel = { name: 'Pass', id: '__pass__' }
-  const [chosen] = game.actions.chooseCards(player, [passSentinel, ...acquirableCards], {
+  const nukeSentinel = { name: 'Use Nuke', id: '__nuke__' }
+  const extras = nukeAvailable ? [passSentinel, nukeSentinel] : [passSentinel]
+  const [chosen] = game.actions.chooseCards(player, [...extras, ...acquirableCards], {
     title: `Acquire cards (${budget} ${resource} available)`,
     kind: 'imperium-card',
   })
 
   if (!chosen || chosen.id === '__pass__') {
     return false
+  }
+
+  if (chosen.id === '__nuke__') {
+    applyNukeRefresh(game, player)
+    return true
   }
 
   const card = chosen

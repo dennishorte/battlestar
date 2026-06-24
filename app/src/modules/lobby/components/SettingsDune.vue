@@ -46,6 +46,62 @@
       />
       <label class="form-check-label text-muted">Bloodlines (not yet implemented)</label>
     </div>
+
+    <div class="mt-3">Imperium Row Refresh</div>
+
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="radio"
+        id="refresh-none"
+        value="none"
+        v-model="models.imperiumRowRefresh"
+        @change="optionsChanged"
+      />
+      <label class="form-check-label" for="refresh-none">None (standard)</label>
+    </div>
+
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="radio"
+        id="refresh-dice"
+        value="dice"
+        v-model="models.imperiumRowRefresh"
+        @change="optionsChanged"
+      />
+      <label class="form-check-label" for="refresh-dice">
+        Dice — roll two dice at round end; remove cards at matching positions (sixes do nothing; double sixes clear all)
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="radio"
+        id="refresh-nuke"
+        value="nuke"
+        v-model="models.imperiumRowRefresh"
+        @change="optionsChanged"
+      />
+      <label class="form-check-label" for="refresh-nuke">
+        Nuke — each player gets one nuke to clear and refill the Imperium Row
+      </label>
+    </div>
+
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="radio"
+        id="refresh-shift"
+        value="shift"
+        v-model="models.imperiumRowRefresh"
+        @change="optionsChanged"
+      />
+      <label class="form-check-label" for="refresh-shift">
+        Conveyor Belt — new cards always enter at the front; oldest card falls off at round end
+      </label>
+    </div>
   </div>
 </template>
 
@@ -64,6 +120,7 @@ export default {
         useRiseOfIx: false,
         useImmortality: false,
         useBloodlines: false,
+        imperiumRowRefresh: 'none',
       },
     }
   },
@@ -102,6 +159,7 @@ export default {
         useRiseOfIx: this.models.useRiseOfIx,
         useImmortality: this.models.useImmortality,
         useBloodlines: this.models.useBloodlines,
+        imperiumRowRefresh: this.models.imperiumRowRefresh,
       }
       this.updateValid()
     },
@@ -113,6 +171,7 @@ export default {
       this.models.useRiseOfIx = Boolean(this.lobby.options.useRiseOfIx)
       this.models.useImmortality = Boolean(this.lobby.options.useImmortality)
       this.models.useBloodlines = Boolean(this.lobby.options.useBloodlines)
+      this.models.imperiumRowRefresh = this.lobby.options.imperiumRowRefresh || 'none'
     }
     else {
       this.lobby.options = {}

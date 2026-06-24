@@ -125,8 +125,10 @@ function acquireCard(game, player, card) {
 
 /**
  * Refill the Imperium Row to 5 cards from the Imperium Deck.
+ * `atHead: true` inserts each new card at position 0 (newest first) for the
+ * Conveyor Belt variant; default appends to the tail.
  */
-function refillImperiumRow(game, { silent = false } = {}) {
+function refillImperiumRow(game, { silent = false, atHead = false } = {}) {
   const rowZone = game.zones.byId('common.imperiumRow')
   const deckZone = game.zones.byId('common.imperiumDeck')
 
@@ -136,7 +138,12 @@ function refillImperiumRow(game, { silent = false } = {}) {
       break
     }
     const card = deckCards[0]
-    card.moveTo(rowZone)
+    if (atHead) {
+      card.moveTo(rowZone, 0)
+    }
+    else {
+      card.moveTo(rowZone)
+    }
     if (!silent) {
       game.log.add({
         template: '{card} is added to the Imperium Row',

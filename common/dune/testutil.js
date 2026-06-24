@@ -218,6 +218,9 @@ TestUtil.setBoard = function(game, state) {
     if (state.phase !== undefined) {
       game.state.phase = state.phase
     }
+    if (state.diceValues !== undefined) {
+      game.state.testDiceValues = state.diceValues
+    }
     if (state.spyPosts) {
       for (const [postId, players] of Object.entries(state.spyPosts)) {
         game.state.spyPosts[postId] = [...players]

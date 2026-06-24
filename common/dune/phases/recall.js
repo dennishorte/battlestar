@@ -1,6 +1,7 @@
 const constants = require('../res/constants.js')
 const { GameOverEvent } = require('../../lib/game.js')
 const { resolveEffect } = require('./playerTurns.js')
+const { applyDiceRefresh, applyShiftRefresh } = require('../systems/imperiumRowRefresh.js')
 
 /**
  * Phase 5: Recall
@@ -49,6 +50,15 @@ function recallPhase(game) {
       })
     }
     game.state.reservedCards = []
+  }
+
+  // Imperium Row refresh variants
+  const refresh = game.settings.imperiumRowRefresh
+  if (refresh === 'dice') {
+    applyDiceRefresh(game)
+  }
+  else if (refresh === 'shift') {
+    applyShiftRefresh(game)
   }
 
   // Pass first player clockwise
