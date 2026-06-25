@@ -11,10 +11,10 @@ describe("market-opportunity", () => {
     expect(card.compatibility).toBe("All")
   })
 
-  test('Pay 2 Solari -> +5 Solari (net +3)', () => {
+  test('Pay 2 Spice -> +5 Solari', () => {
     const game = t.fixture()
     t.setBoard(game, {
-      dennis: { intrigue: ['Market Opportunity'], solari: 5, spice: 0 },
+      dennis: { intrigue: ['Market Opportunity'], solari: 0, spice: 2 },
     })
     game.run()
 
@@ -22,15 +22,15 @@ describe("market-opportunity", () => {
     t.choose(game, 'Market Opportunity')
 
     const choices = t.currentChoices(game)
-    const cheapOption = choices.find(c => /Pay 2 Solari/i.test(c))
+    const cheapOption = choices.find(c => /Pay 2 Spice/i.test(c))
     expect(cheapOption).toBeDefined()
     t.choose(game, cheapOption)
 
     // Each branch parsed as its own cost-effect choice → nested Pay/Decline.
-    t.choose(game, t.currentChoices(game).find(c => /Pay 2 Solari/i.test(c)))
+    t.choose(game, t.currentChoices(game).find(c => /Pay 2 Spice/i.test(c)))
 
     const dennis = game.players.byName('dennis')
-    expect(dennis.solari).toBe(8)
+    expect(dennis.solari).toBe(5)
     expect(dennis.spice).toBe(0)
   })
 

@@ -16,7 +16,7 @@ module.exports = {
   hasSardaukar: false,
   isTwisted: false,
   vpsAvailable: 0,
-  plotEffect: "· Pay 2 Solari → +5 Solari\n  OR\n· Pay 5 Solari → +5 Spice",
+  plotEffect: "· Pay 2 Spice → +5 Solari\n  OR\n· Pay 5 Solari → +5 Spice",
   combatEffect: null,
   endgameEffect: null,
 
@@ -25,15 +25,15 @@ module.exports = {
       type: 'choice',
       choices: [
         {
-          label: 'Pay 2 Solari -> +5 Solari',
+          label: 'Pay 2 Spice -> +5 Solari',
           effects: [
             {
               type: 'choice',
               choices: [
                 {
-                  label: 'Pay 2 Solari -> +5 Solari',
+                  label: 'Pay 2 Spice -> +5 Solari',
                   cost: {
-                    solari: 2
+                    spice: 2
                   },
                   effects: [
                     {
