@@ -8,7 +8,8 @@ module.exports = {
   count: 1,
   persuasionCost: 4,
   acquisitionBonus: null,
-  passiveAbility: "When this card is trashed:\n· Acquire and recruit the Sardaukar Commander in the bank",
+  passiveAbility: null,
+  whenTrashedAbility: "When this card is trashed:\n· Acquire and recruit the Sardaukar Commander in the bank",
   agentIcons: [
     "purple"
   ],
@@ -33,6 +34,17 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: true,
+
+  onTrash(game, player) {
+    if (!player) {
+      return
+    }
+    game.log.add({
+      template: '{player}: Sardaukar Standard trashed — acquire and recruit a Sardaukar Commander (manual)',
+      args: { player },
+      event: 'memo',
+    })
+  },
 
   revealEffects: [
     {

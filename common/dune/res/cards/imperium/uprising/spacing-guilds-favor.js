@@ -10,7 +10,8 @@ module.exports = {
   count: 2,
   persuasionCost: 5,
   acquisitionBonus: null,
-  passiveAbility: "When this card is discarded:\n· +2 Spice",
+  passiveAbility: null,
+  whenDiscardedAbility: "When this card is discarded:\n· +2 Spice",
   agentIcons: [
     "green"
   ],

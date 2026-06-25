@@ -11,7 +11,7 @@ describe('spacing-guilds-favor', () => {
     expect(card.compatibility).toBe('All')
     expect(card.factionAffiliation).toBe(null)
     expect(typeof card.onDiscard).toBe('function')
-    expect(card.passiveAbility).toMatch(/discarded/i)
+    expect(card.whenDiscardedAbility).toMatch(/discarded/i)
   })
 
   test('reveal: +2 base persuasion, no spice spent → no influence change', () => {

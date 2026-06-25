@@ -8,7 +8,8 @@ module.exports = {
   count: 1,
   persuasionCost: 4,
   acquisitionBonus: null,
-  passiveAbility: "When this card is discarded:\n· +3 Solari",
+  passiveAbility: null,
+  whenDiscardedAbility: "When this card is discarded:\n· +3 Solari",
   agentIcons: [
     "green"
   ],
@@ -33,6 +34,17 @@ module.exports = {
   hasContracts: true,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  onDiscard(game, player) {
+    if (!player) {
+      return
+    }
+    player.incrementCounter('solari', 3, { silent: true })
+    game.log.add({
+      template: '{player}: Corrupt Bureaucrat discarded — +3 Solari',
+      args: { player },
+    })
+  },
 
   agentEffects: [
     {

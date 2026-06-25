@@ -8,7 +8,8 @@ module.exports = {
   count: 1,
   persuasionCost: 5,
   acquisitionBonus: null,
-  passiveAbility: "When this card is trashed:\n· +1 Beetle",
+  passiveAbility: null,
+  whenTrashedAbility: "When this card is trashed:\n· +1 Beetle",
   agentIcons: [
     "purple"
   ],
@@ -31,6 +32,17 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  onTrash(game, player) {
+    if (!player) {
+      return
+    }
+    game.log.add({
+      template: '{player}: Replacement Eyes trashed — +1 Beetle (manual)',
+      args: { player },
+      event: 'memo',
+    })
+  },
 
   agentEffects: [
     {

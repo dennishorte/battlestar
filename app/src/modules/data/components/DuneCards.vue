@@ -384,6 +384,8 @@ export default {
           const fields = [
             c.name,
             c.agentAbility,
+            c.whenTrashedAbility,
+            c.whenDiscardedAbility,
             c.revealAbility,
             c.plotEffect,
             c.combatEffect,

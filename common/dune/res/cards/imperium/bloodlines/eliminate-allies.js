@@ -8,7 +8,8 @@ module.exports = {
   count: 1,
   persuasionCost: 2,
   acquisitionBonus: null,
-  passiveAbility: "When this card is trashed:\n· +2 Troops",
+  passiveAbility: null,
+  whenTrashedAbility: "When this card is trashed:\n· +2 Troops",
   agentIcons: [],
   factionAccess: [],
   spyAccess: true,
@@ -29,6 +30,21 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  onTrash(game, player) {
+    if (!player) {
+      return
+    }
+    const recruit = Math.min(2, player.troopsInSupply)
+    if (recruit > 0) {
+      player.decrementCounter('troopsInSupply', recruit, { silent: true })
+      player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+    }
+    game.log.add({
+      template: '{player}: Eliminate Allies trashed — +{amount} Troop(s)',
+      args: { player, amount: recruit },
+    })
+  },
 
   agentEffects: [
     {

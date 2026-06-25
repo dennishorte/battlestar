@@ -98,6 +98,12 @@ export function cardSections(card) {
     if (card.acquisitionBonus) {
       sections.push({ label: 'Acquire', text: card.acquisitionBonus })
     }
+    if (card.whenTrashedAbility) {
+      sections.push({ label: 'Trash', text: card.whenTrashedAbility })
+    }
+    if (card.whenDiscardedAbility) {
+      sections.push({ label: 'Discard', text: card.whenDiscardedAbility })
+    }
   }
   else if (type === 'intrigue') {
     const plot = intrigueText(card.plotText, card.plotEffect)

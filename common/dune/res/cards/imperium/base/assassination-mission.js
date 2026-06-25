@@ -12,7 +12,8 @@ module.exports = {
   agentIcons: [],
   factionAccess: [],
   spyAccess: false,
-  agentAbility: "When trashed by another card or effect:\n· +4 Solari",
+  agentAbility: null,
+  whenTrashedAbility: "When trashed by another card or effect:\n· +4 Solari",
   revealPersuasion: 0,
   revealSwords: 1,
   revealAbility: "+1 Solari",
@@ -31,9 +32,18 @@ module.exports = {
   hasSardaukar: false,
 
   agentEffect() {
-    // "When trashed by another card or effect: +4 Solari" — passive trigger, handled when trashed
   },
 
+  onTrash(game, player) {
+    if (!player) {
+      return
+    }
+    player.incrementCounter('solari', 4, { silent: true })
+    game.log.add({
+      template: '{player}: Assassination Mission trashed — gain 4 Solari',
+      args: { player },
+    })
+  },
 
   revealEffects: [
     {
