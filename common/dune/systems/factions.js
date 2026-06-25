@@ -149,8 +149,23 @@ function getAllianceHolder(game, faction) {
   return game.state.alliances[faction]
 }
 
+/**
+ * Present a single prompt for the player to choose `count` factions, then gain
+ * +1 Influence with each. Use this for all "choose N factions to gain influence"
+ * effects so they resolve in one pick instead of N sequential prompts.
+ */
+function gainInfluenceWithChoice(game, player, count = 1, title = '+1 Influence with:') {
+  const factionChoices = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+  const selections = game.actions.choose(player, factionChoices, { title, count })
+  for (const choice of selections) {
+    const faction = typeof choice === 'object' ? choice.id : choice
+    gainInfluence(game, player, faction)
+  }
+}
+
 module.exports = {
   gainInfluence,
+  gainInfluenceWithChoice,
   loseInfluence,
   checkAlliance,
   getAllianceHolder,

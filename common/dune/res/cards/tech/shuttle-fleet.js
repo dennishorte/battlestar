@@ -16,8 +16,8 @@ module.exports = {
   hasSardaukar: false,
   vpsAvailable: 0,
 
-  onAcquire(game, player, card, { resolveEffect }) {
-    resolveEffect(game, player, { type: 'influence-choice', amount: 1 }, null, card.name)
-    resolveEffect(game, player, { type: 'influence-choice', amount: 1 }, null, card.name)
+  onAcquire(game, player) {
+    const factions = require('../../../systems/factions.js')
+    factions.gainInfluenceWithChoice(game, player, 2, '+1 Influence with 2 Factions')
   },
 }

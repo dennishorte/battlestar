@@ -56,15 +56,7 @@ module.exports = {
             : loseFactions.find(f => (typeof choice === 'string' ? choice : choice.title).includes(f))
           factions.loseInfluence(game, player, loseFaction, 1)
           player.decrementCounter('spice', 2, { silent: true })
-          // Gain +2 influence (choose faction twice; same faction allowed for net +1 to regain bonus)
-          for (let i = 0; i < 2; i++) {
-            const fc = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
-            const [gChoice] = game.actions.choose(player, fc, {
-              title: `Gain Influence (${i + 1} of 2)`,
-            })
-            const gf = typeof gChoice === 'object' ? gChoice.id : gChoice
-            factions.gainInfluence(game, player, gf)
-          }
+          factions.gainInfluenceWithChoice(game, player, 2, 'Gain 2 Influence')
         }
       }
     }
