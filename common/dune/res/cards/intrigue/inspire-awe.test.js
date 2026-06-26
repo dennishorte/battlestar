@@ -12,23 +12,42 @@ describe("inspire-awe", () => {
     expect(card.hasSandworms).toBe(true)
   })
 
-  test('plot: grants +3 Persuasion to acquire a card', () => {
+  test('plot: prompts to acquire a card costing 3 or less', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { intrigue: ['Inspire Awe'] },
     })
     game.run()
 
-    expect(t.currentChoices(game)).toContain('Inspire Awe')
     t.choose(game, 'Inspire Awe')
 
-    const dennis = game.players.byName('dennis')
-    expect(dennis.getCounter('persuasion')).toBe(3)
-    // Without a sandworm in conflict, acquire-to-hand flag is NOT set.
-    expect(game.state.turnTracking.acquireToHand).toBeFalsy()
+    // Should now be prompting for an imperium row card
+    const title = game.waiting?.selectors[0]?.title || ''
+    expect(title).toMatch(/Inspire Awe/)
   })
 
-  test('plot: with sandworm in conflict, sets acquireToHand', () => {
+  test('plot: acquired card goes to discard without sandworm', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { intrigue: ['Inspire Awe'] },
+    })
+    game.run()
+
+    t.choose(game, 'Inspire Awe')
+
+    const rowZone = game.zones.byId('common.imperiumRow')
+    const cheap = rowZone.cardlist().find(c => (c.persuasionCost || 0) <= 3)
+    expect(cheap).toBeTruthy()
+    const acquiredName = cheap.name
+    t.choose(game, acquiredName)
+
+    const inDiscard = game.zones.byId('dennis.discard').cardlist().some(c => c.name === acquiredName)
+    const inHand = game.zones.byId('dennis.hand').cardlist().some(c => c.name === acquiredName)
+    expect(inDiscard).toBe(true)
+    expect(inHand).toBe(false)
+  })
+
+  test('plot: acquired card goes to hand with sandworm in conflict', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { intrigue: ['Inspire Awe'] },
@@ -40,56 +59,29 @@ describe("inspire-awe", () => {
 
     t.choose(game, 'Inspire Awe')
 
-    expect(game.state.turnTracking.acquireToHand).toBe(true)
-    expect(game.players.byName('dennis').getCounter('persuasion')).toBe(3)
-  })
+    const rowZone = game.zones.byId('common.imperiumRow')
+    const cheap = rowZone.cardlist().find(c => (c.persuasionCost || 0) <= 3)
+    expect(cheap).toBeTruthy()
+    const acquiredName = cheap.name
+    t.choose(game, acquiredName)
 
-  test('plot: acquired card lands in hand when sandworm bonus is active', () => {
-    const game = t.fixture()
-    t.setBoard(game, {
-      dennis: { intrigue: ['Inspire Awe'] },
-      conflict: {
-        deployedSandworms: { dennis: 1 },
-      },
-    })
-    game.run()
-
-    t.choose(game, 'Inspire Awe')
-    t.choose(game, 'Reveal Turn')
-
-    // Drive until acquire prompt and pick a cheap card.
-    let acquiredName = null
-    let safety = 30
-    while (game.waiting && safety-- > 0) {
-      const title = game.waiting.selectors[0]?.title || ''
-      if (/Acquire cards/.test(title)) {
-        const cards = game.zones.byId('common.imperiumRow').cardlist()
-        const cheap = cards.find(c => (c.persuasionCost || 0) <= 3)
-        if (!cheap) {
-          break
-        }
-        acquiredName = cheap.name
-        t.choose(game, cheap.name)
-        break
-      }
-      const choices = t.currentChoices(game)
-      if (choices.includes('Pass')) {
-        t.choose(game, 'Pass')
-      }
-      else {
-        t.choose(game, choices[0])
-      }
-    }
-
-    expect(acquiredName).toBeTruthy()
-    // Card should be in dennis's hand (acquireToHand) — not in deck or
-    // discard. (cleanUp moves played/revealed to discard at end of turn.)
     const inHand = game.zones.byId('dennis.hand').cardlist().some(c => c.name === acquiredName)
     const inDiscard = game.zones.byId('dennis.discard').cardlist().some(c => c.name === acquiredName)
-    expect(inHand || inDiscard).toBe(true)
-    // Crucially: not on top of deck (which is what the buggy
-    // acquireToTopOfDeck flag would have produced).
-    const inDeck = game.zones.byId('dennis.deck').cardlist().some(c => c.name === acquiredName)
-    expect(inDeck).toBe(false)
+    expect(inHand).toBe(true)
+    expect(inDiscard).toBe(false)
+  })
+
+  test('plot: pass is allowed', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { intrigue: ['Inspire Awe'] },
+    })
+    game.run()
+
+    t.choose(game, 'Inspire Awe')
+    t.choose(game, 'Pass')
+
+    // Game continues normally after passing
+    expect(game.waiting).toBeTruthy()
   })
 })
