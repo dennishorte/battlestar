@@ -43,8 +43,6 @@ module.exports = {
       return
     }
     deckEngine.acquireCard(game, player, chosen)
-    deckEngine.refillImperiumRow(game)
-    game.log.add({ template: '{player} acquires {card} (Impress, free)', args: { player, card: chosen } })
   },
 
 }

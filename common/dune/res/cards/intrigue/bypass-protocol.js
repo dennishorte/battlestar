@@ -67,7 +67,6 @@ module.exports = {
     }
     else {
       deckEngine.acquireCard(game, player, chosen)
-      game.log.add({ template: '{player} acquires {card} (Bypass Protocol)', args: { player, card: chosen } })
     }
   },
 

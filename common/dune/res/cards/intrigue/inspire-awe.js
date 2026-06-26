@@ -47,7 +47,6 @@ module.exports = {
     }
     else {
       deckEngine.acquireCard(game, player, chosen)
-      game.log.add({ template: '{player} acquires {card} (Inspire Awe)', args: { player, card: chosen } })
     }
   },
 
