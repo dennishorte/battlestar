@@ -55,7 +55,7 @@ module.exports = {
     const isGain = chId === 'gain' || (typeof choice === 'string' && choice.startsWith('+1 Solari'))
     if (isGain) {
       player.incrementCounter('solari', 1, { silent: true })
-      player.incrementCounter('troopsInSupply', 1, { silent: true })
+      player.incrementCounter('troopsInGarrison', 1, { silent: true })
       game.log.add({
         template: '{player}: Emperor — +1 Solari, +1 Troop (units cannot deploy this turn)',
         args: { player },

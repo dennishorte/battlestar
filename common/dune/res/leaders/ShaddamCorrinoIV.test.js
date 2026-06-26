@@ -44,10 +44,10 @@ describe('Shaddam Corrino IV', () => {
 
       const dennis = game.players.byName('dennis')
       expect(dennis.solari).toBe(6)
-      // +1 Troop from Emperor goes to supply. Arrakeen's recruit moves 1 from
-      // supply to garrison.
-      expect(dennis.troopsInSupply).toBe(supplyBefore + 1 - 1)
-      expect(dennis.troopsInGarrison).toBe(garrisonBefore + 1)
+      // +1 Troop from Emperor goes to garrison. Arrakeen's recruit also moves 1
+      // from supply to garrison.
+      expect(dennis.troopsInSupply).toBe(supplyBefore - 1)
+      expect(dennis.troopsInGarrison).toBe(garrisonBefore + 2)
     })
 
     test('Emperor restriction blocks deployment from the Conflict space', () => {
