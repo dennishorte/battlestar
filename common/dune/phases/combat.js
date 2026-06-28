@@ -146,7 +146,11 @@ function combatIntrigueRound(game, combatants) {
  * Resolve combat by ranking players by strength and distributing rewards.
  */
 function resolveCombat(game) {
-  game.log.add({ template: 'Resolve Combat', event: 'step' })
+  const conflictCard = game.state.conflict.currentCard
+  const chipLabel = conflictCard
+    ? `${conflictCard.name} (Tier ${conflictCard.tier})`
+    : 'Conflict'
+  game.log.add({ template: `Resolving conflict: ${chipLabel}`, event: 'step' })
   game.log.indent()
 
   // Get all players with strength > 0
@@ -186,7 +190,6 @@ function resolveCombat(game) {
     })
   }
 
-  const conflictCard = game.state.conflict.currentCard
   const rewards = conflictCard ? conflictCard.rewards : null
   const numPlayers = game.settings.numPlayers
 
