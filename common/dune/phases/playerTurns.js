@@ -1031,12 +1031,19 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
 
       // Pay choice cost
       if (chosen.cost) {
+        let paidSolariInChoice = false
         for (const [resource, amount] of Object.entries(chosen.cost)) {
           player.decrementCounter(resource, amount, { silent: true })
           game.log.add({
             template: '{player} pays {amount} {resource}',
             args: { player, amount, resource },
           })
+          if (resource === 'solari') {
+            paidSolariInChoice = true
+          }
+        }
+        if (paidSolariInChoice) {
+          leaderAbilities.onPaySolariForSpace(game, player)
         }
       }
 
