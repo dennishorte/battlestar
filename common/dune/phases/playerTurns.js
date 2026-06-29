@@ -84,6 +84,20 @@ function playerTurnsPhase(game) {
       // an Agent Turn card or to a Reveal Turn.
       offerPlotIntrigue(game, player)
 
+      // Bindu Suspension: drew a card during plot phase; now offer to pass turn
+      if (game.state.turnTracking?.binduSuspension) {
+        game.state.turnTracking.binduSuspension = false
+        const [passChoice] = game.actions.choose(player, [
+          game.actions.option({ id: 'continue', title: 'Continue Turn' }),
+          game.actions.option({ id: 'pass', title: 'Pass Turn' }),
+        ], { title: 'Bindu Suspension: Pass your turn?' })
+        const passId = typeof passChoice === 'object' ? passChoice.id : passChoice
+        if (passId === 'pass' || passChoice === 'Pass Turn') {
+          game.log.add({ template: '{player} passes their turn (Bindu Suspension)', args: { player } })
+          continue
+        }
+      }
+
       // Build playable card list after Plot Intrigue offers. A card is
       // playable only if there exists at least one board space the player
       // could actually send an agent to with it — otherwise the player

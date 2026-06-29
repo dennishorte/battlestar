@@ -20,8 +20,9 @@ module.exports = {
   endgameEffect: null,
   plotText: "At the start of your turn: Draw a card, you may pass your turn instead of taking an Agent or Reveal turn",
 
-  plotEffect(game) {
-    // At start of turn: draw a card, may pass turn
+  plotEffect(game, player) {
+    const deckEngine = require('../../../systems/deckEngine.js')
+    deckEngine.drawCards(game, player, 1)
     if (game.state.turnTracking) {
       game.state.turnTracking.binduSuspension = true
     }
