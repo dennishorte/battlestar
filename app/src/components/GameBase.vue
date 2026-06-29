@@ -118,6 +118,12 @@ export default {
       await this.$store.dispatch('game/next', { actor: this.actor })
     },
 
+    onKeyDown(event) {
+      if (event.key === 'Escape' && this.loadError && !this.errorDismissed) {
+        this.errorDismissed = true
+      }
+    },
+
   },
 
   watch: {
@@ -129,6 +135,11 @@ export default {
 
   async mounted() {
     await this.loadGame()
+    window.addEventListener('keydown', this.onKeyDown)
+  },
+
+  beforeUnmount() {
+    window.removeEventListener('keydown', this.onKeyDown)
   },
 }
 </script>
