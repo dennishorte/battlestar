@@ -474,9 +474,7 @@ function awardReward(game, player, rewardText, rank) {
   for (const effect of effects) {
     // Sandworms double most rewards, but NOT control or battle icons
     if (hasSandworms && canDoubleReward(effect)) {
-      if (effect.amount) {
-        effect.amount *= 2
-      }
+      effect.amount = (effect.amount || 1) * 2
     }
 
     if (effect.type === 'influence-choice-two') {

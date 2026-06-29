@@ -1098,43 +1098,45 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
     case 'trash-card': {
       // Per official rules, "trash a card" allows a card from hand,
       // in play (Agent-played or Revealed), or discard pile.
-      const sources = [
-        { zoneId: `${player.name}.hand`, label: 'Hand' },
-        { zoneId: `${player.name}.played`, label: 'In Play' },
-        { zoneId: `${player.name}.revealed`, label: 'In Play' },
-        { zoneId: `${player.name}.discard`, label: 'Discard' },
-      ]
-      const entries = []
-      for (const { zoneId, label } of sources) {
-        const zone = game.zones.byId(zoneId)
-        if (!zone) {
-          continue
-        }
-        for (const card of zone.cardlist()) {
-          entries.push({ card, label })
-        }
-      }
-      if (entries.length > 0) {
-        const choices = [
-          game.actions.option({ id: 'pass', title: 'Pass' }),
-          ...entries.map(e => ({
-            title: `${e.card.name} (${e.label})`,
-            id: `${e.card.id}:${e.label}`,
-            defId: e.card.defId,
-            kind: 'imperium-card',
-          })),
+      const trashCount = effect.amount || 1
+      for (let ti = 0; ti < trashCount; ti++) {
+        const sources = [
+          { zoneId: `${player.name}.hand`, label: 'Hand' },
+          { zoneId: `${player.name}.played`, label: 'In Play' },
+          { zoneId: `${player.name}.revealed`, label: 'In Play' },
+          { zoneId: `${player.name}.discard`, label: 'Discard' },
         ]
-        const [choice] = game.actions.choose(player, choices, {
-          title: 'Choose a card to trash',
-        })
-        const chId = typeof choice === 'object' ? choice.id : choice
-        if (chId !== 'pass' && choice !== 'Pass') {
-          const entry = typeof choice === 'object'
-            ? entries.find(e => `${e.card.id}:${e.label}` === choice.id)
-            : entries.find(e => `${e.card.name} (${e.label})` === choice)
-          if (entry) {
-            deckEngine.trashCard(game, entry.card, player)
-            return entry.card
+        const entries = []
+        for (const { zoneId, label } of sources) {
+          const zone = game.zones.byId(zoneId)
+          if (!zone) {
+            continue
+          }
+          for (const card of zone.cardlist()) {
+            entries.push({ card, label })
+          }
+        }
+        if (entries.length > 0) {
+          const choices = [
+            game.actions.option({ id: 'pass', title: 'Pass' }),
+            ...entries.map(e => ({
+              title: `${e.card.name} (${e.label})`,
+              id: `${e.card.id}:${e.label}`,
+              defId: e.card.defId,
+              kind: 'imperium-card',
+            })),
+          ]
+          const [choice] = game.actions.choose(player, choices, {
+            title: trashCount > 1 ? `Choose a card to trash (${ti + 1} of ${trashCount})` : 'Choose a card to trash',
+          })
+          const chId = typeof choice === 'object' ? choice.id : choice
+          if (chId !== 'pass' && choice !== 'Pass') {
+            const entry = typeof choice === 'object'
+              ? entries.find(e => `${e.card.id}:${e.label}` === choice.id)
+              : entries.find(e => `${e.card.name} (${e.label})` === choice)
+            if (entry) {
+              deckEngine.trashCard(game, entry.card, player)
+            }
           }
         }
       }
@@ -1291,7 +1293,10 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
 
     case 'contract': {
       const choam = require('../systems/choam.js')
-      choam.takeContract(game, player)
+      const contractCount = effect.amount || 1
+      for (let i = 0; i < contractCount; i++) {
+        choam.takeContract(game, player)
+      }
       break
     }
 
