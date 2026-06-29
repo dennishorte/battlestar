@@ -1138,6 +1138,12 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
               deckEngine.trashCard(game, entry.card, player)
             }
           }
+          else {
+            game.log.add({
+              template: '{player} chooses not to trash a card',
+              args: { player },
+            })
+          }
         }
       }
       break
@@ -1208,6 +1214,12 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
             deckEngine.trashCard(game, card, player)
             deckEngine.drawIntrigueCard(game, player, 1)
           }
+        }
+        else {
+          game.log.add({
+            template: '{player} chooses not to trash a card',
+            args: { player },
+          })
         }
       }
       break
