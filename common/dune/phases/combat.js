@@ -147,10 +147,16 @@ function combatIntrigueRound(game, combatants) {
  */
 function resolveCombat(game) {
   const conflictCard = game.state.conflict.currentCard
-  const chipLabel = conflictCard
-    ? `${conflictCard.name} (Tier ${conflictCard.tier})`
-    : 'Conflict'
-  game.log.add({ template: `Resolving conflict: ${chipLabel}`, event: 'step' })
+  if (conflictCard) {
+    game.log.add({
+      template: 'Resolving conflict: {card} (Tier {tier})',
+      args: { card: conflictCard, tier: conflictCard.tier },
+      event: 'step',
+    })
+  }
+  else {
+    game.log.add({ template: 'Resolving conflict: Conflict', event: 'step' })
+  }
   game.log.indent()
 
   // Get all players with strength > 0
