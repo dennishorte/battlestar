@@ -7,10 +7,10 @@ module.exports = {
   dogmaBiscuit: `k`,
   echo: `Score the bottom blue card from your board.`,
   dogma: [
-    `Junk all cards in the 1 deck.`
+    `Junk all cards in the {1} deck.`
   ],
   dogmaImpl: [
-    (game, player) => game.actions.junkDeck(player, 1)
+    (game, player, { self }) => game.actions.junkDeck(player, game.getEffectAge(self, 1))
   ],
   echoImpl: (game, player) => {
     const card = game.cards.byPlayer(player, 'blue').slice(-1)[0]
