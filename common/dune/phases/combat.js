@@ -159,9 +159,13 @@ function resolveCombat(game) {
   }
   game.log.indent()
 
-  // Get all players with strength > 0
+  // Only players with deployed units can participate; strength alone doesn't qualify
   const rankings = game.players.all()
-    .filter(p => p.strength > 0)
+    .filter(p => {
+      const troops = game.state.conflict.deployedTroops[p.name] || 0
+      const sandworms = game.state.conflict.deployedSandworms[p.name] || 0
+      return (troops + sandworms) > 0 && p.strength > 0
+    })
     .sort((a, b) => b.strength - a.strength)
 
   if (rankings.length === 0) {

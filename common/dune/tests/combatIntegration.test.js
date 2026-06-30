@@ -103,6 +103,33 @@ describe('Combat Integration', () => {
     expect(dennis.getInfluence('bene-gesserit')).toBe(1)
   })
 
+  test('player with sword strength but no troops does not participate in combat', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      conflictCard: 'CHOAM Security',
+      dennis: { troopsInGarrison: 3, solari: 0 },
+      scott: { solari: 0 },
+      micah: { solari: 0 },
+    })
+    game.run()
+
+    // Dennis deploys troops to the conflict
+    t.choose(game, 'Agent Turn.Reconnaissance')
+    t.choose(game, 'Arrakeen')
+    t.choose(game, 'Deploy 2 troop(s) from garrison')
+
+    // Scott reveals their hand (Dagger gives 1 sword = strength > 0) without deploying any troops
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
+
+    finishUntilNextRound(game)
+
+    expect(game.state.round).toBe(2)
+    // Scott had strength from swords but no deployed troops — must not receive any combat reward
+    const scott = game.players.byName('scott')
+    expect(scott.solari).toBe(0)
+  })
+
   test('second place gets second reward', () => {
     const game = t.fixture()
     t.setBoard(game, {
