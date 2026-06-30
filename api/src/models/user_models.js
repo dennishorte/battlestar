@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt'
+import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
 import { client as databaseClient } from '../utils/mongo.js'
 const database = databaseClient.db('games')
@@ -330,6 +331,53 @@ User.changePassword = async function(userId, currentPassword, newPassword) {
   const filter = { _id: userId }
   const updater = { $set: { passwordHash } }
   return await userCollection.updateOne(filter, updater)
+}
+
+const PASSWORD_RESET_TTL_MS = 24 * 60 * 60 * 1000
+
+User.createPasswordResetToken = async function(userId) {
+  const user = await User.findById(userId)
+  if (!user) {
+    throw new Error('User not found')
+  }
+  if (user.deactivated) {
+    throw new Error('Cannot reset password for deactivated user')
+  }
+
+  const token = crypto.randomBytes(24).toString('hex')
+  const expiresAt = Date.now() + PASSWORD_RESET_TTL_MS
+
+  await userCollection.updateOne(
+    { _id: userId },
+    { $set: { passwordResetToken: token, passwordResetTokenExpiresAt: expiresAt } }
+  )
+
+  return { token, expiresAt, username: user.name }
+}
+
+User.findByPasswordResetToken = async function(token) {
+  return await userCollection.findOne({ passwordResetToken: token })
+}
+
+User.consumePasswordResetToken = async function(token, newPassword) {
+  const user = await User.findByPasswordResetToken(token)
+  if (!user) {
+    throw new Error('Invalid reset token')
+  }
+  if (user.passwordResetTokenExpiresAt < Date.now()) {
+    throw new Error('Reset token has expired')
+  }
+
+  const passwordHash = await bcrypt.hash(newPassword, 10)
+  await userCollection.updateOne(
+    { _id: user._id },
+    {
+      $set: { passwordHash },
+      $unset: { passwordResetToken: 1, passwordResetTokenExpiresAt: 1 }
+    }
+  )
+
+  return await User.findById(user._id)
 }
 
 User.isAdmin = async function(userId) {

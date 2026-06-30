@@ -482,6 +482,55 @@ router.post('/invite/list', async (req, res) => {
   }
 })
 
+/**
+ * @swagger
+ * /admin/password-reset/create:
+ *   post:
+ *     summary: Generate a password reset link for a user
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [userId]
+ *             properties:
+ *               userId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Reset token created
+ *       400:
+ *         description: Bad request
+ */
+router.post('/password-reset/create', async (req, res) => {
+  try {
+    const { userId } = req.body
+
+    if (!userId) {
+      return res.status(400).json({ status: 'error', message: 'userId is required' })
+    }
+
+    const result = await db.user.createPasswordResetToken(userId)
+
+    logger.info(`Admin ${req.user.name} created password reset token for user ${result.username}`)
+
+    res.status(200).json({
+      status: 'success',
+      token: result.token,
+      username: result.username,
+      expiresAt: result.expiresAt,
+    })
+  }
+  catch (error) {
+    logger.error(`Password reset create error: ${error.message}`)
+    res.status(400).json({ status: 'error', message: error.message })
+  }
+})
+
 router.post('/game-summary', async (req, res) => {
   try {
     const result = await db.game.getActiveSummary()

@@ -190,4 +190,61 @@ router.post('/invite/accept', async (req, res) => {
   }
 })
 
+router.post('/password-reset/validate', async (req, res) => {
+  try {
+    const { token } = req.body
+    if (!token) {
+      return res.status(400).json({ status: 'error', message: 'token is required' })
+    }
+
+    const user = await db.user.findByPasswordResetToken(token)
+    if (!user) {
+      return res.status(200).json({ status: 'success', valid: false, reason: 'not_found' })
+    }
+    if (user.passwordResetTokenExpiresAt < Date.now()) {
+      return res.status(200).json({ status: 'success', valid: false, reason: 'expired' })
+    }
+
+    return res.status(200).json({
+      status: 'success',
+      valid: true,
+      username: user.name,
+      expiresAt: user.passwordResetTokenExpiresAt,
+    })
+  }
+  catch (err) {
+    logger.error(`Password reset validate error: ${err.message}`)
+    return res.status(500).json({ status: 'error', message: 'Failed to validate reset token' })
+  }
+})
+
+router.post('/password-reset/accept', async (req, res) => {
+  try {
+    const { token, password } = req.body
+
+    if (!token || !password) {
+      return res.status(400).json({ status: 'error', message: 'token and password are required' })
+    }
+    if (password.length < 8) {
+      return res.status(400).json({ status: 'error', message: 'password must be at least 8 characters' })
+    }
+
+    let user
+    try {
+      user = await db.user.consumePasswordResetToken(token, password)
+    }
+    catch (err) {
+      return res.status(400).json({ status: 'error', message: err.message })
+    }
+
+    logger.info(`User ${user.name} reset their password`)
+
+    return res.status(200).json({ status: 'success', user })
+  }
+  catch (err) {
+    logger.error(`Password reset accept error: ${err.message}`)
+    return res.status(500).json({ status: 'error', message: 'Failed to reset password' })
+  }
+})
+
 export default router

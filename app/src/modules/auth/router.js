@@ -1,5 +1,6 @@
 import store from '@/store'
 import AcceptInvite from './components/AcceptInvite.vue'
+import ResetPassword from './components/ResetPassword.vue'
 import SiteLogin from './components/SiteLogin.vue'
 
 export default [
@@ -14,6 +15,12 @@ export default [
     name: 'AcceptInvite',
     title: 'Create Account',
     component: AcceptInvite,
+  },
+  {
+    path: '/password-reset/:token',
+    name: 'ResetPassword',
+    title: 'Reset Password',
+    component: ResetPassword,
   },
   {
     path: '/logout',

@@ -42,6 +42,7 @@
                   <button @click="impersonate(user)">impersonate</button>
                 </DropdownItem>
                 <DropdownItem><button @click="clearImpersonation(user)">clear impersonation</button></DropdownItem>
+                <DropdownItem><button @click="generatePasswordReset(user)">password reset link</button></DropdownItem>
                 <DropdownItem><button @click="deactivate(user._id)">deactivate</button></DropdownItem>
                 <DropdownItem><button @click="edit(user)">edit</button></DropdownItem>
               </DropdownMenu>
@@ -232,6 +233,17 @@ export default {
             alert(`Failed to impersonate user: ${errorMessage}`)
           }
         }
+      }
+    },
+
+    async generatePasswordReset(user) {
+      try {
+        const resp = await this.$post('/api/admin/password-reset/create', { userId: user._id })
+        const link = `${window.location.origin}/password-reset/${resp.token}`
+        window.prompt(`Password reset link for ${user.name} (expires in 24h):`, link)
+      }
+      catch (error) {
+        alert(`Failed to generate reset link: ${error.response?.data?.message || error.message}`)
       }
     },
 
