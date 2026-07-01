@@ -58,7 +58,16 @@ module.exports = {
   getImperiumCards: settings => getCards(cards.imperiumCards, settings),
   getIntrigueCards: settings => getCards(cards.intrigueCards, settings),
   getReserveCards: settings => getCards(cards.reserveCards, settings),
-  getStarterCards: settings => getCards(cards.starterCards, settings),
+  getStarterCards: (settings) => {
+    const sources = getActiveSources(settings)
+    if (!sources.includes('Base')) {
+      sources.push('Base')
+    }
+    return BaseCardManager.filterDefinitions(
+      cards.starterCards.filter(isCompatibleWithUprising),
+      { sources }
+    )
+  },
   getConflictCards: settings => getCards(cards.conflictCards, settings),
   getTechCards: settings => getCards(cards.techCards, settings),
   getTleilaxCards: settings => getCards(cards.tleilaxCards, settings),
