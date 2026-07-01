@@ -187,14 +187,17 @@ export default {
             const name = c.title || c
             const tokens = name.split(',').map(t => t.trim())
 
-            if (typeof c === 'string' && tokens.length === 2 && this.game.getLocationByName(tokens[0])) {
+            if (
+              (typeof c === 'string' || c.kind === 'troop' || c.kind === 'spy') &&
+              tokens.length === 2 && this.game.getLocationByName(tokens[0])
+            ) {
               // "LocationName, OwnerName" — unit-level target only
               unitTargets.push(name)
             }
             else if (c.title === 'troop' || c.title === 'spy') {
               // Nested group with unit targets only
               for (const sub of (c.choices || [])) {
-                unitTargets.push(sub)
+                unitTargets.push(typeof sub === 'string' ? sub : sub.title)
               }
             }
             else {
