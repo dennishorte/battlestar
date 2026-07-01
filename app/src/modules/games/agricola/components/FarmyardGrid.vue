@@ -34,6 +34,46 @@
         class="fence-segment"
       />
 
+      <!-- Palisades (WoodPalisades card: edge fences built with 2 wood each) -->
+      <g v-for="(fence, index) in palisadeSegments" :key="'palisade-' + index">
+        <rect
+          :x="fence.x"
+          :y="fence.y"
+          :width="fence.width"
+          :height="fence.height"
+          class="palisade-segment"
+        />
+        <!-- Two dots representing the 2 wood tokens -->
+        <circle
+          v-if="fence.width > fence.height"
+          :cx="fence.x + fence.width * 0.35"
+          :cy="fence.y + fence.height / 2"
+          r="1.2"
+          class="palisade-dot"
+        />
+        <circle
+          v-if="fence.width > fence.height"
+          :cx="fence.x + fence.width * 0.65"
+          :cy="fence.y + fence.height / 2"
+          r="1.2"
+          class="palisade-dot"
+        />
+        <circle
+          v-if="fence.height >= fence.width"
+          :cx="fence.x + fence.width / 2"
+          :cy="fence.y + fence.height * 0.35"
+          r="1.2"
+          class="palisade-dot"
+        />
+        <circle
+          v-if="fence.height >= fence.width"
+          :cx="fence.x + fence.width / 2"
+          :cy="fence.y + fence.height * 0.65"
+          r="1.2"
+          class="palisade-dot"
+        />
+      </g>
+
       <!-- New fence indicators (during fencing mode) -->
       <rect
         v-for="(fence, index) in newFenceSegments"
@@ -98,6 +138,10 @@ export default {
       return this.player.farmyard?.fences || []
     },
 
+    palisades() {
+      return this.player.farmyard?.palisades || []
+    },
+
     pastures() {
       return this.player.farmyard?.pastures || []
     },
@@ -107,6 +151,19 @@ export default {
       const segments = []
 
       for (const fence of this.fences) {
+        const segment = this.fenceToSegment(fence)
+        if (segment) {
+          segments.push(segment)
+        }
+      }
+
+      return segments
+    },
+
+    palisadeSegments() {
+      const segments = []
+
+      for (const fence of this.palisades) {
         const segment = this.fenceToSegment(fence)
         if (segment) {
           segments.push(segment)
@@ -308,6 +365,17 @@ export default {
   fill: #f5deb3;
   stroke: #8b7355;
   stroke-width: 1;
+}
+
+.palisade-segment {
+  fill: #8B4513;
+  stroke: #5C2A0A;
+  stroke-width: 1;
+}
+
+.palisade-dot {
+  fill: #f5deb3;
+  pointer-events: none;
 }
 
 .new-fence-segment {

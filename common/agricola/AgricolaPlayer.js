@@ -1012,6 +1012,25 @@ class AgricolaPlayer extends BasePlayer {
     return { edgeFences, internalFences }
   }
 
+  // Resolve which fences are palisades vs regular given an optional explicit key set.
+  // palisadeFenceKeys: Set<string> — keys of form "${row1}:${col1}:${edge}" for chosen palisades.
+  // When undefined (not provided): default to all edge fences if card is active.
+  // When provided (even empty): use exactly the specified set.
+  _resolvePalisadeSplit(fences, palisadeFenceKeys) {
+    if (palisadeFenceKeys !== undefined) {
+      const palisadeFences = fences.filter(f =>
+        f.edge && palisadeFenceKeys.has(`${f.row1}:${f.col1}:${f.edge}`)
+      )
+      const nonPalisadeFences = fences.filter(f => !palisadeFences.includes(f))
+      return { palisadeFences, nonPalisadeFences }
+    }
+    if (this.hasWoodPalisadesCard()) {
+      const { edgeFences, internalFences } = this._splitEdgeAndInternalFences(fences)
+      return { palisadeFences: edgeFences, nonPalisadeFences: internalFences }
+    }
+    return { palisadeFences: [], nonPalisadeFences: fences }
+  }
+
   _countFieldAdjacentFences(fences) {
     let count = 0
     for (const f of fences) {

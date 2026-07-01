@@ -114,8 +114,36 @@ AgricolaActionManager.prototype.selectPastureSpaces = function(player) {
       return { built: false, skipped: true }
     }
 
+    // WoodPalisades: ask player which edge fences to build as palisades (per-fence choice)
+    const palisadeFenceKeys = new Set()
+    if (player.hasWoodPalisadesCard()) {
+      const fences = player.calculateFencesForPasture(selectedSpaces)
+      const { edgeFences } = player._splitEdgeAndInternalFences(fences)
+      if (edgeFences.length > 0) {
+        const fenceOptions = edgeFences.map((f, i) => this.option({
+          id: `p-${i}`,
+          title: `${f.edge.charAt(0).toUpperCase() + f.edge.slice(1)} fence at row ${f.row1}, col ${f.col1}`,
+        }))
+        const selections = this.choose(player, fenceOptions, {
+          title: 'Select edge fences to build as wood palisades (2 wood each, +1 bonus point each)',
+          min: 0,
+          max: edgeFences.length,
+        })
+        const selectedIds = new Set(
+          (Array.isArray(selections) ? selections : selections ? [selections] : [])
+            .map(s => (s && typeof s === 'object') ? s.id : s)
+            .filter(Boolean)
+        )
+        for (const [i, f] of edgeFences.entries()) {
+          if (selectedIds.has(`p-${i}`)) {
+            palisadeFenceKeys.add(`${f.row1}:${f.col1}:${f.edge}`)
+          }
+        }
+      }
+    }
+
     // Validate the selection
-    const validation = player.validatePastureSelection(selectedSpaces)
+    const validation = player.validatePastureSelection(selectedSpaces, { palisadeFenceKeys })
     if (!validation.valid) {
       this.log.add({
         template: 'Invalid pasture selection: {error}',
@@ -125,7 +153,7 @@ AgricolaActionManager.prototype.selectPastureSpaces = function(player) {
     }
 
     // Build the pasture
-    const result = player.buildPasture(selectedSpaces)
+    const result = player.buildPasture(selectedSpaces, { palisadeFenceKeys })
     if (result.success) {
       // Handle pending fence cost choice (Millwright grain substitution)
       if (player._pendingFenceCost) {

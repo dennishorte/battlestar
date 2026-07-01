@@ -20,6 +20,7 @@ describe('Wood Palisades', () => {
     // Fences needed: top (board edge → palisade), left, right, bottom (internal fences)
     // = 1 palisade + 3 internal fences
     t.action(game, 'build-pasture', { spaces: [{ row: 0, col: 2 }] })
+    t.choose(game, 'Top fence at row 0, col 2') // select the top edge as palisade
     t.choose(game, 'Done building fences')
 
     // Remaining turns
@@ -59,6 +60,7 @@ describe('Wood Palisades', () => {
     // Build pasture at top-right corner (0,4) — 2 board edges (top, right)
     // Needs: top (palisade), right (palisade), left (internal), bottom (internal)
     t.action(game, 'build-pasture', { spaces: [{ row: 0, col: 4 }] })
+    t.choose(game, 'Top fence at row 0, col 4', 'Right fence at row 0, col 4') // both edges as palisades
     t.choose(game, 'Done building fences')
 
     t.choose(game, 'Grain Seeds')
@@ -86,6 +88,88 @@ describe('Wood Palisades', () => {
     })
   })
 
+  test('player can decline palisades and use regular fence pieces for edge fences', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['wood-palisades-b030'],
+        wood: 15,
+      },
+      actionSpaces: ['Fencing'],
+    })
+    game.run()
+
+    t.choose(game, 'Fencing')
+    // Build pasture at (0,4) — 2 board edges (top, right); select no palisades
+    t.action(game, 'build-pasture', { spaces: [{ row: 0, col: 4 }] })
+    t.choose(game) // select nothing — both edge fences become regular fence pieces
+    t.choose(game, 'Done building fences')
+
+    t.choose(game, 'Grain Seeds')
+    t.choose(game, 'Day Laborer')
+    t.choose(game, 'Clay Pit')
+
+    const dennis = game.players.byName('dennis')
+
+    // No palisades — all 4 fences are regular
+    expect(dennis.farmyard.palisades.length).toBe(0)
+    expect(dennis.farmyard.fences.length).toBe(4)
+    expect(dennis.farmyard.pastures.length).toBe(1)
+
+    t.testBoard(game, {
+      dennis: {
+        minorImprovements: ['wood-palisades-b030'],
+        wood: 11, // 15 - 4 regular fences (1 wood each)
+        food: 2,
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 4 }] }],
+        },
+      },
+    })
+  })
+
+  test('player can use palisades on only one edge fence in a corner', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        minorImprovements: ['wood-palisades-b030'],
+        wood: 15,
+      },
+      actionSpaces: ['Fencing'],
+    })
+    game.run()
+
+    t.choose(game, 'Fencing')
+    // Build pasture at (0,4) — 2 board edges (top, right); only use palisade on top
+    t.action(game, 'build-pasture', { spaces: [{ row: 0, col: 4 }] })
+    t.choose(game, 'Top fence at row 0, col 4') // only top is palisade; right is regular fence piece
+    t.choose(game, 'Done building fences')
+
+    t.choose(game, 'Grain Seeds')
+    t.choose(game, 'Day Laborer')
+    t.choose(game, 'Clay Pit')
+
+    const dennis = game.players.byName('dennis')
+
+    // 1 palisade (top), 3 regular fences (left, bottom, right)
+    expect(dennis.farmyard.palisades.length).toBe(1)
+    expect(dennis.farmyard.fences.length).toBe(3)
+    expect(dennis.farmyard.pastures.length).toBe(1)
+
+    t.testBoard(game, {
+      dennis: {
+        minorImprovements: ['wood-palisades-b030'],
+        wood: 10, // 15 - 3 (regular fences) - 2 (1 palisade)
+        food: 2,
+        farmyard: {
+          pastures: [{ spaces: [{ row: 0, col: 4 }] }],
+        },
+      },
+    })
+  })
+
   test('palisades do not count against 15-fence limit', () => {
     const game = t.fixture()
     t.setBoard(game, {
@@ -102,10 +186,12 @@ describe('Wood Palisades', () => {
 
     // Build a pasture at (0,4) — 2 edge fences (palisades) + 2 internal
     t.action(game, 'build-pasture', { spaces: [{ row: 0, col: 4 }] })
+    t.choose(game, 'Top fence at row 0, col 4', 'Right fence at row 0, col 4')
     t.choose(game, 'Build another pasture')
 
     // Build another pasture at (0,3) — 1 edge fence (palisade) + 2 internal (shares 1 fence with (0,4))
     t.action(game, 'build-pasture', { spaces: [{ row: 0, col: 3 }] })
+    t.choose(game, 'Top fence at row 0, col 3')
     t.choose(game, 'Done building fences')
 
     t.choose(game, 'Grain Seeds')

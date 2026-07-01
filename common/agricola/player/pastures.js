@@ -615,22 +615,16 @@ AgricolaPlayer.prototype.validatePastureSelection = function(spaces, options) {
     }
   }
 
-  // WoodPalisades: edge fences become palisades (2 wood each, don't count against 15-fence limit)
-  const usesPalisades = this.hasWoodPalisadesCard()
-  const { edgeFences, internalFences } = this._splitEdgeAndInternalFences(fences)
+  // WoodPalisades: selected edge fences become palisades (2 wood each, don't count against limit)
+  // options.palisadeFenceKeys: Set<string> of "${row1}:${col1}:${edge}" — explicit per-fence choice.
+  // When absent: default to all edge fences if card is active.
+  const { palisadeFences, nonPalisadeFences } = this._resolvePalisadeSplit(fences, options?.palisadeFenceKeys)
 
   if (!options?.skipCostCheck) {
     // Check if player has enough wood
-    let woodCost
-    if (usesPalisades) {
-      // Internal fences: normal cost (1 wood each, with modifiers)
-      woodCost = this.applyFenceCostModifiers(internalFences.length, 0)
-      // Edge fences: 2 wood each as palisades
-      woodCost += edgeFences.length * 2
-    }
-    else {
-      woodCost = this.applyFenceCostModifiers(fences.length, this._countEdgeFences(fences))
-    }
+    // Non-palisade fences: normal cost (1 wood each, with modifiers); palisade fences: 2 wood each
+    let woodCost = this.applyFenceCostModifiers(nonPalisadeFences.length, this._countEdgeFences(nonPalisadeFences))
+    woodCost += palisadeFences.length * 2
     // Overhaul free fence discount (validation only — don't decrement)
     if (this._overhaulFreeFences > 0) {
       woodCost = Math.max(0, woodCost - this._overhaulFreeFences)
@@ -663,7 +657,7 @@ AgricolaPlayer.prototype.validatePastureSelection = function(spaces, options) {
   }
 
   // Check if player has enough fences remaining (palisades don't count against limit)
-  const fencesForLimit = usesPalisades ? internalFences.length : fences.length
+  const fencesForLimit = nonPalisadeFences.length
   const remainingFences = res.constants.maxFences - this.getFenceCount()
   if (fencesForLimit > remainingFences) {
     return {
@@ -709,30 +703,31 @@ AgricolaPlayer.prototype.areSpacesConnected = function(spaces) {
 
 // Build a pasture from selected spaces
 AgricolaPlayer.prototype.buildPasture = function(spaces, options) {
-  const validation = this.validatePastureSelection(spaces, options?.skipCost ? { skipCostCheck: true } : undefined)
+  const validateOpts = {}
+  if (options?.skipCost) {
+    validateOpts.skipCostCheck = true
+  }
+  if (options?.palisadeFenceKeys !== undefined) {
+    validateOpts.palisadeFenceKeys = options.palisadeFenceKeys
+  }
+  const validation = this.validatePastureSelection(spaces, Object.keys(validateOpts).length ? validateOpts : undefined)
   if (!validation.valid) {
     return { success: false, error: validation.error }
   }
 
-  // WoodPalisades: edge fences become palisades
-  const usesPalisades = this.hasWoodPalisadesCard()
-  const { edgeFences, internalFences } = this._splitEdgeAndInternalFences(validation.fences)
+  // WoodPalisades: resolve which fences are palisades vs regular
+  const { palisadeFences, nonPalisadeFences } = this._resolvePalisadeSplit(
+    validation.fences, options?.palisadeFenceKeys
+  )
 
   if (!options?.skipCost) {
-    // Pay wood cost (accounting for fence cost modifiers)
-    let woodCost
-    if (usesPalisades) {
-      woodCost = this.applyFenceCostModifiers(internalFences.length, 0)
-      woodCost += edgeFences.length * 2
-    }
-    else {
-      woodCost = this.applyFenceCostModifiers(validation.fencesNeeded, this._countEdgeFences(validation.fences))
-    }
+    // Pay wood cost: non-palisade fences at normal cost, palisade fences at 2 wood each
+    let woodCost = this.applyFenceCostModifiers(nonPalisadeFences.length, this._countEdgeFences(nonPalisadeFences))
+    woodCost += palisadeFences.length * 2
     // Consume per-action fence cost modifiers (e.g. Hedge Keeper free fence counter)
-    const fencesForModifier = usesPalisades ? internalFences.length : validation.fencesNeeded
     for (const card of this.getActiveCards()) {
       if (card.hasHook('consumeFenceCost')) {
-        card.callHook('consumeFenceCost', this, fencesForModifier)
+        card.callHook('consumeFenceCost', this, nonPalisadeFences.length)
       }
     }
     // Overhaul free fence discount — decrement the counter
@@ -785,19 +780,12 @@ AgricolaPlayer.prototype.buildPasture = function(spaces, options) {
     }
   }
 
-  // Add fences — edge fences to palisades if WoodPalisades active
-  if (usesPalisades) {
-    for (const fence of internalFences) {
-      this.farmyard.fences.push(fence)
-    }
-    for (const fence of edgeFences) {
-      this.farmyard.palisades.push(fence)
-    }
+  // Add fences — palisade fences go to farmyard.palisades, all others to farmyard.fences
+  for (const fence of nonPalisadeFences) {
+    this.farmyard.fences.push(fence)
   }
-  else {
-    for (const fence of validation.fences) {
-      this.farmyard.fences.push(fence)
-    }
+  for (const fence of palisadeFences) {
+    this.farmyard.palisades.push(fence)
   }
 
   // Recalculate pastures
