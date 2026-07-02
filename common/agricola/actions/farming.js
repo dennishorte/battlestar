@@ -444,7 +444,7 @@ AgricolaActionManager.prototype.sowSingleField = function(player, card) {
     canSowGrain,
     canSowVeg,
     title: `${card.name}: Choose field to sow`,
-    card: card.name,
+    card: card.id,
   })
 
   return !!result
