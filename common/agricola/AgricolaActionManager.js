@@ -483,10 +483,9 @@ class AgricolaActionManager extends BaseActionManager {
           continue
         }
         const currentTotal = player.getTotalAnimals(type)
-        const babyReleased = (result.overflow?.release?.[type] || 0) >= baby
-        const finalParentCount = babyReleased
-          ? currentTotal - deltRemoved[type] + deltPlaced[type]
-          : Math.max(0, currentTotal - deltRemoved[type] + deltPlaced[type] - baby)
+        const babyOverflow = (result.overflow?.cook?.[type] || 0) + (result.overflow?.release?.[type] || 0)
+        const babyPlaced = Math.max(0, baby - babyOverflow)
+        const finalParentCount = Math.max(0, currentTotal - deltRemoved[type] + deltPlaced[type] - babyPlaced)
         const required = breedingRequirements[type] || 2
         acceptedBabies[type] = finalParentCount >= required ? baby : 0
       }

@@ -284,19 +284,16 @@ describe('animals', () => {
     expect(dennis.housePets.boar).toBe(1)
   })
 
-  test('applyAnimalPlacements validates breeding constraints - no cooking babies', () => {
+  test('applyAnimalPlacements validates breeding constraints - accounting rejects cooking more than available', () => {
     const game = t.fixture()
     game.run()
 
     const dennis = game.players.byName('dennis')
     t.addPasture(dennis, [{ row: 1, col: 0 }, { row: 1, col: 1 }], 'sheep', 2)
 
-    // Remove 2 existing sheep, cook 2 (1 existing + 1 baby), place 1 baby
-    // Accounting: removed(2) + incoming(1) = 3 = placed(1) + cooked(2) + released(0) ✓
-    // But cooked(2) > removed(2) is fine...
-    // To trigger: remove 1, incoming 1 baby, cook 2 (more than removed), place 0
-    // Accounting: removed(1) + incoming(1) = 2 = placed(0) + cooked(2) + released(0) ✓
-    // Breeding: cooked(2) > removed(1) → cannot cook babies
+    // Remove 1 existing sheep but try to cook 2 — with acceptedBabies=0 the baby
+    // never arrives, so only 1 animal is in the pool but 2 are cooked.
+    // Accounting: removed(1) + incoming(0) = 1 ≠ placed(0) + cooked(2) + released(0) = 2
     const result = dennis.applyAnimalPlacements({
       placements: [],
       overflow: { cook: { sheep: 2 } },
@@ -311,7 +308,7 @@ describe('animals', () => {
     })
 
     expect(result.success).toBe(false)
-    expect(result.error).toMatch(/Cannot cook babies/)
+    expect(result.error).toMatch(/Must account for all sheep/)
   })
 
   test('applyAnimalPlacements: eligible baby with no room is released', () => {

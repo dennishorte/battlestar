@@ -863,24 +863,10 @@ AgricolaPlayer.prototype.applyAnimalPlacements = function(plan) {
   const totalCooked = overflow?.cook || {}
   const totalReleased = overflow?.release || {}
 
-  // Breeding constraint validation (run before accounting so callers see the
-  // most specific error first). The "are there enough parents?" check lives in the
-  // caller's acceptedBabies computation; here we only need to ensure the pool isn't
-  // being used to cook babies that don't exist.
-  if (breedingConstraints) {
-    for (const type of res.animalTypes) {
-      const cooked = totalCooked[type] || 0
-      const removed = totalRemoved[type] || 0
-
-      // Babies can't be cooked — only existing animals can be cooked
-      if (cooked > removed) {
-        return {
-          success: false,
-          error: `Cannot cook babies: ${type} cooked(${cooked}) exceeds removed(${removed})`,
-        }
-      }
-    }
-  }
+  // No extra breeding constraint validation needed here — the accounting check
+  // below (removed + incoming = placed + cooked + released) is sufficient.
+  // Babies haven't been placed yet, so cooking them is valid just like cooking
+  // overflow animals in the non-breeding flow.
 
   // Babies rejected by breeding constraints are never born, so they don't need accounting.
   const acceptedForAccounting = breedingConstraints?.acceptedBabies
