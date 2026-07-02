@@ -472,20 +472,21 @@ class AgricolaActionManager extends BaseActionManager {
       for (const r of (result.removals || [])) {
         deltRemoved[r.animalType] = (deltRemoved[r.animalType] || 0) + r.count
       }
-      // A baby is "accepted" (born) if the final placed parent count meets the threshold.
-      // Use deltPlaced as the final count: if the baby was released, all placed are parents;
-      // if the baby was placed, subtract it. This correctly handles move (remove+replace) flows
-      // where parentsRemaining = currentTotal - deltRemoved would undercount.
+      // A baby is "accepted" (born) if the final parent count meets the threshold.
+      // Use currentTotal - deltRemoved + deltPlaced to get the final animal count,
+      // then subtract the baby if it was placed (not released). This handles both
+      // move flows (remove+replace) and non-move flows (parents stay in place).
       for (const type of res.animalTypes) {
         const baby = pendingBabies[type] || 0
         if (baby === 0) {
           acceptedBabies[type] = 0
           continue
         }
+        const currentTotal = player.getTotalAnimals(type)
         const babyReleased = (result.overflow?.release?.[type] || 0) >= baby
         const finalParentCount = babyReleased
-          ? deltPlaced[type]
-          : Math.max(0, deltPlaced[type] - baby)
+          ? currentTotal - deltRemoved[type] + deltPlaced[type]
+          : Math.max(0, currentTotal - deltRemoved[type] + deltPlaced[type] - baby)
         const required = breedingRequirements[type] || 2
         acceptedBabies[type] = finalParentCount >= required ? baby : 0
       }
