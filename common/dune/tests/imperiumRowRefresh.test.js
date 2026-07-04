@@ -289,4 +289,58 @@ describe('Imperium Row Refresh — Conveyor Belt (Shift) Variant', () => {
     expect(game.zones.byId('common.imperiumRow').cardlist().length).toBe(5)
   })
 
+  test('card acquired mid-round is replaced at the head, not the tail', () => {
+    const game = t.fixture({ imperiumRowRefresh: 'shift' })
+    game.run()
+
+    const rowBefore = game.zones.byId('common.imperiumRow').cardlist()
+    const oldestName = rowBefore[rowBefore.length - 1].name
+
+    // Dennis reveals and acquires the first affordable card mid-round,
+    // rather than passing — this exercises deckEngine.acquireCard's refill.
+    t.choose(game, 'Reveal Turn')
+    const choices = t.currentChoices(game)
+    const affordable = choices.filter(c => c !== 'Pass')
+    expect(affordable.length).toBeGreaterThan(0)
+    t.choose(game, affordable[0])
+
+    // The card that refilled the vacated slot must land at the head (index 0),
+    // not the tail — otherwise it could be discarded as "oldest" at recall
+    // moments after entering the row.
+    const rowAfterAcquire = game.zones.byId('common.imperiumRow').cardlist()
+    expect(rowAfterAcquire.length).toBe(5)
+    expect(rowAfterAcquire[rowAfterAcquire.length - 1].name).toBe(oldestName)
+
+    // Let remaining players finish the round and trigger recall.
+    while (game.waiting) {
+      const title = game.waiting.selectors[0]?.title || ''
+      if (title.includes('Acquire') || title.includes('Plot')) {
+        t.choose(game, 'Pass')
+      }
+      else {
+        break
+      }
+    }
+    const playerCount = game.players.all().length
+    for (let i = 1; i < playerCount; i++) {
+      t.choose(game, 'Reveal Turn')
+      while (game.waiting) {
+        const title = game.waiting.selectors[0]?.title || ''
+        if (title.includes('Acquire') || title.includes('Plot')) {
+          t.choose(game, 'Pass')
+        }
+        else {
+          break
+        }
+      }
+    }
+
+    // The original tail card is still the one that falls off — the
+    // mid-round acquisition's replacement (now shifted off the head) must
+    // not have been discarded in its place.
+    t.testBoard(game, { round: 2 })
+    const trash = game.zones.byId('common.trash').cardlist().map(c => c.name)
+    expect(trash).toContain(oldestName)
+  })
+
 })

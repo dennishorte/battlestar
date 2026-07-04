@@ -125,10 +125,15 @@ function acquireCard(game, player, card) {
 
 /**
  * Refill the Imperium Row to 5 cards from the Imperium Deck.
- * `atHead: true` inserts each new card at position 0 (newest first) for the
- * Conveyor Belt variant; default appends to the tail.
+ *
+ * Under the Conveyor Belt (Shift) variant, every refill — not just the one
+ * triggered by `applyShiftRefresh` at end of recall — must insert new cards
+ * at position 0 (newest first). Otherwise a card acquired mid-round would be
+ * appended at the tail and could immediately be treated as "oldest" and fall
+ * off the row, while genuinely old cards near the head survive. Pass
+ * `atHead` explicitly only to override this per-settings default.
  */
-function refillImperiumRow(game, { silent = false, atHead = false } = {}) {
+function refillImperiumRow(game, { silent = false, atHead = game.settings.imperiumRowRefresh === 'shift' } = {}) {
   const rowZone = game.zones.byId('common.imperiumRow')
   const deckZone = game.zones.byId('common.imperiumDeck')
 
