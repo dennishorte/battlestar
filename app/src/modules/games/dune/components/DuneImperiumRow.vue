@@ -16,6 +16,7 @@
                       :subtitle="`×${spiceMustFlowCount} remaining`" />
       <span v-else class="reserve reserve-empty">The Spice Must Flow (0)</span>
     </div>
+    <div class="refresh-memo" @click="openRefreshInfo">Row Refresh: {{ refreshLabel }}</div>
   </div>
 </template>
 
@@ -23,6 +24,13 @@
 <script>
 import DuneCard from './DuneCard.vue'
 import DuneOptionChip from './DuneOptionChip.vue'
+
+const REFRESH_LABELS = {
+  none: 'None (standard)',
+  dice: 'Dice',
+  nuke: 'Nuke',
+  shift: 'Conveyor Belt',
+}
 
 export default {
   name: 'DuneImperiumRow',
@@ -34,6 +42,10 @@ export default {
   computed: {
     rowCards() {
       return this.game.zones.byId('common.imperiumRow').cardlist()
+    },
+
+    refreshLabel() {
+      return REFRESH_LABELS[this.game.settings.imperiumRowRefresh] || 'None (standard)'
     },
 
     prepareCount() {
@@ -50,6 +62,12 @@ export default {
 
     firstSpiceCard() {
       return this.game.zones.byId('common.reserve.spiceMustFlow').cardlist()[0] || null
+    },
+  },
+
+  methods: {
+    openRefreshInfo() {
+      this.$modal('dune-refresh-info').show()
     },
   },
 }
@@ -90,5 +108,18 @@ export default {
   color: #aaa;
   font-style: italic;
   padding: .15em .5em;
+}
+
+.refresh-memo {
+  margin-top: .4em;
+  font-size: .75em;
+  color: #8a7a62;
+  cursor: pointer;
+  text-decoration: underline dotted;
+  width: fit-content;
+}
+
+.refresh-memo:hover {
+  color: #8b6914;
 }
 </style>

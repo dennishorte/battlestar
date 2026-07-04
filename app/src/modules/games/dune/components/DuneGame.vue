@@ -38,6 +38,7 @@
 
     <DuneCardViewerModal />
     <DuneCardListModal />
+    <DuneRefreshInfoModal />
     <DuneRulesModal />
     <DuneShieldWallModal />
     <DuneTableauModal />
@@ -65,6 +66,7 @@ import DuneActionSpaces from './DuneActionSpaces.vue'
 import DuneOptionChip from './DuneOptionChip.vue'
 import DuneCardListModal from './modals/DuneCardListModal.vue'
 import DuneCardViewerModal from './modals/DuneCardViewerModal.vue'
+import DuneRefreshInfoModal from './modals/DuneRefreshInfoModal.vue'
 import DuneRulesModal from './modals/DuneRulesModal.vue'
 import DuneShieldWallModal from './modals/DuneShieldWallModal.vue'
 import DuneTableauModal from './modals/DuneTableauModal.vue'
@@ -85,6 +87,7 @@ export default {
     DuneFactionTrack,
     DuneImperiumRow,
     DunePlayerSummary,
+    DuneRefreshInfoModal,
     DuneRulesModal,
     DuneShieldWallModal,
     DuneTableauModal,
