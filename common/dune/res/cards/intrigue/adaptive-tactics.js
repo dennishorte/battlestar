@@ -29,11 +29,11 @@ module.exports = {
       const [choice] = game.actions.choose(player, choices, { title: 'Adaptive Tactics' })
       const chId = typeof choice === 'object' ? choice.id : choice
       if (chId !== 'pass' && choice !== 'Pass') {
-        player.decrementCounter('spice', 1, { silent: true })
+        player.decrementCounter('spice', 1)
         const recruit = Math.min(1, player.troopsInSupply)
         if (recruit > 0) {
           player.decrementCounter('troopsInSupply', recruit, { silent: true })
-          player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+          player.incrementCounter('troopsInGarrison', recruit)
         }
         if (game.state.turnTracking) {
           game.state.turnTracking.spaceIsCombat = true

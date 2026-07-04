@@ -641,7 +641,7 @@ function resolveWinnerBonuses(game, winner) {
     const chId = typeof choice === 'object' ? choice.id : choice
     const isPay2 = chId === 'pay2' || (typeof choice === 'string' && choice.includes('+2'))
     if (isPay2) {
-      winner.decrementCounter('spice', 2, { silent: true })
+      winner.decrementCounter('spice', 2)
       for (let i = 0; i < 2; i++) {
         const factionChoices = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
         const [fChoice] = game.actions.choose(winner, factionChoices, { title: `+1 Influence (${i + 1}/2)` })

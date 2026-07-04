@@ -42,10 +42,10 @@ module.exports = {
     const chId = typeof choice === 'object' ? choice.id : choice
     const isPersuasion = chId === 'persuasion' || (typeof choice === 'string' && choice.includes('Persuasion'))
     if (isPersuasion) {
-      player.incrementCounter('persuasion', 2, { silent: true })
+      player.incrementCounter('persuasion', 2)
     }
     else {
-      player.decrementCounter('water', 1, { silent: true })
+      player.decrementCounter('water', 1)
       game.state.conflict.deployedSandworms[player.name] =
         (game.state.conflict.deployedSandworms[player.name] || 0) + 1
       game.log.add({ template: '{player}: deploys 1 Sandworm', args: { player } })

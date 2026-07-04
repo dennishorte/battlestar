@@ -55,7 +55,7 @@ module.exports = {
             }
           }
         }
-        player.decrementCounter('solari', 5, { silent: true })
+        player.decrementCounter('solari', 5)
         player.incrementCounter('vp', 1, { silent: true, source: 'Corrinth City' })
         game.log.add({ template: '{player} gains 1 Victory Point', args: { player } })
       }
@@ -74,7 +74,7 @@ module.exports = {
       game.log.add({ template: '{player} gains 5 Solari', args: { player } })
     }
     else if (chId === 'council' || choice === 'Pay 5 Solari for High Council seat') {
-      player.decrementCounter('solari', 5, { silent: true })
+      player.decrementCounter('solari', 5)
       player.setCounter('hasHighCouncil', 1, { silent: true })
       game.log.add({ template: '{player} takes High Council seat', args: { player } })
     }

@@ -487,7 +487,7 @@ function acquireOneCard(game, player, opts = {}) {
 
   const card = chosen
   const effectiveCost = acquireCost(game, player, card)
-  player.decrementCounter(useSolari ? 'solari' : 'persuasion', effectiveCost, { silent: true })
+  player.decrementCounter(useSolari ? 'solari' : 'persuasion', effectiveCost)
 
   // If this was a reserved card, clear that reservation entry
   if (isReservedFor(game, player, card)) {

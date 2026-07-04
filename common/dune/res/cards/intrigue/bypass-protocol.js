@@ -59,7 +59,7 @@ module.exports = {
     }
 
     if (isExpensive) {
-      player.decrementCounter('spice', 2, { silent: true })
+      player.decrementCounter('spice', 2)
       const deckZone = game.zones.byId(`${player.name}.deck`)
       chosen.moveTo(deckZone)
       deckEngine.refillImperiumRow(game)

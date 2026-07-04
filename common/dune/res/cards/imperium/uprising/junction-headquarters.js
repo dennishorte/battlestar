@@ -53,7 +53,7 @@ module.exports = {
             : cards.find(c => c.name === choice)
           if (card) {
             deckEngine.trashCard(game, card)
-            player.decrementCounter('spice', 2, { silent: true })
+            player.decrementCounter('spice', 2)
             player.incrementCounter('vp', 1, { silent: true, source: 'Junction Headquarters' })
             game.log.add({ template: '{player} gains 1 Victory Point', args: { player } })
           }

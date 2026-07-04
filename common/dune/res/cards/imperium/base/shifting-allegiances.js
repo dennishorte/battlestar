@@ -55,7 +55,7 @@ module.exports = {
             ? chId.slice('lose-'.length)
             : loseFactions.find(f => (typeof choice === 'string' ? choice : choice.title).includes(f))
           factions.loseInfluence(game, player, loseFaction, 1)
-          player.decrementCounter('spice', 2, { silent: true })
+          player.decrementCounter('spice', 2)
           factions.gainInfluenceWithChoice(game, player, 2, 'Gain 2 Influence')
         }
       }

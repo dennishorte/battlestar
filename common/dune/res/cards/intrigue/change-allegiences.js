@@ -53,7 +53,7 @@ module.exports = {
       const [c2] = game.actions.choose(player, choices2, { title: 'Also pay 3 Spice?' })
       const c2Id = typeof c2 === 'object' ? c2.id : c2
       if (c2Id !== 'pass' && c2 !== 'Pass') {
-        player.decrementCounter('spice', 3, { silent: true })
+        player.decrementCounter('spice', 3)
         factions.gainInfluence(game, player, pickFaction('Gain +1 Influence'))
       }
     }

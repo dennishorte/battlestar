@@ -41,7 +41,7 @@ module.exports = {
         deckEngine.discardCard(game, player, topCard)
       }
       else if (isDraw) {
-        player.decrementCounter('solari', 1, { silent: true })
+        player.decrementCounter('solari', 1)
         const handZone = game.zones.byId(`${player.name}.hand`)
         topCard.moveTo(handZone)
       }

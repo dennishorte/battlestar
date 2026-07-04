@@ -49,7 +49,7 @@ module.exports = {
       const chId = typeof choice === 'object' ? choice.id : choice
       if (chId !== 'pass' && choice !== 'Pass') {
         game.state.conflict.deployedTroops[player.name] -= 2
-        player.incrementCounter('troopsInSupply', 2, { silent: true })
+        player.incrementCounter('troopsInSupply', 2)
         addStrength(game, player, 'card', 'Chani, Clever Tactician', 4 * constants.SWORD_STRENGTH)
       }
     }

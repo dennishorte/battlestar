@@ -47,12 +47,12 @@ module.exports = {
     const isSpiceTrade = chId === 'spice-for-solari' || (typeof choice === 'string' && choice.includes('2 Spice'))
     const isSolariTrade = chId === 'solari-for-spice' || (typeof choice === 'string' && choice.includes('5 Solari'))
     if (isSpiceTrade) {
-      player.decrementCounter('spice', 2, { silent: true })
-      player.incrementCounter('solari', 5, { silent: true })
+      player.decrementCounter('spice', 2)
+      player.incrementCounter('solari', 5)
     }
     else if (isSolariTrade) {
-      player.decrementCounter('solari', 5, { silent: true })
-      player.incrementCounter('spice', 4, { silent: true })
+      player.decrementCounter('solari', 5)
+      player.incrementCounter('spice', 4)
     }
   },
 

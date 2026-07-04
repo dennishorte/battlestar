@@ -30,7 +30,7 @@ module.exports = {
       const [choice] = game.actions.choose(player, choices, { title: 'Quid Pro Quo' })
       const chId = typeof choice === 'object' ? choice.id : choice
       if (chId !== 'pass' && choice !== 'Pass') {
-        player.decrementCounter('spice', 2, { silent: true })
+        player.decrementCounter('spice', 2)
         // Gain influence with each faction that has at least one of your agents
         const boardSpacesData = require('../../boardSpaces.js')
         const factionSet = new Set()

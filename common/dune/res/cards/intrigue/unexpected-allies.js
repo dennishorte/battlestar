@@ -29,7 +29,7 @@ module.exports = {
       const [choice] = game.actions.choose(player, choices, { title: 'Unexpected Allies' })
       const chId = typeof choice === 'object' ? choice.id : choice
       if (chId !== 'pass' && choice !== 'Pass') {
-        player.decrementCounter('water', 2, { silent: true })
+        player.decrementCounter('water', 2)
         game.state.shieldWall = false
         game.state.conflict.deployedSandworms[player.name] =
           (game.state.conflict.deployedSandworms[player.name] || 0) + 1

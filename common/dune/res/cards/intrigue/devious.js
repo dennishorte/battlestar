@@ -53,7 +53,7 @@ module.exports = {
       const count = dcId
         ? parseInt(dcId.replace('deploy-', ''))
         : parseInt(String(dc).match(/\d+/)[0])
-      player.decrementCounter('troopsInGarrison', count, { silent: true })
+      player.decrementCounter('troopsInGarrison', count)
       require('../../../systems/deploy.js').deployToConflict(game, player, count)
     }
   },

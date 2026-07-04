@@ -24,7 +24,7 @@ module.exports = {
 
   plotEffect(game, player) {
     if (player.troopsInGarrison > 0) {
-      player.decrementCounter('troopsInGarrison', 1, { silent: true })
+      player.decrementCounter('troopsInGarrison', 1)
       const fc = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
       const [fChoice] = game.actions.choose(player, fc, { title: '+1 Influence' })
       const faction = typeof fChoice === 'object' ? fChoice.id : fChoice

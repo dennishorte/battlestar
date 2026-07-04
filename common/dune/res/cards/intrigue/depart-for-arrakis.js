@@ -30,11 +30,11 @@ module.exports = {
       const [choice] = game.actions.choose(player, choices, { title: 'Depart for Arrakis' })
       const chId = typeof choice === 'object' ? choice.id : choice
       if (chId !== 'pass' && choice !== 'Pass') {
-        player.decrementCounter('spice', 2, { silent: true })
+        player.decrementCounter('spice', 2)
         const recruit = Math.min(3, player.troopsInSupply)
         if (recruit > 0) {
           player.decrementCounter('troopsInSupply', recruit, { silent: true })
-          player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+          player.incrementCounter('troopsInGarrison', recruit)
         }
         if (player.getInfluence('guild') >= 3) {
           deckEngine.drawCards(game, player, 1)

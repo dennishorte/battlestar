@@ -44,7 +44,7 @@ module.exports = {
       const [choice] = game.actions.choose(player, choices, { title: 'Smuggler\'s Haven' })
       const chId = typeof choice === 'object' ? choice.id : choice
       if (chId !== 'pass' && choice !== 'Pass') {
-        player.decrementCounter('spice', 4, { silent: true })
+        player.decrementCounter('spice', 4)
         player.incrementCounter('vp', 1, { silent: true, source: "Smuggler's Haven" })
         game.log.add({ template: '{player} gains 1 Victory Point', args: { player } })
       }

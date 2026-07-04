@@ -51,7 +51,7 @@ module.exports = {
       const chId = typeof choice === 'object' ? choice.id : choice
       const chTitle = typeof choice === 'object' ? choice.title : choice
       if (chId !== 'pass' && choice !== 'Pass') {
-        player.decrementCounter('solari', 2, { silent: true })
+        player.decrementCounter('solari', 2)
         const factionId = ['guild', 'bene-gesserit', 'fremen'].includes(chId)
           ? chId
           : constants.normalizeFactionId(chTitle)

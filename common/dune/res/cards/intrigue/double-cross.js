@@ -34,7 +34,7 @@ module.exports = {
         const chId = typeof choice === 'object' ? choice.id : choice
         if (chId !== 'pass' && choice !== 'Pass') {
           const opponentId = chId
-          player.decrementCounter('solari', 1, { silent: true })
+          player.decrementCounter('solari', 1)
           game.state.conflict.deployedTroops[opponentId]--
           const target = game.players.byName(opponentId)
           target.incrementCounter('troopsInSupply', 1, { silent: true })

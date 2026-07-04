@@ -23,7 +23,7 @@ module.exports = {
 
   plotEffect(game, player) {
     if (player.solari >= 5) {
-      player.decrementCounter('solari', 5, { silent: true })
+      player.decrementCounter('solari', 5)
       factions.gainInfluenceWithChoice(game, player, 2, '+1 Influence with 2 Factions')
     }
   },

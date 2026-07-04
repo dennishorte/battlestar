@@ -47,7 +47,7 @@ module.exports = {
       const chId = typeof choice === 'object' ? choice.id : choice
       if (chId !== 'pass' && choice !== 'Pass') {
         game.state.conflict.deployedTroops[player.name] -= 3
-        player.incrementCounter('troopsInSupply', 3, { silent: true })
+        player.incrementCounter('troopsInSupply', 3)
         const fc = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
         const [fChoice] = game.actions.choose(player, fc, { title: '+1 Influence with:' })
         const faction = typeof fChoice === 'object' ? fChoice.id : fChoice

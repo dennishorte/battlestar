@@ -49,12 +49,12 @@ module.exports = {
       const isDeploy = chId === 'deploy' || (typeof choice === 'string' && choice.includes('Deploy'))
       const isRetreat = chId === 'retreat' || (typeof choice === 'string' && choice.includes('Retreat'))
       if (isDeploy) {
-        player.decrementCounter('troopsInGarrison', 1, { silent: true })
+        player.decrementCounter('troopsInGarrison', 1)
         require('../../../../systems/deploy.js').deployToConflict(game, player, 1)
       }
       else if (isRetreat) {
         game.state.conflict.deployedTroops[player.name]--
-        player.incrementCounter('troopsInSupply', 1, { silent: true })
+        player.incrementCounter('troopsInSupply', 1)
       }
     }
   },

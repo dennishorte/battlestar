@@ -42,7 +42,7 @@ module.exports = {
       const [choice] = game.actions.choose(player, choices, { title: 'Arrakis Revolt' })
       const chId = typeof choice === 'object' ? choice.id : choice
       if (chId !== 'pass' && choice !== 'Pass') {
-        player.decrementCounter('spice', 2, { silent: true })
+        player.decrementCounter('spice', 2)
         game.state.shieldWall = false
         game.log.add({ template: '{player} destroys the Shield Wall!', args: { player } })
         game.state.conflict.deployedSandworms[player.name] =

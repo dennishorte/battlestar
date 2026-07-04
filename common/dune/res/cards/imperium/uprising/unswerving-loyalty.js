@@ -36,7 +36,7 @@ module.exports = {
     const recruit = Math.min(1, player.troopsInSupply)
     if (recruit > 0) {
       player.decrementCounter('troopsInSupply', recruit, { silent: true })
-      player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+      player.incrementCounter('troopsInGarrison', recruit)
     }
     const hasFremen = allRevealedCards.some(c =>
       c !== card && constants.getFactionAffiliations(c).includes('fremen')
@@ -61,7 +61,7 @@ module.exports = {
         }
         else if (isRetreat) {
           game.state.conflict.deployedTroops[player.name]--
-          player.incrementCounter('troopsInSupply', 1, { silent: true })
+          player.incrementCounter('troopsInSupply', 1)
         }
       }
     }

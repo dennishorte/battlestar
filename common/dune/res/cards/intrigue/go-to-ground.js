@@ -37,7 +37,7 @@ module.exports = {
           ? parseInt(chId.replace('retreat-', ''))
           : parseInt(String(choice).match(/\d+/)[0])
         game.state.conflict.deployedTroops[player.name] -= count
-        player.incrementCounter('troopsInSupply', count, { silent: true })
+        player.incrementCounter('troopsInSupply', count)
         spies.placeSpy(game, player)
       }
     }

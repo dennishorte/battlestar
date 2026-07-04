@@ -45,7 +45,7 @@ module.exports = {
       const [choice] = game.actions.choose(player, choices, { title: 'Esmar Tuek' })
       const chId = typeof choice === 'object' ? choice.id : choice
       if (chId !== 'pass' && choice !== 'Pass') {
-        player.decrementCounter('spice', 1, { silent: true })
+        player.decrementCounter('spice', 1)
         factions.gainInfluence(game, player, 'bene-gesserit')
         deckEngine.drawCards(game, player, 1)
       }

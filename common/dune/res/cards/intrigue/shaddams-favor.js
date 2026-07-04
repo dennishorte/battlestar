@@ -24,7 +24,7 @@ module.exports = {
     const recruit = Math.min(1, player.troopsInSupply)
     if (recruit > 0) {
       player.decrementCounter('troopsInSupply', recruit, { silent: true })
-      player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+      player.incrementCounter('troopsInGarrison', recruit)
     }
     if (player.getInfluence('emperor') >= 3) {
       player.incrementCounter('solari', 3, { silent: true })

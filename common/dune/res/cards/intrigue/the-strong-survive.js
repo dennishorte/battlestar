@@ -33,12 +33,12 @@ module.exports = {
       const recruit = Math.min(3, player.troopsInSupply)
       if (recruit > 0) {
         player.decrementCounter('troopsInSupply', recruit, { silent: true })
-        player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+        player.incrementCounter('troopsInGarrison', recruit)
       }
     }
     else {
       game.state.conflict.deployedTroops[player.name]--
-      player.incrementCounter('troopsInSupply', 1, { silent: true })
+      player.incrementCounter('troopsInSupply', 1)
       resolveEffect(game, player, { type: 'trash-card' }, null, card.name)
     }
   },

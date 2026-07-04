@@ -29,11 +29,11 @@ module.exports = {
       const [choice] = game.actions.choose(player, choices, { title: 'Reinforcements' })
       const chId = typeof choice === 'object' ? choice.id : choice
       if (chId !== 'pass' && choice !== 'Pass') {
-        player.decrementCounter('solari', 3, { silent: true })
+        player.decrementCounter('solari', 3)
         const recruit = Math.min(3, player.troopsInSupply)
         if (recruit > 0) {
           player.decrementCounter('troopsInSupply', recruit, { silent: true })
-          player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+          player.incrementCounter('troopsInGarrison', recruit)
         }
       }
     }

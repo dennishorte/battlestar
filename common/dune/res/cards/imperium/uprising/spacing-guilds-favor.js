@@ -58,7 +58,7 @@ module.exports = {
       const [choice] = game.actions.choose(player, choices, { title: "Spacing Guild's Favor" })
       const chId = typeof choice === 'object' ? choice.id : choice
       if (chId !== 'pass' && choice !== 'Pass') {
-        player.decrementCounter('spice', 3, { silent: true })
+        player.decrementCounter('spice', 3)
         const fc = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
         const [fChoice] = game.actions.choose(player, fc, { title: '+1 Influence with:' })
         const faction = typeof fChoice === 'object' ? fChoice.id : fChoice
