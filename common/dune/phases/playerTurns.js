@@ -978,7 +978,11 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
       break
 
     case 'spy':
-      spies.placeSpy(game, player)
+      for (let i = 0; i < (effect.amount || 1); i++) {
+        if (!spies.placeSpy(game, player)) {
+          break
+        }
+      }
       break
 
     case 'spice-harvest': {
