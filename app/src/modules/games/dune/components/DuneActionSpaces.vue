@@ -28,6 +28,15 @@
                      class="control-flag"
                      :style="{ backgroundColor: controlColor(space.id) }"
                      :title="`Controlled by ${game.state.controlMarkers[space.id]}`" />
+                <div v-if="spaceContractOwners(space.id).length > 0"
+                     class="contract-flags"
+                     :title="`Contract held by ${spaceContractOwners(space.id).join(', ')}`">
+                  <div v-for="owner in spaceContractOwners(space.id)"
+                       :key="owner"
+                       class="contract-flag">
+                    <span class="contract-dot" :style="{ backgroundColor: playerColorMap[owner] || '#6a5a48' }" />
+                  </div>
+                </div>
               </div>
               <span class="space-name">{{ space.name }}</span>
               <span class="space-occupant" v-if="spaceOccupants(space.id).length > 0">
@@ -204,6 +213,26 @@ export default {
 
     sandwormsBlocked() {
       return !!(this.game.state.shieldWall && this.activeConflictCard?.behindShieldWall)
+    },
+
+    contractOwnersBySpace() {
+      const map = {}
+      if (!this.game?.players) {
+        return map
+      }
+      for (const player of this.game.players.all()) {
+        const cards = this.game.zones.byId(`${player.name}.contracts`).cardlist()
+        for (const card of cards) {
+          const trigger = card.data?.trigger
+          if (trigger?.type === 'board-space' && trigger.spaceId) {
+            if (!map[trigger.spaceId]) {
+              map[trigger.spaceId] = []
+            }
+            map[trigger.spaceId].push(player.name)
+          }
+        }
+      }
+      return map
     },
   },
 
@@ -419,6 +448,10 @@ export default {
       return this.playerColorMap[owner] || '#6a5a48'
     },
 
+    spaceContractOwners(spaceId) {
+      return this.contractOwnersBySpace[spaceId] || []
+    },
+
     formatName(id) {
       return id.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')
     },
@@ -518,6 +551,27 @@ export default {
   width: 10px;
   height: 4px;
   border-radius: 1px;
+}
+
+.contract-flags {
+  display: flex;
+  gap: 1px;
+}
+
+.contract-flag {
+  width: 8px;
+  height: 8px;
+  border-radius: 1px;
+  background-color: #2e8b3a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contract-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
 }
 
 .space-effects {

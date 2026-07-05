@@ -9,7 +9,7 @@
            :style="{ borderTopColor: entry.color }"
            :title="`View ${entry.name}'s tableau`"
            @click="openTableau(entry.player)">
-        <span class="player-name">{{ entry.name }}</span>
+        <span class="player-name" :style="{ backgroundColor: nameShade(entry.color) }">{{ entry.name }}</span>
         <span class="first-player" v-if="entry.isFirstPlayer" title="First Player">1st</span>
       </div>
 
@@ -423,6 +423,10 @@ export default {
       this.$modal('dune-card-list-modal').show()
     },
 
+    nameShade(color) {
+      return color ? `color-mix(in srgb, ${color} 22%, white)` : 'transparent'
+    },
+
     openContracts(player) {
       const cards = this.game.zones.byId(`${player.name}.contracts`).cardlist()
         .sort((l, r) => l.name.localeCompare(r.name))
@@ -503,6 +507,8 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
+  padding: .1em .4em;
+  border-radius: .2em;
 }
 
 .first-player {
