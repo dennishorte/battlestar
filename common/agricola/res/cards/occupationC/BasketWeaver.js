@@ -9,8 +9,8 @@ module.exports = {
   onPlay(game, player) {
     game.actions._completeMajorPurchase(player, 'basketmakers-workshop', {
       customCost: { stone: 1, reed: 1 },
-      logTemplate: "{player} builds {card} for 1 stone and 1 reed via {source}",
-      logArgs: { source: this },
+      logTemplate: "{player} builds {card} for 1 stone and 1 reed via {cardSource}",
+      logArgs: { cardSource: this },
     })
   },
 }

@@ -40,8 +40,8 @@ module.exports = {
 
     const ovenOpts = {
       customCost: cost,
-      logTemplate: '{player} builds {card} at discount using {source}',
-      logArgs: { source: card },
+      logTemplate: '{player} builds {card} at discount using {cardSource}',
+      logArgs: { cardSource: card },
     }
     if (selection[0].id === 'clay-oven') {
       game.actions._completeMajorPurchase(player, 'clay-oven', ovenOpts)

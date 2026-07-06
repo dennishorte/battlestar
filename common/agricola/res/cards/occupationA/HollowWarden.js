@@ -35,8 +35,8 @@ module.exports = {
     }
 
     game.actions._completeMajorPurchase(player, improvementId, {
-      logTemplate: '{player} uses {source} to build {card}',
-      logArgs: { source: card },
+      logTemplate: '{player} uses {cardSource} to build {card}',
+      logArgs: { cardSource: card },
     })
   },
   matches_onAction(game, player, actionId) {

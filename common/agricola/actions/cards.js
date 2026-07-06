@@ -991,8 +991,8 @@ AgricolaActionManager.prototype._offerSecondMajorFromCard = function(player, jus
     }
 
     this._completeMajorPurchase(player, chosenId, {
-      logTemplate: '{player} also buys {card} via {source}',
-      logArgs: { source: card },
+      logTemplate: '{player} also buys {card} via {cardSource}',
+      logArgs: { cardSource: card },
       skipSecondMajorOffer: true,
     })
     return

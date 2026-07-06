@@ -198,6 +198,6 @@ describe('_completeMajorPurchase', () => {
 
     // Verify the custom log message was used
     const logs = game.log.getLog().filter(e => e.template).map(e => e.template)
-    expect(logs).toContain("{player} builds {card} for 1 stone and 1 reed via {source}")
+    expect(logs).toContain("{player} builds {card} for 1 stone and 1 reed via {cardSource}")
   })
 })
