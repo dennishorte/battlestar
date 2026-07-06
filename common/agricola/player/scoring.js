@@ -233,6 +233,11 @@ AgricolaPlayer.prototype.getGrainFieldCount = function() {
       }
     }
   }
+  for (const vf of this.virtualFields) {
+    if (vf.crop === 'grain' && vf.cropCount > 0) {
+      count++
+    }
+  }
   return count
 }
 
@@ -244,6 +249,11 @@ AgricolaPlayer.prototype.getVegetableFieldCount = function() {
       if (space.type === 'field' && space.crop === 'vegetables') {
         count++
       }
+    }
+  }
+  for (const vf of this.virtualFields) {
+    if (vf.crop === 'vegetables' && vf.cropCount > 0) {
+      count++
     }
   }
   return count
