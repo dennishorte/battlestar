@@ -37,6 +37,14 @@
         <span v-else class="dim">—</span>
       </div>
 
+      <div class="stat-label">Agnts</div>
+      <div v-for="entry in entries"
+           :key="`agt-${entry.name}`"
+           class="stat-cell"
+           :class="{ 'is-current': entry.isCurrent, dim: !entry.agentsAvailable }">
+        {{ entry.agentsAvailable }}/{{ entry.agentsTotal }}
+      </div>
+
       <div class="stat-label">Icons</div>
       <div v-for="entry in entries"
            :key="`icn-${entry.name}`"
@@ -77,14 +85,6 @@
            :class="{ 'is-current': entry.isCurrent, dim: !entry.water }">
         <DuneResourceIcon type="water" />
         <span>{{ entry.water }}</span>
-      </div>
-
-      <div class="stat-label">Agnts</div>
-      <div v-for="entry in entries"
-           :key="`agt-${entry.name}`"
-           class="stat-cell"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.agentsAvailable }">
-        {{ entry.agentsAvailable }}/{{ entry.agentsTotal }}
       </div>
 
       <div class="stat-label">Spies</div>
