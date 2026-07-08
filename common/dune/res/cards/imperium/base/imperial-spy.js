@@ -31,4 +31,11 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  agentEffect(game, player, card) {
+    const deckEngine = require('../../../../systems/deckEngine.js')
+    deckEngine.trashCard(game, card)
+    deckEngine.drawIntrigueCard(game, player, 1)
+  },
+
 }
