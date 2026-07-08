@@ -80,4 +80,25 @@ describe('Crop Rotation Field', () => {
       },
     })
   })
+
+  test('crops sown on the virtual field count toward score', () => {
+    const game = t.fixture({ cardSets: ['minorE', 'test'] })
+    t.setBoard(game, {
+      round: 4,
+      firstPlayer: 'dennis',
+      dennis: {
+        occupations: ['test-occupation-1'],
+        minorImprovements: ['crop-rotation-field-e070'],
+        virtualFields: {
+          'crop-rotation-field-e070': { crop: 'grain', cropCount: 3 },
+        },
+      },
+      micah: {},
+    })
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.getTotalGrain()).toBe(3)
+    expect(dennis.getScoreState().grain).toBe(3)
+  })
 })

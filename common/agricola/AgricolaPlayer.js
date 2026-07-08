@@ -109,6 +109,11 @@ class AgricolaPlayer extends BasePlayer {
         total += field.cropCount
       }
     }
+    for (const vf of this.virtualFields) {
+      if (vf.crop === 'grain' && vf.cropCount > 0) {
+        total += vf.cropCount
+      }
+    }
     return total
   }
 
@@ -117,6 +122,11 @@ class AgricolaPlayer extends BasePlayer {
     for (const field of this.getFieldSpaces()) {
       if (field.crop === 'vegetables' && field.cropCount > 0) {
         total += field.cropCount
+      }
+    }
+    for (const vf of this.virtualFields) {
+      if (vf.crop === 'vegetables' && vf.cropCount > 0) {
+        total += vf.cropCount
       }
     }
     return total
