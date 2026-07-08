@@ -28,8 +28,8 @@ module.exports = {
     actingPlayer.addResource('grain', 1)
     cardOwner.addBonusPoints(1)
     game.log.add({
-      template: '{cardOwner} gives 1 grain to {receiver} for 1 bonus point via {card}',
-      args: { cardOwner, receiver: actingPlayer.name, card: cardName },
+      template: '{player} gives 1 grain to {receiver} for 1 bonus point via {card}',
+      args: { player: cardOwner, receiver: actingPlayer.name, card: cardName },
     })
   },
 }

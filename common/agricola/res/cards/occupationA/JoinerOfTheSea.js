@@ -28,8 +28,8 @@ module.exports = {
     actingPlayer.addResource('wood', 1)
     cardOwner.addResource('food', food)
     game.log.add({
-      template: '{cardOwner} gives 1 wood to {receiver} and gets {food} food via {card}',
-      args: { cardOwner, receiver: actingPlayer.name, food, card: cardName },
+      template: '{player} gives 1 wood to {receiver} and gets {food} food via {card}',
+      args: { player: cardOwner, receiver: actingPlayer.name, food, card: cardName },
     })
   },
 }

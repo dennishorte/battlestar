@@ -21,8 +21,8 @@ module.exports = {
         actingPlayer.payCost({ food: 1 })
         cardOwner.addResource('food', 1)
         game.log.add({
-          template: '{actingPlayer} pays 1 food to {player} for {card}',
-          args: { actingPlayer, player: cardOwner , card: this},
+          template: '{player} pays 1 food to {playerOwner} for {card}',
+          args: { player: actingPlayer, playerOwner: cardOwner , card: this},
         })
       }
     }

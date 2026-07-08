@@ -49,8 +49,8 @@ module.exports = {
       player.addResource('food', 2)
       buyer.addResource('reed', 1)
       game.log.add({
-        template: '{player} sells 1 reed to {buyer} for 2 food via {card}',
-        args: { player, buyer, card },
+        template: '{player} sells 1 reed to {playerOther} for 2 food via {card}',
+        args: { player, playerOther: buyer, card },
       })
     }
     else {
