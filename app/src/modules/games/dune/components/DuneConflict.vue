@@ -75,7 +75,7 @@
       <div v-for="entry in combatants"
            :key="`int-${entry.name}`"
            class="stat-cell"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.intrigueCount }">
+           :class="{ 'is-current': entry.isCurrent, dim: !entry.intrigueCount, 'high-intrigue': entry.intrigueCount >= 4 }">
         {{ entry.intrigueCount }}
       </div>
 
@@ -526,6 +526,16 @@ export default {
 
 .stat-cell.dim {
   color: #b0a088;
+}
+
+.stat-cell.high-intrigue {
+  background-color: #6a3d8a;
+  color: white;
+  font-weight: 700;
+}
+
+.stat-cell.high-intrigue.is-current {
+  background-color: #7d4aa0;
 }
 
 .unit-cell {

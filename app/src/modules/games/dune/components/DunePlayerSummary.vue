@@ -100,7 +100,7 @@
       <div v-for="entry in entries"
            :key="`int-${entry.name}`"
            class="stat-cell"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.intrigueCount, clickable: entry.isViewer }"
+           :class="{ 'is-current': entry.isCurrent, dim: !entry.intrigueCount, clickable: entry.isViewer, 'high-intrigue': entry.intrigueCount >= 4 }"
            :title="entry.isViewer ? 'View intrigue cards' : ''"
            @click="entry.isViewer && openIntrigue(entry.player)">
         {{ entry.intrigueCount }}
@@ -540,6 +540,16 @@ export default {
 
 .stat-cell.dim {
   color: #b0a088;
+}
+
+.stat-cell.high-intrigue {
+  background-color: #6a3d8a;
+  color: white;
+  font-weight: 700;
+}
+
+.stat-cell.high-intrigue.is-current {
+  background-color: #7d4aa0;
 }
 
 .stat-cell.clickable {
