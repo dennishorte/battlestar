@@ -37,6 +37,18 @@ module.exports = {
     }
   },
 
+  // Preview-reveal hook (systems/revealPreview.js): the threshold check needs
+  // the *final* strength after revealing (deployed units + card swords), so
+  // it mirrors onRevealTurn's math using the strength the preview already
+  // computed rather than re-deriving it.
+  previewOnRevealTurn(game, player, { strength }) {
+    const threshold = game.settings.numPlayers >= 6 ? 10 : 6
+    if (strength >= threshold) {
+      return { persuasion: 1 }
+    }
+    return {}
+  },
+
   signetRingEffects: [
     {
       type: 'troop',

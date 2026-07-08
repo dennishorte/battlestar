@@ -2,6 +2,7 @@
 
 const t = require('../testutil')
 const { previewReveal } = require('../dune.js')
+const constants = require('../res/constants.js')
 
 describe('previewReveal', () => {
 
@@ -419,5 +420,55 @@ describe('previewReveal', () => {
     const preview = previewReveal(game, dennis)
     expect(preview.totals.troops).toBe(1)
     expect(preview.pending).toEqual([])
+  })
+
+  test('Gurney Halleck: Always Smiling auto-applies +1 Persuasion at 6+ strength', () => {
+    const leader = require('../res/leaders/GurneyHalleck.js')
+    const game = t.fixture()
+    t.setBoard(game, {
+      leaders: { dennis: leader },
+      dennis: { handExact: ['Dagger'] },
+      conflict: { deployedTroops: { dennis: 3 } },
+    })
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    const preview = previewReveal(game, dennis)
+    // 3 troops × 2 = 6 strength, meets threshold -> +1 Persuasion
+    expect(preview.strength).toBe(6 + constants.SWORD_STRENGTH)
+    expect(preview.totals.persuasion).toBe(1)
+    expect(preview.pending).toEqual([])
+  })
+
+  test('Gurney Halleck: Always Smiling does not apply below 6 strength', () => {
+    const leader = require('../res/leaders/GurneyHalleck.js')
+    const game = t.fixture()
+    t.setBoard(game, {
+      leaders: { dennis: leader },
+      dennis: { handExact: ['Dagger'] },
+      conflict: { deployedTroops: { dennis: 2 } },
+    })
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    const preview = previewReveal(game, dennis)
+    // 2 troops × 2 + 1 sword = 5, below threshold -> no bonus
+    expect(preview.strength).toBe(5)
+    expect(preview.totals.persuasion).toBe(0)
+    expect(preview.pending).toEqual([])
+  })
+
+  test('leader with onRevealTurn but no previewOnRevealTurn surfaces as pending', () => {
+    const leader = require('../res/leaders/ArchdukeArmandEcaz.js')
+    const game = t.fixture()
+    t.setBoard(game, {
+      leaders: { dennis: leader },
+      dennis: { handExact: ['Dagger'] },
+    })
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    const preview = previewReveal(game, dennis)
+    expect(preview.pending.some(p => p.source === 'Archduke Armand Ecaz')).toBe(true)
   })
 })

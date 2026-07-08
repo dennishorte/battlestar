@@ -90,6 +90,25 @@ function previewReveal(game, player) {
       + totalDeployedSandworms * constants.SANDWORM_STRENGTH
     : 0
 
+  // Leader-level extension: a leader whose onRevealTurn depends on the
+  // final strength/hand state (e.g. Gurney Halleck's threshold check) can
+  // opt in with a `previewOnRevealTurn(game, player, ctx) => deltas` sibling.
+  // Without one, a leader with an onRevealTurn hook shows up in `pending`
+  // since its effect can't be predicted here.
+  const leaders = require('./leaders.js')
+  const leaderDef = leaders.getLeader(game, player)
+  if (leaderDef && typeof leaderDef.previewOnRevealTurn === 'function') {
+    const result = leaderDef.previewOnRevealTurn(game, player, { strength, hasUnits, handCards }) || {}
+    const { pending: residual, ...deltas } = result
+    mergeDeltas(totals, deltas, leaderDef.name, resolved)
+    if (residual) {
+      pending.push({ source: leaderDef.name, text: residual })
+    }
+  }
+  else if (leaderDef && typeof leaderDef.onRevealTurn === 'function') {
+    pending.push({ source: leaderDef.name, text: leaderDef.leaderAbility })
+  }
+
   return {
     totals,
     resolved,
