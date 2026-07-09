@@ -58,7 +58,7 @@ describe("questionable-methods", () => {
     // resets it to 0. Next prompt is micah's combat-intrigue Pass.
     const dennis = game.players.byName('dennis')
     // 2 troop + 1 Dagger reveal sword + Q.M. (1 + 4) = 8
-    expect(dennis.getCounter('strength')).toBe(8)
+    expect(dennis.strength).toBe(8)
     expect(dennis.getInfluence('emperor')).toBe(0)
   })
 
@@ -83,7 +83,7 @@ describe("questionable-methods", () => {
 
     const dennis = game.players.byName('dennis')
     // 2 troop + 1 Dagger + 1 Q.M. = 4
-    expect(dennis.getCounter('strength')).toBe(4)
+    expect(dennis.strength).toBe(4)
     expect(dennis.getInfluence('emperor')).toBe(1)
   })
 
@@ -106,6 +106,6 @@ describe("questionable-methods", () => {
 
     const dennis = game.players.byName('dennis')
     // 2 troop + 1 Dagger + 1 Q.M. = 4 (no faction → no +4 branch)
-    expect(dennis.getCounter('strength')).toBe(4)
+    expect(dennis.strength).toBe(4)
   })
 })

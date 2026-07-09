@@ -29,9 +29,6 @@ class DunePlayer extends BasePlayer {
       this.addCounter(`influence_${faction}`, 0)
     }
 
-    // Combat
-    this.addCounter('strength', 0)
-
     // Turn state (reset each round)
     this.addCounter('persuasion', 0)
     this.addCounter('hasRevealed', 0)
@@ -91,9 +88,26 @@ class DunePlayer extends BasePlayer {
     this.decrementCounter(`influence_${faction}`, amount, { silent: true })
   }
 
-  // Combat
+  // Combat: derived from live Conflict state rather than a maintained counter,
+  // so it can never go stale relative to deployedTroops/deployedSandworms —
+  // a unit deployed or retreated at any point (Agent Turn, Plot Intrigue,
+  // Combat-phase Intrigue) is reflected the instant it's read. Only the
+  // troops/sandworms portion requires units present (rules.txt:363); card,
+  // leader, and intrigue strength bonuses (e.g. Devious Strength, Calculus
+  // of Power) are unconditional, matching how addStrength has always worked.
   get strength() {
-    return this.getCounter('strength')
+    const conflict = this.game.state.conflict
+    const troops = conflict?.deployedTroops?.[this.name] || 0
+    const sandworms = conflict?.deployedSandworms?.[this.name] || 0
+    const unitStrength = (troops + sandworms) > 0
+      ? troops * constants.TROOP_STRENGTH + sandworms * constants.SANDWORM_STRENGTH
+      : 0
+
+    const extra = (conflict?.strengthBreakdown?.[this.name] || [])
+      .filter(b => b.source !== 'troops' && b.source !== 'sandworms')
+      .reduce((sum, b) => sum + b.amount, 0)
+
+    return unitStrength + extra
   }
 
   // High Council

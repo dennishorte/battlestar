@@ -36,7 +36,7 @@ describe('Feyd-Rautha Harkonnen', () => {
 
       t.choose(game, 'Pass')
       expect(game.state.spyPosts.A).toContain('dennis')
-      expect(game.players.byName('dennis').getCounter('strength')).toBe(0)
+      expect(game.players.byName('dennis').strength).toBe(0)
     })
 
     test('Recall: +2 Strength preserved alongside troop and sword strength', () => {
@@ -54,7 +54,7 @@ describe('Feyd-Rautha Harkonnen', () => {
       t.choose(game, 'Recall a Spy for +2 Strength')
       expect(game.players.byName('dennis').spiesInSupply).toBe(suppliesBefore + 1)
       expect(game.state.spyPosts.A || []).not.toContain('dennis')
-      expect(game.players.byName('dennis').getCounter('strength')).toBe(5)
+      expect(game.players.byName('dennis').strength).toBe(5)
     })
   })
 

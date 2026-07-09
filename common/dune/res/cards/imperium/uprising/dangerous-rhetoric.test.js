@@ -70,7 +70,7 @@ describe('dangerous-rhetoric', () => {
     const dennis = game.players.byName('dennis')
     expect(dennis.getCounter('persuasion')).toBe(1)
     // 1 troop × 2 + 1 sword = 3
-    expect(dennis.getCounter('strength')).toBe(3)
+    expect(dennis.strength).toBe(3)
   })
 
   test('reveal: with no units in conflict, sword does not contribute to strength', () => {
@@ -84,6 +84,6 @@ describe('dangerous-rhetoric', () => {
 
     const dennis = game.players.byName('dennis')
     expect(dennis.getCounter('persuasion')).toBe(1)
-    expect(dennis.getCounter('strength')).toBe(0)
+    expect(dennis.strength).toBe(0)
   })
 })

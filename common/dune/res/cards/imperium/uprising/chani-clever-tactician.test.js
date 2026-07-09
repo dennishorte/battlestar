@@ -76,7 +76,7 @@ describe('chani-clever-tactician', () => {
     const dennis = game.players.byName('dennis')
     // addStrength(+4) from Chani card, then setRevealStrength adds 2 per
     // remaining deployed troop (1 left after retreat) → 4 + 2 = 6.
-    expect(dennis.getCounter('strength')).toBe(6)
+    expect(dennis.strength).toBe(6)
     expect(game.state.conflict.deployedTroops.dennis).toBe(1)
     expect(dennis.troopsInSupply).toBe(2)
   })
@@ -97,7 +97,7 @@ describe('chani-clever-tactician', () => {
 
     const dennis = game.players.byName('dennis')
     // 3 deployed troops × 2 strength each, no card swords.
-    expect(dennis.getCounter('strength')).toBe(6)
+    expect(dennis.strength).toBe(6)
     expect(game.state.conflict.deployedTroops.dennis).toBe(3)
   })
 
@@ -112,7 +112,7 @@ describe('chani-clever-tactician', () => {
     t.choose(game, 'Reveal Turn')
 
     const dennis = game.players.byName('dennis')
-    expect(dennis.getCounter('strength')).toBe(2)
+    expect(dennis.strength).toBe(2)
   })
 
   test('reveal: Fremen Bond fires when another Fremen card is revealed', () => {

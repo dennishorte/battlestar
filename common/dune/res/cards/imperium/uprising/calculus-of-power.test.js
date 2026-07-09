@@ -61,7 +61,7 @@ describe('calculus-of-power', () => {
     t.choose(game, 'Imperial Spymaster')
 
     const dennis = game.players.byName('dennis')
-    expect(dennis.getCounter('strength')).toBe(3)
+    expect(dennis.strength).toBe(3)
     const trashed = game.zones.byId('common.trash').cardlist()
     expect(trashed.some(c => c.name === 'Imperial Spymaster')).toBe(true)
   })
@@ -80,7 +80,7 @@ describe('calculus-of-power', () => {
     t.choose(game, 'Pass')
 
     const dennis = game.players.byName('dennis')
-    expect(dennis.getCounter('strength')).toBe(0)
+    expect(dennis.strength).toBe(0)
   })
 
   test('reveal: with no other emperor card in play, no prompt and no swords', () => {
@@ -93,7 +93,7 @@ describe('calculus-of-power', () => {
     t.choose(game, 'Reveal Turn')
 
     const dennis = game.players.byName('dennis')
-    expect(dennis.getCounter('strength')).toBe(0)
+    expect(dennis.strength).toBe(0)
     expect(dennis.getCounter('persuasion')).toBe(2)
   })
 })

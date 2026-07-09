@@ -1,8 +1,11 @@
 const constants = require('../res/constants.js')
 
 /**
- * Add a strength contribution for a player, incrementing both the counter
- * and the breakdown array.
+ * Record a strength contribution for a player's Combat-strength breakdown
+ * tooltip. `player.strength` is derived (see DunePlayer#strength) from live
+ * Conflict state plus this breakdown, so this only needs to log the entry —
+ * there's no counter to keep in sync, and no ordering requirement relative
+ * to when the player's Reveal Turn happens.
  *
  * @param {object} game
  * @param {object} player
@@ -14,7 +17,6 @@ function addStrength(game, player, source, label, amount) {
   if (!amount) {
     return
   }
-  player.incrementCounter('strength', amount, { silent: true })
 
   if (!game.state.conflict.strengthBreakdown[player.name]) {
     game.state.conflict.strengthBreakdown[player.name] = []
@@ -23,8 +25,10 @@ function addStrength(game, player, source, label, amount) {
 }
 
 /**
- * Set the initial strength from troops, sandworms, and reveal swords.
- * Creates breakdown entries for each component.
+ * Record breakdown entries for troops, sandworms, and reveal swords at a
+ * player's Reveal Turn. The 'troops'/'sandworms' entries are cosmetic (the
+ * tooltip likes an itemized breakdown) — the actual strength value is always
+ * computed live from deployedTroops/deployedSandworms, not from these.
  *
  * @param {object} game
  * @param {object} player
@@ -41,17 +45,6 @@ function setRevealStrength(game, player, swordSources) {
 
   const troopStr = troops * constants.TROOP_STRENGTH
   const sandwormStr = sandworms * constants.SANDWORM_STRENGTH
-  let swordStr = 0
-  for (const s of swordSources) {
-    swordStr += s.swords * constants.SWORD_STRENGTH
-  }
-  const total = troopStr + sandwormStr + swordStr
-
-  // Increment rather than set: leader abilities like Devious Strength
-  // (Feyd-Rautha) may have already added to strength earlier in the reveal
-  // turn. roundStart resets strength to 0, so this is equivalent to setting
-  // when called in isolation.
-  player.incrementCounter('strength', total, { silent: true })
 
   if (!game.state.conflict.strengthBreakdown[player.name]) {
     game.state.conflict.strengthBreakdown[player.name] = []
@@ -66,11 +59,11 @@ function setRevealStrength(game, player, swordSources) {
   }
   for (const s of swordSources) {
     if (s.swords > 0) {
-      breakdown.push({ source: 'card', label: s.label, amount: s.swords * constants.SWORD_STRENGTH })
+      addStrength(game, player, 'card', s.label, s.swords * constants.SWORD_STRENGTH)
     }
   }
 
-  return total
+  return player.strength
 }
 
 /**

@@ -42,7 +42,7 @@ describe('spice-smugglers', () => {
 
     const dennis = game.players.byName('dennis')
     // 1 troop (×2) + 1 sword (×1) = 3
-    expect(dennis.getCounter('strength')).toBe(3)
+    expect(dennis.strength).toBe(3)
   })
 
   test('agent ability: pay 2 spice → +1 Guild Influence and +3 Solari', () => {

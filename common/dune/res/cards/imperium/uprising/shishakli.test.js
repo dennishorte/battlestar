@@ -25,7 +25,7 @@ describe('shishakli', () => {
 
     const dennis = game.players.byName('dennis')
     // Troop(2) + printed +2 swords(2) = 4
-    expect(dennis.getCounter('strength')).toBe(4)
+    expect(dennis.strength).toBe(4)
     // No Fremen bond — influence stays at 1.
     expect(dennis.getInfluence('fremen')).toBe(1)
   })

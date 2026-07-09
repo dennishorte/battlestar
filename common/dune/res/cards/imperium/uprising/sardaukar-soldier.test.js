@@ -26,7 +26,7 @@ describe('sardaukar-soldier', () => {
     const dennis = game.players.byName('dennis')
     expect(dennis.getCounter('persuasion')).toBe(1)
     // Troop(2) + printed +1 sword(1) = 3
-    expect(dennis.getCounter('strength')).toBe(3)
+    expect(dennis.strength).toBe(3)
   })
 
   test('onTrash: trashing this card grants +1 Intrigue card', () => {

@@ -74,7 +74,7 @@ describe('sardaukar-coordination', () => {
 
     const dennis = game.players.byName('dennis')
     // Troop (2) + printed +1 sword (1) + per-Emperor "(including this one)" ×1 (1) = 4
-    expect(dennis.getCounter('strength')).toBe(4)
+    expect(dennis.strength).toBe(4)
   })
 
   test('reveal: +1 Sword per other Emperor card also revealed (engine fix)', () => {
@@ -92,6 +92,6 @@ describe('sardaukar-coordination', () => {
     const dennis = game.players.byName('dennis')
     // Troop(2) + Coordination printed +1(1) + Soldier printed +1(1)
     // + per-Emperor revealed ×2 (2) = 6
-    expect(dennis.getCounter('strength')).toBe(6)
+    expect(dennis.strength).toBe(6)
   })
 })

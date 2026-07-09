@@ -47,7 +47,6 @@ function roundStartPhase(game) {
   for (const player of game.players.all()) {
     game.state.conflict.deployedTroops[player.name] = 0
     game.state.conflict.deployedSandworms[player.name] = 0
-    player.setCounter('strength', 0, { silent: true })
   }
 
   // Defensive bonus: controller of the conflict's location may deploy 1 troop

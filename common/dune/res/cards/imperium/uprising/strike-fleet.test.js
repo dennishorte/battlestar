@@ -77,6 +77,6 @@ describe('strike-fleet', () => {
     const dennis = game.players.byName('dennis')
     expect(dennis.getCounter('persuasion')).toBe(1)
     // 1 troop (×2) + 3 swords (×1) = 5 strength.
-    expect(dennis.getCounter('strength')).toBe(5)
+    expect(dennis.strength).toBe(5)
   })
 })

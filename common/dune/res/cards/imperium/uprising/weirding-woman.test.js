@@ -72,6 +72,6 @@ describe('weirding-woman', () => {
 
     const dennis = game.players.byName('dennis')
     expect(dennis.getCounter('persuasion')).toBe(1)
-    expect(dennis.getCounter('strength')).toBe(3)
+    expect(dennis.strength).toBe(3)
   })
 })

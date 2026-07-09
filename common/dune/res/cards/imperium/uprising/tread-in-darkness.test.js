@@ -96,6 +96,6 @@ describe('tread-in-darkness', () => {
     const dennis = game.players.byName('dennis')
     expect(dennis.getCounter('persuasion')).toBe(2)
     // 1 troop ×2 + 1 sword = 3 strength
-    expect(dennis.getCounter('strength')).toBe(3)
+    expect(dennis.strength).toBe(3)
   })
 })

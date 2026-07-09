@@ -85,7 +85,7 @@ describe('undercover-asset', () => {
 
     const dennis = game.players.byName('dennis')
     // 1 troop ×2 + 2 swords = 4 strength.
-    expect(dennis.getCounter('strength')).toBe(4)
+    expect(dennis.strength).toBe(4)
   })
 
   test('emperor multi-affiliation: counts toward emperor faction in synergy', () => {

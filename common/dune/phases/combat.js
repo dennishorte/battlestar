@@ -691,8 +691,6 @@ function afterCombat(game) {
     }
 
     game.state.conflict.deployedSandworms[player.name] = 0
-
-    player.setCounter('strength', 0, { silent: true })
   }
   resetBreakdown(game)
 }
