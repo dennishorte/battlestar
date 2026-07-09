@@ -23,7 +23,7 @@ module.exports = {
   agentAbility: "Ignore Influence requirements on board spaces when sending an Agent this turn",
   revealPersuasion: 0,
   revealSwords: 0,
-  revealAbility: "· +1 Spy\n  OR\n· +2 Daggers",
+  revealAbility: "· +1 Spy\n  OR\n· +2 Swords",
   factionAffiliation: ["emperor", "guild"],
   vpsAvailable: 0,
   hasTech: false,
