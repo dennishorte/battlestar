@@ -376,6 +376,9 @@ export default {
       if (prereqs.majorImprovement !== undefined) {
         parts.push(`Has ${prereqs.majorImprovement}`)
       }
+      if (prereqs.returnMajor !== undefined) {
+        parts.push(`Return ${prereqs.returnMajor.join(' or ')} major improvement`)
+      }
 
       // --- Field checks ---
       if (prereqs.fields !== undefined) {
