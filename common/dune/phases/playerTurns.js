@@ -61,7 +61,7 @@ function playerTurnsPhase(game) {
       // The acquire-placement flags (acquireToHand / acquireToTopOfDeck) are
       // set by plot intrigues played during the same turn as the Reveal and
       // consumed in acquireCardsPhase that same turn, so they reset cleanly
-      // here. Agent-turn acquisition (Price is Not Object) resolves inline
+      // here. Agent-turn acquisition (Price Is No Object) resolves inline
       // during the Agent Turn and needs no cross-turn bridging.
       game.state.turnTracking = {
         recalledSpy: false,

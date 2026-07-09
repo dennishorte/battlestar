@@ -1,8 +1,8 @@
 'use strict'
 
 module.exports = {
-  id: "price-is-not-object",
-  name: "Price is Not Object",
+  id: "price-is-no-object",
+  name: "Price Is No Object",
   source: "Uprising",
   compatibility: "All",
   count: 1,

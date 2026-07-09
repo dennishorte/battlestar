@@ -1,12 +1,12 @@
 'use strict'
 
 const t = require('../../../../testutil')
-const card = require('./price-is-not-object.js')
+const card = require('./price-is-no-object.js')
 
-describe("price-is-not-object", () => {
+describe("price-is-no-object", () => {
   test('data', () => {
-    expect(card.id).toBe("price-is-not-object")
-    expect(card.name).toBe("Price is Not Object")
+    expect(card.id).toBe("price-is-no-object")
+    expect(card.name).toBe("Price Is No Object")
     expect(card.source).toBe("Uprising")
     expect(card.compatibility).toBe("All")
     expect(card.factionAccess.sort()).toEqual(['bene-gesserit', 'emperor'])
@@ -36,11 +36,11 @@ describe("price-is-not-object", () => {
   // reach the Acquire phase. Secrets grants +1 Intrigue and triggers steal-
   // intrigue (no-op against players holding 0 intrigue).
   function resolveAgentToSecrets(game) {
-    t.choose(game, 'Agent Turn.Price is Not Object')
+    t.choose(game, 'Agent Turn.Price Is No Object')
     t.choose(game, 'Secrets')
     let choices = t.currentChoices(game)
-    if (choices.includes('Price is Not Object')) {
-      t.choose(game, 'Price is Not Object')
+    if (choices.includes('Price Is No Object')) {
+      t.choose(game, 'Price Is No Object')
     }
   }
 
@@ -51,7 +51,7 @@ describe("price-is-not-object", () => {
     injectIntoRow(game, 'Reliable Informant')
     t.setBoard(game, {
       // Empty opponent hands so their turns auto-resolve to Reveal Turn.
-      dennis: { handExact: ['Price is Not Object', 'Dagger', 'Diplomacy', 'Convincing Argument', 'Reconnaissance'], solari: 10 },
+      dennis: { handExact: ['Price Is No Object', 'Dagger', 'Diplomacy', 'Convincing Argument', 'Reconnaissance'], solari: 10 },
       micah: { handExact: [] },
       scott: { handExact: [] },
     })
@@ -88,7 +88,7 @@ describe("price-is-not-object", () => {
     const game = t.fixture()
     injectIntoRow(game, 'Reliable Informant')
     t.setBoard(game, {
-      dennis: { handExact: ['Price is Not Object', 'Dagger', 'Diplomacy', 'Convincing Argument', 'Reconnaissance'], solari: 10 },
+      dennis: { handExact: ['Price Is No Object', 'Dagger', 'Diplomacy', 'Convincing Argument', 'Reconnaissance'], solari: 10 },
       micah: { handExact: [] },
       scott: { handExact: [] },
     })
@@ -117,7 +117,7 @@ describe("price-is-not-object", () => {
   test('reveal: +2 Persuasion, +2 Solari', () => {
     const game = t.fixture()
     t.setBoard(game, {
-      dennis: { handExact: ['Price is Not Object'], solari: 0 },
+      dennis: { handExact: ['Price Is No Object'], solari: 0 },
     })
     game.run()
 
@@ -130,7 +130,7 @@ describe("price-is-not-object", () => {
 
   test('onAcquire: +2 Solari when acquired through normal flow', () => {
     const game = t.fixture()
-    injectIntoRow(game, 'Price is Not Object')
+    injectIntoRow(game, 'Price Is No Object')
     // Boost persuasion to afford 6.
     game.testSetBreakpoint('after-round-start', (g) => {
       const deck = g.zones.byId('common.imperiumDeck')
@@ -146,7 +146,7 @@ describe("price-is-not-object", () => {
 
     const before = game.players.byName('dennis').getCounter('solari')
     t.choose(game, 'Reveal Turn')
-    t.choose(game, 'Price is Not Object')
+    t.choose(game, 'Price Is No Object')
 
     expect(game.players.byName('dennis').getCounter('solari')).toBe(before + 2)
   })

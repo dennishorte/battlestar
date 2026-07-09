@@ -83,15 +83,15 @@ describe('onAcquire bonuses by effect category', () => {
     expect(game.players.byName('dennis').getCounter('spice')).toBe(before + 1)
   })
 
-  test('gain solari: Price is Not Object grants +2 Solari', () => {
+  test('gain solari: Price Is No Object grants +2 Solari', () => {
     const game = t.fixture()
     boostPersuasion(game)
-    injectIntoImperiumRow(game, 'Price is Not Object')
+    injectIntoImperiumRow(game, 'Price Is No Object')
     game.run()
 
     const before = game.players.byName('dennis').getCounter('solari')
     t.choose(game, 'Reveal Turn')
-    t.choose(game, 'Price is Not Object')
+    t.choose(game, 'Price Is No Object')
 
     expect(game.players.byName('dennis').getCounter('solari')).toBe(before + 2)
   })
