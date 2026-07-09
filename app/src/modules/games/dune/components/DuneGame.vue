@@ -20,6 +20,10 @@
           <DunePlayerSummary />
         </div>
 
+        <div class="col cards-column">
+          <DunePlayerCards />
+        </div>
+
         <div class="col spaces-column">
           <DuneActionSpaces />
         </div>
@@ -63,6 +67,7 @@ import DuneImperiumRow from './DuneImperiumRow.vue'
 import DuneConflict from './DuneConflict.vue'
 import DuneFactionTrack from './DuneFactionTrack.vue'
 import DuneContractMarket from './DuneContractMarket.vue'
+import DunePlayerCards from './DunePlayerCards.vue'
 import DuneActionSpaces from './DuneActionSpaces.vue'
 import DuneOptionChip from './DuneOptionChip.vue'
 import DuneCardListModal from './modals/DuneCardListModal.vue'
@@ -88,6 +93,7 @@ export default {
     DuneContractMarket,
     DuneFactionTrack,
     DuneImperiumRow,
+    DunePlayerCards,
     DunePlayerSummary,
     DuneRefreshInfoModal,
     DuneRulesModal,
@@ -389,6 +395,17 @@ export default {
 }
 
 .player-column {
+  height: 100vh;
+  height: 100dvh;
+  min-width: 280px;
+  max-width: 300px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-top: .5em;
+  padding-bottom: 3em;
+}
+
+.cards-column {
   height: 100vh;
   height: 100dvh;
   min-width: 280px;
