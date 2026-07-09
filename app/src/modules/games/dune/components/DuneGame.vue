@@ -20,7 +20,7 @@
           <DunePlayerSummary />
         </div>
 
-        <div class="col cards-column">
+        <div class="col cards-column" v-if="viewerHasCards">
           <DunePlayerCards />
         </div>
 
@@ -128,6 +128,18 @@ export default {
     return {
       ui: this.ui,
     }
+  },
+
+  computed: {
+    viewerHasCards() {
+      const viewer = this.game.players.byName(this.actor.name)
+      if (!viewer) {
+        return false
+      }
+      const hand = this.game.zones.byId(`${viewer.name}.hand`).cardlist()
+      const played = this.game.zones.byId(`${viewer.name}.played`).cardlist()
+      return hand.length > 0 || played.length > 0
+    },
   },
 
   methods: {
