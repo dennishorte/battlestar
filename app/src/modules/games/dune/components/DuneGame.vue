@@ -41,6 +41,7 @@
     <DuneRefreshInfoModal />
     <DuneRulesModal />
     <DuneShieldWallModal />
+    <DuneStrengthBreakdownModal />
     <DuneTableauModal />
     <DuneVpBreakdownModal />
     <DebugModal />
@@ -69,6 +70,7 @@ import DuneCardViewerModal from './modals/DuneCardViewerModal.vue'
 import DuneRefreshInfoModal from './modals/DuneRefreshInfoModal.vue'
 import DuneRulesModal from './modals/DuneRulesModal.vue'
 import DuneShieldWallModal from './modals/DuneShieldWallModal.vue'
+import DuneStrengthBreakdownModal from './modals/DuneStrengthBreakdownModal.vue'
 import DuneTableauModal from './modals/DuneTableauModal.vue'
 import DuneVpBreakdownModal from './modals/DuneVpBreakdownModal.vue'
 
@@ -90,6 +92,7 @@ export default {
     DuneRefreshInfoModal,
     DuneRulesModal,
     DuneShieldWallModal,
+    DuneStrengthBreakdownModal,
     DuneTableauModal,
     DuneVpBreakdownModal,
     GameLogDune,
@@ -109,6 +112,7 @@ export default {
           cardList: null,
           tableau: null,
           vpBreakdown: null,
+          strengthBreakdown: null,
         },
       },
     }

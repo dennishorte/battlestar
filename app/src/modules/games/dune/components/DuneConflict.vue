@@ -57,34 +57,39 @@
       <div class="stat-label corner" />
       <div v-for="entry in combatants"
            :key="`hdr-${entry.name}`"
-           class="player-header"
+           class="player-header clickable"
            :class="{ 'is-current': entry.isCurrent }"
-           :style="{ borderTopColor: entry.color }">
-        <span class="player-name" :title="entry.name">{{ entry.name }}</span>
+           :style="{ borderTopColor: entry.color }"
+           :title="`View ${entry.name}'s strength breakdown`"
+           @click="openStrengthBreakdown(entry.player)">
+        <span class="player-name">{{ entry.name }}</span>
       </div>
 
       <div class="stat-label">Agents</div>
       <div v-for="entry in combatants"
            :key="`agt-${entry.name}`"
-           class="stat-cell"
-           :class="{ 'is-current': entry.isCurrent, dim: entry.agentsAvailable === 0 }">
+           class="stat-cell clickable"
+           :class="{ 'is-current': entry.isCurrent, dim: entry.agentsAvailable === 0 }"
+           @click="openStrengthBreakdown(entry.player)">
         {{ entry.agentsAvailable }}/{{ entry.agentsTotal }}
       </div>
 
       <div class="stat-label">Intrigue</div>
       <div v-for="entry in combatants"
            :key="`int-${entry.name}`"
-           class="stat-cell"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.intrigueCount, 'high-intrigue': entry.intrigueCount >= 4 }">
+           class="stat-cell clickable"
+           :class="{ 'is-current': entry.isCurrent, dim: !entry.intrigueCount, 'high-intrigue': entry.intrigueCount >= 4 }"
+           @click="openStrengthBreakdown(entry.player)">
         {{ entry.intrigueCount }}
       </div>
 
       <div class="stat-label">Maker Hook</div>
       <div v-for="entry in combatants"
            :key="`hook-${entry.name}`"
-           class="stat-cell"
+           class="stat-cell clickable"
            :class="{ 'is-current': entry.isCurrent, dim: !entry.hasMakerHook }"
-           :title="entry.hasMakerHook ? 'Has Maker Hook' : 'No Maker Hook'">
+           :title="entry.hasMakerHook ? 'Has Maker Hook' : 'No Maker Hook'"
+           @click="openStrengthBreakdown(entry.player)">
         <span v-if="entry.hasMakerHook" class="maker-hook">⚓</span>
         <span v-else class="no-units">—</span>
       </div>
@@ -92,8 +97,9 @@
       <div class="stat-label">Supply</div>
       <div v-for="entry in combatants"
            :key="`sup-${entry.name}`"
-           class="stat-cell unit-cell"
-           :class="{ 'is-current': entry.isCurrent }">
+           class="stat-cell unit-cell clickable"
+           :class="{ 'is-current': entry.isCurrent }"
+           @click="openStrengthBreakdown(entry.player)">
         <span class="unit-block" :class="{ dim: !entry.troopsInSupply }">
           <span class="unit-count">{{ entry.troopsInSupply }}</span><span class="unit-letter">T</span>
         </span>
@@ -102,8 +108,9 @@
       <div class="stat-label">Garrison</div>
       <div v-for="entry in combatants"
            :key="`gar-${entry.name}`"
-           class="stat-cell unit-cell"
-           :class="{ 'is-current': entry.isCurrent }">
+           class="stat-cell unit-cell clickable"
+           :class="{ 'is-current': entry.isCurrent }"
+           @click="openStrengthBreakdown(entry.player)">
         <span class="unit-block" :class="{ dim: !entry.garrisonTroops }">
           <span class="unit-count">{{ entry.garrisonTroops }}</span><span class="unit-letter">T</span>
         </span>
@@ -112,8 +119,9 @@
       <div class="stat-label">In Conflict</div>
       <div v-for="entry in combatants"
            :key="`con-${entry.name}`"
-           class="stat-cell unit-cell"
-           :class="{ 'is-current': entry.isCurrent }">
+           class="stat-cell unit-cell clickable"
+           :class="{ 'is-current': entry.isCurrent }"
+           @click="openStrengthBreakdown(entry.player)">
         <template v-if="entry.troops || entry.sandworms">
           <span class="unit-block" v-if="entry.troops" title="troops in conflict">
             <span class="unit-count">{{ entry.troops }}</span><span class="unit-letter">T</span>
@@ -128,13 +136,14 @@
       <div class="stat-label">Strength</div>
       <div v-for="entry in combatants"
            :key="`str-${entry.name}`"
-           class="stat-cell stat-strength"
+           class="stat-cell stat-strength clickable"
            :class="{
              'is-current': entry.isCurrent,
              'strength-pending': entry.pending,
              'strength-zero': !entry.hasUnits,
            }"
-           :title="strengthTooltip(entry)">
+           :title="strengthTooltip(entry)"
+           @click="openStrengthBreakdown(entry.player)">
         {{ entry.hasUnits ? entry.strength + (entry.pending ? '*' : '') : '0' }}
       </div>
     </div>
@@ -156,7 +165,7 @@ const TOTAL_ROUNDS =
 export default {
   name: 'DuneConflict',
 
-  inject: ['game'],
+  inject: ['game', 'ui'],
 
   computed: {
     totalRounds() {
@@ -224,6 +233,7 @@ export default {
         const intrigueCount = this.game.zones.byId(`${player.name}.intrigue`).cardlist().length
         return {
           name: player.name,
+          player,
           color: player.color,
           isFirstPlayer: player.name === firstPlayer?.name,
           isCurrent: player.name === activeName,
@@ -276,6 +286,11 @@ export default {
 
     openShieldWall() {
       this.$modal('dune-shield-wall-modal').show()
+    },
+
+    openStrengthBreakdown(player) {
+      this.ui.modals.strengthBreakdown = { player }
+      this.$modal('dune-strength-breakdown-modal').show()
     },
   },
 }
@@ -494,6 +509,14 @@ export default {
   background-color: #f5edd6;
 }
 
+.player-header.clickable {
+  cursor: pointer;
+}
+
+.player-header.clickable:hover {
+  background-color: #f0e8d6;
+}
+
 .player-name {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -526,6 +549,14 @@ export default {
 
 .stat-cell.dim {
   color: #b0a088;
+}
+
+.stat-cell.clickable {
+  cursor: pointer;
+}
+
+.stat-cell.clickable:hover {
+  background-color: #f0e8d6;
 }
 
 .stat-cell.high-intrigue {
