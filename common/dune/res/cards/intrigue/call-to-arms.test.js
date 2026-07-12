@@ -84,4 +84,31 @@ describe("call-to-arms", () => {
     expect(dennis.troopsInGarrison).toBe(0)
     expect(dennis.troopsInSupply).toBe(5)
   })
+
+  test('plot: troop bonus also applies when a card is acquired via another plot card (Inspire Awe) the same turn', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { intrigue: ['Call to Arms', 'Inspire Awe'], troopsInSupply: 5, troopsInGarrison: 0 },
+    })
+    game.run()
+
+    // Play Call to Arms, then Inspire Awe, both as plot intrigues before
+    // committing to this turn's Agent/Reveal choice.
+    expect(t.currentChoices(game)).toContain('Call to Arms')
+    t.choose(game, 'Call to Arms')
+
+    expect(t.currentChoices(game)).toContain('Inspire Awe')
+    t.choose(game, 'Inspire Awe')
+
+    const rowZone = game.zones.byId('common.imperiumRow')
+    const cheap = rowZone.cardlist().find(c => (c.persuasionCost || 0) <= 3)
+    expect(cheap).toBeTruthy()
+
+    const garrisonBefore = game.players.byName('dennis').troopsInGarrison
+    t.choose(game, cheap.name)
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.troopsInGarrison).toBe(garrisonBefore + 1)
+    expect(dennis.troopsInSupply).toBe(4)
+  })
 })

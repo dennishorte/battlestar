@@ -44,9 +44,11 @@ module.exports = {
       chosen.moveTo(handZone)
       deckEngine.refillImperiumRow(game)
       game.log.add({ template: '{player} acquires {card} to hand (Inspire Awe)', args: { player, card: chosen } })
+      deckEngine.applyAcquireTroopBonus(game, player)
     }
     else {
       deckEngine.acquireCard(game, player, chosen)
+      deckEngine.applyAcquireTroopBonus(game, player)
     }
   },
 

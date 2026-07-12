@@ -108,6 +108,26 @@ function trashCard(game, card, player) {
 }
 
 /**
+ * Grant the Call to Arms troop bonus, if active, for a card acquisition.
+ * Shared by every acquisition path that resolves within the player's own
+ * turn (main acquire loop, Inspire Awe, Bypass Protocol) so the bonus isn't
+ * lost when a card is acquired by something other than the main Reveal Turn
+ * acquire loop. Not called from Impress, whose acquisition happens during
+ * the later, separate Combat phase — outside "your Reveal turn this round".
+ */
+function applyAcquireTroopBonus(game, player) {
+  if (!game.state.turnTracking?.troopOnAcquire) {
+    return
+  }
+  const recruit = Math.min(1, player.troopsInSupply)
+  if (recruit > 0) {
+    player.decrementCounter('troopsInSupply', recruit, { silent: true })
+    player.incrementCounter('troopsInGarrison', recruit, { silent: true })
+    game.log.add({ template: '{player}: +1 Troop (Call to Arms)', args: { player } })
+  }
+}
+
+/**
  * Acquire a card from the Imperium Row or Reserve into the player's discard pile.
  */
 function acquireCard(game, player, card) {
@@ -327,6 +347,7 @@ module.exports = {
   discardCard,
   trashCard,
   acquireCard,
+  applyAcquireTroopBonus,
   refillImperiumRow,
   cleanUp,
   drawIntrigueCard,

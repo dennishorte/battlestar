@@ -64,9 +64,11 @@ module.exports = {
       chosen.moveTo(deckZone)
       deckEngine.refillImperiumRow(game)
       game.log.add({ template: '{player} acquires {card} to top of deck (Bypass Protocol)', args: { player, card: chosen } })
+      deckEngine.applyAcquireTroopBonus(game, player)
     }
     else {
       deckEngine.acquireCard(game, player, chosen)
+      deckEngine.applyAcquireTroopBonus(game, player)
     }
   },
 

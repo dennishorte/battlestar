@@ -506,25 +506,18 @@ function acquireOneCard(game, player, opts = {}) {
     card.moveTo(deckZone)
     game.log.add({ template: '{player} acquires {card} to top of deck', args: { player, card }, summary: true })
     deckEngine.refillImperiumRow(game)
+    deckEngine.applyAcquireTroopBonus(game, player)
   }
   else if (toHand) {
     const handZone = game.zones.byId(`${player.name}.hand`)
     card.moveTo(handZone)
     game.log.add({ template: '{player} acquires {card} to hand', args: { player, card }, summary: true })
     deckEngine.refillImperiumRow(game)
+    deckEngine.applyAcquireTroopBonus(game, player)
   }
   else {
     deckEngine.acquireCard(game, player, card)
-  }
-
-  // Troop on acquire (Call to Arms)
-  if (game.state.turnTracking?.troopOnAcquire) {
-    const recruit = Math.min(1, player.troopsInSupply)
-    if (recruit > 0) {
-      player.decrementCounter('troopsInSupply', recruit, { silent: true })
-      player.incrementCounter('troopsInGarrison', recruit, { silent: true })
-      game.log.add({ template: '{player}: +1 Troop (Call to Arms)', args: { player } })
-    }
+    deckEngine.applyAcquireTroopBonus(game, player)
   }
 
   // Per-card onAcquire hook lives on the card definition.
