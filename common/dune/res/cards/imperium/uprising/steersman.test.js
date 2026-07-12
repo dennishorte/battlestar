@@ -32,9 +32,10 @@ describe('steersman', () => {
 
     t.choose(game, 'Agent Turn.Steersman')
     t.choose(game, 'Assembly Hall')
-    // Card-vs-space ordering, then recall-agent prompt.
+    // Card-vs-space ordering; recall-agent auto-resolves to Gather Support
+    // (the only eligible target — Assembly Hall is excluded as the
+    // just-placed agent's space).
     t.choose(game, 'Steersman')
-    t.choose(game, 'Gather Support')
 
     // Hand: drew 1 from Steersman + Assembly Hall has no draw effect; persuasion +1, intrigue +1.
     const dennis = game.players.byName('dennis')
@@ -49,12 +50,9 @@ describe('steersman', () => {
     void dennis0
   })
 
-  test('agent ability: with no other agent placed, can recall the just-placed agent', () => {
-    // recall-agent's exclude-current-space logic relies on the `space` param
-    // passed to resolveEffect, but card-driven effects pass space=null
-    // (resolveCardAgentAbility, playerTurns.js:709), so the agent that just
-    // placed on the chosen space is itself a valid recall target. Auto-resolves
-    // when it's the only choice.
+  test('agent ability: with no other agent placed, recall-agent has no valid target', () => {
+    // The agent that just placed on the chosen space cannot recall itself,
+    // so with no other agent on the board there is nothing to recall.
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { handExact: ['Steersman'] },
@@ -64,10 +62,10 @@ describe('steersman', () => {
     t.choose(game, 'Agent Turn.Steersman')
     t.choose(game, 'Assembly Hall')
     t.choose(game, 'Steersman')   // resolve card before space
-    // recall-agent auto-picks Assembly Hall (only agent on board).
+    // recall-agent has no eligible target (only the just-placed agent is on the board).
 
-    expect(game.state.boardSpaces['assembly-hall']).toEqual([])
-    // Assembly Hall effects still fired for the placed-then-recalled agent.
+    expect(game.state.boardSpaces['assembly-hall']).toEqual(['dennis'])
+    // Assembly Hall effects still fired for the placed agent.
     const dennis = game.players.byName('dennis')
     expect(dennis.getCounter('persuasion')).toBe(1)
     expect(game.zones.byId('dennis.intrigue').cardlist().length).toBe(1)

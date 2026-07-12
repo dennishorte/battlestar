@@ -1238,10 +1238,14 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
 
     case 'recall-agent': {
       // Return one of your agents from the board (freeing the space).
-      // Exclude the current space — the agent that triggered this effect
-      // cannot recall itself.
+      // Exclude the space this turn's agent occupies — an agent that
+      // triggered this effect cannot recall itself. `agentSpaceId` (not the
+      // local `space` param) is used because effects can resolve several
+      // calls away from the agent-placement site (card ability, contract
+      // completion, etc.) without `space` being threaded through.
+      const currentAgentSpaceId = game.state.turnTracking?.agentSpaceId
       const occupiedSpaces = Object.entries(game.state.boardSpaces)
-        .filter(([id, occupants]) => (occupants || []).includes(player.name) && id !== space?.id)
+        .filter(([id, occupants]) => (occupants || []).includes(player.name) && id !== currentAgentSpaceId)
       if (occupiedSpaces.length > 0) {
         const boardSpaces = getBoardSpaces()
         const recallChoices = occupiedSpaces.map(([id]) => {
