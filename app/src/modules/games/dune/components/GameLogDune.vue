@@ -19,7 +19,7 @@ const ui = inject('ui')
 
 const { viewMode, setMode, filterEntries } = useSummaryLog({
   storageKey: 'dune.logViewMode',
-  keepPhases: ['Game Over'],
+  keepPhases: ['End Game'],
   passthroughPhases: ['Combat'],
 })
 

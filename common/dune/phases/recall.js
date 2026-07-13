@@ -76,7 +76,7 @@ function recallPhase(game) {
  * Tiebreakers: spice > solari > water > garrisoned troops.
  */
 function endGame(game) {
-  game.log.add({ template: 'Game Over', event: 'phase-start' })
+  game.log.add({ template: 'End Game', event: 'phase-start' })
 
   // Allow each player to play Endgame Intrigue cards
   for (const player of game.players.all()) {
