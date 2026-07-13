@@ -17,13 +17,13 @@ module.exports = {
         .filter(card => card.checkHasBiscuit('i'))
       const fromScore = game.actions.chooseAndReturn(player, scoreOptions)[0]
 
-      const handOptions = game
+      const boardOptions = game
         .cards
-        .byPlayer(player, 'hand')
+        .tops(player)
         .filter(card => card.checkHasBiscuit('i'))
-      const fromHand = game.actions.chooseAndReturn(player, handOptions)[0]
+      const fromBoard = game.actions.chooseAndReturn(player, boardOptions)[0]
 
-      if (fromScore && fromHand) {
+      if (fromScore && fromBoard) {
         const count = game.cards.byPlayer(player, 'achievements').length
         const availableAchievements = player.availableAchievements()
         game.actions.chooseAndJunk(player, availableAchievements, { count })

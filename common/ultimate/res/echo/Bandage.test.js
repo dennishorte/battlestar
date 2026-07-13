@@ -41,9 +41,9 @@ describe("Bandage", () => {
         yellow: ['Agriculture'],
       },
       micah: {
-        purple: ['Lighting'],
+        purple: ['Philosophy'],
         hand: ['Enterprise'],
-        score: ['Calendar', 'Gunpowder', 'Software'],
+        score: ['Pottery', 'Gunpowder', 'Software'],
       },
     })
 
@@ -58,9 +58,9 @@ describe("Bandage", () => {
         yellow: ['Agriculture'],
       },
       micah: {
-        purple: ['Lighting'],
+        purple: ['Philosophy'],
         hand: ['Enterprise'],
-        score: ['Calendar', 'Gunpowder'],
+        score: ['Pottery', 'Gunpowder'],
       },
     })
   })
@@ -93,8 +93,7 @@ describe("Bandage", () => {
         yellow: ['Agriculture'],
       },
       micah: {
-        purple: ['Lighting'],
-        hand: ['Enterprise'],
+        hand: ['Enterprise', 'Databases'],
         score: ['Calendar', 'Gunpowder'],
         achievements: ['Empire', 'World'],
       },
