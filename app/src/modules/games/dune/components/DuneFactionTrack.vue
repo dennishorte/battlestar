@@ -9,7 +9,7 @@
               :key="player.name"
               :style="{ 'border-bottom-color': player.color }"
               class="player-col"
-              :class="{ 'is-viewer': player.name === actor.name, 'is-current': player.name === activeName }">
+              :class="{ 'is-viewer': player.name === actor.name }">
             {{ player.name }}
           </th>
           <th class="alliance-col">Alliance</th>
@@ -22,10 +22,7 @@
             <DuneFactionIcon :faction="faction.id" size="1em" />
             {{ faction.short }}
           </td>
-          <td v-for="player in players"
-              :key="player.name"
-              class="influence-cell"
-              :class="{ 'is-current': player.name === activeName }">
+          <td v-for="player in players" :key="player.name" class="influence-cell">
             <span class="influence-val"
                   :class="levelClass(player.getInfluence(faction.id))">
               {{ player.getInfluence(faction.id) }}
@@ -72,12 +69,6 @@ export default {
   computed: {
     players() {
       return this.game.players.all()
-    },
-
-    activeName() {
-      return this.game.state.phase === 'player-turns'
-        ? this.game.state.currentTurnPlayer
-        : null
     },
   },
 
@@ -132,11 +123,6 @@ export default {
 
 .player-col.is-viewer {
   font-weight: 700;
-}
-
-.player-col.is-current,
-.influence-cell.is-current {
-  background-color: #f5edd6;
 }
 
 .alliance-col {
