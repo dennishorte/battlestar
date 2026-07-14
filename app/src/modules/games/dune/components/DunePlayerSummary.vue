@@ -398,7 +398,7 @@ export default {
 }
 
 .stat-cell.is-viewer {
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .stat-cell.dim {
@@ -426,6 +426,10 @@ export default {
 .vp-cell {
   font-weight: bold;
   color: #8b6914;
+}
+
+.vp-cell.is-viewer {
+  font-weight: 900;
 }
 
 .resource-cell {
@@ -458,7 +462,7 @@ export default {
 }
 
 .leader-cell.is-viewer :deep(.chip-name) {
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .icons-cell {

@@ -177,7 +177,7 @@ export default {
 }
 
 .influence-cell.is-viewer .influence-val {
-  font-weight: 800;
+  font-weight: 900;
 }
 
 .alliance-cell {

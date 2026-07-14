@@ -550,7 +550,7 @@ export default {
 }
 
 .stat-cell.is-viewer {
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .stat-cell.dim {
@@ -621,6 +621,10 @@ export default {
   font-weight: bold;
   color: #c04040;
   font-size: 1.05em;
+}
+
+.stat-strength.is-viewer {
+  font-weight: 900;
 }
 
 .stat-strength.strength-pending {
