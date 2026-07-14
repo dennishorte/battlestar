@@ -69,7 +69,7 @@
       <div v-for="entry in combatants"
            :key="`agt-${entry.name}`"
            class="stat-cell clickable"
-           :class="{ 'is-current': entry.isCurrent, dim: entry.agentsAvailable === 0 }"
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: entry.agentsAvailable === 0 }"
            @click="openStrengthBreakdown(entry.player)">
         {{ entry.agentsAvailable }}/{{ entry.agentsTotal }}
       </div>
@@ -78,7 +78,7 @@
       <div v-for="entry in combatants"
            :key="`int-${entry.name}`"
            class="stat-cell clickable"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.intrigueCount, 'high-intrigue': entry.intrigueCount >= 4 }"
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.intrigueCount, 'high-intrigue': entry.intrigueCount >= 4 }"
            @click="openStrengthBreakdown(entry.player)">
         {{ entry.intrigueCount }}
       </div>
@@ -87,7 +87,7 @@
       <div v-for="entry in combatants"
            :key="`hook-${entry.name}`"
            class="stat-cell clickable"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.hasMakerHook }"
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.hasMakerHook }"
            :title="entry.hasMakerHook ? 'Has Maker Hook' : 'No Maker Hook'"
            @click="openStrengthBreakdown(entry.player)">
         <span v-if="entry.hasMakerHook" class="maker-hook">⚓</span>
@@ -98,7 +98,7 @@
       <div v-for="entry in combatants"
            :key="`sup-${entry.name}`"
            class="stat-cell unit-cell clickable"
-           :class="{ 'is-current': entry.isCurrent }"
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer }"
            @click="openStrengthBreakdown(entry.player)">
         <span class="unit-block" :class="{ dim: !entry.troopsInSupply }">
           <span class="unit-count">{{ entry.troopsInSupply }}</span><span class="unit-letter">T</span>
@@ -109,7 +109,7 @@
       <div v-for="entry in combatants"
            :key="`gar-${entry.name}`"
            class="stat-cell unit-cell clickable"
-           :class="{ 'is-current': entry.isCurrent }"
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer }"
            @click="openStrengthBreakdown(entry.player)">
         <span class="unit-block" :class="{ dim: !entry.garrisonTroops }">
           <span class="unit-count">{{ entry.garrisonTroops }}</span><span class="unit-letter">T</span>
@@ -120,7 +120,7 @@
       <div v-for="entry in combatants"
            :key="`con-${entry.name}`"
            class="stat-cell unit-cell clickable"
-           :class="{ 'is-current': entry.isCurrent }"
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer }"
            @click="openStrengthBreakdown(entry.player)">
         <template v-if="entry.troops || entry.sandworms">
           <span class="unit-block" v-if="entry.troops" title="troops in conflict">
@@ -139,6 +139,7 @@
            class="stat-cell stat-strength clickable"
            :class="{
              'is-current': entry.isCurrent,
+             'is-viewer': entry.isViewer,
              'strength-pending': entry.pending,
              'strength-zero': !entry.hasUnits,
            }"
@@ -165,7 +166,7 @@ const TOTAL_ROUNDS =
 export default {
   name: 'DuneConflict',
 
-  inject: ['game', 'ui'],
+  inject: ['actor', 'game', 'ui'],
 
   computed: {
     totalRounds() {
@@ -237,6 +238,7 @@ export default {
           color: player.color,
           isFirstPlayer: player.name === firstPlayer?.name,
           isCurrent: player.name === activeName,
+          isViewer: player.name === this.actor.name,
           agentsAvailable: player.availableAgents,
           agentsTotal,
           intrigueCount,
@@ -545,6 +547,10 @@ export default {
 
 .stat-cell.is-current {
   background-color: #f5edd6;
+}
+
+.stat-cell.is-viewer {
+  font-weight: 600;
 }
 
 .stat-cell.dim {

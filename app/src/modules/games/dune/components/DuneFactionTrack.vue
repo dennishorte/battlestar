@@ -22,7 +22,10 @@
             <DuneFactionIcon :faction="faction.id" size="1em" />
             {{ faction.short }}
           </td>
-          <td v-for="player in players" :key="player.name" class="influence-cell">
+          <td v-for="player in players"
+              :key="player.name"
+              class="influence-cell"
+              :class="{ 'is-viewer': player.name === actor.name }">
             <span class="influence-val"
                   :class="levelClass(player.getInfluence(faction.id))">
               {{ player.getInfluence(faction.id) }}
@@ -171,6 +174,10 @@ export default {
 .influence-val.level-alliance {
   background-color: #8b6914;
   color: white;
+}
+
+.influence-cell.is-viewer .influence-val {
+  font-weight: 800;
 }
 
 .alliance-cell {

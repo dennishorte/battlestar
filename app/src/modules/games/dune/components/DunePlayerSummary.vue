@@ -17,7 +17,7 @@
       <div v-for="entry in entries"
            :key="`vp-${entry.name}`"
            class="stat-cell vp-cell clickable"
-           :class="{ 'is-current': entry.isCurrent }"
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer }"
            title="View VP breakdown"
            @click="openVpBreakdown(entry.player)">
         {{ entry.vp }}
@@ -27,7 +27,7 @@
       <div v-for="entry in entries"
            :key="`ldr-${entry.name}`"
            class="stat-cell leader-cell"
-           :class="{ 'is-current': entry.isCurrent }">
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer }">
         <DuneOptionChip v-if="entry.leader"
                         :name="entry.leader.name"
                         :leader="entry.leader"
@@ -41,7 +41,7 @@
       <div v-for="entry in entries"
            :key="`agt-${entry.name}`"
            class="stat-cell"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.agentsAvailable }">
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.agentsAvailable }">
         {{ entry.agentsAvailable }}/{{ entry.agentsTotal }}
       </div>
 
@@ -49,7 +49,7 @@
       <div v-for="entry in entries"
            :key="`icn-${entry.name}`"
            class="stat-cell icons-cell"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.icons.length }">
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.icons.length }">
         <template v-if="entry.icons.length">
           <span v-for="(icon, idx) in entry.icons"
                 :key="idx"
@@ -64,7 +64,7 @@
       <div v-for="entry in entries"
            :key="`sol-${entry.name}`"
            class="stat-cell resource-cell"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.solari }">
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.solari }">
         <DuneResourceIcon type="solari" />
         <span>{{ entry.solari }}</span>
       </div>
@@ -73,7 +73,7 @@
       <div v-for="entry in entries"
            :key="`spi-${entry.name}`"
            class="stat-cell resource-cell"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.spice }">
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.spice }">
         <DuneResourceIcon type="spice" />
         <span>{{ entry.spice }}</span>
       </div>
@@ -82,7 +82,7 @@
       <div v-for="entry in entries"
            :key="`wat-${entry.name}`"
            class="stat-cell resource-cell"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.water }">
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.water }">
         <DuneResourceIcon type="water" />
         <span>{{ entry.water }}</span>
       </div>
@@ -91,7 +91,7 @@
       <div v-for="entry in entries"
            :key="`spy-${entry.name}`"
            class="stat-cell resource-cell"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.spiesInSupply }">
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.spiesInSupply }">
         <DuneAgentIcon type="spy" />
         <span>{{ entry.spiesInSupply }}</span>
       </div>
@@ -100,7 +100,7 @@
       <div v-for="entry in entries"
            :key="`int-${entry.name}`"
            class="stat-cell"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.intrigueCount, clickable: entry.isViewer, 'high-intrigue': entry.intrigueCount >= 4 }"
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.intrigueCount, clickable: entry.isViewer, 'high-intrigue': entry.intrigueCount >= 4 }"
            :title="entry.isViewer ? 'View intrigue cards' : ''"
            @click="entry.isViewer && openIntrigue(entry.player)">
         {{ entry.intrigueCount }}
@@ -110,7 +110,7 @@
       <div v-for="entry in entries"
            :key="`con-${entry.name}`"
            class="stat-cell"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.contractsCount, clickable: true }"
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.contractsCount, clickable: true }"
            title="View contracts"
            @click="openContracts(entry.player)">
         {{ entry.contractsCount }}
@@ -120,7 +120,7 @@
       <div v-for="entry in entries"
            :key="`hc-${entry.name}`"
            class="stat-cell"
-           :class="{ 'is-current': entry.isCurrent, dim: !entry.hasHighCouncil }"
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.hasHighCouncil }"
            :title="entry.hasHighCouncil ? 'Has High Council seat' : 'No High Council seat'">
         {{ entry.hasHighCouncil ? '✓' : '—' }}
       </div>
@@ -397,6 +397,10 @@ export default {
   background-color: #f5edd6;
 }
 
+.stat-cell.is-viewer {
+  font-weight: 600;
+}
+
 .stat-cell.dim {
   color: #b0a088;
 }
@@ -451,6 +455,10 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
   font-weight: 500;
+}
+
+.leader-cell.is-viewer :deep(.chip-name) {
+  font-weight: 600;
 }
 
 .icons-cell {
