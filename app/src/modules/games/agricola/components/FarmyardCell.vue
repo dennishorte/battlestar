@@ -43,6 +43,9 @@
 
       <!-- Stable indicator (overlay) -->
       <span class="stable-marker" v-if="cell.hasStable">⌂</span>
+
+      <!-- Newborn indicator (overlay) -->
+      <span class="newborn-badge" v-if="showNewbornBadge" title="Newborn placed here">🐣</span>
     </div>
   </div>
 </template>
@@ -258,6 +261,11 @@ export default {
         classes.push('animal-placement-target')
       }
 
+      // Newborn indicator
+      if (this.showNewbornBadge) {
+        classes.push('has-newborn')
+      }
+
       return classes
     },
 
@@ -454,6 +462,25 @@ export default {
         case 'cattle': return '🐄'
         default: return ''
       }
+    },
+
+    // Whether a newborn from the animal-placement modal is currently sitting in this cell.
+    showNewbornBadge() {
+      if (!this.animalOverrides) {
+        return false
+      }
+      if (this.isInPasture) {
+        const key = `pasture-${this.pasture.id}`
+        return this.isFirstPastureCell && !!this.animalOverrides.pastures?.[key]?.hasNewborn
+      }
+      if (this.cell.hasStable && !this.isInPasture) {
+        const key = `stable-${this.row}-${this.col}`
+        return !!this.animalOverrides.stables?.[key]?.hasNewborn
+      }
+      if (this.cell.type === 'room' && this.row === 0 && this.col === 0) {
+        return !!this.animalOverrides.newbornHouseType
+      }
+      return false
     },
   },
 
@@ -678,6 +705,19 @@ export default {
 
 .farmyard-cell.has-stable {
   box-shadow: inset 0 0 0 2px #654321;
+}
+
+/* Newborn indicator */
+.newborn-badge {
+  position: absolute;
+  top: 1px;
+  left: 2px;
+  font-size: .9em;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.6));
+}
+
+.farmyard-cell.has-newborn {
+  box-shadow: inset 0 0 0 2px #ffc107;
 }
 
 /* Pet indicator in room */

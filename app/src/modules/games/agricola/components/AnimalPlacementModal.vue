@@ -53,14 +53,59 @@
         </div>
       </div>
 
-      <!-- Unplaced Pool -->
-      <div class="pool-section" :class="{ selecting: selectingLocation }" v-if="poolTotal > 0 || !isBreeding || selectingLocation">
+      <!-- Farmyard Grid -->
+      <div class="farmyard-section">
+        <h5>Your Farmyard</h5>
+        <FarmyardGrid :player="player" :animalOverrides="animalOverrides" />
+      </div>
+
+      <!-- Card Holdings -->
+      <div class="card-holdings-section" v-if="cardLocations.length > 0">
+        <h5>Card Holdings</h5>
+        <div class="card-holdings">
+          <div
+            v-for="loc in cardLocations"
+            :key="loc.id"
+            class="card-holding-box"
+            :class="{ full: getLocTotal(loc.id) >= loc.maxCapacity }"
+            @click="handleCardClick(loc)"
+          >
+            <span
+              v-if="newbornLocations[loc.id]"
+              class="newborn-badge"
+              title="Newborn placed here"
+            >🐣</span>
+            <div class="card-holding-name">{{ loc.name }}</div>
+            <div class="card-holding-animals">
+              <span v-for="type in animalTypes" :key="type">
+                <span v-if="(animalState[loc.id]?.[type] || 0) > 0">
+                  {{ animalState[loc.id][type] }}{{ getAnimalEmoji(type) }}
+                </span>
+              </span>
+            </div>
+            <div class="card-holding-capacity">
+              {{ getLocTotal(loc.id) }} / {{ loc.maxCapacity }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cooking Section: any animal not currently placed lands here. Doubles as the
+           source pool for manual placement (click a group, then a location) and shows
+           what happens to whatever's left over at confirm time. -->
+      <div class="cooking-section" :class="{ selecting: selectingLocation }" v-if="poolTotal > 0 || !isBreeding || selectingLocation || cookingRates">
         <h5>
           <template v-if="selectingLocation">
             Select animal for {{ selectingLocation.name }}
           </template>
-          <template v-else-if="isBreeding">
-            Animals removed from farmyard
+          <template v-else-if="poolTotal > 0 && cookingRates">
+            Cooking ({{ poolTotal }} animal{{ poolTotal > 1 ? 's' : '' }})
+          </template>
+          <template v-else-if="poolTotal > 0">
+            Release ({{ poolTotal }} animal{{ poolTotal > 1 ? 's' : '' }})
+          </template>
+          <template v-else-if="cookingRates">
+            Cook an Animal
           </template>
           <template v-else>
             Animals to Place
@@ -80,6 +125,14 @@
               <span class="pool-icon">{{ getAnimalEmoji(type) }}</span>
               <span class="pool-count">{{ unplacedPool[type] }}</span>
             </div>
+            <button
+              v-if="cookingRates && !selectingLocation && !selectingBabyType && canCookAdditional(type)"
+              class="cook-more-btn"
+              @click="cookAdditionalAnimal(type)"
+              :title="`Cook another ${type}`"
+            >
+              +{{ getAnimalEmoji(type) }}
+            </button>
           </template>
           <button
             v-if="selectingLocation"
@@ -92,72 +145,7 @@
         <div class="pool-empty" v-if="poolTotal === 0 && !selectingLocation && !isBreeding">
           All animals placed
         </div>
-      </div>
-
-      <!-- Farmyard Grid -->
-      <div class="farmyard-section">
-        <h5>Your Farmyard</h5>
-        <FarmyardGrid :player="player" :animalOverrides="animalOverrides" />
-      </div>
-
-      <!-- Card Holdings -->
-      <div class="card-holdings-section" v-if="cardLocations.length > 0">
-        <h5>Card Holdings</h5>
-        <div class="card-holdings">
-          <div
-            v-for="loc in cardLocations"
-            :key="loc.id"
-            class="card-holding-box"
-            :class="{ full: getLocTotal(loc.id) >= loc.maxCapacity }"
-            @click="handleCardClick(loc)"
-          >
-            <div class="card-holding-name">{{ loc.name }}</div>
-            <div class="card-holding-animals">
-              <span v-for="type in animalTypes" :key="type">
-                <span v-if="(animalState[loc.id]?.[type] || 0) > 0">
-                  {{ animalState[loc.id][type] }}{{ getAnimalEmoji(type) }}
-                </span>
-              </span>
-            </div>
-            <div class="card-holding-capacity">
-              {{ getLocTotal(loc.id) }} / {{ loc.maxCapacity }}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Placement Summary -->
-      <div class="placement-section" v-if="locationsWithActivity.length > 0">
-        <h5>Placement Summary</h5>
-        <table class="placement-table">
-          <thead>
-            <tr>
-              <th>Location</th>
-              <th>Animals</th>
-              <th>Changes</th>
-              <th>Capacity</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="loc in locationsWithActivity" :key="loc.id">
-              <td>{{ loc.name }}</td>
-              <td>{{ formatState(loc.id) }}</td>
-              <td>
-                <span v-if="hasChangesAt(loc.id)" class="changes">
-                  {{ formatChanges(loc.id) }}
-                </span>
-                <span v-else>-</span>
-              </td>
-              <td>{{ loc.maxCapacity }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Overflow Section -->
-      <div class="overflow-section" v-if="poolTotal > 0">
-        <h5>Cannot Place ({{ poolTotal }} animal{{ poolTotal > 1 ? 's' : '' }})</h5>
-        <div v-if="cookingRates" class="cooking-options">
+        <div v-if="poolTotal > 0 && !selectingLocation && cookingRates" class="cooking-options">
           <p>
             Cooking rates ({{ cookingRates.improvementName }}):
             <span v-for="(rate, type) in cookingRates.rates" :key="type" class="rate">
@@ -175,34 +163,11 @@
             </label>
           </div>
         </div>
-        <div v-else class="no-cooking">
+        <div v-else-if="poolTotal > 0 && !selectingLocation && !cookingRates" class="no-cooking">
           <p>No cooking improvement - {{ poolTotal }} animal{{ poolTotal > 1 ? 's' : '' }} will be released.</p>
         </div>
       </div>
 
-      <!-- Summary -->
-      <div class="summary valid">
-        <strong>Summary:</strong>
-        <template v-if="isBreeding">
-          <span class="breeding-summary">
-            <template v-if="bornBabyTypes.length > 0">
-              Breeds: {{ bornBabyTypes.map(t => '+1 ' + t).join(', ') }}
-            </template>
-            <template v-if="releasedBabyTypes.length > 0">
-              {{ bornBabyTypes.length > 0 ? '· ' : '' }}Releases:
-              {{ releasedBabyTypes.map(t => '1 ' + t).join(', ') }}
-            </template>
-            <template v-if="bornBabyTypes.length === 0 && releasedBabyTypes.length === 0">
-              No breeding
-            </template>
-          </span>
-        </template>
-        <span v-if="totalAdded > 0"> Place {{ totalAdded }}</span>
-        <span v-if="totalMoved > 0">{{ totalAdded > 0 ? ',' : '' }} Move {{ totalMoved }}</span>
-        <span v-if="cookCount > 0">, Cook {{ cookCount }} (+{{ estimatedFood }} food)</span>
-        <span v-if="releaseCount > 0">, Release {{ releaseCount }}</span>
-        <span v-if="!isBreeding && totalAdded === 0 && totalMoved === 0 && poolTotal === 0"> No changes</span>
-      </div>
     </div>
 
     <template #footer>
@@ -324,16 +289,6 @@ export default {
       return this.animalTypes.some(t => this.isBabyEligible[t] && this.babyState[t] === 'pending')
     },
 
-    bornBabyTypes() {
-      return this.animalTypes.filter(t => this.babyState[t] === 'placed')
-    },
-
-    releasedBabyTypes() {
-      return this.animalTypes.filter(t =>
-        this.babyState[t] === 'pending' && this.isBabyEligible[t]
-      )
-    },
-
     player() {
       return this.game.players.byName(this.resolvedActorName)
     },
@@ -350,26 +305,43 @@ export default {
       return this.unplacedPool.sheep + this.unplacedPool.boar + this.unplacedPool.cattle
     },
 
+    // Map of locationId -> animal type, for any newborn currently placed there.
+    newbornLocations() {
+      const locs = {}
+      for (const type of this.animalTypes) {
+        if (this.babyState[type] === 'placed' && this.babyLocation[type]) {
+          locs[this.babyLocation[type]] = type
+        }
+      }
+      return locs
+    },
+
     // Compute overrides for FarmyardGrid to show modified animal state
     animalOverrides() {
       if (!this.isActive) {
         return null
       }
 
-      const overrides = { pastures: {}, housePets: { sheep: 0, boar: 0, cattle: 0 }, stables: {} }
+      const overrides = {
+        pastures: {},
+        housePets: { sheep: 0, boar: 0, cattle: 0 },
+        stables: {},
+        newbornHouseType: this.newbornLocations.house || null,
+      }
 
       for (const [locId, animals] of Object.entries(this.animalState)) {
         const animalType = this.animalTypes.find(t => animals[t] > 0) || null
         const totalCount = animals.sheep + animals.boar + animals.cattle
+        const hasNewborn = locId in this.newbornLocations
 
         if (locId === 'house') {
           overrides.housePets = { ...animals }
         }
         else if (locId.startsWith('pasture-')) {
-          overrides.pastures[locId] = { animalType, animalCount: totalCount }
+          overrides.pastures[locId] = { animalType, animalCount: totalCount, hasNewborn }
         }
         else if (locId.startsWith('stable-')) {
-          overrides.stables[locId] = { animalType, animalCount: totalCount }
+          overrides.stables[locId] = { animalType, animalCount: totalCount, hasNewborn }
         }
       }
 
@@ -378,57 +350,6 @@ export default {
 
     cardLocations() {
       return this.locations.filter(loc => loc.type === 'card')
-    },
-
-    locationsWithActivity() {
-      return this.locations.filter(loc => {
-        const total = this.getLocTotal(loc.id)
-        return total > 0 || this.hasChangesAt(loc.id)
-      })
-    },
-
-    totalAdded() {
-      // Count animals added to locations beyond original state
-      let count = 0
-      for (const [locId, desired] of Object.entries(this.animalState)) {
-        const original = this.originalState[locId] || { sheep: 0, boar: 0, cattle: 0 }
-        for (const type of this.animalTypes) {
-          const diff = desired[type] - original[type]
-          if (diff > 0) {
-            count += diff
-          }
-        }
-      }
-      return count
-    },
-
-    totalMoved() {
-      // Count animals removed from locations (moved elsewhere or to pool)
-      let count = 0
-      for (const [locId, desired] of Object.entries(this.animalState)) {
-        const original = this.originalState[locId] || { sheep: 0, boar: 0, cattle: 0 }
-        for (const type of this.animalTypes) {
-          const diff = original[type] - desired[type]
-          if (diff > 0) {
-            count += diff
-          }
-        }
-      }
-      return count
-    },
-
-    cookCount() {
-      if (!this.cookingRates || this.overflowChoice !== 'cook') {
-        return 0
-      }
-      return this.poolTotal
-    },
-
-    releaseCount() {
-      if (this.overflowChoice === 'release' || !this.cookingRates) {
-        return this.poolTotal
-      }
-      return 0
     },
 
     estimatedFood() {
@@ -672,11 +593,43 @@ export default {
       if (!type || !this.isBabyEligible[type]) {
         return
       }
+
       // Don't gate on maxDropCount — see tryAutoPlaceBaby for why.
-      if (!this.canPlaceTypeAtState(loc, type)) {
+      if (this.canPlaceTypeAtState(loc, type)) {
+        this.animalState[loc.id][type] += 1
+        this.babyState[type] = 'placed'
+        this.babyLocation[type] = loc.id
+        this.selectingBabyType = null
         return
       }
-      this.animalState[loc.id][type] += 1
+
+      // Location is full but otherwise valid for this type — try bumping an occupant out.
+      if (!this.canPlaceTypeIgnoringCapacity(loc, type)) {
+        return
+      }
+
+      const state = this.animalState[loc.id]
+      const bumpType = this.animalTypes.find(t => t !== type && state[t] > 0)
+        ?? (state[type] > 0 ? type : null)
+      if (bumpType === null) {
+        return
+      }
+
+      if (bumpType === type) {
+        const required = this.breedingRequirements[type] || 2
+        const parentsAfterBump = this.locationTotals[type] - 1
+        if (parentsAfterBump < required) {
+          alert(
+            `Cannot place newborn ${type} at ${loc.name} — bumping a ${type} out would `
+            + `leave only ${parentsAfterBump} (need ${required}), so the newborn wouldn't be born.`
+          )
+          return
+        }
+      }
+
+      state[bumpType] -= 1
+      this.unplacedPool[bumpType] += 1
+      state[type] += 1
       this.babyState[type] = 'placed'
       this.babyLocation[type] = loc.id
       this.selectingBabyType = null
@@ -691,7 +644,7 @@ export default {
     },
 
     hasRoomForBaby(type) {
-      return this.locations.some(loc => this.canPlaceTypeAtState(loc, type))
+      return this.locations.some(loc => this.canFitBabyWithBump(loc, type))
     },
 
     resetAll() {
@@ -709,48 +662,6 @@ export default {
         return 0
       }
       return state.sheep + state.boar + state.cattle
-    },
-
-    hasChangesAt(locId) {
-      const current = this.animalState[locId]
-      const original = this.originalState[locId]
-      if (!current || !original) {
-        return false
-      }
-      return this.animalTypes.some(t => current[t] !== original[t])
-    },
-
-    formatState(locId) {
-      const state = this.animalState[locId]
-      if (!state) {
-        return '-'
-      }
-      const parts = []
-      for (const type of this.animalTypes) {
-        if (state[type] > 0) {
-          parts.push(`${state[type]} ${type}`)
-        }
-      }
-      return parts.length > 0 ? parts.join(', ') : '-'
-    },
-
-    formatChanges(locId) {
-      const current = this.animalState[locId]
-      const original = this.originalState[locId]
-      if (!current || !original) {
-        return ''
-      }
-      const parts = []
-      for (const type of this.animalTypes) {
-        const diff = current[type] - original[type]
-        if (diff > 0) {
-          parts.push(`+${diff} ${type}`)
-        }
-        else if (diff < 0) {
-          parts.push(`${diff} ${type}`)
-        }
-      }
-      return parts.join(', ')
     },
 
     getLocationForCell(row, col) {
@@ -865,6 +776,37 @@ export default {
       this.selectingLocation = null
     },
 
+    // Whether a real (non-baby) animal of `type` exists at `locId` that could be pulled
+    // out to cook. Babies aren't real animals yet, so a location holding only a placed
+    // baby of this type doesn't count.
+    hasRealAnimalAt(locId, type) {
+      const state = this.animalState[locId]
+      if (!state || state[type] <= 0) {
+        return false
+      }
+      const babyHere = this.babyState[type] === 'placed' && this.babyLocation[type] === locId
+      return (state[type] - (babyHere ? 1 : 0)) > 0
+    },
+
+    canCookAdditional(type) {
+      return this.locations.some(loc => this.hasRealAnimalAt(loc.id, type))
+    },
+
+    // Pull one real animal of `type` out of the farmyard straight into the cooking pool —
+    // a shortcut for players who want to cook one voluntarily rather than pick it up first.
+    cookAdditionalAnimal(type) {
+      if (!this.cookingRates) {
+        return
+      }
+      const loc = this.locations.find(l => this.hasRealAnimalAt(l.id, type))
+      if (!loc) {
+        return
+      }
+      this.animalState[loc.id][type] -= 1
+      this.unplacedPool[type] += 1
+      this.overflowChoice = 'cook'
+    },
+
     maxDropCount(loc, type) {
       const state = this.animalState[loc.id]
       if (!state) {
@@ -918,6 +860,59 @@ export default {
         return false
       }
       return true
+    },
+
+    // Same rules as canPlaceTypeAtState but without the total-capacity gate — used to tell
+    // whether a full location would accept the type if one occupant were bumped out.
+    canPlaceTypeIgnoringCapacity(loc, type) {
+      const state = this.animalState[loc.id]
+      if (!state) {
+        return false
+      }
+
+      if (loc.allowedTypes && !loc.allowedTypes.includes(type)) {
+        return false
+      }
+
+      if (loc.perTypeLimits) {
+        return state[type] < (loc.perTypeLimits[type] || 0)
+      }
+
+      if (loc.mixedTypes) {
+        return true
+      }
+
+      const existingType = this.animalTypes.find(t => state[t] > 0) || null
+      if (existingType && existingType !== type) {
+        return false
+      }
+      return true
+    },
+
+    // Whether a baby of `type` can end up at `loc`, either because there's already room or
+    // because a full location can be made to fit by bumping one occupant to the pool.
+    canFitBabyWithBump(loc, type) {
+      if (this.canPlaceTypeAtState(loc, type)) {
+        return true
+      }
+      if (!this.canPlaceTypeIgnoringCapacity(loc, type)) {
+        return false
+      }
+
+      const state = this.animalState[loc.id]
+      const bumpType = this.animalTypes.find(t => t !== type && state[t] > 0)
+        ?? (state[type] > 0 ? type : null)
+      if (bumpType === null) {
+        return false
+      }
+
+      // Bumping a different type never affects this baby's parent count. Bumping the same
+      // type does — only allow it if enough parents remain once the baby occupies a slot.
+      if (bumpType !== type) {
+        return true
+      }
+      const required = this.breedingRequirements[type] || 2
+      return (this.locationTotals[type] - 1) >= required
     },
 
     addToLocation(locId, type, count) {
@@ -1052,7 +1047,7 @@ export default {
   padding: 1rem;
 }
 
-.pool-section {
+.cooking-section {
   margin-bottom: 1rem;
   padding: 0.5rem;
   background: #f8f9fa;
@@ -1065,7 +1060,7 @@ export default {
   flex-wrap: wrap;
 }
 
-.pool-section.selecting {
+.cooking-section.selecting {
   background: #cce5ff;
   border: 2px solid #0d6efd;
 }
@@ -1125,6 +1120,24 @@ export default {
   color: #333;
 }
 
+.cook-more-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px dashed #28a745;
+  border-radius: 4px;
+  background: #fff;
+  color: #28a745;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cook-more-btn:hover {
+  background: #d4edda;
+}
+
 .pool-empty {
   color: #28a745;
   font-weight: 500;
@@ -1180,37 +1193,12 @@ export default {
   margin-top: 0.25rem;
 }
 
-.placement-section {
-  margin-bottom: 1rem;
-}
-
-.placement-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.placement-table th,
-.placement-table td {
-  padding: 0.25rem 0.5rem;
-  text-align: left;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.placement-table th {
-  font-weight: 600;
-  background: #f8f9fa;
-}
-
-.changes {
-  font-weight: 500;
-  color: #0d6efd;
-}
-
-.overflow-section {
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  background: #fff3cd;
-  border-radius: 4px;
+.newborn-badge {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  font-size: 1rem;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.6));
 }
 
 .cooking-options .rate {
@@ -1233,16 +1221,6 @@ export default {
 
 .no-cooking {
   color: #856404;
-}
-
-.summary {
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  border-radius: 4px;
-}
-
-.summary.valid {
-  background: #d4edda;
 }
 
 .breeding-section {
@@ -1333,10 +1311,5 @@ export default {
 .baby-cancel:hover {
   background: #f0f0f0;
   color: #333;
-}
-
-.breeding-summary {
-  font-weight: 500;
-  margin-right: 0.5rem;
 }
 </style>
