@@ -287,8 +287,11 @@ export default {
       const counts = {}
       for (const card of this.summaryCards) {
         const def = card.definition || card.data || card
-        if (def.factionAffiliation) {
-          counts[def.factionAffiliation] = (counts[def.factionAffiliation] || 0) + 1
+        const affiliations = Array.isArray(def.factionAffiliation)
+          ? def.factionAffiliation
+          : (def.factionAffiliation ? [def.factionAffiliation] : [])
+        for (const f of affiliations) {
+          counts[f] = (counts[f] || 0) + 1
         }
       }
       return FACTION_ORDER
