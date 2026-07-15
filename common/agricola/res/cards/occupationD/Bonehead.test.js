@@ -1,7 +1,7 @@
 const t = require('../../../testutil_v2.js')
 
 describe('Bonehead', () => {
-  test('onPlay places 6 wood on card and gives 2 wood (1 from onPlay + 1 from onPlayOccupation)', () => {
+  test('onPlay places 6 wood on card and gives 1 wood', () => {
     const game = t.fixture({ cardSets: ['occupationD'] })
     t.setBoard(game, {
       firstPlayer: 'dennis',
@@ -13,20 +13,20 @@ describe('Bonehead', () => {
 
     // Play Bonehead via Lessons A
     // onPlay: sets 6 wood, gives 1 -> card has 5, player has 1
-    // onPlayOccupation fires on all active cards (Bonehead is now active): gives 1 more -> card has 4, player has 2
+    // onPlayOccupation also fires (Bonehead is now active) but self-triggering is guarded against
     t.choose(game, 'Lessons A')
     t.choose(game, 'Bonehead')
 
     t.testBoard(game, {
       currentPlayer: 'micah',
       dennis: {
-        wood: 2,
+        wood: 1,
         occupations: ['bonehead-d118'],
       },
     })
 
     // Verify card state
-    expect(game.cardState('bonehead-d118').wood).toBe(4)
+    expect(game.cardState('bonehead-d118').wood).toBe(5)
   })
 
   test('playing another occupation gives 1 more wood from card', () => {

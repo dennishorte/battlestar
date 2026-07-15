@@ -17,7 +17,10 @@ module.exports = {
     // Give 1 wood for playing this card itself
     this._giveWood(game, player)
   },
-  onPlayOccupation(game, player) {
+  onPlayOccupation(game, player, playedCard) {
+    if (playedCard && playedCard.id === this.id) {
+      return
+    }
     this._ensureWood(game)
     this._giveWood(game, player)
   },
