@@ -58,8 +58,8 @@
       <div v-for="entry in combatants"
            :key="`hdr-${entry.name}`"
            class="player-header clickable"
-           :class="{ 'is-current': entry.isCurrent }"
-           :style="{ borderTopColor: entry.color }"
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer }"
+           :style="{ borderTopColor: entry.color, '--viewer-tint': viewerTint(entry.color) }"
            :title="`View ${entry.name}'s strength breakdown`"
            @click="openStrengthBreakdown(entry.player)">
         <span class="player-name">{{ entry.name }}</span>
@@ -70,6 +70,7 @@
            :key="`agt-${entry.name}`"
            class="stat-cell clickable"
            :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: entry.agentsAvailable === 0 }"
+           :style="{ '--viewer-tint': viewerTint(entry.color) }"
            @click="openStrengthBreakdown(entry.player)">
         {{ entry.agentsAvailable }}/{{ entry.agentsTotal }}
       </div>
@@ -79,6 +80,7 @@
            :key="`int-${entry.name}`"
            class="stat-cell clickable"
            :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.intrigueCount, 'high-intrigue': entry.intrigueCount >= 4 }"
+           :style="{ '--viewer-tint': viewerTint(entry.color) }"
            @click="openStrengthBreakdown(entry.player)">
         {{ entry.intrigueCount }}
       </div>
@@ -88,6 +90,7 @@
            :key="`hook-${entry.name}`"
            class="stat-cell clickable"
            :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.hasMakerHook }"
+           :style="{ '--viewer-tint': viewerTint(entry.color) }"
            :title="entry.hasMakerHook ? 'Has Maker Hook' : 'No Maker Hook'"
            @click="openStrengthBreakdown(entry.player)">
         <span v-if="entry.hasMakerHook" class="maker-hook">⚓</span>
@@ -99,6 +102,7 @@
            :key="`sup-${entry.name}`"
            class="stat-cell unit-cell clickable"
            :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer }"
+           :style="{ '--viewer-tint': viewerTint(entry.color) }"
            @click="openStrengthBreakdown(entry.player)">
         <span class="unit-block" :class="{ dim: !entry.troopsInSupply }">
           <span class="unit-count">{{ entry.troopsInSupply }}</span><span class="unit-letter">T</span>
@@ -110,6 +114,7 @@
            :key="`gar-${entry.name}`"
            class="stat-cell unit-cell clickable"
            :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer }"
+           :style="{ '--viewer-tint': viewerTint(entry.color) }"
            @click="openStrengthBreakdown(entry.player)">
         <span class="unit-block" :class="{ dim: !entry.garrisonTroops }">
           <span class="unit-count">{{ entry.garrisonTroops }}</span><span class="unit-letter">T</span>
@@ -121,6 +126,7 @@
            :key="`con-${entry.name}`"
            class="stat-cell unit-cell clickable"
            :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer }"
+           :style="{ '--viewer-tint': viewerTint(entry.color) }"
            @click="openStrengthBreakdown(entry.player)">
         <template v-if="entry.troops || entry.sandworms">
           <span class="unit-block" v-if="entry.troops" title="troops in conflict">
@@ -143,6 +149,7 @@
              'strength-pending': entry.pending,
              'strength-zero': !entry.hasUnits,
            }"
+           :style="{ '--viewer-tint': viewerTint(entry.color) }"
            :title="strengthTooltip(entry)"
            @click="openStrengthBreakdown(entry.player)">
         {{ entry.hasUnits ? entry.strength + (entry.pending ? '*' : '') : '0' }}
@@ -293,6 +300,10 @@ export default {
     openStrengthBreakdown(player) {
       this.ui.modals.strengthBreakdown = { player }
       this.$modal('dune-strength-breakdown-modal').show()
+    },
+
+    viewerTint(color) {
+      return color ? `color-mix(in srgb, ${color} 16%, white)` : '#f8f2e5'
     },
   },
 }
@@ -511,6 +522,10 @@ export default {
   background-color: #f5edd6;
 }
 
+.player-header.is-viewer:not(.is-current) {
+  background-color: var(--viewer-tint);
+}
+
 .player-header.clickable {
   cursor: pointer;
 }
@@ -551,6 +566,10 @@ export default {
 
 .stat-cell.is-viewer {
   font-weight: 700;
+}
+
+.stat-cell.is-viewer:not(.is-current) {
+  background-color: var(--viewer-tint);
 }
 
 .stat-cell.dim {

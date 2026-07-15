@@ -5,8 +5,8 @@
       <div v-for="entry in entries"
            :key="`hdr-${entry.name}`"
            class="player-header clickable"
-           :class="{ 'is-current': entry.isCurrent }"
-           :style="{ borderTopColor: entry.color }"
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer }"
+           :style="{ borderTopColor: entry.color, '--viewer-tint': viewerTint(entry.color) }"
            :title="`View ${entry.name}'s tableau`"
            @click="openTableau(entry.player)">
         <span class="player-name" :style="{ backgroundColor: nameShade(entry.color) }">{{ entry.name }}</span>
@@ -18,6 +18,7 @@
            :key="`vp-${entry.name}`"
            class="stat-cell vp-cell clickable"
            :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer }"
+           :style="{ '--viewer-tint': viewerTint(entry.color) }"
            title="View VP breakdown"
            @click="openVpBreakdown(entry.player)">
         {{ entry.vp }}
@@ -27,7 +28,8 @@
       <div v-for="entry in entries"
            :key="`ldr-${entry.name}`"
            class="stat-cell leader-cell"
-           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer }">
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer }"
+           :style="{ '--viewer-tint': viewerTint(entry.color) }">
         <DuneOptionChip v-if="entry.leader"
                         :name="entry.leader.name"
                         :leader="entry.leader"
@@ -41,7 +43,8 @@
       <div v-for="entry in entries"
            :key="`agt-${entry.name}`"
            class="stat-cell"
-           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.agentsAvailable }">
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.agentsAvailable }"
+           :style="{ '--viewer-tint': viewerTint(entry.color) }">
         {{ entry.agentsAvailable }}/{{ entry.agentsTotal }}
       </div>
 
@@ -49,7 +52,8 @@
       <div v-for="entry in entries"
            :key="`icn-${entry.name}`"
            class="stat-cell icons-cell"
-           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.icons.length }">
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.icons.length }"
+           :style="{ '--viewer-tint': viewerTint(entry.color) }">
         <template v-if="entry.icons.length">
           <span v-for="(icon, idx) in entry.icons"
                 :key="idx"
@@ -64,7 +68,8 @@
       <div v-for="entry in entries"
            :key="`sol-${entry.name}`"
            class="stat-cell resource-cell"
-           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.solari }">
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.solari }"
+           :style="{ '--viewer-tint': viewerTint(entry.color) }">
         <DuneResourceIcon type="solari" />
         <span>{{ entry.solari }}</span>
       </div>
@@ -73,7 +78,8 @@
       <div v-for="entry in entries"
            :key="`spi-${entry.name}`"
            class="stat-cell resource-cell"
-           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.spice }">
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.spice }"
+           :style="{ '--viewer-tint': viewerTint(entry.color) }">
         <DuneResourceIcon type="spice" />
         <span>{{ entry.spice }}</span>
       </div>
@@ -82,7 +88,8 @@
       <div v-for="entry in entries"
            :key="`wat-${entry.name}`"
            class="stat-cell resource-cell"
-           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.water }">
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.water }"
+           :style="{ '--viewer-tint': viewerTint(entry.color) }">
         <DuneResourceIcon type="water" />
         <span>{{ entry.water }}</span>
       </div>
@@ -91,7 +98,8 @@
       <div v-for="entry in entries"
            :key="`spy-${entry.name}`"
            class="stat-cell resource-cell"
-           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.spiesInSupply }">
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.spiesInSupply }"
+           :style="{ '--viewer-tint': viewerTint(entry.color) }">
         <DuneAgentIcon type="spy" />
         <span>{{ entry.spiesInSupply }}</span>
       </div>
@@ -101,6 +109,7 @@
            :key="`int-${entry.name}`"
            class="stat-cell"
            :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.intrigueCount, clickable: entry.isViewer, 'high-intrigue': entry.intrigueCount >= 4 }"
+           :style="{ '--viewer-tint': viewerTint(entry.color) }"
            :title="entry.isViewer ? 'View intrigue cards' : ''"
            @click="entry.isViewer && openIntrigue(entry.player)">
         {{ entry.intrigueCount }}
@@ -111,6 +120,7 @@
            :key="`con-${entry.name}`"
            class="stat-cell"
            :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.contractsCount, clickable: true }"
+           :style="{ '--viewer-tint': viewerTint(entry.color) }"
            title="View contracts"
            @click="openContracts(entry.player)">
         {{ entry.contractsCount }}
@@ -121,6 +131,7 @@
            :key="`hc-${entry.name}`"
            class="stat-cell"
            :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.hasHighCouncil }"
+           :style="{ '--viewer-tint': viewerTint(entry.color) }"
            :title="entry.hasHighCouncil ? 'Has High Council seat' : 'No High Council seat'">
         {{ entry.hasHighCouncil ? '✓' : '—' }}
       </div>
@@ -286,6 +297,10 @@ export default {
       return color ? `color-mix(in srgb, ${color} 22%, white)` : 'transparent'
     },
 
+    viewerTint(color) {
+      return color ? `color-mix(in srgb, ${color} 16%, white)` : '#f8f2e5'
+    },
+
     openContracts(player) {
       const cards = this.game.zones.byId(`${player.name}.contracts`).cardlist()
         .sort((l, r) => l.name.localeCompare(r.name))
@@ -361,6 +376,10 @@ export default {
   background-color: #f5edd6;
 }
 
+.player-header.is-viewer:not(.is-current) {
+  background-color: var(--viewer-tint);
+}
+
 .player-name {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -399,6 +418,10 @@ export default {
 
 .stat-cell.is-viewer {
   font-weight: 700;
+}
+
+.stat-cell.is-viewer:not(.is-current) {
+  background-color: var(--viewer-tint);
 }
 
 .stat-cell.dim {
