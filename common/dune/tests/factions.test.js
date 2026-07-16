@@ -86,4 +86,127 @@ describe('Faction Influence', () => {
     const micah = game.players.byName('micah')
     expect(micah.getInfluence('fremen')).toBe(3)
   })
+
+  test('alliance transfers when holder drops from a 3-way tie (4 -> 3), holder chooses recipient', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      alliances: { emperor: 'dennis' },
+      dennis: {
+        influence: { emperor: 4, guild: 1 },
+        solari: 2,
+        vp: 5,
+        intrigue: ['Opportunism'],
+      },
+      micah: { influence: { emperor: 4 }, vp: 0 },
+      scott: { influence: { emperor: 4 }, vp: 0 },
+    })
+    game.run()
+
+    // Play Opportunism: lose 1 Influence with 2 factions + 2 Solari -> +1 VP
+    t.choose(game, 'Opportunism')
+    t.choose(game, 'Lose 1 Influence with 2 Factions + 2 Solari -> +1 VP')
+    // Lose emperor first: dennis drops from 4 to 3, behind micah/scott (both still at 4)
+    t.choose(game, 'emperor')
+    // Micah and scott are tied for the alliance — dennis (who just lost it) chooses
+    t.choose(game, 'micah')
+    // Second required loss for Opportunism (throwaway, unrelated to the alliance)
+    t.choose(game, 'guild')
+
+    expect(game.state.alliances.emperor).toBe('micah')
+
+    t.testBoard(game, {
+      dennis: { influence: { emperor: 3, guild: 0 }, solari: 0, vp: 5 },
+      micah: { influence: { emperor: 4 }, vp: 1 },
+      scott: { influence: { emperor: 4 }, vp: 0 },
+    })
+  })
+
+  test('alliance transfers when holder drops with only one valid recipient (5 -> 4), no choice needed', () => {
+    const game = t.fixture({ numPlayers: 2 })
+    t.setBoard(game, {
+      alliances: { fremen: 'dennis' },
+      dennis: {
+        influence: { fremen: 5, guild: 1 },
+        solari: 2,
+        vp: 5,
+        intrigue: ['Opportunism'],
+      },
+      micah: { influence: { fremen: 5 }, vp: 0 },
+    })
+    game.run()
+
+    t.choose(game, 'Opportunism')
+    t.choose(game, 'Lose 1 Influence with 2 Factions + 2 Solari -> +1 VP')
+    // Lose fremen first: dennis drops from 5 to 4, behind micah (still at 5).
+    // Micah is the only player who could receive it, so no recipient prompt appears —
+    // the very next choice is Opportunism's second required loss.
+    t.choose(game, 'fremen')
+    t.choose(game, 'guild')
+
+    expect(game.state.alliances.fremen).toBe('micah')
+
+    t.testBoard(game, {
+      dennis: { influence: { fremen: 4, guild: 0 }, solari: 0, vp: 5 },
+      micah: { influence: { fremen: 5 }, vp: 1 },
+    })
+  })
+
+  test('alliance is retained when holder drops but remains at or above 4 influence', () => {
+    const game = t.fixture({ numPlayers: 2 })
+    t.setBoard(game, {
+      alliances: { fremen: 'dennis' },
+      dennis: {
+        influence: { fremen: 5, guild: 1 },
+        solari: 2,
+        vp: 5,
+        intrigue: ['Opportunism'],
+      },
+      micah: { influence: { fremen: 1 }, vp: 0 },
+    })
+    game.run()
+
+    t.choose(game, 'Opportunism')
+    t.choose(game, 'Lose 1 Influence with 2 Factions + 2 Solari -> +1 VP')
+    // Dennis drops from 5 to 4 fremen — still at the 4-influence threshold and
+    // still ahead of micah's 1, so the alliance stays put.
+    t.choose(game, 'fremen')
+    t.choose(game, 'guild')
+
+    expect(game.state.alliances.fremen).toBe('dennis')
+
+    t.testBoard(game, {
+      dennis: { influence: { fremen: 4, guild: 0 }, solari: 0, vp: 6 },
+      micah: { influence: { fremen: 1 }, vp: 0 },
+    })
+  })
+
+  test('alliance returns to the supply when holder drops below 4 and nobody else has reached it', () => {
+    const game = t.fixture({ numPlayers: 2 })
+    t.setBoard(game, {
+      alliances: { fremen: 'dennis' },
+      dennis: {
+        influence: { fremen: 4, guild: 1 },
+        solari: 2,
+        vp: 5,
+        intrigue: ['Opportunism'],
+      },
+      micah: { influence: { fremen: 2 }, vp: 0 },
+    })
+    game.run()
+
+    t.choose(game, 'Opportunism')
+    t.choose(game, 'Lose 1 Influence with 2 Factions + 2 Solari -> +1 VP')
+    // Dennis drops from 4 to 3 fremen. Micah (at 2) hasn't reached 4 either,
+    // so nobody receives the alliance — it returns to the supply.
+    t.choose(game, 'fremen')
+    t.choose(game, 'guild')
+
+    expect(game.state.alliances.fremen).toBe(null)
+
+    t.testBoard(game, {
+      // -1 VP for losing the alliance, +1 VP from Opportunism's reward: net 0.
+      dennis: { influence: { fremen: 3, guild: 0 }, solari: 0, vp: 5 },
+      micah: { influence: { fremen: 2 }, vp: 0 },
+    })
+  })
 })

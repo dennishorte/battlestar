@@ -39,7 +39,8 @@ function gainInfluence(game, player, faction, amount = 1) {
 }
 
 /**
- * Lose influence with a faction. Handles VP loss when dropping below 2.
+ * Lose influence with a faction. Handles VP loss when dropping below 2, and
+ * alliance transfer if the alliance holder falls behind another player.
  */
 function loseInfluence(game, player, faction, amount = 1) {
   const prev = player.getInfluence(faction)
@@ -60,6 +61,55 @@ function loseInfluence(game, player, faction, amount = 1) {
       args: { player, faction },
     })
   }
+
+  checkAllianceOnLoss(game, player, faction)
+}
+
+/**
+ * A player keeps the alliance as long as no one else has more influence than
+ * them, regardless of how they first reached it (e.g. a first-to-4 tie). If
+ * losing influence drops the holder strictly behind another player, the
+ * alliance (and its VP) transfers rather than returning to the supply. When
+ * multiple players are tied for the new highest influence, the player who
+ * just lost influence chooses which of them receives it. If the holder drops
+ * below the 4-influence threshold and no one else has reached it either, the
+ * alliance returns to the supply instead of staying with an under-4 holder.
+ */
+function checkAllianceOnLoss(game, player, faction) {
+  if (game.state.alliances[faction] !== player.name) {
+    return
+  }
+
+  const holderInfluence = player.getInfluence(faction)
+  const others = game.players.all().filter(p => p.name !== player.name)
+  const maxOther = others.reduce((max, p) => Math.max(max, p.getInfluence(faction)), 0)
+
+  if (maxOther <= holderInfluence) {
+    if (holderInfluence < constants.INFLUENCE_BONUS_THRESHOLD) {
+      game.state.alliances[faction] = null
+      player.decrementCounter('vp', 1, { silent: true, source: `${factionLabel(faction)} Alliance (returned)` })
+      game.log.add({
+        template: '{player} drops below 4 {faction} Influence: the Alliance returns to the supply',
+        args: { player, faction },
+      })
+    }
+    return
+  }
+
+  const candidates = others.filter(p => p.getInfluence(faction) === maxOther)
+  const newHolder = candidates.length === 1
+    ? candidates[0]
+    : game.actions.choosePlayer(player, candidates, {
+      title: `Choose who receives the ${factionLabel(faction)} Alliance:`,
+    })
+
+  game.state.alliances[faction] = newHolder.name
+  player.decrementCounter('vp', 1, { silent: true, source: `${factionLabel(faction)} Alliance (lost to ${newHolder.name})` })
+  newHolder.incrementCounter('vp', 1, { silent: true, source: `${factionLabel(faction)} Alliance (from ${player.name})` })
+  game.log.add({
+    template: '{player} takes the {faction} Alliance from {holder}: VP transfers',
+    args: { player: newHolder, faction, holder: player },
+  })
 }
 
 /**
