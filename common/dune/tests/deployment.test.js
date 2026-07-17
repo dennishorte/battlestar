@@ -200,4 +200,34 @@ describe('Units and Deployment', () => {
     expect(choices).toContain('Deploy 2 troop(s) from garrison')
     expect(choices).not.toContain('Deploy 3 troop(s) from garrison')
   })
+
+  test('troops from an end-of-turn Plot Intrigue card are still deployable', () => {
+    const game = t.fixture({ useBloodlines: true })
+    t.setBoard(game, {
+      dennis: { troopsInGarrison: 0, troopsInSupply: 9, intrigue: ['Honor Guard'] },
+    })
+    game.run()
+
+    // Decline the start-of-turn Plot Intrigue offer
+    t.choose(game, 'Pass')
+
+    // Fremkit (fremen combat space) gives draw 1, not troops — nothing to
+    // deploy from the space itself
+    t.choose(game, 'Agent Turn.Diplomacy')
+    t.choose(game, 'Fremkit')
+
+    // End-of-turn Plot Intrigue: Honor Guard grants +1 Troop. Deploying
+    // troops to the Conflict must happen last so this troop is still
+    // deployable this turn.
+    t.choose(game, 'Honor Guard')
+
+    const choices = t.currentChoices(game)
+    expect(choices).toContain('Deploy 0 troop(s) from garrison')
+    expect(choices).toContain('Deploy 1 troop(s) from garrison')
+    t.choose(game, 'Deploy 1 troop(s) from garrison')
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.troopsInGarrison).toBe(0)
+    expect(game.state.conflict.deployedTroops.dennis).toBe(1)
+  })
 })

@@ -42,6 +42,8 @@ describe("contingency-plan", () => {
     t.choose(game, 'Pass')
     t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
+    // end-of-turn Plot Intrigue offer (deploy now happens after it)
+    t.choose(game, 'Pass')
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 
     let safety = 60

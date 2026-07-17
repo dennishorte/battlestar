@@ -318,11 +318,6 @@ function agentTurn(game, player, card) {
   const choam = require('../systems/choam.js')
   choam.checkContractCompletion(game, player, 'board-space', { spaceId: space.id })
 
-  // Deploy units if combat space (or card made it a combat space)
-  if (space.isCombatSpace || game.state.turnTracking?.spaceIsCombat) {
-    deployUnits(game, player)
-  }
-
   // Control bonus: when any player sends an agent to a controlled location
   const controlledBy = game.state.controlMarkers[space.id]
   if (controlledBy) {
@@ -336,8 +331,15 @@ function agentTurn(game, player, card) {
     }
   }
 
-  // Offer to play a Plot Intrigue card
+  // Offer to play a Plot Intrigue card before deploying, so troops granted
+  // by an end-of-turn intrigue card can still be sent to the Conflict
   offerPlotIntrigue(game, player)
+
+  // Deploy units if combat space (or card made it a combat space) — this is
+  // the last step of the turn so troops from any source this turn are deployable
+  if (space.isCombatSpace || game.state.turnTracking?.spaceIsCombat) {
+    deployUnits(game, player)
+  }
 
   game.log.outdent()
 }
@@ -351,6 +353,9 @@ function revealTurn(game, player) {
     event: 'step',
   })
   game.log.indent()
+
+  // Flags cards like Reinforcements that key off "your Reveal turn"
+  game.state.turnTracking.isRevealTurn = true
 
   // Plot Intrigue already offered by playerTurnsPhase before the
   // turn-type choice.
