@@ -1499,6 +1499,64 @@ describe('Innovation', () => {
           },
         })
       })
+
+      test('super-executing a City does nothing', () => {
+        // Priest-King super-executes the top card matching the scored
+        // card's color on the acting player's own turn. Florence has no
+        // dogma effects, so nothing further happens.
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            artifact: ['Priest-King'],
+            purple: ['Florence'],
+            hand: ['Code of Laws'],
+          },
+        })
+
+        let request = game.run()
+        request = t.choose(game, 'dogma')
+
+        t.testBoard(game, {
+          dennis: {
+            purple: ['Florence'],
+            score: ['Code of Laws'],
+            museum: ['Museum 1', 'Priest-King'],
+          },
+        })
+
+        const logs = game.log.getLog().filter(e => e.template).map(e => e.template)
+        expect(logs).not.toContain('{player} will {kind}-execute {card}')
+        expect(logs).toContain('{card} has no dogma effects, so nothing happens')
+      })
+
+      test('self-executing a City does nothing', () => {
+        // Yata No Kagami always self-executes (regardless of whose turn
+        // it is), so this exercises the self-execute path specifically.
+        // Florence has no dogma effects, so nothing further happens.
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti', 'city'] })
+        t.setBoard(game, {
+          dennis: {
+            artifact: ['Yata No Kagami'],
+            purple: ['Florence'],
+            hand: ['Code of Laws'],
+          },
+        })
+
+        let request = game.run()
+        request = t.choose(game, 'dogma')
+
+        t.testBoard(game, {
+          dennis: {
+            purple: ['Florence'],
+            hand: ['Code of Laws'],
+            museum: ['Museum 1', 'Yata No Kagami'],
+          },
+        })
+
+        const logs = game.log.getLog().filter(e => e.template).map(e => e.template)
+        expect(logs).not.toContain('{player} will {kind}-execute {card}')
+        expect(logs).toContain('{card} has no dogma effects, so nothing happens')
+      })
     })
 
     describe('artifacts', () => {

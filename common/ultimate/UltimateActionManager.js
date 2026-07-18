@@ -1046,6 +1046,16 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   selfExecute(executingCard, player, card, opts={}) {
+    // Cards with no dogma effects (e.g. Cities) cannot be self-executed or
+    // super-executed: nothing happens.
+    if (!card.checkHasDogma()) {
+      this.log.add({
+        template: '{card} has no dogma effects, so nothing happens',
+        args: { card },
+      })
+      return
+    }
+
     const topCard = this.cards.top(player, card.color)
     const isTopCard = topCard && topCard.name === card.name
 
