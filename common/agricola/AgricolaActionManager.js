@@ -195,9 +195,11 @@ class AgricolaActionManager extends BaseActionManager {
       })
 
       if (resource === 'sheep' || resource === 'boar' || resource === 'cattle') {
-        // Animals need placement
+        // Animals need placement. Cards like Reclamation Plow / Special Food care
+        // whether the taken animals *could* all fit (allowing rearrange / free
+        // space), not whether canPlaceAnimals is true with the current layout.
         const count = actionState.accumulated
-        const allAccommodated = player.canPlaceAnimals(resource, count)
+        const allAccommodated = player.canAccommodateAnimals(resource, count)
 
         // PetGrower (and similar cards) require manual placement so the player
         // can choose to leave the house pet slot empty for their bonus
@@ -207,7 +209,7 @@ class AgricolaActionManager extends BaseActionManager {
         if (forceModal) {
           this.handleAnimalPlacement(player, { [resource]: count }, { forceModal: true })
         }
-        else if (allAccommodated) {
+        else if (player.canPlaceAnimals(resource, count)) {
           player.placeAnimals(resource, count)
         }
         else {
@@ -287,7 +289,6 @@ class AgricolaActionManager extends BaseActionManager {
         return
       }
     }
-
 
     // There's overflow - show placement modal
     const locations = player.getAnimalPlacementLocationsWithAvailability()

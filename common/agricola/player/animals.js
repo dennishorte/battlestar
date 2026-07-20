@@ -418,6 +418,49 @@ AgricolaPlayer.prototype.canPlaceAnimals = function(animalType, count) {
   return currentCount + count <= capacity
 }
 
+/**
+ * Capacity for an animal type if the farm can be freely rearranged
+ * (clear/retype pastures, pet, stables, and eligible card holders).
+ * Used by cards that care whether taken animals *could* be accommodated.
+ */
+AgricolaPlayer.prototype.getRearrangeableAnimalCapacity = function(animalType) {
+  let capacity = this.applyHouseAnimalCapacityModifiers(1)
+
+  for (const pasture of this.farmyard.pastures) {
+    capacity += this.getPastureCapacity(pasture)
+  }
+
+  const perStable = this.getModifiedUnfencedStableCapacity()
+  for (const stable of this.getStableSpaces()) {
+    if (!this.getPastureAtSpace(stable.row, stable.col)) {
+      capacity += perStable
+    }
+  }
+
+  for (const holding of this.getAnimalHoldingCards()) {
+    if (holding.allowedTypes && !holding.allowedTypes.includes(animalType)) {
+      continue
+    }
+
+    if (holding.perTypeLimits) {
+      capacity += holding.perTypeLimits[animalType] || 0
+    }
+    else {
+      capacity += holding.capacity || 0
+    }
+  }
+
+  return capacity
+}
+
+/**
+ * True if the farm has enough capacity to house `count` animals of this type
+ * when existing animals may be rearranged or freed (cooked/released).
+ */
+AgricolaPlayer.prototype.canAccommodateAnimals = function(animalType, count) {
+  return this.getRearrangeableAnimalCapacity(animalType) >= count
+}
+
 AgricolaPlayer.prototype.placeAnimals = function(animalType, count) {
   // Try to place animals automatically
   let remaining = count

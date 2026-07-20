@@ -147,6 +147,22 @@ describe('animals', () => {
     expect(dennis.getTotalAnimalCapacity('boar')).toBe(2)
   })
 
+  test('canAccommodateAnimals ignores current occupancy', () => {
+    const game = t.fixture()
+    game.run()
+
+    const dennis = game.players.byName('dennis')
+    dennis.housePets.boar = 1
+    t.addPasture(dennis, [{ row: 1, col: 0 }, { row: 1, col: 1 }], 'sheep', 4)
+
+    // Current layout cannot take another sheep (pasture full, pet blocked)
+    expect(dennis.canPlaceAnimals('sheep', 1)).toBe(false)
+    // But farm can hold 1 sheep if rearranged (pasture 4 + pet 1)
+    expect(dennis.canAccommodateAnimals('sheep', 1)).toBe(true)
+    expect(dennis.canAccommodateAnimals('sheep', 5)).toBe(true)
+    expect(dennis.canAccommodateAnimals('sheep', 6)).toBe(false)
+  })
+
   test('animals are not silently dropped when pet has different type', () => {
     const game = t.fixture()
     game.run()
