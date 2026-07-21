@@ -11,7 +11,7 @@ module.exports = {
     const value = game.requestInputSingle({
       actor: player.name,
       title: 'Choose an Age',
-      choices: [1,2,3,4,5,6,7,8,9,10]
+      choices: game.getAges(),
     })[0]
 
     game.log.add({
