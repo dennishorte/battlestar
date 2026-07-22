@@ -42,6 +42,8 @@ describe('guild-envoy', () => {
     expect(game.zones.byId('dennis.hand').cardlist().length).toBe(3)
     const discard = game.zones.byId('dennis.discard')
     expect(discard.cardlist().some(c => c.name === 'Dagger')).toBe(true)
+    const logs = game.log.getLog().filter(e => e.template).map(e => e.template)
+    expect(logs).toContain('{player} discards {card}')
   })
 
   test('agent ability: discarding a Spacing Guild card draws 2 cards', () => {

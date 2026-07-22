@@ -848,10 +848,6 @@ function resolveCardAgentAbility(game, player, card) {
         })
         if (discardCard) {
           deckEngine.discardCard(game, player, discardCard)
-          game.log.add({
-            template: '{player} discards {card}',
-            args: { player, card: discardCard },
-          })
         }
       }
     }
@@ -1483,10 +1479,6 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
           })
           if (card) {
             deckEngine.discardCard(game, opponent, card)
-            game.log.add({
-              template: '{player} discards a card',
-              args: { player: opponent },
-            })
           }
         }
       }

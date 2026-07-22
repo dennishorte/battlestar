@@ -87,6 +87,10 @@ function revealHand(game, player) {
 function discardCard(game, player, card) {
   const discardZone = game.zones.byId(`${player.name}.discard`)
   card.moveTo(discardZone)
+  game.log.add({
+    template: '{player} discards {card}',
+    args: { player, card },
+  })
   if (typeof card.definition?.onDiscard === 'function') {
     card.definition.onDiscard(game, player, card, { resolveEffect: _resolveEffectLazy() })
   }
