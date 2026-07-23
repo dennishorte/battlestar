@@ -157,6 +157,17 @@ function playerTurnsPhase(game) {
 
 /**
  * Agent Turn: Play a card, send an agent to a board space, resolve effects.
+ *
+ * Log structure (siblings under the turn, with nested detail):
+ *   plays {card}
+ *     sends Agent / pays costs / gains influence (and infiltrate, if any)
+ *   gathers intelligence at {space}   (optional)
+ *     recalls Spy / draws card
+ *   resolves {card}                   (when the card has an agent ability)
+ *     card ability effects
+ *   resolves {space}
+ *     board space effects
+ *   deploys …
  */
 function agentTurn(game, player, card) {
   game.log.indent()
@@ -194,12 +205,19 @@ function agentTurn(game, player, card) {
   const space = validSpaces.find(s => s.id === spaceId)
     || validSpaces.find(s => s.name === spaceTitle)
 
-  // Spy actions before placing agent
   const spaceOccupied = (game.state.boardSpaces[space.id] || []).length > 0
   const hasSpyOnPost = spies.hasSpyAt(game, player, space.id)
+  const mustInfiltrate = spaceOccupied && hasSpyOnPost
+  // Gather Intelligence is offered after placing the Agent, before card/space
+  // effects (per rules). Infiltrate consumes the spy first when both apply.
+  const mayGatherIntelligence = !spaceOccupied && hasSpyOnPost
 
-  if (spaceOccupied && hasSpyOnPost) {
-    // Must infiltrate — recall spy to ignore occupant
+  // Play the card — top-level log entry for this agent action
+  deckEngine.playCard(game, player, card)
+  game.log.indent()
+
+  // Infiltrate before placing when the space is occupied
+  if (mustInfiltrate) {
     spies.recallSpyAt(game, player, space.id)
     game.state.turnTracking.recalledSpy = true
     game.log.add({
@@ -207,29 +225,8 @@ function agentTurn(game, player, card) {
       args: { player, boardSpace: space.name },
     })
   }
-  else if (!spaceOccupied && hasSpyOnPost) {
-    // Offer Gather Intelligence — recall spy to draw a card
-    const giChoices = [
-      game.actions.option({ id: 'no', title: 'No' }),
-      game.actions.option({ id: 'yes', title: 'Yes — recall Spy to draw a card' }),
-    ]
-    const [giChoice] = game.actions.choose(player, giChoices, {
-      title: 'Gather Intelligence?',
-    })
-    const giId = typeof giChoice === 'object' ? giChoice.id : giChoice
-    if (giId !== 'no' && giChoice !== 'No') {
-      spies.recallSpyAt(game, player, space.id)
-      game.state.turnTracking.recalledSpy = true
-      deckEngine.drawCards(game, player, 1)
-      game.log.add({
-        template: '{player} gathers intelligence at {boardSpace}',
-        args: { player, boardSpace: space.name },
-      })
-    }
-  }
 
-  // Play the card and place the agent
-  deckEngine.playCard(game, player, card)
+  // Place the agent
   if (!game.state.boardSpaces[space.id]) {
     game.state.boardSpaces[space.id] = []
   }
@@ -284,6 +281,31 @@ function agentTurn(game, player, card) {
     }
   }
 
+  game.log.outdent()
+
+  // Gather Intelligence — after placing the Agent, before card/space effects
+  if (mayGatherIntelligence) {
+    const giChoices = [
+      game.actions.option({ id: 'no', title: 'No' }),
+      game.actions.option({ id: 'yes', title: 'Yes — recall Spy to draw a card' }),
+    ]
+    const [giChoice] = game.actions.choose(player, giChoices, {
+      title: 'Gather Intelligence?',
+    })
+    const giId = typeof giChoice === 'object' ? giChoice.id : giChoice
+    if (giId !== 'no' && giChoice !== 'No') {
+      game.log.add({
+        template: '{player} gathers intelligence at {boardSpace}',
+        args: { player, boardSpace: space.name },
+      })
+      game.log.indent()
+      spies.recallSpyAt(game, player, space.id)
+      game.state.turnTracking.recalledSpy = true
+      deckEngine.drawCards(game, player, 1)
+      game.log.outdent()
+    }
+  }
+
   // Resolve card agent ability and board space effects (player chooses order per rules)
   const hasCardAbility = !!card.definition?.agentAbility
   if (hasCardAbility) {
@@ -293,16 +315,16 @@ function agentTurn(game, player, card) {
     })
     const orderTitle = typeof order === 'object' ? order.title : order
     if (orderTitle === card.name) {
-      resolveCardAgentAbility(game, player, card)
-      resolveBoardSpaceEffects(game, player, space)
+      resolveCardAgentAbilityLogged(game, player, card)
+      resolveBoardSpaceEffectsLogged(game, player, space)
     }
     else {
-      resolveBoardSpaceEffects(game, player, space)
-      resolveCardAgentAbility(game, player, card)
+      resolveBoardSpaceEffectsLogged(game, player, space)
+      resolveCardAgentAbilityLogged(game, player, card)
     }
   }
   else {
-    resolveBoardSpaceEffects(game, player, space)
+    resolveBoardSpaceEffectsLogged(game, player, space)
   }
 
   // Lady Jessica / Reverend Mother: leader ability on BG/Fremen spaces
@@ -341,6 +363,32 @@ function agentTurn(game, player, card) {
     deployUnits(game, player)
   }
 
+  game.log.outdent()
+}
+
+/**
+ * Log a "resolves {card}" header and indent card agent-ability effects under it.
+ */
+function resolveCardAgentAbilityLogged(game, player, card) {
+  game.log.add({
+    template: '{player} resolves {card}',
+    args: { player, card },
+  })
+  game.log.indent()
+  resolveCardAgentAbility(game, player, card)
+  game.log.outdent()
+}
+
+/**
+ * Log a "resolves {space}" header and indent board-space effects under it.
+ */
+function resolveBoardSpaceEffectsLogged(game, player, space) {
+  game.log.add({
+    template: '{player} resolves {boardSpace}',
+    args: { player, boardSpace: space.name },
+  })
+  game.log.indent()
+  resolveBoardSpaceEffects(game, player, space)
   game.log.outdent()
 }
 

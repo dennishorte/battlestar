@@ -42,6 +42,67 @@ describe('strike-fleet', () => {
     expect(dennis.troopsInGarrison).toBe(3)
   })
 
+  test('agent turn log nests play / gather intelligence / resolve steps', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      // Post K connects to Heighliner. Strike Fleet reaches it via spyAccess.
+      spyPosts: { K: ['dennis'] },
+      dennis: {
+        handExact: ['Strike Fleet'],
+        spice: 5,
+        troopsInGarrison: 0,
+        troopsInSupply: 10,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Agent Turn.Strike Fleet')
+    t.choose(game, 'Heighliner')
+    t.choose(game, 'Yes — recall Spy to draw a card')
+    t.choose(game, 'Strike Fleet')
+    t.choose(game, 'Deploy 0 troop(s) from garrison')
+
+    const entries = game.log.getLog().filter(e => e.template)
+    const playIdx = entries.findIndex(e => e.template === '{player} plays {card}')
+    const sendIdx = entries.findIndex(e => e.template === '{player} sends Agent to {boardSpace}')
+    const payIdx = entries.findIndex(e => e.template === '{player} pays {amount} {resource}')
+    const giIdx = entries.findIndex(e => e.template === '{player} gathers intelligence at {boardSpace}')
+    const recallIdx = entries.findIndex(e => e.template === '{player} recalls a Spy from Post {postId}')
+    const drawIdx = entries.findIndex((e, i) =>
+      i > giIdx && (e.template === '{player} draws {cards}' || e.redacted === '{player} draws 1 card')
+    )
+    const resolveCardIdx = entries.findIndex(e => e.template === '{player} resolves {card}')
+    const resolveSpaceIdx = entries.findIndex(e => e.template === '{player} resolves {boardSpace}')
+    const recruitIdxs = entries
+      .map((e, i) => (e.template === '{player} recruits {amount} troop(s)' ? i : -1))
+      .filter(i => i >= 0)
+
+    expect(playIdx).toBeGreaterThanOrEqual(0)
+    expect(sendIdx).toBeGreaterThan(playIdx)
+    expect(payIdx).toBeGreaterThan(sendIdx)
+    expect(giIdx).toBeGreaterThan(payIdx)
+    expect(recallIdx).toBeGreaterThan(giIdx)
+    expect(drawIdx).toBeGreaterThan(recallIdx)
+    expect(resolveCardIdx).toBeGreaterThan(giIdx)
+    expect(resolveSpaceIdx).toBeGreaterThan(resolveCardIdx)
+    expect(recruitIdxs.length).toBe(2)
+    expect(recruitIdxs[0]).toBeGreaterThan(resolveCardIdx)
+    expect(recruitIdxs[0]).toBeLessThan(resolveSpaceIdx)
+    expect(recruitIdxs[1]).toBeGreaterThan(resolveSpaceIdx)
+
+    // Nested detail is one indent deeper than its section header.
+    const baseIndent = entries[playIdx].indent
+    expect(entries[sendIdx].indent).toBe(baseIndent + 1)
+    expect(entries[payIdx].indent).toBe(baseIndent + 1)
+    expect(entries[giIdx].indent).toBe(baseIndent)
+    expect(entries[recallIdx].indent).toBe(baseIndent + 1)
+    expect(entries[drawIdx].indent).toBe(baseIndent + 1)
+    expect(entries[resolveCardIdx].indent).toBe(baseIndent)
+    expect(entries[recruitIdxs[0]].indent).toBe(baseIndent + 1)
+    expect(entries[resolveSpaceIdx].indent).toBe(baseIndent)
+    expect(entries[recruitIdxs[1]].indent).toBe(baseIndent + 1)
+  })
+
   test('agent ability: no troops when no spy was recalled', () => {
     const game = t.fixture()
     t.setBoard(game, {
