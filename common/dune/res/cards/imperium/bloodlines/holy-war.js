@@ -39,12 +39,9 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
 
-  revealEffect(game, player, card, allRevealedCards) {
+  revealEffect(game, player, card) {
     deploy.recruitTroops(game, player, 1)
-    const hasFremen = allRevealedCards.some(c =>
-      c !== card && constants.getFactionAffiliations(c).includes('fremen')
-    )
-    if (hasFremen) {
+    if (constants.hasOtherFactionAffiliatedCardInPlay(game, player, card, 'fremen')) {
       game.log.add({ template: '{player}: Fremen Bond — may deploy troops', args: { player }, event: 'memo' })
     }
   },

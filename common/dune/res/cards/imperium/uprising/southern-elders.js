@@ -35,13 +35,10 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
 
-  revealEffect(game, player, card, allRevealedCards) {
+  revealEffect(game, player, card) {
     player.incrementCounter('water', 1, { silent: true })
     game.log.add({ template: '{player}: +1 Water', args: { player } })
-    const hasFremen = allRevealedCards.some(c =>
-      c !== card && constants.getFactionAffiliations(c).includes('fremen')
-    )
-    if (hasFremen) {
+    if (constants.hasOtherFactionAffiliatedCardInPlay(game, player, card, 'fremen')) {
       player.incrementCounter('persuasion', 2, { silent: true })
       game.log.add({ template: '{player}: Fremen Bond — +2 Persuasion', args: { player } })
     }

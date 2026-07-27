@@ -86,13 +86,18 @@ module.exports = {
     return out
   },
 
-  // True if the player has a card with the given faction affiliation in their
-  // played zone, excluding `card` itself. Use in `agentEffect` for "with
-  // another <faction> card in play" triggers.
+  // True if the player has another card with the given faction affiliation
+  // "in play" (agent-played zone and/or revealed zone), excluding `card`
+  // itself. Used for Fremen Bond and "with another <faction> card in play".
   hasOtherFactionAffiliatedCardInPlay(game, player, card, faction) {
     const target = module.exports.normalizeFactionId(faction)
     const playedZone = game.zones.byId(`${player.name}.played`)
-    return playedZone.cardlist().some(c =>
+    const revealedZone = game.zones.byId(`${player.name}.revealed`)
+    const inPlay = [
+      ...(playedZone ? playedZone.cardlist() : []),
+      ...(revealedZone ? revealedZone.cardlist() : []),
+    ]
+    return inPlay.some(c =>
       c !== card && module.exports.getFactionAffiliations(c).includes(target)
     )
   },

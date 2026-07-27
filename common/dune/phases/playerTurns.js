@@ -1680,15 +1680,10 @@ function checkCondition(game, player, condition, card) {
       return gained >= condition.amount
     }
 
-    case 'faction-card-in-play': {
-      const playedZone = game.zones.byId(`${player.name}.played`)
-      const revealedZone = game.zones.byId(`${player.name}.revealed`)
-      const target = constants.normalizeFactionId(condition.faction)
-      const inPlay = [...playedZone.cardlist(), ...revealedZone.cardlist()]
-      return inPlay.some(c =>
-        c !== card && constants.getFactionAffiliations(c).includes(target)
+    case 'faction-card-in-play':
+      return constants.hasOtherFactionAffiliatedCardInPlay(
+        game, player, card, condition.faction
       )
-    }
 
     case 'sandworms-in-conflict':
       return (game.state.conflict.deployedSandworms[player.name] || 0) >= condition.amount

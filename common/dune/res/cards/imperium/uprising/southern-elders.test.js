@@ -77,6 +77,26 @@ describe('southern-elders', () => {
     expect(dennis.getCounter('persuasion')).toBe(6)
   })
 
+  test('reveal: Fremen Bond fires when another Fremen card is in the played area', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        handExact: ['Southern Elders'],
+        played: ['Desert Survival'],
+        water: 0,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Reveal Turn')
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.water).toBe(1)
+    // Only Southern Elders' Fremen Bond (+2); Desert Survival was played as an
+    // agent card so its reveal effects do not fire.
+    expect(dennis.getCounter('persuasion')).toBe(2)
+  })
+
   test('multi-affiliation: Stilgar counts Southern Elders as Fremen for its bond', () => {
     // Verifies the multi-affiliation engine fix: Southern Elders' Fremen
     // affiliation contributes to Stilgar's "+2 Persuasion per other Fremen

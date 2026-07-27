@@ -131,6 +131,23 @@ describe('chani-clever-tactician', () => {
     expect(dennis.getCounter('persuasion')).toBe(3)
   })
 
+  test('reveal: Fremen Bond fires when another Fremen card is in the played area', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        handExact: ['Chani, Clever Tactician'],
+        played: ['Desert Survival'],
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Reveal Turn')
+
+    const dennis = game.players.byName('dennis')
+    // Only Chani's Fremen Bond (+2); agent-played Desert Survival has no reveal.
+    expect(dennis.getCounter('persuasion')).toBe(2)
+  })
+
   test('reveal alone: no Fremen Bond bonus', () => {
     const game = t.fixture()
     t.setBoard(game, {

@@ -33,12 +33,9 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
 
-  revealEffect(game, player, card, allRevealedCards) {
+  revealEffect(game, player, card) {
     deploy.recruitTroops(game, player, 1)
-    const hasFremen = allRevealedCards.some(c =>
-      c !== card && constants.getFactionAffiliations(c).includes('fremen')
-    )
-    if (hasFremen) {
+    if (constants.hasOtherFactionAffiliatedCardInPlay(game, player, card, 'fremen')) {
       const choices = [game.actions.option({ id: 'pass', title: 'Pass' })]
       if (player.troopsInGarrison > 0) {
         choices.push(game.actions.option({ id: 'deploy', title: 'Deploy 1 troop' }))

@@ -52,6 +52,26 @@ describe('unswerving-loyalty', () => {
     expect(game.state.conflict.deployedTroops.dennis).toBe(1)
   })
 
+  test('reveal with Fremen card in played area: bond offers deploy choice', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        // Unswerving Loyalty has no agent icons, so reveal runs during game.run().
+        handExact: ['Unswerving Loyalty'],
+        played: ['Desert Survival'],
+        troopsInGarrison: 1,
+        troopsInSupply: 5,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Deploy 1 troop')
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.troopsInGarrison).toBe(1)
+    expect(game.state.conflict.deployedTroops.dennis).toBe(1)
+  })
+
   test('reveal with another Fremen card: bond offers retreat choice when deployed', () => {
     const game = t.fixture()
     t.setBoard(game, {

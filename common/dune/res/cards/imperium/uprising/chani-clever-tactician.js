@@ -39,7 +39,7 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
 
-  revealEffect(game, player, card, allRevealedCards) {
+  revealEffect(game, player, card) {
     const deployed = game.state.conflict.deployedTroops[player.name] || 0
     if (deployed >= 2) {
       const choices = [
@@ -53,10 +53,7 @@ module.exports = {
         addStrength(game, player, 'card', 'Chani, Clever Tactician', 4 * constants.SWORD_STRENGTH)
       }
     }
-    const hasFremen = allRevealedCards.some(c =>
-      c !== card && constants.getFactionAffiliations(c).includes('fremen')
-    )
-    if (hasFremen) {
+    if (constants.hasOtherFactionAffiliatedCardInPlay(game, player, card, 'fremen')) {
       player.incrementCounter('persuasion', 2, { silent: true })
       game.log.add({ template: '{player}: Fremen Bond — +2 Persuasion', args: { player } })
     }

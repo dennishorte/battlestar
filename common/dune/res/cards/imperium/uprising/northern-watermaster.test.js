@@ -57,6 +57,22 @@ describe("northern-watermaster", () => {
     expect(game.players.byName('dennis').getCounter('spice')).toBe(before + 2)
   })
 
+  test('reveal: Fremen Bond grants +2 Spice when another Fremen card is in the played area', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        handExact: ['Northern Watermaster'],
+        played: ['Desert Survival'],
+      },
+    })
+    game.run()
+
+    const before = game.players.byName('dennis').getCounter('spice')
+    t.choose(game, 'Reveal Turn')
+
+    expect(game.players.byName('dennis').getCounter('spice')).toBe(before + 2)
+  })
+
   test('reveal: Fremen Bond does NOT fire without another Fremen card', () => {
     const game = t.fixture()
     t.setBoard(game, {
