@@ -35,7 +35,7 @@ const card = computed(() => {
 })
 
 const classes = computed(() => {
-  return funcs.cardClasses ? funcs.cardClasses(card.value) : []
+  return funcs.cardClasses ? funcs.cardClasses(card.value, props.name) : []
 })
 
 const displayName = computed(() => {

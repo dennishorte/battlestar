@@ -20,11 +20,11 @@ const funcs = useGameLog()
 const loc = computed(() => game.value?.zones?.byId(props.name))
 
 const classes = computed(() => {
-  return funcs.locClasses ? funcs.locClasses(loc.value) : []
+  return funcs.locClasses ? funcs.locClasses(loc.value, props.name) : []
 })
 
 const styles = computed(() => {
-  return funcs.locStyles ? funcs.locStyles(loc.value) : []
+  return funcs.locStyles ? funcs.locStyles(loc.value, props.name) : []
 })
 </script>
 

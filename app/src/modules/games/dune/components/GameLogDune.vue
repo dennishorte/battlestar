@@ -9,10 +9,16 @@
 import { inject } from 'vue'
 import GameLog from '@/modules/games/common/components/log/GameLog.vue'
 import SummaryToggle from '@/modules/games/common/components/log/SummaryToggle.vue'
+import CardName from '@/modules/games/common/components/log/CardName.vue'
+import LocName from '@/modules/games/common/components/log/LocName.vue'
+import PlayerName from '@/modules/games/common/components/log/PlayerName.vue'
 import { useGameLogProvider } from '@/modules/games/common/composables/useGameLog'
+import { defaultMatchers } from '@/modules/games/common/composables/useLogTokenizer'
 import { useSummaryLog } from '@/modules/games/common/composables/useSummaryLog'
 import modalUtil from '@/util/modal.js'
 import { dune } from 'battlestar-common'
+import { cardType } from '../cardUtil.js'
+import DuneLogChip from './DuneLogChip.vue'
 
 const game = inject('game')
 const ui = inject('ui')
@@ -42,12 +48,43 @@ for (const deck of [
   }
 }
 
+const boardSpacesByName = Object.fromEntries(
+  dune.res.boardSpaces.map(space => [space.name, space])
+)
+
+const factionLabels = {
+  emperor: 'Emperor',
+  guild: 'Spacing Guild',
+  'bene-gesserit': 'Bene Gesserit',
+  fremen: 'Fremen',
+}
+
+const resourceLabels = {
+  spice: 'Spice',
+  solari: 'Solari',
+  water: 'Water',
+  troop: 'Troop',
+  troops: 'Troops',
+  persuasion: 'Persuasion',
+  swords: 'Swords',
+  vp: 'VP',
+}
+
 function cardClick(card, name) {
   const def = card?.definition || card?.data || cardsByName[name] || null
   if (def) {
     ui.modals.cardViewer = def
     modalUtil.getModal('dune-card-viewer-modal')?.show()
   }
+}
+
+function cardClasses(card, name) {
+  const def = card?.definition || card?.data || cardsByName[name] || null
+  if (!def) {
+    return []
+  }
+  const type = cardType(def)
+  return type ? [`card-type-${type}`] : []
 }
 
 function convertArg(arg, value) {
@@ -58,9 +95,26 @@ function convertArg(arg, value) {
   if (arg === 'space' || arg === 'boardSpace') {
     return `loc(${value.value})`
   }
+  if (arg === 'faction' || arg.startsWith('faction')) {
+    const id = value.value
+    const label = factionLabels[id] || id
+    return `dunechip(faction-name faction-${id}|${label})`
+  }
+  if (arg === 'leader' || arg.startsWith('leader')) {
+    return `dunechip(leader-name|${value.value})`
+  }
+  if (arg === 'resource' || arg.startsWith('resource')) {
+    const id = value.value
+    const label = resourceLabels[id] || id
+    return `dunechip(resource-name resource-${id}|${label})`
+  }
 }
 
-function locClasses() {
+function locClasses(_loc, name) {
+  const space = boardSpacesByName[name]
+  if (space?.icon) {
+    return ['board-space-name', `chip-space-${space.icon}`]
+  }
   return ['board-space-name']
 }
 
@@ -115,6 +169,7 @@ function playerStyles(player) {
 
 useGameLogProvider({
   cardClick,
+  cardClasses,
   chatColors,
   convertArg,
   filterEntries,
@@ -122,6 +177,20 @@ useGameLogProvider({
   lineStyles,
   locClasses,
   playerStyles,
+  tokenMatchers: [
+    ...defaultMatchers,
+    {
+      pattern: /dunechip\(([^|]+)\|([^()]+)\)/,
+      type: 'dunechip',
+      props: m => ({ chipClass: m[1], label: m[2] }),
+    },
+  ],
+  tokenComponents: {
+    card: CardName,
+    player: PlayerName,
+    loc: LocName,
+    dunechip: DuneLogChip,
+  },
 })
 </script>
 
@@ -217,7 +286,7 @@ useGameLogProvider({
   margin-left: 3em;
 }
 
-/* Card names — inline chip style */
+/* Card names — inline chip style, colored by deck type */
 #gamelog :deep(.card-name) {
   display: inline-block;
   color: #2c2416;
@@ -231,36 +300,159 @@ useGameLogProvider({
 }
 
 #gamelog :deep(.card-name:hover) {
-  background-color: #e8dcc0;
+  filter: brightness(0.96);
+}
+
+#gamelog :deep(.card-name.card-type-imperium) {
+  border-color: #d4c8a8;
+  background-color: #f5f0e8;
+}
+
+#gamelog :deep(.card-name.card-type-intrigue) {
+  border-color: #8b6914;
+  background-color: #fdf8ee;
+  color: #6a5010;
+}
+
+#gamelog :deep(.card-name.card-type-contract) {
+  border-color: #c07020;
+  background-color: #fef5ee;
+}
+
+#gamelog :deep(.card-name.card-type-tech) {
+  border-color: #3a7d7d;
+  background-color: #eef7f7;
+  color: #2a5a5a;
+}
+
+#gamelog :deep(.card-name.card-type-conflict) {
+  border-color: #c08888;
+  background-color: #f5eef0;
+  color: #6a2030;
 }
 
 /* Faction names — colored by faction */
 #gamelog :deep(.faction-name) {
   display: inline-block;
-  font-weight: bold;
+  font-weight: 600;
   padding: 0 .3em;
   border-radius: .15em;
+  border: 1px solid transparent;
+}
+
+#gamelog :deep(.faction-emperor) {
+  color: #8b2020;
+  background-color: #f8ecec;
+  border-color: #c08080;
+}
+
+#gamelog :deep(.faction-guild) {
+  color: #8a5010;
+  background-color: #fef5ee;
+  border-color: #c07020;
+}
+
+#gamelog :deep(.faction-bene-gesserit) {
+  color: #5b3a8a;
+  background-color: #f3eef8;
+  border-color: #6a3d8a;
+}
+
+#gamelog :deep(.faction-fremen) {
+  color: #2a6090;
+  background-color: #eef4f8;
+  border-color: #2a6090;
 }
 
 /* Resource names */
 #gamelog :deep(.resource-name) {
   display: inline-block;
   font-weight: 600;
+  padding: 0 .3em;
+  border-radius: .15em;
+  background-color: #f5f0e8;
+  border: 1px solid #d4c8a8;
 }
 
-/* Board space names */
+#gamelog :deep(.resource-spice) {
+  color: #8a5010;
+  background-color: #fdf6e8;
+  border-color: #c09040;
+}
+
+#gamelog :deep(.resource-solari) {
+  color: #6a5a20;
+  background-color: #f8f4d8;
+  border-color: #b8a840;
+}
+
+#gamelog :deep(.resource-water) {
+  color: #2a6090;
+  background-color: #eef4f8;
+  border-color: #6a9ab8;
+}
+
+/* Board space names — bordered by space icon / faction */
 #gamelog :deep(.board-space-name) {
   display: inline-block;
-  background-color: rgba(0, 0, 0, 0.08);
+  background-color: #f5f0e8;
+  border: 1px solid #a89878;
   border-radius: .15em;
   padding: 0 .3em;
+  font-weight: 600;
+}
+
+#gamelog :deep(.chip-space-purple) {
+  border-color: #6a3d8a;
+  background-color: #f3eef8;
+  color: #4a2868;
+}
+
+#gamelog :deep(.chip-space-yellow) {
+  border-color: #b8860b;
+  background-color: #fdf8ee;
+  color: #6a5010;
+}
+
+#gamelog :deep(.chip-space-green) {
+  border-color: #3a7d3a;
+  background-color: #eef5ee;
+  color: #2a5a2a;
+}
+
+#gamelog :deep(.chip-space-emperor) {
+  border-color: #8b2020;
+  background-color: #f8ecec;
+  color: #6a1818;
+}
+
+#gamelog :deep(.chip-space-guild) {
+  border-color: #c07020;
+  background-color: #fef5ee;
+  color: #8a5010;
+}
+
+#gamelog :deep(.chip-space-bene-gesserit) {
+  border-color: #5b3a8a;
+  background-color: #f3eef8;
+  color: #4a2868;
+}
+
+#gamelog :deep(.chip-space-fremen) {
+  border-color: #2a6090;
+  background-color: #eef4f8;
+  color: #1a4060;
 }
 
 /* Leader names */
 #gamelog :deep(.leader-name) {
   display: inline-block;
   color: #6a3d8a;
-  font-weight: bold;
+  font-weight: 600;
+  background-color: #f3eef8;
+  border: 1px solid #6a3d8a;
+  border-radius: .15em;
+  padding: 0 .3em;
 }
 
 /* Player names */
