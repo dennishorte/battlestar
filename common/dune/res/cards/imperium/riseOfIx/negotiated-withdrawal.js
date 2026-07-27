@@ -2,6 +2,8 @@
 
 const factions = require('../../../../systems/factions.js')
 const constants = require('../../../constants.js')
+const deploy = require('../../../../systems/deploy.js')
+
 module.exports = {
   id: "negotiated-withdrawal",
   name: "Negotiated Withdrawal",
@@ -46,7 +48,7 @@ module.exports = {
       const [choice] = game.actions.choose(player, choices, { title: 'Negotiated Withdrawal' })
       const chId = typeof choice === 'object' ? choice.id : choice
       if (chId !== 'pass' && choice !== 'Pass') {
-        require('../../../../systems/deploy.js').retreatTroops(game, player, 3)
+        deploy.retreatTroops(game, player, 3)
         const fc = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
         const [fChoice] = game.actions.choose(player, fc, { title: '+1 Influence with:' })
         const faction = typeof fChoice === 'object' ? fChoice.id : fChoice

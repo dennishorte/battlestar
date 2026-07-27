@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../systems/deploy.js')
+
 module.exports = {
   name: 'Lady Amber Metulli',
   source: 'Uprising',
@@ -26,7 +28,7 @@ module.exports = {
     if (chId === 'pass' || choice === 'Pass') {
       return
     }
-    require('../../systems/deploy.js').retreatTroops(game, player, 1)
+    deploy.retreatTroops(game, player, 1)
   },
 
   resolveSignetRing(game, player, _resolveEffectFn) {

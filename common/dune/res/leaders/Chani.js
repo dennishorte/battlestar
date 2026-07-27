@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../systems/deploy.js')
+
 module.exports = {
   name: 'Chani',
   source: 'Bloodlines',
@@ -37,7 +39,7 @@ module.exports = {
       const countId = typeof countChoice === 'object' ? countChoice.id : countChoice
       const count = parseInt(countId, 10)
       if (count > 0) {
-        require('../../systems/deploy.js').retreatTroops(game, player, count)
+        deploy.retreatTroops(game, player, count)
       }
     }
     else {

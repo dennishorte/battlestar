@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../../systems/deploy.js')
+
 module.exports = {
   id: "distraction",
   name: "Distraction",
@@ -25,7 +27,7 @@ module.exports = {
       return
     }
     game.state.turnTracking.distractionArmed = true
-    require('../../../systems/deploy.js').checkDistractionTrigger(game, player)
+    deploy.checkDistractionTrigger(game, player)
   },
 
 }

@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../../systems/deploy.js')
+
 module.exports = {
   id: "reach-agreement",
   name: "Reach Agreement",
@@ -35,7 +37,7 @@ module.exports = {
         const count = (typeof chId === 'string' && chId.startsWith('retreat-'))
           ? parseInt(chId.replace('retreat-', ''))
           : parseInt(String(choice).match(/\d+/)[0])
-        require('../../../systems/deploy.js').retreatTroops(game, player, count)
+        deploy.retreatTroops(game, player, count)
         const choam = require('../../../systems/choam.js')
         choam.takeContract(game, player)
       }

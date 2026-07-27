@@ -1,6 +1,8 @@
 'use strict'
 
 const spies = require('../../../systems/spies.js')
+const deploy = require('../../../systems/deploy.js')
+
 module.exports = {
   id: "go-to-ground",
   name: "Go to Ground",
@@ -36,7 +38,7 @@ module.exports = {
         const count = (typeof chId === 'string' && chId.startsWith('retreat-'))
           ? parseInt(chId.replace('retreat-', ''))
           : parseInt(String(choice).match(/\d+/)[0])
-        require('../../../systems/deploy.js').retreatTroops(game, player, count)
+        deploy.retreatTroops(game, player, count)
         spies.placeSpy(game, player)
       }
     }
