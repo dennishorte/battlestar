@@ -10,7 +10,12 @@
       <span class="card-name">{{ displayName }}</span>
 
       <span class="card-cost" v-if="costText">{{ costText }}</span>
-      <span v-if="hasPrereqs" class="prereqs-marker">*</span>
+      <span
+        v-if="occupationPrereqText"
+        class="occupation-prereq"
+        :title="occupationPrereqTitle"
+      >{{ occupationPrereqText }}</span>
+      <span v-if="hasNonOccupationPrereqs" class="prereqs-marker" title="Has other requirements">*</span>
       <span class="card-vp" v-if="victoryPoints">{{ victoryPoints }}VP</span>
     </div>
 
@@ -92,6 +97,10 @@
 
 <script>
 import { agricola } from 'battlestar-common'
+import {
+  formatOccupationPrereq,
+  hasNonOccupationPrereqs as cardHasNonOccupationPrereqs,
+} from '../occupationPrereq.js'
 
 const res = agricola.res
 
@@ -187,8 +196,20 @@ export default {
       return this.card?.vps ?? this.card?.victoryPoints ?? null
     },
 
-    hasPrereqs() {
-      return !!this.card?.prereqs
+    occupationPrereq() {
+      return formatOccupationPrereq(this.card?.prereqs)
+    },
+
+    occupationPrereqText() {
+      return this.occupationPrereq?.text || ''
+    },
+
+    occupationPrereqTitle() {
+      return this.occupationPrereq?.title || ''
+    },
+
+    hasNonOccupationPrereqs() {
+      return cardHasNonOccupationPrereqs(this.card?.prereqs)
     },
 
     cardText() {
@@ -490,6 +511,19 @@ export default {
   font-size: .8em;
   color: #555;
   margin-left: auto;
+}
+
+.occupation-prereq {
+  font-size: .8em;
+  font-weight: 600;
+  color: #e65100;
+  background-color: rgba(255, 243, 224, 0.9);
+  padding: .05em .3em;
+  border-radius: .2em;
+  border: 1px solid #ffb74d;
+  margin-left: .25em;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .prereqs-marker {

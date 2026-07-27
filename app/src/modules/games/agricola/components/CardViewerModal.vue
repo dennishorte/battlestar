@@ -19,6 +19,11 @@
       <!-- Prerequisites -->
       <div class="card-prereqs" v-if="card.prereqs">
         <span class="prereqs-label">Requires:</span>
+        <span
+          v-if="occupationPrereqText"
+          class="occupation-prereq"
+          :title="occupationPrereqTitle"
+        >{{ occupationPrereqText }}</span>
         <span class="prereqs-text">{{ formatPrereqs(card.prereqs) }}</span>
       </div>
 
@@ -115,6 +120,7 @@
 <script>
 import ModalBase from '@/components/ModalBase.vue'
 import { agricola } from 'battlestar-common'
+import { formatOccupationPrereq } from '../occupationPrereq.js'
 
 const res = agricola.res
 
@@ -197,6 +203,18 @@ export default {
     cardVictoryPoints() {
       // Minor improvements use 'vps', major improvements use 'victoryPoints'
       return this.card?.vps ?? this.card?.victoryPoints ?? null
+    },
+
+    occupationPrereq() {
+      return formatOccupationPrereq(this.card?.prereqs)
+    },
+
+    occupationPrereqText() {
+      return this.occupationPrereq?.text || ''
+    },
+
+    occupationPrereqTitle() {
+      return this.occupationPrereq?.title || ''
     },
 
     // Get card instance from game (has runtime state)
@@ -632,6 +650,17 @@ export default {
   font-weight: 600;
   color: #555;
   margin-right: .35em;
+}
+
+.occupation-prereq {
+  display: inline-block;
+  font-weight: 600;
+  color: #e65100;
+  background-color: #fff3e0;
+  padding: .1em .4em;
+  border-radius: .2em;
+  border: 1px solid #ffb74d;
+  margin-right: .4em;
 }
 
 .cost-item {
