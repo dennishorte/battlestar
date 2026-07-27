@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../../../systems/deploy.js')
+
 module.exports = {
   id: "shadout-mapes",
   name: "Shadout Mapes",
@@ -49,11 +51,10 @@ module.exports = {
       const isDeploy = chId === 'deploy' || (typeof choice === 'string' && choice.includes('Deploy'))
       const isRetreat = chId === 'retreat' || (typeof choice === 'string' && choice.includes('Retreat'))
       if (isDeploy) {
-        player.decrementCounter('troopsInGarrison', 1)
-        require('../../../../systems/deploy.js').deployToConflict(game, player, 1)
+        deploy.deployFromGarrison(game, player, 1)
       }
       else if (isRetreat) {
-        require('../../../../systems/deploy.js').retreatTroops(game, player, 1)
+        deploy.retreatTroops(game, player, 1)
       }
     }
   },

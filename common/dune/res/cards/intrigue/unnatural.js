@@ -1,6 +1,8 @@
 'use strict'
 
 const deckEngine = require('../../../systems/deckEngine.js')
+const deploy = require('../../../systems/deploy.js')
+
 module.exports = {
   id: "unnatural",
   name: "Unnatural",
@@ -38,11 +40,7 @@ module.exports = {
         if (card) {
           deckEngine.trashCard(game, card)
           deckEngine.drawIntrigueCard(game, player, 1)
-          const recruit = Math.min(1, player.troopsInSupply)
-          if (recruit > 0) {
-            player.decrementCounter('troopsInSupply', recruit, { silent: true })
-            player.incrementCounter('troopsInGarrison', recruit)
-          }
+          deploy.recruitTroops(game, player, 1)
         }
       }
     }

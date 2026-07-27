@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../../systems/deploy.js')
+
 module.exports = {
   id: "staged-incident",
   name: "Staged Incident",
@@ -23,8 +25,7 @@ module.exports = {
   combatEffect(game, player) {
     const deployed = game.state.conflict.deployedTroops[player.name] || 0
     if (deployed >= 3) {
-      game.state.conflict.deployedTroops[player.name] -= 3
-      player.incrementCounter('troopsInSupply', 3, { silent: true })
+      deploy.loseTroops(game, player, 3, { from: 'conflict', silent: true })
       player.incrementCounter('vp', 1, { silent: true, source: 'Staged Incident (intrigue)' })
       game.log.add({ template: '{player}: Loses 3 troops, +1 VP', args: { player } })
     }

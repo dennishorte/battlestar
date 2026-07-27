@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../../systems/deploy.js')
+
 module.exports = {
   id: "detonation",
   name: "Detonation",
@@ -48,9 +50,7 @@ module.exports = {
       const count = dcId
         ? parseInt(dcId.replace('deploy-', ''))
         : parseInt(String(dc).match(/\d+/)[0])
-      player.decrementCounter('troopsInGarrison', count, { silent: true })
-      require('../../../systems/deploy.js').deployToConflict(game, player, count)
-      game.log.add({ template: '{player} deploys {count} troops to Conflict', args: { player, count } })
+      deploy.deployFromGarrison(game, player, count)
     }
   },
 

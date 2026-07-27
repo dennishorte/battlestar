@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../../../systems/deploy.js')
+
 module.exports = {
   id: "the-beasts-spoils",
   name: "The Beast's Spoils",
@@ -47,10 +49,9 @@ module.exports = {
           game.log.add({ template: '{player}: Yellow icon — +1 Spice', args: { player } })
           break
         case 'blue':
-          { const r = Math.min(1, player.troopsInSupply)
+          {
+            const r = deploy.recruitTroops(game, player, 1, { silent: true })
             if (r > 0) {
-              player.decrementCounter('troopsInSupply', r, { silent: true })
-              player.incrementCounter('troopsInGarrison', r, { silent: true })
               game.log.add({ template: '{player}: Blue icon — +1 Troop', args: { player } })
             }
           }

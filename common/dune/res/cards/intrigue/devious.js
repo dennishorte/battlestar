@@ -1,6 +1,8 @@
 'use strict'
 
 const deckEngine = require('../../../systems/deckEngine.js')
+const deploy = require('../../../systems/deploy.js')
+
 module.exports = {
   id: "devious",
   name: "Devious",
@@ -53,8 +55,7 @@ module.exports = {
       const count = dcId
         ? parseInt(dcId.replace('deploy-', ''))
         : parseInt(String(dc).match(/\d+/)[0])
-      player.decrementCounter('troopsInGarrison', count)
-      require('../../../systems/deploy.js').deployToConflict(game, player, count)
+      deploy.deployFromGarrison(game, player, count)
     }
   },
 

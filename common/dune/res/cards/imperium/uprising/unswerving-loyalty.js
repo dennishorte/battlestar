@@ -1,6 +1,7 @@
 'use strict'
 
 const constants = require('../../../constants.js')
+const deploy = require('../../../../systems/deploy.js')
 
 module.exports = {
   id: "unswerving-loyalty",
@@ -33,11 +34,7 @@ module.exports = {
   hasSardaukar: false,
 
   revealEffect(game, player, card, allRevealedCards) {
-    const recruit = Math.min(1, player.troopsInSupply)
-    if (recruit > 0) {
-      player.decrementCounter('troopsInSupply', recruit, { silent: true })
-      player.incrementCounter('troopsInGarrison', recruit)
-    }
+    deploy.recruitTroops(game, player, 1)
     const hasFremen = allRevealedCards.some(c =>
       c !== card && constants.getFactionAffiliations(c).includes('fremen')
     )
@@ -56,11 +53,10 @@ module.exports = {
         const isDeploy = chId === 'deploy' || (typeof choice === 'string' && choice.includes('Deploy'))
         const isRetreat = chId === 'retreat' || (typeof choice === 'string' && choice.includes('Retreat'))
         if (isDeploy) {
-          player.decrementCounter('troopsInGarrison', 1, { silent: true })
-          require('../../../../systems/deploy.js').deployToConflict(game, player, 1)
+          deploy.deployFromGarrison(game, player, 1)
         }
         else if (isRetreat) {
-          require('../../../../systems/deploy.js').retreatTroops(game, player, 1)
+          deploy.retreatTroops(game, player, 1)
         }
       }
     }

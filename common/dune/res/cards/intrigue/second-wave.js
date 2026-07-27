@@ -2,6 +2,7 @@
 
 const constants = require('../../constants.js')
 const { addStrength } = require('../../../systems/strengthBreakdown.js')
+const deploy = require('../../../systems/deploy.js')
 
 module.exports = {
   id: "second-wave",
@@ -37,8 +38,7 @@ module.exports = {
         ? parseInt(chId.replace('deploy-', ''))
         : parseInt(String(choice).match(/\d+/)[0])
       if (count > 0) {
-        player.decrementCounter('troopsInGarrison', count, { silent: true })
-        require('../../../systems/deploy.js').deployToConflict(game, player, count)
+        deploy.deployFromGarrison(game, player, count)
       }
     }
   },

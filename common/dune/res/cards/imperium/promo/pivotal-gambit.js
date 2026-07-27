@@ -1,6 +1,8 @@
 'use strict'
 
 const deckEngine = require('../../../../systems/deckEngine.js')
+const deploy = require('../../../../systems/deploy.js')
+
 module.exports = {
   id: "pivotal-gambit",
   name: "Pivotal Gambit",
@@ -38,12 +40,7 @@ module.exports = {
   agentEffect(game, player, card) {
     // Trash this card -> +1 Troop AND add +1 Influence to 1st place conflict reward
     deckEngine.trashCard(game, card)
-    const recruit = Math.min(1, player.troopsInSupply)
-    if (recruit > 0) {
-      player.decrementCounter('troopsInSupply', recruit, { silent: true })
-      player.incrementCounter('troopsInGarrison', recruit, { silent: true })
-      game.log.add({ template: '{player} recruits 1 troop', args: { player } })
-    }
+    deploy.recruitTroops(game, player, 1)
     // Modify first place reward — store as state for combat resolution
     if (!game.state.conflict.bonusFirstPlaceInfluence) {
       game.state.conflict.bonusFirstPlaceInfluence = 0

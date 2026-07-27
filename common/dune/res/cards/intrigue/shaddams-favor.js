@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../../systems/deploy.js')
+
 module.exports = {
   id: "shaddams-favor",
   name: "Shaddam's Favor",
@@ -21,11 +23,7 @@ module.exports = {
   plotText: "+1 Troop, and if you have 3 Influence with the Emperor: +3 Solari",
 
   plotEffect(game, player) {
-    const recruit = Math.min(1, player.troopsInSupply)
-    if (recruit > 0) {
-      player.decrementCounter('troopsInSupply', recruit, { silent: true })
-      player.incrementCounter('troopsInGarrison', recruit)
-    }
+    deploy.recruitTroops(game, player, 1)
     if (player.getInfluence('emperor') >= 3) {
       player.incrementCounter('solari', 3, { silent: true })
       game.log.add({ template: '{player}: Emperor synergy — +3 Solari', args: { player } })

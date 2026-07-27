@@ -1,6 +1,7 @@
 'use strict'
 
 const constants = require('../../../constants.js')
+const deploy = require('../../../../systems/deploy.js')
 
 module.exports = {
   id: "holy-war",
@@ -39,11 +40,7 @@ module.exports = {
   hasSardaukar: false,
 
   revealEffect(game, player, card, allRevealedCards) {
-    const recruit = Math.min(1, player.troopsInSupply)
-    if (recruit > 0) {
-      player.decrementCounter('troopsInSupply', recruit, { silent: true })
-      player.incrementCounter('troopsInGarrison', recruit)
-    }
+    deploy.recruitTroops(game, player, 1)
     const hasFremen = allRevealedCards.some(c =>
       c !== card && constants.getFactionAffiliations(c).includes('fremen')
     )

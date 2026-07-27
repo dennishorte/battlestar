@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../../../systems/deploy.js')
+
 module.exports = {
   id: "eliminate-allies",
   name: "Eliminate Allies",
@@ -35,11 +37,7 @@ module.exports = {
     if (!player) {
       return
     }
-    const recruit = Math.min(2, player.troopsInSupply)
-    if (recruit > 0) {
-      player.decrementCounter('troopsInSupply', recruit, { silent: true })
-      player.incrementCounter('troopsInGarrison', recruit, { silent: true })
-    }
+    const recruit = deploy.recruitTroops(game, player, 2, { silent: true })
     game.log.add({
       template: '{player}: Eliminate Allies trashed — +{amount} Troop(s)',
       args: { player, amount: recruit },

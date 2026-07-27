@@ -1,6 +1,7 @@
 const { DuneCard } = require('../DuneCard.js')
 const constants = require('../res/constants.js')
 const util = require('../../lib/util.js')
+const deploy = require('./deploy.js')
 
 // Lazy require to avoid circular dependency between deckEngine and playerTurns.
 function _resolveEffectLazy() {
@@ -123,10 +124,8 @@ function applyAcquireTroopBonus(game, player) {
   if (!game.state.turnTracking?.troopOnAcquire) {
     return
   }
-  const recruit = Math.min(1, player.troopsInSupply)
+  const recruit = deploy.recruitTroops(game, player, 1, { silent: true })
   if (recruit > 0) {
-    player.decrementCounter('troopsInSupply', recruit, { silent: true })
-    player.incrementCounter('troopsInGarrison', recruit, { silent: true })
     game.log.add({ template: '{player}: +1 Troop (Call to Arms)', args: { player } })
   }
 }

@@ -66,8 +66,7 @@ function roundStartPhase(game) {
         })
         const chId = typeof choice === 'object' ? choice.id : choice
         if (chId === 'deploy' || choice === 'Deploy') {
-          controller.decrementCounter('troopsInSupply', 1, { silent: true })
-          deploy.deployToConflict(game, controller, 1)
+          deploy.recruitTroops(game, controller, 1, { to: 'conflict', silent: true })
           game.log.add({
             template: '{player} deploys 1 troop to Conflict (defensive bonus for {location})',
             args: { player: controller, location },

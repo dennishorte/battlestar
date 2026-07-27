@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../../systems/deploy.js')
+
 module.exports = {
   id: "double-cross",
   name: "Double Cross",
@@ -33,16 +35,10 @@ module.exports = {
         const [choice] = game.actions.choose(player, choices, { title: 'Pay 1 Solari — which opponent loses a troop?' })
         const chId = typeof choice === 'object' ? choice.id : choice
         if (chId !== 'pass' && choice !== 'Pass') {
-          const opponentId = chId
+          const target = game.players.byName(chId)
           player.decrementCounter('solari', 1)
-          game.state.conflict.deployedTroops[opponentId]--
-          const target = game.players.byName(opponentId)
-          target.incrementCounter('troopsInSupply', 1, { silent: true })
-          // Deploy one of your troops
-          if (player.troopsInGarrison > 0) {
-            player.decrementCounter('troopsInGarrison', 1, { silent: true })
-            require('../../../systems/deploy.js').deployToConflict(game, player, 1)
-          }
+          deploy.loseTroops(game, target, 1, { from: 'conflict', silent: true })
+          deploy.deployFromGarrison(game, player, 1, { silent: true })
           game.log.add({ template: '{player} forces {target} to lose 1 troop, deploys 1', args: { player, target } })
         }
       }

@@ -2,6 +2,8 @@
 
 const factions = require('../../../systems/factions.js')
 const constants = require('../../constants.js')
+const deploy = require('../../../systems/deploy.js')
+
 module.exports = {
   id: "strongarm",
   name: "Strongarm",
@@ -24,7 +26,7 @@ module.exports = {
 
   plotEffect(game, player) {
     if (player.troopsInGarrison > 0) {
-      player.decrementCounter('troopsInGarrison', 1)
+      deploy.loseTroops(game, player, 1, { from: 'garrison' })
       const fc = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
       const [fChoice] = game.actions.choose(player, fc, { title: '+1 Influence' })
       const faction = typeof fChoice === 'object' ? fChoice.id : fChoice

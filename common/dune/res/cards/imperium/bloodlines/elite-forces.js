@@ -1,6 +1,7 @@
 'use strict'
 
 const constants = require('../../../constants.js')
+const deploy = require('../../../../systems/deploy.js')
 
 module.exports = {
   id: "elite-forces",
@@ -42,11 +43,7 @@ module.exports = {
       const isEmperor = constants.getFactionAffiliations(trashed).includes('emperor')
       if (isEmperor) {
         deckEngine.drawIntrigueCard(game, player, 1)
-        const recruit = Math.min(1, player.troopsInSupply)
-        if (recruit > 0) {
-          player.decrementCounter('troopsInSupply', recruit, { silent: true })
-          player.incrementCounter('troopsInGarrison', recruit, { silent: true })
-        }
+        deploy.recruitTroops(game, player, 1, { silent: true })
         game.log.add({ template: '{player}: Emperor synergy — +1 Intrigue, +1 Troop', args: { player } })
       }
     }

@@ -2,6 +2,8 @@
 
 const factions = require('../../../../systems/factions.js')
 const constants = require('../../../constants.js')
+const deploy = require('../../../../systems/deploy.js')
+
 module.exports = {
   id: "possible-futures",
   name: "Possible Futures",
@@ -49,12 +51,7 @@ module.exports = {
       // Get both
       const faction = pickFaction()
       factions.gainInfluence(game, player, faction)
-      const recruit = Math.min(2, player.troopsInSupply)
-      if (recruit > 0) {
-        player.decrementCounter('troopsInSupply', recruit, { silent: true })
-        player.incrementCounter('troopsInGarrison', recruit, { silent: true })
-        game.log.add({ template: '{player} recruits {count} troop(s)', args: { player, count: recruit } })
-      }
+      deploy.recruitTroops(game, player, 2)
     }
     else {
       const choices = [
@@ -69,12 +66,7 @@ module.exports = {
         factions.gainInfluence(game, player, faction)
       }
       else {
-        const recruit = Math.min(2, player.troopsInSupply)
-        if (recruit > 0) {
-          player.decrementCounter('troopsInSupply', recruit, { silent: true })
-          player.incrementCounter('troopsInGarrison', recruit, { silent: true })
-          game.log.add({ template: '{player} recruits {count} troop(s)', args: { player, count: recruit } })
-        }
+        deploy.recruitTroops(game, player, 2)
       }
     }
   },

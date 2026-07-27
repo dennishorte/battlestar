@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../../systems/deploy.js')
+
 module.exports = {
   id: "adaptive-tactics",
   name: "Adaptive Tactics",
@@ -30,11 +32,7 @@ module.exports = {
       const chId = typeof choice === 'object' ? choice.id : choice
       if (chId !== 'pass' && choice !== 'Pass') {
         player.decrementCounter('spice', 1)
-        const recruit = Math.min(1, player.troopsInSupply)
-        if (recruit > 0) {
-          player.decrementCounter('troopsInSupply', recruit, { silent: true })
-          player.incrementCounter('troopsInGarrison', recruit)
-        }
+        deploy.recruitTroops(game, player, 1)
         if (game.state.turnTracking) {
           game.state.turnTracking.spaceIsCombat = true
         }

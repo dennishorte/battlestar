@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../../../systems/deploy.js')
+
 module.exports = {
   id: "treachery",
   name: "Treachery",
@@ -36,10 +38,11 @@ module.exports = {
   hasSardaukar: false,
 
   revealEffect(game, player) {
-    const recruit = Math.min(2, player.troopsInSupply)
+    const recruit = deploy.recruitTroops(game, player, 2, {
+      to: 'conflict',
+      silent: true,
+    })
     if (recruit > 0) {
-      player.decrementCounter('troopsInSupply', recruit, { silent: true })
-      require('../../../../systems/deploy.js').deployToConflict(game, player, recruit)
       game.log.add({ template: '{player}: +{count} troops to Conflict', args: { player, count: recruit } })
     }
   },

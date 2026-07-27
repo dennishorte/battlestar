@@ -1,6 +1,8 @@
 'use strict'
 
 const deckEngine = require('../../../../systems/deckEngine.js')
+const deploy = require('../../../../systems/deploy.js')
+
 module.exports = {
   id: "hidden-missive",
   name: "Hidden Missive",
@@ -36,11 +38,7 @@ module.exports = {
   agentEffect(game, player) {
     // With 2 BG Influence: +1 Troop & Draw a card
     if (player.getInfluence('bene-gesserit') >= 2) {
-      const recruit = Math.min(1, player.troopsInSupply)
-      if (recruit > 0) {
-        player.decrementCounter('troopsInSupply', recruit, { silent: true })
-        player.incrementCounter('troopsInGarrison', recruit, { silent: true })
-      }
+      deploy.recruitTroops(game, player, 1, { silent: true })
       deckEngine.drawCards(game, player, 1)
       game.log.add({ template: '{player}: +1 Troop, Draw 1 card', args: { player } })
     }

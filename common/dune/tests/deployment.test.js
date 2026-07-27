@@ -231,3 +231,129 @@ describe('Units and Deployment', () => {
     expect(game.state.conflict.deployedTroops.dennis).toBe(1)
   })
 })
+
+describe('Troop keyword helpers', () => {
+  function driveToCombatIntrigue(game, cardName) {
+    let safety = 80
+    while (game.waiting && safety-- > 0) {
+      const choices = t.currentChoices(game)
+      const title = game.waiting.selectors[0]?.title || ''
+      if (title === 'Play Combat Intrigue card or Pass' && choices.includes(cardName)) {
+        return
+      }
+      if (choices.includes('Reveal Turn')) {
+        t.choose(game, 'Reveal Turn')
+      }
+      else if (choices.includes('Pass')) {
+        t.choose(game, 'Pass')
+      }
+      else {
+        t.choose(game, choices[0])
+      }
+    }
+  }
+
+  test('loseTroops from conflict returns troops to supply (Shrewd)', () => {
+    const game = t.fixture({ useBloodlines: true })
+    t.setBoard(game, {
+      dennis: {
+        troopsInGarrison: 2,
+        troopsInSupply: 5,
+        intrigue: ['Shrewd'],
+      },
+      conflict: { deployedTroops: { dennis: 3 } },
+    })
+    game.run()
+
+    driveToCombatIntrigue(game, 'Shrewd')
+    t.choose(game, 'Shrewd')
+
+    // Shrewd has no follow-up prompt, so combat resolves immediately:
+    // lose 1 to supply via loseTroops, then afterCombat returns the other 2.
+    // (setBoard re-applies conflict.deployedTroops on the next round start.)
+    const dennis = game.players.byName('dennis')
+    expect(dennis.spice).toBe(1)
+    expect(dennis.troopsInGarrison).toBe(2)
+    expect(dennis.troopsInSupply).toBe(8)
+  })
+
+  test('loseTroops from garrison returns troops to supply (Ambitious)', () => {
+    const game = t.fixture({ useBloodlines: true })
+    t.setBoard(game, {
+      dennis: {
+        troopsInGarrison: 4,
+        troopsInSupply: 5,
+        intrigue: ['Ambitious'],
+      },
+      micah: {
+        influence_emperor: 2,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Ambitious')
+    t.choose(game, 'Lose 3 troops for +1 Influence')
+    t.choose(game, 'emperor')
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.troopsInGarrison).toBe(1)
+    expect(dennis.troopsInSupply).toBe(8)
+  })
+
+  test('recruitTroops moves supply to garrison (Honor Guard)', () => {
+    const game = t.fixture({ useBloodlines: true })
+    t.setBoard(game, {
+      dennis: { troopsInGarrison: 1, troopsInSupply: 4, intrigue: ['Honor Guard'] },
+    })
+    game.run()
+
+    t.choose(game, 'Honor Guard')
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.troopsInGarrison).toBe(2)
+    expect(dennis.troopsInSupply).toBe(3)
+  })
+
+  test('deployFromGarrison moves garrison to conflict (Detonation)', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      shieldWall: false,
+      dennis: { intrigue: ['Detonation'], troopsInGarrison: 3, troopsInSupply: 5 },
+      conflict: { deployedTroops: { dennis: 1 } },
+    })
+    game.run()
+
+    t.choose(game, 'Detonation')
+    t.choose(game, 'Deploy up to 4 Troops to Conflict')
+    t.choose(game, 'Deploy 2')
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.troopsInGarrison).toBe(1)
+    expect(game.state.conflict.deployedTroops.dennis).toBe(3)
+  })
+
+  test('retreat goes to garrison while lose from conflict goes to supply', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        troopsInGarrison: 1,
+        troopsInSupply: 5,
+        intrigue: ['Go to Ground'],
+        spiesInSupply: 1,
+      },
+      conflict: { deployedTroops: { dennis: 2 } },
+    })
+    game.run()
+
+    driveToCombatIntrigue(game, 'Go to Ground')
+    t.choose(game, 'Go to Ground')
+    t.choose(game, 'Retreat 1')
+
+    // Assert at spy placement — before combat cleanup.
+    expect(game.waiting.selectors[0]?.title).toBe('Choose an observation post for your Spy')
+    expect(game.state.conflict.deployedTroops.dennis).toBe(1)
+    const dennis = game.players.byName('dennis')
+    expect(dennis.troopsInGarrison).toBe(2)
+    expect(dennis.troopsInSupply).toBe(5)
+  })
+})

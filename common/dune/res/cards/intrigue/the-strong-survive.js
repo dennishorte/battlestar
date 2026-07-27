@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../../systems/deploy.js')
+
 module.exports = {
   id: "the-strong-survive",
   name: "The Strong Survive",
@@ -30,14 +32,10 @@ module.exports = {
     const chId = typeof choice === 'object' ? choice.id : choice
     const isTroops = chId === 'troops' || (typeof choice === 'string' && choice.includes('+3'))
     if (isTroops) {
-      const recruit = Math.min(3, player.troopsInSupply)
-      if (recruit > 0) {
-        player.decrementCounter('troopsInSupply', recruit, { silent: true })
-        player.incrementCounter('troopsInGarrison', recruit)
-      }
+      deploy.recruitTroops(game, player, 3)
     }
     else {
-      require('../../../systems/deploy.js').retreatTroops(game, player, 1)
+      deploy.retreatTroops(game, player, 1)
       resolveEffect(game, player, { type: 'trash-card' }, null, card.name)
     }
   },

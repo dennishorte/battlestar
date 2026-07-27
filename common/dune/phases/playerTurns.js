@@ -806,12 +806,7 @@ function deployUnits(game, player) {
     ? parseInt(choiceId.replace('deploy-', ''))
     : parseInt(String(choice).match(/\d+/)[0])
   if (count > 0) {
-    player.decrementCounter('troopsInGarrison', count, { silent: true })
-    deploy.deployToConflict(game, player, count)
-    game.log.add({
-      template: '{player} deploys {count} troop(s) to the Conflict',
-      args: { player, count },
-    })
+    deploy.deployFromGarrison(game, player, count)
 
     // Desert Ambush: force enemy retreat per troop deployed
     if (game.state.turnTracking?.forceRetreatOnDeploy) {
@@ -987,25 +982,9 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
       break
 
     case 'troop': {
-      const recruit = Math.min(effect.amount, player.troopsInSupply)
-      if (recruit > 0) {
-        player.decrementCounter('troopsInSupply', recruit, { silent: true })
-        // Sardaukar Coordination: recruited troops go to conflict instead of garrison
-        if (game.state.turnTracking?.recruitToConflict) {
-          deploy.deployToConflict(game, player, recruit)
-          game.log.add({
-            template: '{player} recruits {amount} troop(s) to Conflict',
-            args: { player, amount: recruit },
-          })
-        }
-        else {
-          player.incrementCounter('troopsInGarrison', recruit, { silent: true })
-          game.log.add({
-            template: '{player} recruits {amount} troop(s)',
-            args: { player, amount: recruit },
-          })
-        }
-      }
+      // Sardaukar Coordination: recruited troops go to conflict instead of garrison
+      const to = game.state.turnTracking?.recruitToConflict ? 'conflict' : 'garrison'
+      deploy.recruitTroops(game, player, effect.amount, { to })
       break
     }
 
@@ -1454,14 +1433,7 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
     }
 
     case 'lose-troops': {
-      const loseCount = Math.min(effect.amount, player.troopsInGarrison)
-      if (loseCount > 0) {
-        player.decrementCounter('troopsInGarrison', loseCount, { silent: true })
-        game.log.add({
-          template: '{player} loses {count} troop(s)',
-          args: { player, count: loseCount },
-        })
-      }
+      deploy.loseTroops(game, player, effect.amount, { from: 'garrison' })
       break
     }
 
@@ -1495,12 +1467,7 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
           ? parseInt(deployId.replace('deploy-', ''))
           : parseInt(String(deployChoice).match(/\d+/)[0])
         if (count > 0) {
-          player.decrementCounter('troopsInGarrison', count, { silent: true })
-          deploy.deployToConflict(game, player, count)
-          game.log.add({
-            template: '{player} deploys {count} troop(s) to the Conflict',
-            args: { player, count },
-          })
+          deploy.deployFromGarrison(game, player, count)
         }
       }
       break
@@ -1531,13 +1498,7 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
         if (opponent.name === player.name) {
           continue
         }
-        if (opponent.troopsInGarrison > 0) {
-          opponent.decrementCounter('troopsInGarrison', 1, { silent: true })
-          game.log.add({
-            template: '{player} loses 1 troop',
-            args: { player: opponent },
-          })
-        }
+        deploy.loseTroops(game, opponent, 1, { from: 'garrison' })
       }
       break
     }
@@ -1594,16 +1555,14 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
             resolveEffect(game, opponent, { type: 'opponent-discard', amount: 1 }, null)
           }
           else {
-            opponent.decrementCounter('troopsInGarrison', 1, { silent: true })
-            game.log.add({ template: '{player} loses 1 troop', args: { player: opponent } })
+            deploy.loseTroops(game, opponent, 1, { from: 'garrison' })
           }
         }
         else if (hasCards) {
           resolveEffect(game, opponent, { type: 'opponent-discard', amount: 1 }, null)
         }
         else if (hasTroops) {
-          opponent.decrementCounter('troopsInGarrison', 1, { silent: true })
-          game.log.add({ template: '{player} loses 1 troop', args: { player: opponent } })
+          deploy.loseTroops(game, opponent, 1, { from: 'garrison' })
         }
       }
       break
