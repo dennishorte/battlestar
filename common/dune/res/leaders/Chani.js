@@ -38,10 +38,6 @@ module.exports = {
       const count = parseInt(countId, 10)
       if (count > 0) {
         require('../../systems/deploy.js').retreatTroops(game, player, count)
-        game.log.add({
-          template: '{player}: Fedaykin Maneuver — retreats {count} troop(s)',
-          args: { player, count },
-        })
       }
     }
     else {

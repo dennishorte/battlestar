@@ -27,10 +27,6 @@ module.exports = {
       return
     }
     require('../../systems/deploy.js').retreatTroops(game, player, 1)
-    game.log.add({
-      template: '{player}: Desert Scouts — retreats 1 troop',
-      args: { player },
-    })
   },
 
   resolveSignetRing(game, player, _resolveEffectFn) {

@@ -22,7 +22,7 @@ function deployToConflict(game, player, count) {
  * Distinct from losing troops (which returns them to supply).
  * Returns the number of troops actually retreated.
  */
-function retreatTroops(game, player, count) {
+function retreatTroops(game, player, count, opts = {}) {
   if (count <= 0) {
     return 0
   }
@@ -36,6 +36,12 @@ function retreatTroops(game, player, count) {
 
   conflict.deployedTroops[player.name] = deployed - actual
   player.incrementCounter('troopsInGarrison', actual, { silent: true })
+  if (!opts.silent) {
+    game.log.add({
+      template: '{player} retreats {count} troop(s)',
+      args: { player, count: actual },
+    })
+  }
   return actual
 }
 
