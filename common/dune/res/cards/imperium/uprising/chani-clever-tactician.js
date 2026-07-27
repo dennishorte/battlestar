@@ -2,6 +2,7 @@
 
 const constants = require('../../../constants.js')
 const { addStrength } = require('../../../../systems/strengthBreakdown.js')
+const { retreatTroops } = require('../../../../systems/deploy.js')
 
 module.exports = {
   id: "chani-clever-tactician",
@@ -48,8 +49,7 @@ module.exports = {
       const [choice] = game.actions.choose(player, choices, { title: 'Chani' })
       const chId = typeof choice === 'object' ? choice.id : choice
       if (chId !== 'pass' && choice !== 'Pass') {
-        game.state.conflict.deployedTroops[player.name] -= 2
-        player.incrementCounter('troopsInSupply', 2)
+        retreatTroops(game, player, 2)
         addStrength(game, player, 'card', 'Chani, Clever Tactician', 4 * constants.SWORD_STRENGTH)
       }
     }

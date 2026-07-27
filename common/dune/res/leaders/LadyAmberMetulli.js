@@ -26,8 +26,7 @@ module.exports = {
     if (chId === 'pass' || choice === 'Pass') {
       return
     }
-    game.state.conflict.deployedTroops[player.name]--
-    player.incrementCounter('troopsInSupply', 1, { silent: true })
+    require('../../systems/deploy.js').retreatTroops(game, player, 1)
     game.log.add({
       template: '{player}: Desert Scouts — retreats 1 troop',
       args: { player },

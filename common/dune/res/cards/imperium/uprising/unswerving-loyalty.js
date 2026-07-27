@@ -60,8 +60,7 @@ module.exports = {
           require('../../../../systems/deploy.js').deployToConflict(game, player, 1)
         }
         else if (isRetreat) {
-          game.state.conflict.deployedTroops[player.name]--
-          player.incrementCounter('troopsInSupply', 1)
+          require('../../../../systems/deploy.js').retreatTroops(game, player, 1)
         }
       }
     }

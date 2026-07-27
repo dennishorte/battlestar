@@ -68,10 +68,10 @@ describe('unswerving-loyalty', () => {
     t.choose(game, 'Retreat 1 troop')
 
     const dennis = game.players.byName('dennis')
-    // After reveal: +1 troop -> garrison 1, deployed 1, then retreat -> garrison 1, deployed 0, supply +1.
+    // After reveal: +1 troop -> garrison 1, deployed 1, then retreat -> garrison 2, deployed 0.
     expect(game.state.conflict.deployedTroops.dennis).toBe(0)
-    expect(dennis.troopsInSupply).toBe(5)   // 5 -> 4 (gain) -> 5 (retreat)
-    expect(dennis.troopsInGarrison).toBe(1)
+    expect(dennis.troopsInSupply).toBe(4)   // 5 -> 4 (gain); retreat does not touch supply
+    expect(dennis.troopsInGarrison).toBe(2)
   })
 
   test('reveal with another Fremen, decline bond: pass leaves troops untouched', () => {

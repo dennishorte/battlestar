@@ -37,8 +37,7 @@ module.exports = {
       }
     }
     else {
-      game.state.conflict.deployedTroops[player.name]--
-      player.incrementCounter('troopsInSupply', 1)
+      require('../../../systems/deploy.js').retreatTroops(game, player, 1)
       resolveEffect(game, player, { type: 'trash-card' }, null, card.name)
     }
   },

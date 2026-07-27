@@ -31,7 +31,11 @@ describe("reach-agreement", () => {
     const game = t.fixture()
     t.setBoard(game, {
       conflict: { deployedTroops: { dennis: 2, micah: 1 } },
-      dennis: { intrigue: ['Reach Agreement'], troopsInSupply: 8 },
+      dennis: {
+        intrigue: ['Reach Agreement'],
+        troopsInGarrison: 0,
+        troopsInSupply: 8,
+      },
       micah: { intrigue: ['Leverage'] },
     })
     game.run()
@@ -48,7 +52,8 @@ describe("reach-agreement", () => {
 
     const dennis = game.players.byName('dennis')
     expect(game.state.conflict.deployedTroops.dennis).toBe(1)
-    expect(dennis.troopsInSupply).toBe(9)
+    expect(dennis.troopsInGarrison).toBe(1)
+    expect(dennis.troopsInSupply).toBe(8)
     expect(game.zones.byId('dennis.contracts').cardlist().length).toBe(1)
   })
 

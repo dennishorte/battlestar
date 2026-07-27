@@ -64,6 +64,7 @@ describe('chani-clever-tactician', () => {
     t.setBoard(game, {
       dennis: {
         handExact: ['Chani, Clever Tactician'],
+        troopsInGarrison: 0,
         troopsInSupply: 0,
       },
       conflict: { deployedTroops: { dennis: 3 } },
@@ -78,7 +79,8 @@ describe('chani-clever-tactician', () => {
     // remaining deployed troop (1 left after retreat) → 4 + 2 = 6.
     expect(dennis.strength).toBe(6)
     expect(game.state.conflict.deployedTroops.dennis).toBe(1)
-    expect(dennis.troopsInSupply).toBe(2)
+    expect(dennis.troopsInGarrison).toBe(2)
+    expect(dennis.troopsInSupply).toBe(0)
   })
 
   test('reveal: pass retreat option keeps troops deployed', () => {

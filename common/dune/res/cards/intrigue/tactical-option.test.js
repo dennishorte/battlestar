@@ -55,7 +55,7 @@ describe("tactical-option", () => {
     // it's still at the post-deploy value of 0 base since we used everything.)
   })
 
-  test('combat: choose retreat — all deployed troops return to supply', () => {
+  test('combat: choose retreat — all deployed troops return to garrison', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { troopsInGarrison: 4, troopsInSupply: 0, intrigue: ['Tactical Option'] },
@@ -72,7 +72,9 @@ describe("tactical-option", () => {
     t.choose(game, 'Retreat 2 troop(s)')
 
     const dennis = game.players.byName('dennis')
-    // Recon recruited 1 to garrison, 2 deployed: troopsInSupply 0 -> after retreat += 2 = 2
-    expect(dennis.troopsInSupply).toBe(2)
+    // Supply starts at 0 so Recon cannot recruit. Deploy 2 → garrison 2; retreat 2 → garrison 4.
+    expect(dennis.troopsInGarrison).toBe(4)
+    expect(dennis.troopsInSupply).toBe(0)
+    expect(game.state.conflict.deployedTroops.dennis).toBe(0)
   })
 })

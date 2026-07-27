@@ -37,8 +37,7 @@ module.exports = {
       const countId = typeof countChoice === 'object' ? countChoice.id : countChoice
       const count = parseInt(countId, 10)
       if (count > 0) {
-        game.state.conflict.deployedTroops[player.name] -= count
-        player.incrementCounter('troopsInSupply', count, { silent: true })
+        require('../../systems/deploy.js').retreatTroops(game, player, count)
         game.log.add({
           template: '{player}: Fedaykin Maneuver — retreats {count} troop(s)',
           args: { player, count },

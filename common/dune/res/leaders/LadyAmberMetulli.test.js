@@ -35,19 +35,21 @@ describe('Lady Amber Metulli', () => {
       expect(game.state.conflict.deployedTroops.dennis).toBe(2)
     })
 
-    test('Retreat sends 1 troop from Conflict to supply', () => {
+    test('Retreat sends 1 troop from Conflict to garrison', () => {
       const game = t.fixture()
       t.setBoard(game, {
         leaders: { dennis: leader },
-        dennis: { agents: 0 },
+        dennis: { agents: 0, troopsInGarrison: 0 },
         conflict: { deployedTroops: { dennis: 2 } },
       })
       game.run()
 
       const supplyBefore = game.players.byName('dennis').troopsInSupply
       t.choose(game, 'Retreat 1 troop')
+      const dennis = game.players.byName('dennis')
       expect(game.state.conflict.deployedTroops.dennis).toBe(1)
-      expect(game.players.byName('dennis').troopsInSupply).toBe(supplyBefore + 1)
+      expect(dennis.troopsInGarrison).toBe(1)
+      expect(dennis.troopsInSupply).toBe(supplyBefore)
     })
   })
 

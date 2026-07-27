@@ -36,8 +36,7 @@ module.exports = {
         const count = (typeof chId === 'string' && chId.startsWith('retreat-'))
           ? parseInt(chId.replace('retreat-', ''))
           : parseInt(String(choice).match(/\d+/)[0])
-        game.state.conflict.deployedTroops[player.name] -= count
-        player.incrementCounter('troopsInSupply', count)
+        require('../../../systems/deploy.js').retreatTroops(game, player, count)
         spies.placeSpy(game, player)
       }
     }

@@ -17,6 +17,28 @@ function deployToConflict(game, player, count) {
   }
 }
 
+/**
+ * Retreat troops from the Conflict to the player's garrison.
+ * Distinct from losing troops (which returns them to supply).
+ * Returns the number of troops actually retreated.
+ */
+function retreatTroops(game, player, count) {
+  if (count <= 0) {
+    return 0
+  }
+
+  const conflict = game.state.conflict
+  const deployed = conflict.deployedTroops[player.name] || 0
+  const actual = Math.min(count, deployed)
+  if (actual <= 0) {
+    return 0
+  }
+
+  conflict.deployedTroops[player.name] = deployed - actual
+  player.incrementCounter('troopsInGarrison', actual, { silent: true })
+  return actual
+}
+
 function checkDistractionTrigger(game, player) {
   const tt = game.state.turnTracking
   if (!tt?.distractionArmed || tt.distractionFired) {
@@ -40,5 +62,6 @@ function checkDistractionTrigger(game, player) {
 
 module.exports = {
   deployToConflict,
+  retreatTroops,
   checkDistractionTrigger,
 }

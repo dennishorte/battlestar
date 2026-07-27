@@ -14,11 +14,11 @@ describe('Chani', () => {
   }
 
   describe('Fedaykin Maneuver — retreat', () => {
-    test('retreats chosen number of troops to supply', () => {
+    test('retreats chosen number of troops to garrison', () => {
       const game = t.fixture()
       t.setBoard(game, {
         leaders: { dennis: leader },
-        dennis: { hand: ['Signet Ring'] },
+        dennis: { hand: ['Signet Ring'], troopsInGarrison: 0 },
         conflict: { deployedTroops: { dennis: 3 } },
       })
       game.run()
@@ -27,7 +27,10 @@ describe('Chani', () => {
       // No 2+ Fremen influence → no top-level choice; goes straight to count
       t.choose(game, '2 troops')
 
+      const dennis = game.players.byName('dennis')
+      // Arrakeen recruits +1 to garrison; Fedaykin retreats 2 more there.
       expect(game.state.conflict.deployedTroops.dennis).toBe(1)
+      expect(dennis.troopsInGarrison).toBe(3)
     })
 
     test('pass retreats 0 troops', () => {

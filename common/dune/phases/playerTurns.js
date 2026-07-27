@@ -829,10 +829,8 @@ function deployUnits(game, player) {
           })
           const targetId = typeof targetChoice === 'object' ? targetChoice.id : targetChoice
           if (targetId !== 'pass' && targetChoice !== 'Pass') {
-            const targetName = targetId
-            game.state.conflict.deployedTroops[targetName]--
-            const target = game.players.byName(targetName)
-            target.incrementCounter('troopsInSupply', 1, { silent: true })
+            const target = game.players.byName(targetId)
+            deploy.retreatTroops(game, target, 1)
             game.log.add({
               template: '{player} forces {target} to retreat 1 troop',
               args: { player, target },
@@ -1408,8 +1406,7 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
           retreatCount = maxRetreat
         }
         if (retreatCount > 0) {
-          game.state.conflict.deployedTroops[player.name] -= retreatCount
-          player.incrementCounter('troopsInSupply', retreatCount, { silent: true })
+          deploy.retreatTroops(game, player, retreatCount)
           game.log.add({
             template: '{player} retreats {count} troop(s)',
             args: { player, count: retreatCount },
@@ -1558,8 +1555,7 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
         const target = game.actions.choosePlayer(player, opponents, {
           title: 'Choose opponent to force retreat',
         })
-        game.state.conflict.deployedTroops[target.name]--
-        target.incrementCounter('troopsInSupply', 1, { silent: true })
+        deploy.retreatTroops(game, target, 1)
         game.log.add({
           template: '{player} forces {target} to retreat 1 troop',
           args: { player, target },
