@@ -56,7 +56,7 @@ describe("find-weakness", () => {
     expect(total).toBe(2)
   })
 
-  test('combat: with spy on the board, recalls spy and grants +5 swords total', () => {
+  test('combat: recalling spy grants +5 swords total', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: {
@@ -75,8 +75,14 @@ describe("find-weakness", () => {
     driveToCombatIntrigue(game)
     t.choose(game, 'Find Weakness')
 
-    // recallSpy prompts to choose which post to recall from when there's
-    // exactly one, the engine auto-resolves; otherwise drive past it.
+    expect(game.waiting.selectors[0]?.title).toBe('Find Weakness')
+    expect(t.currentChoices(game)).toEqual(expect.arrayContaining([
+      'Pass',
+      'Recall 1 Spy for +3 Swords',
+    ]))
+    t.choose(game, 'Recall 1 Spy for +3 Swords')
+
+    // recallSpy auto-resolves with a single spy on the board.
     let safety = 10
     while (game.waiting && safety-- > 0) {
       const title = game.waiting.selectors[0]?.title || ''
@@ -96,5 +102,36 @@ describe("find-weakness", () => {
     const dennis = game.players.byName('dennis')
     expect(dennis.spiesInSupply).toBe(1)
     expect((game.state.spyPosts.A || []).includes('dennis')).toBe(false)
+  })
+
+  test('combat: declining recall keeps spy and grants only +2 swords', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        troopsInGarrison: 5,
+        intrigue: ['Find Weakness'],
+        spiesInSupply: 0,
+      },
+      conflict: {
+        deployedTroops: { dennis: 2 },
+      },
+      conflictCard: { id: 'conflict-trade-dispute' },
+      spyPosts: { A: ['dennis'] },
+    })
+    game.run()
+
+    driveToCombatIntrigue(game)
+    t.choose(game, 'Find Weakness')
+    t.choose(game, 'Pass')
+
+    expect(game.waiting.selectors[0]?.title).toBe('Choose a Contract to take')
+
+    const breakdown = game.state.conflict.strengthBreakdown.dennis || []
+    const total = breakdown.filter(b => b.label.startsWith('Find Weakness')).reduce((s, b) => s + b.amount, 0)
+    expect(total).toBe(2)
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.spiesInSupply).toBe(0)
+    expect((game.state.spyPosts.A || []).includes('dennis')).toBe(true)
   })
 })
