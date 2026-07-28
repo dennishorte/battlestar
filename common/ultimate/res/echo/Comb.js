@@ -16,6 +16,10 @@ module.exports = {
       )
       const colorPick = game.actions.choose(player, colorOptions, { title: 'Choose a Color' })[0]
       const color = (colorPick && typeof colorPick === 'object') ? colorPick.id : colorPick
+      game.log.add({
+        template: '{player} chooses {color}',
+        args: { player, color },
+      })
       const cards = [
         game.actions.drawAndReveal(player, game.getEffectAge(self, 1)),
         game.actions.drawAndReveal(player, game.getEffectAge(self, 1)),
