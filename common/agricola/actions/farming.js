@@ -1,5 +1,4 @@
 const { AgricolaActionManager } = require('../AgricolaActionManager.js')
-const res = require('../res/index.js')
 
 AgricolaActionManager.prototype.plowField = function(player, options = {}) {
   const validSpaces = options.zigzagPattern
@@ -119,13 +118,6 @@ AgricolaActionManager.prototype._getZigzagPlowSpaces = function(player) {
   return validSpaces
 }
 
-function _getSowingAmount(cropType) {
-  if (cropType === 'grain' || cropType === 'wood') {
-    return res.constants.sowingGrain
-  }
-  return res.constants.sowingVegetables
-}
-
 // Helper: handle one sow iteration (build selector, parse response, execute sow, log)
 // Returns { cropType, row, col } for regular fields, { cropType } for virtual fields,
 // or false if "Done Sowing" was selected.
@@ -235,7 +227,7 @@ AgricolaActionManager.prototype._sowOneField = function(player, options) {
     }
 
     player.sowField(row, col, cropType)
-    const amount = _getSowingAmount(cropType)
+    const amount = player.getSpace(row, col).cropCount
     this.log.add({
       template: `{player} sows {crop} at ({row},{col}) - {amount} total${logSuffix}`,
       args: { player, crop: cropType, row, col, amount, ...logCardArg },
@@ -256,7 +248,7 @@ AgricolaActionManager.prototype._sowOneField = function(player, options) {
     }
 
     player.sowVirtualField(fieldId, cropType)
-    const amount = _getSowingAmount(cropType)
+    const amount = virtualField.cropCount
     this.log.add({
       template: `{player} sows {crop} in {label} - {amount} total${logSuffix}`,
       args: { player, crop: cropType, label: virtualField.label, amount, ...logCardArg },
@@ -282,7 +274,7 @@ AgricolaActionManager.prototype._sowOneField = function(player, options) {
       const col = parseInt(coordMatch[2])
 
       player.sowField(row, col, cropType)
-      const amount = _getSowingAmount(cropType)
+      const amount = player.getSpace(row, col).cropCount
       this.log.add({
         template: `{player} sows {crop} at ({row},{col}) - {amount} total${logSuffix}`,
         args: { player, crop: cropType, row, col, amount, ...logCardArg },
@@ -297,7 +289,7 @@ AgricolaActionManager.prototype._sowOneField = function(player, options) {
         const vf = emptyVirtualFields.find(f => f.label === label)
         if (vf) {
           player.sowVirtualField(vf.id, cropType)
-          const amount = _getSowingAmount(cropType)
+          const amount = vf.cropCount
           this.log.add({
             template: `{player} sows {crop} in {label} - {amount} total${logSuffix}`,
             args: { player, crop: cropType, label: vf.label, amount, ...logCardArg },

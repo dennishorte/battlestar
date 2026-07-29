@@ -57,5 +57,11 @@ describe('Skimmer Plow', () => {
         },
       },
     })
+
+    const sowLogs = game.log.getLog().filter(
+      e => e.template === '{player} sows {crop} at ({row},{col}) - {amount} total'
+    )
+    expect(sowLogs).toHaveLength(1)
+    expect(sowLogs[0].args.amount).toEqual({ value: 2 })
   })
 })
