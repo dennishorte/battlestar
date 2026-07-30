@@ -77,6 +77,8 @@ function playerTurnsPhase(game) {
         unitsDeployedThisTurn: 0,
         distractionArmed: false,
         distractionFired: false,
+        diversionArmed: false,
+        diversionFired: false,
       }
 
       // Plot Intrigue may only be played at the start or end of the player's
@@ -1335,8 +1337,7 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
         break
       }
       const count = effect.amount || 1
-      game.state.conflict.deployedSandworms[player.name] =
-        (game.state.conflict.deployedSandworms[player.name] || 0) + count
+      deploy.deploySandworms(game, player, count)
       game.log.add({
         template: '{player} summons {count} Sandworm(s)',
         args: { player, count },

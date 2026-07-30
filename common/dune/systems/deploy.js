@@ -2,6 +2,20 @@
 
 const spies = require('./spies.js')
 
+/**
+ * Troops and sandworms are both units. Any deploy-to-Conflict path that should
+ * count toward "deploy N+ units this turn" plot triggers must go through here.
+ */
+function recordUnitsDeployed(game, player, count) {
+  if (!game.state.turnTracking || count <= 0) {
+    return
+  }
+  game.state.turnTracking.unitsDeployedThisTurn =
+    (game.state.turnTracking.unitsDeployedThisTurn || 0) + count
+  checkDistractionTrigger(game, player)
+  checkDiversionTrigger(game, player)
+}
+
 function deployToConflict(game, player, count) {
   if (count <= 0) {
     return
@@ -9,12 +23,22 @@ function deployToConflict(game, player, count) {
 
   const conflict = game.state.conflict
   conflict.deployedTroops[player.name] = (conflict.deployedTroops[player.name] || 0) + count
+  recordUnitsDeployed(game, player, count)
+}
 
-  if (game.state.turnTracking) {
-    game.state.turnTracking.unitsDeployedThisTurn =
-      (game.state.turnTracking.unitsDeployedThisTurn || 0) + count
-    checkDistractionTrigger(game, player)
+/**
+ * Summon/deploy sandworms directly to the Conflict (never garrison).
+ * Counts toward unitsDeployedThisTurn — sandworms are units.
+ */
+function deploySandworms(game, player, count) {
+  if (count <= 0) {
+    return
   }
+
+  const conflict = game.state.conflict
+  conflict.deployedSandworms[player.name] =
+    (conflict.deployedSandworms[player.name] || 0) + count
+  recordUnitsDeployed(game, player, count)
 }
 
 /**
@@ -177,11 +201,31 @@ function checkDistractionTrigger(game, player) {
   spies.placeSpy(game, player, { allowOccupied: true })
 }
 
+function checkDiversionTrigger(game, player) {
+  const tt = game.state.turnTracking
+  if (!tt?.diversionArmed || tt.diversionFired) {
+    return
+  }
+  if ((tt.unitsDeployedThisTurn || 0) < 4) {
+    return
+  }
+
+  tt.diversionFired = true
+  // Rise of Ix Freighter track not yet implemented
+  game.log.add({
+    template: '{player} triggers Diversion — Freighter not available (expansion)',
+    args: { player },
+    event: 'memo',
+  })
+}
+
 module.exports = {
   deployToConflict,
+  deploySandworms,
   deployFromGarrison,
   recruitTroops,
   retreatTroops,
   loseTroops,
   checkDistractionTrigger,
+  checkDiversionTrigger,
 }

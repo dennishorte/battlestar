@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../../systems/deploy.js')
+
 module.exports = {
   id: "unexpected-allies",
   name: "Unexpected Allies",
@@ -31,8 +33,7 @@ module.exports = {
       if (chId !== 'pass' && choice !== 'Pass') {
         player.decrementCounter('water', 2)
         game.state.shieldWall = false
-        game.state.conflict.deployedSandworms[player.name] =
-          (game.state.conflict.deployedSandworms[player.name] || 0) + 1
+        deploy.deploySandworms(game, player, 1)
         game.log.add({ template: '{player}: Blows Shield Wall, deploys Sandworm', args: { player } })
       }
     }

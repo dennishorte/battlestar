@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../../../systems/deploy.js')
+
 module.exports = {
   id: "desert-power",
   name: "Desert Power",
@@ -46,8 +48,7 @@ module.exports = {
     }
     else {
       player.decrementCounter('water', 1)
-      game.state.conflict.deployedSandworms[player.name] =
-        (game.state.conflict.deployedSandworms[player.name] || 0) + 1
+      deploy.deploySandworms(game, player, 1)
       game.log.add({ template: '{player}: deploys 1 Sandworm', args: { player } })
     }
   },

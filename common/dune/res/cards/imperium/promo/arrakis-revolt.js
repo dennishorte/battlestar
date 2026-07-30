@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../../../systems/deploy.js')
+
 module.exports = {
   id: "arrakis-revolt",
   name: "Arrakis Revolt",
@@ -45,8 +47,7 @@ module.exports = {
         player.decrementCounter('spice', 2)
         game.state.shieldWall = false
         game.log.add({ template: '{player} destroys the Shield Wall!', args: { player } })
-        game.state.conflict.deployedSandworms[player.name] =
-          (game.state.conflict.deployedSandworms[player.name] || 0) + 1
+        deploy.deploySandworms(game, player, 1)
         game.log.add({ template: '{player} deploys a Sandworm', args: { player } })
       }
     }
