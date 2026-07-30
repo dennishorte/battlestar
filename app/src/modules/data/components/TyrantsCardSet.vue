@@ -15,6 +15,8 @@
 import { tyrants } from 'battlestar-common'
 import GameCard from '@/modules/games/tyrants/components/GameCard.vue'
 
+const cardData = tyrants.res.cards.factory(null)
+
 export default {
   name: 'TyrantsCardSet',
 
@@ -31,7 +33,7 @@ export default {
 
   computed: {
     cards() {
-      return tyrants.res.cards.byExpansion[this.expansion]
+      return cardData.byExpansion[this.expansion] || []
     },
   },
 }
