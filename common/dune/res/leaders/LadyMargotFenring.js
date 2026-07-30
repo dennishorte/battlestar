@@ -22,8 +22,8 @@ module.exports = {
     }
     player.incrementCounter('spice', 2, { silent: true })
     game.log.add({
-      template: '{player}: Loyalty — +2 Spice',
-      args: { player },
+      template: '{player}: Loyalty — +{amount} {resource}',
+      args: { player, amount: 2, resource: 'spice' },
     })
   },
 

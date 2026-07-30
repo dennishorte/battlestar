@@ -37,7 +37,10 @@ module.exports = {
   agentEffect(game, player, card) {
     // +1 Water AND If you have the Fremen Alliance: Return this card from play to hand.
     player.incrementCounter('water', 1, { silent: true })
-    game.log.add({ template: '{player} gains 1 Water', args: { player } })
+    game.log.add({
+      template: '{player} gains {amount} {resource}',
+      args: { player, amount: 1, resource: 'water' },
+    })
     if (game.state.alliances.fremen === player.name) {
       const handZone = game.zones.byId(`${player.name}.hand`)
       card.moveTo(handZone)

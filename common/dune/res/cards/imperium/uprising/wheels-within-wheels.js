@@ -34,11 +34,17 @@ module.exports = {
     // With 2 Emperor Influence: +2 Solari. With 2 Guild Influence: +1 Spice.
     if (player.getInfluence('emperor') >= 2) {
       player.incrementCounter('solari', 2, { silent: true })
-      game.log.add({ template: '{player}: +2 Solari (Emperor Influence)', args: { player } })
+      game.log.add({
+        template: '{player}: +{amount} {resource} (Emperor Influence)',
+        args: { player, amount: 2, resource: 'solari' },
+      })
     }
     if (player.getInfluence('guild') >= 2) {
       player.incrementCounter('spice', 1, { silent: true })
-      game.log.add({ template: '{player}: +1 Spice (Guild Influence)', args: { player } })
+      game.log.add({
+        template: '{player}: +{amount} {resource} (Guild Influence)',
+        args: { player, amount: 1, resource: 'spice' },
+      })
     }
   },
 

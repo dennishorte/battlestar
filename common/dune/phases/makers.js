@@ -13,8 +13,10 @@ function makersPhase(game) {
     if ((game.state.boardSpaces[spaceId] || []).length === 0) {
       game.state.bonusSpice[spaceId] = (game.state.bonusSpice[spaceId] || 0) + 1
       game.log.add({
-        template: '+1 bonus Spice on {boardSpace} (now {total})',
+        template: '+{amount} bonus {resource} on {boardSpace} (now {total})',
         args: {
+          amount: 1,
+          resource: 'spice',
           boardSpace: spaceId,
           total: game.state.bonusSpice[spaceId],
         },

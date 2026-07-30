@@ -131,7 +131,10 @@ function applyFactionBonus(game, player, faction) {
     case 'guild':
       // +3 Solari
       player.incrementCounter('solari', 3, { silent: true })
-      game.log.add({ template: '{player} gains 3 Solari', args: { player } })
+      game.log.add({
+        template: '{player} gains {amount} {resource}',
+        args: { player, amount: 3, resource: 'solari' },
+      })
       break
     case 'bene-gesserit': {
       // +1 Intrigue card
@@ -142,7 +145,10 @@ function applyFactionBonus(game, player, faction) {
     case 'fremen':
       // +1 Water
       player.incrementCounter('water', 1, { silent: true })
-      game.log.add({ template: '{player} gains 1 Water', args: { player } })
+      game.log.add({
+        template: '{player} gains {amount} {resource}',
+        args: { player, amount: 1, resource: 'water' },
+      })
       break
   }
 }

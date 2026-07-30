@@ -55,7 +55,10 @@ module.exports = {
             deckEngine.trashCard(game, card)
             deckEngine.drawIntrigueCard(game, player, 1)
             player.incrementCounter('spice', 2, { silent: true })
-            game.log.add({ template: '{player}: +1 Intrigue, +2 Spice', args: { player } })
+            game.log.add({
+              template: '{player}: +1 Intrigue, +{amount} {resource}',
+              args: { player, amount: 2, resource: 'spice' },
+            })
           }
         }
       }

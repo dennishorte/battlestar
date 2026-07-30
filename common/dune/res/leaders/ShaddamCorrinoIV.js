@@ -57,8 +57,8 @@ module.exports = {
       player.incrementCounter('solari', 1, { silent: true })
       player.incrementCounter('troopsInGarrison', 1, { silent: true })
       game.log.add({
-        template: '{player}: Emperor — +1 Solari, +1 Troop (units cannot deploy this turn)',
-        args: { player },
+        template: '{player}: Emperor — +{amount} {resource}, +1 Troop (units cannot deploy this turn)',
+        args: { player, amount: 1, resource: 'solari' },
       })
     }
     else {
@@ -70,8 +70,8 @@ module.exports = {
       const faction = typeof factionChoice === 'object' ? factionChoice.id : factionChoice
       factions.gainInfluence(game, player, faction)
       game.log.add({
-        template: '{player}: Emperor — pays 3 Solari, +1 Influence with {faction} (units cannot deploy this turn)',
-        args: { player, faction },
+        template: '{player}: Emperor — pays {amount} {resource}, +1 Influence with {faction} (units cannot deploy this turn)',
+        args: { player, faction, amount: 3, resource: 'solari' },
       })
     }
   },

@@ -45,7 +45,10 @@ module.exports = {
     else {
       player.decrementCounter('water', 1, { silent: true })
       deckEngine.drawCards(game, player, 2)
-      game.log.add({ template: '{player}: Fedaykin Maneuver — trades 1 Water for 2 draws', args: { player } })
+      game.log.add({
+        template: '{player}: Fedaykin Maneuver — trades {amount} {resource} for 2 draws',
+        args: { player, amount: 1, resource: 'water' },
+      })
     }
   },
 }

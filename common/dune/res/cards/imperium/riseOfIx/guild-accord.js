@@ -43,10 +43,22 @@ module.exports = {
     player.incrementCounter('water', 1, { silent: true })
     if (game.state.alliances.guild === player.name) {
       player.incrementCounter('spice', 3, { silent: true })
-      game.log.add({ template: '{player}: +1 Water, +3 Spice (Guild Alliance)', args: { player } })
+      game.log.add({
+        template: '{player}: +{amount} {resource}, +{amount2} {resource2} (Guild Alliance)',
+        args: {
+          player,
+          amount: 1,
+          resource: 'water',
+          amount2: 3,
+          resource2: 'spice',
+        },
+      })
     }
     else {
-      game.log.add({ template: '{player}: +1 Water', args: { player } })
+      game.log.add({
+        template: '{player}: +{amount} {resource}',
+        args: { player, amount: 1, resource: 'water' },
+      })
     }
   },
 

@@ -14,8 +14,14 @@ module.exports = {
     player.incrementCounter('spice', 1, { silent: true })
     player.incrementCounter('solari', 1, { silent: true })
     game.log.add({
-      template: '{player} gains 1 Spice and 1 Solari (Arrakis Fiefdom)',
-      args: { player },
+      template: '{player} gains {amount} {resource} and {amount2} {resource2} (Arrakis Fiefdom)',
+      args: {
+        player,
+        amount: 1,
+        resource: 'spice',
+        amount2: 1,
+        resource2: 'solari',
+      },
     })
   },
 

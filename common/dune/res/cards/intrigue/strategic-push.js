@@ -28,7 +28,10 @@ module.exports = {
     if (game.state.turnTracking) {
       game.state.turnTracking.strategicPush = true
     }
-    game.log.add({ template: '{player}: +2 Swords (if win: +2 Solari)', args: { player } })
+    game.log.add({
+      template: '{player}: +2 Swords (if win: +{amount} {resource})',
+      args: { player, amount: 2, resource: 'solari' },
+    })
   },
 
 }

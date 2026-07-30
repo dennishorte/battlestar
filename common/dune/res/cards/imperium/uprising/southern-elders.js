@@ -37,7 +37,10 @@ module.exports = {
 
   revealEffect(game, player, card) {
     player.incrementCounter('water', 1, { silent: true })
-    game.log.add({ template: '{player}: +1 Water', args: { player } })
+    game.log.add({
+      template: '{player}: +{amount} {resource}',
+      args: { player, amount: 1, resource: 'water' },
+    })
     if (constants.hasOtherFactionAffiliatedCardInPlay(game, player, card, 'fremen')) {
       player.incrementCounter('persuasion', 2, { silent: true })
       game.log.add({ template: '{player}: Fremen Bond — +2 Persuasion', args: { player } })

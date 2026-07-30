@@ -946,8 +946,8 @@ function resolveBoardSpaceEffects(game, player, space) {
     if (bonus > 0) {
       player.incrementCounter('spice', bonus, { silent: true })
       game.log.add({
-        template: '{player} collects {amount} bonus Spice',
-        args: { player, amount: bonus },
+        template: '{player} collects {amount} bonus {resource}',
+        args: { player, amount: bonus, resource: 'spice' },
       })
       game.state.bonusSpice[space.id] = 0
       if (game.state.turnTracking) {
@@ -1018,8 +1018,8 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
       if (total > 0) {
         player.incrementCounter('spice', total, { silent: true })
         game.log.add({
-          template: '{player} harvests {total} Spice',
-          args: { player, total },
+          template: '{player} harvests {amount} {resource}',
+          args: { player, amount: total, resource: 'spice' },
         })
         if (game.state.turnTracking) {
           game.state.turnTracking.spiceGained += total

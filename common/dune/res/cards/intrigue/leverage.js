@@ -26,7 +26,10 @@ module.exports = {
       const choam = require('../../../systems/choam.js')
       choam.takeContract(game, player)
       player.incrementCounter('solari', 1, { silent: true })
-      game.log.add({ template: '{player}: +1 Contract, +1 Solari', args: { player } })
+      game.log.add({
+        template: '{player}: +1 Contract, +{amount} {resource}',
+        args: { player, amount: 1, resource: 'solari' },
+      })
     }
   },
 

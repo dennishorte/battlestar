@@ -34,8 +34,8 @@ module.exports = {
     }
     player.incrementCounter('spice', 1, { silent: true })
     game.log.add({
-      template: '{player}: Smuggle Spice — +1 Spice (spying on {space})',
-      args: { player, space: space.name },
+      template: '{player}: Smuggle Spice — +{amount} {resource} (spying on {space})',
+      args: { player, amount: 1, resource: 'spice', space: space.name },
     })
   },
 
@@ -96,8 +96,14 @@ module.exports = {
         player.decrementCounter('spice', 1, { silent: true })
         player.incrementCounter('solari', 3, { silent: true })
         game.log.add({
-          template: '{player}: Unseen Network — trades 1 Spice for 3 Solari',
-          args: { player },
+          template: '{player}: Unseen Network — trades {amount} {resource} for {amount2} {resource2}',
+          args: {
+            player,
+            amount: 1,
+            resource: 'spice',
+            amount2: 3,
+            resource2: 'solari',
+          },
         })
       }
     }
@@ -115,8 +121,8 @@ module.exports = {
         player.decrementCounter('solari', 2, { silent: true })
         deckEngine.drawIntrigueCard(game, player, 1)
         game.log.add({
-          template: '{player}: Unseen Network — trades 2 Solari for 1 Intrigue',
-          args: { player },
+          template: '{player}: Unseen Network — trades {amount} {resource} for 1 Intrigue',
+          args: { player, amount: 2, resource: 'solari' },
         })
       }
     }

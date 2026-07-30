@@ -110,7 +110,10 @@ module.exports = {
       case 'pay-solari-trash':
         if (player.solari >= 1) {
           player.decrementCounter('solari', 1, { silent: true })
-          game.log.add({ template: '{player} pays 1 Solari', args: { player } })
+          game.log.add({
+            template: '{player} pays {amount} {resource}',
+            args: { player, amount: 1, resource: 'solari' },
+          })
           resolveEffectFn(game, player, { type: 'trash-card' }, null)
         }
         break
@@ -124,7 +127,10 @@ module.exports = {
         break
       case 'spice':
         player.incrementCounter('spice', 2, { silent: true })
-        game.log.add({ template: '{player} gains 2 Spice', args: { player } })
+        game.log.add({
+          template: '{player} gains {amount} {resource}',
+          args: { player, amount: 2, resource: 'spice' },
+        })
         break
       case 'troop-spy': {
         resolveEffectFn(game, player, { type: 'troop', amount: 1 }, null)

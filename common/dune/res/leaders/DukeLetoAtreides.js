@@ -44,8 +44,8 @@ module.exports = {
     player.decrementCounter('spice', 1, { silent: true })
     factions.gainInfluence(game, player, faction)
     game.log.add({
-      template: '{player}: Prudent Diplomacy — pays 1 Spice, +1 Influence with {faction}',
-      args: { player, faction },
+      template: '{player}: Prudent Diplomacy — pays {amount} {resource}, +1 Influence with {faction}',
+      args: { player, faction, amount: 1, resource: 'spice' },
     })
   },
 

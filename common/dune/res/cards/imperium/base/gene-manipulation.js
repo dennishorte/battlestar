@@ -39,7 +39,10 @@ module.exports = {
     resolveEffect(game, player, { type: 'trash-card' }, null, card.name)
     if (constants.hasOtherFactionAffiliatedCardInPlay(game, player, card, 'bene-gesserit')) {
       player.incrementCounter('spice', 2, { silent: true })
-      game.log.add({ template: '{player}: BG synergy — +2 Spice', args: { player } })
+      game.log.add({
+        template: '{player}: BG synergy — +{amount} {resource}',
+        args: { player, amount: 2, resource: 'spice' },
+      })
     }
   },
 

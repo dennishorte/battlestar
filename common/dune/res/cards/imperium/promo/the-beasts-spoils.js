@@ -46,7 +46,10 @@ module.exports = {
           break
         case 'yellow':
           player.incrementCounter('spice', 1, { silent: true })
-          game.log.add({ template: '{player}: Yellow icon — +1 Spice', args: { player } })
+          game.log.add({
+            template: '{player}: Yellow icon — +{amount} {resource}',
+            args: { player, amount: 1, resource: 'spice' },
+          })
           break
         case 'blue':
           {

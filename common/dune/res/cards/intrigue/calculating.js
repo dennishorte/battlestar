@@ -30,7 +30,10 @@ module.exports = {
     }
     if (types > 0) {
       player.incrementCounter('solari', types, { silent: true })
-      game.log.add({ template: '{player}: +{count} Solari ({count} unit types)', args: { player, count: types } })
+      game.log.add({
+        template: '{player}: +{amount} {resource} ({count} unit types)',
+        args: { player, amount: types, resource: 'solari', count: types },
+      })
     }
   },
 

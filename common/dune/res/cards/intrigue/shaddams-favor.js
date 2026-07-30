@@ -26,7 +26,10 @@ module.exports = {
     deploy.recruitTroops(game, player, 1)
     if (player.getInfluence('emperor') >= 3) {
       player.incrementCounter('solari', 3, { silent: true })
-      game.log.add({ template: '{player}: Emperor synergy — +3 Solari', args: { player } })
+      game.log.add({
+        template: '{player}: Emperor synergy — +{amount} {resource}',
+        args: { player, amount: 3, resource: 'solari' },
+      })
     }
   },
 

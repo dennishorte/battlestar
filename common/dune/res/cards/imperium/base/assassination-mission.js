@@ -40,8 +40,8 @@ module.exports = {
     }
     player.incrementCounter('solari', 4, { silent: true })
     game.log.add({
-      template: '{player}: Assassination Mission trashed — gain 4 Solari',
-      args: { player },
+      template: '{player}: Assassination Mission trashed — gain {amount} {resource}',
+      args: { player, amount: 4, resource: 'solari' },
     })
   },
 

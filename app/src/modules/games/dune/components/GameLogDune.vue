@@ -19,6 +19,9 @@ import modalUtil from '@/util/modal.js'
 import { dune } from 'battlestar-common'
 import { cardType } from '../cardUtil.js'
 import DuneLogChip from './DuneLogChip.vue'
+import DuneResourceIcon from './DuneResourceIcon.vue'
+
+const RESOURCE_ICONS = new Set(['spice', 'solari', 'water'])
 
 const game = inject('game')
 const ui = inject('ui')
@@ -60,9 +63,6 @@ const factionLabels = {
 }
 
 const resourceLabels = {
-  spice: 'Spice',
-  solari: 'Solari',
-  water: 'Water',
   troop: 'Troop',
   troops: 'Troops',
   persuasion: 'Persuasion',
@@ -105,6 +105,9 @@ function convertArg(arg, value) {
   }
   if (arg === 'resource' || arg.startsWith('resource')) {
     const id = value.value
+    if (RESOURCE_ICONS.has(id)) {
+      return `duneresource(${id})`
+    }
     const label = resourceLabels[id] || id
     return `dunechip(resource-name resource-${id}|${label})`
   }
@@ -184,12 +187,18 @@ useGameLogProvider({
       type: 'dunechip',
       props: m => ({ chipClass: m[1], label: m[2] }),
     },
+    {
+      pattern: /duneresource\(([^()]+)\)/,
+      type: 'duneresource',
+      props: m => ({ type: m[1] }),
+    },
   ],
   tokenComponents: {
     card: CardName,
     player: PlayerName,
     loc: LocName,
     dunechip: DuneLogChip,
+    duneresource: DuneResourceIcon,
   },
 })
 </script>
@@ -364,7 +373,7 @@ useGameLogProvider({
   border-color: #2a6090;
 }
 
-/* Resource names */
+/* Resource names (non-icon resources: troops, persuasion, etc.) */
 #gamelog :deep(.resource-name) {
   display: inline-block;
   font-weight: 600;
@@ -374,22 +383,8 @@ useGameLogProvider({
   border: 1px solid #d4c8a8;
 }
 
-#gamelog :deep(.resource-spice) {
-  color: #8a5010;
-  background-color: #fdf6e8;
-  border-color: #c09040;
-}
-
-#gamelog :deep(.resource-solari) {
-  color: #6a5a20;
-  background-color: #f8f4d8;
-  border-color: #b8a840;
-}
-
-#gamelog :deep(.resource-water) {
-  color: #2a6090;
-  background-color: #eef4f8;
-  border-color: #6a9ab8;
+#gamelog :deep(.resource-icon) {
+  margin: 0 .1em;
 }
 
 /* Board space names — bordered by space icon / faction */

@@ -18,8 +18,8 @@ module.exports = {
     }
     deckEngine.drawCards(game, player, 1)
     game.log.add({
-      template: '{player}: Spice Addict — draws 1 card, harvests 1 less Spice',
-      args: { player },
+      template: '{player}: Spice Addict — draws 1 card, harvests 1 less {resource}',
+      args: { player, resource: 'spice' },
     })
     return Math.max(0, total - 1)
   },

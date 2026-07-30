@@ -32,7 +32,10 @@ module.exports = {
       if (chId !== 'pass' && choice !== 'Pass') {
         player.decrementCounter('spice', 5, { silent: true })
         player.incrementCounter('vp', 1, { silent: true, source: 'Strategic Stockpiling' })
-        game.log.add({ template: '{player}: pays 5 Spice, +1 VP', args: { player } })
+        game.log.add({
+          template: '{player}: pays {amount} {resource}, +1 VP',
+          args: { player, amount: 5, resource: 'spice' },
+        })
       }
     }
 
@@ -47,7 +50,10 @@ module.exports = {
       if (chId !== 'pass' && choice !== 'Pass') {
         player.decrementCounter('water', 3, { silent: true })
         player.incrementCounter('vp', 1, { silent: true, source: 'Strategic Stockpiling' })
-        game.log.add({ template: '{player}: pays 3 Water, +1 VP', args: { player } })
+        game.log.add({
+          template: '{player}: pays {amount} {resource}, +1 VP',
+          args: { player, amount: 3, resource: 'water' },
+        })
       }
     }
   },

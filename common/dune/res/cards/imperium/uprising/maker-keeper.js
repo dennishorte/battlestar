@@ -36,11 +36,17 @@ module.exports = {
     // With 2 BG Influence: +1 Water. With 2 Fremen Influence: +1 Spice.
     if (player.getInfluence('bene-gesserit') >= 2) {
       player.incrementCounter('water', 1, { silent: true })
-      game.log.add({ template: '{player}: +1 Water (BG Influence)', args: { player } })
+      game.log.add({
+        template: '{player}: +{amount} {resource} (BG Influence)',
+        args: { player, amount: 1, resource: 'water' },
+      })
     }
     if (player.getInfluence('fremen') >= 2) {
       player.incrementCounter('spice', 1, { silent: true })
-      game.log.add({ template: '{player}: +1 Spice (Fremen Influence)', args: { player } })
+      game.log.add({
+        template: '{player}: +{amount} {resource} (Fremen Influence)',
+        args: { player, amount: 1, resource: 'spice' },
+      })
     }
   },
 

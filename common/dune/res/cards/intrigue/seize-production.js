@@ -24,7 +24,10 @@ module.exports = {
     // +2 Solari OR if Sardaukar Commanders in Conflict: +2 Spice
     // Sardaukar Commanders are Bloodlines expansion — just give +2 Solari for now
     player.incrementCounter('solari', 2, { silent: true })
-    game.log.add({ template: '{player}: +2 Solari', args: { player } })
+    game.log.add({
+      template: '{player}: +{amount} {resource}',
+      args: { player, amount: 2, resource: 'solari' },
+    })
   },
 
 }

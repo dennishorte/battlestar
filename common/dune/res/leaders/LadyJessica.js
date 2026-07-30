@@ -60,8 +60,8 @@ module.exports = {
           if (chId !== 'pass' && choice !== 'Pass') {
             player.decrementCounter('water', 1, { silent: true })
             game.log.add({
-              template: '{player}: Reverend Mother — pays 1 Water, repeats {space} effects',
-              args: { player, space: space.name },
+              template: '{player}: Reverend Mother — pays {amount} {resource}, repeats {space} effects',
+              args: { player, amount: 1, resource: 'water', space: space.name },
             })
             if (game.state.turnTracking) {
               game.state.turnTracking.jessicaUsedRepeat = true
@@ -91,8 +91,13 @@ module.exports = {
           player.decrementCounter('troopsInSupply', 1, { silent: true })
           game.state.jessicaMemories[player.name]++
           game.log.add({
-            template: '{player}: Spice Agony — pays 1 Spice, draws Intrigue, troop becomes a Memory ({count} total)',
-            args: { player, count: game.state.jessicaMemories[player.name] },
+            template: '{player}: Spice Agony — pays {amount} {resource}, draws Intrigue, troop becomes a Memory ({count} total)',
+            args: {
+              player,
+              amount: 1,
+              resource: 'spice',
+              count: game.state.jessicaMemories[player.name],
+            },
           })
         }
       }
@@ -102,8 +107,14 @@ module.exports = {
         player.decrementCounter('spice', 1, { silent: true })
         player.incrementCounter('water', 1, { silent: true })
         game.log.add({
-          template: '{player}: Water of Life — pays 1 Spice, gains 1 Water',
-          args: { player },
+          template: '{player}: Water of Life — pays {amount} {resource}, gains {amount2} {resource2}',
+          args: {
+            player,
+            amount: 1,
+            resource: 'spice',
+            amount2: 1,
+            resource2: 'water',
+          },
         })
       }
     }

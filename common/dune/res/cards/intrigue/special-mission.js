@@ -40,7 +40,10 @@ module.exports = {
       spies.recallSpy(game, player)
       game.state.shieldWall = false
       player.incrementCounter('spice', 2, { silent: true })
-      game.log.add({ template: '{player}: Blows Shield Wall, +2 Spice', args: { player } })
+      game.log.add({
+        template: '{player}: Blows Shield Wall, +{amount} {resource}',
+        args: { player, amount: 2, resource: 'spice' },
+      })
     }
   },
 

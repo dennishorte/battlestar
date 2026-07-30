@@ -34,15 +34,15 @@ module.exports = {
   resolveSignetRing(game, player, _resolveEffectFn) {
     player.incrementCounter('solari', 1, { silent: true })
     game.log.add({
-      template: '{player}: Fill Coffers — +1 Solari',
-      args: { player },
+      template: '{player}: Fill Coffers — +{amount} {resource}',
+      args: { player, amount: 1, resource: 'solari' },
     })
     const hasAlliance = Object.values(game.state.alliances).includes(player.name)
     if (hasAlliance) {
       player.incrementCounter('spice', 1, { silent: true })
       game.log.add({
-        template: '{player}: Fill Coffers — +1 Spice (Alliance)',
-        args: { player },
+        template: '{player}: Fill Coffers — +{amount} {resource} (Alliance)',
+        args: { player, amount: 1, resource: 'spice' },
       })
     }
   },

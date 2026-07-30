@@ -13,8 +13,8 @@ module.exports = {
   onAssign(game, player) {
     player.setCounter('water', 0, { silent: true })
     game.log.add({
-      template: '{player} starts with no Water (Smuggling Operation)',
-      args: { player },
+      template: '{player} starts with no {resource} (Smuggling Operation)',
+      args: { player, resource: 'water' },
     })
   },
 
@@ -22,8 +22,8 @@ module.exports = {
     if (amount > 0) {
       player.incrementCounter('solari', 1, { silent: true })
       game.log.add({
-        template: '{player}: Smuggling Operation — +1 bonus Solari',
-        args: { player },
+        template: '{player}: Smuggling Operation — +{amount} bonus {resource}',
+        args: { player, amount: 1, resource: 'solari' },
       })
     }
   },
@@ -54,8 +54,15 @@ module.exports = {
     player.incrementCounter('troopsInSupply', 1, { silent: true })
     player.incrementCounter('spice', 1, { silent: true })
     game.log.add({
-      template: '{player}: Final Delivery — pays 7 Solari, +1 Influence ({faction}), +1 Troop, +1 Spice',
-      args: { player, faction },
+      template: '{player}: Final Delivery — pays {amount} {resource}, +1 Influence ({faction}), +1 Troop, +{amount2} {resource2}',
+      args: {
+        player,
+        faction,
+        amount: 7,
+        resource: 'solari',
+        amount2: 1,
+        resource2: 'spice',
+      },
     })
   },
 }

@@ -41,8 +41,8 @@ module.exports = {
     }
     player.incrementCounter('solari', 3, { silent: true })
     game.log.add({
-      template: '{player}: Corrupt Bureaucrat discarded — +3 Solari',
-      args: { player },
+      template: '{player}: Corrupt Bureaucrat discarded — +{amount} {resource}',
+      args: { player, amount: 3, resource: 'solari' },
     })
   },
 

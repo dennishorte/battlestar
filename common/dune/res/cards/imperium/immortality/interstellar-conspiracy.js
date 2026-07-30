@@ -35,7 +35,10 @@ module.exports = {
   agentEffect(game, player) {
     // +1 Spice (grafted conditional is expansion — skip)
     player.incrementCounter('spice', 1, { silent: true })
-    game.log.add({ template: '{player} gains 1 Spice', args: { player } })
+    game.log.add({
+      template: '{player} gains {amount} {resource}',
+      args: { player, amount: 1, resource: 'spice' },
+    })
   },
 
 }

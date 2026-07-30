@@ -27,7 +27,10 @@ module.exports = {
     if (deployed > 0) {
       deploy.loseTroops(game, player, 1, { from: 'conflict', silent: true })
       player.incrementCounter('spice', 1, { silent: true })
-      game.log.add({ template: '{player}: Loses 1 troop, +1 Spice', args: { player } })
+      game.log.add({
+        template: '{player}: Loses 1 troop, +{amount} {resource}',
+        args: { player, amount: 1, resource: 'spice' },
+      })
     }
   },
 

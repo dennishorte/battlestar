@@ -31,7 +31,10 @@ module.exports = {
       const oppIntrigue = game.zones.byId(`${opponent.name}.intrigue`)
       card.moveTo(oppIntrigue)
       player.incrementCounter('spice', 1, { silent: true })
-      game.log.add({ template: '{player}: Gives Intrigue to {opponent}, +1 Spice', args: { player, opponent } })
+      game.log.add({
+        template: '{player}: Gives Intrigue to {opponent}, +{amount} {resource}',
+        args: { player, opponent, amount: 1, resource: 'spice' },
+      })
     }
   },
 

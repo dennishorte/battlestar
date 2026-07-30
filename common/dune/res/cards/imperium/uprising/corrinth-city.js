@@ -71,7 +71,10 @@ module.exports = {
     const chId = typeof choice === 'object' ? choice.id : choice
     if (chId === 'solari' || choice === '+5 Solari') {
       player.incrementCounter('solari', 5, { silent: true })
-      game.log.add({ template: '{player} gains 5 Solari', args: { player } })
+      game.log.add({
+        template: '{player} gains {amount} {resource}',
+        args: { player, amount: 5, resource: 'solari' },
+      })
     }
     else if (chId === 'council' || choice === 'Pay 5 Solari for High Council seat') {
       player.decrementCounter('solari', 5)

@@ -34,7 +34,10 @@ module.exports = {
     if (tsmfCount >= 2) {
       player.incrementCounter('vp', 1, { silent: true, source: 'Secure Spice Trade (intrigue)' })
       player.incrementCounter('spice', 2, { silent: true })
-      game.log.add({ template: '{player}: +1 VP, +2 Spice (2+ TSMF)', args: { player } })
+      game.log.add({
+        template: '{player}: +1 VP, +{amount} {resource} (2+ TSMF)',
+        args: { player, amount: 2, resource: 'spice' },
+      })
     }
   },
 

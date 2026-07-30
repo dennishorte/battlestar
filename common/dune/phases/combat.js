@@ -660,13 +660,19 @@ function resolveWinnerBonuses(game, winner) {
   // To the Victor: +3 Spice
   if (game.state.turnTracking?.toTheVictor) {
     winner.incrementCounter('spice', 3, { silent: true })
-    game.log.add({ template: '{player}: To the Victor — +3 Spice', args: { player: winner } })
+    game.log.add({
+      template: '{player}: To the Victor — +{amount} {resource}',
+      args: { player: winner, amount: 3, resource: 'spice' },
+    })
   }
 
   // Strategic Push: +2 Solari
   if (game.state.turnTracking?.strategicPush) {
     winner.incrementCounter('solari', 2, { silent: true })
-    game.log.add({ template: '{player}: Strategic Push — +2 Solari', args: { player: winner } })
+    game.log.add({
+      template: '{player}: Strategic Push — +{amount} {resource}',
+      args: { player: winner, amount: 2, resource: 'solari' },
+    })
   }
 
   // Pivotal Gambit: bonus first place influence

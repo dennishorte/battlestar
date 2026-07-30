@@ -44,8 +44,8 @@ module.exports = {
     }
     player.incrementCounter('spice', 2, { silent: true })
     game.log.add({
-      template: "{player}: Spacing Guild's Favor discarded — +2 Spice",
-      args: { player },
+      template: "{player}: Spacing Guild's Favor discarded — +{amount} {resource}",
+      args: { player, amount: 2, resource: 'spice' },
     })
   },
 

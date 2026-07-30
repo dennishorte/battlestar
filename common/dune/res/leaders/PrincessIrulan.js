@@ -78,8 +78,8 @@ module.exports = {
     if (cost >= 1) {
       player.incrementCounter('spice', 2, { silent: true })
       game.log.add({
-        template: '{player}: Chronicler\'s Insight — +2 Spice',
-        args: { player },
+        template: '{player}: Chronicler\'s Insight — +{amount} {resource}',
+        args: { player, amount: 2, resource: 'spice' },
       })
     }
   },
