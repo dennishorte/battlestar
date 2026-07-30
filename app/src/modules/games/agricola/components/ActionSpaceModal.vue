@@ -15,9 +15,12 @@
     </template>
 
     <div v-if="action" class="action-details">
-      <!-- Action Type Badge -->
-      <div class="action-badge" :class="actionTypeBadgeClass">
-        {{ actionTypeBadge }}
+      <div class="action-header-row">
+        <AgricolaActionIcon class="action-header-icon" :type="actionIconType" />
+        <!-- Action Type Badge -->
+        <div class="action-badge" :class="actionTypeBadgeClass">
+          {{ actionTypeBadge }}
+        </div>
       </div>
 
       <!-- Description -->
@@ -142,6 +145,8 @@
 <script>
 import ModalBase from '@/components/ModalBase.vue'
 import { agricola } from 'battlestar-common'
+import AgricolaActionIcon from '../icons/AgricolaActionIcon.vue'
+import { getActionIconType } from '../icons/actionIconMap'
 
 const res = agricola.res
 
@@ -176,6 +181,7 @@ export default {
 
   components: {
     ModalBase,
+    AgricolaActionIcon,
   },
 
   inject: ['actor', 'bus', 'game', 'ui'],
@@ -258,6 +264,10 @@ export default {
         return null
       }
       return Object.keys(this.action.accumulates)[0]
+    },
+
+    actionIconType() {
+      return getActionIconType(this.actionId)
     },
 
     accumulatedIcon() {
@@ -459,13 +469,23 @@ export default {
   padding: .5em;
 }
 
+.action-header-row {
+  display: flex;
+  align-items: center;
+  gap: .6em;
+  margin-bottom: .75em;
+}
+
+.action-header-icon {
+  font-size: 1.75em;
+}
+
 .action-badge {
   display: inline-block;
   padding: .25em .75em;
   border-radius: 1em;
   font-size: .85em;
   font-weight: 500;
-  margin-bottom: .75em;
 }
 
 .badge-base {

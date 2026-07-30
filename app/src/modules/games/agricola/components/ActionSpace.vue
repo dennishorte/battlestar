@@ -14,6 +14,13 @@
     @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
   >
+    <div
+      class="action-icon-region"
+      :class="`icon-${actionIconType}`"
+    >
+      <AgricolaActionIcon class="action-type-icon" :type="actionIconType" />
+    </div>
+
     <div class="action-content">
       <span class="worker" v-if="!compact && occupied" :style="workerStyle" />
       <span class="blocked-icon" v-if="!compact && isBlocked" title="Blocked by linked space">⛔</span>
@@ -41,6 +48,8 @@
 
 <script>
 import { agricola } from 'battlestar-common'
+import AgricolaActionIcon from '../icons/AgricolaActionIcon.vue'
+import { getActionIconType } from '../icons/actionIconMap'
 
 const res = agricola.res
 
@@ -59,6 +68,10 @@ const RESOURCE_ICONS = {
 
 export default {
   name: 'ActionSpace',
+
+  components: {
+    AgricolaActionIcon,
+  },
 
   inject: ['actor', 'bus', 'game', 'ui'],
 
@@ -171,6 +184,10 @@ export default {
       return this.actionState.accumulated || 0
     },
 
+    actionIconType() {
+      return getActionIconType(this.actionId)
+    },
+
     accumulatedIcon() {
       return RESOURCE_ICONS[this.accumulatedResource] || '📦'
     },
@@ -255,15 +272,131 @@ export default {
 <style scoped>
 .action-space {
   display: flex;
-  flex-direction: column;
-  padding: .3em .4em;
+  align-items: stretch;
+  padding: 0;
   background-color: #fff;
   border: 1px solid #ddd;
-  border-radius: .25em;
+  border-radius: .3em;
   cursor: pointer;
   transition: all 0.15s ease;
   overflow: hidden;
   min-width: 0;
+}
+
+.action-icon-region {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.85em;
+  background-color: #efebe9;
+  border-right: 1px solid #d7ccc8;
+  color: #5d4037;
+}
+
+.action-icon-region :deep(.agri-action-icon) {
+  color: inherit;
+}
+
+.action-type-icon {
+  font-size: 1.05em;
+}
+
+/* Thematic icon region colors */
+.icon-forest,
+.icon-riverbank,
+.icon-reed-bank {
+  background-color: #e8f5e9;
+  border-right-color: #a5d6a7;
+  color: #2e7d32;
+}
+
+.icon-clay-pit {
+  background-color: #fbe9e7;
+  border-right-color: #ffab91;
+  color: #bf360c;
+}
+
+.icon-quarry {
+  background-color: #eceff1;
+  border-right-color: #b0bec5;
+  color: #455a64;
+}
+
+.icon-fishing {
+  background-color: #e1f5fe;
+  border-right-color: #81d4fa;
+  color: #0277bd;
+}
+
+.icon-grain-seeds,
+.icon-sow-bake,
+.icon-cultivation {
+  background-color: #fffde7;
+  border-right-color: #fff59d;
+  color: #f9a825;
+}
+
+.icon-vegetable-seeds {
+  background-color: #fff3e0;
+  border-right-color: #ffcc80;
+  color: #ef6c00;
+}
+
+.icon-sheep {
+  background-color: #f5f5f5;
+  border-right-color: #bdbdbd;
+  color: #616161;
+}
+
+.icon-boar,
+.icon-cattle,
+.icon-animal-market,
+.icon-corral {
+  background-color: #efebe9;
+  border-right-color: #bcaaa4;
+  color: #6d4c41;
+}
+
+.icon-family,
+.icon-meeting,
+.icon-laborer,
+.icon-traveling {
+  background-color: #f3e5f5;
+  border-right-color: #ce93d8;
+  color: #6a1b9a;
+}
+
+.icon-occupation {
+  background-color: #e3f2fd;
+  border-right-color: #90caf9;
+  color: #1565c0;
+}
+
+.icon-improvement,
+.icon-renovation,
+.icon-expansion,
+.icon-house,
+.icon-side-job {
+  background-color: #efebe9;
+  border-right-color: #a1887f;
+  color: #4e342e;
+}
+
+.icon-fencing,
+.icon-market,
+.icon-farm-supplies,
+.icon-building-supplies,
+.icon-card {
+  background-color: #efebe9;
+  border-right-color: #bcaaa4;
+  color: #5d4037;
+}
+
+.icon-plow {
+  background-color: #f1f8e9;
+  border-right-color: #c5e1a5;
+  color: #558b2f;
 }
 
 .action-space.clickable:hover {
@@ -321,6 +454,8 @@ export default {
   gap: .3em;
   overflow: hidden;
   min-width: 0;
+  flex: 1;
+  padding: .3em .4em;
 }
 
 .action-name {
@@ -402,6 +537,15 @@ export default {
   background-color: #efebe9;
   border: none;
   border-left: 3px solid #8d6e63;
+  border-radius: .2em;
+}
+
+.action-space.compact .action-icon-region {
+  width: 1.6em;
+  border-right-color: rgba(0, 0, 0, 0.08);
+}
+
+.action-space.compact .action-content {
   padding: .15em .4em;
 }
 
