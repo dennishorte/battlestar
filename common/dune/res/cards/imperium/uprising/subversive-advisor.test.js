@@ -43,6 +43,31 @@ describe('subversive-advisor', () => {
     expect(allZones).not.toContain('Subversive Advisor')
   })
 
+  test('agent ability: bonus goes to this turn\'s faction, not an earlier agent\'s', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      // Agent already on Emperor from an earlier turn this round.
+      boardSpaces: { 'dutiful-service': ['dennis'] },
+      // Post K connects to Heighliner / Deliver Supplies (Spacing Guild).
+      spyPosts: { K: ['dennis'] },
+      dennis: {
+        handExact: ['Subversive Advisor'],
+        influence: { emperor: 1, guild: 0 },
+        agents: 1,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Agent Turn.Subversive Advisor')
+    t.choose(game, 'No')
+    t.choose(game, 'Subversive Advisor')
+
+    const dennis = game.players.byName('dennis')
+    // Placement + card bonus both on guild; emperor must stay at the pre-existing 1.
+    expect(dennis.getInfluence('guild')).toBe(2)
+    expect(dennis.getInfluence('emperor')).toBe(1)
+  })
+
   test('agent ability: non-faction space — no extra influence, card not trashed', () => {
     const game = t.fixture()
     t.setBoard(game, {
