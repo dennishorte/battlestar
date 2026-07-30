@@ -19,6 +19,7 @@ import modalUtil from '@/util/modal.js'
 import { dune } from 'battlestar-common'
 import { cardType } from '../cardUtil.js'
 import DuneLogChip from './DuneLogChip.vue'
+import DuneFactionIcon from './DuneFactionIcon.vue'
 import DuneResourceIcon from './DuneResourceIcon.vue'
 
 const RESOURCE_ICONS = new Set(['spice', 'solari', 'water'])
@@ -55,13 +56,6 @@ const boardSpacesByName = Object.fromEntries(
   dune.res.boardSpaces.map(space => [space.name, space])
 )
 
-const factionLabels = {
-  emperor: 'Emperor',
-  guild: 'Spacing Guild',
-  'bene-gesserit': 'Bene Gesserit',
-  fremen: 'Fremen',
-}
-
 const resourceLabels = {
   troop: 'Troop',
   troops: 'Troops',
@@ -96,9 +90,7 @@ function convertArg(arg, value) {
     return `loc(${value.value})`
   }
   if (arg === 'faction' || arg.startsWith('faction')) {
-    const id = value.value
-    const label = factionLabels[id] || id
-    return `dunechip(faction-name faction-${id}|${label})`
+    return `dunefaction(${value.value})`
   }
   if (arg === 'leader' || arg.startsWith('leader')) {
     return `dunechip(leader-name|${value.value})`
@@ -192,6 +184,11 @@ useGameLogProvider({
       type: 'duneresource',
       props: m => ({ type: m[1] }),
     },
+    {
+      pattern: /dunefaction\(([^()]+)\)/,
+      type: 'dunefaction',
+      props: m => ({ faction: m[1] }),
+    },
   ],
   tokenComponents: {
     card: CardName,
@@ -199,6 +196,7 @@ useGameLogProvider({
     loc: LocName,
     dunechip: DuneLogChip,
     duneresource: DuneResourceIcon,
+    dunefaction: DuneFactionIcon,
   },
 })
 </script>
@@ -340,39 +338,6 @@ useGameLogProvider({
   color: #6a2030;
 }
 
-/* Faction names — colored by faction */
-#gamelog :deep(.faction-name) {
-  display: inline-block;
-  font-weight: 600;
-  padding: 0 .3em;
-  border-radius: .15em;
-  border: 1px solid transparent;
-}
-
-#gamelog :deep(.faction-emperor) {
-  color: #8b2020;
-  background-color: #f8ecec;
-  border-color: #c08080;
-}
-
-#gamelog :deep(.faction-guild) {
-  color: #8a5010;
-  background-color: #fef5ee;
-  border-color: #c07020;
-}
-
-#gamelog :deep(.faction-bene-gesserit) {
-  color: #5b3a8a;
-  background-color: #f3eef8;
-  border-color: #6a3d8a;
-}
-
-#gamelog :deep(.faction-fremen) {
-  color: #2a6090;
-  background-color: #eef4f8;
-  border-color: #2a6090;
-}
-
 /* Resource names (non-icon resources: troops, persuasion, etc.) */
 #gamelog :deep(.resource-name) {
   display: inline-block;
@@ -383,8 +348,10 @@ useGameLogProvider({
   border: 1px solid #d4c8a8;
 }
 
-#gamelog :deep(.resource-icon) {
+#gamelog :deep(.resource-icon),
+#gamelog :deep(.faction-icon) {
   margin: 0 .1em;
+  vertical-align: -.15em;
 }
 
 /* Board space names — bordered by space icon / faction */

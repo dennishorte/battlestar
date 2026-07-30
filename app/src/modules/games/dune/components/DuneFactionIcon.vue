@@ -2,6 +2,7 @@
   <svg :class="['faction-icon', `faction-icon-${faction}`]"
        :width="size"
        :height="size"
+       :title="label"
        viewBox="0 0 24 24">
 
     <!-- Emperor: open arc with vertical stem -->
@@ -90,6 +91,13 @@
 
 
 <script>
+const FACTION_LABELS = {
+  emperor: 'Emperor',
+  guild: 'Spacing Guild',
+  'bene-gesserit': 'Bene Gesserit',
+  fremen: 'Fremen',
+}
+
 export default {
   name: 'DuneFactionIcon',
 
@@ -101,6 +109,12 @@ export default {
     size: {
       type: [String, Number],
       default: '1em',
+    },
+  },
+
+  computed: {
+    label() {
+      return FACTION_LABELS[this.faction] || this.faction
     },
   },
 }
