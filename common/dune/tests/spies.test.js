@@ -38,6 +38,21 @@ describe('Spy System', () => {
     expect(connected.has('imperial-basin')).toBe(false)
   })
 
+  test('spy cannot infiltrate a space occupied by your own Agent', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      // Dennis already has an Agent on Arrakeen and a spy on post A
+      boardSpaces: { arrakeen: 'dennis' },
+      spyPosts: { A: ['dennis'] },
+    })
+    game.run()
+
+    t.choose(game, 'Agent Turn.Reconnaissance')
+
+    const spaceChoices = t.currentChoices(game)
+    expect(spaceChoices).not.toContain('Arrakeen')
+  })
+
   test('infiltrate allows sending agent to occupied space', () => {
     const game = t.fixture()
     t.setBoard(game, {

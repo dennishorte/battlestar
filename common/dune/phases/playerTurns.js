@@ -207,12 +207,13 @@ function agentTurn(game, player, card) {
   const space = validSpaces.find(s => s.id === spaceId)
     || validSpaces.find(s => s.name === spaceTitle)
 
-  const spaceOccupied = (game.state.boardSpaces[space.id] || []).length > 0
+  const occupants = game.state.boardSpaces[space.id] || []
+  const spaceOccupiedByOther = occupants.some(name => name !== player.name)
   const hasSpyOnPost = spies.hasSpyAt(game, player, space.id)
-  const mustInfiltrate = spaceOccupied && hasSpyOnPost
+  const mustInfiltrate = spaceOccupiedByOther && hasSpyOnPost
   // Gather Intelligence is offered after placing the Agent, before card/space
   // effects (per rules). Infiltrate consumes the spy first when both apply.
-  const mayGatherIntelligence = !spaceOccupied && hasSpyOnPost
+  const mayGatherIntelligence = !spaceOccupiedByOther && hasSpyOnPost
 
   // Play the card — top-level log entry for this agent action
   deckEngine.playCard(game, player, card)
@@ -721,7 +722,8 @@ function hasValidPlacement(game, player, card) {
  *   1. Card has a matching agent icon or faction icon for the space, OR
  *   2. Card has spyAccess and player has a spy on a post connected to the space
  * A space is blocked if occupied, UNLESS the player can Infiltrate (recall a spy
- * on a connected post to ignore the occupant).
+ * on a connected post to ignore another player's Agent). You can never send an
+ * Agent to a space you already occupy — Infiltrate does not apply to your own.
  */
 function canSendAgentTo(game, player, card, space) {
   // Check icon access — allIcons/allFactionIcons from Resourceful/Dispatch an Envoy bypass this
@@ -734,8 +736,15 @@ function canSendAgentTo(game, player, card, space) {
     return false
   }
 
+  const occupants = game.state.boardSpaces[space.id] || []
+
+  // Your own Agent always blocks — Infiltrate / ignore-occupancy only skip enemies
+  if (occupants.includes(player.name)) {
+    return false
+  }
+
   // Space occupancy check — can infiltrate if spy on connected post, leader ignores, or card ignores
-  if ((game.state.boardSpaces[space.id] || []).length > 0) {
+  if (occupants.length > 0) {
     const cardIgnores = game.state.turnTracking?.ignoreOccupancy
     if (!spies.hasSpyAt(game, player, space.id) && !leaderAbilities.ignoresOccupancy(game, player, space) && !cardIgnores) {
       return false
