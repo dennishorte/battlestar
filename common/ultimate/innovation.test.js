@@ -2038,6 +2038,34 @@ describe('Innovation', () => {
             })
           })
 
+          test('seize triggers museum check when no museums remain', () => {
+            const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+            t.setBoard(game, {
+              dennis: {
+                blue: ['Tools'],
+                hand: ['Pottery'],
+                museum: ['Museum 1', 'Holmegaard Bows'],
+              },
+              micah: {
+                museum: ['Museum 2', 'Dancing Girl', 'Museum 3', 'Ark of the Covenant'],
+              },
+              junk: ['Museum 4', 'Museum 5'],
+            })
+
+            let request = game.run()
+            request = t.choose(game, 'Meld.Pottery')
+            request = t.choose(game, 'seize.Dancing Girl')
+
+            t.testIsSecondPlayer(game)
+            t.testBoard(game, {
+              dennis: {
+                blue: ['Pottery', 'Tools'],
+                achievements: ['Museum 1'],
+              },
+              micah: {},
+            })
+          })
+
           test('cannot seize if the age does not match', () => {
             const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
             t.setBoard(game, {

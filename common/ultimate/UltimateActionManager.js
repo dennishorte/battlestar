@@ -613,6 +613,7 @@ class UltimateActionManager extends BaseActionManager {
         }
       })
       this.acted(player)
+      this.museumCheck(player)
     }
     else {
       throw new Error(`Unknown artifact action: ${chosen} (${chosen.title})`)
@@ -788,6 +789,10 @@ class UltimateActionManager extends BaseActionManager {
     museum.moveTo(this.zones.byPlayer(player, 'museum'))
     card.moveTo(this.zones.byPlayer(player, 'museum'))
 
+    this.museumCheck(player)
+  }
+
+  museumCheck(player) {
     // If there are no more available museums, do a museum check
     if (this.game.getAvailableMuseums().length === 0) {
       this.log.add({
@@ -798,9 +803,9 @@ class UltimateActionManager extends BaseActionManager {
       const museumCounts = this
         .players
         .all()
-        .map(player => ({
-          player,
-          count: this.cards.byPlayer(player, 'museum').length / 2,
+        .map(p => ({
+          player: p,
+          count: this.cards.byPlayer(p, 'museum').length / 2,
         }))
         .sort((l, r) => r.count - l.count)
 
@@ -817,7 +822,7 @@ class UltimateActionManager extends BaseActionManager {
         const cardsToReturn = this
           .players
           .all()
-          .flatMap(player => this.cards.byPlayer(player, 'museum'))
+          .flatMap(p => this.cards.byPlayer(p, 'museum'))
 
         const museumsToReturn = cardsToReturn.filter(card => card.isMuseum)
         const othersToReturn = cardsToReturn.filter(card => !card.isMuseum)
