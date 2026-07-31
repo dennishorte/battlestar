@@ -487,68 +487,74 @@ function awardReward(game, player, rewardText, rank) {
   }
 
   for (const effect of effects) {
-    // Sandworms double most rewards, but NOT control or battle icons
+    // Sandworms double most rewards, but NOT control or battle icons.
+    // Optional pay-cost rewards are offered a second time instead (see below).
     if (hasSandworms && canDoubleReward(effect)) {
       effect.amount = (effect.amount || 1) * 2
     }
 
-    if (effect.type === 'influence-choice-two') {
-      // Special: choose 2 different factions per round; sandworms double the rounds (1→2)
-      const constants = require('../res/constants.js')
-      const factions = require('../systems/factions.js')
-      const rounds = (effect.amount || 2) / 2
-      for (let r = 0; r < rounds; r++) {
-        const chosen = []
-        for (let i = 0; i < 2; i++) {
-          const options = constants.FACTIONS
-            .filter(f => !chosen.includes(f))
-            .map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
-          const [factionChoice] = game.actions.choose(player, options, {
-            title: rounds > 1
-              ? `Choose faction for Influence (round ${r + 1}, pick ${i + 1} of 2)`
-              : `Choose faction for Influence (${i + 1} of 2)`,
-          })
-          const faction = typeof factionChoice === 'object' ? factionChoice.id : factionChoice
-          chosen.push(faction)
-          factions.gainInfluence(game, player, faction)
-        }
-      }
-    }
-    else if (effect.type === 'return-spies-for-vp') {
-      // Optional: return N spies to supply for VP
-      const spies = require('../systems/spies.js')
-      const observationPosts = require('../res/observationPosts.js')
-      const playerSpyCount = observationPosts.reduce((count, post) => {
-        const occupants = game.state.spyPosts[post.id] || []
-        return count + occupants.filter(n => n === player.name).length
-      }, 0)
-
-      if (playerSpyCount >= effect.spyCount) {
-        const choices = [
-          game.actions.option({
-            id: 'return',
-            title: `Return ${effect.spyCount} Spies for +${effect.vpAmount} Victory point`,
-          }),
-          game.actions.option({ id: 'pass', title: 'Pass' }),
-        ]
-        const [choice] = game.actions.choose(player, choices, {
-          title: `Return ${effect.spyCount} Spies for +${effect.vpAmount} VP?`,
-        })
-        const chId = typeof choice === 'object' ? choice.id : choice
-        if (chId !== 'pass' && choice !== 'Pass') {
-          for (let i = 0; i < effect.spyCount; i++) {
-            spies.recallSpy(game, player)
+    // "When a reward offers the option to pay a cost to gain something, you may
+    // pay the cost a second time to gain it a second time."
+    const times = (hasSandworms && isRepeatableCostReward(effect)) ? 2 : 1
+    for (let offer = 0; offer < times; offer++) {
+      if (effect.type === 'influence-choice-two') {
+        // Special: choose 2 different factions per round; sandworms double the rounds (1→2)
+        const constants = require('../res/constants.js')
+        const factions = require('../systems/factions.js')
+        const rounds = (effect.amount || 2) / 2
+        for (let r = 0; r < rounds; r++) {
+          const chosen = []
+          for (let i = 0; i < 2; i++) {
+            const options = constants.FACTIONS
+              .filter(f => !chosen.includes(f))
+              .map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+            const [factionChoice] = game.actions.choose(player, options, {
+              title: rounds > 1
+                ? `Choose faction for Influence (round ${r + 1}, pick ${i + 1} of 2)`
+                : `Choose faction for Influence (${i + 1} of 2)`,
+            })
+            const faction = typeof factionChoice === 'object' ? factionChoice.id : factionChoice
+            chosen.push(faction)
+            factions.gainInfluence(game, player, faction)
           }
-          player.incrementCounter('vp', effect.vpAmount, { silent: true, source: sourceLabel })
-          game.log.add({
-            template: '{player} gains {amount} Victory Point(s)',
-            args: { player, amount: effect.vpAmount },
-          })
         }
       }
-    }
-    else {
-      resolveEffect(game, player, effect, null, sourceLabel)
+      else if (effect.type === 'return-spies-for-vp') {
+        // Optional: return N spies to supply for VP
+        const spies = require('../systems/spies.js')
+        const observationPosts = require('../res/observationPosts.js')
+        const playerSpyCount = observationPosts.reduce((count, post) => {
+          const occupants = game.state.spyPosts[post.id] || []
+          return count + occupants.filter(n => n === player.name).length
+        }, 0)
+
+        if (playerSpyCount >= effect.spyCount) {
+          const choices = [
+            game.actions.option({
+              id: 'return',
+              title: `Return ${effect.spyCount} Spies for +${effect.vpAmount} Victory point`,
+            }),
+            game.actions.option({ id: 'pass', title: 'Pass' }),
+          ]
+          const [choice] = game.actions.choose(player, choices, {
+            title: `Return ${effect.spyCount} Spies for +${effect.vpAmount} VP?`,
+          })
+          const chId = typeof choice === 'object' ? choice.id : choice
+          if (chId !== 'pass' && choice !== 'Pass') {
+            for (let i = 0; i < effect.spyCount; i++) {
+              spies.recallSpy(game, player)
+            }
+            player.incrementCounter('vp', effect.vpAmount, { silent: true, source: sourceLabel })
+            game.log.add({
+              template: '{player} gains {amount} Victory Point(s)',
+              args: { player, amount: effect.vpAmount },
+            })
+          }
+        }
+      }
+      else {
+        resolveEffect(game, player, effect, null, sourceLabel)
+      }
     }
   }
 
@@ -707,11 +713,29 @@ function afterCombat(game) {
 }
 
 /**
- * Check if a reward effect can be doubled by sandworms.
- * Control markers and battle icons are NOT doubled.
+ * Check if a reward effect can be doubled by sandworms via amount scaling.
+ * Control markers are NOT doubled. Optional pay-cost rewards are handled
+ * separately via isRepeatableCostReward (offered twice instead).
  */
 function canDoubleReward(effect) {
-  return effect.type !== 'control' && effect.type !== 'choice' && effect.type !== 'return-spies-for-vp'
+  return effect.type !== 'control'
+    && effect.type !== 'choice'
+    && effect.type !== 'return-spies-for-vp'
+}
+
+/**
+ * Optional rewards that cost something to claim (e.g. "Pay 4 Spice for +1 VP",
+ * "Return 2 Spies for +1 VP"). With sandworms, these are offered a second time
+ * rather than having their payout doubled for a single payment.
+ */
+function isRepeatableCostReward(effect) {
+  if (effect.type === 'return-spies-for-vp') {
+    return true
+  }
+  if (effect.type === 'choice' && effect.choices?.some(c => c.cost)) {
+    return true
+  }
+  return false
 }
 
 module.exports = { combatPhase, parseRewardText }
