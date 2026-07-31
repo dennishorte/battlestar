@@ -40,7 +40,16 @@ class UltimateZone extends BaseZone {
   }
 
   _updateCardVisibility(card) {
-    super._updateCardVisibility(card)
+    // Private zones (hand, score, forecast) are face-down to everyone except
+    // the owner. Reset visibility on move so a previously revealed card does
+    // not stay face-up after entering the zone (e.g. scored after a reveal).
+    if (this._kind === 'private') {
+      card.hide()
+      card.show(this.owner())
+    }
+    else {
+      super._updateCardVisibility(card)
+    }
 
     const dogmaInfo = this.game.state?.dogmaInfo
     if (dogmaInfo?.decisionMaker && dogmaInfo?.decisionMakerFor

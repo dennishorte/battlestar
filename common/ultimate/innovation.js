@@ -753,12 +753,14 @@ Innovation.prototype.mAdjustCardVisibility = function(card) {
   }
 
   else if (kind === 'private') {
-    util.array.pushUnique(card.visibility, zone.owner.name)
+    // Face-down to non-owners; clear any prior reveal visibility.
+    card.hide()
+    card.show(zone.owner)
 
     const dogmaInfo = this.state.dogmaInfo
     if (dogmaInfo?.decisionMaker && dogmaInfo?.decisionMakerFor
         && zone.owner.name === dogmaInfo.decisionMakerFor.name) {
-      util.array.pushUnique(card.visibility, dogmaInfo.decisionMaker.name)
+      card.show(dogmaInfo.decisionMaker)
     }
   }
 

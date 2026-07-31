@@ -24,6 +24,15 @@ describe("Television", () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Television')
     request = t.choose(game, 1)
+
+    // Score pile choices must be face-down (hidden names), not card titles.
+    const choiceTitles = request.selectors[0].choices.map(c => c.title || c)
+    expect(choiceTitles).toEqual(expect.arrayContaining([
+      '*echo-1* (micah)',
+      '*base-1* (micah)',
+    ]))
+    expect(choiceTitles).not.toEqual(expect.arrayContaining(['Umbrella', 'Tools']))
+
     request = t.choose(game, '**echo-1* (micah)')
 
     t.testIsSecondPlayer(game)
