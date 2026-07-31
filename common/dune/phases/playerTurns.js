@@ -84,7 +84,11 @@ function playerTurnsPhase(game) {
       // Plot Intrigue may only be played at the start or end of the player's
       // turn, never mid-action. Offer it here, before the player commits to
       // an Agent Turn card or to a Reveal Turn.
+      // Indent so "plays Plot" sits at the same level as agent "plays {card}"
+      // (indent 1 → visually flush under the turn; effects nest at indent 2).
+      game.log.indent()
       offerPlotIntrigue(game, player)
+      game.log.outdent()
 
       // Bindu Suspension: drew a card during plot phase; now offer to pass turn
       if (game.state.turnTracking?.binduSuspension) {

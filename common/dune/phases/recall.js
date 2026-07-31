@@ -201,6 +201,9 @@ function offerEndgameIntrigue(game, player) {
 
     const discardZone = game.zones.byId('common.intrigueDiscard')
     card.moveTo(discardZone)
+    // Indent so "plays Endgame" is an action header under End Game (indent 1
+    // → visually flush; effects nest at indent 2).
+    game.log.indent()
     game.log.add({
       template: '{player} plays {card} (Endgame)',
       args: { player, card },
@@ -211,6 +214,7 @@ function offerEndgameIntrigue(game, player) {
     if (typeof endgameEffect === 'function') {
       game.log.indent()
       endgameEffect(game, player, card)
+      game.log.outdent()
       game.log.outdent()
       continue
     }
@@ -229,6 +233,7 @@ function offerEndgameIntrigue(game, player) {
         event: 'memo',
       })
     }
+    game.log.outdent()
     game.log.outdent()
   }
 }

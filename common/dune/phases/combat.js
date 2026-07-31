@@ -100,6 +100,9 @@ function combatIntrigueRound(game, combatants) {
         if (card) {
           const discardZone = game.zones.byId('common.intrigueDiscard')
           card.moveTo(discardZone)
+          // Indent so "plays {card}" is an action header under Combat (indent 1
+          // → visually flush; effects nest at indent 2).
+          game.log.indent()
           game.log.add({
             template: '{player} plays {card}',
             args: { player, card },
@@ -109,6 +112,7 @@ function combatIntrigueRound(game, combatants) {
           const combatEffect = card.definition.combatEffect
           if (typeof combatEffect === 'function') {
             combatEffect(game, player, card, { resolveEffect })
+            game.log.outdent()
             game.log.outdent()
             consecutivePasses = 0
             currentIndex++
@@ -128,6 +132,7 @@ function combatIntrigueRound(game, combatants) {
               event: 'memo',
             })
           }
+          game.log.outdent()
           game.log.outdent()
         }
         consecutivePasses = 0

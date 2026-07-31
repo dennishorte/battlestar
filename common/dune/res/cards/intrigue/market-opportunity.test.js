@@ -32,6 +32,17 @@ describe("market-opportunity", () => {
     const dennis = game.players.byName('dennis')
     expect(dennis.solari).toBe(5)
     expect(dennis.spice).toBe(0)
+
+    // Log nesting: play header at indent 1, pay/gain effects at indent 2
+    // (matches agent-turn structure so Dune's CSS shows nested effects).
+    const log = game.log.getLog().filter(e => e.template)
+    const playIdx = log.findIndex(e => /plays \{card\} \(Plot\)/.test(e.template))
+    expect(playIdx).toBeGreaterThan(-1)
+    expect(log[playIdx].indent).toBe(1)
+    const pay = log.slice(playIdx + 1).find(e => /pays \{amount\}/.test(e.template))
+    const gain = log.slice(playIdx + 1).find(e => /gains \{amount\}/.test(e.template))
+    expect(pay?.indent).toBe(2)
+    expect(gain?.indent).toBe(2)
   })
 
   test('Pay 5 Solari -> +5 Spice', () => {
