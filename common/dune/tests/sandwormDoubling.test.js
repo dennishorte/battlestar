@@ -55,6 +55,26 @@ describe('Sandworm Reward Doubling', () => {
     expect(game.state.controlMarkers['imperial-basin']).toBe('dennis')
   })
 
+  test('sandworm skips second pay-for-VP offer when player cannot afford it', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      conflictCard: { id: 'conflict-battle-for-imperial-basin-uprising' },
+      dennis: { spice: 4, vp: 0, solari: 0 },
+      objectives: { dennis: NO_ICON_OBJ },
+      conflict: { deployedSandworms: { dennis: 1 } },
+    })
+    game.run()
+
+    // finishUntilNextRound takes the first pay; after that spice is 0 so the
+    // second sandworm offer must be skipped (no bare Pass prompt).
+    finishUntilNextRound(game)
+
+    const dennis = game.players.byName('dennis')
+    // 2 (doubled base VP) + 1 (single affordable pay) = 3
+    expect(dennis.vp).toBe(3)
+    expect(dennis.spice).toBe(0)
+  })
+
   test('without sandworms, pay-for-VP is offered only once', () => {
     const game = t.fixture()
     t.setBoard(game, {

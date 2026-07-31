@@ -1064,7 +1064,12 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
         return true
       })
 
-      if (available.length === 0) {
+      // Skip when nothing actionable remains (e.g. only Pass after costs
+      // filtered out) — don't prompt just to decline.
+      const actionable = available.filter(c =>
+        c.cost || (c.effects && c.effects.length > 0)
+      )
+      if (actionable.length === 0) {
         break
       }
 
