@@ -3,6 +3,19 @@
 const t = require('../../../testutil.js')
 const card = require('./desert-mouse.js')
 
+const CRYSKNIFE_OBJ = {
+  id: 'test-obj-crysknife',
+  name: 'Test Objective: Crysknife',
+  battleIcon: 'crysknife',
+  isFirstPlayer: false,
+}
+const DESERT_MOUSE_OBJ = {
+  id: 'test-obj-desert-mouse',
+  name: 'Test Objective: Desert Mouse',
+  battleIcon: 'desert-mouse',
+  isFirstPlayer: false,
+}
+
 function driveToEndgameIntrigue(game) {
   let safety = 80
   while (game.waiting && !game.gameOver && safety-- > 0) {
@@ -60,6 +73,7 @@ describe("desert-mouse", () => {
         wonCards: { dennis: [wonCard] },
         flippedCardIds: { dennis: [] },
       },
+      objectives: { dennis: CRYSKNIFE_OBJ },
     })
     game.run()
 
@@ -70,6 +84,29 @@ describe("desert-mouse", () => {
 
     expect(game.players.byName('dennis').vp).toBe(beforeVp + 1)
     expect(game.state.conflict.flippedCardIds.dennis).toContain('won-1')
+  })
+
+  test('endgame: flips a face-up Desert Mouse Objective for +1 VP', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        vp: 10,
+        intrigue: ['Desert Mouse'],
+      },
+      conflict: {
+        wonCards: { dennis: [] },
+        flippedCardIds: { dennis: [] },
+      },
+      objectives: { dennis: DESERT_MOUSE_OBJ },
+    })
+    game.run()
+
+    driveToEndgameIntrigue(game)
+    const beforeVp = game.players.byName('dennis').vp
+    t.choose(game, 'Desert Mouse')
+
+    expect(game.players.byName('dennis').vp).toBe(beforeVp + 1)
+    expect(game.state.conflict.flippedCardIds.dennis).toContain('test-obj-desert-mouse')
   })
 
   test('endgame: a wild battle icon is also flippable for VP', () => {
@@ -84,6 +121,7 @@ describe("desert-mouse", () => {
         wonCards: { dennis: [wonCard] },
         flippedCardIds: { dennis: [] },
       },
+      objectives: { dennis: CRYSKNIFE_OBJ },
     })
     game.run()
 
@@ -105,6 +143,7 @@ describe("desert-mouse", () => {
         wonCards: { dennis: [wonCard] },
         flippedCardIds: { dennis: [] },
       },
+      objectives: { dennis: CRYSKNIFE_OBJ },
     })
     game.run()
 

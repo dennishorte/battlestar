@@ -7,6 +7,19 @@ const SKIRMISH_CRYSKNIFE = require('../conflict/conflict-skirmish-crysknife.js')
 const SKIRMISH_DESERT_MOUSE = require('../conflict/conflict-skirmish-desert-mouse.js')
 const SKIRMISH_WILD = require('../conflict/conflict-skirmish-5.js')
 
+const DESERT_MOUSE_OBJ = {
+  id: 'test-obj-desert-mouse',
+  name: 'Test Objective: Desert Mouse',
+  battleIcon: 'desert-mouse',
+  isFirstPlayer: false,
+}
+const CRYSKNIFE_OBJ = {
+  id: 'test-obj-crysknife',
+  name: 'Test Objective: Crysknife',
+  battleIcon: 'crysknife',
+  isFirstPlayer: false,
+}
+
 function finishUntilGameOver(game, opts = {}) {
   const playIntrigue = !!opts.playIntrigue
   let safety = 300
@@ -66,6 +79,7 @@ describe("crysknife", () => {
         wonCards: { dennis: [SKIRMISH_CRYSKNIFE, SKIRMISH_DESERT_MOUSE] },
         flippedCardIds: { dennis: [] },
       },
+      objectives: { dennis: DESERT_MOUSE_OBJ },
     })
     game.run()
 
@@ -101,6 +115,47 @@ describe("crysknife", () => {
     expect(after).toBe(before + 1)
   })
 
+  test('endgame: flips a face-up Crysknife Objective for +1 VP', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        intrigue: ['Crysknife'],
+        vp: 10,
+      },
+      conflict: {
+        wonCards: { dennis: [SKIRMISH_DESERT_MOUSE] },
+        flippedCardIds: { dennis: [] },
+      },
+      objectives: { dennis: CRYSKNIFE_OBJ },
+    })
+    game.run()
+
+    let safety = 200
+    while (game.waiting && safety-- > 0) {
+      const choices = t.currentChoices(game)
+      const title = game.waiting.selectors[0]?.title || ''
+      if (title.includes('Endgame Intrigue') && choices.includes('Crysknife')) {
+        break
+      }
+      if (choices.includes('Reveal Turn')) {
+        t.choose(game, 'Reveal Turn')
+      }
+      else if (choices.includes('Pass')) {
+        t.choose(game, 'Pass')
+      }
+      else {
+        t.choose(game, choices[0])
+      }
+    }
+
+    expect(t.currentChoices(game)).toContain('Crysknife')
+    const before = game.players.byName('dennis').vp
+    t.choose(game, 'Crysknife')
+
+    expect(game.players.byName('dennis').vp).toBe(before + 1)
+    expect(game.state.conflict.flippedCardIds.dennis).toContain(CRYSKNIFE_OBJ.id)
+  })
+
   test('endgame: flips a wild-icon conflict card', () => {
     const game = t.fixture()
     t.setBoard(game, {
@@ -112,6 +167,7 @@ describe("crysknife", () => {
         wonCards: { dennis: [SKIRMISH_WILD] },
         flippedCardIds: { dennis: [] },
       },
+      objectives: { dennis: DESERT_MOUSE_OBJ },
     })
     game.run()
 
@@ -150,6 +206,7 @@ describe("crysknife", () => {
         wonCards: { dennis: [SKIRMISH_DESERT_MOUSE] },
         flippedCardIds: { dennis: [] },
       },
+      objectives: { dennis: DESERT_MOUSE_OBJ },
     })
     game.run()
 

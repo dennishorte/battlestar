@@ -3,6 +3,19 @@
 const t = require('../../../testutil.js')
 const card = require('./ornithopter.js')
 
+const CRYSKNIFE_OBJ = {
+  id: 'test-obj-crysknife',
+  name: 'Test Objective: Crysknife',
+  battleIcon: 'crysknife',
+  isFirstPlayer: false,
+}
+const ORNITHOPTER_OBJ = {
+  id: 'test-obj-ornithopter',
+  name: 'Test Objective: Ornithopter',
+  battleIcon: 'ornithopter',
+  isFirstPlayer: false,
+}
+
 describe("ornithopter", () => {
   test('data', () => {
     expect(card.id).toBe("ornithopter")
@@ -36,6 +49,7 @@ describe("ornithopter", () => {
       // Trigger endgame via 10 VP. Dennis already has Ornithopter intrigue.
       dennis: { intrigue: ['Ornithopter'], vp: 10 },
       conflict: { wonCards: { dennis: [skirmish] }, flippedCardIds: { dennis: [] } },
+      objectives: { dennis: CRYSKNIFE_OBJ },
     })
     game.run()
 
@@ -73,11 +87,47 @@ describe("ornithopter", () => {
     expect(game.state.conflict.flippedCardIds.dennis).toContain('conflict-skirmish-ornithopter')
   })
 
+  test('endgame: flips a face-up Ornithopter Objective for +1 VP', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { intrigue: ['Ornithopter'], vp: 10 },
+      conflict: { wonCards: { dennis: [] }, flippedCardIds: { dennis: [] } },
+      objectives: { dennis: ORNITHOPTER_OBJ },
+    })
+    game.run()
+
+    t.choose(game, 'Pass')
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Pass')
+
+    let safety = 80
+    while (safety-- > 0 && game.waiting) {
+      const choices = t.currentChoices(game)
+      if (choices.includes('Ornithopter') && game.state.phase !== 'player-turns') {
+        t.choose(game, 'Ornithopter')
+        break
+      }
+      if (choices.includes('Reveal Turn')) {
+        t.choose(game, 'Reveal Turn')
+      }
+      else if (choices.includes('Pass')) {
+        t.choose(game, 'Pass')
+      }
+      else {
+        break
+      }
+    }
+
+    expect(game.players.byName('dennis').vp).toBe(11)
+    expect(game.state.conflict.flippedCardIds.dennis).toContain(ORNITHOPTER_OBJ.id)
+  })
+
   test('endgame: with no eligible card, no VP gained', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { intrigue: ['Ornithopter'], vp: 10 },
       conflict: { wonCards: { dennis: [] }, flippedCardIds: { dennis: [] } },
+      objectives: { dennis: CRYSKNIFE_OBJ },
     })
     game.run()
 

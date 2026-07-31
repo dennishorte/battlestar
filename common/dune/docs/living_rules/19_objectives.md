@@ -12,6 +12,7 @@
 
 - Each Objective card has a battle icon (Crysknife, Desert Mouse, or Ornithopter).
 - Objective cards participate in the battle icon matching system: when you win a Conflict and take the Conflict card into your supply, check if you have another face-up Conflict or Objective card with the same battle icon. If you do, flip the matching pair face down and gain 1 Victory Point.
+- Objectives count as Conflict cards for the Crysknife / Desert Mouse / Ornithopter Endgame Intrigue flip effects.
 
 ### First Player Determination
 

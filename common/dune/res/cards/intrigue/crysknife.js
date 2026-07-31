@@ -21,9 +21,15 @@ module.exports = {
   endgameText: "Flip one of your face-up Crysknife or ? Conflict cards → +1 Victory Point",
 
   endgameEffect(game, player) {
+    // Objectives count as Conflict cards for this effect (designer ruling).
+    if (!game.state.conflict.flippedCardIds) {
+      game.state.conflict.flippedCardIds = {}
+    }
+    const flipped = new Set(game.state.conflict.flippedCardIds[player.name] || [])
     const wonCards = game.state.conflict.wonCards?.[player.name] || []
-    const flipped = new Set(game.state.conflict.flippedCardIds?.[player.name] || [])
-    const flippable = wonCards.filter(c =>
+    const objective = game.state.objectives?.[player.name]
+    const candidates = objective ? [...wonCards, objective] : [...wonCards]
+    const flippable = candidates.filter(c =>
       !flipped.has(c.id) && (c.battleIcon === 'crysknife' || c.battleIcon === 'wild')
     )
     if (flippable.length > 0) {

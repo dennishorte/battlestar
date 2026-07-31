@@ -22,6 +22,7 @@
 - At the endgame, after Endgame Intrigue cards have been resolved, each face-up Wild Conflict card pairs with one face-up card bearing one of the three real battle icons (Crysknife, Desert Mouse, or Ornithopter — Conflict or Objective). Each such pair flips both cards face down and grants 1 Victory Point.
 - Wild does not pair with another Wild.
 - The Crysknife / Desert Mouse / Ornithopter Endgame Intrigue cards may flip a Wild Conflict in place of the matching icon (their printed text reads "Crysknife or ?" etc.). A Wild already consumed by such an intrigue is no longer face-up and does not participate in the auto-pair pass.
+- Those Endgame Intrigue cards may also flip a face-up Objective bearing the matching icon. Objectives count as Conflict cards for this effect (designer ruling).
 
 ### Sandworm Reward Doubling
 
