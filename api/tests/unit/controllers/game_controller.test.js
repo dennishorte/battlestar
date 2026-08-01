@@ -186,6 +186,26 @@ describe('Game Controller', () => {
     })
   })
 
+  describe('fetchSeries', () => {
+    it('should return series games', async () => {
+      await gameController.fetchSeries(req, res, next)
+
+      expect(gameService.fetchSeries).toHaveBeenCalledWith(req.game)
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'success',
+        seriesId: 'series-1',
+        root: null,
+        games: [],
+      })
+    })
+
+    it('should pass not found when game is missing', async () => {
+      req.game = null
+      await gameController.fetchSeries(req, res, next)
+      expect(next).toHaveBeenCalledWith(expect.any(NotFoundError))
+    })
+  })
+
   describe('saveFull', () => {
     it('should save the full game and return the serialized game', async () => {
       // Setup

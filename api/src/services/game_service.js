@@ -4,6 +4,10 @@ import { magic, util } from 'battlestar-common'
 
 import { GameKilledError, GameOverwriteError } from '../middleware/loaders.js'
 import { GameOverEvent, fromData } from 'battlestar-common'
+import {
+  seriesDisplayName,
+  SERIES_SETTING_KEYS,
+} from '../utils/series.js'
 
 const Game = {}
 
@@ -65,9 +69,15 @@ Game.create = async function(lobby, linkedDraftId) {
   }
 
   async function _maybeHandleMagicLinks(game, linkedDraftId) {
-    if (game.settings.game === 'Magic' && linkedDraftId) {
-      await db.game.linkGameToDraft(game, linkedDraftId)
-      await db.game.linkDraftToGame(linkedDraftId, game)
+    const draftId = linkedDraftId || game.settings.linkedDraftId
+    if (game.settings.game === 'Magic' && draftId) {
+      await db.game.linkGameToDraft(game, draftId)
+      await db.game.linkDraftToGame(draftId, game)
+      game.settings.linkedDraftId = draftId
+      if (!game.settings.seriesId) {
+        game.settings.seriesId = draftId
+        await db.game.saveSettings(game, game.settings)
+      }
     }
   }
 
@@ -87,6 +97,15 @@ Game.create = async function(lobby, linkedDraftId) {
     // Running the game makes sure the waiting information is correctly populated
     game.run()
     await db.game.save(game)
+
+    // Track this game in its rematch/draft series (lightweight match list).
+    if (game.settings.seriesId || game.settings.linkedDraftId) {
+      // Ensure settings.seriesId is set for Magic draft links before appending.
+      if (!game.settings.seriesId && game.settings.linkedDraftId) {
+        game.settings.seriesId = game.settings.linkedDraftId
+      }
+      await db.series.ensureAndAppendGame(game)
+    }
 
     // Save the game id in the lobby
     await db.lobby.gameLaunched(lobby, game)
@@ -123,12 +142,24 @@ Game.rematch = async function(game) {
   lobby.game = game.settings.game
   lobby.users = game.settings.players
 
+  const { seriesId, seriesBaseName, seriesIndex } = await db.series.reserveRematchIndex(game)
+
+  // Backfill series metadata on the source game when this is the first rematch.
+  if (!game.settings.seriesId || !game.settings.seriesBaseName || !game.settings.seriesIndex) {
+    const sourceIndex = game.settings.seriesIndex || 1
+    game.settings.seriesId = seriesId
+    game.settings.seriesBaseName = seriesBaseName
+    game.settings.seriesIndex = sourceIndex
+    await db.game.saveSettings(game, game.settings)
+  }
+
   const nonOptionKeys = [
     'createdTimestamp',
     'game',
     'name',
     'players',
     'seed',
+    ...SERIES_SETTING_KEYS,
   ]
 
   for (const key of Object.keys(game.settings)) {
@@ -137,9 +168,20 @@ Game.rematch = async function(game) {
     }
   }
 
+  lobby.name = seriesDisplayName(seriesBaseName, seriesIndex)
+  // Store series metadata on the lobby itself so game-specific settings UIs
+  // that replace lobby.options do not wipe the series link.
+  lobby.seriesId = seriesId
+  lobby.seriesBaseName = seriesBaseName
+  lobby.seriesIndex = seriesIndex
+
   await db.lobby.save(lobby)
 
   return lobby
+}
+
+Game.fetchSeries = async function(game) {
+  return await db.series.fetchForGame(game)
 }
 
 Game.saveFull = async function(game, { branchId, overwrite, chat, responses, waiting, gameOver, gameOverData }) {

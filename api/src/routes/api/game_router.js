@@ -245,6 +245,33 @@ router.post('/rematch', gameController.rematch)
 
 /**
  * @swagger
+ * /game/series:
+ *   post:
+ *     summary: Fetch all games in a rematch/draft series
+ *     tags: [Games]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - gameId
+ *             properties:
+ *               gameId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Series games
+ *       404:
+ *         description: Game not found
+ */
+router.post('/series', gameController.fetchSeries)
+
+/**
+ * @swagger
  * /game/saveFull:
  *   post:
  *     summary: Save full game state

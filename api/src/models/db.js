@@ -3,6 +3,7 @@ import * as tyrants from './tyrants/index.js'
 import misc from './misc_models.js'
 import lobby from './lobby_models.js'
 import game from './game_models.js'
+import series from './series_models.js'
 import invite from './invite_models.js'
 import notif from './notif_models.js'
 import user from './user_models.js'
@@ -13,6 +14,7 @@ export {
   misc,
   lobby,
   game,
+  series,
   invite,
   notif,
   user
@@ -24,6 +26,7 @@ export default {
   misc,
   lobby,
   game,
+  series,
   invite,
   notif,
   user

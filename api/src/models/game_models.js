@@ -1,6 +1,7 @@
 import { fromData, fromLobby } from 'battlestar-common'
 import { client as databaseClient } from '../utils/mongo.js'
 import { shouldUpdateBranchId } from '../utils/branchId.js'
+import series from './series_models.js'
 
 // Database and collection
 const database = databaseClient.db('games')
@@ -17,6 +18,20 @@ Game.all = async function() {
 Game.create = async function(lobby) {
   const data = fromLobby(lobby).serialize()
   data.settings.createdTimestamp = Date.now()
+
+  // Series fields are not copied by per-game factoryFromLobby helpers.
+  // Prefer top-level lobby fields (set by rematch); fall back to options.
+  const seriesId = lobby.seriesId || lobby.options?.seriesId
+  if (seriesId) {
+    data.settings.seriesId = seriesId
+    data.settings.seriesIndex = lobby.seriesIndex ?? lobby.options?.seriesIndex
+    data.settings.seriesBaseName = lobby.seriesBaseName || lobby.options?.seriesBaseName
+  }
+  else if (data.settings.linkedDraftId || lobby.options?.linkedDraftId) {
+    const draftId = data.settings.linkedDraftId || lobby.options.linkedDraftId
+    data.settings.linkedDraftId = draftId
+    data.settings.seriesId = draftId
+  }
 
   // Added in order to support showing games that have recently ended on user home screens.
   data.lastUpdated = data.settings.createdTimestamp
@@ -84,6 +99,11 @@ Game.gameOver = async function(game, killed=false) {
     { _id: game._id },
     { $set: setValues },
   )
+
+  // Keep the series match list in sync (skipped for killed games).
+  if (!killed) {
+    await series.completeGameFor(game)
+  }
 }
 
 Game.insert = async function(data) {
@@ -109,24 +129,21 @@ Game.insert = async function(data) {
 }
 
 Game.linkDraftToGame = async function(draft, game) {
-  if (draft.linkedGames) {
-    await gameCollection.updateOne(
-      { _id: draft._id },
-      { $addToSet: { linkedGames: game._id } }
-    )
-  }
-  else {
-    await gameCollection.updateOne(
-      { _id: draft._id },
-      { $set: { linkedGames: [game._id] } }
-    )
-  }
+  const draftId = draft._id ?? draft
+  await gameCollection.updateOne(
+    { _id: draftId },
+    { $addToSet: { linkedGames: game._id } },
+  )
 }
 
 Game.linkGameToDraft = async function(game, draft) {
+  const draftId = draft._id ?? draft
   await gameCollection.updateOne(
     { _id: game._id },
-    { $set: { 'settings.linkedDraftId': draft._id } },
+    { $set: {
+      'settings.linkedDraftId': draftId,
+      'settings.seriesId': draftId,
+    } },
   )
 }
 

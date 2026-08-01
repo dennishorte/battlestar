@@ -41,45 +41,32 @@ export default {
 
   methods: {
     async fetchLinkedGameResults() {
-      const { games } = await this.$post('/api/magic/link/fetch_by_draft', {
-        draftId: this.game._id,
+      const { games } = await this.$post('/api/game/series', {
+        gameId: this.game._id,
       })
 
-      this.linkedGames = games
+      this.linkedGames = games || []
     },
 
     resultString(p1, p2) {
       const games = this
         .linkedGames
-        .filter(game => {
+        .filter(entry => {
+          const players = entry.players || []
           return (
-            game.settings.players.some(p => p.name === p1.name)
-            && game.settings.players.some(p => p.name === p2.name)
+            players.some(p => p.name === p1.name)
+            && players.some(p => p.name === p2.name)
           )
         })
-
-      const winnersOf = (game) => {
-        const data = game.gameOverData
-        if (!data) {
-          return []
-        }
-        if (Array.isArray(data.winners)) {
-          return data.winners
-        }
-        if (!data.player || data.player === 'nobody' || data.player === 'everyone') {
-          return []
-        }
-        return [data.player]
-      }
 
       let p1wins = 0
       let p2wins = 0
       let draws = 0
-      for (const game of games) {
-        if (!game.gameOver) {
+      for (const entry of games) {
+        if (!entry.gameOver) {
           continue
         }
-        const winners = winnersOf(game)
+        const winners = entry.winners || []
         if (winners.length === 0) {
           draws += 1
         }

@@ -8,11 +8,22 @@
       <DropdownDivider />
       <DropdownButton @click="debug" :disabled="disabled.includes('debug')">debug</DropdownButton>
       <DropdownButton @click="togglePause">{{ game.paused ? 'unpause' : 'pause' }}</DropdownButton>
+      <DropdownButton
+        v-if="hasSeries"
+        @click="matchStatsModalVis = true"
+        :disabled="disabled.includes('matchStats')"
+      >
+        match stats
+      </DropdownButton>
 
       <slot/>
     </DropdownMenu>
 
     <button v-if="!disabled.includes('undo')" class="btn btn-secondary" @click="undo">undo</button>
+
+    <BModal v-model="matchStatsModalVis" title="Match Stats">
+      <MatchStats v-if="matchStatsModalVis" />
+    </BModal>
   </div>
 </template>
 
@@ -21,6 +32,7 @@
 import DropdownMenu from '@/components/DropdownMenu.vue'
 import DropdownDivider from '@/components/DropdownDivider.vue'
 import DropdownButton from '@/components/DropdownButton.vue'
+import MatchStats from './MatchStats.vue'
 
 export default {
   name: 'GameMenu',
@@ -29,6 +41,7 @@ export default {
     DropdownMenu,
     DropdownDivider,
     DropdownButton,
+    MatchStats,
   },
 
   props: {
@@ -39,6 +52,18 @@ export default {
   },
 
   inject: ['game', 'actor'],
+
+  data() {
+    return {
+      matchStatsModalVis: false,
+    }
+  },
+
+  computed: {
+    hasSeries() {
+      return !!(this.game.settings.seriesId || this.game.settings.linkedDraftId)
+    },
+  },
 
   methods: {
     debug() {

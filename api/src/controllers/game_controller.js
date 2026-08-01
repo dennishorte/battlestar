@@ -144,6 +144,27 @@ export const rematch = async (req, res, next) => {
   }
 }
 
+export const fetchSeries = async (req, res, next) => {
+  try {
+    if (!req.game) {
+      return next(new NotFoundError('Game not found'))
+    }
+
+    const { seriesId, root, games } = await gameService.fetchSeries(req.game)
+
+    res.json({
+      status: 'success',
+      seriesId,
+      root,
+      games,
+    })
+  }
+  catch (err) {
+    logger.error(`Error fetching series: ${err.message}`)
+    next(err)
+  }
+}
+
 export const saveFull = async (req, res, next) => {
   try {
     if (!req.game) {
