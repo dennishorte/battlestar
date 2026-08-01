@@ -60,6 +60,9 @@
         <TableauSection title="Discard" :cards="discardCards" />
         <TableauSection :title="intrigueTitle" :cards="intrigueCards" :hidden-count="intrigueHiddenCount" />
         <TableauSection v-if="contractCards.length" title="Contracts" :cards="contractCards" />
+        <TableauSection v-if="reservedContractCards.length"
+                        title="Reserved Contracts"
+                        :cards="reservedContractCards" />
         <TableauSection v-if="completedContractCards.length"
                         title="Completed Contracts"
                         :cards="completedContractCards" />
@@ -210,6 +213,21 @@ export default {
 
     contractCards() {
       return this.zone('contracts').slice().sort((l, r) => l.name.localeCompare(r.name))
+    },
+
+    reservedContractCards() {
+      if (!this.player) {
+        return []
+      }
+      const leader = this.game.state.leaders?.[this.player.name]
+      if (!leader || leader.name !== 'Shaddam Corrino IV') {
+        return []
+      }
+      const zone = this.game.zones.byId('common.contractReserved')
+      if (!zone) {
+        return []
+      }
+      return zone.cardlist().slice().sort((l, r) => l.name.localeCompare(r.name))
     },
 
     completedContractCards() {
