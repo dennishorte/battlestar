@@ -27,13 +27,15 @@ module.exports = {
           .filter(other => game.zones.byPlayer(other, card.color).cardlist().length > 1)
 
         const chosenPlayer = game.actions.choosePlayer(owner, choices)
-        game.actions.splay(owner, card.color, 'left', { owner: chosenPlayer })
+        if (chosenPlayer) {
+          game.actions.splay(owner, card.color, 'left', { owner: chosenPlayer })
+        }
 
         game.actions.draw(owner, { age: game.getEffectAge(self, 2) })
         game.actions.draw(owner, { age: game.getEffectAge(self, 2) })
 
         const allLeft = game.zones.colorStacks(owner).every(stack => stack.splay === 'left')
-        if (chosenPlayer.id === owner.id && allLeft) {
+        if (chosenPlayer && chosenPlayer.id === owner.id && allLeft) {
           game.youWin(owner, self.name)
         }
       }

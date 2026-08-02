@@ -252,6 +252,37 @@ describe('Caresse Crosby', () => {
       })
     })
 
+    test('karma: no board can splay the color, still draws two age 2', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'], numPlayers: 2 })
+      t.setBoard(game, {
+        dennis: {
+          yellow: ['Caresse Crosby'],
+          blue: ['Writing'], // Only one blue card — cannot splay
+        },
+        micah: {
+          // No blue cards
+        },
+        decks: {
+          base: {
+            2: ['Construction', 'Calendar', 'Mathematics'],
+          },
+        },
+      })
+
+      let request
+      request = game.run()
+      request = t.choose(game, 'Dogma.Writing')
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          yellow: ['Caresse Crosby'],
+          blue: ['Writing'],
+          hand: ['Construction', 'Calendar', 'Mathematics'],
+        },
+      })
+    })
+
     test('karma: can choose player whose color is already splayed left (no-op splay)', () => {
       // Per the splay rule, attempting to splay a color already splayed in
       // that direction does nothing. The owner of Caresse should still be
