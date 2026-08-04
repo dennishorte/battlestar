@@ -4,7 +4,7 @@ module.exports = {
   age: 10,
   expansion: `arti`,
   biscuits: `ppph`,
-  dogmaBiscuit: `s`,
+  dogmaBiscuit: `p`,
   dogma: [
     `Score all cards on your board.`
   ],
