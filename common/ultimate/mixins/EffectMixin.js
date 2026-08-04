@@ -8,7 +8,7 @@
  *   - executeEffect(player, info, opts) - Execute a single card effect
  *   - executeDogmaEffect(player, card, text, impl, opts) - Execute one effect with sharing/demanding
  *   - executeAllEffects(player, card, kind, opts) - Execute all effects of a kind on a card
- *   - trackChainRule(player, card) - Track chain rule for achievement
+ *   - trackChainRule(player, executingCard, targetCard) - Track chain rule for achievement
  *   - finishChainEvent(player) - Finish chain event tracking
  *   - checkEffectIsVisible(card) - Check if card has visible dogma/echo effects
  *   - getEffectAge(card, age) - Get age for effect with karma adjustments
@@ -113,12 +113,18 @@ const EffectMixin = {
 
   /**
    * Track chain rule for achievement.
-   * Called when a card self-executes its effects.
+   * Called when a card self/super-executes another card's effects.
+   *
+   * Nested self/super-executes award a chain achievement, except when a card
+   * directly executes itself (e.g. Priest-King scoring green and re-executing).
+   * Self-execution still advances nesting depth so cross-card trampolines
+   * (A→B→A) remain eligible at each step.
    *
    * @param {Object} player - The player
-   * @param {Object} card - The card being tracked
+   * @param {Object} executingCard - The card whose effect called self/super-execute
+   * @param {Object} targetCard - The card being self/super-executed
    */
-  trackChainRule(player, card) {
+  trackChainRule(player, executingCard, targetCard) {
     if (!this.state.dogmaInfo.chainRule) {
       this.state.dogmaInfo.chainRule = {}
     }
@@ -128,11 +134,12 @@ const EffectMixin = {
 
     const depth = this.state.dogmaInfo.chainRule[player.name]++
 
-    // depth > 0 means we're already inside a self/super-execute
-    if (depth > 0) {
+    // depth > 0 means we're already inside a self/super-execute.
+    // A card directly executing itself does not award a chain.
+    if (depth > 0 && executingCard.name !== targetCard.name) {
       this.log.add({
         template: '{player} achieves a Chain Achievement because {card} is recursively self-executing',
-        args: { player, card }
+        args: { player, card: executingCard }
       })
       const achievement = this.zones.byDeck('base', 11).cardlist()[0]
       if (achievement) {

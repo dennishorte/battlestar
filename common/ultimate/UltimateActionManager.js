@@ -1075,7 +1075,7 @@ class UltimateActionManager extends BaseActionManager {
       }
     })
 
-    this.game.trackChainRule(player, executingCard)
+    this.game.trackChainRule(player, executingCard, card)
 
     // Save the outer acting player so nested executeDogmaEffect doesn't clobber it.
     // Without this, the nested effect clears dogmaInfo.acting, causing acted() calls
