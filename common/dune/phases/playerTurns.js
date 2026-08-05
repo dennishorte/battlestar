@@ -365,9 +365,14 @@ function agentTurn(game, player, card) {
   offerPlotIntrigue(game, player)
 
   // Deploy units if combat space (or card made it a combat space) — this is
-  // the last step of the turn so troops from any source this turn are deployable
+  // the last step of the turn so troops from any source this turn are deployable.
+  // Sardaukar Coordination also permits deploying troops recruited this turn
+  // from a non-combat space (recruited only — not the usual +2 from garrison).
   if (space.isCombatSpace || game.state.turnTracking?.spaceIsCombat) {
     deployUnits(game, player)
+  }
+  else if (game.state.turnTracking?.recruitToConflict) {
+    deployUnits(game, player, { recruitedOnly: true })
   }
 
   game.log.outdent()
@@ -789,8 +794,10 @@ function canSendAgentTo(game, player, card, space) {
 /**
  * Deploy units to the conflict from garrison + any recruited this turn.
  * Players may deploy up to 2 units from garrison plus any newly recruited.
+ * Pass { recruitedOnly: true } to allow only troops recruited this turn
+ * (Sardaukar Coordination on a non-combat space).
  */
-function deployUnits(game, player) {
+function deployUnits(game, player, opts = {}) {
   const garrisoned = player.troopsInGarrison
   if (garrisoned === 0) {
     return
@@ -806,7 +813,12 @@ function deployUnits(game, player) {
   const garrisonAtStart = game.state.turnTracking?.garrisonAtTurnStart ?? garrisoned
   const recruited = Math.max(0, garrisoned - garrisonAtStart)
   const preExisting = garrisonAtStart
-  const maxDeploy = Math.min(garrisoned, recruited + Math.min(2, preExisting))
+  const maxDeploy = opts.recruitedOnly
+    ? Math.min(garrisoned, recruited)
+    : Math.min(garrisoned, recruited + Math.min(2, preExisting))
+  if (maxDeploy === 0) {
+    return
+  }
   const choices = []
   for (let i = 0; i <= maxDeploy; i++) {
     choices.push(game.actions.option({ id: `deploy-${i}`, title: `Deploy ${i} troop(s) from garrison` }))
@@ -997,9 +1009,10 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
       break
 
     case 'troop': {
-      // Sardaukar Coordination: recruited troops go to conflict instead of garrison
-      const to = game.state.turnTracking?.recruitToConflict ? 'conflict' : 'garrison'
-      deploy.recruitTroops(game, player, effect.amount, { to })
+      // Always recruit to garrison. Sardaukar Coordination offers a deploy
+      // choice at end of turn (including from non-combat spaces) so order of
+      // resolving card vs space does not matter.
+      deploy.recruitTroops(game, player, effect.amount)
       break
     }
 

@@ -13,7 +13,7 @@ describe('sardaukar-coordination', () => {
     expect(card.factionAffiliation).toBe('emperor')
   })
 
-  test('agent ability: troops recruited at the chosen space go to the conflict', () => {
+  test('agent ability: may deploy troops recruited at a non-combat space (card first)', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: {
@@ -25,20 +25,26 @@ describe('sardaukar-coordination', () => {
     game.run()
 
     t.choose(game, 'Agent Turn.Sardaukar Coordination')
-    // Gather Support is a green Landsraad space granting 2 troops.
+    // Gather Support is a green Landsraad space granting 2 troops (non-combat).
     t.choose(game, 'Gather Support')
-    // Resolve order: card-first ensures recruitToConflict flag is set when the
-    // space's troop effect resolves.
     t.choose(game, 'Sardaukar Coordination')
     // The choice between "Gain 2 troops" / "Pay 2 Solari..." auto-resolves
     // because dennis has 0 solari (the paid branch is gated).
+
+    // Only troops recruited this turn are deployable (not +2 from garrison).
+    const choices = t.currentChoices(game)
+    expect(choices).toContain('Deploy 0 troop(s) from garrison')
+    expect(choices).toContain('Deploy 2 troop(s) from garrison')
+    expect(choices).not.toContain('Deploy 3 troop(s) from garrison')
+
+    t.choose(game, 'Deploy 2 troop(s) from garrison')
 
     const dennis = game.players.byName('dennis')
     expect(dennis.troopsInGarrison).toBe(0)
     expect(game.state.conflict.deployedTroops.dennis).toBe(2)
   })
 
-  test('agent ability resolved after the space still routes recruits to conflict', () => {
+  test('agent ability: may deploy troops recruited at a non-combat space (space first)', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: {
@@ -51,13 +57,38 @@ describe('sardaukar-coordination', () => {
 
     t.choose(game, 'Agent Turn.Sardaukar Coordination')
     t.choose(game, 'Gather Support')
-    // Resolve space first — the space's "Gain 2 troops" runs BEFORE the card
-    // sets recruitToConflict, so those troops land in the garrison.
+    // Resolve space first — troops land in garrison, then the card arms
+    // recruitToConflict so end-of-turn still offers deployment.
     t.choose(game, 'Gather Support')
+    t.choose(game, 'Deploy 2 troop(s) from garrison')
 
     const dennis = game.players.byName('dennis')
-    expect(dennis.troopsInGarrison).toBe(2)
-    expect(game.state.conflict.deployedTroops.dennis || 0).toBe(0)
+    expect(dennis.troopsInGarrison).toBe(0)
+    expect(game.state.conflict.deployedTroops.dennis).toBe(2)
+  })
+
+  test('agent ability: does not allow deploying pre-existing garrison from non-combat', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        handExact: ['Sardaukar Coordination'],
+        troopsInGarrison: 4,
+        troopsInSupply: 8,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Agent Turn.Sardaukar Coordination')
+    t.choose(game, 'Gather Support')
+    t.choose(game, 'Sardaukar Coordination')
+
+    // 4 pre-existing + 2 recruited → only the 2 recruited are deployable
+    const choices = t.currentChoices(game)
+    expect(choices).toContain('Deploy 2 troop(s) from garrison')
+    expect(choices).not.toContain('Deploy 3 troop(s) from garrison')
+    expect(choices).not.toContain('Deploy 4 troop(s) from garrison')
+
+    t.choose(game, 'Deploy 0 troop(s) from garrison')
   })
 
   test('reveal: +1 Sword when only this Emperor card is revealed', () => {

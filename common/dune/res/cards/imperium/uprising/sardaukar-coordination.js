@@ -35,7 +35,9 @@ module.exports = {
   hasSardaukar: false,
 
   agentEffect(game) {
-    // You may deploy any troops you recruit this turn to the conflict.
+    // You may deploy any troops you recruit this turn to the conflict —
+    // including from a non-combat space. The deploy choice is offered at
+    // end of the agent turn (see deployUnits({ recruitedOnly: true })).
     if (game.state.turnTracking) {
       game.state.turnTracking.recruitToConflict = true
     }
