@@ -206,5 +206,44 @@ describe('John Ericsson', () => {
         },
       })
     })
+
+    test('karma: empties cascaded deck, opponent draw re-adjusts', () => {
+      // Regression: without kind: 'would-first', the karma can take the last
+      // card from the deck the opponent was about to draw, leaving peek() undefined.
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+        },
+        micah: {
+          red: ['John Ericsson'],
+        },
+        decksExact: {
+          base: {
+            1: [],
+            2: [],
+            3: [],
+            4: [],
+            5: [],
+            6: [],
+            7: [],
+            8: ['Flight'], // karma draw-and-tuck {7} cascades here and takes it
+            9: ['Computers'], // opponent draw should cascade here after re-adjust
+          }
+        }
+      })
+
+      let request
+      request = game.run()
+      request = t.choose(game, 'Draw.draw a card')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Computers'],
+        },
+        micah: {
+          red: ['John Ericsson', 'Flight'],
+        },
+      })
+    })
   })
 })

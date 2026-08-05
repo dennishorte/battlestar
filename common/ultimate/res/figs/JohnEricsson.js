@@ -33,6 +33,7 @@ module.exports = {
     {
       trigger: 'draw',
       triggerAll: true,
+      kind: 'would-first',
       matches: (game, player, { owner }) => player.isOpponent(owner),
       func: (game, player, { owner, self }) => {
         game.actions.drawAndTuck(owner, game.getEffectAge(self, 7))
