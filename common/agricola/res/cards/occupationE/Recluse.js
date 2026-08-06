@@ -6,22 +6,24 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "As long as you have no minor improvements in front of you, you get 1 food at the start of each round and 1 wood at the start of each harvest.",
+  matches_onRoundStart(_game, player) {
+    return player.playedMinorImprovements.length === 0
+  },
   onRoundStart(game, player) {
-    if (player.playedMinorImprovements.length === 0) {
-      player.addResource('food', 1)
-      game.log.add({
-        template: '{player} gets 1 food from {card}',
-        args: { player , card: this},
-      })
-    }
+    player.addResource('food', 1)
+    game.log.add({
+      template: '{player} gets 1 food from {card}',
+      args: { player , card: this},
+    })
+  },
+  matches_onHarvestStart(_game, player) {
+    return player.playedMinorImprovements.length === 0
   },
   onHarvestStart(game, player) {
-    if (player.playedMinorImprovements.length === 0) {
-      player.addResource('wood', 1)
-      game.log.add({
-        template: '{player} gets 1 wood from {card}',
-        args: { player , card: this},
-      })
-    }
+    player.addResource('wood', 1)
+    game.log.add({
+      template: '{player} gets 1 wood from {card}',
+      args: { player , card: this},
+    })
   },
 }

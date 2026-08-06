@@ -12,6 +12,13 @@ module.exports = {
     s.goods = []
     s.exchanged = false
   },
+  matches_onHarvest(_game, player) {
+    return player.grain >= 1
+      || player.vegetables >= 1
+      || player.getTotalAnimals('sheep') >= 1
+      || player.getTotalAnimals('boar') >= 1
+      || player.getTotalAnimals('cattle') >= 1
+  },
   onHarvest(game, player) {
     const s = game.cardState(this.id)
     const choices = []
@@ -31,9 +38,6 @@ module.exports = {
       choices.push(game.actions.option({ id: 'cattle', title: 'Place 1 cattle' }))
     }
     choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
-    if (choices.length === 1) {
-      return
-    }
 
     const selection = game.actions.choose(player, choices, {
       title: 'Omnifarmer: Place a good on this card?',

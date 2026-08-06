@@ -6,10 +6,10 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Once you live in a stone house, at the start of each round, you can pay 2 or 3 wood to build up to 3 or 4 fences, respectively.",
+  matches_onRoundStart(_game, player) {
+    return player.roomType === 'stone' && player.wood >= 2
+  },
   onRoundStart(game, player) {
-    if (player.roomType !== 'stone' || player.wood < 2) {
-      return
-    }
     const choices = []
     if (player.wood >= 2) {
       choices.push(game.actions.option({ id: 'pay-2', title: 'Pay 2 wood for up to 3 fences' }))

@@ -31,7 +31,7 @@ See existing examples: `Loom.matches_onHarvest`, `BraidMaker.matches_onHarvest`.
 | occupationB (condition-gated) | done |
 | occupationC (condition-gated) | done |
 | occupationD (condition-gated) | done |
-| occupationE (condition-gated) | pending |
+| occupationE (condition-gated) | done |
 
 ---
 

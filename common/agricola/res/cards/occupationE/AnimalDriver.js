@@ -6,6 +6,12 @@ module.exports = {
   type: "occupation",
   players: "3+",
   text: "At the start of each harvest, if you have 1/2/3+ fenced stables, you get 1 sheep/wild boar/cattle.",
+  matches_onHarvestStart(_game, player) {
+    const fencedStables = player.getFencedStableCount()
+    return (fencedStables >= 3 && player.canPlaceAnimals('cattle', 1))
+      || (fencedStables >= 2 && player.canPlaceAnimals('boar', 1))
+      || (fencedStables >= 1 && player.canPlaceAnimals('sheep', 1))
+  },
   onHarvestStart(game, player) {
     const fencedStables = player.getFencedStableCount()
     if (fencedStables >= 3 && player.canPlaceAnimals('cattle', 1)) {

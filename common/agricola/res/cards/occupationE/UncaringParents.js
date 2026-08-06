@@ -6,13 +6,14 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "At the end of each harvest, if you live in a stone house, you get 1 bonus point.",
+  matches_onHarvestEnd(_game, player) {
+    return player.roomType === 'stone'
+  },
   onHarvestEnd(game, player) {
-    if (player.roomType === 'stone') {
-      player.addBonusPoints(1)
-      game.log.add({
-        template: '{player} gets 1 bonus point from {card}',
-        args: { player , card: this},
-      })
-    }
+    player.addBonusPoints(1)
+    game.log.add({
+      template: '{player} gets 1 bonus point from {card}',
+      args: { player , card: this},
+    })
   },
 }

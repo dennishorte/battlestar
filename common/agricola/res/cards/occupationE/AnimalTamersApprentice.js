@@ -6,6 +6,14 @@ module.exports = {
   type: "occupation",
   players: "4+",
   text: "At the start of each round, you get 1 sheep/wild boar/cattle for each unoccupied wood/clay/stone room in your house.",
+  matches_onRoundStart(_game, player) {
+    const woodRooms = player.getUnoccupiedRoomsByType('wood')
+    const clayRooms = player.getUnoccupiedRoomsByType('clay')
+    const stoneRooms = player.getUnoccupiedRoomsByType('stone')
+    return (woodRooms > 0 && player.canPlaceAnimals('sheep', woodRooms))
+      || (clayRooms > 0 && player.canPlaceAnimals('boar', clayRooms))
+      || (stoneRooms > 0 && player.canPlaceAnimals('cattle', stoneRooms))
+  },
   onRoundStart(game, player) {
     const woodRooms = player.getUnoccupiedRoomsByType('wood')
     const clayRooms = player.getUnoccupiedRoomsByType('clay')

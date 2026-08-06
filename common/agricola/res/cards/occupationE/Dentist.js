@@ -9,24 +9,25 @@ module.exports = {
   onPlay(game, _player) {
     game.cardState(this.id).wood = 0
   },
+  matches_onHarvestStart(_game, player) {
+    return player.wood >= 1
+  },
   onHarvestStart(game, player) {
-    if (player.wood >= 1) {
-      const selection = game.actions.choose(player, [
-        game.actions.option({ id: 'place', title: 'Place 1 wood' }),
-        game.actions.option({ id: 'skip', title: 'Skip' }),
-      ], {
-        title: 'Dentist: Place 1 wood on card?',
-        min: 1,
-        max: 1,
+    const selection = game.actions.choose(player, [
+      game.actions.option({ id: 'place', title: 'Place 1 wood' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ], {
+      title: 'Dentist: Place 1 wood on card?',
+      min: 1,
+      max: 1,
+    })
+    if (selection[0].id === 'place') {
+      player.removeResource('wood', 1)
+      game.cardState(this.id).wood = (game.cardState(this.id).wood || 0) + 1
+      game.log.add({
+        template: '{player} places 1 wood on {card} ({total} total)',
+        args: { player, total: game.cardState(this.id).wood , card: this},
       })
-      if (selection[0].id === 'place') {
-        player.removeResource('wood', 1)
-        game.cardState(this.id).wood = (game.cardState(this.id).wood || 0) + 1
-        game.log.add({
-          template: '{player} places 1 wood on {card} ({total} total)',
-          args: { player, total: game.cardState(this.id).wood , card: this},
-        })
-      }
     }
   },
   matches_onFeedingPhase(game, _player) {

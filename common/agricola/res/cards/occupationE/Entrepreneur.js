@@ -9,6 +9,10 @@ module.exports = {
   onPlay(game, _player) {
     game.cardState(this.id).food = 0
   },
+  matches_onRoundStart(game, player) {
+    const state = game.cardState(this.id)
+    return player.food > 0 || (state.food || 0) > 0
+  },
   onRoundStart(game, player) {
     const state = game.cardState(this.id)
     const choices = []
@@ -17,9 +21,6 @@ module.exports = {
     }
     if (state.food > 0) {
       choices.push(game.actions.option({ id: 'discard', title: 'Discard 1 food from card' }))
-    }
-    if (choices.length === 0) {
-      return
     }
     choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
 

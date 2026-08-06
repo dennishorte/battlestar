@@ -6,6 +6,9 @@ module.exports = {
   type: "occupation",
   players: "3+",
   text: "In the feeding phase of each harvest, you can exchange up to 2 goods as follows: 1 wood to 1 grain and/or 1 grain to 1 stone.",
+  matches_onFeedingPhase(_game, player) {
+    return player.wood > 0 || player.grain > 0
+  },
   onFeedingPhase(game, player) {
     let exchangesLeft = 2
 
