@@ -29,23 +29,28 @@ module.exports = {
       player.interimStorage.reed = (player.interimStorage.reed || 0) + 1
     }
   },
-  onRoundStart(game, player, round) {
-    if ((round === 7 || round === 11 || round === 14) && player.interimStorage) {
-      const storage = player.interimStorage
-      if (storage.wood > 0) {
-        player.addResource('wood', storage.wood)
-      }
-      if (storage.clay > 0) {
-        player.addResource('clay', storage.clay)
-      }
-      if (storage.reed > 0) {
-        player.addResource('reed', storage.reed)
-      }
-      game.log.add({
-        template: '{player} receives {wood} wood, {clay} clay, {reed} reed from {card}',
-        args: { player, wood: storage.wood, clay: storage.clay, reed: storage.reed , card: this},
-      })
-      player.interimStorage = { wood: 0, clay: 0, reed: 0 }
+  matches_onRoundStart(_game, player, round) {
+    if (round !== 7 && round !== 11 && round !== 14) {
+      return false
     }
+    const storage = player.interimStorage
+    return !!(storage && (storage.wood > 0 || storage.clay > 0 || storage.reed > 0))
+  },
+  onRoundStart(game, player, _round) {
+    const storage = player.interimStorage
+    if (storage.wood > 0) {
+      player.addResource('wood', storage.wood)
+    }
+    if (storage.clay > 0) {
+      player.addResource('clay', storage.clay)
+    }
+    if (storage.reed > 0) {
+      player.addResource('reed', storage.reed)
+    }
+    game.log.add({
+      template: '{player} receives {wood} wood, {clay} clay, {reed} reed from {card}',
+      args: { player, wood: storage.wood, clay: storage.clay, reed: storage.reed , card: this},
+    })
+    player.interimStorage = { wood: 0, clay: 0, reed: 0 }
   },
 }

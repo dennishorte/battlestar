@@ -17,10 +17,11 @@ module.exports = {
       args: { player , card: this},
     })
   },
-  onRoundStart(game, player) {
+  matches_onRoundStart(game, player) {
     const scheduled = game.state.scheduledPlowman?.[player.name] || []
-    if (scheduled.includes(game.state.round) && player.food >= 1) {
-      game.offerPlowForFood(player, this)
-    }
+    return scheduled.includes(game.state.round) && player.food >= 1
+  },
+  onRoundStart(game, player) {
+    game.offerPlowForFood(player, this)
   },
 }

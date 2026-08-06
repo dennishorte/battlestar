@@ -34,12 +34,18 @@ module.exports = {
       args: { player, num , card: this},
     })
   },
-  onRoundStart(game, player) {
+  matches_onRoundStart(game, player) {
     const scheduled = game.state.scheduledConfidantSowFences?.[player.name] || []
-    const round = game.state.round
-    if (!scheduled.includes(round)) {
-      return
+    if (!scheduled.includes(game.state.round)) {
+      return false
     }
+    // Still run (silently) when scheduled but unable to act, so the entry is cleared.
+    const canSow = player.canSowAnything()
+    const canFence = player.wood >= 1 || player.getFreeFenceCount() > 0
+    return (canSow || canFence) ? true : 'silent'
+  },
+  onRoundStart(game, player) {
+    const round = game.state.round
     game.state.scheduledConfidantSowFences[player.name] =
       game.state.scheduledConfidantSowFences[player.name].filter(r => r !== round)
 

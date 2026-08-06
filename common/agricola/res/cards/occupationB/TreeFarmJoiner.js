@@ -20,12 +20,12 @@ module.exports = {
       args: { player , card: this},
     })
   },
-  onRoundStart(game, player) {
+  matches_onRoundStart(game, player) {
     const scheduled = game.state.scheduledWoodWithMinor?.[player.name] || []
+    return scheduled.includes(game.state.round)
+  },
+  onRoundStart(game, player) {
     const round = game.state.round
-    if (!scheduled.includes(round)) {
-      return
-    }
     player.addResource('wood', 1)
     game.log.add({
       template: '{player} receives 1 scheduled wood from {card}',
