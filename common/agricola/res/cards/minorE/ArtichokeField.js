@@ -21,13 +21,14 @@ module.exports = {
       args: { player , card: this},
     })
   },
-  onHarvest(game, player, amountHarvested) {
-    if (amountHarvested > 0) {
-      player.addResource('food', 1)
-      game.log.add({
-        template: '{player} gets 1 food',
-        args: { player },
-      })
-    }
+  matches_onHarvest(_game, _player, amountHarvested) {
+    return amountHarvested > 0
+  },
+  onHarvest(game, player, _amountHarvested) {
+    player.addResource('food', 1)
+    game.log.add({
+      template: '{player} gets 1 food',
+      args: { player },
+    })
   },
 }
