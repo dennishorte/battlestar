@@ -8,13 +8,14 @@ module.exports = {
   prereqs: { occupations: 1 },
   category: "Food Provider",
   text: "In the returning home phase of each round, if you have more clay than wood in your supply, you get 1 food.",
+  matches_onReturnHome(_game, player) {
+    return player.clay > player.wood
+  },
   onReturnHome(game, player) {
-    if (player.clay > player.wood) {
-      player.addResource('food', 1)
-      game.log.add({
-        template: '{player} gets 1 food from {card}',
-        args: { player , card: this},
-      })
-    }
+    player.addResource('food', 1)
+    game.log.add({
+      template: '{player} gets 1 food from {card}',
+      args: { player , card: this},
+    })
   },
 }

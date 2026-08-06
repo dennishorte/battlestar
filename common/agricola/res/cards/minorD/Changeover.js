@@ -8,11 +8,11 @@ module.exports = {
   category: "Crop Provider",
   text: "At any time, if a field contains exactly 1 good as a result of a harvest, you can discard that good and immediately take a \"Sow\" action limited to that field.",
 
+  matches_onFieldPhaseEnd(_game, player) {
+    return player.getFieldSpaces().some(f => f.crop && f.cropCount === 1)
+  },
   onFieldPhaseEnd(game, player) {
     const fieldsWithOne = player.getFieldSpaces().filter(f => f.crop && f.cropCount === 1)
-    if (fieldsWithOne.length === 0) {
-      return
-    }
 
     for (const field of fieldsWithOne) {
       const canSowGrain = player.grain >= 1

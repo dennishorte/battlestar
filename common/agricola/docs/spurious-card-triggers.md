@@ -25,7 +25,7 @@ See existing examples: `Loom.matches_onHarvest`, `BraidMaker.matches_onHarvest`.
 | minorA (condition-gated) | done |
 | minorB (condition-gated) | done |
 | minorC (condition-gated) | done |
-| minorD (condition-gated) | pending |
+| minorD (condition-gated) | done |
 | minorE (condition-gated) | pending |
 | occupationA (condition-gated) | pending |
 | occupationB (condition-gated) | pending |

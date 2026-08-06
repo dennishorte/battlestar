@@ -8,20 +8,21 @@ module.exports = {
   prereqs: { occupations: 5 },
   category: "Actions Booster",
   text: "In the returning home phase of each round, if you have more rooms than people, you can pay 1 food to take a \"Family Growth\" action.",
+  matches_onReturnHome(_game, player) {
+    return player.getRoomCount() > player.familyMembers && player.food >= 1 && player.canGrowFamily()
+  },
   onReturnHome(game, player) {
-    if (player.getRoomCount() > player.familyMembers && player.food >= 1 && player.canGrowFamily()) {
-      const selection = game.actions.choose(player, [
-        game.actions.option({ id: 'pay', title: 'Pay 1 food for Family Growth' }),
-        game.actions.option({ id: 'skip', title: 'Skip' }),
-      ], { title: "Stork's Nest", min: 1, max: 1 })
-      if (selection[0].id !== 'skip') {
-        player.addResource('food', -1)
-        game.actions.familyGrowth(player)
-        game.log.add({
-          template: '{player} pays 1 food for Family Growth via {card}',
-          args: { player, card: this },
-        })
-      }
+    const selection = game.actions.choose(player, [
+      game.actions.option({ id: 'pay', title: 'Pay 1 food for Family Growth' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ], { title: "Stork's Nest", min: 1, max: 1 })
+    if (selection[0].id !== 'skip') {
+      player.addResource('food', -1)
+      game.actions.familyGrowth(player)
+      game.log.add({
+        template: '{player} pays 1 food for Family Growth via {card}',
+        args: { player, card: this },
+      })
     }
   },
 }
