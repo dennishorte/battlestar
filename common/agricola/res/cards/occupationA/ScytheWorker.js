@@ -13,6 +13,9 @@ module.exports = {
       args: { player , card: this},
     })
   },
+  matches_onHarvest(_game, player) {
+    return player.getFieldSpaces().some(field => field.crop === 'grain' && field.cropCount > 0)
+  },
   onHarvest(game, player) {
     let amount = 0
     for (const field of player.getFieldSpaces()) {
@@ -25,12 +28,10 @@ module.exports = {
         }
       }
     }
-    if (amount > 0) {
-      player.addResource('grain', amount)
-      game.log.add({
-        template: '{player} harvests {amount} additional grain',
-        args: { player, amount },
-      })
-    }
+    player.addResource('grain', amount)
+    game.log.add({
+      template: '{player} harvests {amount} additional grain',
+      args: { player, amount },
+    })
   },
 }

@@ -6,9 +6,10 @@ module.exports = {
   type: "occupation",
   players: "4+",
   text: "Each returning home phase in which no player returns a person from a \"Lessons\" action space, you can play an occupation for an occupation cost of 1 food.",
+  matches_onReturnHome(game, _player) {
+    return !game.anyPlayerReturnedFromLessons()
+  },
   onReturnHome(game, player) {
-    if (!game.anyPlayerReturnedFromLessons()) {
-      game.actions.offerPlayOccupation(player, this, { cost: { food: 1 } })
-    }
+    game.actions.offerPlayOccupation(player, this, { cost: { food: 1 } })
   },
 }

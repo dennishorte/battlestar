@@ -6,11 +6,11 @@ module.exports = {
   type: "occupation",
   players: "4+",
   text: "At the start of each returning home phase, if only one action space card on round space 1 to 4 is unoccupied, you can use that action space.",
+  matches_onReturnHomeStart(game, _player) {
+    return game.getUnoccupiedActionSpacesInRounds(1, 4).length === 1
+  },
   onReturnHomeStart(game, player) {
     const unoccupiedRound1to4 = game.getUnoccupiedActionSpacesInRounds(1, 4)
-    if (unoccupiedRound1to4.length !== 1) {
-      return
-    }
     const actionId = unoccupiedRound1to4[0]
     const action = game.getActionById(actionId)
     const spaceName = action ? action.name : actionId
