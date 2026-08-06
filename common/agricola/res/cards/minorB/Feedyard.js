@@ -9,16 +9,19 @@ module.exports = {
   category: "Livestock Provider",
   text: "This card can hold 1 animal for each pasture you have, even different types. After the breeding phase of each harvest, you receive 1 food for each unused spot on this card.",
   holdsAnimalsPerPasture: true,
+  matches_onBreedingPhaseEnd(_game, player) {
+    const capacity = player.getPastureCount()
+    const animalsOnCard = player.getCardAnimalTotal(this.id)
+    return capacity - animalsOnCard > 0
+  },
   onBreedingPhaseEnd(game, player) {
     const capacity = player.getPastureCount()
     const animalsOnCard = player.getCardAnimalTotal(this.id)
     const unused = capacity - animalsOnCard
-    if (unused > 0) {
-      player.addResource('food', unused)
-      game.log.add({
-        template: '{player} gets {amount} food',
-        args: { player, amount: unused },
-      })
-    }
+    player.addResource('food', unused)
+    game.log.add({
+      template: '{player} gets {amount} food',
+      args: { player, amount: unused },
+    })
   },
 }

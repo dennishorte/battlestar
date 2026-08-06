@@ -7,6 +7,19 @@ module.exports = {
   cost: { wood: 1 },
   category: "Building Resource Provider",
   text: "Before the start of each work phase, you can take 1 building resource from a wood/clay/reed/stone accumulation space with at least 6/5/4/4 building resources of the same type. You can only take 1 resource per round.",
+  matches_onWorkPhaseStart(game, _player) {
+    const thresholds = [
+      { spaceId: 'take-wood', threshold: 6 },
+      { spaceId: 'take-clay', threshold: 5 },
+      { spaceId: 'take-reed', threshold: 4 },
+      { spaceId: 'take-stone-1', threshold: 4 },
+      { spaceId: 'take-stone-2', threshold: 4 },
+    ]
+    return thresholds.some(({ spaceId, threshold }) => {
+      const space = game.state.actionSpaces[spaceId]
+      return space && space.accumulated >= threshold
+    })
+  },
   onWorkPhaseStart(game, player) {
     const thresholds = [
       { spaceId: 'take-wood', resource: 'wood', threshold: 6 },
@@ -22,10 +35,6 @@ module.exports = {
       if (space && space.accumulated >= threshold) {
         available.push({ spaceId, resource, accumulated: space.accumulated })
       }
-    }
-
-    if (available.length === 0) {
-      return
     }
 
     const choices = available.map((a, idx) => game.actions.option({
