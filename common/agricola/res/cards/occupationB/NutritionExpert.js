@@ -6,53 +6,54 @@ module.exports = {
   type: "occupation",
   players: "3+",
   text: "At the start of each round, you can exchange a set comprised of 1 animal of any type, 1 grain, and 1 vegetable for 5 food and 2 bonus points.",
-  onRoundStart(game, player) {
+  matches_onRoundStart(_game, player) {
     const hasAnimal = player.getTotalAnimals('sheep') >= 1 || player.getTotalAnimals('boar') >= 1 || player.getTotalAnimals('cattle') >= 1
-    if (player.grain >= 1 && player.vegetables >= 1 && hasAnimal) {
-      const choices = [
-        game.actions.option({ id: 'exchange', title: 'Exchange 1 animal + 1 grain + 1 vegetable for 5 food + 2 BP' }),
-        game.actions.option({ id: 'skip', title: 'Skip' }),
-      ]
-      const selection = game.actions.choose(player, choices, {
-        title: 'Nutrition Expert: Exchange set for food and points?',
-        min: 1,
-        max: 1,
-      })
-      if (selection[0].id !== 'skip') {
-        // Choose which animal to give up
-        const animalTypes = []
-        if (player.getTotalAnimals('sheep') >= 1) {
-          animalTypes.push('sheep')
-        }
-        if (player.getTotalAnimals('boar') >= 1) {
-          animalTypes.push('boar')
-        }
-        if (player.getTotalAnimals('cattle') >= 1) {
-          animalTypes.push('cattle')
-        }
-
-        let animalType
-        if (animalTypes.length === 1) {
-          animalType = animalTypes[0]
-        }
-        else {
-          const animalChoices = animalTypes.map(a => game.actions.option({ id: a, title: `Give 1 ${a}` }))
-          const animalSelection = game.actions.choose(player, animalChoices, {
-            title: 'Nutrition Expert: Which animal?',
-            min: 1,
-            max: 1,
-          })
-          animalType = animalSelection[0].id
-        }
-        player.removeAnimals(animalType, 1)
-        player.payCost({ grain: 1, vegetables: 1 })
-        player.addResource('food', 5)
-        player.addBonusPoints(2)
-        game.log.add({
-          template: '{player} exchanges 1 {animal}, 1 grain, 1 vegetable for 5 food and 2 BP from {card}',
-          args: { player, animal: animalType , card: this},
-        })
+    return player.grain >= 1 && player.vegetables >= 1 && hasAnimal
+  },
+  onRoundStart(game, player) {
+    const choices = [
+      game.actions.option({ id: 'exchange', title: 'Exchange 1 animal + 1 grain + 1 vegetable for 5 food + 2 BP' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
+    const selection = game.actions.choose(player, choices, {
+      title: 'Nutrition Expert: Exchange set for food and points?',
+      min: 1,
+      max: 1,
+    })
+    if (selection[0].id !== 'skip') {
+      // Choose which animal to give up
+      const animalTypes = []
+      if (player.getTotalAnimals('sheep') >= 1) {
+        animalTypes.push('sheep')
       }
+      if (player.getTotalAnimals('boar') >= 1) {
+        animalTypes.push('boar')
+      }
+      if (player.getTotalAnimals('cattle') >= 1) {
+        animalTypes.push('cattle')
+      }
+
+      let animalType
+      if (animalTypes.length === 1) {
+        animalType = animalTypes[0]
+      }
+      else {
+        const animalChoices = animalTypes.map(a => game.actions.option({ id: a, title: `Give 1 ${a}` }))
+        const animalSelection = game.actions.choose(player, animalChoices, {
+          title: 'Nutrition Expert: Which animal?',
+          min: 1,
+          max: 1,
+        })
+        animalType = animalSelection[0].id
+      }
+      player.removeAnimals(animalType, 1)
+      player.payCost({ grain: 1, vegetables: 1 })
+      player.addResource('food', 5)
+      player.addBonusPoints(2)
+      game.log.add({
+        template: '{player} exchanges 1 {animal}, 1 grain, 1 vegetable for 5 food and 2 BP from {card}',
+        args: { player, animal: animalType , card: this},
+      })
     }
   },
 }

@@ -6,37 +6,43 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Once you live in a stone house, at the start of each round, you can play an occupation for an occupation cost of 1 food, or a minor improvement (by paying its cost).",
+  matches_onRoundStart(game, player) {
+    if (player.roomType !== 'stone') {
+      return false
+    }
+    const canPlayOccupation = player.hand.some(id => game.cards.byId(id) && game.cards.byId(id).type === 'occupation') && player.food >= 1
+    const canPlayMinor = player.hand.some(id => {
+      const c = game.cards.byId(id)
+      return c && c.type === 'minor' && player.canAffordCost(c.cost || {})
+    })
+    return canPlayOccupation || canPlayMinor
+  },
   onRoundStart(game, player) {
-    if (player.roomType === 'stone') {
-      const options = []
-      if (player.hand.some(id => game.cards.byId(id) && game.cards.byId(id).type === 'occupation') && player.food >= 1) {
-        options.push(game.actions.option({ id: 'play-occupation', title: 'Play an occupation (1 food)' }))
-      }
-      const minors = player.hand.filter(id => {
-        const c = game.cards.byId(id)
-        return c && c.type === 'minor' && player.canAffordCost(c.cost || {})
-      })
-      if (minors.length > 0) {
-        options.push(game.actions.option({ id: 'play-minor', title: 'Play a minor improvement' }))
-      }
-      if (options.length === 0) {
-        return
-      }
-      options.push(game.actions.option({ id: 'skip', title: 'Skip' }))
-      const selection = game.actions.choose(player, options, {
-        title: 'Scholar: Play a card?',
-        min: 1,
-        max: 1,
-      })
-      if (selection[0].id === 'skip') {
-        return
-      }
-      if (selection[0].id === 'play-occupation') {
-        game.actions.playOccupation(player, { costOverride: 1 })
-      }
-      else {
-        game.actions.buyMinorImprovement(player)
-      }
+    const options = []
+    if (player.hand.some(id => game.cards.byId(id) && game.cards.byId(id).type === 'occupation') && player.food >= 1) {
+      options.push(game.actions.option({ id: 'play-occupation', title: 'Play an occupation (1 food)' }))
+    }
+    const minors = player.hand.filter(id => {
+      const c = game.cards.byId(id)
+      return c && c.type === 'minor' && player.canAffordCost(c.cost || {})
+    })
+    if (minors.length > 0) {
+      options.push(game.actions.option({ id: 'play-minor', title: 'Play a minor improvement' }))
+    }
+    options.push(game.actions.option({ id: 'skip', title: 'Skip' }))
+    const selection = game.actions.choose(player, options, {
+      title: 'Scholar: Play a card?',
+      min: 1,
+      max: 1,
+    })
+    if (selection[0].id === 'skip') {
+      return
+    }
+    if (selection[0].id === 'play-occupation') {
+      game.actions.playOccupation(player, { costOverride: 1 })
+    }
+    else {
+      game.actions.buyMinorImprovement(player)
     }
   },
 }

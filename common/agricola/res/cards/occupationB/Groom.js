@@ -13,9 +13,10 @@ module.exports = {
       args: { player , card: this},
     })
   },
+  matches_onRoundStart(_game, player) {
+    return player.roomType === 'stone' && player.wood >= 1
+  },
   onRoundStart(game, player) {
-    if (player.roomType === 'stone' && player.wood >= 1) {
-      game.actions.offerBuildStableForWood(player, this)
-    }
+    game.actions.offerBuildStableForWood(player, this)
   },
 }
