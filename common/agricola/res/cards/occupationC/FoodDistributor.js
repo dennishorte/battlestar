@@ -14,21 +14,22 @@ module.exports = {
     })
     player.foodDistributorPending = true
   },
+  matches_onReturnHomeStart(_game, player) {
+    return !!player.foodDistributorPending
+  },
   onReturnHomeStart(game, player) {
-    if (player.foodDistributorPending) {
-      // Count occupied action spaces (round cards only)
-      let occupiedCount = 0
-      for (const actionId of (game.state.activeActions || [])) {
-        if (game.isActionOccupied(actionId)) {
-          occupiedCount++
-        }
+    // Count occupied action spaces (round cards only)
+    let occupiedCount = 0
+    for (const actionId of (game.state.activeActions || [])) {
+      if (game.isActionOccupied(actionId)) {
+        occupiedCount++
       }
-      player.addResource('food', occupiedCount)
-      game.log.add({
-        template: '{player} gets {amount} food from {card}',
-        args: { player, amount: occupiedCount , card: this},
-      })
-      player.foodDistributorPending = false
     }
+    player.addResource('food', occupiedCount)
+    game.log.add({
+      template: '{player} gets {amount} food from {card}',
+      args: { player, amount: occupiedCount , card: this},
+    })
+    player.foodDistributorPending = false
   },
 }

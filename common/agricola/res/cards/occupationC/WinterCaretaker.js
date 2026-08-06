@@ -13,20 +13,21 @@ module.exports = {
       args: { player , card: this},
     })
   },
+  matches_onHarvestEnd(_game, player) {
+    return player.food >= 2
+  },
   onHarvestEnd(game, player) {
-    if (player.food >= 2) {
-      const selection = game.actions.choose(player, () => [
-        game.actions.option({ id: 'buy', title: 'Pay 2 food for 1 vegetable' }),
-        game.actions.option({ id: 'skip', title: 'Do not buy vegetable' }),
-      ], { title: 'Winter Caretaker', min: 1, max: 1 })
-      if (selection[0].id === 'buy') {
-        player.payCost({ food: 2 })
-        player.addResource('vegetables', 1)
-        game.log.add({
-          template: '{player} buys 1 vegetable for 2 food from {card}',
-          args: { player , card: this},
-        })
-      }
+    const selection = game.actions.choose(player, () => [
+      game.actions.option({ id: 'buy', title: 'Pay 2 food for 1 vegetable' }),
+      game.actions.option({ id: 'skip', title: 'Do not buy vegetable' }),
+    ], { title: 'Winter Caretaker', min: 1, max: 1 })
+    if (selection[0].id === 'buy') {
+      player.payCost({ food: 2 })
+      player.addResource('vegetables', 1)
+      game.log.add({
+        template: '{player} buys 1 vegetable for 2 food from {card}',
+        args: { player , card: this},
+      })
     }
   },
 }

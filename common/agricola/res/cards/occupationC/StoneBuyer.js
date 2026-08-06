@@ -19,17 +19,18 @@ module.exports = {
       }
     }
   },
+  matches_onRoundStart(_game, player) {
+    return player.food >= 2
+  },
   onRoundStart(game, player) {
-    if (player.food >= 2) {
-      const selection = game.actions.choose(player, () => [
-        game.actions.option({ id: 'buy', title: 'Buy 1 stone for 2 food' }),
-        game.actions.option({ id: 'skip', title: 'Skip' }),
-      ], { title: 'Stone Buyer', min: 1, max: 1 })
-      if (selection[0].id !== 'skip') {
-        player.payCost({ food: 2 })
-        player.addResource('stone', 1)
-        game.log.add({ template: '{player} buys 1 stone for 2 food from {card}', args: { player, card: this } })
-      }
+    const selection = game.actions.choose(player, () => [
+      game.actions.option({ id: 'buy', title: 'Buy 1 stone for 2 food' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ], { title: 'Stone Buyer', min: 1, max: 1 })
+    if (selection[0].id !== 'skip') {
+      player.payCost({ food: 2 })
+      player.addResource('stone', 1)
+      game.log.add({ template: '{player} buys 1 stone for 2 food from {card}', args: { player, card: this } })
     }
   },
 }

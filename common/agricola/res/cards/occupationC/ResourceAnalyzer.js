@@ -6,7 +6,7 @@ module.exports = {
   type: "occupation",
   players: "4+",
   text: "Before the start of each round, if you have more building resources than all other players of at least two types, you get 1 food.",
-  onRoundStart(game, player) {
+  matches_onRoundStart(game, player) {
     const buildingTypes = ['wood', 'clay', 'reed', 'stone']
     let typesLeading = 0
     for (const type of buildingTypes) {
@@ -22,12 +22,13 @@ module.exports = {
         typesLeading++
       }
     }
-    if (typesLeading >= 2) {
-      player.addResource('food', 1)
-      game.log.add({
-        template: '{player} gets 1 food from {card}',
-        args: { player , card: this},
-      })
-    }
+    return typesLeading >= 2
+  },
+  onRoundStart(game, player) {
+    player.addResource('food', 1)
+    game.log.add({
+      template: '{player} gets 1 food from {card}',
+      args: { player , card: this},
+    })
   },
 }
