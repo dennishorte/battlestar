@@ -8,6 +8,9 @@ module.exports = {
   prereqs: { grainFields: 1 },
   category: "Crop Provider",
   text: "After each harvest in which you have 2 or 3+ grain in your supply, you get 1 food and 1 additional grain, respectively.",
+  matches_onHarvestEnd(_game, player) {
+    return player.grain >= 2
+  },
   onHarvestEnd(game, player) {
     if (player.grain >= 3) {
       player.addResource('grain', 1)
@@ -16,7 +19,7 @@ module.exports = {
         args: { player , card: this},
       })
     }
-    else if (player.grain >= 2) {
+    else {
       player.addResource('food', 1)
       game.log.add({
         template: '{player} gets 1 food from {card}',

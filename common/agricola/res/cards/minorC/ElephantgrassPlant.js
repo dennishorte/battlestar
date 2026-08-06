@@ -8,24 +8,25 @@ module.exports = {
   prereqs: { occupations: 2 },
   category: "Points Provider",
   text: "Immediately after each harvest, you can use this card to exchange exactly 1 reed for 1 bonus point.",
+  matches_onHarvestEnd(_game, player) {
+    return player.reed >= 1
+  },
   onHarvestEnd(game, player) {
-    if (player.reed >= 1) {
-      const selection = game.actions.choose(player, [
-        game.actions.option({ id: 'exchange', title: 'Exchange 1 reed for 1 bonus point' }),
-        game.actions.option({ id: 'skip', title: 'Skip' }),
-      ], {
-        title: 'Elephantgrass Plant',
-        min: 1,
-        max: 1,
+    const selection = game.actions.choose(player, [
+      game.actions.option({ id: 'exchange', title: 'Exchange 1 reed for 1 bonus point' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ], {
+      title: 'Elephantgrass Plant',
+      min: 1,
+      max: 1,
+    })
+    if (selection[0].id !== 'skip') {
+      player.payCost({ reed: 1 })
+      player.addBonusPoints(1)
+      game.log.add({
+        template: '{player} exchanges 1 reed for 1 bonus point using {card}',
+        args: { player, card: this },
       })
-      if (selection[0].id !== 'skip') {
-        player.payCost({ reed: 1 })
-        player.addBonusPoints(1)
-        game.log.add({
-          template: '{player} exchanges 1 reed for 1 bonus point using {card}',
-          args: { player, card: this },
-        })
-      }
     }
   },
 }
