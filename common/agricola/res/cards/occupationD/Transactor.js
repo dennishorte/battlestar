@@ -6,7 +6,7 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Immediately before the final harvest at the end of round 14, you can take all the building resources that are left on the entire game board.",
-  onBeforeFinalHarvest(game, player) {
+  _collectBuildingResources(game) {
     const collected = { wood: 0, clay: 0, reed: 0, stone: 0 }
     for (const [actionId, state] of Object.entries(game.state.actionSpaces)) {
       if (!state || !state.accumulated) {
@@ -22,18 +22,22 @@ module.exports = {
         }
       }
     }
-    let any = false
+    return collected
+  },
+  matches_onBeforeFinalHarvest(game, _player) {
+    const collected = this._collectBuildingResources(game)
+    return collected.wood > 0 || collected.clay > 0 || collected.reed > 0 || collected.stone > 0
+  },
+  onBeforeFinalHarvest(game, player) {
+    const collected = this._collectBuildingResources(game)
     for (const [resource, amount] of Object.entries(collected)) {
       if (amount > 0) {
         player.addResource(resource, amount)
-        any = true
       }
     }
-    if (any) {
-      game.log.add({
-        template: '{player} collects building resources from the board: {wood} wood, {clay} clay, {reed} reed, {stone} stone',
-        args: { player, ...collected },
-      })
-    }
+    game.log.add({
+      template: '{player} collects building resources from the board: {wood} wood, {clay} clay, {reed} reed, {stone} stone',
+      args: { player, ...collected },
+    })
   },
 }

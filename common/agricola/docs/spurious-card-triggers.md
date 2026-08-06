@@ -30,7 +30,7 @@ See existing examples: `Loom.matches_onHarvest`, `BraidMaker.matches_onHarvest`.
 | occupationA (condition-gated) | done |
 | occupationB (condition-gated) | done |
 | occupationC (condition-gated) | done |
-| occupationD (condition-gated) | pending |
+| occupationD (condition-gated) | done |
 | occupationE (condition-gated) | pending |
 
 ---

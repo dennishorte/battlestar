@@ -6,15 +6,14 @@ module.exports = {
   type: "occupation",
   players: "4+",
   text: "At the start of each of the 1st/2nd/3rd/4th/5th/6th harvest, if you have at least 1/2/3/4/5/6 grain fields, you get 1 bonus point.",
+  matches_onHarvestStart(game, player) {
+    return player.getGrainFieldCount() >= game.getHarvestNumber()
+  },
   onHarvestStart(game, player) {
-    const harvestNumber = game.getHarvestNumber()
-    const grainFields = player.getGrainFieldCount()
-    if (grainFields >= harvestNumber) {
-      player.addBonusPoints(1)
-      game.log.add({
-        template: '{player} gets 1 bonus point from {card}',
-        args: { player , card: this},
-      })
-    }
+    player.addBonusPoints(1)
+    game.log.add({
+      template: '{player} gets 1 bonus point from {card}',
+      args: { player , card: this},
+    })
   },
 }

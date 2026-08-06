@@ -9,13 +9,10 @@ module.exports = {
   onPlay(game, _player) {
     game.cardState(this.id).playedEarly = game.state.round <= 4
   },
+  matches_onAfterFinalHarvest(game, player) {
+    return !!(game.cardState(this.id).playedEarly && player.clay >= 1)
+  },
   onAfterFinalHarvest(game, player) {
-    if (!game.cardState(this.id).playedEarly) {
-      return
-    }
-    if (player.clay < 1) {
-      return
-    }
     const maxPayable = Math.min(player.clay, player.getFamilySize())
     const choices = []
     for (let i = maxPayable; i >= 1; i--) {

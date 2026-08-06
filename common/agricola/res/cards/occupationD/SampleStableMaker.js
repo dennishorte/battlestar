@@ -6,11 +6,11 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "At the start of each returning home phase, you can return a built stable to your supply to get 1 wood, 1 grain, 1 food, and a \"Minor Improvement\" action.",
+  matches_onReturnHomeStart(_game, player) {
+    return player.getStableSpaces().length > 0
+  },
   onReturnHomeStart(game, player) {
     const stables = player.getStableSpaces()
-    if (stables.length === 0) {
-      return
-    }
 
     const choices = stables.map(s => game.actions.option({ id: `space-${s.row}-${s.col}`, title: `Return stable at ${s.row},${s.col}` }))
     choices.push(game.actions.option({ id: 'skip', title: 'Skip' }))
