@@ -8,32 +8,33 @@ module.exports = {
   prereqs: { occupations: 2 },
   category: "Points Provider",
   text: "In the returning home phase of each round, you can pay exactly 1 grain from your supply to get 1 bonus point. If you do, each other player gets 1 food.",
+  matches_onReturnHome(_game, player) {
+    return player.grain >= 1
+  },
   onReturnHome(game, player) {
-    if (player.grain >= 1) {
-      const card = this
-      const choices = [
-        game.actions.option({ id: 'pay', title: 'Pay 1 grain for 1 bonus point' }),
-        game.actions.option({ id: 'skip', title: 'Skip' }),
-      ]
-      const selection = game.actions.choose(player, choices, {
-        title: `${card.name}: Pay grain for bonus point?`,
-        min: 1,
-        max: 1,
-      })
+    const card = this
+    const choices = [
+      game.actions.option({ id: 'pay', title: 'Pay 1 grain for 1 bonus point' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
+    const selection = game.actions.choose(player, choices, {
+      title: `${card.name}: Pay grain for bonus point?`,
+      min: 1,
+      max: 1,
+    })
 
-      if (selection[0].id !== 'skip') {
-        player.payCost({ grain: 1 })
-        player.addBonusPoints(1)
-        for (const other of game.players.all()) {
-          if (other !== player) {
-            other.addResource('food', 1)
-          }
+    if (selection[0].id !== 'skip') {
+      player.payCost({ grain: 1 })
+      player.addBonusPoints(1)
+      for (const other of game.players.all()) {
+        if (other !== player) {
+          other.addResource('food', 1)
         }
-        game.log.add({
-          template: '{player} pays 1 grain for 1 bonus point using {card}. Each other player gets 1 food.',
-          args: { player, card },
-        })
       }
+      game.log.add({
+        template: '{player} pays 1 grain for 1 bonus point using {card}. Each other player gets 1 food.',
+        args: { player, card },
+      })
     }
   },
 }
