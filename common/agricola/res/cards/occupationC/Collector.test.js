@@ -23,13 +23,13 @@ describe('Collector', () => {
     t.choose(game, 'Forest')  // micah
     t.choose(game, 'Collector')  // dennis uses the action space
 
-    // Choose 6 different goods
+    // Choose 6 different goods (including an animal)
     t.choose(game, 'wood')
     t.choose(game, 'clay')
     t.choose(game, 'reed')
     t.choose(game, 'stone')
     t.choose(game, 'grain')
-    t.choose(game, 'vegetables')
+    t.choose(game, 'sheep')
 
     t.testBoard(game, {
       dennis: {
@@ -39,7 +39,8 @@ describe('Collector', () => {
         reed: 1,
         stone: 1,
         grain: 1,
-        vegetables: 1,
+        animals: { sheep: 1 },
+        pet: 'sheep',
         beggingCards: 1,
       },
     })

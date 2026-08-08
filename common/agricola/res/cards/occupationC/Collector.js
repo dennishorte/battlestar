@@ -19,7 +19,8 @@ module.exports = {
     player.addResource('beggingCards', 1)
 
     const card = this
-    const allGoods = ['wood', 'clay', 'reed', 'stone', 'grain', 'vegetables', 'food']
+    const animals = ['sheep', 'boar', 'cattle']
+    const allGoods = ['wood', 'clay', 'reed', 'stone', 'grain', 'vegetables', 'food', ...animals]
     const remaining = [...allGoods]
     const chosen = []
 
@@ -33,7 +34,12 @@ module.exports = {
       const resource = selection[0].id
       chosen.push(resource)
       remaining.splice(remaining.indexOf(resource), 1)
-      player.addResource(resource, 1)
+      if (animals.includes(resource)) {
+        game.actions.handleAnimalPlacement(player, { [resource]: 1 })
+      }
+      else {
+        player.addResource(resource, 1)
+      }
     }
 
     game.log.add({
