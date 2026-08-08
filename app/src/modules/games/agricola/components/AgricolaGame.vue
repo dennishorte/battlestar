@@ -670,8 +670,6 @@ export default {
   },
 
   mounted() {
-    document.title = this.game.settings.name || 'Agricola'
-
     // Listen for action submissions from the farm board
     this.bus.on('submit-action', this.handleSubmitAction)
     // Listen for crop picker requests

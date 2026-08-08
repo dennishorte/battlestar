@@ -4,6 +4,7 @@ export default [
   {
     path: '/profile',
     name: 'UserProfile',
+    meta: { title: 'Profile' },
     component: UserProfile,
   }
 ]

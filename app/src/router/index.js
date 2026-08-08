@@ -15,6 +15,8 @@ import profileRoutes from '@/modules/profile/router.js'
 import authUtil from '@/modules/auth/util.js'
 
 
+const APP_TITLE = 'Game Center'
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -26,11 +28,13 @@ const router = createRouter({
     {
       path: '/game/:id',
       name: 'game',
+      meta: { title: 'Game' },
       component: GameBase,
     },
     {
       path: '/game/editor/:id',
       name: 'Game Editor',
+      meta: { title: 'Game Editor' },
       component: GameEditor,
     },
 
@@ -52,6 +56,16 @@ router.beforeEach((to, from, next) => {
   else {
     next({ name: 'SiteLogin' })
   }
+})
+
+router.afterEach((to) => {
+  const pageTitle = [...to.matched]
+    .reverse()
+    .find(record => record.meta?.title)
+    ?.meta
+    .title
+
+  document.title = pageTitle ? `${APP_TITLE} | ${pageTitle}` : APP_TITLE
 })
 
 

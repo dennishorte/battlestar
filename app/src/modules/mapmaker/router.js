@@ -4,7 +4,7 @@ export default [
   {
     path: '/mapmaker',
     name: 'MapMaker',
-    title: 'MapMaker',
+    meta: { title: 'MapMaker' },
     component: MapMaker,
   }
 ]

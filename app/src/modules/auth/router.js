@@ -7,19 +7,19 @@ export default [
   {
     path: '/login',
     name: 'SiteLogin',
-    title: 'Login',
+    meta: { title: 'Login' },
     component: SiteLogin,
   },
   {
     path: '/invite/:token',
     name: 'AcceptInvite',
-    title: 'Create Account',
+    meta: { title: 'Create Account' },
     component: AcceptInvite,
   },
   {
     path: '/password-reset/:token',
     name: 'ResetPassword',
-    title: 'Reset Password',
+    meta: { title: 'Reset Password' },
     component: ResetPassword,
   },
   {

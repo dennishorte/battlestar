@@ -4,7 +4,7 @@ export default [
   {
     path: '/admin',
     name: 'SiteAdmin',
-    title: 'Admin',
+    meta: { title: 'Admin' },
     component: SiteAdmin,
   }
 ]

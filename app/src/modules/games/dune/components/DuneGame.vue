@@ -149,8 +149,6 @@ export default {
   },
 
   mounted() {
-    document.title = this.game.settings.name || 'Dune Imperium: Uprising'
-
     // Canonical lookup path: resolve by id when a structured choice provides
     // one (see BaseActionManager.chooseCards).
     //

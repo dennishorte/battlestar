@@ -124,17 +124,24 @@ export default {
       }
     },
 
+    updateDocumentTitle() {
+      const gameName = this.game?.settings?.name
+      document.title = gameName ? `Game Center | ${gameName}` : 'Game Center | Game'
+    },
+
   },
 
   watch: {
     async $route() {
       this.id = this.$route.params.id
       await this.loadGame()
+      this.updateDocumentTitle()
     },
   },
 
   async mounted() {
     await this.loadGame()
+    this.updateDocumentTitle()
     window.addEventListener('keydown', this.onKeyDown)
   },
 

@@ -8,25 +8,25 @@ export default [
   {
     path: '/magic',
     name: 'Magic Profile',
-    title: 'Magic Profile',
+    meta: { title: 'Magic Profile' },
     component: Profile,
   },
   {
     path: '/magic/card/:id',
     name: 'Card Viewer',
-    title: 'Card Viewer',
+    meta: { title: 'Card Viewer' },
     component: CardViewer,
   },
   {
     path: '/magic/cube/:id/:tab?',
     name: 'Cube Viewer',
-    title: 'Cube Viewer',
+    meta: { title: 'Cube Viewer' },
     component: CubeViewer,
   },
   {
     path: '/magic/deck/:id',
     name: 'Deck Share',
-    title: 'Deck Share',
+    meta: { title: 'Deck Share' },
     component: DeckBuilder,
   }
 ]

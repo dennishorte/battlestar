@@ -723,9 +723,6 @@ export default {
     this.bus.on('waiting-player-selected', this.onWaitingPlayerSelected)
   },
 
-  mounted() {
-    document.title = this.game.settings.name || 'Game Center'
-  },
 }
 </script>
 

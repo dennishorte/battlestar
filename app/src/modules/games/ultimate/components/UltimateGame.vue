@@ -147,9 +147,6 @@ export default {
     },
   },
 
-  mounted() {
-    document.title = this.game.settings.name || 'Game Center'
-  },
 }
 </script>
 

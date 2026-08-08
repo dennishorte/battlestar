@@ -506,7 +506,6 @@ export default {
   },
 
   mounted() {
-    document.title = this.game.settings.name || 'Twilight Imperium'
     this.bus.on('system-click', this.handleSystemClick)
     this.bus.on('submit-action', this.handleSubmitAction)
     this.bus.on('waiting-player-selected', this.onWaitingPlayerSelected)

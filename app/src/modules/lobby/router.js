@@ -5,6 +5,7 @@ export default [
   {
     path: '/lobby/create',
     name: 'Create Lobby',
+    meta: { title: 'Lobby' },
     component: {
       async beforeRouteEnter(to, from, next) {
         const lobbyId = await lobbyUtil.create()
@@ -15,7 +16,7 @@ export default [
   {
     path: '/lobby/:id',
     name: 'GameLobby',
-    title: 'Lobby',
+    meta: { title: 'Lobby' },
     component: GameLobby,
   },
 ]
