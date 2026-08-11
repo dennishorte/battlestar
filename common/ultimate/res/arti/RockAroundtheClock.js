@@ -7,7 +7,7 @@ module.exports = {
   dogmaBiscuit: `i`,
   dogma: [
     `For each top card on your board with a {i}, draw and score a {9}.`,
-    `Junk all cards in the deck ofvalue equal to the number of cards in your score pile.`
+    `Junk all cards in the deck of value equal to the number of cards in your score pile.`
   ],
   dogmaImpl: [
     (game, player, { self }) => {
