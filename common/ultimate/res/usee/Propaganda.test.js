@@ -34,4 +34,35 @@ describe('Propaganda', () => {
     })
   })
 
+  test('dogma: opponent reveals hand when they have no card of the chosen color', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Propaganda'],
+        hand: ['Mathematics'],
+      },
+      micah: {
+        yellow: ['Agriculture'],
+        hand: ['Tools', 'Domestication'],
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, 'Dogma.Propaganda')
+    request = t.choose(game, 'red')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Propaganda'],
+        blue: ['Mathematics'],
+      },
+      micah: {
+        yellow: ['Agriculture'],
+        hand: ['Tools', 'Domestication'],
+      }
+    })
+  })
+
 })

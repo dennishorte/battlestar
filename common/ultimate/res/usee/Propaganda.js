@@ -20,15 +20,15 @@ module.exports = {
       })[0]
       const chosenColor = (colorPick && typeof colorPick === 'object') ? colorPick.id : colorPick
 
-      const choices = game
-        .cards.byPlayer(player, 'hand')
-        .filter(card => card.color === chosenColor)
+      const hand = game.cards.byPlayer(player, 'hand')
+      const choices = hand.filter(card => card.color === chosenColor)
 
       if (choices.length === 0) {
         game.log.add({
-          template: '{player} does not have a {color} card to meld',
+          template: '{player} reveals their hand to show they have no {color} card',
           args: { player, color: chosenColor }
         })
+        game.actions.revealMany(player, hand, { ordered: true })
       }
       else {
         const melded = game.actions.chooseAndMeld(player, choices)[0]
