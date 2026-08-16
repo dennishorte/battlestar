@@ -33,14 +33,19 @@ module.exports = {
           }
         })
 
-      const sel = game.actions.choose(player, choices, { min: 0, max: 1 })[0].selection[0]
+      const chosen = game.actions.choose(player, choices, { min: 0, max: 1 })[0]
+      const sel = chosen && chosen.selection && chosen.selection[0]
+      if (!sel) {
+        return
+      }
+
       let color, direction
-      if (sel && typeof sel === 'object' && sel.id) {
+      if (typeof sel === 'object' && sel.id) {
         ;[color, direction] = sel.id.split('-')
       }
       else {
         // Legacy / bare-title selection from tests: title format is "color splay"
-        const title = (sel && typeof sel === 'object') ? sel.title : sel
+        const title = (typeof sel === 'object') ? sel.title : sel
         ;[color, direction] = title.split(' ')
       }
       game.actions.splay(player, color, direction)

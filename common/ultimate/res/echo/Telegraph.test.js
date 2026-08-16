@@ -56,6 +56,55 @@ describe("Telegraph", () => {
     })
   })
 
+  test('dogma: may skip matching splay', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
+    t.setBoard(game,  {
+      dennis: {
+        green: ['Telegraph', 'Metric System'],
+        yellow: ['Masonry', 'Agriculture'],
+        blue: ['Atomic Theory', 'Mathematics'],
+      },
+      micah: {
+        red: {
+          cards: ['Archery', 'Construction'],
+          splay: 'left'
+        },
+        green: {
+          cards: ['Navigation', 'Sailing'],
+          splay: 'right'
+        },
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, 'Dogma.Telegraph')
+    request = t.choose(game)
+    request = t.choose(game, 'blue')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        green: ['Telegraph', 'Metric System'],
+        blue: {
+          cards: ['Atomic Theory', 'Mathematics'],
+          splay: 'up'
+        },
+        yellow: ['Masonry', 'Agriculture'],
+      },
+      micah: {
+        red: {
+          cards: ['Archery', 'Construction'],
+          splay: 'left'
+        },
+        green: {
+          cards: ['Navigation', 'Sailing'],
+          splay: 'right'
+        },
+      },
+    })
+  })
+
   test('dogma: was foreseen', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
