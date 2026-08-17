@@ -1,8 +1,11 @@
 <template>
-  <span class="dune-chip" :class="chipClass" @click.stop="showModal = true">
+  <span class="dune-chip" :class="chipClass" @click.stop="onChipClick">
     <span class="chip-main">
       <span class="chip-header">
-        <DuneFactionIcon v-if="spaceIcon && isFaction(spaceIcon)"
+        <DuneFactionIcon v-if="faction"
+                         :faction="faction"
+                         size=".85em" />
+        <DuneFactionIcon v-else-if="spaceIcon && isFaction(spaceIcon)"
                          :faction="spaceIcon"
                          size=".85em" />
         <DuneAgentIcon v-else-if="spaceIcon" :type="spaceIcon" size=".85em" />
@@ -107,6 +110,7 @@ export default {
     card: { type: Object, default: null },
     leader: { type: Object, default: null },
     boardSpace: { type: Object, default: null },
+    faction: { type: String, default: null },
     subtitle: { type: String, default: null },
     feydPosition: { type: String, default: null },
     jessicaFlipped: { type: Boolean, default: false },
@@ -117,6 +121,12 @@ export default {
   },
 
   methods: {
+    onChipClick() {
+      if (this.card || this.leader || this.boardSpace) {
+        this.showModal = true
+      }
+    },
+
     isFaction(icon) {
       return factionIds.has(icon)
     },
@@ -254,6 +264,9 @@ export default {
     },
 
     chipClass() {
+      if (this.faction) {
+        return `chip-faction chip-faction-${this.faction}`
+      }
       if (this.leader) {
         return 'chip-leader'
       }
@@ -264,7 +277,7 @@ export default {
     },
 
     detail() {
-      if (this.leader) {
+      if (this.faction || this.leader) {
         return ''
       }
       if (this.boardSpace) {
@@ -305,6 +318,19 @@ export default {
 .dune-chip:hover {
   background-color: #e8dcc0;
 }
+
+.chip-faction {
+  cursor: default;
+}
+
+.chip-faction:hover {
+  background-color: #f5f0e8;
+}
+
+.chip-faction-emperor { border-color: #d03030; }
+.chip-faction-guild { border-color: #e08828; }
+.chip-faction-bene-gesserit { border-color: #8855cc; }
+.chip-faction-fremen { border-color: #3088cc; }
 
 .chip-main {
   display: flex;

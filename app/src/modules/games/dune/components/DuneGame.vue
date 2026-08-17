@@ -293,6 +293,14 @@ export default {
         return null
       }
 
+      if (option && typeof option === 'object' && option.kind === 'faction') {
+        const rawId = option.id || ''
+        const factionId = rawId.startsWith('lose-') ? rawId.slice('lose-'.length) : rawId
+        if (['emperor', 'guild', 'bene-gesserit', 'fremen'].includes(factionId)) {
+          return { component: DuneOptionChip, props: { name, faction: factionId } }
+        }
+      }
+
       // Canonical path: structured option carries an id (and optionally kind).
       // Prefer defId for lookup — it's the card definition id; `id` is the
       // per-instance id used for disambiguating selections in the engine.

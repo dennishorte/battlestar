@@ -205,24 +205,100 @@ function getAllianceHolder(game, faction) {
   return game.state.alliances[faction]
 }
 
+function factionOption(game, faction) {
+  return game.actions.option({ id: faction, title: faction, kind: 'faction' })
+}
+
+function choiceKey(choice) {
+  if (choice == null) {
+    return ''
+  }
+  if (typeof choice === 'string') {
+    return choice
+  }
+  return choice.id || choice.title || ''
+}
+
+function isPassChoice(choice) {
+  const key = choiceKey(choice)
+  const title = typeof choice === 'object' ? choice.title : choice
+  return key === 'pass' || title === 'Pass'
+}
+
+/**
+ * Resolve a faction id from a choose() response. Accepts structured
+ * `{id, title}` options, bare ids, display names, and legacy `lose-<faction>`
+ * ids from older prompts.
+ */
+function factionIdFromChoice(choice) {
+  const raw = choiceKey(choice)
+  if (typeof raw !== 'string' || raw === '') {
+    return null
+  }
+  const stripped = raw.startsWith('lose-') ? raw.slice('lose-'.length) : raw
+  const normalized = constants.normalizeFactionId(stripped)
+  if (constants.FACTIONS.includes(normalized)) {
+    return normalized
+  }
+  return constants.FACTIONS.find(f => stripped.toLowerCase().includes(f)) || null
+}
+
 /**
  * Present a single prompt for the player to choose `count` factions, then gain
  * +1 Influence with each. Use this for all "choose N factions to gain influence"
  * effects so they resolve in one pick instead of N sequential prompts.
  */
 function gainInfluenceWithChoice(game, player, count = 1, title = '+1 Influence with:') {
-  const factionChoices = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
+  const factionChoices = constants.FACTIONS.map(f => factionOption(game, f))
   const selections = game.actions.choose(player, factionChoices, { title, count })
   for (const choice of selections) {
-    const faction = typeof choice === 'object' ? choice.id : choice
-    gainInfluence(game, player, faction)
+    const faction = factionIdFromChoice(choice)
+    if (faction) {
+      gainInfluence(game, player, faction)
+    }
   }
 }
 
+/**
+ * Optional -1 Influence with a faction you have, then +1 Influence with any
+ * faction (including the one just lowered). Used by Captured Mentat and the
+ * identical intrigue swaps.
+ */
+function swapInfluence(game, player, opts = {}) {
+  const loseTitle = opts.loseTitle || 'Lose 1 Influence with:'
+  const gainTitle = opts.gainTitle || '+1 Influence with:'
+  const loseFactions = constants.FACTIONS.filter(f => player.getInfluence(f) > 0)
+  if (loseFactions.length === 0) {
+    return false
+  }
+
+  const choices = [
+    game.actions.option({ id: 'pass', title: 'Pass' }),
+    ...loseFactions.map(f => factionOption(game, f)),
+  ]
+  const [choice] = game.actions.choose(player, choices, { title: loseTitle })
+  if (isPassChoice(choice)) {
+    return false
+  }
+
+  const loseFaction = factionIdFromChoice(choice)
+  if (!loseFaction || !loseFactions.includes(loseFaction)) {
+    return false
+  }
+
+  loseInfluence(game, player, loseFaction, 1)
+  gainInfluenceWithChoice(game, player, 1, gainTitle)
+  return true
+}
+
 module.exports = {
+  factionIdFromChoice,
+  factionLabel,
+  factionOption,
   gainInfluence,
   gainInfluenceWithChoice,
   loseInfluence,
+  swapInfluence,
   checkAlliance,
   getAllianceHolder,
 }

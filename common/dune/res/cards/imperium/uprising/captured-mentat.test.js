@@ -43,7 +43,7 @@ describe('captured-mentat', () => {
     game.run()
 
     t.choose(game, 'Reveal Turn')
-    t.choose(game, 'Lose 1 emperor')
+    t.choose(game, 'emperor')
     t.choose(game, 'fremen')
 
     const dennis = game.players.byName('dennis')
@@ -82,6 +82,25 @@ describe('captured-mentat', () => {
     expect(dennis.getCounter('persuasion')).toBe(1)
   })
 
+  test('reveal: structured faction ids swap emperor down and guild up', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        handExact: ['Captured Mentat'],
+        influence: { emperor: 3, guild: 1 },
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, { id: 'emperor' })
+    t.choose(game, { id: 'guild' })
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.getInfluence('emperor')).toBe(2)
+    expect(dennis.getInfluence('guild')).toBe(2)
+  })
+
   test('reveal: same-faction swap is allowed (lose 1 fremen, gain 1 fremen)', () => {
     const game = t.fixture()
     t.setBoard(game, {
@@ -93,7 +112,7 @@ describe('captured-mentat', () => {
     game.run()
 
     t.choose(game, 'Reveal Turn')
-    t.choose(game, 'Lose 1 fremen')
+    t.choose(game, 'fremen')
     t.choose(game, 'fremen')
 
     const dennis = game.players.byName('dennis')

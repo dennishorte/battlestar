@@ -17,7 +17,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="faction in factions" :key="faction.id" class="faction-row">
+        <tr v-for="faction in factions"
+            :key="faction.id"
+            class="faction-row"
+            :class="{ clickable: clickableFactionIds.has(faction.id) }"
+            @click="clickFaction(faction.id)">
           <td class="faction-label" :class="`label-${faction.id}`">
             <DuneFactionIcon :faction="faction.id" size="1em" />
             {{ faction.short }}
@@ -56,7 +60,7 @@ export default {
     DuneFactionIcon,
   },
 
-  inject: ['actor', 'game'],
+  inject: ['actor', 'bus', 'game'],
 
   data() {
     return {
@@ -73,9 +77,64 @@ export default {
     players() {
       return this.game.players.all()
     },
+
+    factionChoiceRequest() {
+      if (!this.game?.players) {
+        return null
+      }
+      const owner = this.game.players.byName(this.actor.name)
+      const request = this.game.getWaiting(owner)
+      if (!request?.choices?.some(c => c && c.kind === 'faction')) {
+        return null
+      }
+      return request
+    },
+
+    clickableFactionIds() {
+      const ids = new Set()
+      if (!this.factionChoiceRequest) {
+        return ids
+      }
+      for (const choice of this.factionChoiceRequest.choices) {
+        if (choice?.kind !== 'faction') {
+          continue
+        }
+        const raw = choice.id || ''
+        const factionId = raw.startsWith('lose-') ? raw.slice('lose-'.length) : raw
+        if (this.factions.some(f => f.id === factionId)) {
+          ids.add(factionId)
+        }
+      }
+      return ids
+    },
   },
 
   methods: {
+    clickFaction(factionId) {
+      if (!this.clickableFactionIds.has(factionId)) {
+        return
+      }
+      const choice = this.factionChoiceRequest.choices.find(c => {
+        if (c?.kind !== 'faction') {
+          return false
+        }
+        const raw = c.id || ''
+        const id = raw.startsWith('lose-') ? raw.slice('lose-'.length) : raw
+        return id === factionId
+      })
+      if (!choice) {
+        return
+      }
+      const owner = this.game.players.byName(this.actor.name)
+      this.bus.emit('user-select-option', {
+        actor: owner,
+        optionName: (choice.title || choice.id).toLowerCase(),
+      })
+      this.$nextTick(() => {
+        this.bus.emit('click-choose-selected-option')
+      })
+    },
+
     levelClass(level) {
       if (level >= 4) {
         return 'level-alliance'
@@ -132,6 +191,14 @@ export default {
   color: #8a7a68;
   font-weight: 400;
   font-size: .8em;
+}
+
+.faction-row.clickable {
+  cursor: pointer;
+}
+
+.faction-row.clickable:hover {
+  background-color: #efe4c8;
 }
 
 .faction-label {
