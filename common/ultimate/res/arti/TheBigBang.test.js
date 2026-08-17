@@ -35,4 +35,40 @@ describe("The Big Bang", () => {
       junk: ['Software'],
     })
   })
+
+  test('dogma: unsplay is a change and repeats', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        artifact: ['The Big Bang'],
+        blue: ['Blacklight'],
+        yellow: {
+          cards: ['Agriculture', 'Domestication'],
+          splay: 'left',
+        },
+      },
+      decks: {
+        usee: {
+          10: ['Hacking'],
+        },
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Unsplay.yellow')
+
+    // Blacklight's unsplay is a change, so The Big Bang draws and junks a 10
+    // and repeats. The next prompt is Blacklight again, not the next action.
+    expect(request.selectors[0].title).not.toBe('Choose First Action')
+    t.testBoard(game, {
+      dennis: {
+        artifact: ['The Big Bang'],
+        blue: ['Blacklight'],
+        yellow: ['Agriculture', 'Domestication'],
+      },
+      junk: ['Hacking'],
+    })
+  })
 })

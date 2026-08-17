@@ -998,6 +998,7 @@ class UltimateActionManager extends BaseActionManager {
         args: { player, zone }
       })
       zone.splay = 'none'
+      this.acted(player)
       return colorOrZone
     }
   }
