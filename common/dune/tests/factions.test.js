@@ -105,12 +105,10 @@ describe('Faction Influence', () => {
     // Play Opportunism: lose 1 Influence with 2 factions + 2 Solari -> +1 VP
     t.choose(game, 'Opportunism')
     t.choose(game, 'Lose 1 Influence with 2 Factions + 2 Solari -> +1 VP')
-    // Lose emperor first: dennis drops from 4 to 3, behind micah/scott (both still at 4)
-    t.choose(game, 'emperor')
+    // Exactly two factions have influence → both auto-resolve. Emperor is first
+    // in FACTIONS order, so dennis drops from 4 to 3 before the guild loss.
     // Micah and scott are tied for the alliance — dennis (who just lost it) chooses
     t.choose(game, 'micah')
-    // Second required loss for Opportunism (throwaway, unrelated to the alliance)
-    t.choose(game, 'guild')
 
     expect(game.state.alliances.emperor).toBe('micah')
 
@@ -137,11 +135,9 @@ describe('Faction Influence', () => {
 
     t.choose(game, 'Opportunism')
     t.choose(game, 'Lose 1 Influence with 2 Factions + 2 Solari -> +1 VP')
-    // Lose fremen first: dennis drops from 5 to 4, behind micah (still at 5).
-    // Micah is the only player who could receive it, so no recipient prompt appears —
-    // the very next choice is Opportunism's second required loss.
-    t.choose(game, 'fremen')
-    t.choose(game, 'guild')
+    // Exactly two factions have influence → both auto-resolve. Dennis drops
+    // from 5 to 4 fremen, behind micah (still at 5). Micah is the only player
+    // who could receive the alliance, so no recipient prompt appears.
 
     expect(game.state.alliances.fremen).toBe('micah')
 
@@ -167,10 +163,9 @@ describe('Faction Influence', () => {
 
     t.choose(game, 'Opportunism')
     t.choose(game, 'Lose 1 Influence with 2 Factions + 2 Solari -> +1 VP')
-    // Dennis drops from 5 to 4 fremen — still at the 4-influence threshold and
-    // still ahead of micah's 1, so the alliance stays put.
-    t.choose(game, 'fremen')
-    t.choose(game, 'guild')
+    // Exactly two factions have influence → both auto-resolve. Dennis drops
+    // from 5 to 4 fremen — still at the 4-influence threshold and still ahead
+    // of micah's 1, so the alliance stays put.
 
     expect(game.state.alliances.fremen).toBe('dennis')
 
@@ -196,10 +191,9 @@ describe('Faction Influence', () => {
 
     t.choose(game, 'Opportunism')
     t.choose(game, 'Lose 1 Influence with 2 Factions + 2 Solari -> +1 VP')
-    // Dennis drops from 4 to 3 fremen. Micah (at 2) hasn't reached 4 either,
-    // so nobody receives the alliance — it returns to the supply.
-    t.choose(game, 'fremen')
-    t.choose(game, 'guild')
+    // Exactly two factions have influence → both auto-resolve. Dennis drops
+    // from 4 to 3 fremen. Micah (at 2) hasn't reached 4 either, so nobody
+    // receives the alliance — it returns to the supply.
 
     expect(game.state.alliances.fremen).toBe(null)
 

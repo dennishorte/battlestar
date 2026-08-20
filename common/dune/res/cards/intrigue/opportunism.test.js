@@ -29,9 +29,7 @@ describe("opportunism", () => {
     const accept = choices.find(c => /VP/.test(c))
     expect(accept).toBeDefined()
     t.choose(game, accept)
-
-    t.choose(game, 'emperor')
-    // Second loop: only fremen has influence remaining → single-choice auto-resolves.
+    // Exactly two factions have influence → both auto-resolve.
 
     const dennis = game.players.byName('dennis')
     expect(dennis.vp).toBe(1)
@@ -54,8 +52,7 @@ describe("opportunism", () => {
 
     t.choose(game, 'Opportunism')
     t.choose(game, t.currentChoices(game).find(c => /VP/.test(c)))
-    t.choose(game, 'emperor') // 2 → 1, -1 VP threshold
-    t.choose(game, 'fremen')
+    // Exactly two factions have influence → both auto-resolve (emperor 2→1 forfeits threshold VP).
 
     const dennis = game.players.byName('dennis')
     // +1 from card, -1 from emperor threshold = 0
@@ -100,6 +97,7 @@ describe("opportunism", () => {
     // No inner prompt — proceeds directly to Agent Turn / Reveal Turn.
     const choices = t.currentChoices(game)
     expect(choices.some(c => /Lose 1 Influence/.test(c))).toBe(false)
+    expect(game.log.getLog().some(e => e.template === 'no effect')).toBe(true)
   })
 
   test('no prompt when player cannot afford 2 Solari', () => {
@@ -117,5 +115,30 @@ describe("opportunism", () => {
 
     const choices = t.currentChoices(game)
     expect(choices.some(c => /Lose 1 Influence/.test(c))).toBe(false)
+    expect(game.log.getLog().some(e => e.template === 'no effect')).toBe(true)
+  })
+
+  test('choose 2 of 3 factions in a single prompt', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        intrigue: ['Opportunism'],
+        solari: 5,
+        vp: 0,
+        influence: { emperor: 1, fremen: 1, guild: 1 },
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Opportunism')
+    t.choose(game, t.currentChoices(game).find(c => /VP/.test(c)))
+    t.choose(game, 'emperor', 'guild')
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.vp).toBe(1)
+    expect(dennis.solari).toBe(3)
+    expect(dennis.getInfluence('emperor')).toBe(0)
+    expect(dennis.getInfluence('guild')).toBe(0)
+    expect(dennis.getInfluence('fremen')).toBe(1)
   })
 })
