@@ -958,11 +958,23 @@ class UltimateActionManager extends BaseActionManager {
       return
     }
 
+    // Snapshot visibility across the move so the log names the card if it
+    // was visible before (board → hand) or after (hand → board). Logging
+    // only after the move hides public cards once they enter a private zone.
+    const visibilityBefore = card.visibility.slice()
     card.moveTo(target, 0)
+    const visibilityAfter = card.visibility.slice()
+    card.visibility = visibilityBefore.slice()
+    for (const viewer of visibilityAfter) {
+      card.show(viewer)
+    }
+
     this.log.add({
       template: '{player} transfers {card} to {zone}',
       args: { player, card, zone: target }
     })
+
+    card.visibility = visibilityAfter
     this.acted(player)
     return card
   }

@@ -35,7 +35,7 @@ TestUtil.fixture = function(options) {
 
   options.players = options.players.slice(0, options.numPlayers)
 
-  const game = InnovationFactory(options, 'dennis')
+  const game = InnovationFactory(options, options.viewerName || 'dennis')
 
   game.testSetBreakpoint('initialization-complete', (game) => {
     // Set initial cards in hand

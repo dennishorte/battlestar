@@ -36,6 +36,34 @@ describe('Specialization', () => {
         },
       })
     })
+
+    test('taken cards are named in the log for other players', () => {
+      const game = t.fixtureFirstPlayer({ numPlayers: 3, viewerName: 'scott' })
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Specialization'],
+          red: ['Flight'],
+          hand: ['Oars'],
+        },
+        scott: {
+          red: ['Archery'],
+        },
+        micah: {
+          red: ['Metalworking', 'Optics'],
+        },
+      })
+
+      game.run()
+      t.choose(game, 'Dogma.Specialization')
+
+      const transferred = game
+        .log
+        .getLog()
+        .filter(e => e.template === '{player} transfers {card} to {zone}')
+        .map(e => e.args.card.value)
+
+      expect(transferred).toEqual(expect.arrayContaining(['Archery', 'Metalworking']))
+    })
   })
 
   describe('splay', () => {
