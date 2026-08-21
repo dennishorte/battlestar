@@ -417,8 +417,7 @@ export default {
 }
 
 .action-space.occupied {
-  background-color: #f5f5f5;
-  opacity: 0.8;
+  opacity: 0.4;
 }
 
 .action-space.occupied.selectable {
