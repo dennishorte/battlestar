@@ -6,30 +6,24 @@ module.exports = {
   type: "occupation",
   players: "1+",
   text: "Each time you would harvest a grain field, you can leave the grain on the field and take 1 grain from the general supply instead.",
-  onHarvestGrain(game, player, grainCount) {
-    // Offer to leave grain on field and take from supply instead
-    if (grainCount > 0) {
-      const choices = [
-        game.actions.option({ id: 'use', title: 'Use Grain Thief' }),
-        game.actions.option({ id: 'skip', title: 'Skip' }),
-      ]
-      const selection = game.actions.choose(player, choices, {
-        title: 'Grain Thief: Leave grain on field, take 1 from supply?',
-        min: 1,
-        max: 1,
+  onWouldHarvestGrainField(game, player, field) {
+    const loc = field.label || `${field.row},${field.col}`
+    const choices = [
+      game.actions.option({ id: 'use', title: 'Use Grain Thief' }),
+      game.actions.option({ id: 'skip', title: 'Skip' }),
+    ]
+    const selection = game.actions.choose(player, choices, {
+      title: `Grain Thief: Leave grain on field (${loc}) and take 1 from supply?`,
+      min: 1,
+      max: 1,
+    })
+    if (selection[0].id === 'use') {
+      player.addResource('grain', 1)
+      game.log.add({
+        template: '{player} uses {card} to leave grain on field and take 1 from supply',
+        args: { player, card: this },
       })
-      if (selection[0].id === 'use') {
-        // Return 1 grain to a field (put it back) and take 1 from supply
-        const fields = player.getFieldSpaces().filter(f => f.crop === 'grain' && f.cropCount === 0)
-        if (fields.length > 0) {
-          fields[0].cropCount = 1
-        }
-        player.addResource('grain', 1)
-        game.log.add({
-          template: '{player} uses {card} to leave grain on field and take 1 from supply',
-          args: { player , card: this},
-        })
-      }
+      return true
     }
   },
 }

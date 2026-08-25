@@ -270,6 +270,9 @@ AgricolaPlayer.prototype.harvestFields = function() {
   for (const field of this.getFieldSpaces().filter(f => f.crop && f.cropCount > 0)) {
     if (field.cropCount > 0) {
       const cropType = field.crop
+      if (cropType === 'grain' && this._leaveGrainOnField(field)) {
+        continue
+      }
       harvested[cropType] += 1
       this._lastHarvestedFields.push({ row: field.row, col: field.col })
       const space = this.getSpace(field.row, field.col)
@@ -294,6 +297,9 @@ AgricolaPlayer.prototype.harvestFields = function() {
   // Harvest virtual fields
   for (const vf of this.getSownVirtualFields()) {
     const crop = vf.crop
+    if (crop === 'grain' && this._leaveGrainOnField(vf)) {
+      continue
+    }
     harvested[crop] += 1
     vf.cropCount -= 1
 
@@ -320,6 +326,12 @@ AgricolaPlayer.prototype.harvestFields = function() {
   this.addResource('stone', harvested.stone)
 
   return { harvested, virtualFieldHarvests, lastCropHarvests }
+}
+
+// Grain Thief: leave grain on a field and take 1 from the supply instead.
+AgricolaPlayer.prototype._leaveGrainOnField = function(field) {
+  const results = this.game.callPlayerCardHook(this, 'onWouldHarvestGrainField', field)
+  return results.some(r => r.result)
 }
 
 AgricolaPlayer.prototype.getHarvestedFieldsAdjacentToHouse = function() {

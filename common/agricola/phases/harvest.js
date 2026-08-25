@@ -100,14 +100,12 @@ Agricola.prototype.fieldPhase = function() {
       })
     }
 
-    // Count fields with crops before harvesting (for onHarvestField hook)
-    const fieldsWithCrops = player.getFieldSpaces().filter(f => f.crop && f.cropCount > 0).length
-
     const result = player.harvestFields()
     const harvested = result.harvested
 
-    // Fire onHarvestField once per field that was harvested
-    for (let i = 0; i < fieldsWithCrops; i++) {
+    // Fire onHarvestField once per field tile that was actually harvested
+    const harvestedFieldCount = player._lastHarvestedFields?.length || 0
+    for (let i = 0; i < harvestedFieldCount; i++) {
       this.callPlayerCardHook(player, 'onHarvestField')
     }
 
