@@ -9,7 +9,7 @@ module.exports = {
   matches_onAction(game, player, actionId) {
     return game.isWoodAccumulationSpace(actionId)
   },
-  onAction(game, player, _actionId) {
+  onAction(game, player, actionId) {
     if (player.wood >= 4) {
       const selection = game.actions.choose(player, () => [
         game.actions.option({ id: 'exchange', title: 'Place 4 wood for 2 stone, 1 clay, 1 reed, 1 grain' }),
@@ -17,12 +17,16 @@ module.exports = {
       ], { title: 'Tree Guard', min: 1, max: 1 })
       if (selection[0].id !== 'skip') {
         player.payCost({ wood: 4 })
+        const actionSpace = game.state.actionSpaces[actionId]
+        if (actionSpace) {
+          actionSpace.accumulated += 4
+        }
         player.addResource('stone', 2)
         player.addResource('clay', 1)
         player.addResource('reed', 1)
         player.addResource('grain', 1)
         game.log.add({
-          template: '{player} exchanges 4 wood for resources',
+          template: '{player} places 4 wood on the space for resources',
           args: { player },
         })
       }

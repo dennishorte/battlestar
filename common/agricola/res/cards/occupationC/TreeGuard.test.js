@@ -30,5 +30,6 @@ describe('Tree Guard', () => {
         occupations: ['tree-guard-c102'],
       },
     })
+    expect(game.state.actionSpaces['take-wood'].accumulated).toBe(4)
   })
 })
