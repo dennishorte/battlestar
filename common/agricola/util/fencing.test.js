@@ -222,6 +222,34 @@ describe('fenceUtil', () => {
       expect(result.error).toBe('Spaces must be connected')
     })
 
+    test('second pasture that only touches at a corner is invalid', () => {
+      const result = fenceUtil.validatePastureSelection(
+        [{ row: 1, col: 3 }],
+        { wood: 10, existingPastureSpaces: [{ row: 2, col: 4 }] }
+      )
+
+      expect(result.valid).toBe(false)
+      expect(result.error).toBe('New pasture must be adjacent to an existing pasture')
+    })
+
+    test('second pasture sharing an edge with an existing pasture is valid', () => {
+      const result = fenceUtil.validatePastureSelection(
+        [{ row: 2, col: 3 }],
+        { wood: 10, existingPastureSpaces: [{ row: 2, col: 4 }] }
+      )
+
+      expect(result.valid).toBe(true)
+    })
+
+    test('subdividing an existing pasture space is valid', () => {
+      const result = fenceUtil.validatePastureSelection(
+        [{ row: 2, col: 3 }],
+        { wood: 10, existingPastureSpaces: [{ row: 2, col: 3 }, { row: 2, col: 4 }] }
+      )
+
+      expect(result.valid).toBe(true)
+    })
+
     test('insufficient wood is invalid', () => {
       const spaces = [{ row: 1, col: 2 }] // Needs 4 fences
       const result = fenceUtil.validatePastureSelection(spaces, { wood: 2 })

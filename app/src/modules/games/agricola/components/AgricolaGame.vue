@@ -516,6 +516,7 @@ export default {
         currentFenceCount: player.getFenceCount(),
         maxFences: agricola.res.constants.maxFences,
         existingFences: player.farmyard?.fences || [],
+        existingPastureSpaces: (player.farmyard?.pastures || []).flatMap(p => p.spaces),
         isSpaceValid: (row, col) => {
           const space = player.getSpace(row, col)
           return space && space.type !== 'room' && space.type !== 'field'

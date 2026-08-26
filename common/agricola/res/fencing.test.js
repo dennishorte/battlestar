@@ -687,7 +687,7 @@ describe('Fencing', () => {
       })
     })
 
-    test('second pasture must connect to existing fences', () => {
+    test('second pasture must be orthogonally adjacent to an existing pasture', () => {
       const game = t.fixture()
       t.setBoard(game, {
         actionSpaces: ['Fencing'],
@@ -697,14 +697,48 @@ describe('Fencing', () => {
       })
       game.run()
 
-      // Build first pasture at (2,4) — succeeds (first pasture, no connectivity needed)
+      // Build first pasture at (2,4) — succeeds (first pasture, no adjacency needed)
       t.choose(game, 'Fencing')
       t.action(game, 'build-pasture', { spaces: [{ row: 2, col: 4 }] })
       t.choose(game, 'Build another pasture')
 
-      // Attempt second pasture at (2,0) — far from (2,4), no shared fence corners
+      // Attempt second pasture at (2,0) — far from (2,4)
       t.action(game, 'build-pasture', { spaces: [{ row: 2, col: 0 }] })
-      // Second pasture fails connectivity check; first pasture still exists
+      // Second pasture fails adjacency check; first pasture still exists
+
+      t.choose(game, 'Day Laborer')
+      t.choose(game, 'Grain Seeds')
+      t.choose(game, 'Clay Pit')
+
+      t.testBoard(game, {
+        dennis: {
+          wood: 11, // 15 - 4 (only first pasture built)
+          food: 20,
+          grain: 1,
+          farmyard: {
+            pastures: [{ spaces: [{ row: 2, col: 4 }] }],
+          },
+        },
+      })
+    })
+
+    test('second pasture that only touches at a corner is rejected', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        actionSpaces: ['Fencing'],
+        firstPlayer: 'dennis',
+        dennis: { wood: 15, food: 20 },
+        micah: { food: 20 },
+      })
+      game.run()
+
+      // First pasture at (2,4)
+      t.choose(game, 'Fencing')
+      t.action(game, 'build-pasture', { spaces: [{ row: 2, col: 4 }] })
+      t.choose(game, 'Build another pasture')
+
+      // (1,3) shares only a corner with (2,4) — not orthogonally adjacent
+      t.action(game, 'build-pasture', { spaces: [{ row: 1, col: 3 }] })
 
       t.choose(game, 'Day Laborer')
       t.choose(game, 'Grain Seeds')
