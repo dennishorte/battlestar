@@ -8,7 +8,8 @@ module.exports = {
   dogmaBiscuit: `s`,
   karma: [
     `You may issue a Rivaly Decree with any two figures.`,
-    `If you would claim a standard achievement, instead you may junk a card from your score and then achieve the standard achievement if eligible. If you do, you may achieve the junked card if eligible.`
+    //`If you would claim a standard achievement, instead you may junk a card from your score and then achieve the standard achievement if eligible. If you do, you may achieve the junked card if eligible.`
+    `If you would claim a standard achievement, instead you may junk a card from your score. Achieve the standard achievement if eligible. If you junked a card, achieve it if eligible.`
   ],
   karmaImpl: [
     {
@@ -23,9 +24,6 @@ module.exports = {
         const choices = game
           .cards
           .byPlayer(player, 'score')
-          .filter(card => player.canClaimAchievement(card, {
-            excludeCards: [card],
-          }))
 
         const junked = game.actions.chooseAndJunk(player, choices, { min: 0 })[0]
 

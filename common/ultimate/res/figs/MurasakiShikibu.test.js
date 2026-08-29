@@ -78,12 +78,12 @@ describe('Murasaki Shikibu', () => {
       })
     })
 
-    test('karma: no eligible cards in score, just achieve standard achievement', () => {
+    test('karma: skip junking an ineligible score card, still achieve standard', () => {
       const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
       t.setBoard(game, {
         dennis: {
           purple: ['Murasaki Shikibu'],
-          score: ['Coal'], // Age 5, not eligible (need age 1-3 for standard achievements)
+          score: ['Coal'], // Age 5, not eligible to achieve (top card is age 3)
         },
         achievements: ['The Wheel'], // Age 1 standard achievement
         decks: {
@@ -96,18 +96,79 @@ describe('Murasaki Shikibu', () => {
       let request
       request = game.run()
       request = t.choose(game, 'Achieve.*base-1*')
-      // Karma triggers but no eligible cards in score, so no choice needed
+      request = t.choose(game) // Skip junking Coal
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {
         dennis: {
           purple: ['Murasaki Shikibu'],
-          score: ['Coal'], // No cards junked
-          achievements: ['The Wheel'], // Standard achievement achieved
+          score: ['Coal'],
+          achievements: ['The Wheel'],
         },
         micah: {
           hand: ['Sargon of Akkad'],
         },
+      })
+    })
+
+    test('karma: junk an ineligible score card, still achieve standard', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Murasaki Shikibu'],
+          score: ['Coal', 'Tools'],
+        },
+        achievements: ['The Wheel'],
+        decks: {
+          figs: {
+            1: ['Sargon of Akkad'],
+          },
+        },
+      })
+
+      let request
+      request = game.run()
+      request = t.choose(game, 'Achieve.*base-1*')
+      request = t.choose(game, 'Coal')
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          purple: ['Murasaki Shikibu'],
+          score: ['Tools'],
+          achievements: ['The Wheel'],
+        },
+        micah: {
+          hand: ['Sargon of Akkad'],
+        },
+        junk: ['Coal'],
+      })
+    })
+
+    test('karma: standard ineligible after junk, still achieve junked card', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          purple: ['Murasaki Shikibu'],
+          // 11 + bonus 4 = 15, exactly enough for the age 3 achievement
+          score: ['Software', 'The Wheel'],
+        },
+        achievements: ['Machinery'],
+      })
+
+      let request
+      request = game.run()
+      request = t.choose(game, 'Achieve.*base-3*')
+      request = t.choose(game, 'The Wheel')
+
+      t.testIsSecondPlayer(game)
+      t.testBoard(game, {
+        dennis: {
+          purple: ['Murasaki Shikibu'],
+          score: ['Software'],
+          achievements: ['The Wheel'],
+        },
+        junk: [],
       })
     })
 
