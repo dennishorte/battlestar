@@ -420,7 +420,7 @@ export default {
   font-weight: 700;
 }
 
-.stat-cell.is-viewer:not(.is-current) {
+.stat-cell.is-viewer:not(.is-current):not(.high-intrigue) {
   background-color: var(--viewer-tint);
 }
 
@@ -434,7 +434,8 @@ export default {
   font-weight: 700;
 }
 
-.stat-cell.high-intrigue.is-current {
+.stat-cell.high-intrigue.is-current,
+.stat-cell.high-intrigue.clickable:hover {
   background-color: #7d4aa0;
 }
 
@@ -442,7 +443,7 @@ export default {
   cursor: pointer;
 }
 
-.stat-cell.clickable:hover {
+.stat-cell.clickable:not(.high-intrigue):hover {
   background-color: #f0e8d6;
 }
 
