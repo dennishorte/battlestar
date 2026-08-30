@@ -21,7 +21,7 @@ module.exports = {
   number: 146,
   type: "occupation",
   players: "3+",
-  text: "Place a unique pair of different building resources on this card for each of your improvements (including this one). Each time another player renovates, you may move one such pair to your supply.",
+  text: "Place a unique pair of different building resources on this card for each of your improvements. Each time another player renovates, you may move one such pair to your supply.",
   onPlay(game, player) {
     this._initializePairs(game, player)
   },
@@ -31,14 +31,16 @@ module.exports = {
     if (s.pairs) {
       return
     }
-    const count = player.getImprovementCount() + 1
+    const count = player.getImprovementCount()
     const allPairs = getAllPairs()
     s.pairs = allPairs.slice(0, Math.min(count, allPairs.length))
     this._syncPile(game)
-    game.log.add({
-      template: '{player} places {count} resource pairs on {card}',
-      args: { player, count: s.pairs.length , card: this},
-    })
+    if (s.pairs.length > 0) {
+      game.log.add({
+        template: '{player} places {count} resource pairs on {card}',
+        args: { player, count: s.pairs.length, card: this },
+      })
+    }
   },
 
   onBuildImprovement(game, player) {
