@@ -228,6 +228,7 @@ release remaining.
 **Livestock Feeder (c086)** — `holdsAnimals: { any: true }`, `mixedAnimals: true`
 - Dynamic capacity: `player.grain` (1 per grain)
 - Any type, mixed
+- Spending grain that drops capacity below animals on the card evicts the extras (`onLoseResource`) and forces them to be moved, cooked, or released
 
 **Petting Zoo (e011)** — `holdsAnimals: true`, `mixedAnimals: true`
 - Dynamic capacity: room count (if pasture adjacent to house)

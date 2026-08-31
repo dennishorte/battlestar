@@ -764,11 +764,16 @@ class AgricolaPlayer extends BasePlayer {
   }
 
   removeResource(type, amount) {
+    const before = this[type]
     this._withResourceWrite(() => {
       if (this[type] !== undefined) {
         this[type] = Math.max(0, this[type] - amount)
       }
     })
+    const removed = (before || 0) - (this[type] || 0)
+    if (removed > 0) {
+      this.game.callPlayerCardHook(this, 'onLoseResource', type, removed)
+    }
   }
 
   hasResource(type, amount) {
