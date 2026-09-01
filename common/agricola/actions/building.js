@@ -445,11 +445,22 @@ AgricolaActionManager.prototype._completeRenovation = function(player, targetTyp
 
   // Fire onAnyRenovate hooks on all players' cards (Margrave, RecycledBrick, PatternMaker, etc.)
   const roomCount = player.getRoomCount()
+  const extras = { oldType, newType: targetType, roomCount }
   for (const otherPlayer of this.game.players.all()) {
     const cards = this.game.getPlayerActiveCards(otherPlayer)
     for (const card of cards) {
       if (card.hasHook('onAnyRenovate')) {
-        card.callHook('onAnyRenovate', this.game, player, otherPlayer, { oldType, newType: targetType, roomCount })
+        const matchResult = card.hasHook('matches_onAnyRenovate')
+          ? card.callHook('matches_onAnyRenovate', this.game, player, otherPlayer, extras)
+          : false
+        const shouldLog = matchResult && matchResult !== 'silent'
+        if (shouldLog) {
+          this.game._logCardTrigger(otherPlayer, card)
+        }
+        card.callHook('onAnyRenovate', this.game, player, otherPlayer, extras)
+        if (shouldLog) {
+          this.game.log.outdent()
+        }
       }
     }
   }

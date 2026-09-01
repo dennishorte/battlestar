@@ -14,6 +14,19 @@ function pairLabel(pair) {
   return `${pair[0]} + ${pair[1]}`
 }
 
+function unusedPair(pairs) {
+  const usedKeys = new Set((pairs || []).map(p => pairLabel(p)))
+  return getAllPairs().find(p => !usedKeys.has(pairLabel(p)))
+}
+
+function pairCount(game, cardId, player) {
+  const pairs = game.cardState(cardId).pairs
+  if (pairs) {
+    return pairs.length
+  }
+  return Math.min(player.getImprovementCount(), getAllPairs().length)
+}
+
 module.exports = {
   id: "workshop-assistant-c146",
   name: "Workshop Assistant",
@@ -43,20 +56,27 @@ module.exports = {
     }
   },
 
+  matches_onBuildImprovement(game) {
+    return Boolean(unusedPair(game.cardState(this.id).pairs))
+  },
+
   onBuildImprovement(game, player) {
     this._initializePairs(game, player)
-    const s = game.cardState(this.id)
-    const allPairs = getAllPairs()
-    const usedKeys = new Set(s.pairs.map(p => pairLabel(p)))
-    const nextPair = allPairs.find(p => !usedKeys.has(pairLabel(p)))
-    if (nextPair) {
-      s.pairs.push(nextPair)
-      this._syncPile(game)
-      game.log.add({
-        template: '{player} adds {pair}',
-        args: { player, pair: pairLabel(nextPair) },
-      })
+    const nextPair = unusedPair(game.cardState(this.id).pairs)
+    if (!nextPair) {
+      return
     }
+    const s = game.cardState(this.id)
+    s.pairs.push(nextPair)
+    this._syncPile(game)
+    game.log.add({
+      template: '{player} adds {pair}',
+      args: { player, pair: pairLabel(nextPair) },
+    })
+  },
+
+  matches_onAnyRenovate(game, actingPlayer, cardOwner) {
+    return actingPlayer.name !== cardOwner.name && pairCount(game, this.id, cardOwner) > 0
   },
 
   onAnyRenovate(game, actingPlayer, cardOwner) {
@@ -84,8 +104,8 @@ module.exports = {
         cardOwner.addResource(pair[1], 1)
         this._syncPile(game)
         game.log.add({
-          template: '{player} takes {pair} from {card}',
-          args: { player: cardOwner, pair: pairLabel(pair) , card: this},
+          template: '{player} takes {pair}',
+          args: { player: cardOwner, pair: pairLabel(pair) },
         })
       }
     }
