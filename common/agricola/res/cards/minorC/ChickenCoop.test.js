@@ -28,4 +28,34 @@ describe('Chicken Coop', () => {
       },
     })
   })
+
+  test('can be paid with 2 clay and 1 reed', () => {
+    const game = t.fixture({ cardSets: ['minorC', 'minorImprovementA', 'test'] })
+    t.setBoard(game, {
+      round: 3,
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['chicken-coop-c044'],
+        clay: 2,
+        reed: 1,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Meeting Place')
+    t.choose(game, 'Minor Improvement.Chicken Coop')
+
+    t.testBoard(game, {
+      currentPlayer: 'micah',
+      dennis: {
+        food: 1,
+        clay: 0,
+        reed: 0,
+        minorImprovements: ['chicken-coop-c044'],
+        scheduled: {
+          food: { 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1, 10: 1, 11: 1 },
+        },
+      },
+    })
+  })
 })

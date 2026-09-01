@@ -9,11 +9,27 @@
       </div>
 
       <!-- Cost -->
-      <div class="card-cost" v-if="card.cost">
+      <div class="card-cost" v-if="costSegments.length">
         <span class="cost-label">Cost:</span>
-        <span v-for="(amount, resource) in card.cost" :key="resource" class="cost-item">
-          {{ amount }} {{ resourceIcon(resource) }}
-        </span>
+        <template v-for="(segment, i) in costSegments" :key="i">
+          <span v-if="i > 0" class="cost-and">and</span>
+          <span v-if="segment.kind === 'alternatives'" class="cost-alt-group">
+            <span v-if="costSegments.length > 1">(</span>
+            <template v-for="(opt, j) in segment.options" :key="j">
+              <span v-if="j > 0" class="cost-or">or</span>
+              <span
+                v-for="item in opt"
+                :key="item.resource"
+                class="cost-item"
+              >{{ item.amount }} {{ resourceIcon(item.resource) }}</span>
+            </template>
+            <span v-if="costSegments.length > 1">)</span>
+          </span>
+          <span
+            v-else
+            class="cost-item"
+          >{{ segment.amount }} {{ resourceIcon(segment.resource) }}</span>
+        </template>
       </div>
 
       <!-- Prerequisites -->
@@ -123,6 +139,7 @@ import { agricola } from 'battlestar-common'
 import { formatOccupationPrereq } from '../occupationPrereq.js'
 
 const res = agricola.res
+const { getCardCostSegments } = agricola.cardCost
 
 const RESOURCE_ICONS = {
   food: '🍞',
@@ -203,6 +220,10 @@ export default {
     cardVictoryPoints() {
       // Minor improvements use 'vps', major improvements use 'victoryPoints'
       return this.card?.vps ?? this.card?.victoryPoints ?? null
+    },
+
+    costSegments() {
+      return getCardCostSegments(this.card)
     },
 
     occupationPrereq() {
@@ -664,7 +685,14 @@ export default {
 }
 
 .cost-item {
-  margin-right: .5em;
+  margin-right: .35em;
+}
+
+.cost-or,
+.cost-and {
+  color: #666;
+  font-style: italic;
+  margin: 0 .35em;
 }
 
 .card-vp {

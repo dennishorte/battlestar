@@ -78,7 +78,7 @@
             <tr v-for="card in minorCards" :key="card.id">
               <td>{{ card.name }}</td>
               <td>{{ formatDeck(card.deck) }}</td>
-              <td>{{ formatCost(card.cost) }}</td>
+              <td>{{ formatCardCostDisplay(card) }}</td>
               <td>{{ formatPrereqs(card.prereqs) }}</td>
               <td>{{ formatText(card.text) }}</td>
             </tr>
@@ -98,7 +98,7 @@
           <tbody>
             <tr v-for="card in majorCards" :key="card.id">
               <td>{{ card.name }}</td>
-              <td>{{ formatCost(card.cost) }}</td>
+              <td>{{ formatCardCostDisplay(card) }}</td>
               <td>{{ card.victoryPoints }}</td>
               <td>{{ formatText(card.text) }}</td>
             </tr>
@@ -115,6 +115,7 @@ import GameHeader from '@/components/GameHeader.vue'
 import { agricola } from 'battlestar-common'
 
 const res = agricola.res
+const { formatCardCost } = agricola.cardCost
 
 export default {
   name: 'AgricolaCards',
@@ -249,11 +250,8 @@ export default {
       return text || ''
     },
 
-    formatCost(cost) {
-      if (!cost || Object.keys(cost).length === 0) {
-        return 'Free'
-      }
-      return Object.entries(cost).map(([k, v]) => `${v} ${k}`).join(', ')
+    formatCardCostDisplay(card) {
+      return formatCardCost(card, { style: 'verbose' }) || 'Free'
     },
 
     formatPrereqs(prereqs) {

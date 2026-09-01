@@ -11,6 +11,7 @@ const { AgricolaLogManager } = require('./AgricolaLogManager.js')
 const { AgricolaPlayerManager } = require('./AgricolaPlayerManager.js')
 const { AgricolaZone } = require('./AgricolaZone.js')
 const fenceUtil = require('./util/fencing.js')
+const cardCost = require('./util/cardCost.js')
 
 
 module.exports = {
@@ -24,6 +25,7 @@ module.exports = {
 
   // Fence utilities
   fenceUtil,
+  cardCost,
 }
 
 

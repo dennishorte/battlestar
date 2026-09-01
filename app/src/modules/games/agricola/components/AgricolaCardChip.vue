@@ -9,7 +9,7 @@
       >▶</span>
       <span class="card-name">{{ displayName }}</span>
 
-      <span class="card-cost" v-if="costText">{{ costText }}</span>
+      <span class="card-cost" v-if="costText" :title="costTitle">{{ costText }}</span>
       <span
         v-if="occupationPrereqText"
         class="occupation-prereq"
@@ -103,6 +103,7 @@ import {
 } from '../occupationPrereq.js'
 
 const res = agricola.res
+const { formatCardCost } = agricola.cardCost
 
 export default {
   name: 'AgricolaCardChip',
@@ -243,19 +244,11 @@ export default {
     },
 
     costText() {
-      const cost = this.card?.cost
-      if (!cost) {
-        return ''
-      }
+      return formatCardCost(this.card, { icons: true, style: 'compact' })
+    },
 
-      const entries = Object.entries(cost)
-      if (entries.length === 0) {
-        return ''
-      }
-
-      return entries
-        .map(([resource, amount]) => `${amount}${this.RESOURCE_ICONS[resource] || resource}`)
-        .join(' ')
+    costTitle() {
+      return formatCardCost(this.card, { style: 'verbose' })
     },
 
     // Get card instance from game (has runtime state)
