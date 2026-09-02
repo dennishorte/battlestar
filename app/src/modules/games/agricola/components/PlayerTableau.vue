@@ -421,6 +421,12 @@ export default {
       else if (field.crop === 'grain') {
         classes.push('field-grain')
       }
+      else if (field.crop === 'stone') {
+        classes.push('field-stone')
+      }
+      else if (field.crop === 'wood') {
+        classes.push('field-wood')
+      }
       if (this.canSowVirtualField(field)) {
         classes.push('sow-selectable')
       }
@@ -829,6 +835,14 @@ export default {
 
 .virtual-field-cell.field-grain {
   background-color: #DAA520;
+}
+
+.virtual-field-cell.field-stone {
+  background-color: #7A7A72;
+}
+
+.virtual-field-cell.field-wood {
+  background-color: #8B6914;
 }
 
 .virtual-field-cell.sow-selectable {

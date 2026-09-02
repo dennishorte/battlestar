@@ -311,26 +311,14 @@ export default {
     },
 
     fieldIcon() {
-      if (this.cell.crop === 'grain') {
-        return '🌾'
-      }
-      if (this.cell.crop === 'vegetables') {
-        return '🥕'
-      }
-      return '' // Empty field - rely on background color
+      return this.cropIcon(this.cell.crop)
     },
 
     underCropIcon() {
       if (!this.cell.underCrop || this.cell.underCropCount === 0) {
         return ''
       }
-      if (this.cell.underCrop === 'vegetables') {
-        return '🥕'
-      }
-      if (this.cell.underCrop === 'grain') {
-        return '🌾'
-      }
-      return ''
+      return this.cropIcon(this.cell.underCrop)
     },
 
     // Effective pasture data — checks animalOverrides first, falls back to real data
@@ -485,6 +473,16 @@ export default {
   },
 
   methods: {
+    cropIcon(crop) {
+      switch (crop) {
+        case 'grain': return '🌾'
+        case 'vegetables': return '🥕'
+        case 'wood': return '🪵'
+        case 'stone': return '🪨'
+        default: return ''
+      }
+    },
+
     isAdjacentToSelection(selectedSpaces) {
       for (const selected of selectedSpaces) {
         const rowDiff = Math.abs(this.row - selected.row)
@@ -688,6 +686,14 @@ export default {
 
 .farmyard-cell.field-vegetables {
   background-color: #228B22;
+}
+
+.farmyard-cell.field-stone {
+  background-color: #7A7A72;
+}
+
+.farmyard-cell.field-wood {
+  background-color: #8B6914;
 }
 
 .farmyard-cell.pasture {

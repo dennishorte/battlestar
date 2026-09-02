@@ -185,6 +185,12 @@ export default {
         if (cell.crop === 'vegetables') {
           return '🥕'
         }
+        if (cell.crop === 'stone') {
+          return '🪨'
+        }
+        if (cell.crop === 'wood') {
+          return '🪵'
+        }
         return '▭'
       }
       if (cell.hasStable) {
