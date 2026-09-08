@@ -7,8 +7,7 @@ module.exports = {
   players: "4+",
   text: "Each time another player uses a food accumulation space, you can give them 1 grain from your supply to get 1 bonus point.",
   onAnyAction(game, actingPlayer, actionId, cardOwner) {
-    const foodSpaces = ['fishing', 'traveling-players', 'traveling-players-5']
-    if (!foodSpaces.includes(actionId) || actingPlayer.name === cardOwner.name || cardOwner.grain < 1) {
+    if (!game.isFoodAccumulationSpace(actionId) || actingPlayer.name === cardOwner.name || cardOwner.grain < 1) {
       return
     }
     const cardName = 'Paymaster'

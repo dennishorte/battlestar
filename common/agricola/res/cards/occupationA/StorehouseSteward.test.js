@@ -98,6 +98,58 @@ describe('Storehouse Steward', () => {
     })
   })
 
+  test('onAction does not trigger for Meeting Place', () => {
+    const game = t.fixture({ cardSets: ['occupationA', 'test'], numPlayers: 3 })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        occupations: ['storehouse-steward-a146'],
+        food: 0,
+        stone: 0,
+        reed: 0,
+        clay: 0,
+        wood: 0,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Meeting Place')
+
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['storehouse-steward-a146'],
+        food: 1,
+        stone: 0,
+        reed: 0,
+        clay: 0,
+        wood: 0,
+      },
+    })
+  })
+
+  test('onAction does not trigger for Day Laborer', () => {
+    const game = t.fixture({ cardSets: ['occupationA', 'test'], numPlayers: 3 })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        occupations: ['storehouse-steward-a146'],
+        food: 0,
+        stone: 0,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Day Laborer')
+
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['storehouse-steward-a146'],
+        food: 2,
+        stone: 0,
+      },
+    })
+  })
+
   test('onAction gives no bonus when taking 6+ food', () => {
     const game = t.fixture({ cardSets: ['occupationA', 'test'], numPlayers: 3 })
     t.setBoard(game, {

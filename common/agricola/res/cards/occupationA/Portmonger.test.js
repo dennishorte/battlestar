@@ -70,6 +70,29 @@ describe('Portmonger', () => {
     })
   })
 
+  test('onAction does not trigger for Meeting Place', () => {
+    const game = t.fixture({ cardSets: ['occupationA', 'test'] })
+    t.setBoard(game, {
+      dennis: {
+        occupations: ['portmonger-a103'],
+        food: 0,
+        vegetables: 0,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Meeting Place')
+
+    t.testBoard(game, {
+      currentPlayer: 'micah',
+      dennis: {
+        occupations: ['portmonger-a103'],
+        food: 1,
+        vegetables: 0,
+      },
+    })
+  })
+
   test('onAction does not trigger for non-food accumulation actions', () => {
     const game = t.fixture({ cardSets: ['occupationA', 'test'] })
     t.setBoard(game, {

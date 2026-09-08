@@ -26,6 +26,30 @@ describe('Paymaster', () => {
     })
   })
 
+  test('onAnyAction does not trigger for Meeting Place', () => {
+    const game = t.fixture({ cardSets: ['occupationA', 'test'], numPlayers: 3 })
+    t.setBoard(game, {
+      firstPlayer: 'micah',
+      dennis: {
+        occupations: ['paymaster-a154'],
+        grain: 3,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Meeting Place')
+
+    t.testBoard(game, {
+      currentPlayer: 'scott',
+      dennis: {
+        occupations: ['paymaster-a154'],
+        grain: 3,
+        bonusPoints: 0,
+      },
+      micah: { food: 1, grain: 0 },
+    })
+  })
+
   test('allows skip', () => {
     const game = t.fixture({ cardSets: ['occupationA', 'test'], numPlayers: 3 })
     t.setBoard(game, {

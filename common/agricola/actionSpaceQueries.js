@@ -64,6 +64,11 @@ Agricola.prototype.isWoodAccumulationSpace = function(actionId) {
   return !!(action && action.type === 'accumulating' && action.accumulates && action.accumulates.wood)
 }
 
+Agricola.prototype.isFoodAccumulationSpace = function(actionId) {
+  const action = res.getActionById(actionId)
+  return !!(action && action.type === 'accumulating' && action.accumulates && action.accumulates.food)
+}
+
 Agricola.prototype.getAccumulationSpaceGoodType = function(actionId) {
   const action = res.getActionById(actionId)
   if (!action || !action.accumulates) {
