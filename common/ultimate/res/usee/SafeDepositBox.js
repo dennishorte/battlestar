@@ -37,11 +37,6 @@ module.exports = {
           game.zones.byPlayer(player, 'score'),
           game.zones.byId('junk'),
         )
-
-        game.log.add({
-          template: '{player} exchanges their score with the valued cards in junk',
-          args: { player },
-        })
       }
     },
   ],

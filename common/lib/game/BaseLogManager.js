@@ -273,8 +273,15 @@ class BaseLogManager {
     // (frontend tokenizes each into an inline chip). Strings pass through so
     // pre-formatted callers keep working — without this exact-match entry the
     // 'card*' wildcard above used to handle the string case the same way.
-    this.registerHandler('cards', (cards) => {
+    // `cards2` is the same helper: `cards2` would otherwise match `card*`.
+    const formatCardList = (cards) => {
       if (Array.isArray(cards)) {
+        if (cards.length === 0) {
+          return {
+            value: 'nothing',
+            classes: ['card-id-list'],
+          }
+        }
         return {
           value: cards.map(c => `card(${typeof c === 'string' ? c : c.id})`).join(', '),
           classes: ['card-id-list'],
@@ -284,7 +291,9 @@ class BaseLogManager {
         value: typeof cards === 'string' ? cards : String(cards),
         classes: ['card-id'],
       }
-    })
+    }
+    this.registerHandler('cards', formatCardList)
+    this.registerHandler('cards2', formatCardList)
 
     // Handler for keys starting with 'zone'
     this.registerHandler('zone*', (zone) => ({

@@ -25,23 +25,6 @@ module.exports = {
         playerHand,
         leaderHand
       )
-
-      game.log.add({
-        template: '{player} steals {count} cards from {player2}',
-        args: {
-          player: leader,
-          count: yours.length,
-          player2: player,
-        }
-      })
-      game.log.add({
-        template: '{player} give back {count} cards to {player2}',
-        args: {
-          player: leader,
-          count: mine.length,
-          player2: player,
-        }
-      })
     },
 
     (game, player) => {

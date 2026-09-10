@@ -634,6 +634,35 @@ describe('BaseLogManager', () => {
       })
     })
 
+    test('cards2 uses the same list formatter as cards', () => {
+      const { logManager } = createLogManager()
+
+      const entry = {
+        args: {
+          cards2: [{ id: 'c-1' }, { id: 'c-2' }],
+        },
+      }
+
+      logManager._enrichLogArgs(entry)
+
+      expect(entry.args.cards2).toEqual({
+        value: 'card(c-1), card(c-2)',
+        classes: ['card-id-list'],
+      })
+    })
+
+    test('empty cards list renders as nothing', () => {
+      const { logManager } = createLogManager()
+
+      const entry = { args: { cards: [] } }
+      logManager._enrichLogArgs(entry)
+
+      expect(entry.args.cards).toEqual({
+        value: 'nothing',
+        classes: ['card-id-list'],
+      })
+    })
+
     test('should format zone information correctly', () => {
       const { logManager } = createLogManager()
 

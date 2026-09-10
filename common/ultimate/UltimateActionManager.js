@@ -1009,16 +1009,45 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   exchangeCards(player, cards1, cards2, zone1, zone2) {
+    cards1 = cards1 || []
+    cards2 = cards2 || []
+
     const karmaKind = this.game.triggerKarma(player, 'exchange', { cards1, cards2, zone1, zone2 })
     if (karmaKind === 'would-instead') {
       this.acted(player)
       return 'would-instead'
     }
 
+    const viewers = new Set()
+    if (player?.name) {
+      viewers.add(player.name)
+    }
+    for (const zone of [zone1, zone2]) {
+      const owner = zone && zone.owner()
+      if (owner?.name) {
+        viewers.add(owner.name)
+      }
+    }
+
+    const zoneLabel = (zone) => {
+      if (!zone) {
+        return 'somewhere'
+      }
+      const owner = zone.owner()
+      const short = String(zone.name() || zone.id || 'zone').split('.').pop()
+      return owner?.name ? `${owner.name}'s ${short}` : short
+    }
+
     this.log.add({
-      template: '{player} exchanges {count1} cards for {count2} cards',
+      template: '{player} exchanges {cards} from {from1} for {cards2} from {from2}',
+      redacted: '{player} exchanges {count1} cards from {from1} for {count2} cards from {from2}',
+      visibility: [...viewers],
       args: {
         player,
+        cards: cards1,
+        cards2,
+        from1: zoneLabel(zone1),
+        from2: zoneLabel(zone2),
         count1: cards1.length,
         count2: cards2.length,
       }
@@ -1039,21 +1068,7 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   exchangeZones(player, zone1, zone2) {
-    const cards1 = zone1.cardlist()
-    const cards2 = zone2.cardlist()
-
-    const result = this.exchangeCards(player, cards1, cards2, zone1, zone2)
-
-    if (result === 'would-instead') {
-      return
-    }
-
-    this.log.add({
-      template: '{player} exchanges {count1} cards from {zone1} for {count2} cards from {zone2}',
-      args: { player, zone1, zone2, count1: cards1.length, count2: cards2.length }
-    })
-
-    this.acted(player)
+    this.exchangeCards(player, zone1.cardlist(), zone2.cardlist(), zone1, zone2)
   }
 
   selfExecute(executingCard, player, card, opts={}) {

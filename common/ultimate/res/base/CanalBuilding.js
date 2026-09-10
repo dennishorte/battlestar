@@ -18,10 +18,6 @@ module.exports = {
       const decision = (pick && typeof pick === 'object') ? pick.id : pick
 
       if (decision === 'exchange' || decision === 'Exchange highest cards between hand and score pile') {
-        game.log.add({
-          template: '{player} exchanges the highest cards in their hand and score pile',
-          args: { player }
-        })
         const hand = game.zones.byPlayer(player, 'hand')
         const score = game.zones.byPlayer(player, 'score')
         const handHighest = game.util.highestCards(hand.cardlist())
