@@ -366,32 +366,6 @@ AgricolaPlayer.prototype.hasBoardEdgeFence = function(row, col, edge) {
   return false
 }
 
-// Get the two corner points of a fence segment as string keys
-AgricolaPlayer.prototype._getFenceCorners = function(fence) {
-  const { row1, col1 } = fence
-  let edge = fence.edge
-  if (!edge) {
-    if (fence.row2 < row1) {
-      edge = 'top'
-    }
-    else if (fence.row2 > row1) {
-      edge = 'bottom'
-    }
-    else if (fence.col2 < col1) {
-      edge = 'left'
-    }
-    else {
-      edge = 'right'
-    }
-  }
-  switch (edge) {
-    case 'top': return [`${row1},${col1}`, `${row1},${col1 + 1}`]
-    case 'bottom': return [`${row1 + 1},${col1}`, `${row1 + 1},${col1 + 1}`]
-    case 'left': return [`${row1},${col1}`, `${row1 + 1},${col1}`]
-    case 'right': return [`${row1},${col1 + 1}`, `${row1 + 1},${col1 + 1}`]
-  }
-}
-
 AgricolaPlayer.prototype.isPastureFullyEnclosed = function(spaces) {
   // Check if all border edges of the space group have fences
   // This includes both internal fences (between spaces) and board edge fences
@@ -598,21 +572,9 @@ AgricolaPlayer.prototype.validatePastureSelection = function(spaces, options) {
   // Calculate fences needed
   const fences = this.calculateFencesForPasture(spaces)
 
-  // Check that new fences connect to existing fence network
-  const allExistingFences = [...this.farmyard.fences, ...this.farmyard.palisades]
-  if (allExistingFences.length > 0 && fences.length > 0) {
-    const existingCorners = new Set()
-    for (const f of allExistingFences) {
-      for (const c of this._getFenceCorners(f)) {
-        existingCorners.add(c)
-      }
-    }
-    const connects = fences.some(f =>
-      this._getFenceCorners(f).some(c => existingCorners.has(c))
-    )
-    if (!connects) {
-      return { valid: false, error: 'New pasture must connect to existing fences' }
-    }
+  // New pastures must share an edge with an existing pasture (not just a corner)
+  if (!this.isSelectionAdjacentToExistingPasture(spaces)) {
+    return { valid: false, error: 'New pasture must be adjacent to an existing pasture' }
   }
 
   // WoodPalisades: selected edge fences become palisades (2 wood each, don't count against limit)
@@ -672,6 +634,22 @@ AgricolaPlayer.prototype.validatePastureSelection = function(spaces, options) {
     fencesNeeded: fences.length,
     fences,
   }
+}
+
+// True if this selection is a first pasture, subdivides/expands an existing one,
+// or shares an orthogonal edge with an existing pasture. Corner-touching is not enough.
+AgricolaPlayer.prototype.isSelectionAdjacentToExistingPasture = function(spaces) {
+  if (this.farmyard.pastures.length === 0) {
+    return true
+  }
+
+  return spaces.some(coord => {
+    if (this.getPastureAtSpace(coord.row, coord.col)) {
+      return true
+    }
+    return this.getOrthogonalNeighbors(coord.row, coord.col)
+      .some(n => this.getPastureAtSpace(n.row, n.col))
+  })
 }
 
 // Check if spaces are orthogonally connected

@@ -41,6 +41,33 @@ function areSpacesConnected(spaces) {
 }
 
 /**
+ * True if this is a first pasture, the selection overlaps an existing pasture,
+ * or it shares an orthogonal edge with one. Corner-touching does not count.
+ * @param {Array<{row: number, col: number}>} spaces
+ * @param {Array<{row: number, col: number}>} existingPastureSpaces
+ * @returns {boolean}
+ */
+function isSelectionAdjacentToExistingPasture(spaces, existingPastureSpaces) {
+  if (!existingPastureSpaces || existingPastureSpaces.length === 0) {
+    return true
+  }
+
+  const existingSet = new Set(existingPastureSpaces.map(s => `${s.row},${s.col}`))
+  return spaces.some(coord => {
+    if (existingSet.has(`${coord.row},${coord.col}`)) {
+      return true
+    }
+    const neighbors = [
+      { row: coord.row - 1, col: coord.col },
+      { row: coord.row + 1, col: coord.col },
+      { row: coord.row, col: coord.col - 1 },
+      { row: coord.row, col: coord.col + 1 },
+    ]
+    return neighbors.some(n => existingSet.has(`${n.row},${n.col}`))
+  })
+}
+
+/**
  * Calculate which edges of each selected space need fencing.
  * @param {Array<{row: number, col: number}>} spaces - Array of selected space coordinates
  * @param {Array} existingFences - Array of existing fence segments (optional)
@@ -194,6 +221,7 @@ function countFencesNeeded(spaces, existingFences = [], options = {}) {
  * @param {number} params.currentFenceCount - Current number of fences placed
  * @param {number} params.maxFences - Maximum fences allowed (default 15)
  * @param {Array} params.existingFences - Array of existing fence segments
+ * @param {Array<{row: number, col: number}>} params.existingPastureSpaces - Spaces already in pastures
  * @param {Function} params.isSpaceValid - Function(row, col) to check if space can be fenced
  * @returns {Object} { valid, error, fencesNeeded, fenceEdges }
  */
@@ -221,6 +249,11 @@ function validatePastureSelection(spaces, params = {}) {
   // Check connectivity
   if (!areSpacesConnected(spaces)) {
     return { valid: false, error: 'Spaces must be connected', fencesNeeded: 0 }
+  }
+
+  // New pastures must share an edge with an existing pasture (not just a corner)
+  if (!isSelectionAdjacentToExistingPasture(spaces, params.existingPastureSpaces)) {
+    return { valid: false, error: 'New pasture must be adjacent to an existing pasture', fencesNeeded: 0 }
   }
 
   // Calculate fences needed
@@ -259,6 +292,7 @@ function validatePastureSelection(spaces, params = {}) {
 
 module.exports = {
   areSpacesConnected,
+  isSelectionAdjacentToExistingPasture,
   calculateFenceEdges,
   countFencesNeeded,
   validatePastureSelection,
