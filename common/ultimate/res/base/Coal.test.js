@@ -33,6 +33,33 @@ describe('Coal', () => {
     })
   })
 
+  test('dogma: scored board cards are named in the log for other players', () => {
+    const game = t.fixtureFirstPlayer({ viewerName: 'micah' })
+    t.setBoard(game, {
+      dennis: {
+        red: ['Coal'],
+        blue: ['Alchemy', 'Calendar', 'Tools'],
+      },
+      decks: {
+        base: {
+          5: ['The Pirate Code'],
+        },
+      },
+    })
+    game.run()
+    t.choose(game, 'Dogma.Coal')
+    t.choose(game, 'red')
+    t.choose(game, 'blue')
+
+    const scored = game
+      .log
+      .getLog()
+      .filter(e => e.template === '{player} scores {card}')
+      .map(e => e.args.card.value)
+
+    expect(scored).toEqual(['Alchemy', 'Calendar'])
+  })
+
   test('dogma: choose not to score', () => {
     const game = t.fixtureFirstPlayer()
     t.setBoard(game, {

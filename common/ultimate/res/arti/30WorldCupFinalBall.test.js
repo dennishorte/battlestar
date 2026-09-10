@@ -66,6 +66,14 @@ describe('30 World Cup Final Ball', () => {
         achievements: ['Experimentation'],
       }
     })
+
+    const achieved = game
+      .log
+      .getLog()
+      .filter(e => e.template === '{player} achieves {card} from {zone}')
+      .map(e => e.args.card.value)
+
+    expect(achieved).toEqual(['Experimentation'])
   })
 
   test('dogma: compel', () => {

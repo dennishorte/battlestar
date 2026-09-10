@@ -884,10 +884,11 @@ Innovation.prototype.mSetFirstBaseDraw = function(player) {
 
 Innovation.prototype.mTake = function(player, card) {
   const hand = this.zones.byPlayer(player, 'hand')
-  card.moveTo(hand)
-  this.log.add({
-    template: '{player} takes {card} into hand',
-    args: { player, card }
+  this.actions._moveAndLog(card, () => card.moveTo(hand), () => {
+    this.log.add({
+      template: '{player} takes {card} into hand',
+      args: { player, card }
+    })
   })
   this.actions.acted(player)
   return card

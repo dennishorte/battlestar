@@ -504,11 +504,13 @@ class UltimateActionManager extends BaseActionManager {
 
     // Do the actual achievement claiming
     const source = card.zone
-    card.moveTo(this.zones.byPlayer(player, 'achievements'))
-
-    this.log.add({
-      template: '{player} achieves {card} from {zone}',
-      args: { player, card, zone: source }
+    this._moveAndLog(card, () => {
+      card.moveTo(this.zones.byPlayer(player, 'achievements'))
+    }, () => {
+      this.log.add({
+        template: '{player} achieves {card} from {zone}',
+        args: { player, card, zone: source }
+      })
     })
 
     this.acted(player)
@@ -632,11 +634,12 @@ class UltimateActionManager extends BaseActionManager {
       return
     }
     else {
-      card.moveTo(target)
-
-      this.log.add({
-        template: '{player} foreshadows {card} from {zone}',
-        args: { player, card, zone: card.zone }
+      const source = card.zone
+      this._moveAndLog(card, () => card.moveTo(target), () => {
+        this.log.add({
+          template: '{player} foreshadows {card} from {zone}',
+          args: { player, card, zone: source }
+        })
       })
 
       this.acted(player)
@@ -872,10 +875,11 @@ class UltimateActionManager extends BaseActionManager {
 
   score = UltimateActionManager.insteadKarmaWrapper('score', (player, card) => {
     const target = this.zones.byPlayer(player, 'score')
-    card.moveTo(target)
-    this.log.add({
-      template: '{player} scores {card}',
-      args: { player, card }
+    this._moveAndLog(card, () => card.moveTo(target), () => {
+      this.log.add({
+        template: '{player} scores {card}',
+        args: { player, card }
+      })
     })
     this.state.scoreCount[player.name] += 1
     this.acted(player)
@@ -958,23 +962,12 @@ class UltimateActionManager extends BaseActionManager {
       return
     }
 
-    // Snapshot visibility across the move so the log names the card if it
-    // was visible before (board → hand) or after (hand → board). Logging
-    // only after the move hides public cards once they enter a private zone.
-    const visibilityBefore = card.visibility.slice()
-    card.moveTo(target, 0)
-    const visibilityAfter = card.visibility.slice()
-    card.visibility = visibilityBefore.slice()
-    for (const viewer of visibilityAfter) {
-      card.show(viewer)
-    }
-
-    this.log.add({
-      template: '{player} transfers {card} to {zone}',
-      args: { player, card, zone: target }
+    this._moveAndLog(card, () => card.moveTo(target, 0), () => {
+      this.log.add({
+        template: '{player} transfers {card} to {zone}',
+        args: { player, card, zone: target }
+      })
     })
-
-    card.visibility = visibilityAfter
     this.acted(player)
     return card
   }
@@ -1443,6 +1436,22 @@ class UltimateActionManager extends BaseActionManager {
 
   ////////////////////////////////////////////////////////////////////////////////
   // Helper functions
+
+  // Log after a move, but keep the card named if anyone could see it before
+  // or after. Logging only after the move hides public cards once they enter
+  // a private or hidden zone (board → score/hand/forecast/achievements).
+  _moveAndLog(card, moveFn, logFn) {
+    const visibilityBefore = card.visibility.slice()
+    const result = moveFn()
+    const visibilityAfter = card.visibility.slice()
+    card.visibility = visibilityBefore.slice()
+    for (const viewer of visibilityAfter) {
+      card.show(viewer)
+    }
+    logFn()
+    card.visibility = visibilityAfter
+    return result
+  }
 
   // Used in two cases:
   //  1. Player melds a card onto an empty color stack.

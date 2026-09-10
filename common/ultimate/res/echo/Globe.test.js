@@ -90,6 +90,30 @@ describe("Globe", () => {
     })
   })
 
+  test('dogma: foreshadowed board card is named in the log for other players', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'], viewerName: 'micah' })
+    t.setBoard(game,  {
+      dennis: {
+        green: ['Sailing'],
+        hand: ['Perspective', 'Paper', 'Mathematics', 'Agriculture'],
+        forecast: ['Globe'],
+      },
+    })
+
+    game.run()
+    t.choose(game, 'Meld.Perspective')
+    t.choose(game, 'no')
+    t.choose(game, 'Perspective')
+
+    const foreshadowed = game
+      .log
+      .getLog()
+      .filter(e => e.template === '{player} foreshadows {card} from {zone}')
+      .map(e => e.args.card.value)
+
+    expect(foreshadowed).toEqual(expect.arrayContaining(['Perspective']))
+  })
+
   test('dogma: was foreseen', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
