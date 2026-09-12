@@ -1,6 +1,11 @@
 const t = require('../../../testutil_v2.js')
 
 describe('Piggy Bank', () => {
+  function piggyBankAction(game) {
+    const dennis = game.players.byName('dennis')
+    return game.getAnytimeActions(dennis).find(a => a.cardName === 'Piggy Bank')
+  }
+
   test('store 1 food at end of work phase', () => {
     const game = t.fixture({ cardSets: ['minorE', 'minorImprovementA', 'test'] })
     t.setBoard(game, {
@@ -28,5 +33,62 @@ describe('Piggy Bank', () => {
         minorImprovements: ['piggy-bank-e027'],
       },
     })
+  })
+
+  test('anytime action available with 6 food stored', () => {
+    const game = t.fixture({ cardSets: ['minorE'] })
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['piggy-bank-e027'],
+      },
+    })
+    game.testSetBreakpoint('initialization-complete', (game) => {
+      game.cardState('piggy-bank-e027').stored = 6
+    })
+    game.run()
+
+    expect(piggyBankAction(game)).toBeDefined()
+  })
+
+  test('anytime action not available with fewer than 6 food stored', () => {
+    const game = t.fixture({ cardSets: ['minorE'] })
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['piggy-bank-e027'],
+      },
+    })
+    game.testSetBreakpoint('initialization-complete', (game) => {
+      game.cardState('piggy-bank-e027').stored = 5
+    })
+    game.run()
+
+    expect(piggyBankAction(game)).toBeUndefined()
+  })
+
+  test('discards 6 food and builds a major improvement at no cost', () => {
+    const game = t.fixture({ cardSets: ['minorE'] })
+    t.setBoard(game, {
+      dennis: {
+        minorImprovements: ['piggy-bank-e027'],
+        clay: 0,
+      },
+    })
+    game.testSetBreakpoint('initialization-complete', (game) => {
+      game.cardState('piggy-bank-e027').stored = 6
+    })
+    game.run()
+
+    t.anytimeAction(game, piggyBankAction(game))
+    t.choose(game, 'Fireplace (fireplace-2)')
+
+    t.testBoard(game, {
+      dennis: {
+        clay: 0,
+        minorImprovements: ['piggy-bank-e027'],
+        majorImprovements: ['fireplace-2'],
+      },
+    })
+    expect(game.cardState('piggy-bank-e027').stored).toBe(0)
+    expect(piggyBankAction(game)).toBeUndefined()
   })
 })

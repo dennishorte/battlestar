@@ -7,7 +7,7 @@ module.exports = {
   cost: {},
   text: "At the end of each work phase, you can place 1 food on this card, irretrievably. At any time, you can discard 6 food from this card to build a major improvement at no cost.",
   storedResource: "food",
-  enablesFreeMajor: { cost: 6 },
+  allowsAnytimeAction: true,
   onWorkPhaseEnd(game, player) {
     if (player.food >= 1) {
       const selection = game.actions.choose(player, [
@@ -28,5 +28,52 @@ module.exports = {
         })
       }
     }
+  },
+
+  getAnytimeActions(game, _player) {
+    const stored = game.cardState(this.id).stored || 0
+    if (stored < 6) {
+      return []
+    }
+    if (game.getAvailableMajorImprovements().length === 0) {
+      return []
+    }
+    return [{
+      type: 'card-custom',
+      cardId: this.id,
+      cardName: this.name,
+      actionKey: 'buildFreeMajor',
+      description: `${this.name}: Discard 6 food to build a major improvement`,
+    }]
+  },
+
+  buildFreeMajor(game, player) {
+    const s = game.cardState(this.id)
+    if ((s.stored || 0) < 6) {
+      return
+    }
+    const available = game.getAvailableMajorImprovements()
+    if (available.length === 0) {
+      return
+    }
+
+    // Spend first so this action is not offered again during the nested choose.
+    s.stored -= 6
+
+    const choices = available.map(id => {
+      const imp = game.cards.byId(id)
+      return game.actions.option({ id, title: `${imp.name} (${id})`, kind: 'major-improvement' })
+    })
+    const selection = game.actions.choose(player, choices, {
+      title: 'Piggy Bank: Build a major improvement',
+      min: 1,
+      max: 1,
+    })
+
+    game.actions._completeMajorPurchase(player, selection[0].id, {
+      customCost: {},
+      logTemplate: '{player} uses {cardSource} to build {card}',
+      logArgs: { cardSource: this },
+    })
   },
 }
