@@ -12,7 +12,7 @@ module.exports = {
     `Return a purple card from your hand. If you do, draw and reveal a card of value two higher. If the drawn card is purple, meld it and self-execute it.`
   ],
   dogmaImpl: [
-    (game, player) => {
+    (game, player, { self }) => {
       const purples = game
         .cards.byPlayer(player, 'hand')
         .filter(card => card.color === 'purple')
@@ -24,7 +24,7 @@ module.exports = {
 
         if (drawn && drawn.color === 'purple') {
           game.actions.meld(player, drawn)
-          game.executeAllEffects(player, drawn, 'dogma')
+          game.actions.selfExecute(self, player, drawn)
         }
       }
       else {

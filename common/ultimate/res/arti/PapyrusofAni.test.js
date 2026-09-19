@@ -55,4 +55,39 @@ describe("Papyrus of Ani", () => {
       },
     })
   })
+
+  test.only('dogma: self execute purple', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti', 'usee'] })
+    t.setBoard(game,  {
+      dennis: {
+        artifact: ["Papyrus of Ani"],
+        red: ['Metalworking'],
+        hand: ['Philosophy'],
+        achievements: [],
+      },
+      decks: {
+        base: {
+          1: ['Masonry', 'Code of Laws'],
+          11: ['Climatology'],
+        },
+        usee: {
+          4: ['Legend'],
+        },
+      }
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, 'dogma')
+
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Legend'],
+        hand: ['Code of Laws'],
+        score: ['Metalworking', 'Masonry'],
+        museum: ['Museum 1', 'Papyrus of Ani'],
+        achievements: ['Climatology'],
+      },
+    })
+  })
 })
