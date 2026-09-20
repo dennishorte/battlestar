@@ -12,8 +12,11 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const chosenColor = game.actions.chooseColor(leader)
-      const choices = game.cards.byPlayer(player, 'hand').filter(c => c.color === chosenColor)
-      const returnedCard = game.actions.chooseAndReturn(player, choices, { reveal: true })[0]
+      const returnedCard = game.actions.chooseAndReturn(
+        player,
+        game.cards.byPlayer(player, 'hand'),
+        { reveal: true, filter: card => card.color === chosenColor },
+      )[0]
 
       if (returnedCard) {
         const topCard = game.cards.top(player, chosenColor)

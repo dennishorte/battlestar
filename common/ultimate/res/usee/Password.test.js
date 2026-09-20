@@ -59,4 +59,36 @@ describe('Password', () => {
     })
   })
 
+  test('dogma: no matching color, optional so hand is not revealed', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        red: ['Password'],
+        hand: ['Mysticism', 'The Wheel'],
+      },
+      decks: {
+        usee: {
+          2: ['Padlock'],
+        }
+      }
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, 'Dogma.Password')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Password'],
+        hand: ['Padlock'],
+      },
+    })
+
+    const proofs = game.log.getLog().filter(e =>
+      e.template && e.template.includes('no valid card')
+    )
+    expect(proofs).toEqual([])
+  })
+
 })

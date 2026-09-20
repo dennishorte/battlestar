@@ -1,4 +1,5 @@
 const { BaseActionManager } = require('../lib/game/index.js')
+const selector = require('../lib/selector.js')
 
 const { DogmaAction, EndorseAction } = require('./actions/Dogma.js')
 const { DrawAction } = require('./actions/Draw.js')
@@ -348,6 +349,28 @@ class UltimateActionManager extends BaseActionManager {
       return []
     }
 
+    // `filter` restricts which of `cards` are legal choices. If nothing is
+    // legal, the rules require the player to reveal the hidden cards to
+    // prove they cannot choose.
+    if (opts.filter) {
+      const filtered = cards.filter(card => {
+        if (card === 'auto') {
+          return true
+        }
+        return opts.filter(card.id ? card : this.cards.byId(card))
+      })
+
+      if (filtered.length === 0) {
+        this._proveNoValidCards(player, cards, opts)
+        this.log.addNoEffect()
+        return []
+      }
+
+      cards = filtered
+      opts = { ...opts }
+      delete opts.filter
+    }
+
     const choiceMap = cards.map(card => {
       if (card === 'auto') {
         // 'auto' is a special keyword used by createManyMethod that allows
@@ -425,6 +448,53 @@ class UltimateActionManager extends BaseActionManager {
     }
 
     return output
+  }
+
+  // Whether the player is required to make a selection. Optional selections
+  // (min: 0, or max-only) can simply be declined, so they never require proof.
+  // `numChoices` stands in for selector.choices.length so minMax can apply
+  // its clamping. `required` overrides everything for callers without
+  // min/max semantics (e.g. *Many bulk actions).
+  _selectionIsRequired(opts, numChoices) {
+    if (opts.required !== undefined) {
+      return opts.required
+    }
+    // choose() applies mayIsMust by forcing min >= 1; do the same here.
+    const min = this.state.dogmaInfo.mayIsMust ? Math.max(1, opts.min || 1) : opts.min
+    return selector.minMax({ ...opts, min, choices: new Array(numChoices) }).min > 0
+  }
+
+  // When a player is required to select cards but none of the options are
+  // valid, the rules require them to reveal the hidden options to prove it.
+  // E.g., a player demanded to return a red card from their hand must reveal
+  // their hand if it contains no red cards.
+  _proveNoValidCards(player, cards, opts={}) {
+    if (!this._selectionIsRequired(opts, cards.length)) {
+      return
+    }
+
+    const hidden = cards
+      .map(card => card.id ? card : (card === 'auto' ? null : this.cards.byId(card)))
+      .filter(card => card && !card.revealed())
+    if (hidden.length === 0) {
+      return
+    }
+
+    const zoneNames = {
+      hand: 'hand',
+      score: 'score pile',
+      safe: 'safe',
+      forecast: 'forecast',
+      achievements: 'achievements',
+    }
+    const names = util.array.distinct(hidden.map(card =>
+      zoneNames[card.zone.name().split('.').pop()] || 'cards'
+    ))
+    this.log.add({
+      template: `{player} reveals their ${names.join(' and ')} to show they have no valid card`,
+      args: { player },
+    })
+    this.revealMany(player, hidden, { ordered: true })
   }
 
   chooseColor(player, choices) {
@@ -1337,8 +1407,21 @@ class UltimateActionManager extends BaseActionManager {
   static createManyMethod(verb, numArgs) {
     return function(...args) { //player, cards, opts={}) {
       const player = args[0]
-      const cards = args[1]
       const opts = args[numArgs] || {}
+
+      // `filter` restricts which cards are acted on. If nothing matches, the
+      // rules require the player to reveal the hidden cards to prove it.
+      if (opts.filter) {
+        const filtered = args[1].filter(opts.filter)
+        if (filtered.length === 0) {
+          this._proveNoValidCards(player, args[1], { required: true })
+          this.log.addNoEffect()
+          return []
+        }
+        args[1] = filtered
+      }
+
+      const cards = args[1]
 
       const results = []
       // `ordered`: caller already sorted the cards — process in array order, no prompts.
@@ -1408,6 +1491,13 @@ class UltimateActionManager extends BaseActionManager {
 
         const actionArgs = [...args]
         actionArgs[1] = cards
+        // `filter` was already applied by chooseCards; the *Many method must
+        // not re-filter the selection (or re-run the empty-set proof).
+        if (opts.filter) {
+          const manyOpts = { ...opts }
+          delete manyOpts.filter
+          actionArgs[numArgs] = manyOpts
+        }
         return this[manyFuncName](...actionArgs)
       }
       else {

@@ -20,38 +20,29 @@ module.exports = {
         .filter(([, cards]) => cards.length >= 2)
         .map(([color,]) => color)
 
-      if (colorsWithTwo.length > 0) {
-        const tuckable = hand.filter(c => colorsWithTwo.includes(c.color))
-        const tucked = game.actions.chooseAndTuck(player, tuckable, {
-          title: 'Tuck two cards with the same color',
-          count: 2,
-          guard: (toTuck) => {
-            if (toTuck.length == 2 && toTuck[0].color === toTuck[1].color) {
-              return true
-            }
-            else if (toTuck.length < 2) {
-              return true
-            }
-            else {
-              return false
-            }
+      const tucked = game.actions.chooseAndTuck(player, hand, {
+        title: 'Tuck two cards with the same color',
+        count: 2,
+        filter: card => colorsWithTwo.includes(card.color),
+        guard: (toTuck) => {
+          if (toTuck.length == 2 && toTuck[0].color === toTuck[1].color) {
+            return true
           }
-        })
-
-        if (tucked.length == 2) {
-          game.actions.splay(player, tucked[0].color, 'left')
-          const bottomCard = game.cards.bottom(player, tucked[0].color)
-          const bottomValue = bottomCard ? bottomCard.age : 1
-          const drawnCard = game.actions.draw(player, { age: bottomValue })
-          game.actions.safeguard(player, drawnCard)
+          else if (toTuck.length < 2) {
+            return true
+          }
+          else {
+            return false
+          }
         }
-      }
-      else {
-        game.log.add({
-          template: '{player} reveals hand to show no matching cards',
-          args: { player },
-        })
-        game.actions.revealMany(player, hand, { ordered: true })
+      })
+
+      if (tucked.length == 2) {
+        game.actions.splay(player, tucked[0].color, 'left')
+        const bottomCard = game.cards.bottom(player, tucked[0].color)
+        const bottomValue = bottomCard ? bottomCard.age : 1
+        const drawnCard = game.actions.draw(player, { age: bottomValue })
+        game.actions.safeguard(player, drawnCard)
       }
     },
   ],

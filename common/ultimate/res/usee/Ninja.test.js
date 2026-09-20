@@ -37,4 +37,35 @@ describe('Ninja', () => {
     })
   })
 
+  test('dogma: opponent reveals hand when they have no card of the chosen color', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        red: ['Ninja'],
+      },
+      micah: {
+        hand: ['Tools', 'Domestication'],
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, 'Dogma.Ninja')
+    request = t.choose(game, 'red')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Ninja'],
+      },
+      micah: {
+        hand: ['Tools', 'Domestication'],
+      },
+    })
+
+    const micah = game.players.byName('micah')
+    const hand = game.cards.byPlayer(micah, 'hand')
+    expect(hand.every(card => card.revealed())).toBe(true)
+  })
+
 })

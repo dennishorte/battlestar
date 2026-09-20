@@ -56,7 +56,7 @@ describe("Papyrus of Ani", () => {
     })
   })
 
-  test.only('dogma: self execute purple', () => {
+  test('dogma: self execute purple', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti', 'usee'] })
     t.setBoard(game,  {
       dennis: {

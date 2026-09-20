@@ -16,12 +16,12 @@ module.exports = {
         .cards
         .byPlayer(player, 'hand')
         .filter(c => c.name !== drawnCard.name)
-      const sameColorCards = otherHandCards.filter(c => c.color === drawnCard.color)
 
-      const safeguarded = game.actions.chooseAndSafeguard(player, sameColorCards, {
+      const safeguarded = game.actions.chooseAndSafeguard(player, otherHandCards, {
         title: 'Choose a card to safeguard',
         min: 0,
-        max: 1
+        max: 1,
+        filter: card => card.color === drawnCard.color,
       })[0]
 
       if (safeguarded) {
