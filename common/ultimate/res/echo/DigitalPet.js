@@ -13,10 +13,12 @@ module.exports = {
       const drawn = game.actions.drawAndReveal(player, game.getEffectAge(self, 11))
       const toReturn = [
         ...game.cards.byPlayer(player, drawn.color),
-        ...game.cards.byPlayer(player, 'score').filter(card => card.color === drawn.color),
+        ...game.cards.byPlayer(player, 'score'),
       ]
 
-      game.actions.returnMany(player, toReturn)
+      game.actions.returnMany(player, toReturn, {
+        filter: card => card.color === drawn.color,
+      })
     }
   ],
 }

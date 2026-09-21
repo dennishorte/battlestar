@@ -10,11 +10,11 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const choices = game
-        .cards
-        .byPlayer(player, 'hand')
-        .filter(card => card.getAge() === game.getEffectAge(self, 8))
-      const card = game.actions.chooseAndMeld(player, choices)[0]
+      const card = game.actions.chooseAndMeld(
+        player,
+        game.cards.byPlayer(player, 'hand'),
+        { filter: card => card.getAge() === game.getEffectAge(self, 8) },
+      )[0]
 
       if (card) {
         if (

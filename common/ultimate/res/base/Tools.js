@@ -30,10 +30,11 @@ module.exports = {
     },
 
     (game, player, { self }) => {
-      const choices = game
-        .cards.byPlayer(player, 'hand')
-        .filter(card => card.getAge() === 3)
-      const returned = game.actions.chooseAndReturn(player, choices, { min: 0, max: 1 })
+      const returned = game.actions.chooseAndReturn(
+        player,
+        game.cards.byPlayer(player, 'hand'),
+        { min: 0, max: 1, filter: card => card.getAge() === 3 },
+      )
       if (returned && returned.length > 0) {
         game.actions.draw(player, { age: game.getEffectAge(self, 1) })
         game.actions.draw(player, { age: game.getEffectAge(self, 1) })

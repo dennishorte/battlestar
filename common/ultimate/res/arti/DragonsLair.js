@@ -23,8 +23,11 @@ module.exports = {
         const meldedFromScore = game.actions.meld(player, card)
 
         if (meldedFromScore) {
-          const handOptions = game.cards.byPlayer(player, 'hand').filter(other => other.color === card.color)
-          const meldedFromHand = game.actions.chooseAndMeld(player, handOptions)[0]
+          const meldedFromHand = game.actions.chooseAndMeld(
+            player,
+            game.cards.byPlayer(player, 'hand'),
+            { filter: other => other.color === card.color },
+          )[0]
 
           if (meldedFromHand) {
             game.log.add({

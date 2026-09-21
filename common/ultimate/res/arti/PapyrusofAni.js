@@ -13,10 +13,11 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const purples = game
-        .cards.byPlayer(player, 'hand')
-        .filter(card => card.color === 'purple')
-      const returned = game.actions.chooseAndReturn(player, purples)
+      const returned = game.actions.chooseAndReturn(
+        player,
+        game.cards.byPlayer(player, 'hand'),
+        { filter: card => card.color === 'purple' },
+      )
 
       if (returned && returned.length > 0) {
         const returnedCard = returned[0]

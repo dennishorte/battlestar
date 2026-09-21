@@ -54,6 +54,10 @@ describe("Papyrus of Ani", () => {
         museum: ['Museum 1', 'Papyrus of Ani'],
       },
     })
+
+    // Required choice with no valid options: hand is revealed as proof
+    const hand = game.cards.byPlayer(game.players.byName('dennis'), 'hand')
+    expect(hand.every(card => card.revealed())).toBe(true)
   })
 
   test('dogma: self execute purple', () => {
