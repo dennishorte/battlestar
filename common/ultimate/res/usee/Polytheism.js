@@ -15,8 +15,10 @@ module.exports = {
 
       while (true) {
         const hand = game.cards.byPlayer(player, 'hand')
-        const choices = hand.filter(c => ![...c.biscuits].some(b => b in meldedBiscuits && meldedBiscuits[b] > 0))
-        const melded = game.actions.chooseAndMeld(player, choices, { count: 1 })
+        const melded = game.actions.chooseAndMeld(player, hand, {
+          count: 1,
+          filter: c => ![...c.biscuits].some(b => b in meldedBiscuits && meldedBiscuits[b] > 0),
+        })
 
         if (melded.length > 0) {
           for (const b of melded[0].biscuits) {

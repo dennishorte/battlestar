@@ -18,10 +18,14 @@ module.exports = {
         .players
         .all()
         .flatMap(target => game.cards.byPlayer(target, 'hand'))
-      const revealed = game.actions.revealMany(player, toReveal, { ordered: true })
+      game.actions.revealMany(player, toReveal, { ordered: true })
 
-      const toTransfer = revealed.filter(card => card.color === drawnCard.color)
-      const transferred = game.actions.transferMany(player, toTransfer, game.zones.byPlayer(player, 'hand'))
+      const transferred = game.actions.transferMany(
+        player,
+        toReveal,
+        game.zones.byPlayer(player, 'hand'),
+        { filter: card => card.color === drawnCard.color },
+      )
 
       const allCards = [...transferred, drawnCard]
       const freshWater = allCards.find(card => card.name === 'Fresh Water')

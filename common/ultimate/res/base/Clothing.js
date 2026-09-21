@@ -15,12 +15,9 @@ module.exports = {
         .cards.tops(player)
         .map(card => card.color)
 
-      const choices = game
-        .zones.byPlayer(player, 'hand')
-        .cardlist()
-        .filter(card => !usedColors.includes(card.color))
-
-      game.actions.chooseAndMeld(player, choices)
+      game.actions.chooseAndMeld(player, game.zones.byPlayer(player, 'hand').cardlist(), {
+        filter: card => !usedColors.includes(card.color),
+      })
     },
 
     (game, player, { self }) => {

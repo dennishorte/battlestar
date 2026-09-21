@@ -13,11 +13,12 @@ module.exports = {
       const cards = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'))
       if (cards.length > 0) {
         const card = cards[0]
-        const choices = game
-          .cards
-          .byPlayer(player, 'achievements')
-          .filter(ach => ach.age === card.age)
-        game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'achievements'))
+        game.actions.chooseAndTransfer(
+          player,
+          game.cards.byPlayer(player, 'achievements'),
+          game.zones.byPlayer(leader, 'achievements'),
+          { filter: ach => ach.age === card.age },
+        )
         game.actions.junkDeck(player, card.getAge())
       }
     }

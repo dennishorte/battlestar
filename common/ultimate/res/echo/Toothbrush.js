@@ -39,10 +39,9 @@ module.exports = {
       const choices = util.array.distinct(ages)
       const age = game.actions.chooseAge(player, choices)
       if (age) {
-        const toTuck = game
-          .cards.byPlayer(player, 'hand')
-          .filter(card => card.getAge() === age)
-        game.actions.tuckMany(player, toTuck)
+        game.actions.tuckMany(player, game.cards.byPlayer(player, 'hand'), {
+          filter: card => card.getAge() === age,
+        })
       }
     }
   ],

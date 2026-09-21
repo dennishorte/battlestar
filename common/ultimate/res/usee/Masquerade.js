@@ -17,12 +17,11 @@ module.exports = {
       if (availableAchievement) {
         game.actions.safeguard(player, availableAchievement)
 
-        const toReturn = game
-          .cards
-          .byPlayer(player, 'hand')
-          .filter(c => c.getAge() === handSize)
+        const toReturn = game.cards.byPlayer(player, 'hand')
 
-        const returned = game.actions.returnMany(player, toReturn)
+        const returned = game.actions.returnMany(player, toReturn, {
+          filter: c => c.getAge() === handSize,
+        })
 
         if (returned.some(card => card.getAge() === game.getEffectAge(self, 4))) {
           game.actions.claimAchievement(player, game.cards.byId('Anonymity'))

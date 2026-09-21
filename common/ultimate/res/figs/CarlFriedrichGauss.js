@@ -19,25 +19,16 @@ module.exports = {
       matches: () => true,
       func(game, player, { card }) {
         const age = game.actions.chooseAge(player)
-        const hand = game
-          .cards
-          .byPlayer(player, 'hand')
-          .filter(card => card.getAge() === age)
-          .filter(other => other !== card)
-        const score = game
-          .cards
-          .byPlayer(player, 'score')
-          .filter(card => card.getAge() === age)
 
         // Use distinct in case some Karma causes overlap in these two zones.
-        const cards = util.array.distinct([...hand, ...score])
+        const cards = util.array.distinct([
+          ...game.cards.byPlayer(player, 'hand'),
+          ...game.cards.byPlayer(player, 'score'),
+        ])
 
-        if (cards.length === 0) {
-          game.log.addNoEffect()
-        }
-        else {
-          game.actions.meldMany(player, cards)
-        }
+        game.actions.meldMany(player, cards, {
+          filter: other => other !== card && other.getAge() === age,
+        })
       }
     },
     {

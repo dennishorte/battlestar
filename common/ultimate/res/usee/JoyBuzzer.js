@@ -25,8 +25,10 @@ module.exports = {
         return
       }
 
-      const cardsOfAge = game.cards.byPlayer(player, 'hand').filter(c => c.getAge() === age)
-      game.actions.scoreMany(player, cardsOfAge)
+      const cardsOfAge = game.cards.byPlayer(player, 'hand')
+      game.actions.scoreMany(player, cardsOfAge, {
+        filter: c => c.getAge() === age,
+      })
 
       const topPurple = game.cards.top(player, 'purple')
       if (topPurple) {

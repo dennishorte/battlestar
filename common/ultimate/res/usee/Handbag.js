@@ -34,8 +34,10 @@ module.exports = {
       else if (choice === 'score-by-value' || choice === 'Score cards of chosen value from hand') {
         const values = game.cards.byPlayer(player, 'hand').map(c => c.getAge())
         const value = game.actions.chooseAge(player, util.array.distinct(values).sort())
-        const toScore = game.cards.byPlayer(player, 'hand').filter(c => c.getAge() === value)
-        game.actions.scoreMany(player, toScore)
+        const toScore = game.cards.byPlayer(player, 'hand')
+        game.actions.scoreMany(player, toScore, {
+          filter: c => c.getAge() === value,
+        })
       }
       else {
         throw new Error('Invalid choice: ' + JSON.stringify(pick))

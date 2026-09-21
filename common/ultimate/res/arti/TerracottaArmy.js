@@ -17,10 +17,11 @@ module.exports = {
       game.actions.chooseAndReturn(player, choices)
     },
     (game, player, { self }) => {
-      const choices = game
-        .cards.byPlayer(player, 'hand')
-        .filter(card => !card.checkHasBiscuit('k'))
-      const scored = game.actions.chooseAndScore(player, choices)[0]
+      const scored = game.actions.chooseAndScore(
+        player,
+        game.cards.byPlayer(player, 'hand'),
+        { filter: card => !card.checkHasBiscuit('k') },
+      )[0]
       if (scored) {
         game.actions.junkDeck(player, scored.getAge())
       }

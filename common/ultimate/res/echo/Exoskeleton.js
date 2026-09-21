@@ -13,9 +13,10 @@ module.exports = {
     (game, player, { leader }) => {
       const cardsInHand = game.cards.byPlayer(player, 'hand')
       const lowestCards = game.util.lowestCards(cardsInHand)
-      const toTransfer = cardsInHand.filter(c => !lowestCards.includes(c))
 
-      game.actions.transferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'))
+      game.actions.transferMany(player, cardsInHand, game.zones.byPlayer(leader, 'score'), {
+        filter: card => !lowestCards.includes(card),
+      })
     },
 
     (game, player, { foreseen, self }) => {
@@ -25,9 +26,12 @@ module.exports = {
           .players
           .all()
           .flatMap(p => game.cards.byPlayer(p, 'hand'))
-          .filter(card => player.canClaimAchievement(card))
 
-        const achieved = game.actions.chooseAndAchieve(player, mayAchieve)
+        const achieved = game.actions.chooseAndAchieve(player, mayAchieve, {
+          min: 0,
+          max: 1,
+          filter: card => player.canClaimAchievement(card),
+        })
 
         if (foreseen && achieved.length > 0) {
           continue

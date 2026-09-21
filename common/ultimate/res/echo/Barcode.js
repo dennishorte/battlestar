@@ -17,23 +17,17 @@ module.exports = {
       const bonuses = player.bonuses()
       while (bonuses.length > 0) {
         game.log.add({ template: bonuses.join(',') })
-        const scoreCards = game
-          .cards
-          .byPlayer(player, 'score')
-          .filter(card => bonuses.some(value => card.getAge() === value))
+        const chosen = game.actions.chooseCard(player, game.cards.byPlayer(player, 'score'), {
+          title: 'Choose a card to return next',
+          filter: card => bonuses.some(value => card.getAge() === value),
+        })
 
-        if (scoreCards.length === 0) {
+        if (!chosen) {
           return
         }
 
-        const chosen = game.actions.chooseCard(player, scoreCards, {
-          title: 'Choose a card to return next',
-        })
-
-        if (chosen) {
-          util.array.remove(bonuses, chosen.getAge())
-          game.actions.return(player, chosen)
-        }
+        util.array.remove(bonuses, chosen.getAge())
+        game.actions.return(player, chosen)
       }
     },
 

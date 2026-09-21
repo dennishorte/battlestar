@@ -15,12 +15,11 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func: (game, player, { card, self }) => {
-        const mayMeld = game
-          .cards
-          .byPlayer(player, 'hand')
-          .filter(other => other.id !== card.id)
-
-        const melded = game.actions.chooseAndMeld(player, mayMeld)[0]
+        const melded = game.actions.chooseAndMeld(
+          player,
+          game.cards.byPlayer(player, 'hand'),
+          { filter: other => other.id !== card.id },
+        )[0]
 
         if (melded && melded.color === 'purple') {
           game.actions.draw(player, { age: game.getEffectAge(self, 4) })

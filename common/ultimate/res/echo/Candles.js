@@ -11,14 +11,11 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader, self }) => {
-      const valid = game
-        .cards.byPlayer(player, 'hand')
-        .filter(card => card.checkHasBiscuit('k') || card.checkHasBiscuit('s'))
-
       const transferred = game.actions.chooseAndTransfer(
         player,
-        valid,
-        game.zones.byPlayer(leader, 'hand')
+        game.cards.byPlayer(player, 'hand'),
+        game.zones.byPlayer(leader, 'hand'),
+        { filter: card => card.checkHasBiscuit('k') || card.checkHasBiscuit('s') },
       )
       if (transferred && transferred.length > 0) {
         game.actions.draw(player, { age: game.getEffectAge(self, 1) })

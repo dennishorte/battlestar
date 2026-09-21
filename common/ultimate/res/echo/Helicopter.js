@@ -21,11 +21,11 @@ module.exports = {
         if (card) {
           game.actions.transfer(player, card, game.zones.byPlayer(card.owner, 'score'))
 
-          const returnChoices = game
-            .cards.byPlayer(player, 'hand')
-            .filter(c => card.checkSharesBiscuit(c))
-
-          const toReturn = game.actions.chooseCard(player, returnChoices, { min: 0, max: 1 })
+          const toReturn = game.actions.chooseCard(player, game.cards.byPlayer(player, 'hand'), {
+            min: 0,
+            max: 1,
+            filter: c => card.checkSharesBiscuit(c),
+          })
           if (toReturn) {
             game.actions.return(player, toReturn)
             continue

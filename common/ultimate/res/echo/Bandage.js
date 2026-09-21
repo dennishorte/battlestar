@@ -11,11 +11,9 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const scoreOptions = game
-        .cards
-        .byPlayer(player, 'score')
-        .filter(card => card.checkHasBiscuit('i'))
-      const fromScore = game.actions.chooseAndReturn(player, scoreOptions)[0]
+      const fromScore = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'), {
+        filter: card => card.checkHasBiscuit('i'),
+      })[0]
 
       const boardOptions = game
         .cards
@@ -32,10 +30,9 @@ module.exports = {
   ],
   echoImpl: [
     (game, player) => {
-      const choices = game
-        .cards.byPlayer(player, 'hand')
-        .filter(card => card.checkHasBiscuit('l'))
-      game.actions.chooseAndMeld(player, choices)
+      game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'), {
+        filter: card => card.checkHasBiscuit('l'),
+      })
     }
   ],
 }

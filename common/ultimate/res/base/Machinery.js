@@ -28,10 +28,11 @@ module.exports = {
     },
 
     (game, player) => {
-      const choices = game
-        .cards.byPlayer(player, 'hand')
-        .filter(card => card.checkHasBiscuit('k'))
-      game.actions.chooseAndScore(player, choices)
+      game.actions.chooseAndScore(
+        player,
+        game.cards.byPlayer(player, 'hand'),
+        { filter: card => card.checkHasBiscuit('k') }
+      )
     },
 
     (game, player) => {

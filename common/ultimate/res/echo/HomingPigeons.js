@@ -15,10 +15,10 @@ module.exports = {
       const ages = game
         .cards.byPlayer(leader, 'hand')
         .map(card => card.getAge())
-      const choices = game
-        .cards.byPlayer(player, 'score')
-        .filter(card => ages.includes(card.getAge()))
-      game.actions.chooseAndReturn(player, choices, { count: 2 })
+      game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'), {
+        count: 2,
+        filter: card => ages.includes(card.getAge()),
+      })
     },
 
     (game, player, { foreseen, self }) => {

@@ -15,11 +15,9 @@ module.exports = {
         game.actions.draw(player, { age: game.getEffectAge(self, 7) })
       }
 
-      const choices = game
-        .cards.byPlayer(player, 'hand')
-        .filter(card => card.color === 'blue')
-
-      game.actions.chooseAndMeld(player, choices)
+      game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'), {
+        filter: card => card.color === 'blue',
+      })
 
       game.actions.transferMany(
         player,

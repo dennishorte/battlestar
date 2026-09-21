@@ -15,11 +15,11 @@ module.exports = {
         const color = tucked.color
         game.actions.splay(player, color, 'up')
 
-        const toTuck = game
-          .cards
-          .byPlayer(player, 'score')
-          .filter(card => card.color === color)
-        const tuckedFromScore = game.actions.tuckMany(player, toTuck)
+        const tuckedFromScore = game.actions.tuckMany(
+          player,
+          game.cards.byPlayer(player, 'score'),
+          { filter: card => card.color === color },
+        )
 
         if (tuckedFromScore.length > 0) {
           game.actions.junkAvailableAchievement(player, game.getAges())

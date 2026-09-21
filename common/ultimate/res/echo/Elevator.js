@@ -51,9 +51,10 @@ module.exports = {
         const otherPlayers = game.players.other(player)
         const cards = otherPlayers
           .flatMap(other => game.cards.byPlayer(other, zoneName))
-          .filter(card => card.getAge() === age)
 
-        game.actions.scoreMany(player, cards, game.zones.byPlayer(player, 'score'))
+        game.actions.scoreMany(player, cards, {
+          filter: card => card.getAge() === age,
+        })
 
         game.actions.drawAndForeshadow(player, age)
       }

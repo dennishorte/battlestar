@@ -15,11 +15,14 @@ module.exports = {
         .cards.byPlayer(leader, 'safe')
         .map(card => card.getAge())
 
-      const handCards = game
-        .cards.byPlayer(player, 'hand')
-        .filter(card => leaderSecretAges.includes(card.getAge()))
+      const handCards = game.cards.byPlayer(player, 'hand')
 
-      game.actions.transferMany(player, handCards, game.zones.byPlayer(leader, 'score'))
+      game.actions.transferMany(
+        player,
+        handCards,
+        game.zones.byPlayer(leader, 'score'),
+        { filter: card => leaderSecretAges.includes(card.getAge()) },
+      )
 
       game.actions.draw(player, { age: game.getEffectAge(self, 5) })
     },
@@ -29,11 +32,12 @@ module.exports = {
         .cards.tops(player)
         .map(card => card.getAge())
 
-      const availableAchievements = player
-        .availableStandardAchievements()
-        .filter(achievement => topCardAges.includes(achievement.getAge()))
+      const availableAchievements = player.availableStandardAchievements()
 
-      game.actions.chooseAndSafeguard(player, availableAchievements, { hidden: true })
+      game.actions.chooseAndSafeguard(player, availableAchievements, {
+        hidden: true,
+        filter: achievement => topCardAges.includes(achievement.getAge()),
+      })
     }
   ],
 }

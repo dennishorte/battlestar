@@ -82,6 +82,10 @@ describe('Fire', () => {
     // So micah loses, then second effect (meld) runs for dennis
 
     t.testGameOver(request, 'dennis', 'Fire') // Dennis wins when Micah loses
+
+    // No valid card to reveal: micah's hand was revealed as proof
+    const hand = game.cards.byPlayer(game.players.byName('micah'), 'hand')
+    expect(hand.every(card => card.revealed())).toBe(true)
   })
 
   test('dogma: meld - player loses (no card of color on board)', () => {
@@ -104,5 +108,9 @@ describe('Fire', () => {
     // Second effect: meld - no blue card in hand, so player loses
 
     t.testGameOver(request, 'micah', 'Fire') // Micah wins when Dennis loses
+
+    // No valid card to meld: dennis's hand was revealed as proof
+    const hand = game.cards.byPlayer(game.players.byName('dennis'), 'hand')
+    expect(hand.every(card => card.revealed())).toBe(true)
   })
 })

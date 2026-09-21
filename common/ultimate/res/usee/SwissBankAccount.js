@@ -18,10 +18,10 @@ module.exports = {
 
       if (achievement) {
         game.actions.safeguard(player, achievement)
-        const cardsInHand = game
-          .cards.byPlayer(player, 'hand')
-          .filter(c => c.age === achievement.age)
-        game.actions.scoreMany(player, cardsInHand)
+        const cardsInHand = game.cards.byPlayer(player, 'hand')
+        game.actions.scoreMany(player, cardsInHand, {
+          filter: c => c.age === achievement.age,
+        })
       }
     },
     (game, player, { self }) => {

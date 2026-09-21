@@ -22,11 +22,13 @@ module.exports = {
       if (game.cards.bottoms(player).includes(card)) {
         game.actions.score(player, card)
 
-        const sameColorInHand = game
-          .cards.byPlayer(player, 'hand')
-          .filter(c => c.color === card.color)
+        const hand = game.cards.byPlayer(player, 'hand')
 
-        game.actions.chooseAndScore(player, sameColorInHand, { min: 0, max: sameColorInHand.length })
+        game.actions.chooseAndScore(player, hand, {
+          min: 0,
+          max: hand.length,
+          filter: c => c.color === card.color,
+        })
       }
     }
   ],

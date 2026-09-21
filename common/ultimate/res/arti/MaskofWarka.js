@@ -26,12 +26,12 @@ module.exports = {
       }
 
       if (revealedBy.length === 1 && revealedBy[0] === player) {
-        const toReturn = game
-          .cards
-          .byPlayer(player, 'hand')
-          .filter(card => card.color === color)
-        game.actions.returnMany(player, toReturn)
-        const toClaim = toReturn.map(card => card.getAge())
+        const returned = game.actions.returnMany(
+          player,
+          game.cards.byPlayer(player, 'hand'),
+          { filter: card => card.color === color },
+        )
+        const toClaim = returned.map(card => card.getAge())
         player
           .availableAchievements()
           .filter(card => toClaim.includes(card.getAge()))

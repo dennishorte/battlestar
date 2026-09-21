@@ -12,11 +12,11 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const choices = game
-        .cards.byPlayer(player, 'forecast')
-        .filter(card => card.checkHasBonus())
-
-      const cards = game.actions.chooseAndReturn(player, choices, { min: 0, max: 1 })
+      const cards = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'forecast'), {
+        min: 0,
+        max: 1,
+        filter: card => card.checkHasBonus(),
+      })
       if (cards && cards.length > 0) {
         const card = cards[0]
         const bonuses = card.getBonuses()

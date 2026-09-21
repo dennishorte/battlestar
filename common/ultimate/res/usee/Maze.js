@@ -50,11 +50,11 @@ module.exports = {
         const colorString = makeColorString(colorsToDiscard)
         game.log.add({ template: 'remaining to discard are ' + colorString })
 
-        const validCards = game
-          .cards.byPlayer(player, 'hand')
-          .filter(c => colorsToDiscard.indexOf(c.color) >= 0)
+        const validCards = game.cards.byPlayer(player, 'hand')
 
-        const scored = game.actions.chooseAndScore(player, validCards)[0]
+        const scored = game.actions.chooseAndScore(player, validCards, {
+          filter: c => colorsToDiscard.indexOf(c.color) >= 0,
+        })[0]
 
         if (scored) {
           util.array.remove(colorsToDiscard, scored.color)

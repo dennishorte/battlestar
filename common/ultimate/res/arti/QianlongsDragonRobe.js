@@ -34,11 +34,19 @@ module.exports = {
         })
       }
 
-      const yellowCards = game.cards.byPlayer(player, 'score').filter(card => card.color === 'yellow')
-      game.actions.chooseAndTransfer(player, yellowCards, leaderScore)
+      game.actions.chooseAndTransfer(
+        player,
+        game.cards.byPlayer(player, 'score'),
+        leaderScore,
+        { filter: card => card.color === 'yellow' },
+      )
 
-      const purpleCards = game.cards.byPlayer(player, 'score').filter(card => card.color === 'purple')
-      game.actions.chooseAndTransfer(player, purpleCards, game.zones.byPlayer(leader, 'hand'))
+      game.actions.chooseAndTransfer(
+        player,
+        game.cards.byPlayer(player, 'score'),
+        game.zones.byPlayer(leader, 'hand'),
+        { filter: card => card.color === 'purple' },
+      )
     }
   ],
 }

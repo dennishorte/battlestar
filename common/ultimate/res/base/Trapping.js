@@ -25,8 +25,12 @@ module.exports = {
       })
       game.actions.revealMany(player, scoreCards, { ordered: true })
 
-      const toTransfer = handCards.filter(card => scoreCards.some(other => other.color === card.color))
-      game.actions.transferMany(player, toTransfer, game.zones.byPlayer(leader, 'hand'))
+      game.actions.transferMany(
+        player,
+        handCards,
+        game.zones.byPlayer(leader, 'hand'),
+        { filter: card => scoreCards.some(other => other.color === card.color) }
+      )
     }
   ],
 }

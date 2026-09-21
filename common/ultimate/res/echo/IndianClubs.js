@@ -39,7 +39,10 @@ module.exports = {
           toScore.push(cards[0])
         }
         else {
-          const card = game.actions.chooseCard(player, cards, { title: `Choose a card to score of age ${age}` })
+          const card = game.actions.chooseCard(player, game.cards.byPlayer(player, 'hand'), {
+            title: `Choose a card to score of age ${age}`,
+            filter: card => card.getAge() === parseInt(age),
+          })
           toScore.push(card)
         }
       }

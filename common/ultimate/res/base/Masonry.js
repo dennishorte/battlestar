@@ -11,10 +11,12 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const choices = game
-        .cards.byPlayer(player, 'hand')
-        .filter(card => card.checkHasBiscuit('k'))
-      const cards = game.actions.chooseCards(player, choices, { min: 0, max: choices.length })
+      const hand = game.cards.byPlayer(player, 'hand')
+      const cards = game.actions.chooseCards(player, hand, {
+        min: 0,
+        max: hand.filter(card => card.checkHasBiscuit('k')).length,
+        filter: card => card.checkHasBiscuit('k'),
+      })
       if (cards) {
         game.actions.meldMany(player, cards)
       }

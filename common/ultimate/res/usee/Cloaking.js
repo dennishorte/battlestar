@@ -10,13 +10,12 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const choices = game
-        .cards.byPlayer(player, 'achievements')
-        .filter(card => card.checkIsStandardAchievement())
+      const choices = game.cards.byPlayer(player, 'achievements')
 
       const card = game.actions.chooseCards(player, choices, {
         title: 'Choose a standard achievement to transfer',
-        hidden: true
+        hidden: true,
+        filter: card => card.checkIsStandardAchievement(),
       })[0]
 
       if (card) {

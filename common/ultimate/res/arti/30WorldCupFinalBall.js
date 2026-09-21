@@ -11,11 +11,11 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const options = game
-        .cards
-        .byPlayer(player, 'achievements')
-        .filter(card => card.checkIsStandardAchievement())
-      game.actions.chooseAndReturn(player, options)
+      game.actions.chooseAndReturn(
+        player,
+        game.cards.byPlayer(player, 'achievements'),
+        { filter: card => card.checkIsStandardAchievement() },
+      )
     },
 
     (game, player, { self }) => {

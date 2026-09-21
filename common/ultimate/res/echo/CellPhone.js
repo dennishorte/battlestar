@@ -24,10 +24,13 @@ module.exports = {
     },
 
     (game, player) => {
-      const choices = game
-        .cards.byPlayer(player, 'hand')
-        .filter(card => card.checkHasBiscuit('i'))
-      const tucked = game.actions.chooseAndTuck(player, choices, { min: 0, max: choices.length, title: 'Choose any number of cards to tuck.' })
+      const hand = game.cards.byPlayer(player, 'hand')
+      const tucked = game.actions.chooseAndTuck(player, hand, {
+        min: 0,
+        max: hand.length,
+        title: 'Choose any number of cards to tuck.',
+        filter: card => card.checkHasBiscuit('i'),
+      })
 
       if (tucked) {
         for (const card of tucked) {

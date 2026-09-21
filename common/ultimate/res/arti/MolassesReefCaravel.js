@@ -19,19 +19,9 @@ module.exports = {
       game.actions.draw(player, { age: game.getEffectAge(self, 4) })
       game.actions.draw(player, { age: game.getEffectAge(self, 4) })
 
-      const greenCards = game
-        .cards
-        .byPlayer(player, 'hand')
-        .filter(card => card.color === 'green')
-      if (greenCards.length > 0) {
-        game.actions.chooseAndMeld(player, greenCards)
-      }
-      else {
-        game.log.add({
-          template: '{player} has no green cards',
-          args: { player }
-        })
-      }
+      game.actions.chooseAndMeld(player, game.cards.byPlayer(player, 'hand'), {
+        filter: card => card.color === 'green',
+      })
 
       const topGreen = game
         .cards

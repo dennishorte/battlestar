@@ -35,10 +35,10 @@ module.exports = {
     (game, player, { self }) => {
       const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 1))
       if (card && card.color === 'yellow') {
-        const toScore = game
-          .cards.byPlayer(player, 'hand')
-          .filter(card => card.getAge() === game.getEffectAge(self, 1))
-        game.actions.scoreMany(player, toScore, { ordered: true })
+        game.actions.scoreMany(player, game.cards.byPlayer(player, 'hand'), {
+          ordered: true,
+          filter: card => card.getAge() === game.getEffectAge(self, 1),
+        })
       }
     },
   ],

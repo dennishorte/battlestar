@@ -29,11 +29,10 @@ module.exports = {
         }
 
         // Tuck score pile cards of returned color
-        const tuckScore = game
-          .cards
-          .byPlayer(player, 'score')
-          .filter(c => c.color === color)
-        game.actions.tuckMany(player, tuckScore)
+        const tuckScore = game.cards.byPlayer(player, 'score')
+        game.actions.tuckMany(player, tuckScore, {
+          filter: c => c.color === color,
+        })
       }
     },
   ],

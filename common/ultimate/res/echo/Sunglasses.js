@@ -66,9 +66,8 @@ module.exports = {
     const splayedColors = game
       .util.colors()
       .filter(color => game.zones.byPlayer(player, color).splay !== 'none')
-    const choices = game
-      .cards.byPlayer(player, 'hand')
-      .filter(card => splayedColors.includes(card.color))
-    game.actions.chooseAndScore(player, choices)
+    game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'), {
+      filter: card => splayedColors.includes(card.color),
+    })
   },
 }

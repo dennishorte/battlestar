@@ -15,10 +15,9 @@ module.exports = {
       const topValues = game
         .cards.tops(player)
         .map(card => card.getAge())
-      const toReturn = game
-        .cards.byPlayer(player, 'score')
-        .filter(card => topValues.includes(card.getAge()))
-      game.actions.returnMany(player, toReturn)
+      game.actions.returnMany(player, game.cards.byPlayer(player, 'score'), {
+        filter: card => topValues.includes(card.getAge()),
+      })
     },
 
     (game, player) => {

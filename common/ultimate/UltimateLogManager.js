@@ -77,7 +77,9 @@ class UltimateLogManager extends BaseLogManager {
 
     if (entryIsCombinable && prevWasDraw) {
       const argsMatch = (
-        prev.args.player.value === entry.args.player.value
+        prev.args.player && entry.args.player
+        && prev.args.player.value === entry.args.player.value
+        && prev.args.card && entry.args.card
         && prev.args.card.card === entry.args.card.card
       )
 

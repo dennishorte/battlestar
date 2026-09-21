@@ -15,14 +15,14 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func: (game, player, { card, self }) => {
-        const toMeld = game
+        const handCards = game
           .players
           .all()
           .flatMap(player2 => game.cards.byPlayer(player2, 'hand'))
-          .filter(other => other.color === card.color)
-          .filter(other => other.id !== card.id)
 
-        const melded = game.actions.meldMany(player, toMeld)
+        const melded = game.actions.meldMany(player, handCards, {
+          filter: other => other.color === card.color && other.id !== card.id,
+        })
 
         for (let i = 0; i < melded.length; i++) {
           const toAchieve = game.actions.draw(player, { age: game.getEffectAge(self, 9) })

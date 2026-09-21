@@ -11,11 +11,13 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const choices = game
-        .cards.byPlayer(player, 'score')
-        .filter(card => card.getAge() <= 4)
       const target = game.zones.byPlayer(leader, 'score')
-      const transferred = game.actions.chooseAndTransfer(player, choices, target, { count: 2 })
+      const transferred = game.actions.chooseAndTransfer(
+        player,
+        game.cards.byPlayer(player, 'score'),
+        target,
+        { count: 2, filter: card => card.getAge() <= 4 }
+      )
       if (transferred && transferred.length > 0) {
         game.state.dogmaInfo.piratesLooted = true
       }

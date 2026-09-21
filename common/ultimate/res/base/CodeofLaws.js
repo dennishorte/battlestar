@@ -14,12 +14,11 @@ module.exports = {
         .cards.tops(player)
         .map(card => card.color)
 
-      const choices = game
-        .zones.byPlayer(player, 'hand')
-        .cardlist()
-        .filter(card => boardColors.includes(card.color))
-
-      const tucked = game.actions.chooseAndTuck(player, choices, { min: 0, max: 1 })
+      const tucked = game.actions.chooseAndTuck(
+        player,
+        game.zones.byPlayer(player, 'hand').cardlist(),
+        { min: 0, max: 1, filter: card => boardColors.includes(card.color) },
+      )
 
       if (tucked && tucked.length > 0) {
         const color = tucked[0].color

@@ -31,11 +31,14 @@ module.exports = {
           .some(card => card.getAge() === game.getEffectAge(self, 5))
       },
       func: (game, player, { self }) => {
-        const options = game
-          .cards
-          .byPlayer(player, 'hand')
-          .filter(card => card.getAge() === game.getEffectAge(self, 5))
-        const card = game.actions.chooseCard(player, options, { min: 0 })
+        const card = game.actions.chooseCard(
+          player,
+          game.cards.byPlayer(player, 'hand'),
+          {
+            min: 0,
+            filter: other => other.getAge() === game.getEffectAge(self, 5),
+          },
+        )
         if (card) {
           game.actions.return(player, card)
           game.actions.draw(player, { age: game.getEffectAge(self, 6) })

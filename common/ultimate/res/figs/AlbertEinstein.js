@@ -20,13 +20,15 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func(game, player) {
-        const toMeld = game
+        const handCards = game
           .players
           .all()
           .flatMap(other => game.cards.byPlayer(other, 'hand'))
-          .filter(card => card.checkHasBiscuit('s') || card.checkHasBiscuit('i'))
 
-        game.actions.revealMany(player, toMeld, { ordered: true })
+        const toMeld = game.actions.revealMany(player, handCards, {
+          ordered: true,
+          filter: card => card.checkHasBiscuit('s') || card.checkHasBiscuit('i'),
+        })
         game.actions.meldMany(player, toMeld)
       }
     }

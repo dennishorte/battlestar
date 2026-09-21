@@ -16,11 +16,11 @@ module.exports = {
       )
       const colorPick = game.actions.choose(player, colorOptions)[0]
       const color = (colorPick && typeof colorPick === 'object') ? colorPick.id : colorPick
-      const choices = game
-        .cards.byPlayer(player, 'hand')
-        .filter(card => card.color === color)
-
-      const tucked = game.actions.chooseAndTuck(player, choices, { min: 0, max: 999 })
+      const tucked = game.actions.chooseAndTuck(player, game.cards.byPlayer(player, 'hand'), {
+        min: 0,
+        max: 999,
+        filter: card => card.color === color,
+      })
 
       if (tucked.length > 0) {
         const topValue = game.cards.top(player, color).getAge()
@@ -31,10 +31,11 @@ module.exports = {
           .map(card => card.getAge())
 
         if (opponentValues.every(value => value < topValue)) {
-          const eligible = game
-            .cards.byPlayer(player, 'hand')
-            .filter(card => player.canClaimAchievement(card))
-          game.actions.chooseAndAchieve(player, eligible, { min: 0, max: 1 })
+          game.actions.chooseAndAchieve(player, game.cards.byPlayer(player, 'hand'), {
+            min: 0,
+            max: 1,
+            filter: card => player.canClaimAchievement(card),
+          })
         }
       }
     }

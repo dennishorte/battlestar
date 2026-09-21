@@ -11,22 +11,24 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader, self }) => {
-      const hand = game
-        .cards
-        .byPlayer(player, 'hand')
-        .filter(card => card.getAge() === 9)
-      const transferred = game.actions.chooseAndTransfer(player, hand, game.zones.byPlayer(leader, 'hand'))
+      const transferred = game.actions.chooseAndTransfer(
+        player,
+        game.cards.byPlayer(player, 'hand'),
+        game.zones.byPlayer(leader, 'hand'),
+        { filter: card => card.getAge() === 9 },
+      )
 
       if (transferred && transferred.length > 0) {
         game.log.add({ template: 'A card was transferred from hand' })
         return
       }
 
-      const score = game
-        .cards
-        .byPlayer(player, 'score')
-        .filter(card => card.getAge() === 9)
-      const st = game.actions.chooseAndTransfer(player, score, game.zones.byPlayer(leader, 'score'))
+      const st = game.actions.chooseAndTransfer(
+        player,
+        game.cards.byPlayer(player, 'score'),
+        game.zones.byPlayer(leader, 'score'),
+        { filter: card => card.getAge() === 9 },
+      )
       if (st && st.length > 0) {
         game.log.add({ template: 'A card was transferred from score' })
         return

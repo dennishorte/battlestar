@@ -20,9 +20,9 @@ module.exports = {
 
       const toReturn = []
       for (const age of ages) {
-        const options = scoreCards.filter(card => card.getAge() === age)
-        const selected = game.actions.chooseCard(player, options, {
+        const selected = game.actions.chooseCard(player, scoreCards, {
           title: 'Choose a card of age ' + age,
+          filter: card => card.getAge() === age,
         })
         if (selected) {
           toReturn.push(selected)

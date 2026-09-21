@@ -75,5 +75,9 @@ describe("Candles", () => {
         score: ['Bangle'],
       },
     })
+
+    // micah had no {k} or {s} card, so the hand was revealed as proof.
+    const hand = game.cards.byPlayer(game.players.byName('micah'), 'hand')
+    expect(hand.every(card => card.revealed())).toBe(true)
   })
 })

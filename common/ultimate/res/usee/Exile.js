@@ -24,12 +24,11 @@ module.exports = {
       if (returned) {
         game.state.dogmaInfo.exileCount += 1
 
-        const scoreCards = game
-          .cards
-          .byPlayer(player, 'score')
-          .filter(card => card.age === returned.age)
+        const scoreCards = game.cards.byPlayer(player, 'score')
 
-        const scored = game.actions.returnMany(player, scoreCards)
+        const scored = game.actions.returnMany(player, scoreCards, {
+          filter: card => card.age === returned.age,
+        })
         game.state.dogmaInfo.exileCount += scored.length
       }
     },

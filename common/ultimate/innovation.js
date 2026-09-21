@@ -844,7 +844,9 @@ Innovation.prototype._attemptToCombineWithPreviousEntry = function(msg) {
 
   if (msgIsCombinable && prevWasDraw) {
     const argsMatch = (
-      prev.args.player.value === msg.args.player.value
+      prev.args.player && msg.args.player
+      && prev.args.player.value === msg.args.player.value
+      && prev.args.card && msg.args.card
       && prev.args.card.card === msg.args.card.card
     )
 

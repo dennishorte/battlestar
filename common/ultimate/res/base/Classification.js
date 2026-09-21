@@ -22,12 +22,9 @@ module.exports = {
           .forEach(card => game.mTake(player, card))
 
         // Meld cards
-        const cardsToMeld = game
-          .zones.byPlayer(player, 'hand')
-          .cardlist()
-          .filter(card => card.color === revealed.color)
-
-        game.actions.meldMany(player, cardsToMeld)
+        game.actions.meldMany(player, game.zones.byPlayer(player, 'hand').cardlist(), {
+          filter: card => card.color === revealed.color,
+        })
       }
     }
   ],

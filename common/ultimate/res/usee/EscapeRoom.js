@@ -14,11 +14,11 @@ module.exports = {
       const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 11))
       if (card) {
         game.actions.score(player, card)
-        const choices = game
-          .cards.byPlayer(player, 'hand')
-          .filter(c => c.color === card.color)
-
-        const scored = game.actions.chooseAndScore(player, choices)[0]
+        const scored = game.actions.chooseAndScore(
+          player,
+          game.cards.byPlayer(player, 'hand'),
+          { filter: c => c.color === card.color },
+        )[0]
         if (!scored) {
           game.youLose(player, self.name)
         }

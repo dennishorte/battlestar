@@ -12,12 +12,9 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const toTransfer = game
-        .cards
-        .byPlayer(player, 'hand')
-        .filter(card => !card.checkHasBiscuit('i'))
-
-      game.actions.transferMany(player, toTransfer, game.zones.byPlayer(leader, 'hand'))
+      game.actions.transferMany(player, game.cards.byPlayer(player, 'hand'), game.zones.byPlayer(leader, 'hand'), {
+        filter: card => !card.checkHasBiscuit('i'),
+      })
     },
 
     (game, player, { foreseen, self }) => {

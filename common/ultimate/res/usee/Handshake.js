@@ -28,8 +28,10 @@ module.exports = {
 
       // Transfer all cards of chosen colors from player's hand to leader's hand
       const playerHand = game.zones.byPlayer(player, 'hand')
-      const transferCards = playerHand.cardlist().filter(card => chosenColors.includes(card.color))
-      game.actions.transferMany(player, transferCards, leaderHand, { ordered: true })
+      game.actions.transferMany(player, playerHand.cardlist(), leaderHand, {
+        ordered: true,
+        filter: card => chosenColors.includes(card.color),
+      })
     },
   ],
 }

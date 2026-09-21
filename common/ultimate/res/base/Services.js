@@ -11,11 +11,12 @@ module.exports = {
   dogmaImpl: [
     (game, player, { leader }) => {
       const value = game.actions.chooseAge(leader)
-      const cards = game
-        .cards.byPlayer(player, 'score')
-        .filter(c => c.getAge() === value)
-
-      const transferred = game.actions.transferMany(player, cards, game.zones.byPlayer(leader, 'hand'))
+      const transferred = game.actions.transferMany(
+        player,
+        game.cards.byPlayer(player, 'score'),
+        game.zones.byPlayer(leader, 'hand'),
+        { filter: c => c.getAge() === value }
+      )
       if (transferred && transferred.length > 0) {
         const choices = game
           .cards.tops(leader)

@@ -21,12 +21,11 @@ module.exports = {
           game.actions.return(player, topCard)
         }
 
-        const handCards = game
-          .cards.byPlayer(player, 'hand')
-          .filter(c => c.id !== drawnCard.id)
-          .filter(c => c.color === returnColor)
+        const handCards = game.cards.byPlayer(player, 'hand')
 
-        const handCard = game.actions.chooseAndReturn(player, handCards)[0]
+        const handCard = game.actions.chooseAndReturn(player, handCards, {
+          filter: c => c.id !== drawnCard.id && c.color === returnColor,
+        })[0]
         const scoreCard = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'))[0]
 
         const cardsReturned = [topCard, handCard, scoreCard].filter(c => c)

@@ -21,16 +21,14 @@ module.exports = {
 
       game.actions.safeguardAvailableAchievement(player, splayedColors)
 
-      const choices = game
-        .cards.byPlayer(player, 'hand')
-        .filter(card => card.age === splayedColors)
-
-      if (choices.length > 0) {
+      const hand = game.cards.byPlayer(player, 'hand')
+      const card = game.actions.chooseCard(player, hand, {
+        title: 'Choose a card to transfer',
+        filter: card => card.age === splayedColors,
+      })
+      if (card) {
         const transferTo = game.actions.choosePlayer(player, game.players.all(), {
           title: 'Choose a player to transfer card to'
-        })
-        const card = game.actions.chooseCard(player, choices, {
-          title: 'Choose a card to transfer'
         })
         game.actions.transfer(player, card, game.zones.byPlayer(transferTo, card.color))
       }

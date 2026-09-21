@@ -14,11 +14,10 @@ module.exports = {
       const opponent = game.actions.choosePlayer(player, game.players.opponents(player))
       const age = game.actions.chooseAge(player)
 
-      const choices = game
-        .cards
-        .byPlayer(opponent, 'score')
-        .filter(card => card.getAge() === age)
-      const transferred = game.actions.chooseCard(player, choices, { hidden: true })
+      const transferred = game.actions.chooseCard(player, game.cards.byPlayer(opponent, 'score'), {
+        hidden: true,
+        filter: card => card.getAge() === age,
+      })
       if (transferred) {
         game.actions.transfer(player, transferred, game.zones.byPlayer(opponent, transferred.color))
 
@@ -28,12 +27,10 @@ module.exports = {
           .filter(card => card.getAge() === transferred.getAge())
 
         if (matchingAchievements.length > 0) {
-          const achieveChoices = game
-            .cards
-            .byPlayer(opponent, 'score')
-            .filter(card => card.getAge() === age)
-            .filter(card => player.canClaimAchievement(card))
-          game.actions.chooseAndAchieve(player, achieveChoices, { hidden: true })
+          game.actions.chooseAndAchieve(player, game.cards.byPlayer(opponent, 'score'), {
+            hidden: true,
+            filter: card => card.getAge() === age && player.canClaimAchievement(card),
+          })
         }
       }
     }

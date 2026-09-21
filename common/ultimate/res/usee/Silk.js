@@ -21,17 +21,17 @@ module.exports = {
         .cards.tops(player)
         .map(card => card.color)
 
-      const choices = game
-        .cards.byPlayer(player, 'hand')
-        .filter(card => boardColors.includes(card.color))
+      const hand = game.cards.byPlayer(player, 'hand')
+      const choices = hand.filter(card => boardColors.includes(card.color))
 
       while (true) {
         const choiceColors = util.array.distinct(choices.map(c => c.color))
 
-        const toScore = game.actions.chooseCards(player, choices, {
+        const toScore = game.actions.chooseCards(player, hand, {
           title: 'You may score a card from your hand of each color on your board.',
           min: 0,
           max: choiceColors.length,
+          filter: card => boardColors.includes(card.color),
         })
 
         if (util.array.isDistinct(toScore.map(c => c.color))) {

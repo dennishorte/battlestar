@@ -35,9 +35,11 @@ module.exports = {
       const toTransfer = [
         ...game.cards.byPlayer(player, 'hand'),
         ...game.cards.byPlayer(player, 'score'),
-      ].filter(card => card.getAge() === count)
+      ]
 
-      game.actions.transferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'))
+      game.actions.transferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'), {
+        filter: card => card.getAge() === count,
+      })
 
       game.actions.junkAvailableAchievement(player, [count])
     }

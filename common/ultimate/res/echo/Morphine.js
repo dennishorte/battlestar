@@ -13,11 +13,9 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const toReturn = game
-        .cards
-        .byPlayer(player, 'hand')
-        .filter(card => card.getAge() % 2 === 1)
-      const returned = game.actions.returnMany(player, toReturn)
+      const returned = game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'), {
+        filter: card => card.getAge() % 2 === 1,
+      })
       game.actions.draw(player, { age: game.getEffectAge(self, 6) })
 
       if (!game.state.dogmaInfo.morphine) {
@@ -45,10 +43,8 @@ module.exports = {
     },
   ],
   echoImpl: (game, player) => {
-    const choices = game
-      .cards
-      .byPlayer(player, 'hand')
-      .filter(card => card.getAge() % 2 === 1)
-    game.actions.chooseAndScore(player, choices)
+    game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'), {
+      filter: card => card.getAge() % 2 === 1,
+    })
   },
 }

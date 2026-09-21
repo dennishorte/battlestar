@@ -24,9 +24,10 @@ module.exports = {
           .players
           .all()
           .flatMap(p => game.cards.byPlayer(p, 'score'))
-          .filter(card => card.checkIsFigure())
 
-        const chosenCard = game.actions.chooseCard(player, options)
+        const chosenCard = game.actions.chooseCard(player, options, {
+          filter: card => card.checkIsFigure(),
+        })
 
         if (chosenCard) {
           const pick = game.actions.choose(player, [

@@ -37,9 +37,11 @@ module.exports = {
     },
   ],
   echoImpl: (game, player) => {
-    const choices = game
-      .cards.byPlayer(player, 'forecast')
-      .filter(card => card.getAge() === 5)
-    game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(player, 'hand'))
+    game.actions.chooseAndTransfer(
+      player,
+      game.cards.byPlayer(player, 'forecast'),
+      game.zones.byPlayer(player, 'hand'),
+      { filter: card => card.getAge() === 5 },
+    )
   },
 }

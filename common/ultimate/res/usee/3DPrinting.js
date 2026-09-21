@@ -19,13 +19,12 @@ module.exports = {
 
         if (returned) {
           const age = returned.age
-          const secretOptions = game
-            .cards.byPlayer(player, 'safe')
-            .filter(c => c.getAge() === age)
+          const secretOptions = game.cards.byPlayer(player, 'safe')
 
           const secret = game.actions.chooseCards(player, secretOptions, {
             title: 'Choose a secret to achieve',
             hidden: true,
+            filter: c => c.getAge() === age,
           })[0]
 
           if (secret) {

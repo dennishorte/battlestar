@@ -20,10 +20,11 @@ module.exports = {
           totalReturned += 1
         }
 
-        const fromScore = game
-          .cards.byPlayer(player, 'score')
-          .filter(c => c.color === card.color)
-        const score = game.actions.chooseAndReturn(player, fromScore)
+        const score = game.actions.chooseAndReturn(
+          player,
+          game.cards.byPlayer(player, 'score'),
+          { filter: c => c.color === card.color },
+        )
         if (score && score.length > 0) {
           totalReturned += 1
         }

@@ -16,12 +16,14 @@ module.exports = {
       kind: 'would-first',
       matches: (game) => game.state.actionNumber === 2,
       func: (game, player) => {
-        const options = game
-          .players
-          .opponents(player)
-          .flatMap(opponent => game.cards.byPlayer(opponent, 'hand'))
-          .filter(card => card.checkIsFigure())
-        game.actions.chooseAndScore(player, options)
+        game.actions.chooseAndScore(
+          player,
+          game
+            .players
+            .opponents(player)
+            .flatMap(opponent => game.cards.byPlayer(opponent, 'hand')),
+          { filter: card => card.checkIsFigure() },
+        )
       },
     },
     {

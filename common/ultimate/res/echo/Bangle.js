@@ -14,12 +14,10 @@ module.exports = {
     (game, player, { self }) => {
       const choices = [game.actions.option({ id: 'foreshadow', title: 'Draw and foreshadow' })]
 
-      const forecast = game
-        .cards
-        .byPlayer(player, 'forecast')
-        .filter(card => card.getAge() === game.getEffectAge(self, 2))
+      const forecast = game.cards.byPlayer(player, 'forecast')
+      const filter = card => card.getAge() === game.getEffectAge(self, 2)
 
-      if (forecast.length > 0) {
+      if (forecast.filter(filter).length > 0) {
         choices.push(game.actions.option({ id: 'tuck', title: 'Tuck from forecast' }))
       }
 
@@ -30,7 +28,7 @@ module.exports = {
         game.actions.drawAndForeshadow(player, game.getEffectAge(self, 2))
       }
       else {
-        game.actions.chooseAndTuck(player, forecast)
+        game.actions.chooseAndTuck(player, forecast, { filter })
       }
     },
 
@@ -50,13 +48,9 @@ module.exports = {
   ],
   echoImpl: [
     (game, player, { self }) => {
-      const cards = game
-        .zones
-        .byPlayer(player, 'hand')
-        .cardlist()
-        .filter(card => card.getAge() === game.getEffectAge(self, 1))
-
-      game.actions.chooseAndTuck(player, cards)
+      game.actions.chooseAndTuck(player, game.zones.byPlayer(player, 'hand').cardlist(), {
+        filter: card => card.getAge() === game.getEffectAge(self, 1),
+      })
     }
   ],
 }

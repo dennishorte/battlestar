@@ -27,10 +27,10 @@ module.exports = {
           args: { player, value: cardValue }
         })
 
-        const toReturn = hand
-          .filter(c => c.getAge() === cardValue)
-          .filter(c => c.name !== card.name)
-        game.actions.returnMany(player, toReturn, { ordered: true })
+        game.actions.returnMany(player, hand, {
+          ordered: true,
+          filter: c => c.getAge() === cardValue && c.name !== card.name,
+        })
 
         for (let i = 0; i < 3; i++) {
           game.actions.draw(player, { age: cardValue })

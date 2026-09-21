@@ -19,9 +19,10 @@ module.exports = {
           .players.all()
           .flatMap(player => game
             .cards.byPlayer(player, 'score')
-            .filter(card => card.getAge() === age)
           )
-        game.actions.transferMany(player, toTransfer, game.zones.byPlayer(player, 'hand'))
+        game.actions.transferMany(player, toTransfer, game.zones.byPlayer(player, 'hand'), {
+          filter: card => card.getAge() === age,
+        })
       }
     },
 

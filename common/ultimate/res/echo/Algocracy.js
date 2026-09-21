@@ -37,9 +37,10 @@ module.exports = {
             ...game.cards.byPlayer(player, 'hand'),
             ...game.cards.byPlayer(player, 'score'),
           ])
-          .filter(card => card.dogmaBiscuit === biscuit)
 
-        game.actions.transferMany(player, toTransfer, game.zones.byPlayer(holderOfTheMost, 'hand'))
+        game.actions.transferMany(player, toTransfer, game.zones.byPlayer(holderOfTheMost, 'hand'), {
+          filter: card => card.dogmaBiscuit === biscuit,
+        })
       }
     }
   ],

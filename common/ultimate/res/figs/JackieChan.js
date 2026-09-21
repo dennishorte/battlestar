@@ -57,11 +57,9 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func: (game, player) => {
-        const choices = game
-          .cards
-          .byPlayer(player, 'hand')
-          .filter(card => card.checkIsFigure())
-        game.actions.chooseAndScore(player, choices)
+        game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'), {
+          filter: card => card.checkIsFigure(),
+        })
       }
     }
   ]

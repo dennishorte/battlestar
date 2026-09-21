@@ -26,11 +26,11 @@ module.exports = {
         const returned = game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
         if (colorCheck(returned)) {
           // Prove that all three colors were returned.
-          const toProve = returned.filter(x => x.color === 'yellow' || x.color === 'green' || x.color === 'blue')
-          const toReveal = game.actions.chooseCards(player, toProve, {
+          const toReveal = game.actions.chooseCards(player, returned, {
             title: 'Choose a blue, green, and yellow card to reveal',
             count: 3,
             visible: true,
+            filter: x => x.color === 'yellow' || x.color === 'green' || x.color === 'blue',
             guard: (cards) => colorCheck(cards),
           })
           game.actions.revealMany(player, toReveal, { ordered: true })

@@ -15,12 +15,14 @@ module.exports = {
       kind: 'would-first',
       matches: () => true,
       func: (game, player, { card }) => {
-        const mayReturn = game
-          .cards
-          .byPlayer(player, 'hand')
-          .filter(card => card.checkHasBiscuit(game.state.dogmaInfo.featuredBiscuit))
-
-        const returned = game.actions.chooseAndReturn(player, mayReturn, { min: 0 })[0]
+        const returned = game.actions.chooseAndReturn(
+          player,
+          game.cards.byPlayer(player, 'hand'),
+          {
+            min: 0,
+            filter: other => other.checkHasBiscuit(game.state.dogmaInfo.featuredBiscuit),
+          },
+        )[0]
 
         if (returned) {
           let decreeName

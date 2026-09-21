@@ -39,11 +39,10 @@ module.exports = {
         game.actions.return(player, card)
 
         const returnedValue = card.getAge()
-        const scoreCardsToReturn = game
-          .cards.byPlayer(player, 'score')
-          .filter(c => c.getAge() >= returnedValue)
-
-        game.actions.returnMany(player, scoreCardsToReturn, { ordered: true })
+        game.actions.returnMany(player, game.cards.byPlayer(player, 'score'), {
+          ordered: true,
+          filter: c => c.getAge() >= returnedValue,
+        })
       }
     }
   ],

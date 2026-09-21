@@ -15,8 +15,11 @@ module.exports = {
       const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 3))
 
       if (card) {
-        const matching = hand.filter(other => other.color === card.color)
-        const tucked = game.actions.chooseAndTuck(player, matching, { min: 0, max: 1 })[0]
+        const tucked = game.actions.chooseAndTuck(player, hand, {
+          min: 0,
+          max: 1,
+          filter: other => other.color === card.color,
+        })[0]
 
         if (tucked && foreseen) {
           game.log.addForeseen(foreseen, self)

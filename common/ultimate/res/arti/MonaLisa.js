@@ -44,7 +44,9 @@ module.exports = {
           template: '{player} guessed correctly',
           args: { player }
         })
-        game.actions.scoreMany(player, matches)
+        game.actions.scoreMany(player, hand, {
+          filter: card => card.color === color,
+        })
         game.actions.splay(player, color, 'right')
       }
       else {

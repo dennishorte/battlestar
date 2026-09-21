@@ -12,11 +12,9 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const choices = game
-        .cards
-        .byPlayer(player, 'hand')
-        .filter(card => card.checkIsExpansion())
-      game.actions.chooseAndReturn(player, choices)
+      game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), {
+        filter: card => card.checkIsExpansion(),
+      })
     },
 
     (game, player, { self }) => {

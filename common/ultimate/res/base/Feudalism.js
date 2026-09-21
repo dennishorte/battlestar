@@ -11,10 +11,12 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader }) => {
-      const choices = game
-        .cards.byPlayer(player, 'hand')
-        .filter(card => card.checkHasBiscuit('k'))
-      const cards = game.actions.chooseAndTransfer(player, choices, game.zones.byPlayer(leader, 'hand'))
+      const cards = game.actions.chooseAndTransfer(
+        player,
+        game.cards.byPlayer(player, 'hand'),
+        game.zones.byPlayer(leader, 'hand'),
+        { filter: card => card.checkHasBiscuit('k') },
+      )
       if (cards && cards.length > 0) {
         const card = cards[0]
         game.actions.unsplay(player, card.color)

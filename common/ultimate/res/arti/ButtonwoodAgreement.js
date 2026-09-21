@@ -22,10 +22,11 @@ module.exports = {
         game.actions.splay(player, card.color, 'up')
       }
       else {
-        const toReturn = game
-          .cards.byPlayer(player, 'score')
-          .filter(other => other.color === card.color)
-        game.actions.returnMany(player, toReturn)
+        game.actions.returnMany(
+          player,
+          game.cards.byPlayer(player, 'score'),
+          { filter: other => other.color === card.color },
+        )
         game.actions.unsplay(player, card.color)
       }
     }

@@ -49,6 +49,7 @@ describe("Exoskeleton", () => {
     request = game.run()
     request = t.choose(game, 'Meld.Robocar')
     request = t.choose(game, '**base-1* (micah)')
+    request = t.choose(game, '**echo-1* (micah)')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

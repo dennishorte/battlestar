@@ -11,13 +11,14 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader, self }) => {
-      const choices = game
-        .zones.byPlayer(player, 'score')
-        .cardlist()
-        .filter(card => card.getAge() === game.getEffectAge(self, 1))
-        .map(card => card.id)
+      const age = game.getEffectAge(self, 1)
       const target = game.zones.byPlayer(leader, 'score')
-      const transferredCards = game.actions.chooseAndTransfer(player, choices, target)
+      const transferredCards = game.actions.chooseAndTransfer(
+        player,
+        game.cards.byPlayer(player, 'score'),
+        target,
+        { filter: card => card.getAge() === age }
+      )
 
       if (transferredCards.length > 0) {
         game.state.dogmaInfo.transferred = true

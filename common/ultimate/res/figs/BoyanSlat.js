@@ -16,13 +16,14 @@ module.exports = {
       matches: () => true,
       func: (game, player) => {
         const value = game.actions.chooseAge(player, game.getAges())
-        const toReturn = game
+        const scoreCards = game
           .players
           .all()
           .flatMap(p => game.cards.byPlayer(p, 'score'))
-          .filter(card => card.getAge() === value)
 
-        const returned = game.actions.returnMany(player, toReturn)
+        const returned = game.actions.returnMany(player, scoreCards, {
+          filter: card => card.getAge() === value,
+        })
 
         if (returned.length === 1) {
           game.actions.claimAchievement(player, returned[0])

@@ -20,11 +20,12 @@ module.exports = {
       kind: 'would-first',
       matches: (game, player, { share }) => share,
       func: (game, player, { featuredBiscuit }) => {
-        const choices = game
-          .cards
-          .byPlayer(player, 'hand')
-          .filter(card => card.checkHasBiscuit(featuredBiscuit))
-        game.actions.chooseAndMeld(player, choices, { min: 0, max: choices.length })
+        const hand = game.cards.byPlayer(player, 'hand')
+        game.actions.chooseAndMeld(player, hand, {
+          min: 0,
+          max: hand.length,
+          filter: card => card.checkHasBiscuit(featuredBiscuit),
+        })
       }
     },
   ]

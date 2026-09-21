@@ -17,11 +17,12 @@ module.exports = {
         args: { leader, value }
       })
 
-      const cardsToTransfer = game
-        .cards.byPlayer(player, 'score')
-        .filter(card => card.getAge() === value)
-
-      game.actions.transferMany(player, cardsToTransfer, game.zones.byPlayer(leader, 'score'))
+      game.actions.transferMany(
+        player,
+        game.cards.byPlayer(player, 'score'),
+        game.zones.byPlayer(leader, 'score'),
+        { filter: card => card.getAge() === value }
+      )
     },
 
     (game, player, { self }) => {
@@ -31,11 +32,7 @@ module.exports = {
         return
       }
 
-      // Find the highest card
-      const highest = Math.max(...scoreCards.map(card => card.getAge()))
-      const highestCards = scoreCards.filter(card => card.getAge() === highest)
-
-      const card = game.actions.chooseCard(player, highestCards)
+      const card = game.actions.chooseHighest(player, scoreCards, 1)[0]
       if (card) {
         game.actions.reveal(player, card)
         game.actions.selfExecute(self, player, card)

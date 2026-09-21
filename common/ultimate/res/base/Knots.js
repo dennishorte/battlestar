@@ -10,12 +10,11 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { self }) => {
-      const choices = game
-        .cards
-        .byPlayer(player, 'score')
-        .filter(card => Boolean(game.cards.top(player, card.color)))
-
-      const revealed = game.actions.chooseAndReveal(player, choices)[0]
+      const revealed = game.actions.chooseAndReveal(
+        player,
+        game.cards.byPlayer(player, 'score'),
+        { filter: card => Boolean(game.cards.top(player, card.color)) }
+      )[0]
 
       if (revealed) {
         game.actions.draw(player, { age: game.getEffectAge(self, 1) })

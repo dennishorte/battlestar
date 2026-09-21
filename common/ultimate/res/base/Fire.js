@@ -11,17 +11,17 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader, self }) => {
-      const revealChoices = game
-        .cards
-        .byPlayer(player, 'hand')
-        .filter(card => {
-          const notOnBoardCondition = !game.cards.top(leader, card.color)
-          const greaterThanZeroCondition = card.getAge() > 0
-          return notOnBoardCondition || greaterThanZeroCondition
-        })
-
-
-      const revealed = game.actions.chooseAndReveal(player, revealChoices)[0]
+      const revealed = game.actions.chooseAndReveal(
+        player,
+        game.cards.byPlayer(player, 'hand'),
+        {
+          filter: card => {
+            const notOnBoardCondition = !game.cards.top(leader, card.color)
+            const greaterThanZeroCondition = card.getAge() > 0
+            return notOnBoardCondition || greaterThanZeroCondition
+          },
+        },
+      )[0]
 
       if (!revealed) {
         game.youLose(player, self.name)
@@ -29,12 +29,11 @@ module.exports = {
     },
     (game, player, { self }) => {
       const validColors = game.cards.tops(player).map(card => card.color)
-      const meldChoices = game
-        .cards
-        .byPlayer(player, 'hand')
-        .filter(card => validColors.includes(card.color))
-
-      const melded = game.actions.chooseAndMeld(player, meldChoices)
+      const melded = game.actions.chooseAndMeld(
+        player,
+        game.cards.byPlayer(player, 'hand'),
+        { filter: card => validColors.includes(card.color) },
+      )
 
       if (!melded || (Array.isArray(melded) && melded.length === 0)) {
         game.youLose(player, self.name)

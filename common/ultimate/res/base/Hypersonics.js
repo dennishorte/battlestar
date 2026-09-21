@@ -50,11 +50,14 @@ module.exports = {
       if (returned.length === 2) {
         // Return all cards of that value or less from hand and score
         const cardsToReturn = [
-          ...game.cards.byPlayer(player, 'hand').filter(c => c.getAge() <= chosenValue),
-          ...game.cards.byPlayer(player, 'score').filter(c => c.getAge() <= chosenValue)
+          ...game.cards.byPlayer(player, 'hand'),
+          ...game.cards.byPlayer(player, 'score')
         ]
 
-        game.actions.returnMany(player, cardsToReturn, { ordered: true })
+        game.actions.returnMany(player, cardsToReturn, {
+          ordered: true,
+          filter: c => c.getAge() <= chosenValue,
+        })
       }
     }
   ],

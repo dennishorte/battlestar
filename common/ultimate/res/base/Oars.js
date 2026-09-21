@@ -11,25 +11,18 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player, { leader, self }) => {
-      const choices = game
-        .cards.byPlayer(player, 'hand')
-        .filter(card => card.checkHasBiscuit('c'))
-      if (choices.length === 0) {
-        game.log.addNoEffect()
-      }
-
       const target = game.zones.byPlayer(leader, 'score')
       while (true) {
-        const choices = game
-          .cards.byPlayer(player, 'hand')
-          .filter(card => card.checkHasBiscuit('c'))
-        if (choices.length > 0) {
-          const transferred = game.actions.chooseAndTransfer(player, choices, target)
-          if (transferred && transferred.length > 0) {
-            game.state.dogmaInfo.oarsCardTransferred = true
-            game.actions.draw(player, { age: game.getEffectAge(self, 1) })
-            continue
-          }
+        const transferred = game.actions.chooseAndTransfer(
+          player,
+          game.cards.byPlayer(player, 'hand'),
+          target,
+          { filter: card => card.checkHasBiscuit('c') },
+        )
+        if (transferred && transferred.length > 0) {
+          game.state.dogmaInfo.oarsCardTransferred = true
+          game.actions.draw(player, { age: game.getEffectAge(self, 1) })
+          continue
         }
 
         break

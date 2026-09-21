@@ -19,12 +19,11 @@ module.exports = {
         .filter(zone => zone.cardlist().length >= 2 && zone.cardlist()[0].getAge() === age)
         .forEach(zone => game.actions.splay(player, zone.color, 'up'))
 
-      const toReturn = game
-        .players.all()
-        .flatMap(player => game.cards.byPlayer(player, 'score'))
-        .filter(card => card.getAge() === age)
-
-      game.actions.returnMany(player, toReturn)
+      game.actions.returnMany(
+        player,
+        game.players.all().flatMap(p => game.cards.byPlayer(p, 'score')),
+        { filter: card => card.getAge() === age },
+      )
     }
   ],
 }

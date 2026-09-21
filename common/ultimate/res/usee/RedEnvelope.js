@@ -30,9 +30,10 @@ module.exports = {
 
       const age = game.actions.chooseAge(player, eligibleAges, { title: 'Choose age of cards to transfer' })
 
-      const transferCards = handAndScore.filter(card => card.getAge() === age)
       const rightPlayer = game.players.rightOf(player)
-      game.actions.transferMany(player, transferCards, game.zones.byPlayer(rightPlayer, 'score'))
+      game.actions.transferMany(player, handAndScore, game.zones.byPlayer(rightPlayer, 'score'), {
+        filter: card => card.getAge() === age,
+      })
     },
     (game, player) => {
       const choices = game.cards.byPlayer(player, 'hand')

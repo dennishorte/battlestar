@@ -31,10 +31,9 @@ module.exports = {
   ],
   echoImpl: [
     (game, player) => {
-      const choices = game
-        .cards.byPlayer(player, 'hand')
-        .filter(card => card.checkIsExpansion())
-      game.actions.chooseAndScore(player, choices)
+      game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'), {
+        filter: card => card.checkIsExpansion(),
+      })
     }
   ],
 }

@@ -20,10 +20,11 @@ module.exports = {
         args: { player, color }
       })
       game.actions.draw(player, { age: game.getEffectAge(self, 1) })
-      const choices = game
-        .cards.byPlayer(player, 'hand')
-        .filter(card => card.color === color)
-      const melded = game.actions.chooseAndMeld(player, choices)
+      const melded = game.actions.chooseAndMeld(
+        player,
+        game.cards.byPlayer(player, 'hand'),
+        { filter: card => card.color === color },
+      )
       if (melded.length > 0) {
         game.actions.splay(player, color, 'left')
         game.actions.junkAvailableAchievement(player, [melded[0].getAge()])
