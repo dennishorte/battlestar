@@ -304,6 +304,16 @@ class UltimateActionManager extends BaseActionManager {
   }
 
   chooseByPredicate(player, cards, count, pred, opts={}) {
+    if (opts.filter) {
+      cards = this._applyChoiceFilter(player, cards, opts)
+      if (cards.length === 0) {
+        this.log.addNoEffect()
+        return []
+      }
+      opts = { ...opts }
+      delete opts.filter
+    }
+
     let numRemaining = count
     let cardsRemaining = [...cards]
     let selected = []
@@ -326,12 +336,12 @@ class UltimateActionManager extends BaseActionManager {
     return selected
   }
 
-  chooseHighest(player, cards, count) {
-    return this.chooseByPredicate(player, cards, count, this.util.highestCards)
+  chooseHighest(player, cards, count, opts={}) {
+    return this.chooseByPredicate(player, cards, count, this.util.highestCards, opts)
   }
 
-  chooseLowest(player, cards, count) {
-    return this.chooseByPredicate(player, cards, count, this.util.lowestCards)
+  chooseLowest(player, cards, count, opts={}) {
+    return this.chooseByPredicate(player, cards, count, this.util.lowestCards, opts)
   }
 
   chooseBiscuit(player) {
@@ -353,20 +363,11 @@ class UltimateActionManager extends BaseActionManager {
     // legal, the rules require the player to reveal the hidden cards to
     // prove they cannot choose.
     if (opts.filter) {
-      const filtered = cards.filter(card => {
-        if (card === 'auto') {
-          return true
-        }
-        return opts.filter(card.id ? card : this.cards.byId(card))
-      })
-
-      if (filtered.length === 0) {
-        this._proveNoValidCards(player, cards, opts)
+      cards = this._applyChoiceFilter(player, cards, opts)
+      if (cards.length === 0) {
         this.log.addNoEffect()
         return []
       }
-
-      cards = filtered
       opts = { ...opts }
       delete opts.filter
     }
@@ -448,6 +449,23 @@ class UltimateActionManager extends BaseActionManager {
     }
 
     return output
+  }
+
+  // Applies opts.filter to a choice set. `cards` may contain card objects or
+  // id strings; the 'auto' sentinel always survives. If nothing is legal,
+  // the hidden source cards are revealed as proof (required selections only)
+  // and the empty array is returned.
+  _applyChoiceFilter(player, cards, opts) {
+    const filtered = cards.filter(card => {
+      if (card === 'auto') {
+        return true
+      }
+      return opts.filter(card.id ? card : this.cards.byId(card))
+    })
+    if (filtered.length === 0) {
+      this._proveNoValidCards(player, cards, opts)
+    }
+    return filtered
   }
 
   // Whether the player is required to make a selection. Optional selections
@@ -1411,14 +1429,14 @@ class UltimateActionManager extends BaseActionManager {
 
       // `filter` restricts which cards are acted on. If nothing matches, the
       // rules require the player to reveal the hidden cards to prove it.
+      // Bulk actions have no min/max, so they are required unless the caller
+      // explicitly opts out with `required: false`.
       if (opts.filter) {
-        const filtered = args[1].filter(opts.filter)
-        if (filtered.length === 0) {
-          this._proveNoValidCards(player, args[1], { required: true })
+        args[1] = this._applyChoiceFilter(player, args[1], { required: true, ...opts })
+        if (args[1].length === 0) {
           this.log.addNoEffect()
           return []
         }
-        args[1] = filtered
       }
 
       const cards = args[1]
