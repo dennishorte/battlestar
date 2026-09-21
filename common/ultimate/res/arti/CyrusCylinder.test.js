@@ -44,4 +44,49 @@ describe('Cyrus Cylinder', () => {
       },
     })
   })
+test('dogma: chained execution', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+    t.setBoard(game,  {
+      dennis: {
+        green: ['Priest-King', 'The Wheel'],
+        purple: ['Cyrus Cylinder'],
+        hand: ['Enterprise', 'Philosophy'],
+        achievements: [],
+      },
+      micah: {
+        purple: ['Code of Laws'],
+      },
+      decks: {
+        base: {
+          11: ['Hypersonics']
+        }
+      }
+    })
+
+    game.run()
+    t.choose(game, 'Dogma.Priest-King')
+    t.choose(game, 'Enterprise')
+    t.choose(game, 'dennis-green')
+    t.choose(game, 'Philosophy')
+    t.choose(game, 'purple')
+
+    t.testBoard(game, {
+      dennis: {
+        green: {
+          cards: ['Priest-King', 'The Wheel'],
+          splay: 'left',
+        },
+        purple: {
+          cards: ['Cyrus Cylinder', 'Philosophy'],
+          splay: 'left',
+        },
+        hand: [],
+        score: ['Enterprise'],
+        achievements: ['Hypersonics'],
+      },
+      micah: {
+        purple: ['Code of Laws'],
+      }
+    })
+  })
 })
