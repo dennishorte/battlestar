@@ -512,7 +512,9 @@ class UltimateActionManager extends BaseActionManager {
       template: `{player} reveals their ${names.join(' and ')} to show they have no valid card`,
       args: { player },
     })
+    this.log.indent()
     this.revealMany(player, hidden, { ordered: true })
+    this.log.outdent()
   }
 
   chooseColor(player, choices) {
