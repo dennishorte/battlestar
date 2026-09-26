@@ -34,7 +34,8 @@ common/magic/
 ├── draft/                 Draft game variant
 │   ├── cube_draft.js      Cube draft implementation
 │   ├── CubeDraftPlayer.js Draft player state
-│   ├── pack.js            Pack mechanics
+│   ├── pack.js            Pack mechanics + per-set generator dispatch
+│   ├── set_packs/         Set-specific pack generators, keyed by set code
 │   └── testutil_cube.js   Draft test utilities
 └── util/                  Card utilities
     ├── cardUtil.js        Card parsing and filtering

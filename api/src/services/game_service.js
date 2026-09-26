@@ -45,6 +45,7 @@ Game.create = async function(lobby, linkedDraftId) {
         game.settings.packs = magic.draft.pack.makeSetPacks(wrappedCards, {
           numPacks: game.settings.numPacks,
           numPlayers: game.settings.players.length,
+          setCode: game.settings.set.code,
         })
         game.settings.packSize = game.settings.packs[0].length
       }

@@ -1,4 +1,5 @@
 const util = require('../../lib/util.js')
+const setPackFactories = require('./set_packs/index.js')
 
 class Pack {
   constructor(game, cards) {
@@ -122,6 +123,9 @@ function makeCubePacks(cards, options) {
  * @param {Object} options - Options for pack creation
  * @param {number} options.numPacks - Total number of packs to create
  * @param {number} options.numPlayers - Number of players in the draft
+ * @param {string} options.setCode - Scryfall set code; selects a set-specific
+ *   pack generator when one is registered in set_packs/
+ * @param {Function} options.rng - Optional random source (default Math.random)
  * @returns {Array} Array of packs (each pack is an array of card objects)
  */
 function makeSetPacks(cards, options) {
@@ -130,6 +134,37 @@ function makeSetPacks(cards, options) {
   }
 
   const { numPacks, numPlayers } = options
+  const totalPacks = numPlayers * numPacks
+  const openPack = _setPackGenerator(cards, options)
+
+  let index = 0
+  const packs = []
+
+  while (packs.length < totalPacks) {
+    // Prepare cards with unique IDs and extract relevant properties
+    const preparedPack = openPack().map(card => {
+      index += 1
+      return _convertCardToPackCard(card, index)
+    })
+
+    packs.push(preparedPack)
+  }
+
+  return packs
+}
+
+// Look up a set-specific pack generator by set code, falling back to the
+// default rarity-based generator. Factories take (cards, options) and return
+// an openPack() function producing one pack as an array of MagicCard objects.
+function _setPackGenerator(cards, options) {
+  const factory = (options.setCode && setPackFactories[options.setCode])
+    || _defaultSetPackGenerator
+  return factory(cards, options)
+}
+
+// Default generator: one rare-or-mythic, three uncommons, ten commons.
+function _defaultSetPackGenerator(cards, options) {
+  const rng = options.rng || Math.random
 
   // Filter out basic lands and special layouts
   const filteredCards = cards
@@ -143,38 +178,25 @@ function makeSetPacks(cards, options) {
   const rarityPools = util.array.collect(uniqueCards, c => c.rarity())
 
   // Helper function to get random cards of a specific rarity
-  const getCards = (rarity, count) => util.array.selectMany(rarityPools[rarity] || [], count)
+  const getCards = (rarity, count) => util.array.selectMany(rarityPools[rarity] || [], count, rng)
 
-  const totalPacks = numPlayers * numPacks
-  let index = 0
-  const packs = []
-
-
-  while (packs.length < totalPacks) {
+  return function() {
     const pack = []
 
     // One rare or mythic card (about 1 in 7.4 packs has a mythic)
-    if (rarityPools['mythic'] && Math.random() < .135) {
-      getCards('mythic', 1).forEach(card => pack.push(card))
+    if (rarityPools['mythic'] && rng() < .135) {
+      pack.push(...getCards('mythic', 1))
     }
     else {
-      getCards('rare', 1).forEach(card => pack.push(card))
+      pack.push(...getCards('rare', 1))
     }
 
     // Add uncommons and commons
-    getCards('uncommon', 3).forEach(card => pack.push(card))
-    getCards('common', 10).forEach(card => pack.push(card))
+    pack.push(...getCards('uncommon', 3))
+    pack.push(...getCards('common', 10))
 
-    // Prepare cards with unique IDs and extract relevant properties
-    const preparedPack = pack.map(card => {
-      index += 1
-      return _convertCardToPackCard(card, index)
-    })
-
-    packs.push(preparedPack)
+    return pack
   }
-
-  return packs
 }
 
 module.exports = {
