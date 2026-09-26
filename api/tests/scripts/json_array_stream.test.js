@@ -1,7 +1,7 @@
 import { Readable } from 'stream'
 import { describe, test, expect } from 'vitest'
 
-import { streamJsonArrayElements } from '../../scripts/util/json_array_stream.js'
+import { streamJsonArrayElements, streamJsonLines } from '../../scripts/util/json_array_stream.js'
 
 function readableFromString(str, chunkSize) {
   if (!chunkSize) {
@@ -90,5 +90,46 @@ describe('streamJsonArrayElements', () => {
     for (let cs = 1; cs <= input.length; cs++) {
       expect(await collect(readableFromString(input, cs))).toEqual([{ x: 'a"b' }])
     }
+  })
+})
+
+describe('streamJsonLines', () => {
+  async function collectLines(readable) {
+    const out = []
+    for await (const el of streamJsonLines(readable)) {
+      out.push(el)
+    }
+    return out
+  }
+
+  test('parses newline-delimited objects', async () => {
+    const input = '{"a":1}\n{"b":2}\n{"c":3}\n'
+    expect(await collectLines(readableFromString(input))).toEqual([{ a: 1 }, { b: 2 }, { c: 3 }])
+  })
+
+  test('handles missing trailing newline', async () => {
+    const input = '{"a":1}\n{"b":2}'
+    expect(await collectLines(readableFromString(input))).toEqual([{ a: 1 }, { b: 2 }])
+  })
+
+  test('skips blank lines', async () => {
+    const input = '{"a":1}\n\n  \n{"b":2}\n'
+    expect(await collectLines(readableFromString(input))).toEqual([{ a: 1 }, { b: 2 }])
+  })
+
+  test('produces correct results when chunk boundaries split lines', async () => {
+    const input = '{"key":"value with spaces"}\n{"nested":{"deep":[1,2,3]}}\n{"last":true}\n'
+    for (const chunkSize of [1, 2, 3, 5, 7, 11, 31]) {
+      const result = await collectLines(readableFromString(input, chunkSize))
+      expect(result).toEqual([
+        { key: 'value with spaces' },
+        { nested: { deep: [1, 2, 3] } },
+        { last: true },
+      ])
+    }
+  })
+
+  test('handles empty input', async () => {
+    expect(await collectLines(readableFromString(''))).toEqual([])
   })
 })

@@ -1,9 +1,13 @@
 import axios from 'axios'
 import fs from 'fs'
 import path from 'path'
+import zlib from 'zlib'
+import { pipeline } from 'stream/promises'
 import md5 from 'js-md5'
 
 import { magic, util } from 'battlestar-common'
+
+import { streamJsonLines } from './util/json_array_stream.js'
 
 const rootFields = [
   "id",
@@ -346,6 +350,7 @@ function processCards(cards, hasNormalVersion) {
 
 async function fetchScryfallDefaultCards(uri) {
   const result = await axios.get(uri, {
+    responseType: 'stream',
     maxBodyLength: Infinity,
     maxContentLength: Infinity,
     timeout: 0,
@@ -358,7 +363,11 @@ async function fetchScryfallDefaultCards(uri) {
     }
   }
 
-  return result.data
+  const cards = []
+  for await (const card of streamJsonLines(result.data.pipe(zlib.createGunzip()))) {
+    cards.push(card)
+  }
+  return cards
 }
 
 async function fetchScryfallDefaultDataUri() {
@@ -375,11 +384,11 @@ async function fetchScryfallDefaultDataUri() {
     throw new Error('Unable to parse default_cards from the bulk data last')
   }
 
-  if (!targetData.download_uri) {
+  if (!targetData.jsonl_download_uri) {
     throw new Error('Unable to parse the download URI for default cards')
   }
 
-  return targetData.download_uri
+  return targetData.jsonl_download_uri
 }
 
 function getLatestCachedFile() {
@@ -398,47 +407,72 @@ function getLatestCachedFile() {
   return path.join(cachedDir, latestFile)
 }
 
+async function streamDownloadToFile(uri, dest) {
+  const response = await axios.get(uri, {
+    responseType: 'stream',
+    maxRedirects: 5,
+    maxBodyLength: Infinity,
+    maxContentLength: Infinity,
+    timeout: 0,
+  })
+
+  await pipeline(response.data, fs.createWriteStream(dest))
+}
+
+// Loads cards from a cached bulk file. Scryfall now serves bulk data as
+// gzip-compressed JSONL; older cached files are plain JSON arrays.
+async function loadCardsFromFile(file) {
+  if (file.endsWith('.jsonl') || file.endsWith('.jsonl.gz')) {
+    let stream = fs.createReadStream(file)
+    if (file.endsWith('.gz')) {
+      stream = stream.pipe(zlib.createGunzip())
+    }
+
+    const cards = []
+    for await (const card of streamJsonLines(stream)) {
+      cards.push(card)
+    }
+    return cards
+  }
+
+  return JSON.parse(fs.readFileSync(file))
+}
+
+// The processed output keeps the historical naming scheme:
+// default-cards-<timestamp>.jsonl.gz -> card_data/default-cards-<timestamp>.json
+function outputFilenameFor(basename) {
+  return path.join('card_data', basename.replace(/\.(jsonl\.gz|jsonl|json)$/, '') + '.json')
+}
+
 async function downloadAndLoadScryfallData(useCache) {
   let cachedFilename
-  let outputFilename
 
   if (useCache) {
     cachedFilename = getLatestCachedFile()
     if (!cachedFilename) {
       throw new Error('No cached files found. Will download from Scryfall.')
     }
-    else {
-      console.log(`...using latest cached file: ${cachedFilename}`)
-      // Extract the base filename for the output file
-      const baseFilename = path.basename(cachedFilename)
-      outputFilename = path.join('card_data', baseFilename)
-    }
-  }
-
-  if (!useCache) {
-    const downloadUri = await fetchScryfallDefaultDataUri()
-    cachedFilename = 'cached/' + downloadUri.split('/').slice(-1)[0]
-    outputFilename = 'card_data/' + downloadUri.split('/').slice(-1)[0]
-  }
-
-  let cards
-
-  if (fs.existsSync(cachedFilename)) {
-    console.log('...loading card data from disk')
-    const cardData = fs.readFileSync(cachedFilename)
-    cards = JSON.parse(cardData)
+    console.log(`...using latest cached file: ${cachedFilename}`)
   }
   else {
-    console.log('...downloading card data from Scryfall')
     const downloadUri = await fetchScryfallDefaultDataUri()
-    cards = await fetchScryfallDefaultCards(downloadUri)
+    cachedFilename = 'cached/' + downloadUri.split('/').slice(-1)[0]
+  }
 
-    console.log('...writing raw data to disk: ' + cachedFilename)
+  const outputFilename = outputFilenameFor(path.basename(cachedFilename))
+
+  if (!fs.existsSync(cachedFilename)) {
+    const downloadUri = await fetchScryfallDefaultDataUri()
+
+    console.log('...downloading card data from Scryfall: ' + downloadUri)
     if (!fs.existsSync('cached')){
       fs.mkdirSync('cached')
     }
-    fs.writeFileSync(cachedFilename, JSON.stringify(cards))
+    await streamDownloadToFile(downloadUri, cachedFilename)
   }
+
+  console.log('...loading card data from disk')
+  const cards = await loadCardsFromFile(cachedFilename)
 
   return { cards, outputFilename }
 }

@@ -95,3 +95,31 @@ export async function* streamJsonArrayElements(readable) {
     yield JSON.parse(buf.slice(elementStart))
   }
 }
+
+/**
+ * Streams objects from a JSONL file (one JSON object per line).
+ * Scryfall bulk downloads are served in this format (gzip-compressed), so
+ * callers typically pipe a fs read stream through zlib.createGunzip() first.
+ */
+export async function* streamJsonLines(readable) {
+  const decoder = new StringDecoder('utf8')
+  let buf = ''
+
+  for await (const chunk of readable) {
+    buf += decoder.write(chunk)
+
+    let idx
+    while ((idx = buf.indexOf('\n')) !== -1) {
+      const line = buf.slice(0, idx).trim()
+      buf = buf.slice(idx + 1)
+      if (line) {
+        yield JSON.parse(line)
+      }
+    }
+  }
+
+  buf += decoder.end()
+  if (buf.trim()) {
+    yield JSON.parse(buf)
+  }
+}

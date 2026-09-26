@@ -26,10 +26,11 @@ import axios from 'axios'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
+import zlib from 'zlib'
 import { pipeline } from 'stream/promises'
 
 import { processCards } from './fetch_scryfall_cards.js'
-import { streamJsonArrayElements } from './util/json_array_stream.js'
+import { streamJsonArrayElements, streamJsonLines } from './util/json_array_stream.js'
 import Sets from '../src/models/magic/sets_models.js'
 import Scryfall from '../src/models/magic/scryfall_models.js'
 import { client as databaseClient } from '../src/utils/mongo.js'
@@ -59,17 +60,25 @@ async function fetchScryfallBulkUri() {
     throw new Error('Unable to fetch bulk data list')
   }
   const target = result.data.data.find(d => d.type === 'default_cards')
-  if (!target?.download_uri) {
+  if (!target?.jsonl_download_uri) {
     throw new Error('Unable to locate default_cards download URI')
   }
-  return target.download_uri
+  return target.jsonl_download_uri
 }
 
 // Iterate cards from the temp file, yielding one parsed card at a time.
-// Wraps streamJsonArrayElements so callers don't need to manage the read stream.
+// Wraps the stream parsers so callers don't need to manage the read stream.
+// Scryfall bulk downloads are gzip-compressed JSONL; older files may be
+// plain JSON arrays.
 async function* streamCardsFromFile(file) {
-  const stream = fs.createReadStream(file)
-  yield* streamJsonArrayElements(stream)
+  let stream = fs.createReadStream(file)
+  const uncompressed = file.endsWith('.gz')
+  if (uncompressed) {
+    stream = stream.pipe(zlib.createGunzip())
+  }
+
+  const isJsonl = (uncompressed ? file.slice(0, -3) : file).endsWith('.jsonl')
+  yield* (isJsonl ? streamJsonLines(stream) : streamJsonArrayElements(stream))
 }
 
 // Streaming equivalent of buildHasNormalVersionSet so we never hold the full
