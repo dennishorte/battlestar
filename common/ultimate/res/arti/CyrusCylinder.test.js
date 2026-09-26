@@ -44,7 +44,8 @@ describe('Cyrus Cylinder', () => {
       },
     })
   })
-test('dogma: chained execution', () => {
+
+  test('dogma: chained execution', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
