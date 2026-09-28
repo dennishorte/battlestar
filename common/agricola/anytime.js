@@ -1,9 +1,10 @@
 const { Agricola } = require('./agricola')
 
-function formatExchange(from, to) {
+function formatExchange(from, to, bonusPoints) {
   const fromStr = Object.entries(from).map(([r, a]) => `${a} ${r}`).join(' + ')
   const toStr = Object.entries(to).map(([r, a]) => `${a} ${r}`).join(' + ')
-  return `${fromStr} → ${toStr}`
+  const bonusStr = bonusPoints ? ` + ${bonusPoints} bonus point${bonusPoints === 1 ? '' : 's'}` : ''
+  return `${fromStr} → ${toStr}${bonusStr}`
 }
 
 function canAffordCost(player, cost) {
@@ -81,6 +82,7 @@ Agricola.prototype.getAnytimeFoodConversionOptions = function(player) {
         if (player.getTotalAnimals(conv.from) > 0) {
           options.push({
             type: 'card-cook',
+            cardId: card.id,
             cardName: card.name,
             resource: conv.from,
             count: 1,
@@ -94,6 +96,7 @@ Agricola.prototype.getAnytimeFoodConversionOptions = function(player) {
         if ((player[resourceKey] || 0) > 0) {
           options.push({
             type: 'card-convert',
+            cardId: card.id,
             cardName: card.name,
             resource: resourceKey,
             count: 1,
@@ -119,6 +122,7 @@ Agricola.prototype.getAnytimeFoodConversionOptions = function(player) {
           if (player.getTotalAnimals(conv.from) > 0) {
             options.push({
               type: 'card-cook',
+              cardId: card.id,
               cardName: card.name,
               resource: conv.from,
               count: 1,
@@ -132,6 +136,7 @@ Agricola.prototype.getAnytimeFoodConversionOptions = function(player) {
           if ((player[resourceKey] || 0) > 0) {
             options.push({
               type: 'card-convert',
+              cardId: card.id,
               cardName: card.name,
               resource: resourceKey,
               count: 1,
@@ -159,6 +164,7 @@ Agricola.prototype.getAnytimeFoodConversionOptions = function(player) {
         const count = fromEntries[0][1]
         options.push({
           type: 'card-convert',
+          cardId: card.id,
           cardName: card.name,
           resource,
           count,
@@ -195,6 +201,7 @@ Agricola.prototype.getAnytimeFoodConversionOptions = function(player) {
       const count = fromEntries[0][1]
       options.push({
         type: 'card-convert',
+        cardId: card.id,
         cardName: card.name,
         resource,
         count,
@@ -239,8 +246,8 @@ Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
     player.removeResource(option.resource, option.count)
     player.addResource('food', option.food)
     this.log.add({
-      template: '{player} uses {improvement} to convert {resource} to {food} food',
-      args: { player, improvement: option.improvement, resource: option.resource, food: option.food },
+      template: '{player} uses {card} to convert {resource} to {food} food',
+      args: { player, card: option.improvementId || option.improvement, resource: option.resource, food: option.food },
     })
     // Call onUseCraftConversion hooks (e.g., PlowBuilder offers plow when using Joinery)
     this.callPlayerCardHook(player, 'onUseCraftConversion', option.improvement, option.resource)
@@ -251,7 +258,7 @@ Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
     player.addResource('food', option.food)
     this.log.add({
       template: '{player} uses {card} to cook {count} {resource} for {food} food',
-      args: { player, card: option.cardName, count: option.count, resource: option.resource, food: option.food },
+      args: { player, card: option.cardId || option.cardName, count: option.count, resource: option.resource, food: option.food },
     })
     this.callPlayerCardHook(player, 'onCookAnimal', option.resource, option.count, option.food)
     this.callPlayerCardHook(player, 'onCook', option.resource, option.count, option.food)
@@ -262,7 +269,7 @@ Agricola.prototype.executeAnytimeFoodConversion = function(player, option) {
     player.addResource('food', option.food)
     this.log.add({
       template: '{player} uses {card} to convert {resource} to {food} food',
-      args: { player, card: option.cardName, resource: option.resource, food: option.food },
+      args: { player, card: option.cardId || option.cardName, resource: option.resource, food: option.food },
     })
   }
 }
@@ -323,6 +330,7 @@ Agricola.prototype.getAnytimeActions = function(player) {
         if (player.getTotalAnimals(conv.from) > 0) {
           options.push({
             type: 'card-cook',
+            cardId: card.id,
             cardName: card.name,
             resource: conv.from,
             count: 1,
@@ -336,6 +344,7 @@ Agricola.prototype.getAnytimeActions = function(player) {
         if ((player[resourceKey] || 0) > 0) {
           options.push({
             type: 'card-convert',
+            cardId: card.id,
             cardName: card.name,
             resource: resourceKey,
             count: 1,
@@ -399,6 +408,7 @@ Agricola.prototype.getAnytimeActions = function(player) {
           if (['sheep', 'boar', 'cattle'].includes(resource)) {
             options.push({
               type: 'card-cook',
+              cardId: card.id,
               cardName: card.name,
               resource,
               count,
@@ -409,6 +419,7 @@ Agricola.prototype.getAnytimeActions = function(player) {
           else {
             options.push({
               type: 'card-convert',
+              cardId: card.id,
               cardName: card.name,
               resource,
               count,
@@ -443,7 +454,7 @@ Agricola.prototype.getAnytimeActions = function(player) {
           cardName: card.name,
           from: opt.from,
           to: opt.to,
-          description: `${card.name}: ${formatExchange(opt.from, opt.to)}`,
+          description: `${card.name}: ${formatExchange(opt.from, opt.to, opt.bonusPoints)}`,
         }
         if (opt.bonusPoints) {
           action.bonusPoints = opt.bonusPoints
@@ -518,7 +529,7 @@ Agricola.prototype.executeAnytimeCardExchange = function(player, action) {
   }
   this.log.add({
     template: '{player} uses {card}: {exchange}',
-    args: { player, card: action.cardName, exchange: formatExchange(action.from, action.to) },
+    args: { player, card: action.cardId || action.cardName, exchange: formatExchange(action.from, action.to, action.bonusPoints) },
   })
 }
 
