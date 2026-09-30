@@ -27,6 +27,42 @@ describe('Mini Pasture', () => {
         },
       },
     })
+
+    // Fences count once against the supply (not also via usedFences)
+    const dennis = game.players.byName('dennis')
+    expect(dennis.getFenceCount()).toBe(4)
+    expect(dennis.getFencesInSupply()).toBe(11)
+  })
+
+  test('not offered when no space fits in remaining fence supply', () => {
+    const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
+
+    game.testSetBreakpoint('initialization-complete', () => {
+      game.players.byName('dennis').usedFences = 13
+    })
+
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        food: 2,
+        hand: ['mini-pasture-b002'],
+      },
+      actionSpaces: ['Major Improvement'],
+    })
+    game.run()
+
+    t.choose(game, 'Major Improvement')
+    t.choose(game, 'Minor Improvement.Mini Pasture')
+
+    // Only 2 fences in supply; every space needs at least 4 — nothing built
+    t.testBoard(game, {
+      dennis: {
+        farmyard: {
+          pastures: [],
+        },
+      },
+    })
+    expect(game.players.byName('dennis').getFencesInSupply()).toBe(2)
   })
 
   test('new pasture must be adjacent to existing when pastures exist', () => {

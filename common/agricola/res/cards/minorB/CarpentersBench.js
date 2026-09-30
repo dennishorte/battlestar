@@ -65,8 +65,7 @@ module.exports = {
       const fences = player.calculateFencesForPasture(selectedSpaces)
       const fencesNeeded = fences.length
 
-      const remainingFences = 15 - player.getFenceCount()
-      if (fencesNeeded > remainingFences) {
+      if (fencesNeeded > player.getFencesInSupply()) {
         return
       }
 
@@ -85,10 +84,6 @@ module.exports = {
 
       for (const fence of fences) {
         player.farmyard.fences.push(fence)
-      }
-
-      for (let i = 0; i < fencesNeeded; i++) {
-        player.useFenceFromSupply()
       }
 
       player.recalculatePastures()

@@ -220,6 +220,9 @@ function countFencesNeeded(spaces, existingFences = [], options = {}) {
  * @param {number} params.wood - Available wood
  * @param {number} params.currentFenceCount - Current number of fences placed
  * @param {number} params.maxFences - Maximum fences allowed (default 15)
+ * @param {number} [params.maxNewFences] - Hard cap on new fences this selection
+ *        (overrides the maxFences/currentFenceCount calculation, e.g. Midnight Fencer)
+ * @param {boolean} [params.skipCostCheck] - Skip the wood affordability check
  * @param {Array} params.existingFences - Array of existing fence segments
  * @param {Array<{row: number, col: number}>} params.existingPastureSpaces - Spaces already in pastures
  * @param {Function} params.isSpaceValid - Function(row, col) to check if space can be fenced
@@ -231,6 +234,8 @@ function validatePastureSelection(spaces, params = {}) {
     freeFences = 0,
     currentFenceCount = 0,
     maxFences = res.constants.maxFences || 15,
+    maxNewFences,
+    skipCostCheck = false,
     existingFences = [],
     isSpaceValid = () => true,
   } = params
@@ -261,18 +266,22 @@ function validatePastureSelection(spaces, params = {}) {
   const fencesNeeded = countFencesNeeded(spaces, existingFences)
 
   // Check wood (free fences from cards like Ash Trees reduce cost)
-  const woodCost = Math.max(0, fencesNeeded - freeFences)
-  if (woodCost > wood) {
-    return {
-      valid: false,
-      error: `Need ${woodCost} wood (have ${wood})`,
-      fencesNeeded,
-      fenceEdges,
+  if (!skipCostCheck) {
+    const woodCost = Math.max(0, fencesNeeded - freeFences)
+    if (woodCost > wood) {
+      return {
+        valid: false,
+        error: `Need ${woodCost} wood (have ${wood})`,
+        fencesNeeded,
+        fenceEdges,
+      }
     }
   }
 
   // Check fence limit
-  const remainingFences = maxFences - currentFenceCount
+  const remainingFences = maxNewFences !== undefined
+    ? maxNewFences
+    : maxFences - currentFenceCount
   if (fencesNeeded > remainingFences) {
     return {
       valid: false,

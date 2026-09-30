@@ -40,7 +40,7 @@ function canTakeOccupation(game, player) {
 }
 
 function canTakeFencing(game, player) {
-  return player.getFencesInSupply() > 0
+  return player.getBuildableFenceCount() > 0
 }
 
 // Base actions available from the start of the game
@@ -261,7 +261,7 @@ const roundCards = [
     type: 'instant',
     allowsRenovation: true,
     allowsFencing: true,
-    canTake: (game, player) => (!player.cannotRenovate && player.roomType !== 'stone') || player.getFencesInSupply() > 0,
+    canTake: (game, player) => (!player.cannotRenovate && player.roomType !== 'stone') || player.getBuildableFenceCount() > 0,
   },
 ]
 

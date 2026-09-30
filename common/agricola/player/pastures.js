@@ -130,6 +130,18 @@ AgricolaPlayer.prototype.useFenceFromSupply = function(count = 1) {
   this.usedFences = (this.usedFences || 0) + count
 }
 
+// Fences that could still be placed on the board: supply plus fences stored
+// on cards (e.g. Ash Trees), which are placeable but not part of the supply.
+AgricolaPlayer.prototype.getBuildableFenceCount = function() {
+  let storedOnCards = 0
+  for (const card of this.getActiveCards()) {
+    if (card.hasHook('getFreeFences')) {
+      storedOnCards += card.callHook('getFreeFences', this.game) || 0
+    }
+  }
+  return Math.max(0, this.getFencesInSupply()) + storedOnCards
+}
+
 AgricolaPlayer.prototype.getPastureCount = function() {
   return this.farmyard.pastures.length
 }
@@ -582,6 +594,10 @@ AgricolaPlayer.prototype.validatePastureSelection = function(spaces, options) {
   // When absent: default to all edge fences if card is active.
   const { palisadeFences, nonPalisadeFences } = this._resolvePalisadeSplit(fences, options?.palisadeFenceKeys)
 
+  // Fences stored on cards (e.g. Ash Trees) are placeable without drawing from
+  // the supply, but only up to the wood cost they would cover (see buildPasture).
+  let usableCardFences = 0
+
   if (!options?.skipCostCheck) {
     // Check if player has enough wood
     // Non-palisade fences: normal cost (1 wood each, with modifiers); palisade fences: 2 wood each
@@ -600,12 +616,14 @@ AgricolaPlayer.prototype.validatePastureSelection = function(spaces, options) {
       woodCost = Math.max(0, woodCost - this._farmRedevelopmentFreeFences)
     }
     // Card-based free fences (e.g. Ash Trees) — validation only, don't decrement
+    let cardFreeFences = 0
     for (const card of this.getActiveCards()) {
       if (card.hasHook('getFreeFences')) {
-        const freeFences = card.callHook('getFreeFences', this.game)
-        woodCost = Math.max(0, woodCost - freeFences)
+        cardFreeFences += card.callHook('getFreeFences', this.game)
       }
     }
+    usableCardFences = Math.min(woodCost, cardFreeFences)
+    woodCost = Math.max(0, woodCost - cardFreeFences)
     // Check if player can afford the wood cost, accounting for grain substitution (Millwright)
     const grainSubLimit = this._getGrainSubstitutionLimit()
     const maxGrainSub = grainSubLimit > 0 ? Math.min(grainSubLimit, this.grain || 0) : 0
@@ -618,9 +636,13 @@ AgricolaPlayer.prototype.validatePastureSelection = function(spaces, options) {
     }
   }
 
-  // Check if player has enough fences remaining (palisades don't count against limit)
+  // Check if player has enough fences remaining (palisades don't count against limit).
+  // options.fenceLimit overrides the supply check entirely (e.g. Midnight Fencer's
+  // stolen fences, which may push the farm beyond 15).
   const fencesForLimit = nonPalisadeFences.length
-  const remainingFences = res.constants.maxFences - this.getFenceCount()
+  const remainingFences = options?.fenceLimit !== undefined
+    ? options.fenceLimit
+    : this.getFencesInSupply() + usableCardFences
   if (fencesForLimit > remainingFences) {
     return {
       valid: false,
@@ -687,6 +709,9 @@ AgricolaPlayer.prototype.buildPasture = function(spaces, options) {
   }
   if (options?.palisadeFenceKeys !== undefined) {
     validateOpts.palisadeFenceKeys = options.palisadeFenceKeys
+  }
+  if (options?.fenceLimit !== undefined) {
+    validateOpts.fenceLimit = options.fenceLimit
   }
   const validation = this.validatePastureSelection(spaces, Object.keys(validateOpts).length ? validateOpts : undefined)
   if (!validation.valid) {

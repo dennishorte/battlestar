@@ -38,6 +38,11 @@ describe("Carpenter's Bench", () => {
         },
       },
     })
+
+    // Fences count once against the supply (not also via usedFences)
+    const dennis = game.players.byName('dennis')
+    expect(dennis.getFenceCount()).toBe(4)
+    expect(dennis.getFencesInSupply()).toBe(11)
   })
 
   test('can skip building a pasture', () => {

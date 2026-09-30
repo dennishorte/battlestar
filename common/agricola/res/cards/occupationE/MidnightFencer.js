@@ -10,14 +10,14 @@ module.exports = {
     if (game.getHarvestNumber() !== 6) {
       return false
     }
-    return game.getPlayers().some(opponent =>
+    return game.players.all().some(opponent =>
       opponent !== player && opponent.getFencesInSupply() > 0
     )
   },
   onHarvestStart(game, player) {
     // Steal unbuilt fences from opponents
     let stolenTotal = 0
-    for (const opponent of game.getPlayers()) {
+    for (const opponent of game.players.all()) {
       if (opponent === player) {
         continue
       }

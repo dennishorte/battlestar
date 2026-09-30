@@ -1,7 +1,12 @@
 const { AgricolaActionManager } = require('../AgricolaActionManager.js')
-const res = require('../res/index.js')
 
-AgricolaActionManager.prototype.buildFences = function(player) {
+AgricolaActionManager.prototype.buildFences = function(player, options = {}) {
+  // options.free — fences cost no wood (e.g. Midnight Fencer)
+  // options.extraFences — fence pieces that may be built beyond the player's
+  //   normal supply (e.g. Midnight Fencer's stolen fences; the farm can then
+  //   hold more than 15 fences)
+  const freeBuild = !!options.free
+  const extraBudget = options.extraFences !== undefined ? options.extraFences : null
   let totalFencesBuilt = 0
   let continueBuilding = true
 
@@ -10,22 +15,26 @@ AgricolaActionManager.prototype.buildFences = function(player) {
 
   while (continueBuilding) {
     // Check if player can build any fences (accounting for free fences from cards)
-    const hasFreeOverhaulFences = (player._overhaulFreeFences || 0) > 0
-    const hasFieldFenceDiscount = !!player._fieldFencesActive
-    const hasFarmRedevFreeFences = (player._farmRedevelopmentFreeFences || 0) > 0
-    const hasCardFreeFences = player.getActiveCards().some(c => c.hasHook('getFreeFences') && c.callHook('getFreeFences', this.game) > 0)
-    const hasGrainSubstitution = player.grain > 0 && player._getGrainSubstitutionLimit() > 0
-    if (player.wood < 1 && player.getFreeFenceCount() === 0 && !hasFreeOverhaulFences && !hasFieldFenceDiscount && !hasFarmRedevFreeFences && !hasCardFreeFences && !hasGrainSubstitution) {
-      if (totalFencesBuilt === 0) {
-        this.log.add({
-          template: '{player} has no wood for fences',
-          args: { player },
-        })
+    if (!freeBuild) {
+      const hasFreeOverhaulFences = (player._overhaulFreeFences || 0) > 0
+      const hasFieldFenceDiscount = !!player._fieldFencesActive
+      const hasFarmRedevFreeFences = (player._farmRedevelopmentFreeFences || 0) > 0
+      const hasCardFreeFences = player.getActiveCards().some(c => c.hasHook('getFreeFences') && c.callHook('getFreeFences', this.game) > 0)
+      const hasGrainSubstitution = player.grain > 0 && player._getGrainSubstitutionLimit() > 0
+      if (player.wood < 1 && player.getFreeFenceCount() === 0 && !hasFreeOverhaulFences && !hasFieldFenceDiscount && !hasFarmRedevFreeFences && !hasCardFreeFences && !hasGrainSubstitution) {
+        if (totalFencesBuilt === 0) {
+          this.log.add({
+            template: '{player} has no wood for fences',
+            args: { player },
+          })
+        }
+        break
       }
-      break
     }
 
-    const remainingFences = res.constants.maxFences - player.getFenceCount()
+    const remainingFences = extraBudget !== null
+      ? extraBudget - totalFencesBuilt
+      : player.getBuildableFenceCount()
     if (remainingFences <= 0) {
       if (totalFencesBuilt === 0) {
         this.log.add({
@@ -37,7 +46,10 @@ AgricolaActionManager.prototype.buildFences = function(player) {
     }
 
     // Build pasture selection choices
-    const result = this.selectPastureSpaces(player)
+    const result = this.selectPastureSpaces(player, {
+      free: freeBuild,
+      fenceLimit: remainingFences,
+    })
 
     if (!result.built) {
       if (totalFencesBuilt === 0 && !result.skipped) {
@@ -49,7 +61,8 @@ AgricolaActionManager.prototype.buildFences = function(player) {
     totalFencesBuilt += result.fencesBuilt
 
     // Ask if player wants to build another pasture
-    const canAffordMore = player.wood >= 1 || player.getFreeFenceCount() > 0
+    const canAffordMore = freeBuild
+      || player.wood >= 1 || player.getFreeFenceCount() > 0
       || (player._overhaulFreeFences || 0) > 0 || !!player._fieldFencesActive
       || (player._farmRedevelopmentFreeFences || 0) > 0
       || (player.grain > 0 && player._getGrainSubstitutionLimit() > 0)
@@ -82,7 +95,7 @@ AgricolaActionManager.prototype.buildFences = function(player) {
   return totalFencesBuilt > 0
 }
 
-AgricolaActionManager.prototype.selectPastureSpaces = function(player) {
+AgricolaActionManager.prototype.selectPastureSpaces = function(player, opts = {}) {
   // Get fenceable spaces
   const fenceableSpaces = player.getFenceableSpaces()
 
@@ -94,17 +107,25 @@ AgricolaActionManager.prototype.selectPastureSpaces = function(player) {
     return { built: false }
   }
 
-  // Use action-type selector - client manages selection locally and sends final result
-  const response = this.choose(player, [
-    this.option({ id: 'cancel', title: 'Cancel fencing' }),
-  ], {
+  const requestOpts = {
     title: 'Select spaces for pasture',
     min: 1,
     max: 1,
     allowsAction: 'build-pasture',
     fenceableSpaces,
     help: 'You can also click on the farmyard to select.',
-  })
+  }
+  if (opts.free) {
+    requestOpts.fencesFree = true
+  }
+  if (opts.fenceLimit !== undefined) {
+    requestOpts.fenceAllowance = opts.fenceLimit
+  }
+
+  // Use action-type selector - client manages selection locally and sends final result
+  const response = this.choose(player, [
+    this.option({ id: 'cancel', title: 'Cancel fencing' }),
+  ], requestOpts)
 
   // Check if response is an action (spaces array) or a choice
   if (response.action === 'build-pasture' && response.spaces) {
@@ -115,8 +136,9 @@ AgricolaActionManager.prototype.selectPastureSpaces = function(player) {
     }
 
     // WoodPalisades: ask player which edge fences to build as palisades (per-fence choice)
+    // Skipped for free builds — palisades are a paid upgrade
     const palisadeFenceKeys = new Set()
-    if (player.hasWoodPalisadesCard()) {
+    if (!opts.free && player.hasWoodPalisadesCard()) {
       const fences = player.calculateFencesForPasture(selectedSpaces)
       const { edgeFences } = player._splitEdgeAndInternalFences(fences)
       if (edgeFences.length > 0) {
@@ -143,7 +165,14 @@ AgricolaActionManager.prototype.selectPastureSpaces = function(player) {
     }
 
     // Validate the selection
-    const validation = player.validatePastureSelection(selectedSpaces, { palisadeFenceKeys })
+    const pastureOpts = { palisadeFenceKeys }
+    if (opts.free) {
+      pastureOpts.skipCostCheck = true
+    }
+    if (opts.fenceLimit !== undefined) {
+      pastureOpts.fenceLimit = opts.fenceLimit
+    }
+    const validation = player.validatePastureSelection(selectedSpaces, pastureOpts)
     if (!validation.valid) {
       this.log.add({
         template: 'Invalid pasture selection: {error}',
@@ -153,7 +182,11 @@ AgricolaActionManager.prototype.selectPastureSpaces = function(player) {
     }
 
     // Build the pasture
-    const result = player.buildPasture(selectedSpaces, { palisadeFenceKeys })
+    const result = player.buildPasture(selectedSpaces, {
+      palisadeFenceKeys,
+      skipCost: opts.free,
+      fenceLimit: opts.fenceLimit,
+    })
     if (result.success) {
       // Handle pending fence cost choice (Millwright grain substitution)
       if (player._pendingFenceCost) {

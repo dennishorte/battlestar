@@ -156,6 +156,8 @@ export default {
           fenceEdges: {},
           validation: null,
           fenceableSpaces: [],
+          fencesFree: false,
+          fenceAllowance: null,
         },
         // Plowing UI state
         plowing: {
@@ -317,6 +319,8 @@ export default {
         if (request.allowsAction === 'build-pasture') {
           this.ui.fencing.active = true
           this.ui.fencing.fenceableSpaces = request.fenceableSpaces || []
+          this.ui.fencing.fencesFree = request.fencesFree === true
+          this.ui.fencing.fenceAllowance = request.fenceAllowance ?? null
           // Don't clear selectedSpaces - keep local state
           return
         }
@@ -513,10 +517,12 @@ export default {
       const params = {
         wood: player.wood,
         freeFences,
-        currentFenceCount: player.getFenceCount(),
+        currentFenceCount: player.getFenceCount() + Math.max(0, (player.usedFences || 0) - freeFences),
         maxFences: agricola.res.constants.maxFences,
         existingFences: player.farmyard?.fences || [],
         existingPastureSpaces: (player.farmyard?.pastures || []).flatMap(p => p.spaces),
+        skipCostCheck: this.ui.fencing.fencesFree === true,
+        maxNewFences: this.ui.fencing.fenceAllowance ?? undefined,
         isSpaceValid: (row, col) => {
           const space = player.getSpace(row, col)
           return space && space.type !== 'room' && space.type !== 'field'
@@ -534,6 +540,8 @@ export default {
       this.ui.fencing.fenceEdges = {}
       this.ui.fencing.validation = null
       this.ui.fencing.fenceableSpaces = []
+      this.ui.fencing.fencesFree = false
+      this.ui.fencing.fenceAllowance = null
     },
 
     clearPlowingState() {

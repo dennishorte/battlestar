@@ -40,6 +40,19 @@ module.exports = {
       return false
     }
 
+    // Only offer spaces the player has enough fences left to enclose
+    const fencesInSupply = player.getFencesInSupply()
+    validSpaces = validSpaces.filter(s =>
+      player.calculateFencesForPasture([s]).length <= fencesInSupply
+    )
+    if (validSpaces.length === 0) {
+      game.log.add({
+        template: '{player} has not enough fences in supply for {card}',
+        args: { player, card },
+      })
+      return false
+    }
+
     const spaceChoices = validSpaces.map(s => game.actions.option({
       id: `space-${s.row}-${s.col}`,
       title: `${s.row},${s.col}`,
@@ -67,11 +80,6 @@ module.exports = {
     // Add fences (free — no wood cost)
     for (const fence of fences) {
       player.farmyard.fences.push(fence)
-    }
-
-    // Use fences from supply
-    for (let i = 0; i < fences.length; i++) {
-      player.useFenceFromSupply()
     }
 
     // Recalculate pastures
