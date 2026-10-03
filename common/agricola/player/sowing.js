@@ -257,6 +257,10 @@ AgricolaPlayer.prototype.sowField = function(row, col, cropType) {
 
   space.crop = cropType
   space.cropCount = totalCrops
+
+  // Planting a field may shrink animal-holding capacity (e.g. Mud Patch)
+  this.game.callPlayerCardHook(this, 'onFieldSown', { row, col, cropType })
+
   return true
 }
 
