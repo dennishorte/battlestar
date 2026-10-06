@@ -5,7 +5,12 @@
 <script setup>
 import { useStore } from 'vuex'
 import GameLog from '@/modules/games/common/components/log/GameLog.vue'
+import CardName from '@/modules/games/common/components/log/CardName.vue'
+import LocName from '@/modules/games/common/components/log/LocName.vue'
+import PlayerName from '@/modules/games/common/components/log/PlayerName.vue'
 import { useGameLogProvider } from '@/modules/games/common/composables/useGameLog'
+import { defaultMatchers } from '@/modules/games/common/composables/useLogTokenizer'
+import ManaSymbol from '@/modules/magic/components/card/ManaSymbol.vue'
 import CardMoveLog from './CardMoveLog.vue'
 import StackPushLog from './StackPushLog.vue'
 
@@ -77,6 +82,27 @@ function lineIndent(line) {
   }
 }
 
+const tokenMatchers = [
+  {
+    pattern: /\buntap:\s*/,
+    type: 'mana-symbol',
+    props: () => ({ m: 'untap' }),
+  },
+  {
+    pattern: /\btap:\s*/,
+    type: 'mana-symbol',
+    props: () => ({ m: 'tap' }),
+  },
+  ...defaultMatchers,
+]
+
+const tokenComponents = {
+  card: CardName,
+  player: PlayerName,
+  loc: LocName,
+  'mana-symbol': ManaSymbol,
+}
+
 useGameLogProvider({
   cardClasses,
   cardMouseover,
@@ -85,6 +111,8 @@ useGameLogProvider({
   lineComponent,
   lineClasses,
   lineIndent,
+  tokenComponents,
+  tokenMatchers,
 })
 </script>
 
@@ -180,6 +208,10 @@ useGameLogProvider({
   font-size: .85em;
   color: #5a6b4f;
   padding-left: 2.5em;
+}
+
+#gamelog :deep(.tap-effect .ms) {
+  margin-right: .3em;
 }
 
 #gamelog :deep(.tap-effect .card-name) {
