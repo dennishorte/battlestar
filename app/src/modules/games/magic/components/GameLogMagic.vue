@@ -7,6 +7,7 @@ import { useStore } from 'vuex'
 import GameLog from '@/modules/games/common/components/log/GameLog.vue'
 import { useGameLogProvider } from '@/modules/games/common/composables/useGameLog'
 import CardMoveLog from './CardMoveLog.vue'
+import StackPushLog from './StackPushLog.vue'
 
 const store = useStore()
 
@@ -37,6 +38,9 @@ function lineComponent(line) {
   if (line.event === 'move-card') {
     return CardMoveLog
   }
+  if (line.event === 'stack-push') {
+    return StackPushLog
+  }
   return null
 }
 
@@ -49,6 +53,15 @@ function lineClasses(line) {
   }
   if (line.event === 'pass-priority') {
     return 'pass-priority'
+  }
+  if (line.event === 'stack-push') {
+    return 'stack-header'
+  }
+  if (line.event === 'stack-pop') {
+    return 'stack-pop'
+  }
+  if (line.text.startsWith('tap: ') || line.text.startsWith('untap: ')) {
+    return 'tap-effect'
   }
 }
 
@@ -146,6 +159,33 @@ useGameLogProvider({
 }
 #gamelog :deep(.player-turn-start::after) {
   content: "—";
+}
+
+#gamelog :deep(.log-line.stack-header) {
+  display: block;
+  font-weight: bold;
+  font-size: 1.15em;
+  text-align: center;
+  padding: .35em .5em;
+  margin: -.25em 0 .25em;
+  background-color: rgba(0, 0, 0, .08);
+  border-radius: 0 .5em 0 0;
+}
+
+#gamelog :deep(.log-line.stack-pop) {
+  display: none;
+}
+
+#gamelog :deep(.log-line.tap-effect) {
+  font-size: .85em;
+  color: #5a6b4f;
+  padding-left: 2.5em;
+}
+
+#gamelog :deep(.tap-effect .card-name) {
+  color: #5a6b4f;
+  font-weight: normal;
+  text-decoration-color: rgba(90, 107, 79, .6);
 }
 
 #gamelog :deep(.card-name) {
