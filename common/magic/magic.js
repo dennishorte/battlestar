@@ -982,7 +982,8 @@ Magic.prototype.aStackEffect = function(player, cardId) {
     name: 'effect: ' + card.name(),
   }
 
-  this.aCreateToken(controller, data, { silent: true })[0]
+  const effect = this.aCreateToken(controller, data, { silent: true })[0]
+  effect.effectSourceId = card.id
 }
 
 Magic.prototype.aTap = function(player, cardId) {

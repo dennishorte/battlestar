@@ -3,6 +3,7 @@
 </template>
 
 <script setup>
+import { inject } from 'vue'
 import { useStore } from 'vuex'
 import GameLog from '@/modules/games/common/components/log/GameLog.vue'
 import CardName from '@/modules/games/common/components/log/CardName.vue'
@@ -15,6 +16,16 @@ import CardMoveLog from './CardMoveLog.vue'
 import StackPushLog from './StackPushLog.vue'
 
 const store = useStore()
+const game = inject('game')
+
+// Effect tokens on the stack link back to the card that produced them;
+// hovering the effect should preview that card.
+function effectSource(card) {
+  if (card?.effectSourceId && game.value?.cards?.hasId(card.effectSourceId)) {
+    return game.value.cards.byId(card.effectSourceId)
+  }
+  return card
+}
 
 function cardClasses() {
   return 'card-name'
@@ -22,13 +33,13 @@ function cardClasses() {
 
 function cardMouseover(card) {
   if (card) {
-    store.commit('magic/setMouseoverCard', card)
+    store.commit('magic/setMouseoverCard', effectSource(card))
   }
 }
 
 function cardMouseleave(card) {
   if (card) {
-    store.commit('magic/unsetMouseoverCard', card)
+    store.commit('magic/unsetMouseoverCard', effectSource(card))
   }
 }
 
