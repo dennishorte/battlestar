@@ -13,6 +13,13 @@ describe('Magic', () => {
     // If no errors thrown, success.
   })
 
+  test('game creation with seat shuffling', () => {
+    // Prod games use default playerOptions (shuffleSeats: true), which logs
+    // 'Players assigned to random seats' while the player manager is still
+    // being constructed. Regression test for a crash in MagicLogManager.add.
+    t.fixture({ playerOptions: {} })
+  })
+
   test('deck selection', () => {
     t.fixtureDecksSelected()
     // If no errors, decks were selected successfully.
