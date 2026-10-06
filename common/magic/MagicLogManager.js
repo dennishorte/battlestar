@@ -2,6 +2,23 @@ const { BaseLogManager } = require('../lib/game/index.js')
 
 
 class MagicLogManager extends BaseLogManager {
+  add(msg) {
+    const player = msg.args?.player
+    const current = this._game.players.current()
+
+    // The player holding priority is the implied actor, so their name is
+    // dropped from log entries. It stays when someone acts without
+    // priority (e.g. an anytime action on another player's turn).
+    if (player && current && (player.name || player) === current.name) {
+      msg = {
+        ...msg,
+        template: msg.template.replace(/ ?by \{player\}$/, ''),
+      }
+    }
+
+    super.add(msg)
+  }
+
   addStackPush(player, card) {
     this.add({
       template: '{card} put on the stack by {player}',
