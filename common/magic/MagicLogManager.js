@@ -4,7 +4,7 @@ const { BaseLogManager } = require('../lib/game/index.js')
 class MagicLogManager extends BaseLogManager {
   addStackPush(player, card) {
     this.add({
-      template: '{player} puts {card} on the stack',
+      template: '{card} put on the stack by {player}',
       args: { player, card },
       event: 'stack-push',
     })

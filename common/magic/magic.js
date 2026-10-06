@@ -204,8 +204,8 @@ Magic.prototype.aActiveFace = function(player, cardId, faceIndex) {
   const activeFaceName = card.name(card.activeFaceIndex)
 
   this.log.add({
-    template: `{player} flips ${prevFaceName} to ${activeFaceName}`,
-    args: { player },
+    template: `{card} flipped from ${prevFaceName} to ${activeFaceName} by {player}`,
+    args: { player, card },
   })
 }
 
@@ -299,7 +299,7 @@ Magic.prototype.aAnnotate = function(player, cardId, annotation) {
   const card = this.cards.byId(cardId)
   card.annotation = annotation
   this.log.add({
-    template: '{player} sets annotation on {card} to {annotation}',
+    template: '{card} annotation set to {annotation} by {player}',
     args: { player, card, annotation },
   })
 }
@@ -309,7 +309,7 @@ Magic.prototype.aAnnotateEOT = function(player, cardId, annotation) {
   const card = this.cards.byId(cardId)
   card.annotationEOT = annotation
   this.log.add({
-    template: '{player} sets EOT annotation on {card} to {annotation}',
+    template: '{card} EOT annotation set to {annotation} by {player}',
     args: { player, card, annotation },
   })
 }
@@ -319,7 +319,7 @@ Magic.prototype.aAnnotatePerpetual = function(player, cardId, annotation) {
   const card = this.cards.byId(cardId)
   card.annotationPerpetual = annotation
   this.log.add({
-    template: '{player} sets perpetual annotation on {card} to {annotation}',
+    template: '{card} perpetual annotation set to {annotation} by {player}',
     args: { player, card, annotation },
   })
 }
@@ -551,7 +551,7 @@ Magic.prototype.aDraw = function(player, opts={}) {
 
   if (!opts.silent) {
     this.log.add({
-      template: '{player} draws {card}',
+      template: '{card} drawn by {player}',
       args: { player, card }
     })
   }
@@ -706,10 +706,10 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
         logArgs.placement = `${fromBottom} from the bottom of`
       }
 
-      template = `{player} moves {card} from {zone1} to {placement} {zone2}`
+      template = `{card} moved from {zone1} to {placement} {zone2} by {player}`
     }
     else {
-      template = '{player} moves {card} from {zone1} to {zone2}'
+      template = '{card} moved from {zone1} to {zone2} by {player}'
     }
 
     this.log.add({
@@ -822,7 +822,7 @@ Magic.prototype.aReveal = function(player, cardId) {
 
   card.reveal()
   this.log.add({
-    template: '{player} reveals {card} from {zone}',
+    template: '{card} revealed from {zone} by {player}',
     args: { player, card, zone: card.zone },
   })
 }
@@ -853,7 +853,7 @@ Magic.prototype.aRevealNext = function(player, zoneId) {
   const card = cards[nextIndex]
   card.reveal()
   this.log.add({
-    template: `{player} reveals the next card in {zone} (top+${nextIndex}): {card}`,
+    template: `{card} revealed from {zone} (top+${nextIndex}) by {player}`,
     args: { player, zone, card }
   })
 }
@@ -1007,7 +1007,7 @@ Magic.prototype.aUnmorph = function(player, cardId) {
   card.morph = false
   card.reveal()
   this.log.add({
-    template: '{player} unmorphs {card}',
+    template: '{card} is unmorphed by {player}',
     args: { player, card },
   })
 }
@@ -1018,7 +1018,7 @@ Magic.prototype.aUnsecret = function(player, cardId) {
   card.secret = false
   this.mAdjustCardVisibility(card)
   this.log.add({
-    template: '{player} unsecrets {card}',
+    template: '{card} is unsecreted by {player}',
     args: { player, card },
   })
 }
