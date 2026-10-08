@@ -123,14 +123,17 @@ export default {
   },
 
   watch: {
-    selectedCardId(newValue) {
-      if (newValue) {
-        const card = this.game.cards.byId(newValue)
-        this.activeFaceIndex = card.activeFaceIndex
-        this.annotation = card.annotation
-        this.annotationEOT = card.annotationEOT
-        this.annotationPerpetual = card.annotationPerpetual
-      }
+    selectedCardId: {
+      immediate: true,
+      handler(newValue) {
+        if (newValue) {
+          const card = this.game.cards.byId(newValue)
+          this.activeFaceIndex = card.activeFaceIndex
+          this.annotation = card.annotation
+          this.annotationEOT = card.annotationEOT
+          this.annotationPerpetual = card.annotationPerpetual
+        }
+      },
     },
   },
 
