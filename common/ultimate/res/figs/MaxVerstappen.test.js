@@ -181,4 +181,89 @@ describe('Max Verstappen', () => {
     })
   })
 
+  test('karma: does not trigger when a demand is made of you', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        red: ['Archery'], // Demand effect; dennis has more {k} than micah
+      },
+      micah: {
+        red: ['Max Verstappen'], // Karma should NOT fire: micah is impacted, not executing
+        hand: ['Tools', 'Coal'],
+      },
+      achievements: [],
+      decks: {
+        base: {
+          1: ['Sailing'], // Card micah is demanded to draw
+        },
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, 'Dogma.Archery')
+    // No karma prompt for micah. The demand just resolves:
+    // micah draws a {1} (Sailing), then transfers the highest card in hand
+    // (Coal) to dennis's hand. Archery's second effect has no targets.
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Archery'],
+        hand: ['Coal'],
+      },
+      micah: {
+        red: ['Max Verstappen'],
+        hand: ['Tools', 'Sailing'],
+      },
+    })
+  })
+
+  test('karma: triggers for the player executing a demand', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+    t.setBoard(game, {
+      dennis: {
+        red: ['Max Verstappen'],
+        green: ['Mapmaking'], // Demand effect; dennis has more {c} than micah
+        hand: ['Tools'], // Card to return for karma
+      },
+      micah: {
+        score: ['Sailing'], // {1} to transfer to dennis's score pile
+      },
+      achievements: [],
+      decks: {
+        base: {
+          1: ['Agriculture'], // Card dennis draws and scores via second effect
+          11: ['Fusion'], // Card dennis draws via karma
+        },
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, 'Dogma.Mapmaking')
+    // dennis is executing the demand effect, so dennis's karma fires.
+    request = t.choose(game, 'Tools') // Return Tools to repeat the demand once
+    // Demand resolves against micah twice:
+    //   First: micah transfers Sailing to dennis's score
+    //   Second: micah's score pile is empty, no effect
+    // Then dennis draws an {11} (Fusion) via karma
+    // Second (non-demand) effect triggers karma again; return nothing.
+    request = t.choose(game)
+    // Second effect executes: a card was transferred, so draw and score a {1} (Agriculture)
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        red: ['Max Verstappen'],
+        green: ['Mapmaking'],
+        hand: ['Fusion'],
+        score: ['Sailing', 'Agriculture'],
+      },
+      micah: {
+        score: [],
+      },
+    })
+  })
+
 })

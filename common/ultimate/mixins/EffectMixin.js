@@ -329,8 +329,12 @@ const EffectMixin = {
       }
     }
 
-    // Handle dogma-effect karma
-    const dogmaEffectKarmaKind = this.triggerKarma(actor, 'dogma-effect', {
+    // Handle dogma-effect karma.
+    // For demands and compels, the player controlling the card is the one
+    // executing the effect; the actor is merely impacted by it. So the karma
+    // triggers for the executing player, not the demand/compel target.
+    const executor = participation.demand || participation.compel ? player : actor
+    const dogmaEffectKarmaKind = this.triggerKarma(executor, 'dogma-effect', {
       ...opts,
       card,
       effect: function() {
