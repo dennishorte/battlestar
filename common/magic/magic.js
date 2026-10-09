@@ -688,7 +688,13 @@ Magic.prototype.aMoveCard = function(player, cardId, destId, destIndex) {
 
     let template
 
-    if (dest.id.endsWith('library') && destIndex !== undefined) {
+    if (dest.id.endsWith('attacking')) {
+      template = '{card} attacks by {player}'
+    }
+    else if (dest.id.endsWith('blocking')) {
+      template = '{card} defends by {player}'
+    }
+    else if (dest.id.endsWith('library') && destIndex !== undefined) {
       const librarySize = dest.cardlist().length
       const position = destIndex === null ? librarySize - 1 : destIndex
       const fromBottom = librarySize - 1 - position

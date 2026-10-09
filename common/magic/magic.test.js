@@ -157,6 +157,38 @@ describe('Magic Actions', () => {
     })
   })
 
+  test('move card to attacking or blocking logs attacks/defends', () => {
+    const game = t.fixtureDecksSelected()
+
+    const request1 = game.run()
+    const request2 = t.do(game, request1, { name: 'draw' })
+    const request3 = t.do(game, request2, {
+      name: 'move card',
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
+      destId: 'players.dennis.creatures',
+      destIndex: 0,
+    })
+    const request4 = t.do(game, request3, {
+      name: 'move card',
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].id,
+      destId: 'players.dennis.attacking',
+      destIndex: 0,
+    })
+
+    const log = game.log.getLog()
+    expect(log[log.length - 1].template).toBe('{card} attacks')
+
+    t.do(game, request4, {
+      name: 'move card',
+      cardId: game.cards.byPlayer(t.dennis(game), 'attacking')[0].id,
+      destId: 'players.dennis.blocking',
+      destIndex: 0,
+    })
+
+    const log2 = game.log.getLog()
+    expect(log2[log2.length - 1].template).toBe('{card} defends')
+  })
+
   test('mulligan', () => {
     const game = t.fixtureDecksSelected()
 
