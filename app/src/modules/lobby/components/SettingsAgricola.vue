@@ -59,7 +59,7 @@ export default {
     },
 
     availableCardSets() {
-      return Object.values(res.cardSets).filter(set => !set.hidden)
+      return Object.values(res.cardSets).filter(set => !set.hidden && !set.testOnly)
     },
 
     selectedCardSets: {
@@ -129,8 +129,15 @@ export default {
     if (!this.lobby.options) {
       this.lobby.options = {}
     }
+    const selectableIds = res.getSelectableCardSetIds()
     if (!this.lobby.options.cardSets) {
-      this.lobby.options.cardSets = res.getSelectableCardSetIds()
+      this.lobby.options.cardSets = selectableIds
+    }
+    else {
+      this.lobby.options.cardSets = this.lobby.options.cardSets.filter(id => selectableIds.includes(id))
+      if (this.lobby.options.cardSets.length === 0) {
+        this.lobby.options.cardSets = selectableIds
+      }
     }
     // Set version 4 for new games (enables animal placement modal)
     if (!this.lobby.options.version) {
