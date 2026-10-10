@@ -9,7 +9,7 @@ describe('spacing-guilds-favor', () => {
     expect(card.name).toBe("Spacing Guild's Favor")
     expect(card.source).toBe('Uprising')
     expect(card.compatibility).toBe('All')
-    expect(card.factionAffiliation).toBe(null)
+    expect(card.factionAffiliation).toBe('guild')
     expect(typeof card.onDiscard).toBe('function')
     expect(card.whenDiscardedAbility).toMatch(/discarded/i)
   })

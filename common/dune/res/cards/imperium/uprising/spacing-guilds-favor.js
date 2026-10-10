@@ -23,7 +23,7 @@ module.exports = {
   revealPersuasion: 2,
   revealSwords: 0,
   revealAbility: "Spend 3 Spice → +1 Influence with any Faction",
-  factionAffiliation: null,
+  factionAffiliation: "guild",
   vpsAvailable: 0,
   hasTech: false,
   hasShipping: false,
