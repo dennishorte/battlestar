@@ -90,13 +90,8 @@ export default {
       if (!base) {
         return []
       }
-      const distinct = []
-      for (const a of base) {
-        if (!distinct.some(b => b.same(a))) {
-          distinct.push(a)
-        }
-      }
-      return distinct
+      const setsByCode = this.$store.getters['magic/cards/setsByCode'] || {}
+      return mag.util.card.uniqueImplementations(base, setsByCode)
     },
   },
 

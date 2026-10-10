@@ -777,3 +777,93 @@ describe('CardUtil.segmentText', () => {
     })
   })
 })
+
+describe('CardUtil.pickBestPrinting', () => {
+  function stubCard(setCode, collectorNumber) {
+    return {
+      set: () => setCode,
+      collectorNumber: () => collectorNumber,
+    }
+  }
+
+  const setsByCode = {
+    lea: { set_type: 'core', released_at: '1993-08-05' },
+    m21: { set_type: 'core', released_at: '2020-07-03' },
+    blb: { set_type: 'expansion', released_at: '2024-08-02' },
+    sld: { set_type: 'promo', released_at: '2025-01-01' },
+    custom: undefined,
+  }
+
+  test('picks the smallest collector number from the latest normal set', () => {
+    const alpha = stubCard('lea', '10')
+    const m21 = stubCard('m21', '100')
+    const blb = stubCard('blb', '50')
+    expect(CardUtil.pickBestPrinting([alpha, m21, blb], setsByCode)).toBe(blb)
+  })
+
+  test('prefers smaller collector number within the best set', () => {
+    const normal = stubCard('blb', '300')
+    const variant = stubCard('blb', '350')
+    expect(CardUtil.pickBestPrinting([variant, normal], setsByCode)).toBe(normal)
+  })
+
+  test('excludes special set types even when more recent', () => {
+    const m21 = stubCard('m21', '100')
+    const secretLair = stubCard('sld', '1')
+    expect(CardUtil.pickBestPrinting([m21, secretLair], setsByCode)).toBe(m21)
+  })
+
+  test('handles collector numbers with suffixes', () => {
+    const plain = stubCard('blb', '300')
+    const suffixed = stubCard('blb', '300a')
+    expect(CardUtil.pickBestPrinting([suffixed, plain], setsByCode)).toBe(plain)
+  })
+
+  test('sorts non-numeric collector numbers last', () => {
+    const numeric = stubCard('blb', '250')
+    const alphabetic = stubCard('blb', 'GR1')
+    expect(CardUtil.pickBestPrinting([alphabetic, numeric], setsByCode)).toBe(numeric)
+  })
+
+  test('falls back to first card when no set is known', () => {
+    const first = stubCard('custom', '5')
+    const second = stubCard('custom', '1')
+    expect(CardUtil.pickBestPrinting([first, second], setsByCode)).toBe(first)
+  })
+
+  test('falls back to newest release when no normal set exists', () => {
+    const setsPromoOnly = { sld: setsByCode.sld, plst: { set_type: 'memorabilia', released_at: '2023-01-01' } }
+    const promo = stubCard('sld', '1')
+    const plst = stubCard('plst', '5')
+    expect(CardUtil.pickBestPrinting([plst, promo], setsPromoOnly)).toBe(promo)
+  })
+})
+
+describe('CardUtil.uniqueImplementations', () => {
+  function stubCard(setCode, collectorNumber, impl = 'a') {
+    return {
+      set: () => setCode,
+      collectorNumber: () => collectorNumber,
+      same: (other) => other._impl === impl,
+      _impl: impl,
+    }
+  }
+
+  const setsByCode = {
+    lea: { set_type: 'core', released_at: '1993-08-05' },
+    blb: { set_type: 'expansion', released_at: '2024-08-02' },
+  }
+
+  test('returns one card per implementation', () => {
+    const a = stubCard('blb', '10', 'a')
+    const b = stubCard('blb', '20', 'b')
+    expect(CardUtil.uniqueImplementations([a, b], setsByCode)).toEqual([a, b])
+  })
+
+  test('picks the best printing within each implementation', () => {
+    const oldA = stubCard('lea', '10', 'a')
+    const newA = stubCard('blb', '50', 'a')
+    const newB = stubCard('blb', '60', 'b')
+    expect(CardUtil.uniqueImplementations([oldA, newB, newA], setsByCode)).toEqual([newA, newB])
+  })
+})

@@ -25,7 +25,8 @@
 
 
 <script>
-import { util } from 'battlestar-common'
+import { mapState } from 'vuex'
+import { util, mag } from 'battlestar-common'
 
 import CardListItem from '../CardListItem.vue'
 
@@ -66,6 +67,10 @@ export default {
   },
 
   computed: {
+    ...mapState('magic/cards', {
+      setsByCode: 'setsByCode',
+    }),
+
     cardsByName() {
       const groupedCards = util.array.groupBy(this.cardlist, (card) => card.name())
 
@@ -73,20 +78,10 @@ export default {
       const uniqueImplementationsByName = {}
 
       Object.keys(groupedCards).forEach(name => {
-        const cardsWithSameName = groupedCards[name]
-        const uniqueImplementations = []
-
-        cardsWithSameName.forEach(card => {
-          const hasSameImplementation = uniqueImplementations.some(existingCard =>
-            card.same(existingCard)
-          )
-
-          if (!hasSameImplementation) {
-            uniqueImplementations.push(card)
-          }
-        })
-
-        uniqueImplementationsByName[name] = uniqueImplementations
+        uniqueImplementationsByName[name] = mag.util.card.uniqueImplementations(
+          groupedCards[name],
+          this.setsByCode,
+        )
       })
 
       return uniqueImplementationsByName

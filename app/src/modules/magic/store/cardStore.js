@@ -10,6 +10,9 @@ export default {
     cards: null,
     cardsReady: false,
 
+    // Scryfall set code -> set info ({ set_type, released_at, ... })
+    setsByCode: {},
+
     // This is displayed while loading cards in MagicWrapper.vue
     log: [],
   }),
@@ -21,6 +24,10 @@ export default {
 
     cardsReady(state) {
       return state.cardsReady
+    },
+
+    setsByCode(state) {
+      return state.setsByCode
     },
 
     cardLink() {
@@ -95,6 +102,16 @@ export default {
           await _maybeUpdateLocalDatabase(versions)
           const cards = await _loadCardsFromLocalDatabase(Object.keys(versions.remote))
           state.cards = mag.util.card.lookup.create(cards)
+
+          try {
+            const response = await post('/api/magic/sets/all', {})
+            state.setsByCode = Object.fromEntries((response.sets || []).map(s => [s.code, s]))
+          }
+          catch (err) {
+            commit('logInfo', 'Failed to load set info; card art may use unexpected versions')
+            console.error('Failed to load sets', err)
+          }
+
           state.cardsReady = true
         }
       }

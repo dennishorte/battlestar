@@ -549,3 +549,76 @@ CardUtil.parseCardlist = function(cardlist) {
 
   return cards
 }
+
+
+// Set types whose printings count as normal versions of a card, for the
+// purpose of choosing a default printing. Excludes promos, alchemy, funny,
+// and other special products.
+CardUtil.NORMAL_SET_TYPES = [
+  'expansion',
+  'core',
+  'draft_innovation',
+  'masters',
+  'commander',
+  'starter',
+  'duel_deck',
+  'premium_deck',
+  'box',
+]
+
+// Choose a default printing from a list of printings of the same card.
+// Picks the smallest collector number from the most recently released
+// "normal" set. Falls back to the first card if no printing has a known
+// set, and relaxes the normal-set requirement if none qualifies.
+//
+// setsByCode maps Scryfall set codes to set objects ({ set_type, released_at }).
+CardUtil.pickBestPrinting = function(cards, setsByCode) {
+  if (!cards.some(card => setsByCode[card.set()])) {
+    return cards[0]
+  }
+
+  const scored = cards.map(card => {
+    const sett = setsByCode[card.set()]
+    const cnumString = String(card.collectorNumber() ?? '')
+    const cnum = parseInt(cnumString, 10)
+    return {
+      card,
+      normal: sett && CardUtil.NORMAL_SET_TYPES.includes(sett.set_type),
+      releasedAt: sett?.released_at || '',
+      cnum: isNaN(cnum) ? Number.MAX_SAFE_INTEGER : cnum,
+      cnumString,
+    }
+  })
+
+  scored.sort((l, r) => {
+    if (l.normal !== r.normal) {
+      return l.normal ? -1 : 1
+    }
+    if (l.releasedAt !== r.releasedAt) {
+      return l.releasedAt > r.releasedAt ? -1 : 1
+    }
+    if (l.cnum !== r.cnum) {
+      return l.cnum - r.cnum
+    }
+    return l.cnumString < r.cnumString ? -1 : l.cnumString > r.cnumString ? 1 : 0
+  })
+
+  return scored[0].card
+}
+
+// Group printings by gameplay identity (`same()`) and pick the default
+// printing of each group via pickBestPrinting. Returns one card per unique
+// implementation of the card.
+CardUtil.uniqueImplementations = function(cards, setsByCode) {
+  const groups = []
+  for (const card of cards) {
+    const group = groups.find(g => g[0].same(card))
+    if (group) {
+      group.push(card)
+    }
+    else {
+      groups.push([card])
+    }
+  }
+  return groups.map(g => CardUtil.pickBestPrinting(g, setsByCode))
+}
