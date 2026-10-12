@@ -22,6 +22,7 @@ module.exports = {
           )
         game.actions.transferMany(player, toTransfer, game.zones.byPlayer(player, 'hand'), {
           filter: card => card.getAge() === age,
+          filterIsPublic: true,
         })
       }
     },

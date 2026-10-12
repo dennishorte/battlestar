@@ -20,6 +20,7 @@ module.exports = {
         const chosen = game.actions.chooseCard(player, game.cards.byPlayer(player, 'score'), {
           title: 'Choose a card to return next',
           filter: card => bonuses.some(value => card.getAge() === value),
+          filterIsPublic: true,
         })
 
         if (!chosen) {

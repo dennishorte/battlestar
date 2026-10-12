@@ -17,7 +17,7 @@ module.exports = {
           player,
           game.cards.byPlayer(player, 'achievements'),
           game.zones.byPlayer(leader, 'achievements'),
-          { filter: ach => ach.age === card.age },
+          { filter: ach => ach.age === card.age, filterIsPublic: true },
         )
         game.actions.junkDeck(player, card.getAge())
       }

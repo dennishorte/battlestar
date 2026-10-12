@@ -18,7 +18,7 @@ module.exports = {
         const melded = game.actions.chooseAndMeld(
           player,
           game.cards.byPlayer(player, 'hand'),
-          { filter: other => other.id !== card.id },
+          { filter: other => other.id !== card.id, filterIsPublic: true },
         )[0]
 
         if (melded && melded.color === 'purple') {

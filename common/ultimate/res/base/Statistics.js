@@ -27,7 +27,7 @@ module.exports = {
           player,
           game.cards.byPlayer(player, 'score'),
           game.zones.byPlayer(player, 'hand'),
-          { ordered: true, filter: card => card.getAge() === value }
+          { ordered: true, filter: card => card.getAge() === value, filterIsPublic: true }
         )
       }
     },

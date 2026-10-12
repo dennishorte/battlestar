@@ -15,7 +15,7 @@ module.exports = {
         player,
         game.cards.byPlayer(player, 'score'),
         game.zones.byPlayer(leader, 'hand'),
-        { filter: c => c.getAge() === value }
+        { filter: c => c.getAge() === value, filterIsPublic: true }
       )
       if (transferred && transferred.length > 0) {
         const choices = game

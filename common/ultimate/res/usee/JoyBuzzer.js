@@ -28,6 +28,7 @@ module.exports = {
       const cardsOfAge = game.cards.byPlayer(player, 'hand')
       game.actions.scoreMany(player, cardsOfAge, {
         filter: c => c.getAge() === age,
+        filterIsPublic: true,
       })
 
       const topPurple = game.cards.top(player, 'purple')

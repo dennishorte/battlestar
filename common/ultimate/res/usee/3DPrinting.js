@@ -25,6 +25,7 @@ module.exports = {
             title: 'Choose a secret to achieve',
             hidden: true,
             filter: c => c.getAge() === age,
+            filterIsPublic: true,
           })[0]
 
           if (secret) {

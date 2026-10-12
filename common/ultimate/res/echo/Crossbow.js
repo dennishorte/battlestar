@@ -14,6 +14,7 @@ module.exports = {
     (game, player, { leader }) => {
       game.actions.chooseAndTransfer(player, game.cards.byPlayer(player, 'hand'), game.zones.byPlayer(leader, 'score'), {
         filter: card => card.checkIsExpansion(),
+        filterIsPublic: true,
       })
     },
 

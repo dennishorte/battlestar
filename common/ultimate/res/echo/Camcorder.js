@@ -22,6 +22,7 @@ module.exports = {
       if (!foreseen) {
         game.actions.meldMany(player, game.cards.byPlayer(player, 'hand'), {
           filter: card => card.getAge() === game.getEffectAge(self, 9),
+          filterIsPublic: true,
         })
         game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'))
         game.actions.draw(player, { age: game.getEffectAge(self, 9) })

@@ -23,6 +23,7 @@ module.exports = {
         const selected = game.actions.chooseCard(player, scoreCards, {
           title: 'Choose a card of age ' + age,
           filter: card => card.getAge() === age,
+          filterIsPublic: true,
         })
         if (selected) {
           toReturn.push(selected)

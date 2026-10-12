@@ -14,6 +14,7 @@ module.exports = {
     (game, player) => {
       game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'), {
         filter: card => card.checkIsExpansion(),
+        filterIsPublic: true,
       })
     },
 

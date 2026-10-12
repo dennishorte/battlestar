@@ -25,6 +25,7 @@ module.exports = {
       const card = game.actions.chooseCard(player, hand, {
         title: 'Choose a card to transfer',
         filter: card => card.age === splayedColors,
+        filterIsPublic: true,
       })
       if (card) {
         const transferTo = game.actions.choosePlayer(player, game.players.all(), {

@@ -16,7 +16,7 @@ module.exports = {
         player,
         game.cards.byPlayer(player, 'score'),
         target,
-        { count: 2, filter: card => card.getAge() <= 4 }
+        { count: 2, filter: card => card.getAge() <= 4, filterIsPublic: true }
       )
       if (transferred && transferred.length > 0) {
         game.state.dogmaInfo.piratesLooted = true

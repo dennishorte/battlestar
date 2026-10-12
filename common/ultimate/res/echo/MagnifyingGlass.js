@@ -34,6 +34,7 @@ module.exports = {
         const returned = game.actions.chooseAndReturn(player, hand, {
           count: 3,
           filter: card => card.getAge() === age,
+          filterIsPublic: true,
         })
         if (returned && returned.length === 3) {
           game.actions.draw(player, { age: age + 2 })

@@ -17,6 +17,7 @@ module.exports = {
       const transferred = game.actions.chooseCard(player, game.cards.byPlayer(opponent, 'score'), {
         hidden: true,
         filter: card => card.getAge() === age,
+        filterIsPublic: true,
       })
       if (transferred) {
         game.actions.transfer(player, transferred, game.zones.byPlayer(opponent, transferred.color))
@@ -30,6 +31,7 @@ module.exports = {
           game.actions.chooseAndAchieve(player, game.cards.byPlayer(opponent, 'score'), {
             hidden: true,
             filter: card => card.getAge() === age && player.canClaimAchievement(card),
+            filterIsPublic: true,
           })
         }
       }

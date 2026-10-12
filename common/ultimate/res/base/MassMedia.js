@@ -24,6 +24,7 @@ module.exports = {
           .flatMap(player => game.cards.byPlayer(player, 'score'))
         game.actions.returnMany(player, toReturn, {
           filter: card => card.getAge() === age,
+          filterIsPublic: true,
         })
         game.log.outdent()
       }

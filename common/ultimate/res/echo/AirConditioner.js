@@ -17,6 +17,7 @@ module.exports = {
         .map(card => card.getAge())
       game.actions.returnMany(player, game.cards.byPlayer(player, 'score'), {
         filter: card => topValues.includes(card.getAge()),
+        filterIsPublic: true,
       })
     },
 

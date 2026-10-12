@@ -15,6 +15,7 @@ module.exports = {
     (game, player, { self }) => {
       const returned = game.actions.returnMany(player, game.cards.byPlayer(player, 'hand'), {
         filter: card => card.getAge() % 2 === 1,
+        filterIsPublic: true,
       })
       game.actions.draw(player, { age: game.getEffectAge(self, 6) })
 
@@ -45,6 +46,7 @@ module.exports = {
   echoImpl: (game, player) => {
     game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'), {
       filter: card => card.getAge() % 2 === 1,
+      filterIsPublic: true,
     })
   },
 }

@@ -22,7 +22,7 @@ module.exports = {
       const returned = game.actions.returnMany(
         player,
         game.cards.byPlayer(player, 'score'),
-        { filter: c => c.getAge() === chosenValue }
+        { filter: c => c.getAge() === chosenValue, filterIsPublic: true }
       )
 
       if (returned.length > 0) {

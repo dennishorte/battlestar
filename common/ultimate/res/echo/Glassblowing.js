@@ -33,6 +33,7 @@ module.exports = {
     (game, player) => {
       game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'), {
         filter: card => card.checkIsExpansion(),
+        filterIsPublic: true,
       })
     }
   ],

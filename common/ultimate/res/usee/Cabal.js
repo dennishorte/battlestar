@@ -21,7 +21,7 @@ module.exports = {
         player,
         handCards,
         game.zones.byPlayer(leader, 'score'),
-        { filter: card => leaderSecretAges.includes(card.getAge()) },
+        { filter: card => leaderSecretAges.includes(card.getAge()), filterIsPublic: true },
       )
 
       game.actions.draw(player, { age: game.getEffectAge(self, 5) })
@@ -37,6 +37,7 @@ module.exports = {
       game.actions.chooseAndSafeguard(player, availableAchievements, {
         hidden: true,
         filter: achievement => topCardAges.includes(achievement.getAge()),
+        filterIsPublic: true,
       })
     }
   ],

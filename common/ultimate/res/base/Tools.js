@@ -33,7 +33,7 @@ module.exports = {
       const returned = game.actions.chooseAndReturn(
         player,
         game.cards.byPlayer(player, 'hand'),
-        { min: 0, max: 1, filter: card => card.getAge() === 3 },
+        { min: 0, max: 1, filter: card => card.getAge() === 3, filterIsPublic: true },
       )
       if (returned && returned.length > 0) {
         game.actions.draw(player, { age: game.getEffectAge(self, 1) })

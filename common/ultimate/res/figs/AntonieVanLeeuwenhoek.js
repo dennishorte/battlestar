@@ -37,6 +37,7 @@ module.exports = {
           {
             min: 0,
             filter: other => other.getAge() === game.getEffectAge(self, 5),
+            filterIsPublic: true,
           },
         )
         if (card) {

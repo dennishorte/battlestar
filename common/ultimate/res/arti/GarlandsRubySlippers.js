@@ -13,7 +13,7 @@ module.exports = {
       const card = game.actions.chooseAndMeld(
         player,
         game.cards.byPlayer(player, 'hand'),
-        { filter: card => card.getAge() === game.getEffectAge(self, 8) },
+        { filter: card => card.getAge() === game.getEffectAge(self, 8), filterIsPublic: true },
       )[0]
 
       if (card) {

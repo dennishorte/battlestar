@@ -39,6 +39,7 @@ module.exports = {
 
       game.actions.transferMany(player, toTransfer, game.zones.byPlayer(leader, 'score'), {
         filter: card => card.getAge() === count,
+        filterIsPublic: true,
       })
 
       game.actions.junkAvailableAchievement(player, [count])

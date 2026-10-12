@@ -42,6 +42,7 @@ module.exports = {
         game.actions.returnMany(player, game.cards.byPlayer(player, 'score'), {
           ordered: true,
           filter: c => c.getAge() >= returnedValue,
+          filterIsPublic: true,
         })
       }
     }

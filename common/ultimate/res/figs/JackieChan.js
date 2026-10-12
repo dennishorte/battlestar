@@ -59,6 +59,7 @@ module.exports = {
       func: (game, player) => {
         game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'), {
           filter: card => card.checkIsFigure(),
+          filterIsPublic: true,
         })
       }
     }

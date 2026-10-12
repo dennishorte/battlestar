@@ -16,6 +16,7 @@ module.exports = {
 
       game.actions.transferMany(player, cardsInHand, game.zones.byPlayer(leader, 'score'), {
         filter: card => !lowestCards.includes(card),
+        filterIsPublic: true,
       })
     },
 
@@ -31,6 +32,7 @@ module.exports = {
           min: 0,
           max: 1,
           filter: card => player.canClaimAchievement(card),
+          filterIsPublic: true,
         })
 
         if (foreseen && achieved.length > 0) {

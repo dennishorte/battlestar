@@ -27,6 +27,7 @@ module.exports = {
 
         const chosenCard = game.actions.chooseCard(player, options, {
           filter: card => card.checkIsFigure(),
+          filterIsPublic: true,
         })
 
         if (chosenCard) {

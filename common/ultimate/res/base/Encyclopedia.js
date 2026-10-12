@@ -25,6 +25,7 @@ module.exports = {
       if (chosenValue) {
         game.actions.meldMany(player, game.cards.byPlayer(player, 'score'), {
           filter: c => c.getAge() === chosenValue,
+          filterIsPublic: true,
         })
       }
     },

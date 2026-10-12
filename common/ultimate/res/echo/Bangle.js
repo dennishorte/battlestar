@@ -50,6 +50,7 @@ module.exports = {
     (game, player, { self }) => {
       game.actions.chooseAndTuck(player, game.zones.byPlayer(player, 'hand').cardlist(), {
         filter: card => card.getAge() === game.getEffectAge(self, 1),
+        filterIsPublic: true,
       })
     }
   ],

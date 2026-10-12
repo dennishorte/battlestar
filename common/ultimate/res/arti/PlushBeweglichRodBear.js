@@ -22,7 +22,7 @@ module.exports = {
       game.actions.returnMany(
         player,
         game.players.all().flatMap(p => game.cards.byPlayer(p, 'score')),
-        { filter: card => card.getAge() === age },
+        { filter: card => card.getAge() === age, filterIsPublic: true },
       )
     }
   ],

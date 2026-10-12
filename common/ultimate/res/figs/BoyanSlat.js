@@ -23,6 +23,7 @@ module.exports = {
 
         const returned = game.actions.returnMany(player, scoreCards, {
           filter: card => card.getAge() === value,
+          filterIsPublic: true,
         })
 
         if (returned.length === 1) {

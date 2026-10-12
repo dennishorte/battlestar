@@ -38,6 +38,7 @@ module.exports = {
         game.actions.scoreMany(player, game.cards.byPlayer(player, 'hand'), {
           ordered: true,
           filter: card => card.getAge() === game.getEffectAge(self, 1),
+          filterIsPublic: true,
         })
       }
     },

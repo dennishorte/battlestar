@@ -54,6 +54,7 @@ module.exports = {
 
         game.actions.scoreMany(player, cards, {
           filter: card => card.getAge() === age,
+          filterIsPublic: true,
         })
 
         game.actions.drawAndForeshadow(player, age)

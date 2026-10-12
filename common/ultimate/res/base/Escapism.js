@@ -30,6 +30,7 @@ module.exports = {
         game.actions.returnMany(player, hand, {
           ordered: true,
           filter: c => c.getAge() === cardValue && c.name !== card.name,
+          filterIsPublic: true,
         })
 
         for (let i = 0; i < 3; i++) {

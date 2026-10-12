@@ -33,6 +33,7 @@ module.exports = {
       const rightPlayer = game.players.rightOf(player)
       game.actions.transferMany(player, handAndScore, game.zones.byPlayer(rightPlayer, 'score'), {
         filter: card => card.getAge() === age,
+        filterIsPublic: true,
       })
     },
     (game, player) => {

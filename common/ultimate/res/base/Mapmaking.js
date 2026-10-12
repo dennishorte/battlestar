@@ -17,7 +17,7 @@ module.exports = {
         player,
         game.cards.byPlayer(player, 'score'),
         target,
-        { filter: card => card.getAge() === age }
+        { filter: card => card.getAge() === age, filterIsPublic: true }
       )
 
       if (transferredCards.length > 0) {

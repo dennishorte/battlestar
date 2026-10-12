@@ -41,6 +41,7 @@ module.exports = {
       if (age) {
         game.actions.tuckMany(player, game.cards.byPlayer(player, 'hand'), {
           filter: card => card.getAge() === age,
+          filterIsPublic: true,
         })
       }
     }

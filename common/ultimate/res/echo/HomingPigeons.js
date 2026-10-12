@@ -18,6 +18,7 @@ module.exports = {
       game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'score'), {
         count: 2,
         filter: card => ages.includes(card.getAge()),
+        filterIsPublic: true,
       })
     },
 

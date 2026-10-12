@@ -15,12 +15,14 @@ module.exports = {
       const handHighest = game.util.highestCards(hand.cardlist())
       game.actions.returnMany(player, hand.cardlist(), {
         filter: c => !handHighest.includes(c),
+        filterIsPublic: true,
       })
 
       const score = game.zones.byPlayer(player, 'score')
       const scoreHighest = game.util.highestCards(score.cardlist())
       game.actions.returnMany(player, score.cardlist(), {
         filter: c => !scoreHighest.includes(c),
+        filterIsPublic: true,
       })
     },
     (game, player) => {

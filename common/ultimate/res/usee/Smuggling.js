@@ -18,6 +18,7 @@ module.exports = {
             title: 'Transfer a card for ' + target.name,
             count: 1,
             filter: c => c.getAge() === topYellow.getAge(),
+            filterIsPublic: true,
           })
         }
       }

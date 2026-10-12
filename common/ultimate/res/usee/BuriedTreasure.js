@@ -21,7 +21,7 @@ module.exports = {
         player,
         toTransfer,
         game.zones.byId('achievements'),
-        { filter: card => card.getAge() === value },
+        { filter: card => card.getAge() === value, filterIsPublic: true },
       )
 
       if (transferred.length >= 4) {

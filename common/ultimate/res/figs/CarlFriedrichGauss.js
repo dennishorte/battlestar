@@ -28,6 +28,7 @@ module.exports = {
 
         game.actions.meldMany(player, cards, {
           filter: other => other !== card && other.getAge() === age,
+          filterIsPublic: true,
         })
       }
     },

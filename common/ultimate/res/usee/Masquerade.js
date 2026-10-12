@@ -21,6 +21,7 @@ module.exports = {
 
         const returned = game.actions.returnMany(player, toReturn, {
           filter: c => c.getAge() === handSize,
+          filterIsPublic: true,
         })
 
         if (returned.some(card => card.getAge() === game.getEffectAge(self, 4))) {

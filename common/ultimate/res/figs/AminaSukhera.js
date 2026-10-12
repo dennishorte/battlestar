@@ -22,7 +22,7 @@ module.exports = {
             .players
             .opponents(player)
             .flatMap(opponent => game.cards.byPlayer(opponent, 'hand')),
-          { filter: card => card.checkIsFigure() },
+          { filter: card => card.checkIsFigure(), filterIsPublic: true },
         )
       },
     },

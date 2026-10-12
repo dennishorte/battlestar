@@ -28,6 +28,7 @@ module.exports = {
 
         const scored = game.actions.returnMany(player, scoreCards, {
           filter: card => card.age === returned.age,
+          filterIsPublic: true,
         })
         game.state.dogmaInfo.exileCount += scored.length
       }

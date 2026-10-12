@@ -19,6 +19,7 @@ module.exports = {
           min: 0,
           max: 1,
           filter: c => c.age === value,
+          filterIsPublic: true,
         })[0]
 
         if (!card) {

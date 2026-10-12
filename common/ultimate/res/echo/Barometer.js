@@ -41,7 +41,7 @@ module.exports = {
       player,
       game.cards.byPlayer(player, 'forecast'),
       game.zones.byPlayer(player, 'hand'),
-      { filter: card => card.getAge() === 5 },
+      { filter: card => card.getAge() === 5, filterIsPublic: true },
     )
   },
 }

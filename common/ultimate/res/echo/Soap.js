@@ -35,6 +35,7 @@ module.exports = {
             min: 0,
             max: 1,
             filter: card => player.canClaimAchievement(card),
+            filterIsPublic: true,
           })
         }
       }

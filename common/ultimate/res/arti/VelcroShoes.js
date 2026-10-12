@@ -15,7 +15,7 @@ module.exports = {
         player,
         game.cards.byPlayer(player, 'hand'),
         game.zones.byPlayer(leader, 'hand'),
-        { filter: card => card.getAge() === 9 },
+        { filter: card => card.getAge() === 9, filterIsPublic: true },
       )
 
       if (transferred && transferred.length > 0) {
@@ -27,7 +27,7 @@ module.exports = {
         player,
         game.cards.byPlayer(player, 'score'),
         game.zones.byPlayer(leader, 'score'),
-        { filter: card => card.getAge() === 9 },
+        { filter: card => card.getAge() === 9, filterIsPublic: true },
       )
       if (st && st.length > 0) {
         game.log.add({ template: 'A card was transferred from score' })
