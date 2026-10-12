@@ -1,4 +1,6 @@
 const { BasePlayer } = require('./BasePlayer.js')
+const { BaseLogManager } = require('./BaseLogManager.js')
+const logUtil = require('../log.js')
 
 function createPlayer({ round = null, turn = null } = {}) {
   const state = { round, turn }
@@ -8,6 +10,13 @@ function createPlayer({ round = null, turn = null } = {}) {
   }
   const player = new BasePlayer(game, { _id: 'p1', name: 'dennis' })
   return { player, game, state }
+}
+
+function createPlayerWithLog() {
+  const game = { state: {} }
+  game.log = new BaseLogManager(game)
+  const player = new BasePlayer(game, { _id: 'p1', name: 'dennis' })
+  return { player, game }
 }
 
 describe('BasePlayer counter history', () => {
@@ -93,5 +102,76 @@ describe('BasePlayer counter history', () => {
 
     expect(Object.keys(state.counterHistory)).toEqual(['dennis'])
     expect(state.counterHistory.dennis[0]).toEqual(expect.objectContaining({ round: 5, turn: 'dennis' }))
+  })
+})
+
+describe('BasePlayer counter log aggregation', () => {
+
+  test('consecutive increments of the same counter collapse to one line', () => {
+    const { player, game } = createPlayerWithLog()
+    player.addCounter('life', 8)
+
+    player.incrementCounter('life', 1)
+    player.incrementCounter('life', 1)
+
+    expect(game.log.getLog()).toHaveLength(1)
+    expect(logUtil.toString(game.log.getLog()[0])).toBe("dennis 'life': 8 + 2 = 10")
+  })
+
+  test('mixed-sign increments net out in the merged line', () => {
+    const { player, game } = createPlayerWithLog()
+    player.addCounter('life', 8)
+
+    player.incrementCounter('life', 1)
+    player.decrementCounter('life', 3)
+
+    expect(game.log.getLog()).toHaveLength(1)
+    expect(logUtil.toString(game.log.getLog()[0])).toBe("dennis 'life': 8 - 2 = 6")
+  })
+
+  test('different counters do not merge', () => {
+    const { player, game } = createPlayerWithLog()
+    player.addCounter('life', 20)
+    player.addCounter('poison', 0)
+
+    player.incrementCounter('life', 1)
+    player.incrementCounter('poison', 1)
+    player.incrementCounter('life', 1)
+
+    expect(game.log.getLog()).toHaveLength(3)
+  })
+
+  test('silent increments do not appear but logged increments still aggregate', () => {
+    const { player, game } = createPlayerWithLog()
+    player.addCounter('life', 20)
+
+    player.incrementCounter('life', 1)
+    player.incrementCounter('life', 1, { silent: true })
+    player.incrementCounter('life', 1)
+
+    expect(game.log.getLog()).toHaveLength(1)
+    expect(logUtil.toString(game.log.getLog()[0])).toBe("dennis 'life': 20 + 2 = 23")
+  })
+
+  test('consecutive setCounter calls collapse to one line', () => {
+    const { player, game } = createPlayerWithLog()
+    player.addCounter('vp', 3)
+
+    player.setCounter('vp', 5)
+    player.setCounter('vp', 9)
+
+    expect(game.log.getLog()).toHaveLength(1)
+    expect(logUtil.toString(game.log.getLog()[0])).toBe("dennis 'vp': set from 3 to 9")
+  })
+
+  test('setCounter and incrementCounter do not merge with each other', () => {
+    const { player, game } = createPlayerWithLog()
+    player.addCounter('vp', 3)
+
+    player.incrementCounter('vp', 1)
+    player.setCounter('vp', 5)
+    player.incrementCounter('vp', 1)
+
+    expect(game.log.getLog()).toHaveLength(3)
   })
 })

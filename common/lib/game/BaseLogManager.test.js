@@ -708,6 +708,129 @@ describe('BaseLogManager', () => {
     })
   })
 
+  describe('entry merging', () => {
+    function counterMsg(delta, final) {
+      return {
+        template: '{player} {initial} {sign} {amount} = {final}',
+        args: {
+          player: 'dennis',
+          initial: 0,
+          sign: delta >= 0 ? '+' : '-',
+          amount: Math.abs(delta),
+          final,
+        },
+        merge: {
+          key: 'player-counter:dennis:life',
+          data: { delta, final },
+          reduce: (prev, cur) => ({ delta: prev.delta + cur.delta, final: cur.final }),
+          apply: (entry, data) => {
+            entry.args.sign.value = data.delta >= 0 ? '+' : '-'
+            entry.args.amount.value = Math.abs(data.delta)
+            entry.args.final.value = data.final
+          },
+        },
+      }
+    }
+
+    test('consecutive entries with the same merge key fold into one', () => {
+      const { logManager } = createLogManager()
+
+      logManager.add(counterMsg(1, 1))
+      logManager.add(counterMsg(1, 2))
+      logManager.add(counterMsg(1, 3))
+
+      expect(logManager.getLog()).toHaveLength(1)
+
+      const entry = logManager.getLog()[0]
+      expect(entry.args.amount.value).toBe(3)
+      expect(entry.args.final.value).toBe(3)
+      expect(entry.mergeData).toEqual({ delta: 3, final: 3 })
+    })
+
+    test('apply can rewrite the previous entry template', () => {
+      const { logManager } = createLogManager()
+
+      const msg = (amount) => ({
+        template: `{card} counter adjusted by ${amount}`,
+        args: { card: 'card-1' },
+        merge: {
+          key: 'card-counter:card-1:+1/+1',
+          data: { amount },
+          reduce: (prev, cur) => ({ amount: prev.amount + cur.amount }),
+          apply: (entry, data) => {
+            entry.template = `{card} counter adjusted by ${data.amount}`
+          },
+        },
+      })
+
+      logManager.add(msg(1))
+      logManager.add(msg(2))
+
+      expect(logManager.getLog()).toHaveLength(1)
+      expect(logManager.getLog()[0].template).toBe('{card} counter adjusted by 3')
+    })
+
+    test('entries with different merge keys do not merge', () => {
+      const { logManager } = createLogManager()
+
+      const other = counterMsg(1, 1)
+      other.merge.key = 'player-counter:dennis:poison'
+
+      logManager.add(counterMsg(1, 1))
+      logManager.add(other)
+      logManager.add(counterMsg(1, 2))
+
+      expect(logManager.getLog()).toHaveLength(3)
+    })
+
+    test('an intervening log entry breaks the merge chain', () => {
+      const { logManager } = createLogManager()
+
+      logManager.add(counterMsg(1, 1))
+      logManager.add({ template: 'something else happened' })
+      logManager.add(counterMsg(1, 2))
+
+      expect(logManager.getLog()).toHaveLength(3)
+      expect(logManager.getLog()[2].args.amount.value).toBe(1)
+    })
+
+    test('response markers are skipped when finding a merge partner', () => {
+      const { logManager } = createLogManager()
+
+      logManager.add(counterMsg(1, 1))
+      logManager.responseReceived({ actor: 'dennis' })
+      logManager.add(counterMsg(1, 2))
+
+      const logEntries = logManager.getLog().filter(e => e.type === 'log')
+      expect(logEntries).toHaveLength(1)
+      expect(logEntries[0].args.amount.value).toBe(2)
+      expect(logEntries[0].args.final.value).toBe(2)
+    })
+
+    test('entries at different indent levels do not merge', () => {
+      const { logManager } = createLogManager()
+
+      logManager.add(counterMsg(1, 1))
+      logManager.indent()
+      logManager.add(counterMsg(1, 2))
+
+      expect(logManager.getLog()).toHaveLength(2)
+    })
+
+    test('a falsy reduce result aborts the merge and pushes a new entry', () => {
+      const { logManager } = createLogManager()
+
+      const msg = counterMsg(1, 1)
+      msg.merge.reduce = () => null
+
+      logManager.add(counterMsg(1, 1))
+      logManager.add(msg)
+
+      expect(logManager.getLog()).toHaveLength(2)
+      expect(logManager.getLog()[1].mergeKey).toBe('player-counter:dennis:life')
+    })
+  })
+
   describe('_postEnrichArgs', () => {
     test('should return false by default', () => {
       const { logManager } = createLogManager()

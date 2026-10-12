@@ -83,6 +83,13 @@ class BaseLogManager {
     if (this._postEnrichArgs(entry)) {
       return
     }
+    if (msg.merge) {
+      entry.mergeKey = msg.merge.key
+      entry.mergeData = msg.merge.data
+      if (this._tryMerge(entry, msg.merge)) {
+        return
+      }
+    }
     this._log.push(entry)
   }
 
@@ -334,6 +341,37 @@ class BaseLogManager {
         }
       }
     }
+  }
+
+  // Attempt to fold a new entry into the most recent visible log entry.
+  // `merge` is { key, data, reduce, apply }: entries share a merge only when
+  // the previous log entry carries the same key at the same indent level.
+  // reduce(prevData, newData) returns the merged data (falsy aborts the
+  // merge); apply(prevEntry, mergedData) rewrites the previous entry's
+  // template/args in place. Non-log entries such as response markers are
+  // skipped when searching for a merge partner, so consecutive user actions
+  // of the same kind still aggregate into one line.
+  _tryMerge(entry, merge) {
+    let prev = null
+    for (let i = this._log.length - 1; i >= 0; i--) {
+      if (this._log[i].type === 'log') {
+        prev = this._log[i]
+        break
+      }
+    }
+
+    if (!prev || prev.mergeKey !== merge.key || prev.indent !== entry.indent) {
+      return false
+    }
+
+    const data = merge.reduce(prev.mergeData, merge.data)
+    if (!data) {
+      return false
+    }
+
+    prev.mergeData = data
+    merge.apply(prev, data)
+    return true
   }
 
   // eslint-disable-next-line

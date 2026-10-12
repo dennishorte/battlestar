@@ -14,6 +14,7 @@ import { tokenize, defaultMatchers } from '../../composables/useLogTokenizer'
 import CardName from './CardName.vue'
 import LocName from './LocName.vue'
 import PlayerName from './PlayerName.vue'
+import StyledText from './StyledText.vue'
 
 const props = defineProps({
   text: {
@@ -28,10 +29,11 @@ const defaultComponents = {
   card: CardName,
   player: PlayerName,
   loc: LocName,
+  hl: StyledText,
 }
 
 const matchers = computed(() => funcs.tokenMatchers || defaultMatchers)
-const componentMap = computed(() => funcs.tokenComponents || defaultComponents)
+const componentMap = computed(() => Object.assign({}, defaultComponents, funcs.tokenComponents))
 const tokens = computed(() => tokenize(props.text, matchers.value))
 </script>
 

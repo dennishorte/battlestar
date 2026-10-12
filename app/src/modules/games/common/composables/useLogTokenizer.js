@@ -14,6 +14,12 @@ export const defaultMatchers = [
     type: 'loc',
     props: (match) => ({ name: match[1] }),
   },
+  {
+    // Generic styled span: hl(css-classes|display text)
+    pattern: /hl\(([^()|]*)\|([^()]*)\)/,
+    type: 'hl',
+    props: (match) => ({ classes: match[1], text: match[2] }),
+  },
 ]
 
 export function tokenize(text, matchers = defaultMatchers) {

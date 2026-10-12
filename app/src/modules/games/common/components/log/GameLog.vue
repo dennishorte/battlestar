@@ -175,6 +175,11 @@ function convertLogMessage(entry) {
       replacement = `loc(${value.value})`
     }
 
+    else if (value.hl) {
+      const cls = (value.classes || []).join(' ')
+      replacement = `hl(${cls}|${replacement})`
+    }
+
     msg = msg.replace(`{${arg}}`, replacement)
   }
   return msg

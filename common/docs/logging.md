@@ -459,6 +459,32 @@ this.log.add({
 
 Implement via `_postEnrichArgs(entry)` — return `true` to suppress the entry and modify the previous one instead.
 
+For repeated numeric changes (e.g. counter adjustments), `log.add()` accepts a
+`merge` option that folds consecutive same-kind entries into one line:
+
+```javascript
+this.log.add({
+  template: "{player} '{counter}': {initial} {sign} {amount} = {final}",
+  args: { player, counter, initial, sign, amount, final },
+  merge: {
+    key: `player-counter:${player.name}:${counter}`,  // only same-key entries merge
+    data: { delta: count, final },                    // merge state for this entry
+    reduce: (prev, cur) => ({ delta: prev.delta + cur.delta, final: cur.final }),
+    apply: (entry, data) => {                         // rewrite the previous entry
+      entry.args.sign.value = data.delta >= 0 ? '+' : '-'
+      entry.args.amount.value = Math.abs(data.delta)
+      entry.args.final.value = data.final
+    },
+  },
+})
+```
+
+A merge only happens when the previous *visible* log entry has the same `key` at
+the same indent level — response markers between user actions are skipped, so
+repeated clicks still aggregate. `reduce` returning a falsy value aborts the
+merge. `BasePlayer.incrementCounter`/`setCounter` use this to collapse lines
+like `life: 8 + 1 = 9, life: 9 + 1 = 10` into `life: 8 + 2 = 10`.
+
 ### Silent Operations
 
 For operations that are implementation details (not meaningful to players), support `{ silent: true }`:

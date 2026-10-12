@@ -81,6 +81,22 @@ Magic.prototype.setCardWrapper = function(wrapper) {
   this.cardWrapper = wrapper
 }
 
+function counterAdjustMessage(amount) {
+  if (amount === 1) {
+    return 'added'
+  }
+  else if (amount === -1) {
+    return 'removed'
+  }
+  else {
+    return `adjusted by ${amount}`
+  }
+}
+
+function counterAdjustClasses(amount) {
+  return ['counter-delta', amount >= 0 ? 'counter-pos' : 'counter-neg']
+}
+
 Magic.prototype._mainProgram = function() {
   this.initialize()
   this.chooseDecks()
@@ -255,20 +271,22 @@ Magic.prototype.aAdjustCardCounter = function(player, cardId, name, amount) {
   const card = this.cards.byId(cardId)
   card.counters[name] += amount
 
-  let msg
-  if (amount === 1) {
-    msg = 'added'
-  }
-  else if (amount === -1) {
-    msg = 'removed'
-  }
-  else {
-    msg = `adjusted by ${amount}`
-  }
-
   this.log.add({
-    template: `{card} ${name} counter ${msg}`,
-    args: { card }
+    template: `{card} {counter} counter {msg}`,
+    args: {
+      card,
+      counter: { value: name, classes: ['counter-name'], hl: true },
+      msg: { value: counterAdjustMessage(amount), classes: counterAdjustClasses(amount), hl: true },
+    },
+    merge: {
+      key: `card-counter:${card.id}:${name}`,
+      data: { amount },
+      reduce: (prev, cur) => ({ amount: prev.amount + cur.amount }),
+      apply: (entry, data) => {
+        entry.args.msg.value = counterAdjustMessage(data.amount)
+        entry.args.msg.classes = counterAdjustClasses(data.amount)
+      },
+    },
   })
 }
 
@@ -277,20 +295,22 @@ Magic.prototype.aAdjustCardTracker = function(player, cardId, name, amount) {
   const card = this.cards.byId(cardId)
   card.trackers[name] += amount
 
-  let msg
-  if (amount === 1) {
-    msg = 'added'
-  }
-  else if (amount === -1) {
-    msg = 'removed'
-  }
-  else {
-    msg = `adjusted by ${amount}`
-  }
-
   this.log.add({
-    template: `{card} ${name} tracker ${msg}`,
-    args: { card }
+    template: `{card} {counter} tracker {msg}`,
+    args: {
+      card,
+      counter: { value: name, classes: ['counter-name'], hl: true },
+      msg: { value: counterAdjustMessage(amount), classes: counterAdjustClasses(amount), hl: true },
+    },
+    merge: {
+      key: `card-tracker:${card.id}:${name}`,
+      data: { amount },
+      reduce: (prev, cur) => ({ amount: prev.amount + cur.amount }),
+      apply: (entry, data) => {
+        entry.args.msg.value = counterAdjustMessage(data.amount)
+        entry.args.msg.classes = counterAdjustClasses(data.amount)
+      },
+    },
   })
 }
 

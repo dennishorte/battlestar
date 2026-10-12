@@ -42,6 +42,54 @@ describe('Magic', () => {
     })
   })
 
+  test('consecutive life adjustments aggregate into a single log entry', () => {
+    const game = t.fixtureDecksSelected()
+
+    const request1 = game.run()
+    const request2 = t.do(game, request1, {
+      name: 'adjust counter',
+      counter: 'life',
+      amount: 1,
+      playerName: 'dennis',
+    })
+    t.do(game, request2, {
+      name: 'adjust counter',
+      counter: 'life',
+      amount: 1,
+      playerName: 'dennis',
+    })
+
+    const entries = game.log.getLog().filter(e => e.classes?.includes('player-counter-change'))
+    expect(entries).toHaveLength(1)
+    expect(entries[0].args.amount.value).toBe(2)
+    expect(entries[0].args.final.value).toBe(22)
+  })
+
+  test('consecutive card counter adjustments aggregate into a single log entry', () => {
+    const game = t.fixtureDecksSelected()
+
+    const request1 = game.run()
+    const cardId = game.zones.byPlayer(game.players.byName('dennis'), 'library').cardlist()[0].id
+
+    const request2 = t.do(game, request1, {
+      name: 'add counter',
+      cardId,
+      key: '+1/+1',
+    })
+    t.do(game, request2, {
+      name: 'adjust c-counter',
+      cardId,
+      key: '+1/+1',
+      count: 1,
+    })
+
+    const entries = game.log.getLog()
+      .filter(e => e.type === 'log' && e.template.includes('counter {msg}'))
+    expect(entries).toHaveLength(1)
+    expect(entries[0].args.counter.value).toBe('+1/+1')
+    expect(entries[0].args.msg.value).toBe('adjusted by 2')
+  })
+
 })
 
 

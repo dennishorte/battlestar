@@ -1,5 +1,10 @@
 const { GameProxy } = require('./GameProxy.js')
 
+// Log arg classes for counter deltas: green for gains, red for losses.
+function deltaClasses(delta) {
+  return ['counter-delta', delta >= 0 ? 'counter-pos' : 'counter-neg']
+}
+
 class BasePlayer {
   constructor(game, data) {
     this.game = game
@@ -32,18 +37,32 @@ class BasePlayer {
   }
 
   incrementCounter(name, count=1, opts={}) {
+    const final = this.counters[name] + count
+
     if (!opts.silent) {
       this.log.add({
         template: "{player} '{counter}': {initial} {sign} {amount} = {final}",
         args: {
           player: this,
-          counter: name,
+          counter: { value: name, classes: ['counter-name'], hl: true },
           initial: this.counters[name],
-          sign: count >= 0 ? '+' : '-',
-          amount: Math.abs(count),
-          final: this.counters[name] + count,
+          sign: { value: count >= 0 ? '+' : '-', classes: deltaClasses(count), hl: true },
+          amount: { value: Math.abs(count), classes: deltaClasses(count), hl: true },
+          final,
         },
         classes: ['player-counter-change'],
+        merge: {
+          key: `player-counter:${this.name}:${name}`,
+          data: { delta: count, final },
+          reduce: (prev, cur) => ({ delta: prev.delta + cur.delta, final: cur.final }),
+          apply: (entry, data) => {
+            entry.args.sign.value = data.delta >= 0 ? '+' : '-'
+            entry.args.sign.classes = deltaClasses(data.delta)
+            entry.args.amount.value = Math.abs(data.delta)
+            entry.args.amount.classes = deltaClasses(data.delta)
+            entry.args.final.value = data.final
+          },
+        },
       })
     }
 
@@ -65,11 +84,19 @@ class BasePlayer {
         template: "{player} '{counter}': set from {initial} to {final}",
         args: {
           player: this,
-          counter: name,
+          counter: { value: name, classes: ['counter-name'], hl: true },
           initial: this.counters[name],
           final: value,
         },
         classes: ['player-counter-change'],
+        merge: {
+          key: `player-counter-set:${this.name}:${name}`,
+          data: { final: value },
+          reduce: (prev, cur) => ({ final: cur.final }),
+          apply: (entry, data) => {
+            entry.args.final.value = data.final
+          },
+        },
       })
     }
 
