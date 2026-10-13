@@ -31,4 +31,32 @@ describe("Philosopher's Stone", () => {
     const junk = game.cards.byZone('junk')
     expect(junk[0].getAge()).toBe(2)
   })
+
+  test.only('dogma - mixed age', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
+    t.setBoard(game,  {
+      dennis: {
+        artifact: ["Philosopher's Stone"],
+        hand: ['Archery', 'Tools', 'Sailing', 'Optics', 'Compass']
+      },
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Optics')
+    request = t.choose(game, 'Archery', 'Tools', 'Compass')
+
+    t.testIsFirstAction(request)
+    t.testBoard(game, {
+      dennis: {
+        score: ['Archery', 'Tools', 'Compass'],
+        hand: ['Sailing'],
+        museum: ['Museum 1', "Philosopher's Stone"],
+      },
+    })
+
+    const junk = game.cards.byZone('junk')
+    expect(junk[0].getAge()).toBe(5)
+  })
 })
