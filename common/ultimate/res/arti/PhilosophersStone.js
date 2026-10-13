@@ -12,10 +12,8 @@ module.exports = {
     (game, player) => {
       const cards = game.actions.chooseAndReturn(player, game.cards.byPlayer(player, 'hand'))
       if (cards.length > 0) {
-        const card = cards[0]
-        game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'), { count: card.getAge() })
-
-        const totalValue = cards.reduce((acc, card) => acc + card.getAge(), 0)
+        const scored = game.actions.chooseAndScore(player, game.cards.byPlayer(player, 'hand'), { count: card.getAge() })
+        const totalValue = scored.reduce((acc, card) => acc + card.getAge(), 0)
         if (totalValue <= 11) {
           game.actions.junkDeck(player, totalValue)
         }
