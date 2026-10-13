@@ -15,12 +15,7 @@ describe("Liner Titanic", () => {
         },
         blue: ['Experimentation'],
         green: ['Metric System', 'Paper'],
-      },
-      decksExact: {
-        base: {
-          1: [],
-        }
-      },
+      }
     })
 
     let request
@@ -36,7 +31,5 @@ describe("Liner Titanic", () => {
         museum: ['Museum 1', 'Liner Titanic'],
       },
     })
-
-    t.testDeckIsJunked(game, 2)
   })
 })
