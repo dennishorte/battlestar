@@ -32,7 +32,7 @@ describe("Philosopher's Stone", () => {
     expect(junk[0].getAge()).toBe(2)
   })
 
-  test.only('dogma - mixed age', () => {
+  test('dogma - mixed age', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'arti'] })
     t.setBoard(game,  {
       dennis: {
