@@ -237,6 +237,88 @@ describe('Magic Actions', () => {
     expect(log2[log2.length - 1].template).toBe('{card} defends')
   })
 
+  test('moving to attacking taps a creature without vigilance', () => {
+    const game = t.fixtureDecksSelected()
+
+    const request1 = game.run()
+    const request2 = t.do(game, request1, { name: 'draw' })
+    const request3 = t.do(game, request2, {
+      name: 'move card',
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
+      destId: 'players.dennis.creatures',
+      destIndex: 0,
+    })
+    t.do(game, request3, {
+      name: 'move card',
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].id,
+      destId: 'players.dennis.attacking',
+      destIndex: 0,
+    })
+
+    const card = game.cards.byPlayer(t.dennis(game), 'attacking')[0]
+    expect(card.tapped).toBe(true)
+  })
+
+  test('moving to attacking does not tap a creature with vigilance in oracle text', () => {
+    const game = t.fixtureDecksSelected()
+    game.testSetBreakpoint('decks-selected', (game) => {
+      const dennis = game.players.byName('dennis')
+      const card = game.zones.byPlayer(dennis, 'library').cardlist()
+        .find(c => c.name() === 'White Knight')
+      card.face(0).oracle_text = 'Vigilance'
+    })
+
+    const request1 = game.run()
+    const request2 = t.do(game, request1, { name: 'draw' })
+    const request3 = t.do(game, request2, {
+      name: 'move card',
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
+      destId: 'players.dennis.creatures',
+      destIndex: 0,
+    })
+    t.do(game, request3, {
+      name: 'move card',
+      cardId: game.cards.byPlayer(t.dennis(game), 'creatures')[0].id,
+      destId: 'players.dennis.attacking',
+      destIndex: 0,
+    })
+
+    const card = game.cards.byPlayer(t.dennis(game), 'attacking')[0]
+    expect(card.tapped).toBe(false)
+  })
+
+  test.each([
+    'annotate',
+    'annotate eot',
+    'annotate perpetual',
+  ])('moving to attacking does not tap a creature with vigilance in %s', (actionName) => {
+    const game = t.fixtureDecksSelected()
+
+    const request1 = game.run()
+    const request2 = t.do(game, request1, { name: 'draw' })
+    const request3 = t.do(game, request2, {
+      name: 'move card',
+      cardId: game.cards.byPlayer(t.dennis(game), 'hand')[0].id,
+      destId: 'players.dennis.creatures',
+      destIndex: 0,
+    })
+    const cardId = game.cards.byPlayer(t.dennis(game), 'creatures')[0].id
+    const request4 = t.do(game, request3, {
+      name: actionName,
+      cardId,
+      annotation: 'vigilance',
+    })
+    t.do(game, request4, {
+      name: 'move card',
+      cardId,
+      destId: 'players.dennis.attacking',
+      destIndex: 0,
+    })
+
+    const card = game.cards.byPlayer(t.dennis(game), 'attacking')[0]
+    expect(card.tapped).toBe(false)
+  })
+
   test('mulligan', () => {
     const game = t.fixtureDecksSelected()
 

@@ -325,6 +325,16 @@ class MagicCard extends BaseCard {
     return this.subtypes(faceIndex).includes('vehicle')
   }
 
+  hasVigilance() {
+    const texts = [
+      this.oracleText(this.activeFaceIndex),
+      this.annotation,
+      this.annotationEOT,
+      this.annotationPerpetual,
+    ]
+    return texts.some(text => /\bvigilance\b/i.test(text || ''))
+  }
+
   isLegalIn(format) {
     return this.data.legal && this.data.legal.includes(format)
   }
@@ -506,7 +516,7 @@ class MagicCard extends BaseCard {
     }
 
     // Move card to the attacking zone, which usually taps them
-    if (targetKind === 'attacking') {
+    if (targetKind === 'attacking' && !this.hasVigilance()) {
       this.game.mTap(this)
     }
   }
