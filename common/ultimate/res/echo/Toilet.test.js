@@ -44,7 +44,7 @@ describe("Toilet", () => {
     })
   })
 
-  test('dogma: no matching bonus is proven by card backs, without revealing the score pile', () => {
+  test('dogma: no matching bonus leaves the score pile unrevealed', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'echo'] })
     t.setBoard(game,  {
       dennis: {
@@ -81,8 +81,11 @@ describe("Toilet", () => {
     expect(score.every(card => !card.revealed())).toBe(true)
 
     const proofs = game.log.getLog().filter(e =>
-      e.template && e.template.includes('shows the backs')
+      e.template && (
+        e.template.includes('shows the backs')
+        || e.template.includes('no valid card')
+      )
     )
-    expect(proofs.length).toBe(1)
+    expect(proofs).toEqual([])
   })
 })

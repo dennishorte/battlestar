@@ -362,7 +362,7 @@ class UltimateActionManager extends BaseActionManager {
     // `filter` restricts which of `cards` are legal choices. If nothing is
     // legal, the rules require the player to reveal the hidden cards to
     // prove they cannot choose — unless `filterIsPublic` marks the filter
-    // as verifiable from the card backs alone.
+    // as checking only the card backs, which everyone can already see.
     if (opts.filter) {
       cards = this._applyChoiceFilter(player, cards, opts)
       if (cards.length === 0) {
@@ -489,9 +489,12 @@ class UltimateActionManager extends BaseActionManager {
   // their hand if it contains no red cards.
   //
   // Filters marked `filterIsPublic` only inspect attributes printed on the
-  // backs of the cards (age and expansion), so the card backs are themselves
-  // the proof and no reveal is necessary.
+  // backs of the cards (age and expansion). Those backs are already visible
+  // to everyone, so nothing is logged.
   _proveNoValidCards(player, cards, opts={}) {
+    if (opts.filterIsPublic) {
+      return
+    }
     if (!this._selectionIsRequired(opts, cards.length)) {
       return
     }
@@ -514,26 +517,13 @@ class UltimateActionManager extends BaseActionManager {
       zoneNames[card.zone.name().split('.').pop()] || 'cards'
     ))
 
-    if (opts.filterIsPublic) {
-      this.log.add({
-        template: `{player} shows the backs of their ${names.join(' and ')} to prove they have no valid card`,
-        args: { player },
-      })
-      this.log.indent()
-      for (const card of hidden) {
-        this.log.add({ template: '{card}', args: { card } })
-      }
-      this.log.outdent()
-    }
-    else {
-      this.log.add({
-        template: `{player} reveals their ${names.join(' and ')} to show they have no valid card`,
-        args: { player },
-      })
-      this.log.indent()
-      this.revealMany(player, hidden, { ordered: true })
-      this.log.outdent()
-    }
+    this.log.add({
+      template: `{player} reveals their ${names.join(' and ')} to show they have no valid card`,
+      args: { player },
+    })
+    this.log.indent()
+    this.revealMany(player, hidden, { ordered: true })
+    this.log.outdent()
   }
 
   chooseColor(player, choices) {
@@ -1450,9 +1440,10 @@ class UltimateActionManager extends BaseActionManager {
 
       // `filter` restricts which cards are acted on. If nothing matches, the
       // rules require the player to reveal the hidden cards to prove it —
-      // unless `filterIsPublic` marks the filter as verifiable from the card
-      // backs alone. Bulk actions have no min/max, so they are required
-      // unless the caller explicitly opts out with `required: false`.
+      // unless `filterIsPublic` marks the filter as checking only the card
+      // backs, which everyone can already see. Bulk actions have no min/max,
+      // so they are required unless the caller explicitly opts out with
+      // `required: false`.
       if (opts.filter) {
         args[1] = this._applyChoiceFilter(player, args[1], { required: true, ...opts })
         if (args[1].length === 0) {
