@@ -43,11 +43,25 @@ module.exports = {
       },
       effects: [
         {
-          type: 'recall-spy-cost'
-        },
-        {
-          type: 'intrigue',
-          amount: 1
+          type: 'choice',
+          choices: [
+            {
+              label: 'Recall a Spy → Get an Intrigue card',
+              effects: [
+                {
+                  type: 'recall-spy-cost'
+                },
+                {
+                  type: 'intrigue',
+                  amount: 1
+                }
+              ]
+            },
+            {
+              label: 'Decline',
+              effects: []
+            }
+          ]
         }
       ]
     }

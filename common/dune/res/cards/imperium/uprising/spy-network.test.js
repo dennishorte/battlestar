@@ -39,7 +39,8 @@ describe('spy-network', () => {
       spyPosts: { A: ['dennis'], B: ['dennis'] },
     })
     game.run()
-    // Spy Network reveal triggers: choose which spy to recall.
+    // Optional: recall a spy to draw an Intrigue card.
+    t.choose(game, 'Recall a Spy → Get an Intrigue card')
     t.choose(game, 'Post A')
 
     const dennis = game.players.byName('dennis')
@@ -48,6 +49,23 @@ describe('spy-network', () => {
     expect(game.state.spyPosts.B).toEqual(['dennis'])
     expect(dennis.spiesInSupply).toBe(2)
     expect(game.zones.byId('dennis.intrigue').cardlist().length).toBe(1)
+  })
+
+  test('reveal with 2 spies on board: declining leaves spies and grants no Intrigue', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { handExact: ['Spy Network'], spiesInSupply: 1 },
+      spyPosts: { A: ['dennis'], B: ['dennis'] },
+    })
+    game.run()
+    t.choose(game, 'Decline')
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.getCounter('persuasion')).toBe(2)
+    expect(game.state.spyPosts.A).toEqual(['dennis'])
+    expect(game.state.spyPosts.B).toEqual(['dennis'])
+    expect(dennis.spiesInSupply).toBe(1)
+    expect(game.zones.byId('dennis.intrigue').cardlist().length).toBe(0)
   })
 
   test('reveal with only 1 spy on board: condition not met, no recall', () => {
