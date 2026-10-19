@@ -179,11 +179,12 @@ const ActionChoicesMixin = {
   _generateActionChoicesEndorse() {
     const player = this.players.current()
 
-    const lowestHandAge = this
+    const handAges = this
       .zones.byPlayer(player, 'hand')
       .cardlist()
       .map(card => card.getAge())
-      .sort((l, r) => l - r)[0] || 99
+    // Age 0 is a real card age. A missing hand is the only case with no tuckable card.
+    const lowestHandAge = handAges.length === 0 ? 99 : Math.min(...handAges)
 
     const cities = this
       .cards.tops(player)

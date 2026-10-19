@@ -909,6 +909,22 @@ describe('Innovation', () => {
         expect(t.getChoices(result1, 'Endorse')).toStrictEqual(['blue'])
       })
 
+      test('age 0 card in hand still allows endorse', () => {
+        const game = t.fixtureFirstPlayer({ expansions: ['base', 'city', 'usee'] })
+        t.setBoard(game, {
+          dennis: {
+            yellow: ['Woodworking'],
+            green: ['Paper'],
+            blue: ['Cordoba'],
+            hand: ['Shelter'],
+          },
+        })
+        const result = game.run()
+        // Cordoba has a lightbulb, which is Paper's featured icon, and factories, which match Cordoba.
+        // Woodworking's featured icon is a leaf, which Cordoba does not have.
+        expect(t.getChoices(result, 'Endorse')).toStrictEqual(['green', 'blue'])
+      })
+
       // Test expectations don't match actual game behavior - needs investigation
       test.skip('triggers dogma karmas', () => {
         const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs', 'city'] })
