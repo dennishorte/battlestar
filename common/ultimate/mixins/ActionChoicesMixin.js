@@ -183,7 +183,7 @@ const ActionChoicesMixin = {
       .zones.byPlayer(player, 'hand')
       .cardlist()
       .map(card => card.getAge())
-      .sort((l, r) => l - r)[0] || 99
+      .sort((l, r) => l - r)?.[0]
 
     const cities = this
       .cards.tops(player)
