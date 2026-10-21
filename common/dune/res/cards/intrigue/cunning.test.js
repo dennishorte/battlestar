@@ -18,7 +18,7 @@ describe("cunning", () => {
     })
     game.run()
 
-    t.choose(game, 'Cunning')
+    t.playPlot(game, 'Cunning')
 
     const handBefore = game.zones.byId('dennis.hand').cardlist().length
     const deckBefore = game.zones.byId('dennis.deck').cardlist().length
@@ -41,7 +41,7 @@ describe("cunning", () => {
     const handBefore = game.zones.byId('dennis.hand').cardlist().length
     const deckBefore = game.zones.byId('dennis.deck').cardlist().length
 
-    t.choose(game, 'Cunning')
+    t.playPlot(game, 'Cunning')
     t.choose(game, 'Pay 1 Spice -> Draw a card and Trash a card')
     // Inner cost choice: pay or decline
     t.choose(game, 'Pay 1 Spice -> Draw a card and Trash a card')
@@ -67,7 +67,7 @@ describe("cunning", () => {
     })
     game.run()
 
-    t.choose(game, 'Cunning')
+    t.playPlot(game, 'Cunning')
 
     const choices = t.currentChoices(game)
     // Both labels appear; the OR-choice itself doesn't enforce affordability,

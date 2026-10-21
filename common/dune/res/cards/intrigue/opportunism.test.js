@@ -24,7 +24,7 @@ describe("opportunism", () => {
     })
     game.run()
 
-    t.choose(game, 'Opportunism')
+    t.playPlot(game, 'Opportunism')
     const choices = t.currentChoices(game)
     const accept = choices.find(c => /VP/.test(c))
     expect(accept).toBeDefined()
@@ -50,7 +50,7 @@ describe("opportunism", () => {
     })
     game.run()
 
-    t.choose(game, 'Opportunism')
+    t.playPlot(game, 'Opportunism')
     t.choose(game, t.currentChoices(game).find(c => /VP/.test(c)))
     // Exactly two factions have influence → both auto-resolve (emperor 2→1 forfeits threshold VP).
 
@@ -72,7 +72,7 @@ describe("opportunism", () => {
     })
     game.run()
 
-    t.choose(game, 'Opportunism')
+    t.playPlot(game, 'Opportunism')
     t.choose(game, 'Pass')
 
     const dennis = game.players.byName('dennis')
@@ -81,7 +81,7 @@ describe("opportunism", () => {
     expect(dennis.getInfluence('emperor')).toBe(2)
   })
 
-  test('no prompt when fewer than 2 factions have influence', () => {
+  test('not offered when fewer than 2 factions have influence', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: {
@@ -92,15 +92,13 @@ describe("opportunism", () => {
     })
     game.run()
 
-    t.choose(game, 'Opportunism')
-
-    // No inner prompt — proceeds directly to Agent Turn / Reveal Turn.
-    const choices = t.currentChoices(game)
-    expect(choices.some(c => /Lose 1 Influence/.test(c))).toBe(false)
-    expect(game.log.getLog().some(e => e.template === 'no effect')).toBe(true)
+    const plots = (game.waiting.selectors[0].plotActions || []).map(p => p.title)
+    expect(plots).not.toContain('Opportunism')
+    const held = game.zones.byId('dennis.intrigue').cardlist()
+    expect(held.some(c => c.name === 'Opportunism')).toBe(true)
   })
 
-  test('no prompt when player cannot afford 2 Solari', () => {
+  test('not offered when the player cannot afford 2 Solari', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: {
@@ -111,11 +109,10 @@ describe("opportunism", () => {
     })
     game.run()
 
-    t.choose(game, 'Opportunism')
-
-    const choices = t.currentChoices(game)
-    expect(choices.some(c => /Lose 1 Influence/.test(c))).toBe(false)
-    expect(game.log.getLog().some(e => e.template === 'no effect')).toBe(true)
+    const plots = (game.waiting.selectors[0].plotActions || []).map(p => p.title)
+    expect(plots).not.toContain('Opportunism')
+    const held = game.zones.byId('dennis.intrigue').cardlist()
+    expect(held.some(c => c.name === 'Opportunism')).toBe(true)
   })
 
   test('choose 2 of 3 factions in a single prompt', () => {
@@ -130,7 +127,7 @@ describe("opportunism", () => {
     })
     game.run()
 
-    t.choose(game, 'Opportunism')
+    t.playPlot(game, 'Opportunism')
     t.choose(game, t.currentChoices(game).find(c => /VP/.test(c)))
     t.choose(game, 'emperor', 'guild')
 

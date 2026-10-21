@@ -46,4 +46,8 @@ module.exports = {
     }
   },
 
+  canPlayPlot(game, player) {
+    return player.spice >= 2
+  },
+
 }

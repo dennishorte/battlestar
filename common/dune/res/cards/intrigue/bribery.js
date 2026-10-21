@@ -32,4 +32,8 @@ module.exports = {
     }
   },
 
+  canPlayPlot(game, player) {
+    return player.solari >= 2
+  },
+
 }

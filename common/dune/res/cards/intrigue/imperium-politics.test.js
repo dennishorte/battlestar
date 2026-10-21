@@ -21,8 +21,8 @@ describe("imperium-politics", () => {
     })
     game.run()
 
-    expect(t.currentChoices(game)).toContain('Imperium Politics')
-    t.choose(game, 'Imperium Politics')
+    expect(game.waiting.selectors[0].plotActions.map(p => p.title)).toContain('Imperium Politics')
+    t.playPlot(game, 'Imperium Politics')
 
     // Cost-effect: choose to pay or decline
     const choices = t.currentChoices(game)
@@ -52,7 +52,7 @@ describe("imperium-politics", () => {
     })
     game.run()
 
-    t.choose(game, 'Imperium Politics')
+    t.playPlot(game, 'Imperium Politics')
     const payChoice = t.currentChoices(game).find(c => /Pay 1 Solari/.test(c))
     t.choose(game, payChoice)
     t.choose(game, '+1 Spacing Guild Influence')
@@ -72,7 +72,7 @@ describe("imperium-politics", () => {
     })
     game.run()
 
-    t.choose(game, 'Imperium Politics')
+    t.playPlot(game, 'Imperium Politics')
     expect(t.currentChoices(game)).toContain('Decline')
     t.choose(game, 'Decline')
 

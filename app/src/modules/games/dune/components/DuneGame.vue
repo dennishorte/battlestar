@@ -13,6 +13,13 @@
         <div class="col game-column">
           <DuneConflict />
           <DuneFactionTrack />
+          <div v-if="plotStrip.length" class="plot-strip">
+            <div class="plot-strip-label">Play a plot</div>
+            <div v-for="plot in plotStrip" :key="plot.cardId" class="plot-strip-row">
+              <DuneOptionChip :name="plot.title" :card="plot.card" />
+              <button type="button" class="plot-play" @click="playPlot(plot)">Play</button>
+            </div>
+          </div>
           <WaitingPanel />
         </div>
 
@@ -93,6 +100,7 @@ export default {
     DuneContractMarket,
     DuneFactionTrack,
     DuneImperiumRow,
+    DuneOptionChip,
     DunePlayerCards,
     DunePlayerSummary,
     DuneRefreshInfoModal,
@@ -140,11 +148,40 @@ export default {
       const played = this.game.zones.byId(`${viewer.name}.played`).cardlist()
       return hand.length > 0 || played.length > 0
     },
+
+    plotStrip() {
+      const me = this.game.players.byName(this.actor.name)
+      if (!me) {
+        return []
+      }
+      const waiting = this.game.getWaiting(me)
+      if (!waiting || waiting.actor !== me.name || !waiting.plotActions) {
+        return []
+      }
+      const zone = this.game.zones.byId(`${me.name}.intrigue`)
+      return waiting.plotActions.map(action => ({
+        ...action,
+        card: zone.cardlist().find(c => c.id === action.cardId) || null,
+      })).filter(plot => plot.card)
+    },
   },
 
   methods: {
     openRules() {
       this.$modal('dune-rules-reference').show()
+    },
+
+    playPlot(plot) {
+      const me = this.game.players.byName(this.actor.name)
+      const waiting = me && this.game.getWaiting(me)
+      if (!waiting) {
+        return
+      }
+      this.$store.dispatch('game/submitAction', {
+        actor: waiting.actor,
+        title: waiting.title,
+        selection: { action: 'play-plot', cardId: plot.cardId },
+      })
     },
   },
 
@@ -410,6 +447,35 @@ export default {
   overflow-y: auto;
   padding-top: .5em;
   padding-bottom: 3em;
+}
+
+.plot-strip {
+  margin: 0 .4rem .5rem;
+  padding: .4rem .5rem;
+  border: 1px solid #8b6914;
+  background: #fdf8ee;
+}
+
+.plot-strip-label {
+  font-size: .75rem;
+  font-weight: 700;
+  margin-bottom: .25rem;
+}
+
+.plot-strip-row {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin-bottom: .25rem;
+}
+
+.plot-play {
+  border: 1px solid #8b6914;
+  background: #fff;
+  color: #2c2416;
+  font-size: .75rem;
+  padding: .15rem .45rem;
+  cursor: pointer;
 }
 
 .player-column {

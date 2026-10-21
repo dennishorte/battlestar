@@ -56,4 +56,8 @@ module.exports = {
       amount: 1
     }
   ],
+
+  canPlayPlot(game, player) {
+    return game.zones.byId(`${player.name}.deck`).cardlist().length > 0
+  },
 }

@@ -33,8 +33,8 @@ describe("call-to-arms", () => {
     game.run()
 
     // At start of turn, plot intrigue is offered.
-    expect(t.currentChoices(game)).toContain('Call to Arms')
-    t.choose(game, 'Call to Arms')
+    expect(game.waiting.selectors[0].plotActions.map(p => p.title)).toContain('Call to Arms')
+    t.playPlot(game, 'Call to Arms')
 
     // Then choose Reveal Turn
     t.choose(game, 'Reveal Turn')
@@ -72,7 +72,6 @@ describe("call-to-arms", () => {
     })
     game.run()
 
-    t.choose(game, 'Pass')
     t.choose(game, 'Reveal Turn')
 
     const choices = t.currentChoices(game)
@@ -94,11 +93,11 @@ describe("call-to-arms", () => {
 
     // Play Call to Arms, then Inspire Awe, both as plot intrigues before
     // committing to this turn's Agent/Reveal choice.
-    expect(t.currentChoices(game)).toContain('Call to Arms')
-    t.choose(game, 'Call to Arms')
+    expect(game.waiting.selectors[0].plotActions.map(p => p.title)).toContain('Call to Arms')
+    t.playPlot(game, 'Call to Arms')
 
-    expect(t.currentChoices(game)).toContain('Inspire Awe')
-    t.choose(game, 'Inspire Awe')
+    expect(game.waiting.selectors[0].plotActions.map(p => p.title)).toContain('Inspire Awe')
+    t.playPlot(game, 'Inspire Awe')
 
     const rowZone = game.zones.byId('common.imperiumRow')
     const cheap = rowZone.cardlist().find(c => (c.persuasionCost || 0) <= 3)

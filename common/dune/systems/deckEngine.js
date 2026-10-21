@@ -227,6 +227,10 @@ function drawIntrigueCard(game, player, count = 1) {
     })
   }
 
+  // Version 5: a Plot just drawn can be played before the rest of this
+  // resolution. Lazy require — playerTurns already requires this module.
+  require('../phases/playerTurns.js').maybePlotDrawPause(game, player)
+
   return drawnCards.length
 }
 

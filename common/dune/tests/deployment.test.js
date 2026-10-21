@@ -208,9 +208,6 @@ describe('Units and Deployment', () => {
     })
     game.run()
 
-    // Decline the start-of-turn Plot Intrigue offer
-    t.choose(game, 'Pass')
-
     // Fremkit (fremen combat space) gives draw 1, not troops — nothing to
     // deploy from the space itself
     t.choose(game, 'Agent Turn.Diplomacy')
@@ -219,7 +216,7 @@ describe('Units and Deployment', () => {
     // End-of-turn Plot Intrigue: Honor Guard grants +1 Troop. Deploying
     // troops to the Conflict must happen last so this troop is still
     // deployable this turn.
-    t.choose(game, 'Honor Guard')
+    t.playPlot(game, 'Honor Guard')
 
     const choices = t.currentChoices(game)
     expect(choices).toContain('Deploy 0 troop(s) from garrison')
@@ -291,7 +288,7 @@ describe('Troop keyword helpers', () => {
     })
     game.run()
 
-    t.choose(game, 'Ambitious')
+    t.playPlot(game, 'Ambitious')
     t.choose(game, 'Lose 3 troops for +1 Influence')
     t.choose(game, 'emperor')
 
@@ -307,7 +304,7 @@ describe('Troop keyword helpers', () => {
     })
     game.run()
 
-    t.choose(game, 'Honor Guard')
+    t.playPlot(game, 'Honor Guard')
 
     const dennis = game.players.byName('dennis')
     expect(dennis.troopsInGarrison).toBe(2)
@@ -323,7 +320,7 @@ describe('Troop keyword helpers', () => {
     })
     game.run()
 
-    t.choose(game, 'Detonation')
+    t.playPlot(game, 'Detonation')
     t.choose(game, 'Deploy up to 4 Troops to Conflict')
     t.choose(game, 'Deploy 2')
 

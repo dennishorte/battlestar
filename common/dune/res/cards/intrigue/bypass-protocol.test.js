@@ -18,7 +18,7 @@ describe("bypass-protocol", () => {
     })
     game.run()
 
-    t.choose(game, 'Bypass Protocol')
+    t.playPlot(game, 'Bypass Protocol')
     t.choose(game, 'Acquire card costing 3 Persuasion or less')
 
     const rowZone = game.zones.byId('common.imperiumRow')
@@ -38,7 +38,7 @@ describe("bypass-protocol", () => {
     })
     game.run()
 
-    t.choose(game, 'Bypass Protocol')
+    t.playPlot(game, 'Bypass Protocol')
     t.choose(game, 'Pay 2 Spice: Acquire card costing 5 or less (to top of deck)')
 
     const rowZone = game.zones.byId('common.imperiumRow')
@@ -60,7 +60,7 @@ describe("bypass-protocol", () => {
     })
     game.run()
 
-    t.choose(game, 'Bypass Protocol')
+    t.playPlot(game, 'Bypass Protocol')
     t.choose(game, 'Pass')
 
     expect(game.waiting).toBeTruthy()

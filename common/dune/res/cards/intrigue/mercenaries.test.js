@@ -23,8 +23,8 @@ describe("mercenaries", () => {
     })
     game.run()
 
-    expect(t.currentChoices(game)).toContain('Mercenaries')
-    t.choose(game, 'Mercenaries')
+    expect(game.waiting.selectors[0].plotActions.map(p => p.title)).toContain('Mercenaries')
+    t.playPlot(game, 'Mercenaries')
 
     // Cost-effect parser opens a Pay/Decline prompt.
     const choices = t.currentChoices(game)
@@ -50,7 +50,7 @@ describe("mercenaries", () => {
     })
     game.run()
 
-    t.choose(game, 'Mercenaries')
+    t.playPlot(game, 'Mercenaries')
     t.choose(game, 'Decline')
 
     const dennis = game.players.byName('dennis')
@@ -58,16 +58,17 @@ describe("mercenaries", () => {
     expect(dennis.troopsInGarrison).toBe(0)
   })
 
-  test('not enough Solari → Pay branch hidden', () => {
+  test('not offered without 3 Solari', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { intrigue: ['Mercenaries'], solari: 2 },
     })
     game.run()
 
-    t.choose(game, 'Mercenaries')
-    // Cannot afford → choice prompt either filters or auto-skips.
-    const choices = t.currentChoices(game)
-    expect(choices.some(c => /Pay 3 Solari/i.test(c))).toBe(false)
+    const plots = (game.waiting.selectors[0].plotActions || []).map(p => p.title)
+    expect(plots).not.toContain('Mercenaries')
+    const held = game.zones.byId('dennis.intrigue').cardlist()
+    expect(held.some(c => c.name === 'Mercenaries')).toBe(true)
+    expect(game.players.byName('dennis').solari).toBe(2)
   })
 })

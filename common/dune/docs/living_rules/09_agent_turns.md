@@ -27,6 +27,7 @@ Starting with the player who has the First Player marker and continuing clockwis
 ### Plot Intrigue Cards
 
 - You may play any Plot Intrigue cards you have at any point during one of your own Agent or Reveal turns.
+- While it is your Agent or Reveal turn, each decision you are asked also offers the Plot cards that are legal at that moment. Drawing an intrigue card, and deploying when you would otherwise not be asked, are decisions too.
 
 ## Related
 

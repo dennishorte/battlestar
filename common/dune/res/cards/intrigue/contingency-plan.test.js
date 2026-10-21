@@ -19,7 +19,7 @@ describe("contingency-plan", () => {
     })
     game.run()
 
-    t.choose(game, 'Contingency Plan')
+    t.playPlot(game, 'Contingency Plan')
 
     const dennis = game.players.byName('dennis')
     expect(dennis.solari).toBe(2)
@@ -39,11 +39,9 @@ describe("contingency-plan", () => {
     })
     game.run()
 
-    t.choose(game, 'Pass')
     t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
-    // end-of-turn Plot Intrigue offer (deploy now happens after it)
-    t.choose(game, 'Pass')
+
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 
     let safety = 60

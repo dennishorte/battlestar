@@ -18,8 +18,8 @@ describe("buy-access", () => {
     })
     game.run()
 
-    expect(t.currentChoices(game)).toContain('Buy Access')
-    t.choose(game, 'Buy Access')
+    expect(game.waiting.selectors[0].plotActions.map(p => p.title)).toContain('Buy Access')
+    t.playPlot(game, 'Buy Access')
 
     // Single prompt — choose both factions at once
     expect(t.currentChoices(game)).toContain('emperor')
@@ -31,24 +31,20 @@ describe("buy-access", () => {
     expect(dennis.getInfluence('fremen')).toBe(1)
   })
 
-  test('plot: insufficient Solari — effect does nothing, card still discarded', () => {
+  test('plot: insufficient Solari — card stays in hand', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { intrigue: ['Buy Access'], solari: 4 },
     })
     game.run()
 
-    t.choose(game, 'Buy Access')
+    const plots = (game.waiting.selectors[0].plotActions || []).map(p => p.title)
+    expect(plots).not.toContain('Buy Access')
+    const held = game.zones.byId('dennis.intrigue').cardlist()
+    expect(held.some(c => c.name === 'Buy Access')).toBe(true)
 
     const dennis = game.players.byName('dennis')
     expect(dennis.solari).toBe(4)
-    expect(dennis.getInfluence('emperor')).toBe(0)
-    expect(dennis.getInfluence('fremen')).toBe(0)
-    expect(dennis.getInfluence('guild')).toBe(0)
-    expect(dennis.getInfluence('bene-gesserit')).toBe(0)
-
-    const discard = game.zones.byId('common.intrigueDiscard').cardlist()
-    expect(discard.some(c => c.name === 'Buy Access')).toBe(true)
   })
 
   test('plot: guild and bene-gesserit chosen for +1 influence each', () => {
@@ -58,7 +54,7 @@ describe("buy-access", () => {
     })
     game.run()
 
-    t.choose(game, 'Buy Access')
+    t.playPlot(game, 'Buy Access')
     t.choose(game, 'guild', 'bene-gesserit')
 
     const dennis = game.players.byName('dennis')

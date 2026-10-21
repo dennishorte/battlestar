@@ -23,15 +23,15 @@ describe("diversion", () => {
     })
     game.run()
 
-    t.choose(game, 'Diversion')
-    t.choose(game, 'Detonation')
+    t.playPlot(game, 'Diversion')
+    t.playPlot(game, 'Detonation')
     t.choose(game, 'Deploy up to 4 Troops to Conflict')
     t.choose(game, 'Deploy 3')
 
     expect(game.state.turnTracking.diversionFired).toBeFalsy()
     expect(game.state.turnTracking.unitsDeployedThisTurn).toBe(3)
 
-    t.choose(game, 'Unexpected Allies')
+    t.playPlot(game, 'Unexpected Allies')
     t.choose(game, 'Pay 2 Water: Blow Shield Wall + 1 Sandworm')
 
     expect(game.state.turnTracking.unitsDeployedThisTurn).toBe(4)
@@ -50,8 +50,8 @@ describe("diversion", () => {
     })
     game.run()
 
-    t.choose(game, 'Diversion')
-    t.choose(game, 'Detonation')
+    t.playPlot(game, 'Diversion')
+    t.playPlot(game, 'Detonation')
     t.choose(game, 'Deploy up to 4 Troops to Conflict')
     t.choose(game, 'Deploy 3')
 

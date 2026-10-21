@@ -53,8 +53,8 @@ describe("desert-mouse", () => {
     })
     game.run()
 
-    expect(t.currentChoices(game)).toContain('Desert Mouse')
-    t.choose(game, 'Desert Mouse')
+    expect(game.waiting.selectors[0].plotActions.map(p => p.title)).toContain('Desert Mouse')
+    t.playPlot(game, 'Desert Mouse')
 
     expect(game.players.byName('dennis').spice).toBe(1)
     const discard = game.zones.byId('common.intrigueDiscard').cardlist()

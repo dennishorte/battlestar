@@ -22,7 +22,7 @@ describe("change-allegiences", () => {
     })
     game.run()
 
-    t.choose(game, 'Change Allegiences')
+    t.playPlot(game, 'Change Allegiences')
 
     // First swap: choose to lose influence on a faction
     let choices = t.currentChoices(game)
@@ -62,7 +62,7 @@ describe("change-allegiences", () => {
     })
     game.run()
 
-    t.choose(game, 'Change Allegiences')
+    t.playPlot(game, 'Change Allegiences')
     t.choose(game, 'Pass')
     t.choose(game, 'Pass')
 
@@ -81,7 +81,7 @@ describe("change-allegiences", () => {
     })
     game.run()
 
-    t.choose(game, 'Change Allegiences')
+    t.playPlot(game, 'Change Allegiences')
 
     // No swap branch because no influence — only spice offer.
     const payChoice = t.currentChoices(game).find(c => /3 Spice/i.test(c))

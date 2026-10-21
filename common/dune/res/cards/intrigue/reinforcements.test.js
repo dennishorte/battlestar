@@ -20,7 +20,7 @@ describe("reinforcements", () => {
 
     // Played from the start-of-turn Plot Intrigue offer, before the
     // Agent/Reveal turn choice is even made.
-    t.choose(game, 'Reinforcements')
+    t.playPlot(game, 'Reinforcements')
     t.choose(game, 'Pay 3 Solari for +3 Troops')
 
     const dennis = game.players.byName('dennis')
@@ -36,20 +36,10 @@ describe("reinforcements", () => {
     })
     game.run()
 
-    // Decline the start-of-turn Plot Intrigue offer so Reinforcements is
-    // instead played after the Reveal Turn's strength has already been set.
-    t.choose(game, 'Pass')
-    while (game.waiting) {
-      const title = game.waiting.selectors[0]?.title || ''
-      if (title.includes('Acquire')) {
-        t.choose(game, 'Pass')
-      }
-      else {
-        break
-      }
-    }
+    // Reveal first so strength is already set, then play from that decision.
+    t.choose(game, 'Reveal Turn')
 
-    t.choose(game, 'Reinforcements')
+    t.playPlot(game, 'Reinforcements')
     t.choose(game, 'Pay 3 Solari for +3 Troops')
     expect(t.currentChoices(game)).toContain('Deploy 2 troop(s) to the Conflict')
     t.choose(game, 'Deploy 2 troop(s) to the Conflict')
@@ -66,18 +56,9 @@ describe("reinforcements", () => {
     })
     game.run()
 
-    t.choose(game, 'Pass')
-    while (game.waiting) {
-      const title = game.waiting.selectors[0]?.title || ''
-      if (title.includes('Acquire')) {
-        t.choose(game, 'Pass')
-      }
-      else {
-        break
-      }
-    }
+    t.choose(game, 'Reveal Turn')
 
-    t.choose(game, 'Reinforcements')
+    t.playPlot(game, 'Reinforcements')
     t.choose(game, 'Pay 3 Solari for +3 Troops')
     t.choose(game, 'Deploy 0 troops')
 

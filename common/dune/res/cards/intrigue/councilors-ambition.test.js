@@ -22,7 +22,7 @@ describe("councilors-ambition", () => {
     })
     game.run()
 
-    t.choose(game, "Councilor's Ambition")
+    t.playPlot(game, "Councilor's Ambition")
 
     const dennis = game.players.byName('dennis')
     expect(dennis.water).toBe(3)
@@ -39,7 +39,7 @@ describe("councilors-ambition", () => {
     })
     game.run()
 
-    t.choose(game, "Councilor's Ambition")
+    t.playPlot(game, "Councilor's Ambition")
 
     const dennis = game.players.byName('dennis')
     expect(dennis.water).toBe(1)

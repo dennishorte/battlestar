@@ -103,7 +103,7 @@ describe('Faction Influence', () => {
     game.run()
 
     // Play Opportunism: lose 1 Influence with 2 factions + 2 Solari -> +1 VP
-    t.choose(game, 'Opportunism')
+    t.playPlot(game, 'Opportunism')
     t.choose(game, 'Lose 1 Influence with 2 Factions + 2 Solari -> +1 VP')
     // Exactly two factions have influence → both auto-resolve. Emperor is first
     // in FACTIONS order, so dennis drops from 4 to 3 before the guild loss.
@@ -133,7 +133,7 @@ describe('Faction Influence', () => {
     })
     game.run()
 
-    t.choose(game, 'Opportunism')
+    t.playPlot(game, 'Opportunism')
     t.choose(game, 'Lose 1 Influence with 2 Factions + 2 Solari -> +1 VP')
     // Exactly two factions have influence → both auto-resolve. Dennis drops
     // from 5 to 4 fremen, behind micah (still at 5). Micah is the only player
@@ -161,7 +161,7 @@ describe('Faction Influence', () => {
     })
     game.run()
 
-    t.choose(game, 'Opportunism')
+    t.playPlot(game, 'Opportunism')
     t.choose(game, 'Lose 1 Influence with 2 Factions + 2 Solari -> +1 VP')
     // Exactly two factions have influence → both auto-resolve. Dennis drops
     // from 5 to 4 fremen — still at the 4-influence threshold and still ahead
@@ -189,7 +189,7 @@ describe('Faction Influence', () => {
     })
     game.run()
 
-    t.choose(game, 'Opportunism')
+    t.playPlot(game, 'Opportunism')
     t.choose(game, 'Lose 1 Influence with 2 Factions + 2 Solari -> +1 VP')
     // Exactly two factions have influence → both auto-resolve. Dennis drops
     // from 4 to 3 fremen. Micah (at 2) hasn't reached 4 either, so nobody

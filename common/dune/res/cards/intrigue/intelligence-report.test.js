@@ -21,8 +21,8 @@ describe("intelligence-report", () => {
 
     const handBefore = game.zones.byId('dennis.hand').cardlist().length
 
-    expect(t.currentChoices(game)).toContain('Intelligence Report')
-    t.choose(game, 'Intelligence Report')
+    expect(game.waiting.selectors[0].plotActions.map(p => p.title)).toContain('Intelligence Report')
+    t.playPlot(game, 'Intelligence Report')
 
     const handAfter = game.zones.byId('dennis.hand').cardlist().length
     expect(handAfter).toBe(handBefore + 1)
@@ -37,7 +37,7 @@ describe("intelligence-report", () => {
     game.run()
 
     const handBefore = game.zones.byId('dennis.hand').cardlist().length
-    t.choose(game, 'Intelligence Report')
+    t.playPlot(game, 'Intelligence Report')
     const handAfter = game.zones.byId('dennis.hand').cardlist().length
     expect(handAfter).toBe(handBefore + 1)
   })
@@ -51,7 +51,7 @@ describe("intelligence-report", () => {
     game.run()
 
     const handBefore = game.zones.byId('dennis.hand').cardlist().length
-    t.choose(game, 'Intelligence Report')
+    t.playPlot(game, 'Intelligence Report')
     const handAfter = game.zones.byId('dennis.hand').cardlist().length
     expect(handAfter).toBe(handBefore + 2)
   })
@@ -65,7 +65,7 @@ describe("intelligence-report", () => {
     game.run()
 
     const handBefore = game.zones.byId('dennis.hand').cardlist().length
-    t.choose(game, 'Intelligence Report')
+    t.playPlot(game, 'Intelligence Report')
     const handAfter = game.zones.byId('dennis.hand').cardlist().length
     // Dennis has only 1 spy of his own, so only 1 draw.
     expect(handAfter).toBe(handBefore + 1)

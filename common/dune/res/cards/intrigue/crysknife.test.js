@@ -62,7 +62,7 @@ describe("crysknife", () => {
     })
     game.run()
 
-    t.choose(game, 'Crysknife')
+    t.playPlot(game, 'Crysknife')
 
     const dennis = game.players.byName('dennis')
     expect(dennis.spice).toBe(1)

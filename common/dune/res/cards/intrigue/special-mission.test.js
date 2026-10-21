@@ -26,7 +26,7 @@ describe("special-mission", () => {
     })
     game.run()
 
-    t.choose(game, 'Special Mission')
+    t.playPlot(game, 'Special Mission')
     t.choose(game, 'Place 1 Spy')
 
     const choices = t.currentChoices(game)
@@ -51,7 +51,7 @@ describe("special-mission", () => {
     })
     game.run()
 
-    t.choose(game, 'Special Mission')
+    t.playPlot(game, 'Special Mission')
     t.choose(game, 'Recall Spy -> Blow Shield Wall + 2 Spice')
     // recallSpy auto-resolves with only one spy
 
@@ -68,7 +68,7 @@ describe("special-mission", () => {
     })
     game.run()
 
-    t.choose(game, 'Special Mission')
+    t.playPlot(game, 'Special Mission')
     expect(t.currentChoices(game)).not.toContain('Recall Spy -> Blow Shield Wall + 2 Spice')
   })
 })

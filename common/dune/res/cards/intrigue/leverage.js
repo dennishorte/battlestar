@@ -33,4 +33,8 @@ module.exports = {
     }
   },
 
+  canPlayPlot(game) {
+    return (game.state.turnTracking?.spiceGained || 0) > 0
+  },
+
 }

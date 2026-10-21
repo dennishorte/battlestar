@@ -19,6 +19,7 @@ module.exports = {
   combatEffect: null,
   endgameEffect: null,
   plotText: "The card you play this turn has the following icons: Emperor, Spacing Guild, Bene Gesserit and Fremen board spaces",
+  plotTiming: 'before-agent',
 
   plotEffect(game) {
     // Card gets all faction icons this turn

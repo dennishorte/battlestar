@@ -18,7 +18,7 @@ TestUtil.fixture = function(options = {}) {
 
   const game = DuneFactory({
     game: 'Dune Imperium: Uprising',
-    version: 4,
+    version: 5,
     name: options.name || 'test_game',
     seed: options.seed || 'test_seed',
     players: activePlayers,
@@ -550,6 +550,26 @@ function assertEq(errors, label, actual, expected) {
   }
 }
 
+
+/**
+ * Play a Plot intrigue card from the side channel on the open decision.
+ * The card is not one of the listed choices. Mirrors Agricola's anytimeAction.
+ */
+TestUtil.playPlot = function(game, cardIdOrName) {
+  const request = game.waiting
+  const selector = request.selectors[0]
+  const plots = selector.plotActions || []
+  const plot = plots.find(p => p.cardId === cardIdOrName || p.title === cardIdOrName)
+  if (!plot) {
+    const names = plots.map(p => p.title).join(', ') || '(none)'
+    throw new Error(`No playable plot "${cardIdOrName}" on "${selector.title}". Offered: ${names}`)
+  }
+  return game.respondToInputRequest({
+    actor: selector.actor,
+    title: selector.title,
+    selection: { action: 'play-plot', cardId: plot.cardId },
+  })
+}
 
 TestUtil.currentChoices = function(game) {
   if (!game.waiting) {

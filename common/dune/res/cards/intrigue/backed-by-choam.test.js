@@ -23,8 +23,8 @@ describe("backed-by-choam", () => {
     })
     game.run()
 
-    expect(t.currentChoices(game)).toContain('Backed by CHOAM')
-    t.choose(game, 'Backed by CHOAM')
+    expect(game.waiting.selectors[0].plotActions.map(p => p.title)).toContain('Backed by CHOAM')
+    t.playPlot(game, 'Backed by CHOAM')
 
     // lose-influence prompts which faction to lose
     const lossChoices = t.currentChoices(game)
@@ -56,11 +56,9 @@ describe("backed-by-choam", () => {
     game.run()
 
     // pass plot intrigue at start of turn
-    t.choose(game, 'Pass')
     t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
-    // end-of-turn Plot Intrigue offer (deploy now happens after it)
-    t.choose(game, 'Pass')
+
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 
     // advance through reveal turns until combat intrigue prompt
@@ -107,11 +105,9 @@ describe("backed-by-choam", () => {
     })
     game.run()
 
-    t.choose(game, 'Pass')
     t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
-    // end-of-turn Plot Intrigue offer (deploy now happens after it)
-    t.choose(game, 'Pass')
+
     t.choose(game, 'Deploy 2 troop(s) from garrison')
 
     let safety = 60

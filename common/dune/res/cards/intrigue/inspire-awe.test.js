@@ -19,7 +19,7 @@ describe("inspire-awe", () => {
     })
     game.run()
 
-    t.choose(game, 'Inspire Awe')
+    t.playPlot(game, 'Inspire Awe')
 
     // Should now be prompting for an imperium row card
     const title = game.waiting?.selectors[0]?.title || ''
@@ -33,7 +33,7 @@ describe("inspire-awe", () => {
     })
     game.run()
 
-    t.choose(game, 'Inspire Awe')
+    t.playPlot(game, 'Inspire Awe')
 
     const rowZone = game.zones.byId('common.imperiumRow')
     const cheap = rowZone.cardlist().find(c => (c.persuasionCost || 0) <= 3)
@@ -57,7 +57,7 @@ describe("inspire-awe", () => {
     })
     game.run()
 
-    t.choose(game, 'Inspire Awe')
+    t.playPlot(game, 'Inspire Awe')
 
     const rowZone = game.zones.byId('common.imperiumRow')
     const cheap = rowZone.cardlist().find(c => (c.persuasionCost || 0) <= 3)
@@ -78,7 +78,7 @@ describe("inspire-awe", () => {
     })
     game.run()
 
-    t.choose(game, 'Inspire Awe')
+    t.playPlot(game, 'Inspire Awe')
     t.choose(game, 'Pass')
 
     // Game continues normally after passing

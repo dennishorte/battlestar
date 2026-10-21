@@ -57,4 +57,12 @@ module.exports = {
       }
     }
   },
+
+  canPlayPlot(game, player) {
+    if (player.getCounter('spice') >= 5) {
+      return true
+    }
+    return player.getInfluence('fremen') >= 3 && player.getCounter('water') >= 3
+  },
+
 }

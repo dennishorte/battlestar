@@ -72,4 +72,11 @@ module.exports = {
     }
   },
 
+  canPlayPlot(game, player) {
+    const allCards = game.zones.byId('common.imperiumRow').cardlist()
+    const cheap = allCards.some(c => (c.persuasionCost || 0) <= 3)
+    const medium = allCards.some(c => (c.persuasionCost || 0) <= 5)
+    return cheap || (player.spice >= 2 && medium)
+  },
+
 }

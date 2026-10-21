@@ -20,7 +20,7 @@ describe("unexpected-allies", () => {
     })
     game.run()
 
-    t.choose(game, 'Unexpected Allies')
+    t.playPlot(game, 'Unexpected Allies')
     t.choose(game, 'Pay 2 Water: Blow Shield Wall + 1 Sandworm')
 
     const dennis = game.players.byName('dennis')
@@ -29,7 +29,7 @@ describe("unexpected-allies", () => {
     expect(game.state.conflict.deployedSandworms.dennis).toBe(1)
   })
 
-  test('plot: cannot pay (not enough water) — choice not offered', () => {
+  test('plot: not offered without 2 water', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: { intrigue: ['Unexpected Allies'], water: 1 },
@@ -37,10 +37,10 @@ describe("unexpected-allies", () => {
     })
     game.run()
 
-    t.choose(game, 'Unexpected Allies')
-    // No Pay choice; effect resolves to nothing (player goes back to next prompt)
-    const choices = t.currentChoices(game)
-    expect(choices).not.toContain('Pay 2 Water: Blow Shield Wall + 1 Sandworm')
+    const plots = (game.waiting.selectors[0].plotActions || []).map(p => p.title)
+    expect(plots).not.toContain('Unexpected Allies')
+    const held = game.zones.byId('dennis.intrigue').cardlist()
+    expect(held.some(c => c.name === 'Unexpected Allies')).toBe(true)
     expect(game.state.shieldWall).toBe(true)
   })
 
@@ -52,7 +52,7 @@ describe("unexpected-allies", () => {
     })
     game.run()
 
-    t.choose(game, 'Unexpected Allies')
+    t.playPlot(game, 'Unexpected Allies')
     t.choose(game, 'Pass')
 
     const dennis = game.players.byName('dennis')

@@ -31,8 +31,8 @@ describe("ornithopter", () => {
     })
     game.run()
 
-    expect(t.currentChoices(game)).toContain('Ornithopter')
-    t.choose(game, 'Ornithopter')
+    expect(game.waiting.selectors[0].plotActions.map(p => p.title)).toContain('Ornithopter')
+    t.playPlot(game, 'Ornithopter')
 
     const dennis = game.players.byName('dennis')
     expect(dennis.spice).toBe(1)
@@ -53,10 +53,7 @@ describe("ornithopter", () => {
     })
     game.run()
 
-    // First prompt: start-of-turn plot intrigue (Ornithopter has plot effect).
-    // Decline so we keep it for endgame. Then Reveal Turn (no agents).
-    expect(t.currentChoices(game)).toContain('Ornithopter')
-    t.choose(game, 'Pass')
+    // Ornithopter stays in hand for the endgame prompt. Reveal, then pass acquire.
     t.choose(game, 'Reveal Turn')
     // End-of-reveal plot offered again — pass to keep it for endgame.
     t.choose(game, 'Pass')
@@ -96,7 +93,6 @@ describe("ornithopter", () => {
     })
     game.run()
 
-    t.choose(game, 'Pass')
     t.choose(game, 'Reveal Turn')
     t.choose(game, 'Pass')
 
@@ -131,7 +127,6 @@ describe("ornithopter", () => {
     })
     game.run()
 
-    t.choose(game, 'Pass')
     t.choose(game, 'Reveal Turn')
     t.choose(game, 'Pass')
 

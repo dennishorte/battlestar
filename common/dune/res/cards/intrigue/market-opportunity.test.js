@@ -18,8 +18,8 @@ describe("market-opportunity", () => {
     })
     game.run()
 
-    expect(t.currentChoices(game)).toContain('Market Opportunity')
-    t.choose(game, 'Market Opportunity')
+    expect(game.waiting.selectors[0].plotActions.map(p => p.title)).toContain('Market Opportunity')
+    t.playPlot(game, 'Market Opportunity')
 
     const choices = t.currentChoices(game)
     const cheapOption = choices.find(c => /Pay 2 Spice/i.test(c))
@@ -33,16 +33,16 @@ describe("market-opportunity", () => {
     expect(dennis.solari).toBe(5)
     expect(dennis.spice).toBe(0)
 
-    // Log nesting: play header at indent 1, pay/gain effects at indent 2
-    // (matches agent-turn structure so Dune's CSS shows nested effects).
+    // Played from the turn choice, so the play line sits at the turn's indent
+    // and the pay/gain lines sit one level deeper.
     const log = game.log.getLog().filter(e => e.template)
     const playIdx = log.findIndex(e => /plays \{card\} \(Plot\)/.test(e.template))
     expect(playIdx).toBeGreaterThan(-1)
-    expect(log[playIdx].indent).toBe(1)
+    expect(log[playIdx].indent).toBe(0)
     const pay = log.slice(playIdx + 1).find(e => /pays \{amount\}/.test(e.template))
     const gain = log.slice(playIdx + 1).find(e => /gains \{amount\}/.test(e.template))
-    expect(pay?.indent).toBe(2)
-    expect(gain?.indent).toBe(2)
+    expect(pay?.indent).toBe(1)
+    expect(gain?.indent).toBe(1)
   })
 
   test('Pay 5 Solari -> +5 Spice', () => {
@@ -52,7 +52,7 @@ describe("market-opportunity", () => {
     })
     game.run()
 
-    t.choose(game, 'Market Opportunity')
+    t.playPlot(game, 'Market Opportunity')
 
     const choices = t.currentChoices(game)
     const spiceOption = choices.find(c => /Pay 5 Solari/i.test(c))
@@ -74,7 +74,7 @@ describe("market-opportunity", () => {
     })
     game.run()
 
-    t.choose(game, 'Market Opportunity')
+    t.playPlot(game, 'Market Opportunity')
     const outer = t.currentChoices(game)
     const expensive = outer.find(c => /Pay 5 Solari/i.test(c))
     t.choose(game, expensive)

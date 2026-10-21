@@ -81,74 +81,86 @@ function playerTurnsPhase(game) {
         diversionFired: false,
       }
 
-      // Plot Intrigue may only be played at the start or end of the player's
-      // turn, never mid-action. Offer it here, before the player commits to
-      // an Agent Turn card or to a Reveal Turn.
-      // Indent so "plays Plot" sits at the same level as agent "plays {card}"
-      // (indent 1 → visually flush under the turn; effects nest at indent 2).
-      game.log.indent()
-      offerPlotIntrigue(game, player)
-      game.log.outdent()
+      // Version 4 offers Plot cards only here, before the player commits to
+      // an Agent Turn or a Reveal Turn. Version 5 offers them beside every
+      // decision instead, including this one.
+      if (!usesPlotAnytime(game)) {
+        // Indent so "plays Plot" sits at the same level as agent "plays {card}"
+        // (indent 1 → visually flush under the turn; effects nest at indent 2).
+        game.log.indent()
+        offerPlotIntrigue(game, player)
+        game.log.outdent()
 
-      // Bindu Suspension: drew a card during plot phase; now offer to pass turn
-      if (game.state.turnTracking?.binduSuspension) {
-        game.state.turnTracking.binduSuspension = false
-        const [passChoice] = game.actions.choose(player, [
-          game.actions.option({ id: 'continue', title: 'Continue Turn' }),
-          game.actions.option({ id: 'pass', title: 'Pass Turn' }),
-        ], { title: 'Bindu Suspension: Pass your turn?' })
-        const passId = typeof passChoice === 'object' ? passChoice.id : passChoice
-        if (passId === 'pass' || passChoice === 'Pass Turn') {
-          game.log.add({ template: '{player} passes their turn (Bindu Suspension)', args: { player } })
+        // Bindu Suspension: drew a card during the plot offer; now offer to pass.
+        if (game.state.turnTracking?.binduSuspension) {
+          game.state.turnTracking.binduSuspension = false
+          const [passChoice] = game.actions.choose(player, [
+            game.actions.option({ id: 'continue', title: 'Continue Turn' }),
+            game.actions.option({ id: 'pass', title: 'Pass Turn' }),
+          ], { title: 'Bindu Suspension: Pass your turn?' })
+          const passId = typeof passChoice === 'object' ? passChoice.id : passChoice
+          if (passId === 'pass' || passChoice === 'Pass Turn') {
+            game.log.add({ template: '{player} passes their turn (Bindu Suspension)', args: { player } })
+            continue
+          }
+        }
+        else if (game.state.turnTracking?.passedTurn) {
+          game.state.turnTracking.passedTurn = false
+          game.log.add({ template: '{player} passes their turn (Withdrawn)', args: { player } })
           continue
         }
       }
 
-      // Build playable card list after Plot Intrigue offers. A card is
-      // playable only if there exists at least one board space the player
-      // could actually send an agent to with it — otherwise the player
-      // would commit to the card and waste the turn with "no valid spaces".
-      const handZone = game.zones.byId(`${player.name}.hand`)
-      const handCards = handZone.cardlist()
-      let playableCards
+      // A card is playable only if there is at least one board space the
+      // player could send an agent to with it. The list is a function on
+      // version 5 so a Plot played beside this prompt (Resourceful, and the
+      // like) is visible in the cards offered afterwards.
+      const canAskTurn = () => (
+        player.availableAgents > 0 || listPlayableAgentCards(game, player).length > 0
+      )
 
-      if (player.availableAgents > 0) {
-        playableCards = handCards.filter(c => hasAgentTurnAccess(c) && hasValidPlacement(game, player, c))
-      }
-      else {
-        // Cards that relocate an existing agent (e.g. Kwisatz Haderach) can still
-        // be played when all agent slots are occupied, as long as there is an
-        // agent already on the board to serve as the source of the move.
-        const hasAgentOnBoard = Object.values(game.state.boardSpaces)
-          .some(occupants => (occupants || []).includes(player.name))
-        playableCards = hasAgentOnBoard
-          ? handCards.filter(c =>
-            c.definition?.movesExistingAgent && hasAgentTurnAccess(c) && hasValidPlacement(game, player, c)
-          )
-          : []
-      }
-
-      if (player.availableAgents > 0 || playableCards.length > 0) {
-        const choices = []
-        if (playableCards.length > 0) {
-          choices.push({
-            title: 'Agent Turn',
-            choices: playableCards.map(c => game.actions.cardOption(c, 'imperium-card')),
-          })
-        }
-        choices.push(game.actions.option({ id: 'reveal', title: 'Reveal Turn' }))
-
-        const [choice] = game.actions.choose(player, choices, {
-          title: 'Choose Turn',
+      if (usesPlotAnytime(game) && !canAskTurn() && hasLegalPlots(game, player, 'start')) {
+        const paused = game.actions.choose(player, [
+          game.actions.option({ id: 'continue', title: 'Continue' }),
+        ], {
+          title: 'Continue',
+          window: 'start',
+          allowTurnPass: true,
         })
+        if (paused?.action === 'turn-passed') {
+          game.log.add({ template: '{player} passes their turn', args: { player } })
+          continue
+        }
+      }
 
+      if (canAskTurn()) {
+        const result = game.actions.choose(
+          player,
+          () => buildTurnChoices(game, player),
+          usesPlotAnytime(game)
+            ? { title: 'Choose Turn', window: 'start', allowTurnPass: true }
+            : { title: 'Choose Turn' },
+        )
+        if (result?.action === 'turn-passed') {
+          game.log.add({ template: '{player} passes their turn', args: { player } })
+          continue
+        }
+
+        const [choice] = result
         if (choice.title === 'Agent Turn') {
           const sel = choice.selection[0]
           const selId = typeof sel === 'object' ? sel.id : null
           const selTitle = typeof sel === 'object' ? sel.title : sel
-          const card = playableCards.find(c => c.id === selId)
-            || playableCards.find(c => c.name === selTitle)
-          agentTurn(game, player, card)
+          const handNow = game.zones.byId(`${player.name}.hand`).cardlist()
+          const card = (selId && handNow.find(c => c.id === selId))
+            || handNow.find(c => c.name === selTitle)
+          if (card) {
+            game.state.turnTracking.agentCardPlayed = true
+            agentTurn(game, player, card)
+          }
+          else {
+            revealTurn(game, player)
+          }
         }
         else {
           revealTurn(game, player)
@@ -192,24 +204,41 @@ function agentTurn(game, player, card) {
     card.definition.prePlacementEffect(game, player, card, { resolveEffect })
   }
 
-  // Step 2: Choose a board space
-  const boardSpaces = getBoardSpaces()
-  const validSpaces = boardSpaces.filter(space => canSendAgentTo(game, player, card, space))
+  // Step 2: Choose a board space. The list is rebuilt after a Plot so a
+  // solari or influence card played here can open a space that was closed.
+  const liveSpaces = () => getBoardSpaces().filter(space => canSendAgentTo(game, player, card, space))
 
-  if (validSpaces.length === 0) {
+  if (liveSpaces().length === 0 && !hasLegalPlots(game, player, 'turn')) {
     game.log.add({ template: 'No valid board spaces', event: 'memo' })
     game.log.outdent()
     return
   }
 
-  const spaceChoices = validSpaces.map(s => spaceOption(s))
-  const [spaceChoice] = game.actions.choose(player, spaceChoices, {
+  const spaceResult = game.actions.choose(player, () => {
+    const spaces = liveSpaces()
+    if (spaces.length === 0) {
+      return [game.actions.option({ id: 'continue', title: 'Continue' })]
+    }
+    return spaces.map(s => spaceOption(s))
+  }, {
     title: 'Choose a board space',
+    window: 'turn',
   })
+  const [spaceChoice] = spaceResult
   const spaceId = typeof spaceChoice === 'object' ? spaceChoice.id : null
   const spaceTitle = typeof spaceChoice === 'object' ? spaceChoice.title : spaceChoice
-  const space = validSpaces.find(s => s.id === spaceId)
-    || validSpaces.find(s => s.name === spaceTitle)
+  if (spaceId === 'continue') {
+    game.log.add({ template: 'No valid board spaces', event: 'memo' })
+    game.log.outdent()
+    return
+  }
+  const space = liveSpaces().find(s => s.id === spaceId)
+    || liveSpaces().find(s => s.name === spaceTitle)
+  if (!space) {
+    game.log.add({ template: 'No valid board spaces', event: 'memo' })
+    game.log.outdent()
+    return
+  }
 
   const occupants = game.state.boardSpaces[space.id] || []
   const spaceOccupiedByOther = occupants.some(name => name !== player.name)
@@ -360,9 +389,12 @@ function agentTurn(game, player, card) {
     }
   }
 
-  // Offer to play a Plot Intrigue card before deploying, so troops granted
-  // by an end-of-turn intrigue card can still be sent to the Conflict
-  offerPlotIntrigue(game, player)
+  // Version 4 offers Plot cards here, before deploy, so a troop from that
+  // card can still be sent to the Conflict. Version 5 plays that card from
+  // the deploy prompt itself (or the Continue pause when the garrison is empty).
+  if (!usesPlotAnytime(game)) {
+    offerPlotIntrigue(game, player)
+  }
 
   // Deploy units if combat space (or card made it a combat space) — this is
   // the last step of the turn so troops from any source this turn are deployable.
@@ -489,8 +521,11 @@ function revealTurn(game, player) {
   // Step 3: Acquire cards with persuasion
   acquireCardsPhase(game, player)
 
-  // Offer Plot Intrigue at end of turn
-  offerPlotIntrigue(game, player)
+  // Version 4 offers Plot cards after acquire. Version 5 offers them on the
+  // acquire prompt itself, so a persuasion card can still pay for a buy.
+  if (!usesPlotAnytime(game)) {
+    offerPlotIntrigue(game, player)
+  }
 
   // Step 4: Clean up
   deckEngine.cleanUp(game, player)
@@ -512,45 +547,98 @@ function revealTurn(game, player) {
  */
 function acquireOneCard(game, player, opts = {}) {
   const useSolari = !!opts.useSolari
-  const toTopOfDeck = opts.toTopOfDeck ?? !!game.state.turnTracking?.acquireToTopOfDeck
-  const toHand = opts.toHand ?? !!game.state.turnTracking?.acquireToHand
 
   const nukeAvailable = game.settings.imperiumRowRefresh === 'nuke' &&
     !!game.state.nukesAvailable?.[player.name]
 
-  const budget = useSolari ? player.solari : player.getCounter('persuasion')
-  if (budget <= 0 && !nukeAvailable) {
-    return false
+  let card = null
+
+  if (usesPlotAnytime(game)) {
+    // Placement flags and the affordable list are read inside the choice
+    // function. A Plot played from this prompt (Recruitment Mission, a
+    // persuasion card) has to change what can be bought and where it goes.
+    const picked = game.actions.choose(player, () => {
+      const budget = useSolari ? player.solari : player.getCounter('persuasion')
+      const cards = budget > 0 ? getAcquirableCards(game, player, budget) : []
+      const plots = legalPlotActions(game, player, { window: 'turn' })
+      if (cards.length === 0 && !nukeAvailable && plots.length === 0) {
+        return []
+      }
+      const options = [game.actions.option({ id: '__pass__', title: 'Pass' })]
+      if (nukeAvailable) {
+        options.push(game.actions.option({ id: '__nuke__', title: 'Use Nuke' }))
+      }
+      return [
+        ...options,
+        ...cards.map(c => game.actions.cardOption(c, 'imperium-card')),
+      ]
+    }, {
+      title: () => {
+        const budget = useSolari ? player.solari : player.getCounter('persuasion')
+        const resource = useSolari ? 'Solari' : 'Persuasion'
+        return `Acquire cards (${budget} ${resource} available)`
+      },
+      window: 'turn',
+    })
+
+    if (!picked || picked.length === 0) {
+      return false
+    }
+    const [chosen] = picked
+    const chosenId = typeof chosen === 'object' ? chosen.id : chosen
+    if (!chosenId || chosenId === '__pass__') {
+      return false
+    }
+    if (chosenId === '__nuke__') {
+      applyNukeRefresh(game, player)
+      return true
+    }
+    card = findAcquirableCard(game, chosenId)
+    if (!card) {
+      return false
+    }
+  }
+  else {
+    const budget = useSolari ? player.solari : player.getCounter('persuasion')
+    if (budget <= 0 && !nukeAvailable) {
+      return false
+    }
+
+    const acquirableCards = budget > 0 ? getAcquirableCards(game, player, budget) : []
+    if (acquirableCards.length === 0 && !nukeAvailable) {
+      return false
+    }
+
+    const resource = useSolari ? 'Solari' : 'Persuasion'
+    // Use chooseCards so name collisions (e.g. imperium + reserve cards
+    // happening to share a title) resolve by card id rather than by
+    // iteration order. Pass is represented as a sentinel entry so it
+    // mixes cleanly into the card list.
+    const passSentinel = { name: 'Pass', id: '__pass__' }
+    const nukeSentinel = { name: 'Use Nuke', id: '__nuke__' }
+    const extras = nukeAvailable ? [passSentinel, nukeSentinel] : [passSentinel]
+    const [chosen] = game.actions.chooseCards(player, [...extras, ...acquirableCards], {
+      title: `Acquire cards (${budget} ${resource} available)`,
+      kind: 'imperium-card',
+    })
+
+    if (!chosen || chosen.id === '__pass__') {
+      return false
+    }
+
+    if (chosen.id === '__nuke__') {
+      applyNukeRefresh(game, player)
+      return true
+    }
+
+    card = chosen
   }
 
-  const acquirableCards = budget > 0 ? getAcquirableCards(game, player, budget) : []
-  if (acquirableCards.length === 0 && !nukeAvailable) {
-    return false
-  }
+  // Read placement after the choice. A Plot played beside it may have set
+  // acquireToHand / acquireToTopOfDeck. Explicit opts still win.
+  const toTopOfDeck = opts.toTopOfDeck ?? !!game.state.turnTracking?.acquireToTopOfDeck
+  const toHand = opts.toHand ?? !!game.state.turnTracking?.acquireToHand
 
-  const resource = useSolari ? 'Solari' : 'Persuasion'
-  // Use chooseCards so name collisions (e.g. imperium + reserve cards
-  // happening to share a title) resolve by card id rather than by
-  // iteration order. Pass is represented as a sentinel entry so it
-  // mixes cleanly into the card list.
-  const passSentinel = { name: 'Pass', id: '__pass__' }
-  const nukeSentinel = { name: 'Use Nuke', id: '__nuke__' }
-  const extras = nukeAvailable ? [passSentinel, nukeSentinel] : [passSentinel]
-  const [chosen] = game.actions.chooseCards(player, [...extras, ...acquirableCards], {
-    title: `Acquire cards (${budget} ${resource} available)`,
-    kind: 'imperium-card',
-  })
-
-  if (!chosen || chosen.id === '__pass__') {
-    return false
-  }
-
-  if (chosen.id === '__nuke__') {
-    applyNukeRefresh(game, player)
-    return true
-  }
-
-  const card = chosen
   const effectiveCost = acquireCost(game, player, card)
   player.decrementCounter(useSolari ? 'solari' : 'persuasion', effectiveCost)
 
@@ -568,7 +656,7 @@ function acquireOneCard(game, player, opts = {}) {
   // Acquire to top of deck, hand, or discard pile
   if (toTopOfDeck) {
     const deckZone = game.zones.byId(`${player.name}.deck`)
-    card.moveTo(deckZone)
+    card.moveToTop(deckZone)
     game.log.add({ template: '{player} acquires {card} to top of deck', args: { player, card }, summary: true })
     deckEngine.refillImperiumRow(game)
     deckEngine.applyAcquireTroopBonus(game, player)
@@ -735,10 +823,12 @@ function hasValidPlacement(game, player, card) {
  * Agent to a space you already occupy — Infiltrate does not apply to your own.
  */
 function canSendAgentTo(game, player, card, space) {
-  // Check icon access — allIcons/allFactionIcons from Resourceful/Dispatch an Envoy bypass this
+  // Check icon access — allIcons/allFactionIcons from Resourceful/Dispatch an Envoy
+  // bypass this. Emperor's Invitation adds the Emperor icon only.
   const allIcons = game.state.turnTracking?.allIcons
   const allFactionIcons = game.state.turnTracking?.allFactionIcons
-  const hasMatchingIcon = allIcons || allFactionIcons
+  const emperorIcon = game.state.turnTracking?.hasEmperorIcon && space.icon === 'emperor'
+  const hasMatchingIcon = allIcons || allFactionIcons || emperorIcon
     || card.agentIcons.includes(space.icon) || card.factionAccess.includes(space.icon)
   const hasSpyConnection = card.spyAccess && spies.hasSpyAt(game, player, space.id)
   if (!hasMatchingIcon && !hasSpyConnection) {
@@ -798,40 +888,52 @@ function canSendAgentTo(game, player, card, space) {
  * (Sardaukar Coordination on a non-combat space).
  */
 function deployUnits(game, player, opts = {}) {
-  const garrisoned = player.troopsInGarrison
-  if (garrisoned === 0) {
-    return
-  }
-
   // Shaddam Corrino IV's "Emperor of the Known Universe" locks deployment for
-  // the rest of the turn.
+  // the rest of the turn. A Plot does not undo that.
   if (game.state.turnTracking?.shaddamNoDeploy) {
     return
   }
 
-  // Per rules: deploy any/all troops recruited this turn + up to 2 from pre-existing garrison
-  const garrisonAtStart = game.state.turnTracking?.garrisonAtTurnStart ?? garrisoned
-  const recruited = Math.max(0, garrisoned - garrisonAtStart)
-  const preExisting = garrisonAtStart
-  const maxDeploy = opts.recruitedOnly
-    ? Math.min(garrisoned, recruited)
-    : Math.min(garrisoned, recruited + Math.min(2, preExisting))
-  if (maxDeploy === 0) {
-    return
-  }
-  const choices = []
-  for (let i = 0; i <= maxDeploy; i++) {
-    choices.push(game.actions.option({ id: `deploy-${i}`, title: `Deploy ${i} troop(s) from garrison` }))
+  const maxDeployNow = () => {
+    const garrisoned = player.troopsInGarrison
+    if (garrisoned === 0) {
+      return 0
+    }
+    // Per rules: deploy any/all troops recruited this turn + up to 2 from pre-existing garrison
+    const garrisonAtStart = game.state.turnTracking?.garrisonAtTurnStart ?? garrisoned
+    const recruited = Math.max(0, garrisoned - garrisonAtStart)
+    const preExisting = garrisonAtStart
+    return opts.recruitedOnly
+      ? Math.min(garrisoned, recruited)
+      : Math.min(garrisoned, recruited + Math.min(2, preExisting))
   }
 
-  const [choice] = game.actions.choose(player, choices, {
+  if (maxDeployNow() === 0 && !hasLegalPlots(game, player, 'turn')) {
+    return
+  }
+
+  const [choice] = game.actions.choose(player, () => {
+    const maxDeploy = maxDeployNow()
+    if (maxDeploy === 0) {
+      return [game.actions.option({ id: 'continue', title: 'Continue' })]
+    }
+    const choices = []
+    for (let i = 0; i <= maxDeploy; i++) {
+      choices.push(game.actions.option({ id: `deploy-${i}`, title: `Deploy ${i} troop(s) from garrison` }))
+    }
+    return choices
+  }, {
     title: 'Deploy troops to the Conflict',
+    window: 'turn',
   })
 
   const choiceId = typeof choice === 'object' ? choice.id : null
+  if (choiceId === 'continue') {
+    return
+  }
   const count = choiceId
-    ? parseInt(choiceId.replace('deploy-', ''))
-    : parseInt(String(choice).match(/\d+/)[0])
+    ? parseInt(choiceId.replace('deploy-', ''), 10)
+    : parseInt(String(choice).match(/\d+/)[0], 10)
   if (count > 0) {
     deploy.deployFromGarrison(game, player, count)
 
@@ -1813,8 +1915,270 @@ function checkCondition(game, player, condition, card) {
  * Get the effective cost for a board space, handling dynamic costs.
  */
 /**
+ * Rules version 5 plays Plot cards beside decisions. Older games keep the
+ * three "Play a Plot Intrigue card?" prompts.
+ */
+function usesPlotAnytime(game) {
+  return (game.settings.version || 1) >= 5
+}
+
+function resolvePlotWindow(game, opts = {}) {
+  if (opts.window) {
+    return opts.window
+  }
+  if ((game.state.plotPlayDepth || 0) > 0) {
+    return 'effect'
+  }
+  return 'turn'
+}
+
+/**
+ * Cards in hand that could send an agent right now. Recomputed after a Plot
+ * because icon and cost access can change.
+ */
+function listPlayableAgentCards(game, player) {
+  const handCards = game.zones.byId(`${player.name}.hand`).cardlist()
+
+  if (player.availableAgents > 0) {
+    return handCards.filter(c => hasAgentTurnAccess(c) && hasValidPlacement(game, player, c))
+  }
+
+  // Cards that relocate an existing agent (e.g. Kwisatz Haderach) can still
+  // be played when all agent slots are occupied, as long as there is an
+  // agent already on the board to serve as the source of the move.
+  const hasAgentOnBoard = Object.values(game.state.boardSpaces)
+    .some(occupants => (occupants || []).includes(player.name))
+  if (!hasAgentOnBoard) {
+    return []
+  }
+  return handCards.filter(c =>
+    c.definition?.movesExistingAgent && hasAgentTurnAccess(c) && hasValidPlacement(game, player, c)
+  )
+}
+
+function buildTurnChoices(game, player) {
+  const playableCards = listPlayableAgentCards(game, player)
+  const choices = []
+  if (playableCards.length > 0) {
+    choices.push({
+      title: 'Agent Turn',
+      choices: playableCards.map(c => game.actions.cardOption(c, 'imperium-card')),
+    })
+  }
+  choices.push(game.actions.option({ id: 'reveal', title: 'Reveal Turn' }))
+  return choices
+}
+
+function findAcquirableCard(game, cardId) {
+  const zoneIds = [
+    'common.imperiumRow',
+    'common.reserve.prepareTheWay',
+    'common.reserve.spiceMustFlow',
+    'common.reservedCards',
+  ]
+  for (const zoneId of zoneIds) {
+    const card = game.zones.byId(zoneId).cardlist().find(c => c.id === cardId)
+    if (card) {
+      return card
+    }
+  }
+  return null
+}
+
+function hasPlotAbility(def) {
+  if (!def) {
+    return false
+  }
+  if (typeof def.plotEffect === 'function') {
+    return true
+  }
+  if (Array.isArray(def.plotEffects) && def.plotEffects.length > 0) {
+    return true
+  }
+  return typeof def.plotEffect === 'string' && def.plotEffect.length > 0
+}
+
+function choiceOptionPlayable(game, player, option) {
+  if (option.cost) {
+    for (const [resource, amount] of Object.entries(option.cost)) {
+      if (player.getCounter(resource) < amount) {
+        return false
+      }
+    }
+  }
+  if (option.requires === 'maker-hook') {
+    if (!game.state.makerHooks?.[player.name]) {
+      return false
+    }
+    if (isConflictProtected(game)) {
+      return false
+    }
+  }
+  return true
+}
+
+/**
+ * A declarative plot whose only effects are choices the player cannot take
+ * would be discarded for nothing. Anything else still does something.
+ */
+function declarativePlotPlayable(game, player, effects) {
+  let sawChoice = false
+  for (const effect of effects) {
+    if (effect.type !== 'choice') {
+      return true
+    }
+    sawChoice = true
+    const available = (effect.choices || []).filter(c => choiceOptionPlayable(game, player, c))
+    const actionable = available.filter(c => c.cost || (c.effects && c.effects.length > 0))
+    if (actionable.length > 0) {
+      return true
+    }
+  }
+  return !sawChoice
+}
+
+function canPlayPlot(game, player, card, ctx) {
+  const def = card.definition
+  if (!hasPlotAbility(def)) {
+    return false
+  }
+
+  const timing = def.plotTiming || 'any'
+  const window = ctx.window
+  const tracking = game.state.turnTracking
+  if (window === 'effect') {
+    if (timing === 'start' || timing === 'before-agent') {
+      return false
+    }
+  }
+  else if (window === 'start') {
+    if (timing === 'before-agent' && (tracking?.agentCardPlayed || tracking?.isRevealTurn)) {
+      return false
+    }
+  }
+  else if (window === 'turn') {
+    if (timing !== 'any') {
+      return false
+    }
+  }
+  else {
+    return false
+  }
+
+  if (typeof def.canPlayPlot === 'function' && !def.canPlayPlot(game, player, card)) {
+    return false
+  }
+  if (typeof def.plotEffect !== 'function' && Array.isArray(def.plotEffects)) {
+    return declarativePlotPlayable(game, player, def.plotEffects)
+  }
+  return true
+}
+
+function onPlotTurn(game, player) {
+  if (!usesPlotAnytime(game)) {
+    return false
+  }
+  if (game.state.phase !== 'player-turns') {
+    return false
+  }
+  return game.state.currentTurnPlayer === player.name
+}
+
+function legalPlotActions(game, player, opts = {}) {
+  if (!onPlotTurn(game, player)) {
+    return []
+  }
+  const window = resolvePlotWindow(game, opts)
+  const cards = game.zones.byId(`${player.name}.intrigue`).cardlist()
+  return cards
+    .filter(card => canPlayPlot(game, player, card, { window }))
+    .map(card => ({
+      cardId: card.id,
+      title: card.name,
+      defId: card.defId,
+      kind: 'intrigue-card',
+    }))
+}
+
+function hasLegalPlots(game, player, window) {
+  return legalPlotActions(game, player, { window }).length > 0
+}
+
+/**
+ * After an intrigue draw, stop when this player can play a Plot before the
+ * rest of the current resolution. Skipped while a Plot is already resolving
+ * (the outer decision asks again) and outside the player-turn phase, so a
+ * combat reward does not open a Plot window.
+ */
+function maybePlotDrawPause(game, player) {
+  if ((game.state.plotPlayDepth || 0) > 0) {
+    return
+  }
+  if (!hasLegalPlots(game, player, 'turn')) {
+    return
+  }
+  game.actions.choose(player, [
+    game.actions.option({ id: 'continue', title: 'Continue' }),
+  ], {
+    title: 'Continue',
+    window: 'turn',
+  })
+}
+
+/**
+ * Play one Plot card from the side channel. The card stays in hand when it
+ * is no longer legal. plotPlayDepth stops the draw pause from asking again
+ * before this effect has finished.
+ */
+function playPlot(game, player, cardId, opts = {}) {
+  const intrigueZone = game.zones.byId(`${player.name}.intrigue`)
+  const card = intrigueZone.cardlist().find(c => c.id === cardId)
+  if (!card) {
+    return
+  }
+  const window = resolvePlotWindow(game, opts)
+  if (!canPlayPlot(game, player, card, { window })) {
+    return
+  }
+
+  const discardZone = game.zones.byId('common.intrigueDiscard')
+  card.moveTo(discardZone)
+  game.log.add({
+    template: '{player} plays {card} (Plot)',
+    args: { player, card },
+    summary: true,
+  })
+
+  game.state.plotPlayDepth = (game.state.plotPlayDepth || 0) + 1
+  game.log.indent()
+  try {
+    const plotEffect = card.definition.plotEffect
+    if (typeof plotEffect === 'function') {
+      plotEffect(game, player, card, { resolveEffect })
+    }
+    else if (card.definition.plotEffects) {
+      for (const effect of card.definition.plotEffects) {
+        resolveEffect(game, player, effect, null)
+      }
+    }
+    else if (plotEffect) {
+      game.log.add({
+        template: '{effect}',
+        args: { effect: plotEffect },
+        event: 'memo',
+      })
+    }
+  }
+  finally {
+    game.log.outdent()
+    game.state.plotPlayDepth -= 1
+  }
+}
+
+/**
  * Offer the player a chance to play a Plot Intrigue card.
  * Loops until the player passes, so they can play multiple plot cards.
+ * Version 4 only. Version 5 uses the side channel instead.
  */
 function offerPlotIntrigue(game, player) {
   while (true) {
@@ -1928,4 +2292,7 @@ module.exports = {
   revealTurn,
   canSendAgentTo,
   resolveEffect,
+  legalPlotActions,
+  playPlot,
+  maybePlotDrawPause,
 }

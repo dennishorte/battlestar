@@ -55,4 +55,9 @@ module.exports = {
     game.log.add({ template: '{player}: +1 VP', args: { player } })
   },
 
+  canPlayPlot(game, player) {
+    const factionsWithInfluence = constants.FACTIONS.filter(f => player.getInfluence(f) > 0)
+    return player.solari >= 2 && factionsWithInfluence.length >= 2
+  },
+
 }

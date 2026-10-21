@@ -20,8 +20,8 @@ describe("distraction", () => {
     })
     game.run()
 
-    expect(t.currentChoices(game)).toContain('Distraction')
-    t.choose(game, 'Distraction')
+    expect(game.waiting.selectors[0].plotActions.map(p => p.title)).toContain('Distraction')
+    t.playPlot(game, 'Distraction')
 
     const discard = game.zones.byId('common.intrigueDiscard').cardlist()
     expect(discard.some(c => c.name === 'Distraction')).toBe(true)
@@ -39,8 +39,8 @@ describe("distraction", () => {
     })
     game.run()
 
-    t.choose(game, 'Distraction')
-    t.choose(game, 'Detonation')
+    t.playPlot(game, 'Distraction')
+    t.playPlot(game, 'Detonation')
     t.choose(game, 'Deploy up to 4 Troops to Conflict')
     t.choose(game, 'Deploy 3')
 
@@ -66,8 +66,8 @@ describe("distraction", () => {
     })
     game.run()
 
-    t.choose(game, 'Distraction')
-    t.choose(game, 'Detonation')
+    t.playPlot(game, 'Distraction')
+    t.playPlot(game, 'Detonation')
     t.choose(game, 'Deploy up to 4 Troops to Conflict')
     t.choose(game, 'Deploy 2')
 
@@ -88,8 +88,8 @@ describe("distraction", () => {
     })
     game.run()
 
-    t.choose(game, 'Distraction')
-    t.choose(game, 'Detonation')
+    t.playPlot(game, 'Distraction')
+    t.playPlot(game, 'Detonation')
     t.choose(game, 'Deploy up to 4 Troops to Conflict')
     t.choose(game, 'Deploy 3')
 

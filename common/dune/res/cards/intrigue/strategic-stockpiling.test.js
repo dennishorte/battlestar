@@ -19,7 +19,7 @@ describe("strategic-stockpiling", () => {
     })
     game.run()
 
-    t.choose(game, 'Strategic Stockpiling')
+    t.playPlot(game, 'Strategic Stockpiling')
     expect(t.currentChoices(game)).toEqual(['Pass', 'Pay 5 Spice: +1 VP'])
     t.choose(game, 'Pay 5 Spice: +1 VP')
 
@@ -35,7 +35,7 @@ describe("strategic-stockpiling", () => {
     })
     game.run()
 
-    t.choose(game, 'Strategic Stockpiling')
+    t.playPlot(game, 'Strategic Stockpiling')
     t.choose(game, 'Pass')
 
     const dennis = game.players.byName('dennis')
@@ -55,7 +55,7 @@ describe("strategic-stockpiling", () => {
     })
     game.run()
 
-    t.choose(game, 'Strategic Stockpiling')
+    t.playPlot(game, 'Strategic Stockpiling')
     // Spice leg
     t.choose(game, 'Pay 5 Spice: +1 VP')
     // Water leg offered
@@ -80,7 +80,7 @@ describe("strategic-stockpiling", () => {
     })
     game.run()
 
-    t.choose(game, 'Strategic Stockpiling')
+    t.playPlot(game, 'Strategic Stockpiling')
     t.choose(game, 'Pay 5 Spice: +1 VP')
     // No water-leg prompt — flow continues to agent/reveal selection
     const choices = t.currentChoices(game)
@@ -104,7 +104,7 @@ describe("strategic-stockpiling", () => {
     })
     game.run()
 
-    t.choose(game, 'Strategic Stockpiling')
+    t.playPlot(game, 'Strategic Stockpiling')
     // Spice leg skipped, water leg offered first
     expect(t.currentChoices(game)).toEqual(['Pass', 'Pay 3 Water: +1 VP'])
     t.choose(game, 'Pay 3 Water: +1 VP')

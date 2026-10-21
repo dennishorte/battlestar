@@ -16,8 +16,8 @@ describe("manipulate", () => {
     t.setBoard(game, { dennis: { intrigue: ['Manipulate'] } })
     game.run()
 
-    expect(t.currentChoices(game)).toContain('Manipulate')
-    t.choose(game, 'Manipulate')
+    expect(game.waiting.selectors[0].plotActions.map(p => p.title)).toContain('Manipulate')
+    t.playPlot(game, 'Manipulate')
 
     const targetName = game.zones.byId('common.imperiumRow').cardlist()[0].name
     t.choose(game, targetName)

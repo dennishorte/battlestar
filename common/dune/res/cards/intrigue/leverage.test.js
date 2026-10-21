@@ -24,15 +24,15 @@ describe("leverage", () => {
     })
     game.run()
 
-    // Start-of-turn plot prompt: pass (spiceGained=0 so Leverage no-ops here).
-    expect(t.currentChoices(game)).toContain('Leverage')
-    t.choose(game, 'Pass')
+    // No spice yet, so Leverage is not a legal plot.
+    const before = (game.waiting.selectors[0].plotActions || []).map(p => p.title)
+    expect(before).not.toContain('Leverage')
 
     t.choose(game, 'Reveal Turn')
 
-    // End-of-reveal plot prompt: spiceGained=1 from Rebel Supplier reveal.
-    expect(t.currentChoices(game)).toContain('Leverage')
-    t.choose(game, 'Leverage')
+    // Rebel Supplier's spice makes Leverage legal on the next decision.
+    expect(game.waiting.selectors[0].plotActions.map(p => p.title)).toContain('Leverage')
+    t.playPlot(game, 'Leverage')
 
     // takeContract opens a chooser — pick the first available contract.
     const contractChoices = t.currentChoices(game)
@@ -44,7 +44,7 @@ describe("leverage", () => {
     expect(game.zones.byId('dennis.contracts').cardlist().length).toBe(1)
   })
 
-  test('does nothing if no Spice was gained this turn', () => {
+  test('is not offered when no Spice was gained this turn', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: {
@@ -54,11 +54,9 @@ describe("leverage", () => {
     })
     game.run()
 
-    expect(t.currentChoices(game)).toContain('Leverage')
-    t.choose(game, 'Leverage')
-
-    const dennis = game.players.byName('dennis')
-    expect(dennis.solari).toBe(0)
-    expect(game.zones.byId('dennis.contracts').cardlist().length).toBe(0)
+    const plots = (game.waiting.selectors[0].plotActions || []).map(p => p.title)
+    expect(plots).not.toContain('Leverage')
+    const held = game.zones.byId('dennis.intrigue').cardlist()
+    expect(held.some(c => c.name === 'Leverage')).toBe(true)
   })
 })

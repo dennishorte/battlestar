@@ -23,7 +23,7 @@ describe("depart-for-arrakis", () => {
     })
     game.run()
 
-    t.choose(game, 'Depart for Arrakis')
+    t.playPlot(game, 'Depart for Arrakis')
     t.choose(game, 'Pay 2 Spice for +3 Troops')
 
     const dennis = game.players.byName('dennis')
@@ -44,7 +44,7 @@ describe("depart-for-arrakis", () => {
     })
     game.run()
 
-    t.choose(game, 'Depart for Arrakis')
+    t.playPlot(game, 'Depart for Arrakis')
     t.choose(game, 'Pass')
 
     const dennis = game.players.byName('dennis')
@@ -66,7 +66,7 @@ describe("depart-for-arrakis", () => {
     game.run()
 
     const handBefore = game.zones.byId('dennis.hand').cardlist().length
-    t.choose(game, 'Depart for Arrakis')
+    t.playPlot(game, 'Depart for Arrakis')
     t.choose(game, 'Pay 2 Spice for +3 Troops')
 
     const handAfter = game.zones.byId('dennis.hand').cardlist().length
@@ -75,7 +75,7 @@ describe("depart-for-arrakis", () => {
     expect(dennis.troopsInGarrison).toBe(3)
   })
 
-  test('plot: with insufficient spice, no payment option', () => {
+  test('plot: not offered without 2 spice', () => {
     const game = t.fixture()
     t.setBoard(game, {
       dennis: {
@@ -87,10 +87,11 @@ describe("depart-for-arrakis", () => {
     })
     game.run()
 
-    t.choose(game, 'Depart for Arrakis')
-
-    const dennis = game.players.byName('dennis')
-    expect(dennis.spice).toBe(1)
-    expect(dennis.troopsInGarrison).toBe(0)
+    const plots = (game.waiting.selectors[0].plotActions || []).map(p => p.title)
+    expect(plots).not.toContain('Depart for Arrakis')
+    const held = game.zones.byId('dennis.intrigue').cardlist()
+    expect(held.some(c => c.name === 'Depart for Arrakis')).toBe(true)
+    expect(game.players.byName('dennis').spice).toBe(1)
+    expect(game.players.byName('dennis').troopsInGarrison).toBe(0)
   })
 })

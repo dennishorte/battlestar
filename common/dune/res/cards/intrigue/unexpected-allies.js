@@ -39,4 +39,8 @@ module.exports = {
     }
   },
 
+  canPlayPlot(game, player) {
+    return player.water >= 2
+  },
+
 }

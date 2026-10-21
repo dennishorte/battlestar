@@ -19,6 +19,7 @@ module.exports = {
   combatEffect: null,
   endgameEffect: null,
   plotText: "The card you play this turn has the following icons: Green, Purple, Yellow",
+  plotTiming: 'before-agent',
 
   plotEffect(game) {
     if (game.state.turnTracking) {

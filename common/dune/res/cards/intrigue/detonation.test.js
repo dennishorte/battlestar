@@ -21,8 +21,8 @@ describe("detonation", () => {
     })
     game.run()
 
-    expect(t.currentChoices(game)).toContain('Detonation')
-    t.choose(game, 'Detonation')
+    expect(game.waiting.selectors[0].plotActions.map(p => p.title)).toContain('Detonation')
+    t.playPlot(game, 'Detonation')
 
     expect(t.currentChoices(game)).toContain('Blow the Shield Wall')
     t.choose(game, 'Blow the Shield Wall')
@@ -38,7 +38,7 @@ describe("detonation", () => {
     })
     game.run()
 
-    t.choose(game, 'Detonation')
+    t.playPlot(game, 'Detonation')
     expect(t.currentChoices(game)).toContain('Deploy up to 4 Troops to Conflict')
     t.choose(game, 'Deploy up to 4 Troops to Conflict')
     t.choose(game, 'Deploy 4')
@@ -56,7 +56,7 @@ describe("detonation", () => {
     })
     game.run()
 
-    t.choose(game, 'Detonation')
+    t.playPlot(game, 'Detonation')
     t.choose(game, 'Deploy up to 4 Troops to Conflict')
     const choices = t.currentChoices(game)
     expect(choices).toEqual(expect.arrayContaining(['Deploy 1', 'Deploy 2']))
@@ -77,7 +77,7 @@ describe("detonation", () => {
     })
     game.run()
 
-    t.choose(game, 'Detonation')
+    t.playPlot(game, 'Detonation')
     expect(t.currentChoices(game)).not.toContain('Blow the Shield Wall')
   })
 
@@ -89,23 +89,11 @@ describe("detonation", () => {
     })
     game.run()
 
-    // Decline the start-of-turn Plot Intrigue offer so Detonation is
-    // instead played after the Reveal Turn's strength has already been set.
-    t.choose(game, 'Pass')
-    // With an empty hand, Reveal Turn is the only option and auto-resolves.
-    // Keep passing on acquire prompts until the end-of-turn Plot Intrigue offer
-    while (game.waiting) {
-      const title = game.waiting.selectors[0]?.title || ''
-      if (title.includes('Acquire')) {
-        t.choose(game, 'Pass')
-      }
-      else {
-        break
-      }
-    }
+    // Reveal first so strength is already set, then play from that decision.
+    t.choose(game, 'Reveal Turn')
 
-    expect(t.currentChoices(game)).toContain('Detonation')
-    t.choose(game, 'Detonation')
+    expect(game.waiting.selectors[0].plotActions.map(p => p.title)).toContain('Detonation')
+    t.playPlot(game, 'Detonation')
     t.choose(game, 'Deploy up to 4 Troops to Conflict')
     t.choose(game, 'Deploy 2')
 
@@ -122,7 +110,7 @@ describe("detonation", () => {
     })
     game.run()
 
-    t.choose(game, 'Detonation')
+    t.playPlot(game, 'Detonation')
     t.choose(game, 'Pass')
 
     expect(game.state.shieldWall).toBe(true)

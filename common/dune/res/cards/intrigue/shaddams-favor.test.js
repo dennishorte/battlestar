@@ -24,8 +24,8 @@ describe("shaddams-favor", () => {
     })
     game.run()
 
-    expect(t.currentChoices(game)).toContain("Shaddam's Favor")
-    t.choose(game, "Shaddam's Favor")
+    expect(game.waiting.selectors[0].plotActions.map(p => p.title)).toContain("Shaddam's Favor")
+    t.playPlot(game, "Shaddam's Favor")
 
     const dennis = game.players.byName('dennis')
     expect(dennis.troopsInGarrison).toBe(1)
@@ -45,7 +45,7 @@ describe("shaddams-favor", () => {
     })
     game.run()
 
-    t.choose(game, "Shaddam's Favor")
+    t.playPlot(game, "Shaddam's Favor")
 
     const dennis = game.players.byName('dennis')
     expect(dennis.troopsInGarrison).toBe(1)
@@ -65,7 +65,7 @@ describe("shaddams-favor", () => {
     })
     game.run()
 
-    t.choose(game, "Shaddam's Favor")
+    t.playPlot(game, "Shaddam's Favor")
 
     const dennis = game.players.byName('dennis')
     expect(dennis.troopsInGarrison).toBe(0)

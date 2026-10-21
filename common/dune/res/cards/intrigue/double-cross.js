@@ -45,4 +45,13 @@ module.exports = {
     }
   },
 
+  canPlayPlot(game, player) {
+    if (player.solari < 1) {
+      return false
+    }
+    return game.players.all().some(p =>
+      p.name !== player.name && (game.state.conflict.deployedTroops[p.name] || 0) > 0
+    )
+  },
+
 }

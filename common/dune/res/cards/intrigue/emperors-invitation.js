@@ -19,6 +19,7 @@ module.exports = {
   combatEffect: null,
   endgameEffect: null,
   plotText: "Draw a card OR The card you play this turn has the Emperor icon",
+  plotTiming: 'before-agent',
 
   plotEffect(game) {
     if (game.state.turnTracking) {

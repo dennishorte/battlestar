@@ -18,8 +18,8 @@ describe("sietch-ritual", () => {
     })
     game.run()
 
-    expect(t.currentChoices(game)).toContain('Sietch Ritual')
-    t.choose(game, 'Sietch Ritual')
+    expect(game.waiting.selectors[0].plotActions.map(p => p.title)).toContain('Sietch Ritual')
+    t.playPlot(game, 'Sietch Ritual')
 
     const handBefore = game.zones.byId('dennis.hand').cardlist().map(c => c.name)
     const handSizeBefore = handBefore.length
@@ -42,7 +42,7 @@ describe("sietch-ritual", () => {
     })
     game.run()
 
-    t.choose(game, 'Sietch Ritual')
+    t.playPlot(game, 'Sietch Ritual')
     const handBefore = game.zones.byId('dennis.hand').cardlist().map(c => c.name)
     t.choose(game, handBefore[0])
     t.choose(game, 'Fremen')
