@@ -12,7 +12,7 @@ module.exports = {
     (game, player, { leader }) => {
       const choices = game
         .cards.tops(player)
-        .filter(card => card.checkHasBiscuit('i'))
+        .filter(card => card.color !== 'yellow' && card.checkHasBiscuit('i'))
       const cards = game.actions.chooseAndTransfer(player, choices, { toBoard: true, player: leader })
       if (cards && cards.length > 0) {
         const remaining = game.cards.byPlayer(player, cards[0].color)

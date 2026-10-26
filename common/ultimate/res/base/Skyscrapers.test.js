@@ -35,4 +35,25 @@ describe('Skyscrapers', () => {
       }
     })
   })
+
+  test('dogma: yellow cards with a lightbulb are not choices', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'usee'] })
+    t.setBoard(game, {
+      dennis: {
+        yellow: ['Skyscrapers'],
+      },
+      micah: {
+        blue: ['Computers'],
+        green: ['Databases'],
+        yellow: ['Subway'],
+        red: ['Gunpowder'],
+      }
+    })
+
+    let request
+    request = game.run()
+    request = t.choose(game, 'Dogma.Skyscrapers')
+
+    t.testChoices(request, ['Computers', 'Databases'])
+  })
 })
