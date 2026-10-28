@@ -115,6 +115,26 @@ describe('Staban Tuek', () => {
       return `Post ${postId} (${spaceNames.join(', ')})`
     }
 
+    test('does not offer posts occupied by another player', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        leaders: { dennis: leader },
+        dennis: { hand: ['Signet Ring'] },
+        // Micah occupies L; Dennis already occupies D.
+        spyPosts: { L: ['micah'], D: ['dennis'] },
+      })
+      game.run()
+
+      playSignet(game)
+
+      const postIds = t.currentChoices(game)
+        .filter(c => c.startsWith('Post '))
+        .map(c => c.match(/Post (\w+)/)[1])
+      expect(postIds).not.toContain('L')
+      expect(postIds).not.toContain('D')
+      expect(postIds).toContain('H')
+    })
+
     test('places a spy on chosen post and decrements supply', () => {
       const game = t.fixture()
       t.setBoard(game, {

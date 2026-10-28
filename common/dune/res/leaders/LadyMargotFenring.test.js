@@ -85,6 +85,27 @@ describe('Lady Margot Fenring', () => {
   })
 
   describe('Arrakis Informant', () => {
+    test('does not offer purple posts occupied by another player', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        leaders: { dennis: leader },
+        dennis: { hand: ['Signet Ring'] },
+        // Post A is purple-adjacent (Arrakeen, Spice Refinery).
+        spyPosts: { A: ['micah'] },
+      })
+      game.run()
+
+      t.choose(game, 'Agent Turn.Signet Ring')
+      t.choose(game, 'Arrakeen')
+      t.choose(game, 'Signet Ring')
+
+      const postIds = t.currentChoices(game)
+        .filter(c => c.startsWith('Post '))
+        .map(c => c.match(/Post (\w+)/)[1])
+      expect(postIds).not.toContain('A')
+      expect(postIds.length).toBeGreaterThan(0)
+    })
+
     test('places spy on a purple-adjacent post and decrements supply', () => {
       const game = t.fixture()
       t.setBoard(game, {

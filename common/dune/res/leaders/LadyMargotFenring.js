@@ -29,40 +29,6 @@ module.exports = {
 
   resolveSignetRing(game, player, _resolveEffectFn) {
     const spies = require('../../systems/spies.js')
-    const observationPosts = require('../observationPosts.js')
-    const boardSpaces = require('../boardSpaces.js')
-
-    const purpleSpaceIds = new Set(
-      boardSpaces.filter(s => s.icon === 'purple').map(s => s.id)
-    )
-    const purplePosts = observationPosts.filter(post =>
-      post.spaces.some(id => purpleSpaceIds.has(id))
-      && !(game.state.spyPosts[post.id] || []).includes(player.name)
-    )
-
-    if (purplePosts.length === 0 || player.spiesInSupply <= 0) {
-      return
-    }
-
-    const labels = purplePosts.map(post => {
-      const spaceNames = post.spaces.map(id => {
-        const space = boardSpaces.find(s => s.id === id)
-        return space ? space.name : id
-      })
-      return game.actions.option({
-        id: `post-${post.id}`,
-        title: `Post ${post.id} (${spaceNames.join(', ')})`,
-        kind: 'observation-post',
-      })
-    })
-    const [pick] = game.actions.choose(player, labels, {
-      title: 'Arrakis Informant: Place Spy on which purple post?',
-    })
-    const pickId = typeof pick === 'object' ? pick.id : null
-    const pickTitle = typeof pick === 'object' ? pick.title : pick
-    const post = pickId
-      ? purplePosts.find(p => `post-${p.id}` === pickId)
-      : purplePosts[labels.findIndex(l => l.title === pickTitle)]
-    spies.placeSpyAt(game, player, post.id)
+    spies.placeSpy(game, player, { icons: ['purple'] })
   },
 }

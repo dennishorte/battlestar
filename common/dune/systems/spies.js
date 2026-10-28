@@ -30,8 +30,12 @@ function postIcons(post) {
  *     (used by abilities like Double Agent that explicitly grant this).
  *   - factions: array of faction ids; restrict to posts connected to a space
  *     of one of those factions (e.g. Reliable Informant: emperor/BG/fremen).
+ *   - icons: array of agent icons; restrict to posts connected to a space
+ *     with one of those icons (e.g. Lady Margot Fenring: purple).
  *   - spaceId: board space id; restrict to posts connected to that space
  *     (e.g. Double Agent: the space the agent was sent to this turn).
+ * Returns the observation post the spy was placed on, or false if none
+ * was placed.
  */
 function placeSpy(game, player, options = {}) {
   if (player.spiesInSupply <= 0) {
@@ -120,7 +124,7 @@ function placeSpy(game, player, options = {}) {
     args: { player, postId: post.id },
   })
 
-  return true
+  return post
 }
 
 /**
@@ -235,8 +239,7 @@ function recallSpyAt(game, player, spaceId) {
 
 /**
  * Place a spy on a specific observation post, bypassing the interactive
- * chooser. Used by abilities that dictate the post (e.g. Lady Margot Fenring,
- * Staban Tuek).
+ * chooser. Returns true when the spy is placed.
  */
 function placeSpyAt(game, player, postId, options = {}) {
   if (player.spiesInSupply <= 0) {

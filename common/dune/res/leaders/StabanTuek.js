@@ -41,41 +41,13 @@ module.exports = {
 
   resolveSignetRing(game, player, _resolveEffectFn) {
     const spies = require('../../systems/spies.js')
-    const observationPosts = require('../observationPosts.js')
     const boardSpaces = require('../boardSpaces.js')
     const constants = require('../constants.js')
 
-    if (player.spiesInSupply <= 0) {
+    const post = spies.placeSpy(game, player)
+    if (!post) {
       return
     }
-
-    const availablePosts = observationPosts.filter(post =>
-      !(game.state.spyPosts[post.id] || []).includes(player.name)
-    )
-    if (availablePosts.length === 0) {
-      return
-    }
-
-    const labels = availablePosts.map(post => {
-      const spaceNames = post.spaces.map(id => {
-        const space = boardSpaces.find(s => s.id === id)
-        return space ? space.name : id
-      })
-      return game.actions.option({
-        id: `post-${post.id}`,
-        title: `Post ${post.id} (${spaceNames.join(', ')})`,
-        kind: 'observation-post',
-      })
-    })
-    const [pick] = game.actions.choose(player, labels, {
-      title: 'Unseen Network: Place Spy on which post?',
-    })
-    const pickId = typeof pick === 'object' ? pick.id : null
-    const pickTitle = typeof pick === 'object' ? pick.title : pick
-    const post = pickId
-      ? availablePosts.find(p => `post-${p.id}` === pickId)
-      : availablePosts[labels.findIndex(l => l.title === pickTitle)]
-    spies.placeSpyAt(game, player, post.id)
 
     // The post's connected spaces determine bonus eligibility.
     const connectedSpaces = post.spaces
