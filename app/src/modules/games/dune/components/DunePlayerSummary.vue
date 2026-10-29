@@ -119,11 +119,11 @@
       <div v-for="entry in entries"
            :key="`con-${entry.name}`"
            class="stat-cell"
-           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.contractsCount, clickable: true }"
+           :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.contractsUnfinished, clickable: true }"
            :style="{ '--viewer-tint': viewerTint(entry.color) }"
-           title="View contracts"
+           :title="`${entry.contractsUnfinished} unfinished of ${entry.contractsTotal} contracts`"
            @click="openContracts(entry.player)">
-        {{ entry.contractsCount }}
+        {{ entry.contractsUnfinished }}/{{ entry.contractsTotal }}
       </div>
 
       <div class="stat-label">HC</div>
@@ -237,7 +237,8 @@ export default {
           agentsTotal: player.getCounter('agents') + player.getCounter('hasSwordmaster'),
           spiesInSupply: player.spiesInSupply,
           intrigueCount: this.zoneCount(player.name, 'intrigue'),
-          contractsCount: this.zoneCount(player.name, 'contracts'),
+          contractsUnfinished: this.zoneCount(player.name, 'contracts'),
+          contractsTotal: this.zoneCount(player.name, 'contracts') + this.zoneCount(player.name, 'contractsCompleted'),
           hasHighCouncil: !!player.hasHighCouncil,
           leader: this.game.state.leaders?.[player.name] || null,
           feydPosition: this.game.state.feydTrack?.[player.name] || null,
