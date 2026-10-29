@@ -90,7 +90,9 @@ module.exports = {
       args: { player, card, row, col, fenceCount: fences.length },
     })
 
+    // Fencing the space is also building those fence pieces.
     game.callPlayerCardHook(player, 'onBuildPasture', { spaces: [{ row, col }] })
+    game.callPlayerCardHook(player, 'onBuildFences', fences.length)
 
     return true
   },

@@ -34,6 +34,40 @@ describe('Mini Pasture', () => {
     expect(dennis.getFencesInSupply()).toBe(11)
   })
 
+  test('fencing the space counts as building those fences', () => {
+    const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationE', 'test'] })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        food: 2,
+        hand: ['mini-pasture-b002'],
+        occupations: ['blackberry-farmer-e108'],
+      },
+      actionSpaces: ['Major Improvement'],
+    })
+    game.run()
+
+    t.choose(game, 'Major Improvement')
+    t.choose(game, 'Minor Improvement.Mini Pasture')
+    t.choose(game, '2,0')
+
+    // One space takes 4 fences. Round 1 schedules food on rounds 2-5.
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['blackberry-farmer-e108'],
+        farmyard: {
+          pastures: [
+            { spaces: [{ row: 2, col: 0 }] },
+          ],
+          fences: 4,
+        },
+        scheduled: {
+          food: { 2: 1, 3: 1, 4: 1, 5: 1 },
+        },
+      },
+    })
+  })
+
   test('not offered when no space fits in remaining fence supply', () => {
     const game = t.fixture({ cardSets: ['minorImprovementB', 'occupationA', 'test'] })
 

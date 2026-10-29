@@ -41,7 +41,7 @@ module.exports = {
       player.payCost({ wood: 2 })
 
       // Build the pasture (bypass normal fence cost — already paid 2 wood)
-      player.buildPasture(selectedSpaces, { skipCost: true })
+      const built = player.buildPasture(selectedSpaces, { skipCost: true })
 
       // Remove 3 stables from supply
       player.removedStables = (player.removedStables || 0) + 3
@@ -50,6 +50,14 @@ module.exports = {
         template: '{player} builds a pasture via {card} and removes 3 stables from supply',
         args: { player , card: this},
       })
+
+      // Fencing the pasture is also building those fence pieces.
+      if (built.success) {
+        game.callPlayerCardHook(player, 'onBuildPasture', { spaces: selectedSpaces })
+        if (built.fencesBuilt > 0) {
+          game.callPlayerCardHook(player, 'onBuildFences', built.fencesBuilt)
+        }
+      }
     }
   },
 }

@@ -90,4 +90,42 @@ describe('Open Air Farmer', () => {
     expect(dennis.canBuildStable(2, 0)).toBe(true)
     // After building 1, should not be able to build another
   })
+
+  test('fencing the pasture counts as building those fences', () => {
+    const game = t.fixture({ cardSets: ['occupationB', 'occupationE', 'test'], numPlayers: 3 })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['open-air-farmer-b149'],
+        occupations: ['blackberry-farmer-e108'],
+        food: 1, // second occupation costs 1 food
+        wood: 5,
+        farmyard: {
+          stables: [{ row: 2, col: 0 }],
+        },
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Lessons A')
+    t.choose(game, 'Open Air Farmer')
+    t.action(game, 'build-pasture', { spaces: [{ row: 2, col: 3 }, { row: 2, col: 4 }] })
+
+    // Two spaces take 6 fences. Round 1 schedules food on rounds 2-7.
+    t.testBoard(game, {
+      dennis: {
+        occupations: ['open-air-farmer-b149', 'blackberry-farmer-e108'],
+        food: 0,
+        wood: 3,
+        farmyard: {
+          stables: [{ row: 2, col: 0 }],
+          pastures: [{ spaces: [{ row: 2, col: 3 }, { row: 2, col: 4 }] }],
+          fences: 6,
+        },
+        scheduled: {
+          food: { 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1 },
+        },
+      },
+    })
+  })
 })
