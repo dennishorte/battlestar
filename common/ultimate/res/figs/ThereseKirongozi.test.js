@@ -97,6 +97,7 @@ describe('Therese Kirongozi', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Archery')
+    request = t.choose(game, 'Metalworking')
     // Karma does NOT trigger (owner dogmas, not opponent)
     // Archery's dogma executes normally: "Draw a {1}"
     t.testBoard(game, {

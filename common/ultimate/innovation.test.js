@@ -721,6 +721,7 @@ describe('Innovation', () => {
         })
         game.run()
         t.choose(game, 'Dogma.Archery')
+        t.choose(game, 'Gunpowder')
 
         t.testIsSecondPlayer(game)
         t.testBoard(game, {

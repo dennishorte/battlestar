@@ -25,6 +25,7 @@ describe('Konstantin Novoselov', () => {
     request = game.run()
     // First action: Dogma Archery - karma should NOT trigger (actionNumber === 1)
     request = t.choose(game, 'Dogma.Archery')
+    request = t.choose(game, 'Gunpowder')
     request = t.choose(game, '**base-2*')
     // Archery's dogma executes normally: "I demand you draw a {1}, then transfer the highest card in your hand to my hand!"
     // dennis (owner) draws Tools, transfers highest (Tools) to himself (no change)

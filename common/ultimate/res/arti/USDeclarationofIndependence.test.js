@@ -22,6 +22,8 @@ describe("U.S. Declaration of Independence", () => {
     let request
     request = game.run()
     request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Canning')
+    request = t.choose(game, 'Navigation')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

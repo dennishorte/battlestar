@@ -20,6 +20,8 @@ describe("Qianlong's Dragon Robe", () => {
     let request
     request = game.run()
     request = t.choose(game, 'dogma')
+    request = t.choose(game, 'Machinery')
+    request = t.choose(game, 'Monotheism')
 
     t.testIsFirstAction(request)
     t.testBoard(game, {

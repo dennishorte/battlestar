@@ -57,6 +57,7 @@ describe('Edward Jenner', () => {
     request = game.run()
     request = t.choose(game, 'Dogma.Archery')
     request = t.choose(game, 'Enterprise')
+    request = t.choose(game, 'Mathematics')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

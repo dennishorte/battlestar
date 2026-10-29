@@ -16,6 +16,7 @@ module.exports = {
         title: 'Choose a standard achievement to transfer',
         hidden: true,
         filter: card => card.checkIsStandardAchievement(),
+        forTransfer: true,
       })[0]
 
       if (card) {

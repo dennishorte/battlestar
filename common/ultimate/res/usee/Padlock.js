@@ -20,7 +20,7 @@ module.exports = {
         return
       }
 
-      const secret = game.actions.chooseCards(player, secrets, { hidden: true })[0]
+      const secret = game.actions.chooseCards(player, secrets, { hidden: true, forTransfer: true })[0]
       const transferred = game.actions.transfer(player, secret, game.zones.byId('achievements'))
       if (transferred) {
         game.state.dogmaInfo.padlockCardTransferred = true

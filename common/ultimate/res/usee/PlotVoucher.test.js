@@ -29,6 +29,7 @@ describe('Plot Voucher', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Plot Voucher')
+    request = t.choose(game, 'Navigation')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

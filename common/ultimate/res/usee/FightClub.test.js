@@ -17,6 +17,7 @@ describe('Fight Club', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Fight Club')
+    request = t.choose(game, '**base-1* (micah)')
     request = t.choose(game, 'yellow')
 
     t.testIsSecondPlayer(game)

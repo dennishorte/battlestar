@@ -59,7 +59,7 @@ function InnovationFactory(settings, viewerName) {
 function factoryFromLobby(lobby) {
   return GameFactory({
     game: 'Innovation: Ultimate',
-    version: 5,
+    version: 6,
     name: lobby.name,
     expansions: lobby.options.expansions,
     randomizeExpansions: lobby.options.randomizeExpansions,

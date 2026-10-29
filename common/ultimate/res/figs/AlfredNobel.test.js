@@ -30,9 +30,9 @@ describe('Alfred Nobel', () => {
       let request
       request = game.run()
       request = t.choose(game, 'Dogma.Construction')
-      // Construction demands: transfer two cards from micah's hand
-      // System auto-selects both cards (exactly 2 cards, need to select 2)
-      // Then asks for order - use 'auto' since order doesn't matter
+      // Exactly two cards, and both must be transferred. Micah still picks them
+      // so the demand does not reveal that the hand had no other choice.
+      request = t.choose(game, 'Gunpowder', 'Currency')
       request = t.choose(game, 'auto') // Auto-order the transfer
       // Construction's second effect draws a {2}
       // Karma triggers: junk all cards in age 7 deck first

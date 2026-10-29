@@ -25,6 +25,7 @@ describe('Oars', () => {
     request = t.choose(game, 'Dogma.Oars')
     request = t.choose(game, 'Sailing')
     request = t.choose(game, 'Writing')
+    request = t.choose(game, 'Clothing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

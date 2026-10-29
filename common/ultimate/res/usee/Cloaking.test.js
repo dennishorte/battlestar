@@ -16,6 +16,7 @@ describe('Cloaking', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Cloaking')
+    request = t.choose(game, '**base-1* (micah)')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

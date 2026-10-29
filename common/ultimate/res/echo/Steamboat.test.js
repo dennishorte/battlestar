@@ -57,6 +57,7 @@ describe("Steamboat", () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Steamboat')
+    request = t.choose(game, 'Sailing')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

@@ -12,11 +12,13 @@ module.exports = {
     (game, player, { leader }) => {
       const secrets = game.actions.chooseHighest(player, game.cards.byPlayer(player, 'safe'), 2, {
         title: 'Choose secrets to transfer',
+        forTransfer: true,
       })
       game.actions.transferMany(player, secrets, game.zones.byPlayer(leader, 'safe'))
 
       const score = game.actions.chooseHighest(player, game.cards.byPlayer(player, 'score'), 2, {
         title: 'Choose score to transfer',
+        forTransfer: true,
       })
       game.actions.transferMany(player, score, game.zones.byPlayer(leader, 'score'))
 

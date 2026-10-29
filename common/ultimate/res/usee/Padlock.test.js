@@ -18,6 +18,7 @@ describe('Padlock', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Padlock')
+    request = t.choose(game, '**base-1* (micah)')
 
     t.testIsSecondPlayer(game)
     t.testBoard(game, {

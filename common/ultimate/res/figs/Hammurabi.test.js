@@ -26,6 +26,7 @@ describe('Hammurabi', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Archery')
+    request = t.choose(game, 'Calendar')
 
     t.testBoard(game, {
       dennis: {

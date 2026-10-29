@@ -50,6 +50,7 @@ describe('Robert E. Lee', () => {
       let request
       request = game.run()
       request = t.choose(game, 'Dogma.Archery')
+      request = t.choose(game, 'Sailing')
       // Karma triggers: transfer a top card with {l} of another color
 
       t.testIsSecondPlayer(game)
@@ -88,6 +89,7 @@ describe('Robert E. Lee', () => {
       let request
       request = game.run()
       request = t.choose(game, 'Dogma.Archery')
+      request = t.choose(game, 'Sailing')
       // Karma triggers: transfer a top card with {l} of another color
 
       t.testIsSecondPlayer(game)
@@ -158,6 +160,7 @@ describe('Robert E. Lee', () => {
       // Karma triggers: transfer a top card with {l} of another color
       // Available: Agriculture (yellow), Pottery (blue)
       request = t.choose(game, 'Pottery') // Choose Pottery (blue, has {l})
+      request = t.choose(game, 'Sailing')
 
       t.testIsSecondPlayer(game)
       t.testBoard(game, {

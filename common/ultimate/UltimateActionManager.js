@@ -322,7 +322,13 @@ class UltimateActionManager extends BaseActionManager {
       const choices = pred(cardsRemaining)
       cardsRemaining = cardsRemaining.filter(card => !choices.includes(card))
 
-      if (choices.length <= numRemaining) {
+      // A single highest/lowest card would otherwise be taken with no prompt.
+      // During a demand transfer from a face-down zone, that skip tells everyone
+      // the card was the only match. Ask even when the set is fully determined.
+      const mustPrompt = opts.forTransfer
+        && choices.length > 0
+        && this._shouldPromptHiddenDemandChoice(choices, opts)
+      if (choices.length <= numRemaining && !mustPrompt) {
         selected = selected.concat(choices)
         numRemaining -= choices.length
       }
@@ -371,6 +377,16 @@ class UltimateActionManager extends BaseActionManager {
       }
       opts = { ...opts }
       delete opts.filter
+    }
+
+    // `forTransfer` is an internal flag, not a selector field.
+    if (opts.forTransfer) {
+      const prompt = this._shouldPromptHiddenDemandChoice(cards, opts)
+      opts = { ...opts }
+      delete opts.forTransfer
+      if (prompt) {
+        opts.noAutoRespond = true
+      }
     }
 
     const choiceMap = cards.map(card => {
@@ -481,6 +497,48 @@ class UltimateActionManager extends BaseActionManager {
     // choose() applies mayIsMust by forcing min >= 1; do the same here.
     const min = this.state.dogmaInfo.mayIsMust ? Math.max(1, opts.min || 1) : opts.min
     return selector.minMax({ ...opts, min, choices: new Array(numChoices) }).min > 0
+  }
+
+  // A demand that transfers from a face-down zone (hand, score, forecast,
+  // safe, achievements) must not auto-pick when only one card qualifies.
+  // Auto-picking tells every other player the valid set had that exact size.
+  // Zero valid cards still reveal and continue, via _proveNoValidCards.
+  // Filters marked filterIsPublic only use the printed age and expansion,
+  // which are already visible, so auto-picking those does not leak.
+  // Games saved before version 6 keep the old auto-pick.
+  _shouldPromptHiddenDemandChoice(cards, opts={}) {
+    if (opts.filterIsPublic) {
+      return false
+    }
+    const version = this.game.settings.version
+    if (version != null && version < 6) {
+      return false
+    }
+    if (!this.state.dogmaInfo?.isDemandEffect) {
+      return false
+    }
+    return cards.some(card => {
+      const resolved = this._resolveChoiceCard(card)
+      if (!resolved?.zone?.kind) {
+        return false
+      }
+      const kind = resolved.zone.kind()
+      return kind === 'private' || kind === 'hidden'
+    })
+  }
+
+  _resolveChoiceCard(card) {
+    if (!card || card === 'auto') {
+      return null
+    }
+    if (card.zone) {
+      return card
+    }
+    const id = typeof card === 'string' ? card : card.id
+    if (!id || !this.cards.hasId(id)) {
+      return null
+    }
+    return this.cards.byId(id)
   }
 
   // When a player is required to select cards but none of the options are
@@ -1514,7 +1572,10 @@ class UltimateActionManager extends BaseActionManager {
       const titleVerb = manyFuncName.slice(0, -4).toLowerCase()
       opts.title = opts.title || `Choose card(s) to ${titleVerb}`
 
-      const cards = this.chooseCards(player, choices, opts)
+      const chooseOpts = manyFuncName === 'transferMany'
+        ? { ...opts, forTransfer: true }
+        : opts
+      const cards = this.chooseCards(player, choices, chooseOpts)
       if (cards) {
         if (opts.reveal) {
           this.revealMany(player, cards)

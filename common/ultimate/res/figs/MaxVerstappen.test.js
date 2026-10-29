@@ -202,6 +202,7 @@ describe('Max Verstappen', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Archery')
+    request = t.choose(game, 'Coal')
     // No karma prompt for micah. The demand just resolves:
     // micah draws a {1} (Sailing), then transfers the highest card in hand
     // (Coal) to dennis's hand. Archery's second effect has no targets.

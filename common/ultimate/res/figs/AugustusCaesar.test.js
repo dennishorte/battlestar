@@ -98,6 +98,7 @@ describe('Augustus Caesar', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Archery')
+    request = t.choose(game, 'Gunpowder')
     request = t.choose(game, '**base-1*') // Choose achievement to junk
 
     t.testBoard(game, {
@@ -203,6 +204,7 @@ describe('Augustus Caesar', () => {
     let request
     request = game.run()
     request = t.choose(game, 'Dogma.Archery')
+    request = t.choose(game, 'Gunpowder')
     request = t.choose(game, '**base-1*') // Choose achievement to junk
 
     t.testBoard(game, {
