@@ -201,19 +201,33 @@ class AgricolaActionManager extends BaseActionManager {
         const count = actionState.accumulated
         const allAccommodated = player.canAccommodateAnimals(resource, count)
 
+        // Cards such as Animal Dealer may buy an extra animal before these are
+        // placed, so food from cooking the market animals cannot pay for it.
+        // The extra animal is placed in the same batch.
+        let extra = 0
+        const bonusResults = this.game.callPlayerCardHook(
+          player, 'onBeforePlaceAccumulatedAnimals', actionId, resource, count,
+        )
+        for (const { result } of bonusResults) {
+          if (typeof result === 'number' && result > 0) {
+            extra += result
+          }
+        }
+        const placeCount = count + extra
+
         // PetGrower (and similar cards) require manual placement so the player
         // can choose to leave the house pet slot empty for their bonus
         const forceModal = this.game.getPlayerActiveCards(player)
           .some(c => c.definition.forceManualAnimalPlacement)
 
         if (forceModal) {
-          this.handleAnimalPlacement(player, { [resource]: count }, { forceModal: true })
+          this.handleAnimalPlacement(player, { [resource]: placeCount }, { forceModal: true })
         }
-        else if (player.canPlaceAnimals(resource, count)) {
-          player.placeAnimals(resource, count)
+        else if (player.canPlaceAnimals(resource, placeCount)) {
+          player.placeAnimals(resource, placeCount)
         }
         else {
-          this.handleAnimalOverflow(player, resource, count)
+          this.handleAnimalOverflow(player, resource, placeCount)
         }
 
         this.game.callPlayerCardHook(player, 'onTakeAnimals', resource, count, allAccommodated)

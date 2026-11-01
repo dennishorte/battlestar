@@ -122,14 +122,17 @@ AgricolaActionManager.prototype.offerBuyBonusPoint = function(player, card, food
 }
 
 /**
- * Offer to buy additional animal (Animal Dealer)
+ * Offer to buy 1 additional animal for 1 food (Animal Dealer, Cattle Feeder).
+ * A free stall is not required. The player may buy an animal they will cook,
+ * rearrange into an existing spot, or release.
+ * Pass { deferPlacement: true } to pay now and let the caller place the animal
+ * with a later batch (Animal Dealer folds it into the market animals).
+ * Returns true when the player buys.
  */
-AgricolaActionManager.prototype.offerBuyAnimal = function(player, card, animalType) {
+AgricolaActionManager.prototype.offerBuyAnimal = function(player, card, animalType, options = {}) {
+  const deferPlacement = options && typeof options === 'object' && options.deferPlacement
   if (player.food < 1 && this.game.getAnytimeFoodConversionOptions(player).length === 0) {
-    return
-  }
-  if (!player.canPlaceAnimals(animalType, 1)) {
-    return
+    return false
   }
 
   const choices = [
@@ -142,14 +145,19 @@ AgricolaActionManager.prototype.offerBuyAnimal = function(player, card, animalTy
     max: 1,
   })
 
-  if (selection[0].id !== 'skip') {
-    player.payCost({ food: 1 })
-    this.handleAnimalPlacement(player, { [animalType]: 1 })
-    this.log.add({
-      template: '{player} buys 1 {animal} for 1 food using {card}',
-      args: { player, animal: animalType, card: card },
-    })
+  if (selection[0].id === 'skip') {
+    return false
   }
+
+  player.payCost({ food: 1 })
+  if (!deferPlacement) {
+    this.handleAnimalPlacement(player, { [animalType]: 1 })
+  }
+  this.log.add({
+    template: '{player} buys 1 {animal} for 1 food using {card}',
+    args: { player, animal: animalType, card: card },
+  })
+  return true
 }
 
 /**
