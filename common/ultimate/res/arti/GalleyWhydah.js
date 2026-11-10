@@ -19,7 +19,7 @@ module.exports = {
           return yours > mine
         })
         .map(c => game.actions.option({ id: c, title: c, kind: 'color' }))
-      const colors = game.actions.choose(player, choices, { title: 'Choose a Color' })
+      const colors = game.actions.choose(player, choices, { title: 'Choose a color to transfer' })
       if (colors && colors.length > 0) {
         const pick = colors[0]
         const color = (pick && typeof pick === 'object') ? pick.id : pick

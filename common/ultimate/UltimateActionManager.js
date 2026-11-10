@@ -294,7 +294,7 @@ class UltimateActionManager extends BaseActionManager {
       this.actions.option({ id: color, title: color, kind: 'color' })
     )
     const selections = this.choose(player, colorOptions, {
-      title: 'Choose a color',
+      title: 'Choose a color to unsplay',
       ...opts
     })
     for (const sel of selections) {
@@ -584,14 +584,17 @@ class UltimateActionManager extends BaseActionManager {
     this.log.outdent()
   }
 
-  chooseColor(player, choices) {
+  chooseColor(player, choices, opts={}) {
     if (!choices) {
       choices = this.util.colors()
     }
     const options = choices.map(color =>
       this.actions.option({ id: color, title: color, kind: 'color' })
     )
-    const selection = this.choose(player, options, { title: 'Choose a color' })[0]
+    const selection = this.choose(player, options, {
+      title: 'Choose a color',
+      ...opts,
+    })[0]
     return (selection && typeof selection === 'object') ? selection.id : selection
   }
 

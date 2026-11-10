@@ -14,7 +14,9 @@ module.exports = {
       const colorOptions = game.util.colors().map(c =>
         game.actions.option({ id: c, title: c, kind: 'color' })
       )
-      const colorPick = game.actions.choose(player, colorOptions)[0]
+      const colorPick = game.actions.choose(player, colorOptions, {
+        title: 'Choose a color to tuck',
+      })[0]
       const color = (colorPick && typeof colorPick === 'object') ? colorPick.id : colorPick
       const tucked = game.actions.chooseAndTuck(player, game.cards.byPlayer(player, 'hand'), {
         min: 0,

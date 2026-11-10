@@ -16,7 +16,7 @@ module.exports = {
         .highestCards(game.cards.tops(player))
         .map(card => card.color)
         .map(c => game.actions.option({ id: c, title: c, kind: 'color' }))
-      const colors = game.actions.choose(player, choices, { title: 'Choose a color' })
+      const colors = game.actions.choose(player, choices, { title: 'Choose a color to meld' })
       if (colors && colors.length > 0) {
         const pick = colors[0]
         const color = (pick && typeof pick === 'object') ? pick.id : pick

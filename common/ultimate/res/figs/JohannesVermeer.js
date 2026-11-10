@@ -28,7 +28,7 @@ module.exports = {
       matches: () => true,
       func: (game, player) => {
         const colors = game.cards.tops(player).map(card => card.color)
-        const color = game.actions.chooseColor(player, colors)
+        const color = game.actions.chooseColor(player, colors, { title: 'Choose a color to score' })
         if (color) {
           game.actions.scoreMany(player, game.cards.byPlayer(player, color))
         }

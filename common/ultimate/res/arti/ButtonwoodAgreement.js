@@ -13,7 +13,10 @@ module.exports = {
       const colorOptions = game.util.colors().map(c =>
         game.actions.option({ id: c, title: c, kind: 'color' })
       )
-      const selections = game.actions.choose(player, colorOptions, { count: 3 })
+      const selections = game.actions.choose(player, colorOptions, {
+        count: 3,
+        title: 'Choose three colors to match',
+      })
       const colors = selections.map(s => (s && typeof s === 'object') ? s.id : s)
       const card = game.actions.drawAndReveal(player, game.getEffectAge(self, 8))
 

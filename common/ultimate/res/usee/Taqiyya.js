@@ -11,7 +11,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const color = game.actions.chooseColor(player)
+      const color = game.actions.chooseColor(player, null, { title: 'Choose a color to take into your hand' })
       const toTransfer = game.cards.byPlayer(player, color)
 
       game.actions.transferMany(player, toTransfer, game.zones.byPlayer(player, 'hand'), { ordered: true })

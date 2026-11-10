@@ -10,7 +10,7 @@ module.exports = {
   ],
   dogmaImpl: [
     (game, player) => {
-      const color = game.actions.chooseColor(player)
+      const color = game.actions.chooseColor(player, null, { title: 'Choose a color to reveal' })
       const revealedBy = []
 
       for (const plyr of game.players.startingWith(player)) {

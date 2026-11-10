@@ -17,7 +17,7 @@ module.exports = {
         game.actions.option({ id: card.color, title: card.color, kind: 'color' })
       )
       const selection = game.actions.choose(player, choices, {
-        title: 'Choose a color',
+        title: 'Choose a color to junk',
       })
       const colorPick = selection[0]
       const color = (colorPick && typeof colorPick === 'object') ? colorPick.id : colorPick

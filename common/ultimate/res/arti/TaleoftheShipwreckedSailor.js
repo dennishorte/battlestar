@@ -13,7 +13,7 @@ module.exports = {
       const colorOptions = game.util.colors().map(c =>
         game.actions.option({ id: c, title: c, kind: 'color' })
       )
-      const colorPick = game.actions.choose(player, colorOptions, { title: 'Choose a Color ' })[0]
+      const colorPick = game.actions.choose(player, colorOptions, { title: 'Choose a color to meld' })[0]
       const color = (colorPick && typeof colorPick === 'object') ? colorPick.id : colorPick
       game.log.add({
         template: '{player} chooses {color}',

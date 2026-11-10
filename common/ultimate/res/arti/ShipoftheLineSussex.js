@@ -14,7 +14,7 @@ module.exports = {
         const colorChoices = game.util.colors().map(c =>
           game.actions.option({ id: c, title: c, kind: 'color' })
         )
-        const colors = game.actions.choose(player, colorChoices, { title: 'Choose a Color' })
+        const colors = game.actions.choose(player, colorChoices, { title: 'Choose a color to score' })
         const pick = colors[0]
         const color = (pick && typeof pick === 'object') ? pick.id : pick
         game.actions.scoreMany(player, game.cards.byPlayer(player, color))

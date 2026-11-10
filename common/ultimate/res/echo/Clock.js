@@ -20,7 +20,7 @@ module.exports = {
         })
       })
 
-      const selected = game.actions.choose(leader, choices, { title: 'Choose a color' })
+      const selected = game.actions.choose(leader, choices, { title: 'Choose a color to set the value' })
       const pick = selected[0]
       const color = (pick && typeof pick === 'object' && pick.id)
         ? pick.id

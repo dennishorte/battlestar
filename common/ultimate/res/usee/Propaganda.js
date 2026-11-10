@@ -15,7 +15,7 @@ module.exports = {
         game.actions.option({ id: c, title: c, kind: 'color' })
       )
       const colorPick = game.actions.choose(leader, colorChoices, {
-        title: 'Choose a color',
+        title: 'Choose a color to meld',
         count: 1,
       })[0]
       const chosenColor = (colorPick && typeof colorPick === 'object') ? colorPick.id : colorPick
