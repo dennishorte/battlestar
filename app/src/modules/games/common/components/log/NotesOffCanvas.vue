@@ -25,6 +25,7 @@
 
     <div
       class="toggle"
+      :class="{ 'has-notes': hasNotes }"
       data-bs-toggle="offcanvas"
       data-bs-target="#notes-off-canvas"
     >
@@ -56,6 +57,7 @@ export default {
       savedText: '',
       saveStatus: 'saved',
       hasLoaded: false,
+      isFetching: false,
       debounceTimer: null,
     }
   },
@@ -75,6 +77,10 @@ export default {
 
     hasUnsavedChanges() {
       return this.noteText !== this.savedText
+    },
+
+    hasNotes() {
+      return this.noteText.trim().length > 0
     },
 
     statusText() {
@@ -155,21 +161,29 @@ export default {
     },
 
     async fetchNotes() {
-      if (this.hasLoaded) {
+      if (this.hasLoaded || this.isFetching) {
         return
       }
+
+      this.isFetching = true
 
       try {
         const response = await axiosWrapper.post('/api/game/notes/fetch', {
           gameId: this.game._id,
         })
 
-        this.noteText = response.notes || ''
-        this.savedText = this.noteText
+        const notes = response.notes || ''
+        if (!this.hasUnsavedChanges) {
+          this.noteText = notes
+        }
+        this.savedText = notes
         this.hasLoaded = true
       }
       catch (err) {
         console.error('Error fetching notes:', err)
+      }
+      finally {
+        this.isFetching = false
       }
     },
 
@@ -179,6 +193,8 @@ export default {
   },
 
   mounted() {
+    this.fetchNotes()
+
     const offcanvasEl = this.$refs.offcanvas.$el
     offcanvasEl.addEventListener('show.bs.offcanvas', this.onOffcanvasShow)
   },
@@ -299,6 +315,15 @@ button:disabled {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.toggle.has-notes {
+  background-color: rgba(240, 173, 20, 0.95);
+}
+
+.toggle.has-notes .toggle-label {
+  color: #1a1a1a;
+  font-weight: 700;
 }
 
 .toggle-label {
