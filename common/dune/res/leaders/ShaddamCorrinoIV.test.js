@@ -44,10 +44,26 @@ describe('Shaddam Corrino IV', () => {
 
       const dennis = game.players.byName('dennis')
       expect(dennis.solari).toBe(6)
-      // +1 Troop from Emperor goes to garrison. Arrakeen's recruit also moves 1
-      // from supply to garrison.
-      expect(dennis.troopsInSupply).toBe(supplyBefore - 1)
+      // Emperor and Arrakeen each recruit 1 troop from supply into the garrison.
+      expect(dennis.troopsInSupply).toBe(supplyBefore - 2)
       expect(dennis.troopsInGarrison).toBe(garrisonBefore + 2)
+    })
+
+    test('+1 Troop does nothing when supply is empty', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        leaders: { dennis: leader },
+        dennis: { solari: 5, hand: ['Signet Ring'], troopsInSupply: 0, troopsInGarrison: 12 },
+      })
+      game.run()
+
+      playSignet(game)
+      t.choose(game, '+1 Solari and +1 Troop')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.solari).toBe(6)
+      expect(dennis.troopsInSupply).toBe(0)
+      expect(dennis.troopsInGarrison).toBe(12)
     })
 
     test('Emperor restriction blocks deployment from the Conflict space', () => {
@@ -64,8 +80,7 @@ describe('Shaddam Corrino IV', () => {
       playSignet(game)
       t.choose(game, '+1 Solari and +1 Troop')
 
-      // Dennis has 6 troops in garrison but the deploy step is skipped — no
-      // Deploy prompt is ever raised for dennis.
+      // The deploy step is skipped — no Deploy prompt is ever raised for dennis.
       expect(game.waiting?.selectors[0].title).not.toContain('Deploy')
       expect(game.waiting?.selectors[0].actor).not.toBe('dennis')
     })

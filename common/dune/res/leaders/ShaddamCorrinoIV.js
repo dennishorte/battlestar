@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../systems/deploy.js')
+
 module.exports = {
   name: 'Shaddam Corrino IV',
   source: 'Uprising',
@@ -55,9 +57,11 @@ module.exports = {
     const isGain = chId === 'gain' || (typeof choice === 'string' && choice.startsWith('+1 Solari'))
     if (isGain) {
       player.incrementCounter('solari', 1, { silent: true })
-      player.incrementCounter('troopsInGarrison', 1, { silent: true })
+      const recruited = deploy.recruitTroops(game, player, 1, { silent: true })
       game.log.add({
-        template: '{player}: Emperor — +{amount} {resource}, +1 Troop (units cannot deploy this turn)',
+        template: recruited > 0
+          ? '{player}: Emperor — +{amount} {resource}, +1 Troop (units cannot deploy this turn)'
+          : '{player}: Emperor — +{amount} {resource} (units cannot deploy this turn)',
         args: { player, amount: 1, resource: 'solari' },
       })
     }

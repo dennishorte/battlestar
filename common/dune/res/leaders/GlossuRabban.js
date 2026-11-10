@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../systems/deploy.js')
+
 module.exports = {
   name: 'Glossu “The Beast” Rabban',
   source: 'Base',
@@ -26,18 +28,22 @@ module.exports = {
   },
 
   resolveSignetRing(game, player, _resolveEffectFn) {
-    player.incrementCounter('troopsInSupply', 1, { silent: true })
-    game.log.add({
-      template: '{player}: Brutality — +1 Troop',
-      args: { player },
-    })
+    const recruited = deploy.recruitTroops(game, player, 1, { silent: true })
+    if (recruited > 0) {
+      game.log.add({
+        template: '{player}: Brutality — +{amount} Troop',
+        args: { player, amount: recruited },
+      })
+    }
     const hasAlliance = Object.values(game.state.alliances).includes(player.name)
     if (hasAlliance) {
-      player.incrementCounter('troopsInSupply', 2, { silent: true })
-      game.log.add({
-        template: '{player}: Brutality — +2 additional Troops (Faction Alliance)',
-        args: { player },
-      })
+      const extra = deploy.recruitTroops(game, player, 2, { silent: true })
+      if (extra > 0) {
+        game.log.add({
+          template: '{player}: Brutality — +{amount} additional Troops (Faction Alliance)',
+          args: { player, amount: extra },
+        })
+      }
     }
   },
 }

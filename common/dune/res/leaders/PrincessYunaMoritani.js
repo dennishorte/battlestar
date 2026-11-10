@@ -1,5 +1,7 @@
 'use strict'
 
+const deploy = require('../../systems/deploy.js')
+
 module.exports = {
   name: 'Princess Yuna Moritani',
   source: 'Rise of Ix',
@@ -51,10 +53,12 @@ module.exports = {
     })
     const faction = typeof factionChoice === 'object' ? factionChoice.id : factionChoice
     factions.gainInfluence(game, player, faction)
-    player.incrementCounter('troopsInSupply', 1, { silent: true })
+    const recruited = deploy.recruitTroops(game, player, 1, { silent: true })
     player.incrementCounter('spice', 1, { silent: true })
     game.log.add({
-      template: '{player}: Final Delivery — pays {amount} {resource}, +1 Influence ({faction}), +1 Troop, +{amount2} {resource2}',
+      template: recruited > 0
+        ? '{player}: Final Delivery — pays {amount} {resource}, +1 Influence ({faction}), +1 Troop, +{amount2} {resource2}'
+        : '{player}: Final Delivery — pays {amount} {resource}, +1 Influence ({faction}), +{amount2} {resource2}',
       args: {
         player,
         faction,

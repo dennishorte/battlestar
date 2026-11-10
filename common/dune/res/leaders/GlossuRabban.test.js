@@ -21,9 +21,12 @@ describe('Glossu "The Beast" Rabban', () => {
     t.setBoard(game, { leaders: { dennis: leader } })
     game.run()
     const dennis = game.players.byName('dennis')
-    const before = dennis.troopsInSupply
+    const supplyBefore = dennis.troopsInSupply
+    const garrisonBefore = dennis.troopsInGarrison
     leader.resolveSignetRing(game, dennis)
-    expect(game.players.byName('dennis').troopsInSupply).toBe(before + 1)
+    const after = game.players.byName('dennis')
+    expect(after.troopsInSupply).toBe(supplyBefore - 1)
+    expect(after.troopsInGarrison).toBe(garrisonBefore + 1)
   })
 
   test('Brutality: +3 Troops total with an alliance', () => {
@@ -34,8 +37,11 @@ describe('Glossu "The Beast" Rabban', () => {
     })
     game.run()
     const dennis = game.players.byName('dennis')
-    const before = dennis.troopsInSupply
+    const supplyBefore = dennis.troopsInSupply
+    const garrisonBefore = dennis.troopsInGarrison
     leader.resolveSignetRing(game, dennis)
-    expect(game.players.byName('dennis').troopsInSupply).toBe(before + 3)
+    const after = game.players.byName('dennis')
+    expect(after.troopsInSupply).toBe(supplyBefore - 3)
+    expect(after.troopsInGarrison).toBe(garrisonBefore + 3)
   })
 })
