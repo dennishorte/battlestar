@@ -22,6 +22,7 @@
     "test:coverage": "jest --coverage",
     "lint": "npx eslint --max-warnings=0 .",
     "lint:fix": "npx eslint --fix --max-warnings=0 .",
-    "regen-card-indexes": "node scripts/regen-card-indexes.js"
+    "regen-card-indexes": "node scripts/regen-card-indexes.js",
+    "list-card-fields": "node scripts/list-agricola-card-fields.js"
   }
 }

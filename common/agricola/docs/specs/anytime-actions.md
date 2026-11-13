@@ -111,7 +111,7 @@ conversion of a building resource to food. These are added in
 
 Type: `craft`
 
-If the card turns a building resource (wood, clay, reed, or stone) into food, also set `buildingResourceToFood` to that resource, or to a list when the player can convert more than one kind. Wares Salesman reads this field when the improvement is built and does not infer it from `harvestConversion` or from the card text. Grain, vegetables, and animals do not count. See `docs/games/agricola.md`.
+If the card turns a building resource (wood, clay, reed, or stone) into food, also set `buildingResourceToFood` to that resource, or to a list when the player can convert more than one kind. Wares Salesman reads this field when the improvement is built and does not infer it from `harvestConversion` or from the card text. Grain, vegetables, and animals do not count. The full card format is in `card-format.md`.
 
 ## Turn-Time Flow
 

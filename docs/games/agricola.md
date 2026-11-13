@@ -101,6 +101,10 @@ Handles card play, resource collection, and animal placement:
 
 24 components for board layout, actions, farmyard, animals, cards, and scoring. Key components include action space modals, animal placement UI, card viewers, and score breakdown.
 
+## Card format
+
+A card is one object exported from `common/agricola/res/cards/`. The fields on that object, including rare optional ones such as `buildingResourceToFood`, are specified in `common/agricola/docs/specs/card-format.md`. `npm run list-card-fields -w common` lists every field on every card, and `--check` fails if the format doc does not name one of them.
+
 ## Cards that turn building resources into food
 
 Wares Salesman pays its owner when any player plays or builds an improvement that turns a building resource into food. It does not read card text or conversion hooks. It reads `buildingResourceToFood` on the improvement that was just built.
