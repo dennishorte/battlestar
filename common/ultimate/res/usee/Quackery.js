@@ -23,6 +23,7 @@ module.exports = {
           id: 'score',
           choices: handCards.map(c => game.actions.cardOption(c)),
           min: 0,
+          max: 1,
         })
       }
 
