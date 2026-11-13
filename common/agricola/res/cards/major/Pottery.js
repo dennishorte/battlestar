@@ -9,6 +9,7 @@ module.exports = {
     'Harvest: At most 1 time Clay \u2192 2 Food',
     'Scoring: 3/5/7 Clay \u2192 1/2/3 bonus points',
   ],
+  buildingResourceToFood: 'clay',
   harvestConversion: {
     resource: 'clay',
     food: 2,

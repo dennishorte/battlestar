@@ -43,6 +43,10 @@ class AgricolaCard extends BaseCard {
     return this.definition.harvestConversion
   }
 
+  get buildingResourceToFood() {
+    return this.definition.buildingResourceToFood
+  }
+
   get vps() {
     return this.definition.vps
   }

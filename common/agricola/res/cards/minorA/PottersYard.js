@@ -8,6 +8,7 @@ module.exports = {
   prereqs: { unusedFarmyardAtMost: 7 },
   category: "Building Resource Provider",
   text: "Immediately place 1 clay on each unused space in your farmyard. Each time you turn a space into a used space, you get the clay and you can immediately exchange it for 2 food.",
+  buildingResourceToFood: "clay",
   onPlay(game, player) {
     const unused = player.getUnusedSpaceCount()
     if (unused > 0) {

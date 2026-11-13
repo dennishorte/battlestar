@@ -9,6 +9,7 @@ module.exports = {
   prereqs: { maxRound: 6 },
   category: "Actions Booster",
   text: "This is an action space for all. A player who uses it can exchange 5/7/9 wood for 8 wood and 2/4/7 food. When another player uses it, they must first pay you 1 food.",
+  buildingResourceToFood: "wood",
   providesActionSpace: true,
   actionSpaceId: "forest-inn",
   onActionSpaceUsed(game, actingPlayer, cardOwner) {

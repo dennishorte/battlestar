@@ -8,6 +8,7 @@ module.exports = {
   vps: 1,
   category: "Food Provider",
   text: "In the feeding phase of each harvest, you can use this card to turn exactly 1 wood/clay/stone into 2/2/3 food.",
+  buildingResourceToFood: ["wood", "clay", "stone"],
   matches_onFeedingPhase(_game, player) {
     return player.wood >= 1 || player.clay >= 1 || player.stone >= 1
   },

@@ -7,6 +7,7 @@ module.exports = {
   cost: { wood: 1 },
   prereqs: { boar: 1 },
   text: "Each harvest, you can exchange exactly 1 clay for your choice of 2 food or 1 bonus point.",
+  buildingResourceToFood: "clay",
   matches_onHarvest(_game, player) {
     return player.clay >= 1
   },

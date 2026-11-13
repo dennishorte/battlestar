@@ -11,6 +11,7 @@ module.exports = {
   },
   category: "Food Provider",
   text: "At any time, you can use the Large Pottery to convert 1 Clay to 2 Food. At the end of the game, you may spend 3/5/6/7 Clay from your supply to earn 1/2/3/4 bonus points.",
+  buildingResourceToFood: "clay",
   anytimeConversions: [
     { from: "clay", to: "food", rate: 2 },
   ],

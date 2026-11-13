@@ -7,6 +7,7 @@ module.exports = {
   cost: { wood: 1 },
   category: "Food Provider",
   text: "Each time after you obtain at least 1 wood, if you then have 5 or more wood in your supply, you can exchange 1 wood for 3 food. With 7 or more wood, you must do so.",
+  buildingResourceToFood: "wood",
   matches_onGainWood(_game, player) {
     return player.wood >= 5
   },

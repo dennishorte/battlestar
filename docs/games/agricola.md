@@ -101,6 +101,22 @@ Handles card play, resource collection, and animal placement:
 
 24 components for board layout, actions, farmyard, animals, cards, and scoring. Key components include action space modals, animal placement UI, card viewers, and score breakdown.
 
+## Cards that turn building resources into food
+
+Wares Salesman pays its owner when any player plays or builds an improvement that turns a building resource into food. It does not read card text or conversion hooks. It reads `buildingResourceToFood` on the improvement that was just built.
+
+Set that field on every minor or major improvement whose effect lets a player turn wood, clay, reed, or stone into food:
+
+```js
+buildingResourceToFood: 'wood'
+// more than one kind; the Wares Salesman player picks exactly one
+buildingResourceToFood: ['wood', 'stone']
+```
+
+The owner also receives 1 reed. Grain, vegetables, and animals are not building resources, so a card that only converts those does not get this field.
+
+Playing an occupation does not read this field. An occupation that turns a building resource into food needs its own play hook before Wares Salesman can see it.
+
 ## Testing
 
 ```bash

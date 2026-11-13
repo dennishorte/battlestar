@@ -6,6 +6,7 @@ module.exports = {
   type: "minor",
   cost: { food: 1 },
   text: "Each time you play or build an improvement after this, you can pay 1 additional building resource of a type in the printed cost to get 3 food.",
+  buildingResourceToFood: ["wood", "clay", "reed", "stone"],
   matches_onBuildImprovement(_game, _player, _cost, card) {
     return card.id !== this.id && card.cost
   },
