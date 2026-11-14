@@ -17,7 +17,7 @@ import { defaultMatchers } from '@/modules/games/common/composables/useLogTokeni
 import { useSummaryLog } from '@/modules/games/common/composables/useSummaryLog'
 import modalUtil from '@/util/modal.js'
 import { dune } from 'battlestar-common'
-import { cardType } from '../cardUtil.js'
+import { cardType, intrigueKinds } from '../cardUtil.js'
 import DuneLogChip from './DuneLogChip.vue'
 import DuneFactionIcon from './DuneFactionIcon.vue'
 import DuneResourceIcon from './DuneResourceIcon.vue'
@@ -78,7 +78,16 @@ function cardClasses(card, name) {
     return []
   }
   const type = cardType(def)
-  return type ? [`card-type-${type}`] : []
+  if (!type) {
+    return []
+  }
+  const classes = [`card-type-${type}`]
+  if (type === 'intrigue') {
+    for (const kind of intrigueKinds(def)) {
+      classes.push(`card-type-intrigue-${kind}`)
+    }
+  }
+  return classes
 }
 
 function convertArg(arg, value) {
@@ -319,6 +328,48 @@ useGameLogProvider({
   border-color: #8b6914;
   background-color: #fdf8ee;
   color: #6a5010;
+}
+
+#gamelog :deep(.card-name.card-type-intrigue-combat:not(.card-type-intrigue-plot):not(.card-type-intrigue-endgame)) {
+  border-color: #9a3b30;
+  background-color: #f6d4c8;
+  color: #6b2a1e;
+}
+
+#gamelog :deep(.card-name.card-type-intrigue-endgame:not(.card-type-intrigue-plot):not(.card-type-intrigue-combat)) {
+  border-color: #2c5a86;
+  background-color: #dce7f4;
+  color: #1a3d5e;
+}
+
+#gamelog :deep(.card-name.card-type-intrigue-plot.card-type-intrigue-combat) {
+  border-color: transparent;
+  color: #2c2416;
+  background-image:
+    linear-gradient(90deg, #fdf8ee 50%, #f6d4c8 50%),
+    linear-gradient(90deg, #8b6914 50%, #9a3b30 50%);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+}
+
+#gamelog :deep(.card-name.card-type-intrigue-plot.card-type-intrigue-endgame) {
+  border-color: transparent;
+  color: #2c2416;
+  background-image:
+    linear-gradient(90deg, #fdf8ee 50%, #dce7f4 50%),
+    linear-gradient(90deg, #8b6914 50%, #2c5a86 50%);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+}
+
+#gamelog :deep(.card-name.card-type-intrigue-combat.card-type-intrigue-endgame) {
+  border-color: transparent;
+  color: #2c2416;
+  background-image:
+    linear-gradient(90deg, #f6d4c8 50%, #dce7f4 50%),
+    linear-gradient(90deg, #9a3b30 50%, #2c5a86 50%);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
 }
 
 #gamelog :deep(.card-name.card-type-contract) {

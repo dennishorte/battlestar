@@ -1,29 +1,31 @@
 <template>
-  <div class="dune-card" :class="`card-${type}`">
-    <div class="card-header-row">
-      <span class="card-icons" v-if="allIcons.length">
-        <template v-for="(icon, i) in allIcons" :key="i">
-          <DuneFactionIcon v-if="icon.faction"
-                           :faction="icon.type"
-                           size=".95em" />
-          <DuneAgentIcon v-else :type="icon.type" />
-        </template>
-      </span>
-      <span class="card-name">{{ def.name }}</span>
-      <span class="card-cost" v-if="costLabel">{{ costLabel }}</span>
-    </div>
-    <div class="card-affiliation"
-         v-for="aff in affiliations"
-         :key="aff.id"
-         :class="`affiliation-${aff.id}`">
-      <DuneFactionIcon :faction="aff.id" size=".9em" />
-      {{ aff.label }}
+  <div class="dune-card" :class="cardClasses">
+    <div class="card-body">
+      <div class="card-header-row">
+        <span class="card-icons" v-if="allIcons.length">
+          <template v-for="(icon, i) in allIcons" :key="i">
+            <DuneFactionIcon v-if="icon.faction"
+                             :faction="icon.type"
+                             size=".95em" />
+            <DuneAgentIcon v-else :type="icon.type" />
+          </template>
+        </span>
+        <span class="card-name">{{ def.name }}</span>
+        <span class="card-cost" v-if="costLabel">{{ costLabel }}</span>
+      </div>
+      <div class="card-affiliation"
+           v-for="aff in affiliations"
+           :key="aff.id"
+           :class="`affiliation-${aff.id}`">
+        <DuneFactionIcon :faction="aff.id" size=".9em" />
+        {{ aff.label }}
+      </div>
     </div>
     <div class="card-effects" v-if="sections.length">
       <div v-for="(section, i) in sections"
            :key="i"
            class="effect"
-           :class="{ 'effect-highlight': section.highlight }">
+           :class="sectionClass(section)">
         <span class="effect-label">{{ section.label }}:</span>
         <div v-for="(line, li) in section.lines"
              :key="li"
@@ -70,6 +72,23 @@ export default {
       return cardType(this.def)
     },
 
+    cardClasses() {
+      const classes = []
+      if (this.type) {
+        classes.push(`card-${this.type}`)
+      }
+      if (this.type === 'intrigue') {
+        const kinds = this.sections.map(section => section.kind).filter(Boolean)
+        for (const kind of kinds) {
+          classes.push(`intrigue-${kind}`)
+        }
+        if (kinds.length > 1) {
+          classes.push('intrigue-mixed')
+        }
+      }
+      return classes
+    },
+
     allIcons() {
       const icons = []
       for (const icon of this.def.agentIcons || []) {
@@ -113,6 +132,17 @@ export default {
       }))
     },
   },
+
+  methods: {
+    sectionClass(section) {
+      return {
+        'effect-highlight': section.highlight,
+        'effect-plot': section.kind === 'plot',
+        'effect-combat': section.kind === 'combat',
+        'effect-endgame': section.kind === 'endgame',
+      }
+    },
+  },
 }
 </script>
 
@@ -127,6 +157,7 @@ export default {
   border: 1px solid #d4c8a8;
   font-size: .85em;
   margin: 1px;
+  overflow: hidden;
 }
 
 .card-header-row {
@@ -225,6 +256,63 @@ export default {
 }
 .card-intrigue .card-name { color: #6a5010; }
 .card-intrigue .effect-label { color: #8b7a40; }
+
+/* Combat intrigue: clay red, warmer than the rose used for conflict cards. */
+.card-intrigue.intrigue-combat:not(.intrigue-mixed) {
+  background-color: #f6d4c8;
+  border-color: #c25648;
+}
+.card-intrigue.intrigue-combat:not(.intrigue-mixed) .card-name { color: #6b2a1e; }
+.card-intrigue.intrigue-combat:not(.intrigue-mixed) .effect-label { color: #8d4336; }
+.card-intrigue.intrigue-combat:not(.intrigue-mixed) .card-effects { border-top-color: #e4c2b6; }
+
+/* Endgame intrigue: sky blue, kept apart from the teal tech cards. */
+.card-intrigue.intrigue-endgame:not(.intrigue-mixed) {
+  background-color: #dce7f4;
+  border-color: #5d86b4;
+}
+.card-intrigue.intrigue-endgame:not(.intrigue-mixed) .card-name { color: #1a3d5e; }
+.card-intrigue.intrigue-endgame:not(.intrigue-mixed) .effect-label { color: #3a6286; }
+.card-intrigue.intrigue-endgame:not(.intrigue-mixed) .card-effects { border-top-color: #c5d6ea; }
+
+/* Two timings share one card. The title keeps the earlier timing; each option is its own color. */
+.card-intrigue.intrigue-mixed {
+  padding: 0;
+}
+.card-intrigue.intrigue-mixed.intrigue-combat:not(.intrigue-plot) {
+  background-color: #f6d4c8;
+  border-color: #c25648;
+}
+.card-intrigue.intrigue-mixed.intrigue-combat:not(.intrigue-plot) .card-name { color: #6b2a1e; }
+.card-intrigue.intrigue-mixed .card-body {
+  padding: .25em .5em .15em;
+  border-bottom: 1px solid #e8e0d0;
+}
+.card-intrigue.intrigue-mixed.intrigue-combat:not(.intrigue-plot) .card-body {
+  border-bottom-color: #e4c2b6;
+}
+.card-intrigue.intrigue-mixed .card-effects {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  border-top: none;
+}
+.card-intrigue.intrigue-mixed .effect {
+  padding: .28em .5em .32em;
+}
+.card-intrigue.intrigue-mixed .effect-plot {
+  background-color: #fdf8ee;
+}
+.card-intrigue.intrigue-mixed .effect-plot .effect-label { color: #8b7a40; }
+.card-intrigue.intrigue-mixed .effect-combat {
+  background-color: #f6d4c8;
+}
+.card-intrigue.intrigue-mixed .effect-combat .effect-label { color: #8d4336; }
+.card-intrigue.intrigue-mixed .effect-endgame {
+  background-color: #dce7f4;
+}
+.card-intrigue.intrigue-mixed .effect-endgame .effect-label { color: #3a6286; }
 
 .card-tech {
   background-color: #eef7f7;

@@ -12,6 +12,25 @@ function intrigueText(text, effect) {
   return null
 }
 
+const intrigueModes = [
+  { kind: 'plot', label: 'Plot', textKey: 'plotText', effectKey: 'plotEffect' },
+  { kind: 'combat', label: 'Combat', textKey: 'combatText', effectKey: 'combatEffect' },
+  { kind: 'endgame', label: 'Endgame', textKey: 'endgameText', effectKey: 'endgameEffect' },
+]
+
+/**
+ * Play timings printed on an intrigue card, in plot → combat → endgame order.
+ * A card can have more than one.
+ */
+export function intrigueKinds(card) {
+  if (!card) {
+    return []
+  }
+  return intrigueModes
+    .filter(mode => intrigueText(card[mode.textKey], card[mode.effectKey]))
+    .map(mode => mode.kind)
+}
+
 /**
  * Split multiline ability text into formatted lines.
  */
@@ -106,17 +125,11 @@ export function cardSections(card) {
     }
   }
   else if (type === 'intrigue') {
-    const plot = intrigueText(card.plotText, card.plotEffect)
-    if (plot) {
-      sections.push({ label: 'Plot', text: plot })
-    }
-    const combat = intrigueText(card.combatText, card.combatEffect)
-    if (combat) {
-      sections.push({ label: 'Combat', text: combat })
-    }
-    const endgame = intrigueText(card.endgameText, card.endgameEffect)
-    if (endgame) {
-      sections.push({ label: 'Endgame', text: endgame })
+    for (const mode of intrigueModes) {
+      const text = intrigueText(card[mode.textKey], card[mode.effectKey])
+      if (text) {
+        sections.push({ label: mode.label, text, kind: mode.kind })
+      }
     }
   }
   else if (type === 'contract') {
@@ -148,16 +161,8 @@ export function cardDetail(card) {
     return `Tier ${card.tier}`
   }
   if (type === 'intrigue') {
-    if (intrigueText(card.plotText, card.plotEffect)) {
-      return 'Plot'
-    }
-    if (intrigueText(card.combatText, card.combatEffect)) {
-      return 'Combat'
-    }
-    if (intrigueText(card.endgameText, card.endgameEffect)) {
-      return 'Endgame'
-    }
-    return ''
+    const labels = { plot: 'Plot', combat: 'Combat', endgame: 'Endgame' }
+    return intrigueKinds(card).map(kind => labels[kind]).join(' · ')
   }
   if (type === 'contract') {
     return 'Contract'
@@ -183,7 +188,11 @@ export function cardChipClass(card) {
     return 'chip-conflict'
   }
   if (type === 'intrigue') {
-    return 'chip-intrigue'
+    const kinds = intrigueKinds(card)
+    if (kinds.length === 0) {
+      return 'chip-intrigue'
+    }
+    return ['chip-intrigue', ...kinds.map(kind => `chip-intrigue-${kind}`)].join(' ')
   }
   if (type === 'contract') {
     return 'chip-contract'

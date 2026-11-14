@@ -37,7 +37,6 @@ export default {
 
 <style scoped>
 .modal-card {
-  border: 1px solid #d4c8a8;
   font-size: .9em;
   padding: .4em .6em;
   margin-bottom: .35em;

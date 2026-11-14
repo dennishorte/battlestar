@@ -391,6 +391,59 @@ export default {
 .chip-conflict:hover { background-color: #ecdce0; }
 .chip-intrigue { border-color: #8b6914; background-color: #fdf8ee; }
 .chip-intrigue:hover { background-color: #f5ecd8; }
+.chip-intrigue-combat:not(.chip-intrigue-plot):not(.chip-intrigue-endgame) {
+  border-color: #9a3b30;
+  background-color: #f6d4c8;
+}
+.chip-intrigue-combat:not(.chip-intrigue-plot):not(.chip-intrigue-endgame):hover {
+  background-color: #efc4b6;
+}
+.chip-intrigue-endgame:not(.chip-intrigue-plot):not(.chip-intrigue-combat) {
+  border-color: #2c5a86;
+  background-color: #dce7f4;
+}
+.chip-intrigue-endgame:not(.chip-intrigue-plot):not(.chip-intrigue-combat):hover {
+  background-color: #c9daf0;
+}
+.chip-intrigue-plot.chip-intrigue-combat {
+  border-color: transparent;
+  background-image:
+    linear-gradient(90deg, #fdf8ee 50%, #f6d4c8 50%),
+    linear-gradient(90deg, #8b6914 50%, #9a3b30 50%);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+}
+.chip-intrigue-plot.chip-intrigue-combat:hover {
+  background-image:
+    linear-gradient(90deg, #f5ecd8 50%, #efc4b6 50%),
+    linear-gradient(90deg, #8b6914 50%, #9a3b30 50%);
+}
+.chip-intrigue-plot.chip-intrigue-endgame {
+  border-color: transparent;
+  background-image:
+    linear-gradient(90deg, #fdf8ee 50%, #dce7f4 50%),
+    linear-gradient(90deg, #8b6914 50%, #2c5a86 50%);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+}
+.chip-intrigue-plot.chip-intrigue-endgame:hover {
+  background-image:
+    linear-gradient(90deg, #f5ecd8 50%, #c9daf0 50%),
+    linear-gradient(90deg, #8b6914 50%, #2c5a86 50%);
+}
+.chip-intrigue-combat.chip-intrigue-endgame {
+  border-color: transparent;
+  background-image:
+    linear-gradient(90deg, #f6d4c8 50%, #dce7f4 50%),
+    linear-gradient(90deg, #9a3b30 50%, #2c5a86 50%);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+}
+.chip-intrigue-combat.chip-intrigue-endgame:hover {
+  background-image:
+    linear-gradient(90deg, #efc4b6 50%, #c9daf0 50%),
+    linear-gradient(90deg, #9a3b30 50%, #2c5a86 50%);
+}
 .chip-contract { border-color: #c07020; background-color: #fef5ee; }
 .chip-contract:hover { background-color: #f8e8d4; }
 .chip-tech { border-color: #3a7d7d; background-color: #eef7f7; }
