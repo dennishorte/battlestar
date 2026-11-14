@@ -63,7 +63,10 @@
         <template v-else-if="card.text">
           <p class="text-line">{{ card.text }}</p>
         </template>
-        <p v-if="card.passLeft" class="text-line pass-left">(Pass this card to the player on your left after you play it.)</p>
+        <p v-if="card.passLeft" class="text-line pass-left">
+          <i class="bi bi-arrow-counterclockwise pass-left-icon" aria-hidden="true"/>
+          Pass this card to the player on your left after you play it.
+        </p>
       </div>
 
       <!-- Card Runtime State -->
@@ -752,6 +755,12 @@ export default {
 .card-text .pass-left {
   font-style: italic;
   color: #666;
+}
+
+.card-text .pass-left-icon {
+  margin-right: .35em;
+  color: #1565c0;
+  font-style: normal;
 }
 
 .card-alternate-cost {

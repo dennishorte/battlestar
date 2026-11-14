@@ -11,6 +11,13 @@
 
       <span class="card-cost" v-if="costText" :title="costTitle">{{ costText }}</span>
       <span
+        v-if="passesLeft"
+        class="pass-left"
+        role="img"
+        :aria-label="passLeftLabel"
+        :title="passLeftLabel"
+      ><i class="bi bi-arrow-counterclockwise" aria-hidden="true"/></span>
+      <span
         v-if="occupationPrereqText"
         class="occupation-prereq"
         :title="occupationPrereqTitle"
@@ -134,6 +141,7 @@ export default {
   data() {
     return {
       localExpanded: this.initialExpanded,
+      passLeftLabel: 'Pass this card to the player on your left after you play it.',
       RESOURCE_ICONS: {
         food: '🍞',
         wood: '🪵',
@@ -249,6 +257,10 @@ export default {
 
     costTitle() {
       return formatCardCost(this.card, { style: 'verbose' })
+    },
+
+    passesLeft() {
+      return this.card?.passLeft === true
     },
 
     // Get card instance from game (has runtime state)
@@ -504,6 +516,20 @@ export default {
   font-size: .8em;
   color: #555;
   margin-left: auto;
+}
+
+.pass-left {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: auto;
+  color: #1565c0;
+  font-size: .95em;
+  line-height: 1;
+}
+
+.card-cost + .pass-left {
+  margin-left: 0;
 }
 
 .occupation-prereq {
