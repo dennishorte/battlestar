@@ -104,18 +104,28 @@ module.exports = {
     }
     else {
       if (player.spice >= 1) {
-        player.decrementCounter('spice', 1, { silent: true })
-        player.incrementCounter('water', 1, { silent: true })
-        game.log.add({
-          template: '{player}: Water of Life — pays {amount} {resource}, gains {amount2} {resource2}',
-          args: {
-            player,
-            amount: 1,
-            resource: 'spice',
-            amount2: 1,
-            resource2: 'water',
-          },
+        const choices = [
+          game.actions.option({ id: 'pass', title: 'Pass' }),
+          game.actions.option({ id: 'water', title: 'Water of Life (1 Spice → 1 Water)' }),
+        ]
+        const [choice] = game.actions.choose(player, choices, {
+          title: 'Reverend Mother: Activate Water of Life?',
         })
+        const chId = typeof choice === 'object' ? choice.id : choice
+        if (chId !== 'pass' && choice !== 'Pass') {
+          player.decrementCounter('spice', 1, { silent: true })
+          player.incrementCounter('water', 1, { silent: true })
+          game.log.add({
+            template: '{player}: Water of Life — pays {amount} {resource}, gains {amount2} {resource2}',
+            args: {
+              player,
+              amount: 1,
+              resource: 'spice',
+              amount2: 1,
+              resource2: 'water',
+            },
+          })
+        }
       }
     }
   },

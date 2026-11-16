@@ -156,13 +156,31 @@ describe('Lady Jessica', () => {
       game.run()
 
       playSignet(game)
+      t.choose(game, 'Water of Life (1 Spice → 1 Water)')
 
       const dennis = game.players.byName('dennis')
       expect(dennis.spice).toBe(1)
       expect(dennis.water).toBe(1)
     })
 
-    test('no-op when flipped with 0 spice', () => {
+    test('Pass leaves resources unchanged', () => {
+      const game = t.fixture()
+      t.setBoard(game, {
+        leaders: { dennis: leader },
+        dennis: { spice: 2, water: 0, hand: ['Signet Ring'] },
+        jessicaFlipped: { dennis: true },
+      })
+      game.run()
+
+      playSignet(game)
+      t.choose(game, 'Pass')
+
+      const dennis = game.players.byName('dennis')
+      expect(dennis.spice).toBe(2)
+      expect(dennis.water).toBe(0)
+    })
+
+    test('no Water of Life prompt without spice', () => {
       const game = t.fixture()
       t.setBoard(game, {
         leaders: { dennis: leader },
@@ -172,6 +190,7 @@ describe('Lady Jessica', () => {
       game.run()
 
       playSignet(game)
+      expect(game.waiting?.selectors[0].title).not.toContain('Water of Life')
       expect(game.players.byName('dennis').water).toBe(0)
     })
   })
