@@ -26,6 +26,7 @@ describe('Potato Planter', () => {
         occupations: ['potato-planter-d142'],
       },
     })
+    expect(triggerLogs(game)).toHaveLength(1)
   })
 
   test('gives 1 vegetable when occupying Reed Bank while Clay Pit is free', () => {
@@ -51,6 +52,7 @@ describe('Potato Planter', () => {
         occupations: ['potato-planter-d142'],
       },
     })
+    expect(triggerLogs(game)).toHaveLength(1)
   })
 
   test('does not give vegetable when both Clay Pit and Reed Bank are occupied', () => {
@@ -76,5 +78,35 @@ describe('Potato Planter', () => {
         occupations: ['potato-planter-d142'],
       },
     })
+    expect(triggerLogs(game)).toHaveLength(0)
+  })
+
+  test('does not trigger when neither Clay Pit nor Reed Bank is occupied', () => {
+    const game = t.fixture({ cardSets: ['occupationD'] })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        occupations: ['potato-planter-d142'],
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Forest')          // dennis
+    t.choose(game, 'Day Laborer')     // micah
+    t.choose(game, 'Grain Seeds')     // dennis
+    t.choose(game, 'Fishing')         // micah
+
+    t.testBoard(game, {
+      dennis: {
+        wood: 3,
+        grain: 1,
+        occupations: ['potato-planter-d142'],
+      },
+    })
+    expect(triggerLogs(game)).toHaveLength(0)
   })
 })
+
+function triggerLogs(game) {
+  return game.log.getLog().filter(e => e.template === '{card} triggers for {player}')
+}
