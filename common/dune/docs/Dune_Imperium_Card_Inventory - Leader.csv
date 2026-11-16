@@ -8,11 +8,10 @@ Lady Jessica,Uprising,All,Atreides,,"Other Memories: When you send an Agent to a
 Shaddam Corrino IV,Uprising,Uprising,Corrino,,Sardaukar Commander: Set aside both Sardaukar contracts. Only you can acquire them during the game.,Emperor of the Known Universe: Units can't be deployed to the Conflict this turn. +1 Solari and +1 Troop OR trade 3 Solari for +1 Influence,2
 Princess Irulan,Uprising,All,Corrino,,Imperial Birthright: When you reach 2 Influence with the Emperor: +1 Intrigue,Chronicler's Insight: You may choose: Acquire a card that costs 1 Persuasion OR trash a card from your hand. If it has a cost of 1+ Persuasion: +2 Spice,2
 "Archduke Armand Ecaz
-",Rise of Ix,All,Ecaz,,"Coordination: At reveal turn:
-You may trash one of your cards In Play.","Conscript: You may acquire a card
+",Rise of Ix,All,Ecaz,,"Coordination: Reveal turn: If you have at least two Agents on green, purple, or yellow board spaces, you may trash one of your cards in play.","Conscript: You may acquire a card
 that costs 3 Persuation or les.",2
 "Ilesa Ecaz
-",Rise of Ix,All,Ecaz,,One Step Ahead: Round start: Set aside a card. If you use it to send an Agent: Gain Spice or Solari.,Guild Contacts: Pay 1 Solari: Gain 1 Foldspace card.,3
+",Rise of Ix,All,Ecaz,,"One Step Ahead: Round start: Set aside a card from your hand. At the start of your second turn, reveal it and return it to your hand. If you use it to send an Agent: 1 spice if it has exactly one Agent icon, otherwise 1 Solari.",Guild Contacts: Pay 1 Solari: Gain 1 Foldspace card.,3
 Lady Margot Fenring,Uprising,Uprising,Fenring,,"Loyalty: When you reach 2 Influence with the the Bene Gesserit, +2 Spice.",Arrakis Informant: +1 Spy on any purple space.,1
 "Baron Vladimir Harkonnen
 ",Base,All,Harkonnen,,"Masterstroke: Once per game:
@@ -26,7 +25,7 @@ Lady Amber Metulli,Uprising,All,Metulli,,Desert Scouts: Reveal Turn: You may ret
 ",Rise of Ix,All,Moritani,,"Smuggling Operation: At game start: no Water. When you gain Solari on your turn, gain +1 Solari.","Final Delivery: Pay 7 Solari:
 Gain +1 Influence, +1 Troop, +1 Spice",2
 "Viscount Hundro Moritani
-",Rise of Ix,Rise of Ix,Moritani,,"Intelligence: At game start: Look at the top 2 cards of the Intrigue deck. Keep 1, put the other back on top.",Couriers: Pay 1 Spice: +1 Dreadnought,1
+",Rise of Ix,Rise of Ix,Moritani,,"Intelligence: At game start: Look at the top 2 cards of the Intrigue deck. Keep 1, put the other back on top.",Couriers: Pay 1 Spice: Move your Freighter once,1
 Helena Richese,Base,All,Richese,,Eyes Everywhere: Enemy Agents don't block your Agents at Green or Blue board spaces.,Manipulate: Remove a card in the Imperium Row. You may acquire this  card for 1 Persuation less.,2
 "Count Ilban Richese
 ",Base,All,Richese,,Ruthless Negotiator: When you pay Solari for the cost of a board Space: Draw 1 card.,Manufacturing: +1 Solari,1
@@ -36,7 +35,7 @@ gain 1 less spice and draw 1 card.",Hidden Reservoir: +1 Water,3
 "Earl Memnon Thorvald
 ",Base,All,Thorvald,,Connections: When you take a High Counsil seat: Gain +1 Influence.,Spice Hoard: +1 Spice.,1
 "Tessia Vernius
-",Rise of Ix,All,Vernius,,Careful Observation: Use Snooper tokens on the Influence track to gain rewards.,Duplicity: Lose 1 Influence: Gain 1 Influence with a Faction where you have a Snooper token.,4
+",Rise of Ix,All,Vernius,,"Careful Observation: Rewards are taken from top to bottom, one at a time, and are not tied to an influence number. Whenever you reach 2 Influence on a faction track, take the next reward: discard a card for 1 spice; the track bonus; 1 Influence on that track; the track bonus and 1 Influence.",Duplicity: Lose 1 Influence: Gain 1 Influence with a Faction where you have a Snooper token.,4
 "Prince Rhombur Vernius
 ",Rise of Ix,Rise of Ix,Vernius,,Heavy Lasgun Cannons: Your dreadnoughts have 4 Swords (instead of 3).,Ixian Technology: Acquire Tech or Tech Negotiation.,1
 Staban Tuek,Uprising,Uprising,,Limited Allies: You start the game without Diplomacy in your deck.,Smuggle Spice: Whenever another player sends an Agent to a Maker board space you are spying on: +1 Spice.,"Unseen Network: +1 Spy. If placed on green, you may trade 1 Spice for 3 Solari. If placed on a Faction space, you may trade 2 Solari for 1 Intrigue card.",3

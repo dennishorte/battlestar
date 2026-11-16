@@ -23,3 +23,7 @@ Espionage,bene gesserit,-,-,FALSE,L,-,1 spice,,Draw a card. Place a spy.
 Secrets,bene gesserit,-,-,FALSE,L,-,-,,Draw 1 intrigue card. Steal a random intrigue card from each other player with 4 or more intrigue cards.
 Desert Tactics,fremen,-,-,TRUE,M,-,1 water,,Gain 1 troop. Trash a card.
 Fremkit,fremen,-,-,TRUE,M,-,-,,Draw a card.
+Dreadnought,green,-,-,FALSE,-,-,3 solari,,Commission a dreadnought and/or Acquire Tech.
+Tech Negotiation,green,-,-,FALSE,-,-,-,,"Choose one: Acquire Tech at a 1 spice discount, or send a Negotiator to Ix. Reveal turn: +1 Persuasion if you have an Agent here."
+Smuggling,yellow,-,-,FALSE,-,-,-,,Gain 1 Solari and move your Freighter once.
+Interstellar Shipping,yellow,-,-,FALSE,-,2 Spacing Guild,-,,Move your Freighter twice.

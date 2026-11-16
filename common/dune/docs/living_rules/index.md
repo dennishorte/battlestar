@@ -17,6 +17,7 @@
 | Objectives | [19_objectives.md](19_objectives.md) |
 | Recall and Endgame | [17_recall_and_endgame.md](17_recall_and_endgame.md) |
 | Reveal Turns | [10_reveal_turns.md](10_reveal_turns.md) |
+| Rise of Ix | [20_rise_of_ix.md](20_rise_of_ix.md) |
 | Round Start | [08_round_start.md](08_round_start.md) |
 | Setup | [01_setup.md](01_setup.md) |
 | Spies | [14_spies.md](14_spies.md) |

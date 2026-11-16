@@ -8,7 +8,7 @@ module.exports = {
   compatibility: 'All',
   house: 'Ecaz',
   startingEffect: null,
-  leaderAbility: 'Coordination\nReveal Turn:\n· You may trash one of your cards In Play',
+  leaderAbility: 'Coordination\nReveal Turn:\n· If you have at least two Agents on green, purple, or yellow board spaces, you may trash one of your cards in play',
   signetRingAbility: 'Conscript\n· Acquire a card that costs 3 Persuasion or less',
   complexity: 2,
 
