@@ -1,8 +1,14 @@
 'use strict'
 
 const factions = require('../../../systems/factions.js')
-const constants = require('../../constants.js')
 const deploy = require('../../../systems/deploy.js')
+const boardSpaces = require('../../boardSpaces.js')
+
+function visitedFaction(game) {
+  const spaceId = game.state.turnTracking?.agentSpaceId
+  const space = boardSpaces.getBoardSpaces(game.settings).find(candidate => candidate.id === spaceId)
+  return space?.faction || null
+}
 
 module.exports = {
   id: "strongarm",
@@ -24,14 +30,17 @@ module.exports = {
   endgameEffect: null,
   plotText: "Lose a Troop → Gain one Influence with a Faction whose board space you sent an Agent to this turn",
 
+  canPlayPlot(game, player) {
+    return visitedFaction(game) != null && player.troopsInGarrison > 0
+  },
+
   plotEffect(game, player) {
-    if (player.troopsInGarrison > 0) {
-      deploy.loseTroops(game, player, 1, { from: 'garrison' })
-      const fc = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
-      const [fChoice] = game.actions.choose(player, fc, { title: '+1 Influence' })
-      const faction = typeof fChoice === 'object' ? fChoice.id : fChoice
-      factions.gainInfluence(game, player, faction)
+    const faction = visitedFaction(game)
+    if (!faction || player.troopsInGarrison <= 0) {
+      return
     }
+    deploy.loseTroops(game, player, 1, { from: 'garrison' })
+    factions.gainInfluence(game, player, faction)
   },
 
 }

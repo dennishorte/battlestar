@@ -84,4 +84,52 @@ describe('Rise of Ix contracts', () => {
     expect(game.zones.byId('dennis.contractsCompleted').cardlist().map(card => card.definition.defId)).toEqual(['dreadnought'])
     expect(waitingTitle(game)).toBe('Choose a Contract to take')
   })
+
+  test('Tech Negotiation pays a contract when an agent visits Tech Negotiation', () => {
+    const game = t.fixture({ useRiseOfIx: true })
+    giveIxContract(game, 'tech-negotiation')
+    t.setBoard(game, { dennis: { handExact: ['Dagger'] } })
+    game.run()
+
+    t.choose(game, 'Agent Turn.Dagger')
+    t.choose(game, 'Place a Negotiator')
+
+    expect(dennis(game).negotiators).toBe(1)
+    expect(game.zones.byId('dennis.contractsCompleted').cardlist().map(card => card.definition.defId)).toEqual(['tech-negotiation'])
+    expect(waitingTitle(game)).toBe('Choose a Contract to take')
+  })
+
+  test('Interstellar Shipping pays Solari and a contract', () => {
+    const game = t.fixture({ useRiseOfIx: true })
+    giveIxContract(game, 'interstellar-shipping')
+    t.setBoard(game, {
+      dennis: { handExact: ['Dune, The Desert Planet'], influence: { guild: 2 } },
+    })
+    game.run()
+
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
+    t.choose(game, 'Interstellar Shipping')
+    t.choose(game, 'Advance')
+    t.choose(game, 'Advance')
+
+    expect(dennis(game).freighterPosition).toBe(2)
+    expect(dennis(game).solari).toBe(2)
+    expect(game.zones.byId('dennis.contractsCompleted').cardlist().map(card => card.definition.defId)).toEqual(['interstellar-shipping'])
+    expect(waitingTitle(game)).toBe('Choose a Contract to take')
+  })
+
+  test('the High Council contract pays Solari and a contract', () => {
+    const game = t.fixture({ useRiseOfIx: true })
+    giveIxContract(game, 'high-council-2')
+    t.setBoard(game, { dennis: { handExact: ['Dagger'], solari: 5 } })
+    game.run()
+
+    t.choose(game, 'Agent Turn.Dagger')
+    t.choose(game, 'High Council')
+
+    expect(dennis(game).hasHighCouncil).toBe(true)
+    expect(dennis(game).solari).toBe(2)
+    expect(game.zones.byId('dennis.contractsCompleted').cardlist().map(card => card.definition.defId)).toEqual(['high-council-2'])
+    expect(waitingTitle(game)).toBe('Choose a Contract to take')
+  })
 })

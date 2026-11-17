@@ -33,9 +33,14 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
 
-  agentEffect(game) {
-    // You may take another turn immediately after this one
-    if (game.state.turnTracking) {
+  agentEffect(game, player) {
+    const choices = [
+      game.actions.option({ id: 'pass', title: 'Pass' }),
+      game.actions.option({ id: 'extra', title: 'Take another turn' }),
+    ]
+    const [choice] = game.actions.choose(player, choices, { title: 'Weirding Way' })
+    const choiceId = typeof choice === 'object' ? choice.id : choice
+    if (choiceId === 'extra' && game.state.turnTracking) {
       game.state.turnTracking.extraTurn = true
     }
   },

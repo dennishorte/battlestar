@@ -175,6 +175,11 @@ function playerTurnsPhase(game) {
       else {
         revealTurn(game, player)
       }
+
+      // Weirding Way: another turn for this player before the next seat.
+      if (game.state.turnTracking?.extraTurn) {
+        i -= 1
+      }
     }
   }
 }
@@ -248,6 +253,9 @@ function agentTurn(game, player, card) {
 
   const occupants = game.state.boardSpaces[space.id] || []
   const spaceOccupiedByOther = occupants.some(name => name !== player.name)
+  if (spaceOccupiedByOther) {
+    game.state.turnTracking.sentToOccupied = true
+  }
   const hasSpyOnPost = spies.hasSpyAt(game, player, space.id)
   const mustInfiltrate = spaceOccupiedByOther && hasSpyOnPost
   // Gather Intelligence is offered after placing the Agent, before card/space
@@ -1871,7 +1879,7 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
     }
 
     case 'swords-per': {
-      const swordCount = countPerVariable(game, player, effect.per)
+      const swordCount = countPerVariable(game, player, effect.per, card)
       const swordTotal = effect.amount * swordCount
       if (swordTotal > 0) {
         const { addStrength } = require('../systems/strengthBreakdown.js')
@@ -1889,7 +1897,11 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
 /**
  * Count a variable for "per each X" effects.
  */
-function countPerVariable(game, player, per) {
+function countPerVariable(game, player, per, card) {
+  if (/other revealed card that provides one or more \+ sword/i.test(per)) {
+    const revealed = game.zones.byId(`${player.name}.revealed`).cardlist()
+    return revealed.filter(other => other !== card && (other.definition?.revealSwords || 0) > 0).length
+  }
   if (/contract.*completed/i.test(per)) {
     const choamCount = require('../systems/choam.js')
     return choamCount.getCompletedContractCount(game, player)

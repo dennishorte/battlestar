@@ -32,6 +32,24 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
 
+  agentEffects: [
+    {
+      type: 'conditional',
+      condition: { type: 'influence', faction: 'emperor', amount: 2 },
+      effects: [{ type: 'gain', resource: 'solari', amount: 2 }],
+    },
+    {
+      type: 'conditional',
+      condition: { type: 'influence', faction: 'guild', amount: 2 },
+      effects: [{ type: 'draw', amount: 1 }],
+    },
+    {
+      type: 'conditional',
+      condition: { type: 'influence', faction: 'fremen', amount: 2 },
+      effects: [{ type: 'gain', resource: 'water', amount: 1 }],
+    },
+  ],
+
   revealEffects: [
     {
       type: 'influence-choice',
