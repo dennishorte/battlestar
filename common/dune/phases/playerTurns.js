@@ -1748,6 +1748,11 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
       break
     }
 
+    case 'move-freighter': {
+      require('../systems/shipping.js').moveFreighter(game, player, effect.times || 1)
+      break
+    }
+
     case 'acquire-tech': {
       const tech = require('../systems/tech.js')
       tech.acquireTech(game, player, {

@@ -313,6 +313,7 @@ const ixSpaces = [
     isCombatSpace: false,
     effects: [
       { type: 'gain', resource: 'solari', amount: 1 },
+      { type: 'move-freighter', times: 1 },
     ],
   },
   {
@@ -321,7 +322,9 @@ const ixSpaces = [
     icon: 'yellow',
     influenceRequirement: { faction: 'guild', amount: 2 },
     isCombatSpace: false,
-    effects: [],
+    effects: [
+      { type: 'move-freighter', times: 2 },
+    ],
   },
 ]
 

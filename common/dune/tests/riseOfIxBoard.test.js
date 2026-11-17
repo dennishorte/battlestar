@@ -89,8 +89,10 @@ describe('Rise of Ix board', () => {
 
     t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Smuggling')
+    t.choose(game, 'Advance')
 
     expect(game.players.byName('dennis').solari).toBe(1)
+    expect(game.players.byName('dennis').freighterPosition).toBe(1)
   })
 
   test('Interstellar Shipping requires 2 Spacing Guild influence', () => {
