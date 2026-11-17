@@ -194,6 +194,7 @@ Dune.prototype.initialize = function() {
   require('./systems/leaderAbilities.js').onGameStart(this)
 
   this._breakpoint('initialization-complete')
+  require('./systems/choam.js').dealRiseOfIxContracts(this)
 }
 
 Dune.prototype.initializeZones = function() {
@@ -214,6 +215,8 @@ Dune.prototype.initializeZones = function() {
   z('common.reserve.foldspace', 'Foldspace', 'public')
   z('common.trash', 'Trash', 'hidden')
   z('common.contractDeck', 'Contract Deck', 'hidden')
+  z('common.ixContracts', 'Rise of Ix Contracts', 'hidden')
+  z('common.ixRemoved', 'Rise of Ix Contracts Removed', 'hidden')
   z('common.contractMarket', 'Contract Market', 'public')
   z('common.contractReserved', 'Reserved Contracts', 'public')
   z('common.reservedCards', 'Reserved (Manipulate)', 'public')

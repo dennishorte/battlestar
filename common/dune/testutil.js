@@ -62,6 +62,9 @@ TestUtil.fixture = function(options = {}) {
     if (!options.preserveFirstPlayer) {
       game.state.firstPlayerIndex = 0
     }
+    if (!options.chooseIxContract) {
+      game.state.skipIxContractChoice = true
+    }
 
     // Sort decks into canonical order so tests are deterministic regardless of
     // card pool size changes (which shift seeded RNG consumption).

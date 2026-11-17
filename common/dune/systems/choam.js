@@ -17,9 +17,10 @@ function initializeContracts(game) {
 
   // Filter out Rise of Ix-specific contracts if not using that expansion
   let contractDefs = require('../res/index.js').getContractCards(settings)
-  if (!settings.useRiseOfIx) {
-    contractDefs = contractDefs.filter(c => !c.riseOfIxSpecific)
-  }
+  const ixDefs = settings.useRiseOfIx
+    ? contractDefs.filter(c => c.riseOfIxSpecific && c.source === 'Uprising')
+    : []
+  contractDefs = contractDefs.filter(c => !c.riseOfIxSpecific)
 
   const contractDeckZone = game.zones.byId('common.contractDeck')
 
@@ -39,6 +40,97 @@ function initializeContracts(game) {
 
   // Deal 2 face-up to the market
   refillContractMarket(game, { silent: true })
+
+  const ixZone = game.zones.byId('common.ixContracts')
+  if (ixZone) {
+    for (const cardDef of ixDefs) {
+      const id = `ix-contract-${cardDef.id}`
+      const card = new DuneCard(game, { ...cardDef, defId: cardDef.id, id, type: 'contract' })
+      game.cards.register(card)
+      card.setHome(ixZone)
+      ixZone.push(card)
+    }
+  }
+}
+
+/**
+ * Each player keeps one Rise of Ix contract. The others leave the game.
+ * Called after setup breakpoints so a test can place a contract first.
+ */
+function dealRiseOfIxContracts(game) {
+  if (!game.settings.useRiseOfIx) {
+    return
+  }
+  const pool = game.zones.byId('common.ixContracts')
+  if (!pool || pool.cardlist().length === 0) {
+    return
+  }
+  const trash = game.zones.byId('common.trash')
+
+  // Tests that skip the choice are not playing these contracts. Keep them out
+  // of the trash, which is where a card goes when a player trashes it.
+  if (game.state.skipIxContractChoice) {
+    const removed = game.zones.byId('common.ixRemoved')
+    for (const card of [...pool.cardlist()]) {
+      card.moveTo(removed || trash)
+    }
+    return
+  }
+
+  pool.shuffle(game.random)
+  const pile = pool.cardlist().slice()
+  const needsChoice = []
+  for (const player of game.players.all()) {
+    const owned = game.zones.byId(`${player.name}.contracts`).cardlist()
+    if (owned.some(card => card.definition.riseOfIxSpecific)) {
+      continue
+    }
+    const pair = pile.splice(0, 2)
+    if (pair.length === 0) {
+      continue
+    }
+    needsChoice.push({ player, pair })
+  }
+
+  const selectors = needsChoice
+    .filter(entry => entry.pair.length > 1)
+    .map(entry => ({
+      actor: entry.player.name,
+      title: 'Choose a Rise of Ix contract to keep',
+      choices: entry.pair.map(card => game.actions.option({
+        id: card.id,
+        title: `${card.name} (${card.definition.reward})`,
+        kind: 'contract',
+      })),
+    }))
+
+  const responses = selectors.length > 0 ? game.requestInputMany(selectors) : []
+  for (const entry of needsChoice) {
+    const response = responses.find(item => item.actor === entry.player.name)
+    let kept = entry.pair[0]
+    if (response) {
+      const sel = response.selection[0]
+      const chosenId = typeof sel === 'object' ? sel.id : null
+      const chosenTitle = typeof sel === 'object' ? sel.title : sel
+      kept = entry.pair.find(card => card.id === chosenId)
+        || entry.pair.find(card => `${card.name} (${card.definition.reward})` === chosenTitle)
+        || kept
+    }
+    kept.moveTo(game.zones.byId(`${entry.player.name}.contracts`))
+    game.log.add({
+      template: '{player} keeps contract: {contract}',
+      args: { player: entry.player, contract: kept },
+    })
+    for (const card of entry.pair) {
+      if (card !== kept) {
+        card.moveTo(trash)
+      }
+    }
+  }
+
+  for (const card of pool.cardlist()) {
+    card.moveTo(trash)
+  }
 }
 
 /**
@@ -223,6 +315,7 @@ function getCompletedContractCount(game, player) {
 
 module.exports = {
   initializeContracts,
+  dealRiseOfIxContracts,
   refillContractMarket,
   takeContract,
   completeContract,
