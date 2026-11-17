@@ -205,6 +205,7 @@ Dune.prototype.initializeZones = function() {
   z('common.conflictDiscard', 'Conflict Discard', 'public')
   z('common.reserve.prepareTheWay', 'Prepare the Way', 'public')
   z('common.reserve.spiceMustFlow', 'The Spice Must Flow', 'public')
+  z('common.reserve.foldspace', 'Foldspace', 'public')
   z('common.trash', 'Trash', 'hidden')
   z('common.contractDeck', 'Contract Deck', 'hidden')
   z('common.contractMarket', 'Contract Market', 'public')

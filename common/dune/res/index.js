@@ -30,19 +30,29 @@ function isSourceActive(source, settings) {
   return getActiveSources(settings).includes(source)
 }
 
-// Dune-specific compatibility filter: only Uprising-compatible cards are
-// playable in this engine, regardless of source. Applied alongside the
-// generic source filter.
-function isCompatibleWithUprising(item) {
-  return item.compatibility === 'All' || item.compatibility === 'Uprising'
+// Uprising is the game being played. Rise of Ix cards join only when that
+// expansion is on. The source check still applies after this, so a Bloodlines
+// tile that reuses a Rise of Ix compatibility string stays out unless
+// Bloodlines itself is on.
+const RISE_OF_IX_COMPATIBILITY = new Set([
+  'Rise of Ix',
+  'Shipping (Rise of Ix)',
+  'Tech (Rise of Ix)',
+])
+
+function allowsCompatibility(item, settings) {
+  if (item.compatibility === 'All' || item.compatibility === 'Uprising') {
+    return true
+  }
+  return Boolean(settings?.useRiseOfIx) && RISE_OF_IX_COMPATIBILITY.has(item.compatibility)
 }
 
 function isIncluded(item, settings) {
-  return isCompatibleWithUprising(item) && isSourceActive(item.source, settings)
+  return allowsCompatibility(item, settings) && isSourceActive(item.source, settings)
 }
 
 function getCards(defs, settings) {
-  const compatible = defs.filter(isCompatibleWithUprising)
+  const compatible = defs.filter(item => allowsCompatibility(item, settings))
   return BaseCardManager.filterDefinitions(compatible, { sources: getActiveSources(settings) })
 }
 
@@ -64,7 +74,7 @@ module.exports = {
       sources.push('Base')
     }
     return BaseCardManager.filterDefinitions(
-      cards.starterCards.filter(isCompatibleWithUprising),
+      cards.starterCards.filter(item => allowsCompatibility(item, settings) && item.id !== 'control-the-spice'),
       { sources }
     )
   },

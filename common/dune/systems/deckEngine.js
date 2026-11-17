@@ -347,6 +347,26 @@ function initializeCards(game) {
   refillImperiumRow(game, { silent: true })
 }
 
+// Six Foldspace cards, created only for Ilesa. Nothing else draws from this pile.
+function createFoldspacePile(game) {
+  if (!game.settings.useRiseOfIx) {
+    return
+  }
+  const zone = game.zones.byId('common.reserve.foldspace')
+  if (!zone || zone.cardlist().length > 0) {
+    return
+  }
+  const foldspace = require('../res/cards/reserve/foldspace.js')
+  const copies = foldspace.count || 6
+  for (let i = 0; i < copies; i++) {
+    const id = `reserve-foldspace-${i}`
+    const card = new DuneCard(game, { ...foldspace, defId: foldspace.id, id, type: 'reserve' })
+    game.cards.register(card)
+    card.setHome(zone)
+    zone.push(card)
+  }
+}
+
 module.exports = {
   drawCards,
   playCard,
@@ -359,4 +379,5 @@ module.exports = {
   cleanUp,
   drawIntrigueCard,
   initializeCards,
+  createFoldspacePile,
 }
