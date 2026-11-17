@@ -1747,6 +1747,15 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
       break
     }
 
+    case 'acquire-tech': {
+      const tech = require('../systems/tech.js')
+      tech.acquireTech(game, player, {
+        discount: effect.discount || 0,
+        payWith: effect.payWith,
+      })
+      break
+    }
+
     case 'commission-dreadnought': {
       if (player.dreadnoughtsInSupply <= 0) {
         break

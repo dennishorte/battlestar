@@ -291,6 +291,7 @@ const ixSpaces = [
     isCombatSpace: false,
     effects: [
       { type: 'commission-dreadnought' },
+      { type: 'acquire-tech' },
     ],
   },
   {
@@ -300,8 +301,8 @@ const ixSpaces = [
     isCombatSpace: false,
     effects: [
       { type: 'choice', choices: [
+        { label: 'Acquire Tech at a 1 spice discount', effects: [{ type: 'acquire-tech', discount: 1 }] },
         { label: 'Place a Negotiator', effects: [{ type: 'place-negotiator' }] },
-        { label: 'Pass', effects: [] },
       ]},
     ],
   },
