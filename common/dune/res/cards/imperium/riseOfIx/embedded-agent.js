@@ -32,6 +32,17 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
 
+  agentEffect(game, player, card) {
+    const played = game.zones.byId(`${player.name}.played`).cardlist()
+    const another = played.some(c =>
+      c.id !== card.id && c.definition?.factionAffiliation === 'bene-gesserit'
+    )
+    if (!another) {
+      return
+    }
+    require('../../../../systems/shipping.js').moveFreighter(game, player, 2)
+  },
+
   revealEffects: [
     {
       type: 'intrigue',

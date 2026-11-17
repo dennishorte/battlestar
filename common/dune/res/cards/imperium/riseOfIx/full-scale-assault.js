@@ -34,12 +34,8 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
 
-  onAcquire(game, player) {
-    game.log.add({
-      template: '{player}: +1 Dreadnought (manual)',
-      args: { player },
-      event: 'memo',
-    })
+  onAcquire(game, player, card, { resolveEffect }) {
+    resolveEffect(game, player, { type: 'commission-dreadnought', optional: false }, null, card.name)
   },
 
   agentEffects: [

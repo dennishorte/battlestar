@@ -35,6 +35,10 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
 
+  revealEffects: [
+    { type: 'move-freighter', times: 1 },
+  ],
+
   agentEffects: [
     {
       type: 'discard-card',

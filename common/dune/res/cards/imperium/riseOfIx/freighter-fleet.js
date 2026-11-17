@@ -31,4 +31,8 @@ module.exports = {
   hasContracts: false,
   hasBattleIcons: false,
   hasSardaukar: false,
+
+  revealEffects: [
+    { type: 'move-freighter', times: 1 },
+  ],
 }

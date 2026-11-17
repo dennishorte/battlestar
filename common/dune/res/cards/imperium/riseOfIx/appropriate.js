@@ -34,10 +34,19 @@ module.exports = {
   hasSardaukar: false,
 
   onAcquire(game, player) {
-    game.log.add({
-      template: '{player}: +1 Shipping track move (manual)',
-      args: { player },
-      event: 'memo',
-    })
+    require('../../../../systems/shipping.js').moveFreighter(game, player, 1)
+  },
+
+  agentEffect(game, player) {
+    if (player.getInfluence('emperor') < 2) {
+      return
+    }
+    const [choice] = game.actions.choose(player, [
+      game.actions.option({ id: 'spice', title: 'Pay Spice' }),
+      game.actions.option({ id: 'solari', title: 'Pay Solari' }),
+    ], { title: 'Appropriate: pay for one Tech tile' })
+    const choiceId = typeof choice === 'object' ? choice.id : choice
+    const payWith = choiceId === 'solari' || choice === 'Pay Solari' ? 'solari' : 'spice'
+    require('../../../../systems/tech.js').acquireTech(game, player, { payWith })
   },
 }

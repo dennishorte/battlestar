@@ -1812,13 +1812,15 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
       if (player.dreadnoughtsInSupply <= 0) {
         break
       }
-      const [commissionChoice] = game.actions.choose(player, [
-        game.actions.option({ id: 'pass', title: 'Do not commission' }),
-        game.actions.option({ id: 'commission', title: 'Commission a dreadnought' }),
-      ], { title: 'Dreadnought' })
-      const commissionId = typeof commissionChoice === 'object' ? commissionChoice.id : commissionChoice
-      if (commissionId === 'pass' || commissionChoice === 'Do not commission') {
-        break
+      if (effect.optional !== false) {
+        const [commissionChoice] = game.actions.choose(player, [
+          game.actions.option({ id: 'pass', title: 'Do not commission' }),
+          game.actions.option({ id: 'commission', title: 'Commission a dreadnought' }),
+        ], { title: 'Dreadnought' })
+        const commissionId = typeof commissionChoice === 'object' ? commissionChoice.id : commissionChoice
+        if (commissionId === 'pass' || commissionChoice === 'Do not commission') {
+          break
+        }
       }
       player.decrementCounter('dreadnoughtsInSupply', 1, { silent: true })
       player.incrementCounter('dreadnoughtsInGarrison', 1, { silent: true })
@@ -1826,6 +1828,21 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
         template: '{player} commissions a dreadnought',
         args: { player },
       })
+      break
+    }
+
+    case 'tech-negotiation': {
+      const [choice] = game.actions.choose(player, [
+        game.actions.option({ id: 'acquire', title: 'Acquire Tech at a 1 spice discount' }),
+        game.actions.option({ id: 'negotiator', title: 'Place a Negotiator' }),
+      ], { title: 'Tech Negotiation' })
+      const choiceId = typeof choice === 'object' ? choice.id : choice
+      if (choiceId === 'negotiator' || choice === 'Place a Negotiator') {
+        resolveEffect(game, player, { type: 'place-negotiator' }, space, sourceName, card)
+      }
+      else {
+        resolveEffect(game, player, { type: 'acquire-tech', discount: 1 }, space, sourceName, card)
+      }
       break
     }
 
