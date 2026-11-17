@@ -8,6 +8,7 @@ module.exports = {
   spiceCost: 2,
   acquisitionBonus: null,
   effect: 'Reveal turn: +1 Persuasion',
+  timing: 'reveal',
   hasShipping: false,
   hasSpies: false,
   hasSandworms: false,

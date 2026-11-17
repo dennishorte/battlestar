@@ -8,6 +8,8 @@ module.exports = {
   spiceCost: 3,
   acquisitionBonus: null,
   effect: 'Once per round: +1 Troop',
+  timing: 'flip',
+  flip: true,
   hasShipping: false,
   hasSpies: false,
   hasSandworms: false,

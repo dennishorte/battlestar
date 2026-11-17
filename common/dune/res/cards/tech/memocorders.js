@@ -8,6 +8,7 @@ module.exports = {
   spiceCost: 2,
   acquisitionBonus: '+1 Influence with any faction',
   effect: 'Endgame: If you have 3+ Influence on all four Influence tracks:\n· +1 Victory Point',
+  timing: 'endgame',
   hasShipping: false,
   hasSpies: false,
   hasSandworms: false,

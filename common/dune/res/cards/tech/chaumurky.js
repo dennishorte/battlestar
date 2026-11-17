@@ -8,6 +8,7 @@ module.exports = {
   spiceCost: 4,
   acquisitionBonus: null,
   effect: 'Endgame: You win tiebreakers',
+  timing: 'endgame',
   hasShipping: false,
   hasSpies: false,
   hasSandworms: false,

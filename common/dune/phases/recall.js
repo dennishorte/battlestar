@@ -91,11 +91,16 @@ function endGame(game) {
     pairEndgameWildIcons(game, player)
   }
 
-  // Determine winner
+  const tech = require('../systems/tech.js')
+  tech.applyEndgame(game)
+
+  // Determine winner. Chaumurky beats spice, Solari, water, and garrison
+  // when exactly one player tied for the lead owns it.
   const players = game.players.all()
     .map(p => ({
       player: p,
       vp: p.vp,
+      chaumurky: tech.owns(game, p, 'chaumurky') ? 1 : 0,
       spice: p.spice,
       solari: p.solari,
       water: p.water,
@@ -104,6 +109,9 @@ function endGame(game) {
     .sort((a, b) => {
       if (a.vp !== b.vp) {
         return b.vp - a.vp
+      }
+      if (a.chaumurky !== b.chaumurky) {
+        return b.chaumurky - a.chaumurky
       }
       if (a.spice !== b.spice) {
         return b.spice - a.spice
@@ -125,8 +133,11 @@ function endGame(game) {
   const tiedOnVP = players.filter(p => p.vp === winner.vp)
   if (tiedOnVP.length > 1) {
     const tiedNames = tiedOnVP.map(p => p.player.name).join(', ')
+    const order = tiedOnVP.some(p => p.chaumurky)
+      ? 'Chaumurky, spice, solari, water, garrisoned troops'
+      : 'spice, solari, water, garrisoned troops'
     game.log.add({
-      template: `Tie at ${winner.vp} VP between ${tiedNames} — tie-breakers (in order): spice, solari, water, garrisoned troops`,
+      template: `Tie at ${winner.vp} VP between ${tiedNames} — tie-breakers (in order): ${order}`,
     })
     for (const p of tiedOnVP) {
       game.log.add({
@@ -136,6 +147,7 @@ function endGame(game) {
     }
 
     const categories = [
+      { key: 'chaumurky', label: 'Chaumurky' },
       { key: 'spice', label: 'spice' },
       { key: 'solari', label: 'solari' },
       { key: 'water', label: 'water' },

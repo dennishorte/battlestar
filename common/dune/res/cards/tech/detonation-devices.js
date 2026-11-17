@@ -8,6 +8,7 @@ module.exports = {
   spiceCost: 3,
   acquisitionBonus: null,
   effect: 'When you win a Conflict using a dreadnought:\n· You may return a dreadnought to your supply to gain +1 Victory Point instead of taking control of a board space with it',
+  timing: 'win-conflict',
   hasShipping: false,
   hasSpies: false,
   hasSandworms: false,

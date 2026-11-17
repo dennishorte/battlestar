@@ -81,6 +81,8 @@ function playerTurnsPhase(game) {
         diversionFired: false,
       }
 
+      require('../systems/tech.js').offerTurnAbilities(game, player)
+
       // Version 4 offers Plot cards only here, before the player commits to
       // an Agent Turn or a Reveal Turn. Version 5 offers them beside every
       // decision instead, including this one.
@@ -510,9 +512,16 @@ function revealTurn(game, player) {
     })
   }
 
+  const tech = require('../systems/tech.js')
+  const revealExtra = tech.revealAdjustments(game, player, swordSources)
+  totalPersuasion += revealExtra.persuasion
+  swordSources.push(...revealExtra.swords)
+
   if (totalPersuasion > 0) {
     player.incrementCounter('persuasion', totalPersuasion, { silent: true })
   }
+
+  tech.offerDisposal(game, player, totalPersuasion)
 
   // Leader reveal turn hook
   leaderAbilities.onRevealTurn(game, player)
@@ -645,8 +654,15 @@ function acquireOneCard(game, player, opts = {}) {
 
   // Read placement after the choice. A Plot played beside it may have set
   // acquireToHand / acquireToTopOfDeck. Explicit opts still win.
-  const toTopOfDeck = opts.toTopOfDeck ?? !!game.state.turnTracking?.acquireToTopOfDeck
-  const toHand = opts.toHand ?? !!game.state.turnTracking?.acquireToHand
+  // Spaceport may then move a discard-bound card to the top of the deck.
+  const placed = require('../systems/tech.js').chooseAcquireDestination(
+    game,
+    player,
+    opts.toTopOfDeck ?? !!game.state.turnTracking?.acquireToTopOfDeck,
+    opts.toHand ?? !!game.state.turnTracking?.acquireToHand,
+  )
+  const toTopOfDeck = placed.toTopOfDeck
+  const toHand = placed.toHand
 
   const effectiveCost = acquireCost(game, player, card)
   player.decrementCounter(useSolari ? 'solari' : 'persuasion', effectiveCost)

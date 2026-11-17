@@ -8,6 +8,7 @@ module.exports = {
   spiceCost: 2,
   acquisitionBonus: '+1 Water',
   effect: 'When you win a Conflict: +1 Water',
+  timing: 'win-conflict',
   hasShipping: false,
   hasSpies: false,
   hasSandworms: false,

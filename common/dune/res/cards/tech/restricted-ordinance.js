@@ -8,6 +8,7 @@ module.exports = {
   spiceCost: 4,
   acquisitionBonus: null,
   effect: 'If you have a seat on the High Council: +4 Swords',
+  timing: 'standing',
   hasShipping: false,
   hasSpies: false,
   hasSandworms: false,

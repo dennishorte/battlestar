@@ -8,6 +8,7 @@ module.exports = {
   spiceCost: 4,
   acquisitionBonus: null,
   effect: '· Pay 3 Spice → trash this for +1 Victory Point\n· Endgame: Worth 1 Victory Point for each Faction where you have 1 or less Influence',
+  timing: ['untimed', 'endgame'],
   hasShipping: false,
   hasSpies: false,
   hasSandworms: false,

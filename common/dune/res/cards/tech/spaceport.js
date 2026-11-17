@@ -8,6 +8,7 @@ module.exports = {
   spiceCost: 5,
   acquisitionBonus: 'Draw 2 cards',
   effect: 'You may put cards you acquire on top of your deck',
+  timing: 'standing',
   hasShipping: false,
   hasSpies: false,
   hasSandworms: false,

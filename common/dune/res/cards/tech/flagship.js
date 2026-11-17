@@ -8,6 +8,8 @@ module.exports = {
   spiceCost: 8,
   acquisitionBonus: '+1 Victory Point',
   effect: 'Once per round: Spend 4 Solari → +3 Troops',
+  timing: 'flip',
+  flip: true,
   hasShipping: false,
   hasSpies: false,
   hasSandworms: false,

@@ -8,6 +8,7 @@ module.exports = {
   spiceCost: 2,
   acquisitionBonus: '+2 Intrigue cards',
   effect: '· Whenever you recruit troops from the Shipping track, recruit an additional troop\n· You may deploy any of them to the conflict',
+  timing: 'shipping',
   hasShipping: true,
   hasSpies: false,
   hasSandworms: false,

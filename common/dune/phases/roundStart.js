@@ -75,6 +75,8 @@ function roundStartPhase(game) {
       }
     }
   }
+
+  require('../systems/tech.js').applyRoundStart(game)
 }
 
 module.exports = { roundStartPhase }

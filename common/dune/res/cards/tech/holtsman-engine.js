@@ -8,6 +8,7 @@ module.exports = {
   spiceCost: 6,
   acquisitionBonus: null,
   effect: '· Round start: Draw a card\n· Endgame: Worth 1 Victory Point if you have at least two The Spice Must Flow',
+  timing: ['round-start', 'endgame'],
   hasShipping: false,
   hasSpies: false,
   hasSandworms: false,

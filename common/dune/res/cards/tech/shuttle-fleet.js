@@ -8,6 +8,7 @@ module.exports = {
   spiceCost: 6,
   acquisitionBonus: '+1 Influence with any two factions',
   effect: 'Round start: +2 Solari',
+  timing: 'round-start',
   hasShipping: false,
   hasSpies: false,
   hasSandworms: false,

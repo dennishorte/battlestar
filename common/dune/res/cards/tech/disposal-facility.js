@@ -8,6 +8,7 @@ module.exports = {
   spiceCost: 3,
   acquisitionBonus: 'You may trash a card',
   effect: 'Reveal turn: If you have 6 Persuasion or more:\n· You may trash one of your cards in play',
+  timing: 'reveal',
   hasShipping: false,
   hasSpies: false,
   hasSandworms: false,

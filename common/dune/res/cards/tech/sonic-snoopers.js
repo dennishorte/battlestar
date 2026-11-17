@@ -8,6 +8,7 @@ module.exports = {
   spiceCost: 2,
   acquisitionBonus: '+1 Intrigue card',
   effect: 'Trash this → put any number of your Intrigue cards on the bootom of the Intrigue deck, then draw that many Intrigue cards',
+  timing: 'untimed',
   hasShipping: false,
   hasSpies: false,
   hasSandworms: false,

@@ -8,6 +8,7 @@ module.exports = {
   spiceCost: 1,
   acquisitionBonus: null,
   effect: 'Reveal turn: +1 Sword for each revealed card that provides 1 or more Sword this turn',
+  timing: 'reveal',
   hasShipping: false,
   hasSpies: false,
   hasSandworms: false,

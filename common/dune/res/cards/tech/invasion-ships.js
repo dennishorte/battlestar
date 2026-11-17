@@ -8,6 +8,8 @@ module.exports = {
   spiceCost: 5,
   acquisitionBonus: '+4 Troops',
   effect: 'Once per round: Discard a card → enemy Agents don\'t block your Agent this turn',
+  timing: 'flip',
+  flip: true,
   hasShipping: false,
   hasSpies: false,
   hasSandworms: false,
