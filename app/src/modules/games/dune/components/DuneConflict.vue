@@ -119,6 +119,12 @@
         <span class="unit-block" :class="{ dim: !entry.garrisonTroops }">
           <span class="unit-count">{{ entry.garrisonTroops }}</span><span class="unit-letter">T</span>
         </span>
+        <span v-if="useShips"
+              class="unit-block ship"
+              :class="{ dim: !entry.garrisonShips }"
+              title="dreadnoughts in garrison">
+          <span class="unit-count">{{ entry.garrisonShips }}</span><span class="unit-letter">D</span>
+        </span>
       </div>
 
       <div class="stat-label">In Conflict</div>
@@ -128,12 +134,15 @@
            :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer }"
            :style="{ '--viewer-tint': viewerTint(entry.color) }"
            @click="openStrengthBreakdown(entry.player)">
-        <template v-if="entry.troops || entry.sandworms">
+        <template v-if="entry.troops || entry.sandworms || entry.dreadnoughts">
           <span class="unit-block" v-if="entry.troops" title="troops in conflict">
             <span class="unit-count">{{ entry.troops }}</span><span class="unit-letter">T</span>
           </span>
           <span class="unit-block worm" v-if="entry.sandworms" title="sandworms in conflict">
             <span class="unit-count">{{ entry.sandworms }}</span><span class="unit-letter">W</span>
+          </span>
+          <span class="unit-block ship" v-if="entry.dreadnoughts" title="dreadnoughts in conflict">
+            <span class="unit-count">{{ entry.dreadnoughts }}</span><span class="unit-letter">D</span>
           </span>
         </template>
         <span v-else class="no-units">—</span>
@@ -165,6 +174,7 @@ import { dune } from 'battlestar-common'
 
 const TROOP_STRENGTH = 2
 const SANDWORM_STRENGTH = 3
+const DREADNOUGHT_STRENGTH = 3
 const TOTAL_ROUNDS =
   dune.res.constants.CONFLICT_I_COUNT
   + dune.res.constants.CONFLICT_II_COUNT
@@ -205,6 +215,10 @@ export default {
       return this.game.state.conflict.currentCard
     },
 
+    useShips() {
+      return !!this.game.settings?.useRiseOfIx
+    },
+
     thirdPlaceAvailable() {
       return this.game.players.all().length >= 4
     },
@@ -235,7 +249,9 @@ export default {
       return ordered.map(player => {
         const t = troops[player.name] || 0
         const s = sandworms[player.name] || 0
-        const preview = t * TROOP_STRENGTH + s * SANDWORM_STRENGTH
+        const ships = this.useShips ? (player.dreadnoughtsInConflict || 0) : 0
+        const shipStrength = this.game.state.leaders?.[player.name]?.name === 'Prince Rhombur Vernius' ? 4 : DREADNOUGHT_STRENGTH
+        const preview = t * TROOP_STRENGTH + s * SANDWORM_STRENGTH + ships * shipStrength
         const pending = player.strength === 0 && preview > 0
         const agentsTotal = player.getCounter('agents') + player.getCounter('hasSwordmaster')
         const intrigueCount = this.game.zones.byId(`${player.name}.intrigue`).cardlist().length
@@ -250,11 +266,13 @@ export default {
           agentsTotal,
           intrigueCount,
           garrisonTroops: player.troopsInGarrison,
+          garrisonShips: this.useShips ? (player.dreadnoughtsInGarrison || 0) : 0,
           troopsInSupply: player.troopsInSupply,
           hasMakerHook: (makerHooks[player.name] || 0) > 0,
           troops: t,
           sandworms: s,
-          hasUnits: t + s > 0,
+          dreadnoughts: ships,
+          hasUnits: t + s + ships > 0,
           strength: pending ? preview : player.strength,
           pending,
           breakdown: breakdown[player.name] || [],
@@ -614,6 +632,10 @@ export default {
 
 .unit-block.worm {
   background-color: #e0d4b8;
+}
+
+.unit-block.ship {
+  background-color: #d5dde6;
 }
 
 .unit-block.dim {

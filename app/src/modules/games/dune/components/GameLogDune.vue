@@ -52,9 +52,10 @@ for (const deck of [
   }
 }
 
-const boardSpacesByName = Object.fromEntries(
-  dune.res.boardSpaces.map(space => [space.name, space])
-)
+function spaceByName(name) {
+  const spaces = dune.res.boardSpaces.getBoardSpaces(game.value?.settings)
+  return spaces.find(space => space.name === name)
+}
 
 const resourceLabels = {
   troop: 'Troop',
@@ -115,7 +116,7 @@ function convertArg(arg, value) {
 }
 
 function locClasses(_loc, name) {
-  const space = boardSpacesByName[name]
+  const space = spaceByName(name)
   if (space?.icon) {
     return ['board-space-name', `chip-space-${space.icon}`]
   }

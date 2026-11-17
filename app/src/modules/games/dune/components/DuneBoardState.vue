@@ -30,6 +30,51 @@
         </span>
       </div>
     </div>
+
+    <template v-if="useRiseOfIx">
+      <div class="subsection">
+        <div class="subsection-label">Tech</div>
+        <div class="tech-stacks">
+          <div v-for="stack in techStacks" :key="stack.index" class="tech-stack">
+            <div class="tile-face" v-if="stack.top">{{ tileName(stack.top) }}</div>
+            <div class="tile-face empty" v-else>empty</div>
+            <div class="stack-count">{{ stack.hidden }} face down</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-label">Negotiators</div>
+        <div class="occupied">
+          <span v-for="row in ixPlayers" :key="`neg-${row.name}`" class="occupied-space">
+            {{ row.name }}: {{ row.negotiators }}
+          </span>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-label">Freighters</div>
+        <div class="occupied">
+          <span v-for="row in ixPlayers" :key="`ship-${row.name}`" class="occupied-space">
+            {{ row.name }}: {{ row.freighter }}
+          </span>
+        </div>
+      </div>
+
+      <div class="subsection" v-if="ownedTiles.length">
+        <div class="subsection-label">Owned Tech</div>
+        <div class="owned-tiles">
+          <div v-for="tile in ownedTiles"
+               :key="tile.id"
+               class="owned-tile"
+               :class="{ flipped: tile.flipped }">
+            <span class="tile-owner">{{ tile.owner }}</span>
+            <span v-if="tile.flipped">{{ tile.name }} (face down)</span>
+            <span v-else>{{ tile.name }}<span v-if="tile.cost != null"> · {{ tile.cost }} spice</span></span>
+          </div>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -41,19 +86,66 @@ export default {
   inject: ['game'],
 
   computed: {
+    useRiseOfIx() {
+      return !!this.game.settings?.useRiseOfIx
+    },
+
     hasBonusSpice() {
-      return Object.values(this.game.state.bonusSpice).some(v => v > 0)
+      return Object.values(this.game.state.bonusSpice || {}).some(v => v > 0)
     },
 
     occupiedSpaces() {
-      return Object.entries(this.game.state.boardSpaces)
-        .filter(([, player]) => player != null)
+      return Object.entries(this.game.state.boardSpaces || {})
+        .map(([space, raw]) => {
+          const names = Array.isArray(raw) ? raw : (raw ? [raw] : [])
+          return [space, names.join(', ')]
+        })
+        .filter(([, names]) => names)
+    },
+
+    techStacks() {
+      return (this.game.state.techStacks || []).map((stack, index) => ({
+        index,
+        top: stack[0] || null,
+        hidden: Math.max(0, (stack.length || 0) - (stack[0] ? 1 : 0)),
+      }))
+    },
+
+    ixPlayers() {
+      const names = ['Bottom', 'Middle', 'Top']
+      return this.game.players.all().map(player => ({
+        name: player.name,
+        negotiators: player.negotiators || 0,
+        freighter: names[player.freighterPosition] || names[0],
+      }))
+    },
+
+    ownedTiles() {
+      const flipped = this.game.state.flippedTech || {}
+      const owned = this.game.state.ownedTech || {}
+      const rows = []
+      for (const player of this.game.players.all()) {
+        for (const tile of owned[player.name] || []) {
+          rows.push({
+            id: tile.id,
+            owner: player.name,
+            name: this.tileName(tile),
+            cost: tile.definition?.spiceCost,
+            flipped: !!flipped[tile.id],
+          })
+        }
+      }
+      return rows
     },
   },
 
   methods: {
     formatName(id) {
       return id.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')
+    },
+
+    tileName(tile) {
+      return tile?.name || tile?.definition?.name || 'Tech'
     },
   },
 }
@@ -100,5 +192,44 @@ export default {
   background-color: #f5f0e8;
   padding: .1em .4em;
   border-radius: .15em;
+}
+
+.tech-stacks {
+  display: flex;
+  gap: .4em;
+}
+
+.tech-stack {
+  flex: 1;
+  background-color: #f5f0e8;
+  border-radius: .15em;
+  padding: .25em .35em;
+  font-size: .8em;
+}
+
+.tile-face {
+  font-weight: 600;
+  color: #4a3a20;
+}
+
+.tile-face.empty, .stack-count {
+  color: #8a7a68;
+  font-size: .85em;
+}
+
+.owned-tiles {
+  display: flex;
+  flex-direction: column;
+  gap: .2em;
+  font-size: .85em;
+}
+
+.owned-tile.flipped {
+  color: #8a7a68;
+}
+
+.tile-owner {
+  font-weight: 600;
+  margin-right: .3em;
 }
 </style>

@@ -32,6 +32,7 @@
         </div>
 
         <div class="col spaces-column">
+          <DuneBoardState v-if="game.settings.useRiseOfIx" />
           <DuneActionSpaces />
         </div>
 
@@ -76,6 +77,7 @@ import DuneFactionTrack from './DuneFactionTrack.vue'
 import DuneContractMarket from './DuneContractMarket.vue'
 import DunePlayerCards from './DunePlayerCards.vue'
 import DuneActionSpaces from './DuneActionSpaces.vue'
+import DuneBoardState from './DuneBoardState.vue'
 import DuneOptionChip from './DuneOptionChip.vue'
 import DuneCardListModal from './modals/DuneCardListModal.vue'
 import DuneCardViewerModal from './modals/DuneCardViewerModal.vue'
@@ -94,6 +96,7 @@ export default {
     DebugModal,
     DropdownButton,
     DuneActionSpaces,
+    DuneBoardState,
     DuneCardListModal,
     DuneCardViewerModal,
     DuneConflict,
@@ -245,7 +248,7 @@ export default {
     }
     const spacesByName = {}
     const spacesById = {}
-    for (const space of dune.res.boardSpaces) {
+    for (const space of dune.res.boardSpaces.getBoardSpaces(this.game.settings)) {
       spacesByName[space.name] = space
       if (space.id) {
         spacesById[space.id] = space

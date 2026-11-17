@@ -20,9 +20,8 @@
         type="checkbox"
         v-model="models.useRiseOfIx"
         @change="optionsChanged"
-        disabled
       />
-      <label class="form-check-label text-muted">Rise of Ix (not yet implemented)</label>
+      <label class="form-check-label">Rise of Ix</label>
     </div>
 
     <div class="form-check">

@@ -28,6 +28,9 @@
                      class="control-flag"
                      :style="{ backgroundColor: controlColor(space.id) }"
                      :title="`Controlled by ${game.state.controlMarkers[space.id]}`" />
+                <span v-if="parkedOwner(space.id)"
+                      class="parked-ship"
+                      :title="`Dreadnought parked by ${parkedOwner(space.id)}`">D</span>
                 <div v-if="spaceContractOwners(space.id).length > 0"
                      class="contract-flags"
                      :title="`Contract held by ${spaceContractOwners(space.id).join(', ')}`">
@@ -146,6 +149,14 @@ export default {
   },
 
   computed: {
+    activeSpaces() {
+      return boardSpaces.getBoardSpaces(this.game?.settings)
+    },
+
+    activePosts() {
+      return observationPosts.getObservationPosts(this.game?.settings)
+    },
+
     visibleGroups() {
       const defs = this.factions
         ? [
@@ -161,7 +172,7 @@ export default {
         ]
       return defs.map(g => ({
         ...g,
-        spaces: boardSpaces.filter(s => g.icons.includes(s.icon)),
+        spaces: this.activeSpaces.filter(s => g.icons.includes(s.icon)),
       })).filter(g => g.spaces.length > 0)
     },
 
@@ -195,7 +206,7 @@ export default {
       const ids = new Set()
       for (const choice of this.spyPlacementRequest.choices) {
         const name = choice.title || choice
-        const match = name.match(/^Post ([A-M])\b/)
+        const match = name.match(/^Post ([A-N])\b/)
         if (match) {
           ids.add(match[1])
         }
@@ -269,7 +280,7 @@ export default {
       })
 
       const positions = []
-      for (const post of observationPosts) {
+      for (const post of this.activePosts) {
         const spaceYs = post.spaces
           .map(id => spaceYMap[id])
           .filter(y => y != null)
@@ -356,6 +367,10 @@ export default {
         'intrigue-trash-draw': () => 'trash intrigue → draw intrigue',
         'break-shield-wall': () => 'destroy Shield Wall',
         'influence-choice': (e) => `+${e.amount} influence (any faction)`,
+        'commission-dreadnought': () => 'commission a dreadnought',
+        'acquire-tech': (e) => e.discount ? `acquire tech (-${e.discount} spice)` : 'acquire tech',
+        'place-negotiator': () => 'place a negotiator',
+        'move-freighter': (e) => `move freighter ${(e.times || 1) === 1 ? 'once' : `${e.times} times`}`,
       }
       const fn = labels[effect.type]
       return fn ? fn(effect) : effect.type
@@ -438,6 +453,10 @@ export default {
       this.$nextTick(() => {
         this.bus.emit('click-choose-selected-option')
       })
+    },
+
+    parkedOwner(spaceId) {
+      return this.game.state.parkedDreadnoughts?.[spaceId]?.owner || null
     },
 
     controlColor(spaceId) {
@@ -551,6 +570,13 @@ export default {
   width: 10px;
   height: 4px;
   border-radius: 1px;
+}
+
+.parked-ship {
+  font-size: .65em;
+  font-weight: 700;
+  color: #6a5010;
+  line-height: 1;
 }
 
 .contract-flags {
