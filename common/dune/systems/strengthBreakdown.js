@@ -35,9 +35,9 @@ function addStrength(game, player, source, label, amount) {
  * @param {Array} swordSources - [{ label, swords }] per-card sword contributions
  */
 function setRevealStrength(game, player, swordSources) {
-  const troops = game.state.conflict.deployedTroops[player.name] || 0
-  const sandworms = game.state.conflict.deployedSandworms[player.name] || 0
-  const hasUnits = (troops + sandworms) > 0
+  const units = require('./units.js')
+  const { troops, sandworms, dreadnoughts } = units.counts(game, player)
+  const hasUnits = units.hasUnitInConflict(game, player)
 
   if (!hasUnits) {
     return 0
@@ -56,6 +56,14 @@ function setRevealStrength(game, player, swordSources) {
   }
   if (sandwormStr > 0) {
     breakdown.push({ source: 'sandworms', label: `${sandworms} Sandworm${sandworms > 1 ? 's' : ''}`, amount: sandwormStr })
+  }
+  if (dreadnoughts > 0) {
+    const shipStr = units.dreadnoughtStrength(game, player)
+    breakdown.push({
+      source: 'dreadnoughts',
+      label: `${dreadnoughts} Dreadnought${dreadnoughts > 1 ? 's' : ''}`,
+      amount: shipStr,
+    })
   }
   for (const s of swordSources) {
     if (s.swords > 0) {

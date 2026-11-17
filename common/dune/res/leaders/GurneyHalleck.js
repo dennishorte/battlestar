@@ -17,16 +17,17 @@ module.exports = {
   // deployed units + revealed swords, matching setRevealStrength's math.
   onRevealTurn(game, player) {
     const threshold = game.settings.numPlayers >= 6 ? 10 : 6
-    const troops = game.state.conflict.deployedTroops[player.name] || 0
-    const sandworms = game.state.conflict.deployedSandworms[player.name] || 0
-    if (troops + sandworms === 0) {
+    const units = require('../../systems/units.js')
+    if (!units.hasUnitInConflict(game, player)) {
       return
     }
+    const { troops, sandworms } = units.counts(game, player)
     const revealedZone = game.zones.byId(`${player.name}.revealed`)
     const swords = revealedZone.cardlist().reduce((sum, c) => sum + (c.revealSwords || 0), 0)
     const strength =
       troops * constants.TROOP_STRENGTH
       + sandworms * constants.SANDWORM_STRENGTH
+      + units.dreadnoughtStrength(game, player)
       + swords * constants.SWORD_STRENGTH
     if (strength >= threshold) {
       player.incrementCounter('persuasion', 1, { silent: true })

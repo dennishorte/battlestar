@@ -79,15 +79,18 @@ function previewReveal(game, player) {
     resolved.push({ source: 'High Council', description: '+2 Persuasion' })
   }
 
+  const units = require('./units.js')
   const baseDeployedTroops = game.state.conflict?.deployedTroops?.[player.name] || 0
   const baseDeployedSandworms = game.state.conflict?.deployedSandworms?.[player.name] || 0
   const totalDeployedTroops = baseDeployedTroops + (totals.deployFromSupply || 0)
   const totalDeployedSandworms = baseDeployedSandworms
-  const hasUnits = (totalDeployedTroops + totalDeployedSandworms) > 0
+  const dreadnoughts = player.dreadnoughtsInConflict || 0
+  const hasUnits = (totalDeployedTroops + totalDeployedSandworms + dreadnoughts) > 0
   const strength = hasUnits
     ? totals.swords * constants.SWORD_STRENGTH
       + totalDeployedTroops * constants.TROOP_STRENGTH
       + totalDeployedSandworms * constants.SANDWORM_STRENGTH
+      + units.dreadnoughtStrength(game, player)
     : 0
 
   // Leader-level extension: a leader whose onRevealTurn depends on the
@@ -344,9 +347,8 @@ function checkCondition(game, player, handCards, sourceCard, condition) {
       return (game.state.conflict?.deployedSandworms?.[player.name] || 0) >= condition.amount
 
     case 'units-in-conflict': {
-      const troops = game.state.conflict?.deployedTroops?.[player.name] || 0
-      const sandworms = game.state.conflict?.deployedSandworms?.[player.name] || 0
-      return (troops + sandworms) >= condition.amount
+      const units = require('./units.js').counts(game, player)
+      return (units.troops + units.sandworms + units.dreadnoughts) >= condition.amount
     }
 
     case 'most-deployed-troops': {

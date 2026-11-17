@@ -1895,9 +1895,8 @@ function checkCondition(game, player, condition, card) {
       return (game.state.conflict.deployedSandworms[player.name] || 0) >= condition.amount
 
     case 'units-in-conflict': {
-      const troops = game.state.conflict.deployedTroops[player.name] || 0
-      const sandworms = game.state.conflict.deployedSandworms[player.name] || 0
-      return (troops + sandworms) >= condition.amount
+      const units = require('../systems/units.js').counts(game, player)
+      return (units.troops + units.sandworms + units.dreadnoughts) >= condition.amount
     }
 
     case 'most-deployed-troops': {

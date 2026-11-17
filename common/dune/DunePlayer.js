@@ -119,14 +119,18 @@ class DunePlayer extends BasePlayer {
   // of Power) are unconditional, matching how addStrength has always worked.
   get strength() {
     const conflict = this.game.state.conflict
+    const units = require('./systems/units.js')
     const troops = conflict?.deployedTroops?.[this.name] || 0
     const sandworms = conflict?.deployedSandworms?.[this.name] || 0
-    const unitStrength = (troops + sandworms) > 0
-      ? troops * constants.TROOP_STRENGTH + sandworms * constants.SANDWORM_STRENGTH
+    const present = units.hasUnitInConflict(this.game, this)
+    const unitStrength = present
+      ? troops * constants.TROOP_STRENGTH
+        + sandworms * constants.SANDWORM_STRENGTH
+        + units.dreadnoughtStrength(this.game, this)
       : 0
 
     const extra = (conflict?.strengthBreakdown?.[this.name] || [])
-      .filter(b => b.source !== 'troops' && b.source !== 'sandworms')
+      .filter(b => b.source !== 'troops' && b.source !== 'sandworms' && b.source !== 'dreadnoughts')
       .reduce((sum, b) => sum + b.amount, 0)
 
     return unitStrength + extra

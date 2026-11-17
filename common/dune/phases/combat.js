@@ -10,11 +10,8 @@ function combatPhase(game) {
   game.log.add({ template: 'Combat', event: 'phase-start' })
 
   // Determine which players are involved in combat (have units in conflict)
-  const combatants = game.players.all().filter(p => {
-    const troops = game.state.conflict.deployedTroops[p.name] || 0
-    const sandworms = game.state.conflict.deployedSandworms[p.name] || 0
-    return (troops + sandworms) > 0
-  })
+  const { hasUnitInConflict } = require('../systems/units.js')
+  const combatants = game.players.all().filter(p => hasUnitInConflict(game, p))
 
   if (combatants.length === 0) {
     game.log.add({ template: 'No units in Conflict — combat skipped', event: 'memo' })
@@ -166,11 +163,7 @@ function resolveCombat(game) {
 
   // Only players with deployed units can participate; strength alone doesn't qualify
   const rankings = game.players.all()
-    .filter(p => {
-      const troops = game.state.conflict.deployedTroops[p.name] || 0
-      const sandworms = game.state.conflict.deployedSandworms[p.name] || 0
-      return (troops + sandworms) > 0 && p.strength > 0
-    })
+    .filter(p => require('../systems/units.js').hasUnitInConflict(game, p) && p.strength > 0)
     .sort((a, b) => b.strength - a.strength)
 
   if (rankings.length === 0) {
