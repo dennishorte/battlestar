@@ -95,6 +95,7 @@ function discardCard(game, player, card) {
   if (typeof card.definition?.onDiscard === 'function') {
     card.definition.onDiscard(game, player, card, { resolveEffect: _resolveEffectLazy() })
   }
+  require('../phases/playerTurns.js').resolveUnload(game, player, card)
 }
 
 /**
@@ -110,6 +111,7 @@ function trashCard(game, card, player) {
   if (typeof card.definition?.onTrash === 'function') {
     card.definition.onTrash(game, player, card, { resolveEffect: _resolveEffectLazy() })
   }
+  require('../phases/playerTurns.js').resolveUnload(game, player, card)
 }
 
 /**

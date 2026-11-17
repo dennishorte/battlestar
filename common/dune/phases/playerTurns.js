@@ -872,7 +872,9 @@ function canSendAgentTo(game, player, card, space) {
   // Space occupancy check — can infiltrate if spy on connected post, leader ignores, or card ignores
   if (occupants.length > 0) {
     const cardIgnores = game.state.turnTracking?.ignoreOccupancy
-    if (!spies.hasSpyAt(game, player, space.id) && !leaderAbilities.ignoresOccupancy(game, player, space) && !cardIgnores) {
+    const printedIcon = card.agentIcons.includes(space.icon) || card.factionAccess.includes(space.icon)
+    const infiltrates = Boolean(card.definition?.hasInfiltration) && printedIcon
+    if (!spies.hasSpyAt(game, player, space.id) && !leaderAbilities.ignoresOccupancy(game, player, space) && !cardIgnores && !infiltrates) {
       return false
     }
   }
@@ -1018,17 +1020,8 @@ function resolveCardAgentAbility(game, player, card) {
       deckEngine.trashCard(game, card, player)
     }
     else if (effect.type === 'discard-card') {
-      // Discard from hand
-      const handZone = game.zones.byId(`${player.name}.hand`)
-      const handCards = handZone.cardlist()
-      if (handCards.length > 0) {
-        const discardCard = game.actions.chooseCard(player, handCards, {
-          title: 'Choose a card to discard',
-          kind: 'imperium-card',
-        })
-        if (discardCard) {
-          deckEngine.discardCard(game, player, discardCard)
-        }
+      if (resolveEffect(game, player, effect, null, card?.name, card) === false) {
+        break
       }
     }
     else {
@@ -1104,8 +1097,57 @@ function resolveBoardSpaceEffects(game, player, space) {
 /**
  * Resolve a single effect. Used by board spaces, choice sub-effects, and combat rewards.
  */
+function payDiscardCost(game, player, optional) {
+  const hand = game.zones.byId(`${player.name}.hand`).cardlist()
+  if (hand.length === 0) {
+    return false
+  }
+  const choices = hand.map(c => game.actions.cardOption(c, 'imperium-card'))
+  if (optional) {
+    choices.unshift(game.actions.option({ id: 'pass', title: 'Do not discard' }))
+  }
+  const [choice] = game.actions.choose(player, choices, { title: 'Discard a card' })
+  const choiceId = typeof choice === 'object' ? choice.id : choice
+  if (choiceId === 'pass' || choice === 'Do not discard') {
+    return false
+  }
+  const discarded = typeof choice === 'object'
+    ? hand.find(c => c.id === choice.id)
+    : hand.find(c => c.name === choice)
+  if (!discarded) {
+    return false
+  }
+  deckEngine.discardCard(game, player, discarded)
+  return true
+}
+
+function resolveUnload(game, player, card) {
+  if (!player || !card?.definition?.hasUnload) {
+    return
+  }
+  if (!game.state.unloading) {
+    game.state.unloading = {}
+  }
+  if (game.state.unloading[card.id]) {
+    return
+  }
+  game.state.unloading[card.id] = true
+  try {
+    resolveCardRevealAbility(game, player, card, [])
+  }
+  finally {
+    delete game.state.unloading[card.id]
+  }
+}
+
 function resolveEffect(game, player, effect, space, sourceName, card) {
   switch (effect.type) {
+    case 'discard-card':
+      if (!payDiscardCost(game, player, Boolean(effect.cost))) {
+        return effect.cost ? false : undefined
+      }
+      return undefined
+
     case 'gain':
       player.incrementCounter(effect.resource, effect.amount, { silent: true })
       game.log.add({
@@ -1231,7 +1273,9 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
 
       // Resolve sub-effects
       for (const subEffect of chosen.effects) {
-        resolveEffect(game, player, subEffect, space, sourceName, card)
+        if (resolveEffect(game, player, subEffect, space, sourceName, card) === false) {
+          break
+        }
       }
       break
     }
@@ -1570,7 +1614,9 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
     case 'conditional': {
       if (checkCondition(game, player, effect.condition, card)) {
         for (const subEffect of effect.effects) {
-          resolveEffect(game, player, subEffect, space, sourceName, card)
+          if (resolveEffect(game, player, subEffect, space, sourceName, card) === false) {
+            break
+          }
         }
       }
       break
@@ -2222,7 +2268,9 @@ function playPlot(game, player, cardId, opts = {}) {
     }
     else if (card.definition.plotEffects) {
       for (const effect of card.definition.plotEffects) {
-        resolveEffect(game, player, effect, null)
+        if (resolveEffect(game, player, effect, null) === false) {
+          break
+        }
       }
     }
     else if (plotEffect) {
@@ -2295,7 +2343,9 @@ function offerPlotIntrigue(game, player) {
     game.log.indent()
     if (effects) {
       for (const effect of effects) {
-        resolveEffect(game, player, effect, null)
+        if (resolveEffect(game, player, effect, null) === false) {
+          break
+        }
       }
     }
     else {
@@ -2356,6 +2406,7 @@ module.exports = {
   revealTurn,
   canSendAgentTo,
   resolveEffect,
+  resolveUnload,
   legalPlotActions,
   playPlot,
   maybePlotDrawPause,

@@ -23,6 +23,7 @@ describe('captured-mentat', () => {
     t.choose(game, 'Agent Turn.Captured Mentat')
     t.choose(game, 'Assembly Hall')
     t.choose(game, 'Captured Mentat')
+    t.choose(game, 'Dagger')
 
     const dennis = game.players.byName('dennis')
     expect(game.zones.byId('dennis.hand').cardlist().length).toBe(1)

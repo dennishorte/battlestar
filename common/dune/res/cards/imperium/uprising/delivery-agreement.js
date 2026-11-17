@@ -34,7 +34,8 @@ module.exports = {
 
   agentEffects: [
     {
-      type: 'discard-card'
+      type: 'discard-card',
+      cost: true
     },
     {
       type: 'contract'

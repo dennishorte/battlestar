@@ -22,10 +22,12 @@ module.exports = {
 
   plotEffects: [
     {
-      type: 'discard-card'
+      type: 'discard-card',
+      cost: true
     },
     {
-      type: 'discard-card'
+      type: 'discard-card',
+      cost: true
     },
     {
       type: 'draw',
