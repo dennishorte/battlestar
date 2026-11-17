@@ -59,6 +59,8 @@ function DuneFactory(settings, viewerName) {
   data.settings.useCHOAM = true
   data.settings.useBaseGameCards = settings.useBaseGameCards !== false
   data.settings.useRiseOfIx = settings.useRiseOfIx || false
+  data.settings.useEpic = settings.useEpic || false
+  data.settings.vpToWin = (data.settings.useEpic && data.settings.useRiseOfIx) ? 12 : constants.VP_TO_WIN
   data.settings.useImmortality = settings.useImmortality || false
   data.settings.useBloodlines = settings.useBloodlines || false
   data.settings.usePromo = settings.usePromo || false
@@ -78,6 +80,7 @@ function factoryFromLobby(lobby) {
     useCHOAM: true,
     useBaseGameCards: lobby.options?.useBaseGameCards !== false,
     useRiseOfIx: lobby.options?.useRiseOfIx || false,
+    useEpic: lobby.options?.useEpic || false,
     useImmortality: lobby.options?.useImmortality || false,
     useBloodlines: lobby.options?.useBloodlines || false,
     usePromo: lobby.options?.usePromo || false,
@@ -195,6 +198,7 @@ Dune.prototype.initialize = function() {
 
   this._breakpoint('initialization-complete')
   require('./systems/choam.js').dealRiseOfIxContracts(this)
+  deckEngine.applyEpicSetup(this)
 }
 
 Dune.prototype.initializeZones = function() {
@@ -253,6 +257,10 @@ Dune.prototype.initializePlayers = function() {
     if (this.settings.useRiseOfIx) {
       player.setCounter('dreadnoughtsInSupply', 2, { silent: true })
       player.setCounter('freighterPosition', 0, { silent: true })
+    }
+    if (this.settings.useEpic && this.settings.useRiseOfIx) {
+      player.incrementCounter('troopsInGarrison', 2, { silent: true })
+      player.decrementCounter('troopsInSupply', 2, { silent: true })
     }
   }
 }

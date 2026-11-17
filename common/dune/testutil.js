@@ -26,6 +26,7 @@ TestUtil.fixture = function(options = {}) {
     shuffleSeats: false,
     useCHOAM: true,
     useRiseOfIx: options.useRiseOfIx || false,
+    useEpic: options.useEpic || false,
     useImmortality: options.useImmortality || false,
     useBloodlines: options.useBloodlines || false,
     ...options,

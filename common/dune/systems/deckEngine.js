@@ -294,38 +294,47 @@ function initializeCards(game) {
     }
   }
 
-  // Build Conflict deck: shuffle tier III (all 4), deal 5 tier II on top, deal 1 tier I on top
+  // Build Conflict deck: shuffle tier III (all 4), deal 5 tier II on top, deal 1 tier I on top.
+  // Epic mode uses a different deck and never slices a tier that could drop Economic Supremacy.
   const conflictDeckZone = game.zones.byId('common.conflictDeck')
   const conflictCards = require('../res/index.js').getConflictCards(settings)
-  const tierI = [], tierII = [], tierIII = []
-  for (const cardDef of conflictCards) {
-    const card = new DuneCard(game, { ...cardDef, defId: cardDef.id, type: 'conflict' })
-    game.cards.register(card)
-    card.setHome(conflictDeckZone)
-    if (cardDef.tier === 1) {
-      tierI.push(card)
-    }
-    else if (cardDef.tier === 2) {
-      tierII.push(card)
-    }
-    else if (cardDef.tier === 3) {
-      tierIII.push(card)
-    }
+  if (settings.useEpic && settings.useRiseOfIx) {
+    buildEpicConflictDeck(game, conflictDeckZone, conflictCards)
   }
-  // Shuffle each tier
-  util.array.shuffle(tierIII, game.random)
-  util.array.shuffle(tierII, game.random)
-  util.array.shuffle(tierI, game.random)
-  // Stack the deck: tier I on top (index 0), tier II middle, tier III bottom.
-  // push(card, 0) inserts at the top.
-  for (const card of tierIII.slice(0, constants.CONFLICT_III_COUNT)) {
-    conflictDeckZone.push(card)
-  }
-  for (const card of tierII.slice(0, constants.CONFLICT_II_COUNT)) {
-    conflictDeckZone.push(card, 0)
-  }
-  for (const card of tierI.slice(0, constants.CONFLICT_I_COUNT)) {
-    conflictDeckZone.push(card, 0)
+  else {
+    const tierI = [], tierII = [], tierIII = []
+    for (const cardDef of conflictCards) {
+      if (cardDef.epicOnly) {
+        continue
+      }
+      const card = new DuneCard(game, { ...cardDef, defId: cardDef.id, type: 'conflict' })
+      game.cards.register(card)
+      card.setHome(conflictDeckZone)
+      if (cardDef.tier === 1) {
+        tierI.push(card)
+      }
+      else if (cardDef.tier === 2) {
+        tierII.push(card)
+      }
+      else if (cardDef.tier === 3) {
+        tierIII.push(card)
+      }
+    }
+    // Shuffle each tier
+    util.array.shuffle(tierIII, game.random)
+    util.array.shuffle(tierII, game.random)
+    util.array.shuffle(tierI, game.random)
+    // Stack the deck: tier I on top (index 0), tier II middle, tier III bottom.
+    // push(card, 0) inserts at the top.
+    for (const card of tierIII.slice(0, constants.CONFLICT_III_COUNT)) {
+      conflictDeckZone.push(card)
+    }
+    for (const card of tierII.slice(0, constants.CONFLICT_II_COUNT)) {
+      conflictDeckZone.push(card, 0)
+    }
+    for (const card of tierI.slice(0, constants.CONFLICT_I_COUNT)) {
+      conflictDeckZone.push(card, 0)
+    }
   }
 
   // Create starting deck for each player
@@ -342,6 +351,9 @@ function initializeCards(game) {
         deckZone.push(card)
       }
     }
+    if (settings.useEpic && settings.useRiseOfIx) {
+      swapControlTheSpice(game, player, deckZone)
+    }
     deckZone.shuffle(game.random)
   }
 
@@ -349,6 +361,85 @@ function initializeCards(game) {
   refillImperiumRow(game, { silent: true })
 
   initializeTechStacks(game)
+}
+
+// Five Uprising Conflict II cards on top of Uprising's four Conflict III cards
+// plus Economic Supremacy. No Conflict I. Every Conflict III is kept.
+function buildEpicConflictDeck(game, conflictDeckZone, conflictCards) {
+  const tierII = []
+  const tierIII = []
+  for (const cardDef of conflictCards) {
+    if (cardDef.epicOnly) {
+      continue
+    }
+    const card = new DuneCard(game, { ...cardDef, defId: cardDef.id, type: 'conflict' })
+    game.cards.register(card)
+    card.setHome(conflictDeckZone)
+    if (cardDef.source === 'Uprising' && cardDef.tier === 2) {
+      tierII.push(card)
+    }
+    else if (cardDef.source === 'Uprising' && cardDef.tier === 3) {
+      tierIII.push(card)
+    }
+  }
+
+  const supremacyDef = require('../res/cards/conflict/conflict-economic-supremacy.js')
+  if (!tierIII.some(card => card.definition.id === supremacyDef.id)) {
+    const supremacy = new DuneCard(game, {
+      ...supremacyDef,
+      defId: supremacyDef.id,
+      type: 'conflict',
+    })
+    game.cards.register(supremacy)
+    supremacy.setHome(conflictDeckZone)
+    tierIII.push(supremacy)
+  }
+
+  util.array.shuffle(tierIII, game.random)
+  util.array.shuffle(tierII, game.random)
+  for (const card of tierIII) {
+    conflictDeckZone.push(card)
+  }
+  for (const card of tierII.slice(0, constants.CONFLICT_II_COUNT)) {
+    conflictDeckZone.push(card, 0)
+  }
+}
+
+// Replace one Dune, the Desert Planet. The other copy stays.
+function swapControlTheSpice(game, player, deckZone) {
+  const deserts = deckZone.cardlist().filter(card => card.defId === 'dune-the-desert-planet')
+  const desert = deserts[deserts.length - 1]
+  if (!desert) {
+    return
+  }
+  desert.moveTo(game.zones.byId('common.trash'))
+  const control = require('../res/cards/starter/control-the-spice.js')
+  const card = new DuneCard(game, {
+    ...control,
+    defId: control.id,
+    id: `starter-${player.name}-control-the-spice-0`,
+    type: 'starter',
+  })
+  game.cards.register(card)
+  card.setHome(deckZone)
+  deckZone.push(card)
+}
+
+// Epic draws one intrigue card for each player, then Hundro uses Intelligence.
+function applyEpicSetup(game) {
+  if (!game.settings.useEpic || !game.settings.useRiseOfIx) {
+    return
+  }
+  for (const player of game.players.all()) {
+    drawIntrigueCard(game, player, 1)
+  }
+  const { getLeader } = require('./leaders.js')
+  for (const player of game.players.all()) {
+    const leader = getLeader(game, player)
+    if (leader && leader.name === 'Viscount Hundro Moritani' && typeof leader.intelligence === 'function') {
+      leader.intelligence(game, player)
+    }
+  }
 }
 
 function initializeTechStacks(game) {
@@ -402,4 +493,5 @@ module.exports = {
   drawIntrigueCard,
   initializeCards,
   createFoldspacePile,
+  applyEpicSetup,
 }

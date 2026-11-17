@@ -5,7 +5,7 @@ const { applyDiceRefresh, applyShiftRefresh } = require('../systems/imperiumRowR
 
 /**
  * Phase 5: Recall
- * - Check endgame conditions (10+ VP or empty conflict deck)
+ * - Check endgame conditions (victory-point target, or an empty conflict deck)
  * - Recall all agents
  * - Clear board space occupation
  * - Pass first player clockwise
@@ -15,11 +15,12 @@ function recallPhase(game) {
   game.log.add({ template: 'Recall', event: 'phase-start' })
 
   // Check endgame conditions
-  const anyPlayerAt10VP = game.players.all().some(p => p.vp >= constants.VP_TO_WIN)
+  const vpTarget = game.settings.vpToWin || constants.VP_TO_WIN
+  const anyPlayerAtTarget = game.players.all().some(p => p.vp >= vpTarget)
   const conflictDeck = game.zones.byId('common.conflictDeck')
   const conflictDeckEmpty = conflictDeck.cardlist().length === 0
 
-  if (anyPlayerAt10VP || conflictDeckEmpty) {
+  if (anyPlayerAtTarget || conflictDeckEmpty) {
     endGame(game)
   }
 

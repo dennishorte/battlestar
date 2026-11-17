@@ -38,6 +38,7 @@ const conflict_battle_for_arrakeen_uprising = require('./conflict-battle-for-arr
 const conflict_battle_for_imperial_basin_uprising = require('./conflict-battle-for-imperial-basin-uprising.js')
 const conflict_battle_for_spice_refinery = require('./conflict-battle-for-spice-refinery.js')
 const conflict_propaganda = require('./conflict-propaganda.js')
+const conflict_economic_supremacy = require('./conflict-economic-supremacy.js')
 
 module.exports = [
   conflict_skirmish_1,
@@ -76,4 +77,5 @@ module.exports = [
   conflict_battle_for_imperial_basin_uprising,
   conflict_battle_for_spice_refinery,
   conflict_propaganda,
+  conflict_economic_supremacy,
 ]

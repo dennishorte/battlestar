@@ -320,13 +320,23 @@ describe('Rise of Ix leaders', () => {
     expect(intrigueIds).not.toContain(other.id)
   })
 
-  test('Hundro waits to look at intrigue when Epic mode is also on', () => {
+  test('Hundro looks at intrigue after every player has drawn one in Epic mode', () => {
     const game = t.fixture({ useRiseOfIx: true, useEpic: true })
     t.setBoard(game, { leaders: { dennis: hundro } })
     game.run()
 
-    expect(waitingTitle(game)).not.toMatch(/Intelligence/)
-    expect(game.zones.byId('dennis.intrigue').cardlist()).toHaveLength(0)
+    expect(game.zones.byId('micah.intrigue').cardlist()).toHaveLength(1)
+    expect(game.zones.byId('scott.intrigue').cardlist()).toHaveLength(1)
+    expect(game.zones.byId('dennis.intrigue').cardlist()).toHaveLength(1)
+    expect(waitingTitle(game)).toBe('Intelligence: keep one Intrigue card')
+
+    const [kept, other] = game.waiting.selectors[0].choices
+    t.choose(game, { id: kept.id })
+
+    const intrigueIds = game.zones.byId('dennis.intrigue').cardlist().map(card => card.id)
+    expect(intrigueIds).toHaveLength(2)
+    expect(intrigueIds).toContain(kept.id)
+    expect(game.zones.byId('common.intrigueDeck').cardlist().map(card => card.id)).toContain(other.id)
   })
 
   test('Couriers spends a spice to move the freighter', () => {

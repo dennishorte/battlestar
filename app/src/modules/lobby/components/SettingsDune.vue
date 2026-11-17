@@ -29,6 +29,17 @@
       <input
         class="form-check-input"
         type="checkbox"
+        v-model="models.useEpic"
+        @change="optionsChanged"
+        :disabled="!models.useRiseOfIx"
+      />
+      <label class="form-check-label" :class="{ 'text-muted': !models.useRiseOfIx }">Epic mode</label>
+    </div>
+
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="checkbox"
         v-model="models.useImmortality"
         @change="optionsChanged"
         disabled
@@ -118,6 +129,7 @@ export default {
       models: {
         useBaseGameCards: true,
         useRiseOfIx: false,
+        useEpic: false,
         useImmortality: false,
         useBloodlines: false,
         imperiumRowRefresh: 'none',
@@ -154,9 +166,13 @@ export default {
     },
 
     optionsChanged() {
+      if (!this.models.useRiseOfIx) {
+        this.models.useEpic = false
+      }
       this.lobby.options = {
         useBaseGameCards: this.models.useBaseGameCards,
         useRiseOfIx: this.models.useRiseOfIx,
+        useEpic: this.models.useEpic,
         useImmortality: this.models.useImmortality,
         useBloodlines: this.models.useBloodlines,
         imperiumRowRefresh: this.models.imperiumRowRefresh,
@@ -169,6 +185,7 @@ export default {
     if (this.lobby.options) {
       this.models.useBaseGameCards = this.lobby.options.useBaseGameCards !== false
       this.models.useRiseOfIx = Boolean(this.lobby.options.useRiseOfIx)
+      this.models.useEpic = Boolean(this.lobby.options.useEpic) && this.models.useRiseOfIx
       this.models.useImmortality = Boolean(this.lobby.options.useImmortality)
       this.models.useBloodlines = Boolean(this.lobby.options.useBloodlines)
       this.models.imperiumRowRefresh = this.lobby.options.imperiumRowRefresh || 'none'
