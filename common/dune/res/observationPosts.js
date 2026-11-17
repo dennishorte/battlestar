@@ -18,4 +18,20 @@ const observationPosts = [
   { id: 'M', spaces: ['desert-tactics', 'fremkit'] },
 ]
 
+function getObservationPosts(settings) {
+  if (!settings?.useRiseOfIx) {
+    return observationPosts
+  }
+  const posts = observationPosts.map(post => {
+    if (post.id !== 'I') {
+      return post
+    }
+    return { id: 'I', spaces: ['interstellar-shipping', 'smuggling'] }
+  })
+  posts.push({ id: 'N', spaces: ['tech-negotiation', 'dreadnought'] })
+  return posts
+}
+
+observationPosts.getObservationPosts = getObservationPosts
+
 module.exports = observationPosts

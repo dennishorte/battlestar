@@ -33,7 +33,7 @@ module.exports = {
 
   onRevealTurn(game, player) {
     const spies = require('../../systems/spies.js')
-    const observationPosts = require('../observationPosts.js')
+    const observationPosts = game.state.observationPosts
     const hasSpy = observationPosts.some(post => {
       const occupants = game.state.spyPosts[post.id] || []
       return occupants.includes(player.name)

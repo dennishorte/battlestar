@@ -101,9 +101,14 @@ Dune.prototype._reset = function() {
   // Multiple occupants possible via spy infiltration or leader abilities
   // (e.g. Helena Richese ignoring occupancy on green/purple).
   this.state.boardSpaces = {}
-  for (const space of res.boardSpaces) {
+  for (const space of res.boardSpaces.getBoardSpaces(this.settings)) {
     this.state.boardSpaces[space.id] = []
   }
+  this.state.observationPosts = res.observationPosts.getObservationPosts(this.settings)
+  this.state.techStacks = [[], [], []]
+  this.state.ownedTech = {}
+  this.state.flippedTech = {}
+  this.state.parkedDreadnoughts = {}
 
   // Control markers: { locationId: playerName | null }
   this.state.controlMarkers = {
@@ -239,6 +244,10 @@ Dune.prototype.initializePlayers = function() {
     player.setCounter('vp', startingVp, { silent: true, source: 'Starting VP' })
     if (this.settings.imperiumRowRefresh === 'nuke') {
       this.state.nukesAvailable[player.name] = true
+    }
+    if (this.settings.useRiseOfIx) {
+      player.setCounter('dreadnoughtsInSupply', 2, { silent: true })
+      player.setCounter('freighterPosition', 0, { silent: true })
     }
   }
 }

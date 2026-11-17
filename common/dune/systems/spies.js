@@ -1,10 +1,18 @@
 const boardSpaces = require('../res/boardSpaces.js')
 const observationPosts = require('../res/observationPosts.js')
 
-function postFactions(post) {
+function postsFor(game) {
+  return game.state.observationPosts || observationPosts
+}
+
+function spacesFor(game) {
+  return boardSpaces.getBoardSpaces(game.settings)
+}
+
+function postFactions(post, spaces) {
   const factions = new Set()
   for (const id of post.spaces) {
-    const space = boardSpaces.find(s => s.id === id)
+    const space = spaces.find(s => s.id === id)
     if (space?.faction) {
       factions.add(space.faction)
     }
@@ -12,10 +20,10 @@ function postFactions(post) {
   return factions
 }
 
-function postIcons(post) {
+function postIcons(post, spaces) {
   const icons = new Set()
   for (const id of post.spaces) {
-    const space = boardSpaces.find(s => s.id === id)
+    const space = spaces.find(s => s.id === id)
     if (space?.icon) {
       icons.add(space.icon)
     }
@@ -46,7 +54,8 @@ function placeSpy(game, player, options = {}) {
   const factionFilter = factions ? new Set(factions) : null
   const iconFilter = icons ? new Set(icons) : null
 
-  const availablePosts = observationPosts.filter(post => {
+  const spaces = spacesFor(game)
+  const availablePosts = postsFor(game).filter(post => {
     const occupants = game.state.spyPosts[post.id] || []
     if (occupants.includes(player.name)) {
       return false
@@ -58,7 +67,7 @@ function placeSpy(game, player, options = {}) {
       return false
     }
     if (factionFilter) {
-      const pf = postFactions(post)
+      const pf = postFactions(post, spaces)
       let match = false
       for (const f of pf) {
         if (factionFilter.has(f)) {
@@ -71,7 +80,7 @@ function placeSpy(game, player, options = {}) {
       }
     }
     if (iconFilter) {
-      const pi = postIcons(post)
+      const pi = postIcons(post, spaces)
       let match = false
       for (const i of pi) {
         if (iconFilter.has(i)) {
@@ -92,7 +101,7 @@ function placeSpy(game, player, options = {}) {
 
   const choices = availablePosts.map(post => {
     const spaceNames = post.spaces.map(id => {
-      const space = boardSpaces.find(s => s.id === id)
+      const space = spaces.find(s => s.id === id)
       return space ? space.name : id
     })
     return game.actions.option({
@@ -132,7 +141,7 @@ function placeSpy(game, player, options = {}) {
  * Returns the post the spy was recalled from, or null.
  */
 function recallSpy(game, player) {
-  const playerPosts = observationPosts.filter(post => {
+  const playerPosts = postsFor(game).filter(post => {
     const occupants = game.state.spyPosts[post.id] || []
     return occupants.includes(player.name)
   })
@@ -173,7 +182,7 @@ function recallSpy(game, player) {
  */
 function getSpyConnectedSpaces(game, player) {
   const connected = new Set()
-  for (const post of observationPosts) {
+  for (const post of postsFor(game)) {
     const occupants = game.state.spyPosts[post.id] || []
     if (occupants.includes(player.name)) {
       for (const spaceId of post.spaces) {
@@ -196,7 +205,7 @@ function hasSpyAt(game, player, spaceId) {
  * If multiple posts connect to the space, the player chooses which spy to recall.
  */
 function recallSpyAt(game, player, spaceId) {
-  const connectedPosts = observationPosts.filter(post => {
+  const connectedPosts = postsFor(game).filter(post => {
     const occupants = game.state.spyPosts[post.id] || []
     return occupants.includes(player.name) && post.spaces.includes(spaceId)
   })
@@ -245,7 +254,7 @@ function placeSpyAt(game, player, postId, options = {}) {
   if (player.spiesInSupply <= 0) {
     return false
   }
-  const post = observationPosts.find(p => p.id === postId)
+  const post = postsFor(game).find(p => p.id === postId)
   if (!post) {
     return false
   }

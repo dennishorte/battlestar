@@ -23,7 +23,7 @@ module.exports = {
   plotText: "Recall a Spy → Trash a card and Draw a card OR Ignore Influence requirements on board spaces when sending an Agent this turn",
 
   plotEffect(game, player, card, { resolveEffect }) {
-    const observationPosts = require('../../observationPosts.js')
+    const observationPosts = game.state.observationPosts
     const hasSpy = observationPosts.some(p => (game.state.spyPosts[p.id] || []).includes(player.name))
     const choices = []
     if (hasSpy) {

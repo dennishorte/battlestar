@@ -41,7 +41,7 @@ module.exports = {
 
   resolveSignetRing(game, player, _resolveEffectFn) {
     const spies = require('../../systems/spies.js')
-    const boardSpaces = require('../boardSpaces.js')
+    const boardSpaces = require('../boardSpaces.js').getBoardSpaces(game.settings)
     const constants = require('../constants.js')
 
     const post = spies.placeSpy(game, player)

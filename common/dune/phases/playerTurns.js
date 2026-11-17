@@ -206,7 +206,7 @@ function agentTurn(game, player, card) {
 
   // Step 2: Choose a board space. The list is rebuilt after a Plot so a
   // solari or influence card played here can open a space that was closed.
-  const liveSpaces = () => getBoardSpaces().filter(space => canSendAgentTo(game, player, card, space))
+  const liveSpaces = () => getBoardSpaces(game).filter(space => canSendAgentTo(game, player, card, space))
 
   if (liveSpaces().length === 0 && !hasLegalPlots(game, player, 'turn')) {
     game.log.add({ template: 'No valid board spaces', event: 'memo' })
@@ -491,6 +491,15 @@ function revealTurn(game, player) {
     game.log.outdent()
   }
 
+  // Tech Negotiation: +1 Persuasion on your Reveal turn while your Agent is still there.
+  if ((game.state.boardSpaces['tech-negotiation'] || []).includes(player.name)) {
+    totalPersuasion += 1
+    game.log.add({
+      template: '{player}: +{amount} Persuasion (Tech Negotiation)',
+      args: { player, amount: 1 },
+    })
+  }
+
   // High Council seat: +2 Persuasion during Reveal
   if (player.hasHighCouncil) {
     const seatBonus = 2
@@ -682,7 +691,7 @@ function acquireOneCard(game, player, opts = {}) {
   // influence with each faction you are spying on.
   if (card.defId === 'the-spice-must-flow' && game.state.turnTracking?.guildSpyTSMF) {
     const spyMod = require('../systems/spies.js')
-    const boardSpaces = getBoardSpaces()
+    const boardSpaces = getBoardSpaces(game)
     const connectedSpaceIds = spyMod.getSpyConnectedSpaces(game, player)
     const spiedFactions = new Set()
     for (const spaceId of connectedSpaceIds) {
@@ -788,7 +797,7 @@ function hasAgentTurnAccess(card) {
  * each possible source to check whether a valid destination would exist.
  */
 function hasValidPlacement(game, player, card) {
-  const boardSpaces = getBoardSpaces()
+  const boardSpaces = getBoardSpaces(game)
 
   if (card.definition?.movesExistingAgent) {
     const playerOccupied = Object.entries(game.state.boardSpaces)
@@ -1408,7 +1417,7 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
       const occupiedSpaces = Object.entries(game.state.boardSpaces)
         .filter(([id, occupants]) => (occupants || []).includes(player.name) && id !== currentAgentSpaceId)
       if (occupiedSpaces.length > 0) {
-        const boardSpaces = getBoardSpaces()
+        const boardSpaces = getBoardSpaces(game)
         const recallChoices = occupiedSpaces.map(([id]) => {
           const bs = boardSpaces.find(s => s.id === id)
           return game.actions.option({ id, title: bs ? bs.name : id, kind: 'board-space' })
@@ -1738,6 +1747,44 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
       break
     }
 
+    case 'commission-dreadnought': {
+      if (player.dreadnoughtsInSupply <= 0) {
+        break
+      }
+      const [commissionChoice] = game.actions.choose(player, [
+        game.actions.option({ id: 'pass', title: 'Do not commission' }),
+        game.actions.option({ id: 'commission', title: 'Commission a dreadnought' }),
+      ], { title: 'Dreadnought' })
+      const commissionId = typeof commissionChoice === 'object' ? commissionChoice.id : commissionChoice
+      if (commissionId === 'pass' || commissionChoice === 'Do not commission') {
+        break
+      }
+      player.decrementCounter('dreadnoughtsInSupply', 1, { silent: true })
+      player.incrementCounter('dreadnoughtsInGarrison', 1, { silent: true })
+      game.log.add({
+        template: '{player} commissions a dreadnought',
+        args: { player },
+      })
+      break
+    }
+
+    case 'place-negotiator': {
+      if (player.troopsInSupply <= 0) {
+        game.log.add({
+          template: '{player} has no troop to send as a Negotiator',
+          args: { player },
+        })
+        break
+      }
+      player.decrementCounter('troopsInSupply', 1, { silent: true })
+      player.incrementCounter('negotiators', 1, { silent: true })
+      game.log.add({
+        template: '{player} places a Negotiator on Ix',
+        args: { player },
+      })
+      break
+    }
+
     case 'swords-per': {
       const swordCount = countPerVariable(game, player, effect.per)
       const swordTotal = effect.amount * swordCount
@@ -1848,7 +1895,7 @@ function checkCondition(game, player, condition, card) {
       return game.state.alliances[condition.faction] === player.name
 
     case 'occupying-maker-space': {
-      const boardSpacesData = getBoardSpaces()
+      const boardSpacesData = getBoardSpaces(game)
       return boardSpacesData.some(s => s.isMakerSpace && (game.state.boardSpaces[s.id] || []).includes(player.name))
     }
 
@@ -1880,7 +1927,7 @@ function checkCondition(game, player, condition, card) {
     }
 
     case 'agent-on-space': {
-      const allSpaces = getBoardSpaces()
+      const allSpaces = getBoardSpaces(game)
       return allSpaces.some(s => {
         if (!(game.state.boardSpaces[s.id] || []).includes(player.name)) {
           return false
@@ -2256,7 +2303,7 @@ function isConflictProtected(game) {
   if (!currentCard || !currentCard.location) {
     return false
   }
-  const boardSpacesData = getBoardSpaces()
+  const boardSpacesData = getBoardSpaces(game)
   const locationSpace = boardSpacesData.find(s => s.id === currentCard.location)
   return locationSpace && locationSpace.isProtected
 }
@@ -2282,8 +2329,8 @@ function getSpaceCost(game, space, player) {
 /**
  * Get the board spaces data, loading lazily.
  */
-function getBoardSpaces() {
-  return require('../res/boardSpaces.js')
+function getBoardSpaces(game) {
+  return require('../res/boardSpaces.js').getBoardSpaces(game.settings)
 }
 
 module.exports = {

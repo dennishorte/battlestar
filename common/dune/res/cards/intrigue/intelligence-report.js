@@ -24,7 +24,7 @@ module.exports = {
   plotEffect(game, player) {
     deckEngine.drawCards(game, player, 1)
     // Check spy count on board
-    const observationPosts = require('../../observationPosts.js')
+    const observationPosts = game.state.observationPosts
     let spyCount = 0
     for (const post of observationPosts) {
       const occupants = game.state.spyPosts[post.id] || []

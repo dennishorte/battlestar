@@ -345,6 +345,26 @@ function initializeCards(game) {
 
   // Fill the Imperium Row
   refillImperiumRow(game, { silent: true })
+
+  initializeTechStacks(game)
+}
+
+function initializeTechStacks(game) {
+  if (!game.settings.useRiseOfIx) {
+    return
+  }
+  const tiles = require('../res/index.js').getTechCards(game.settings)
+    .filter(tile => tile.source === 'Rise of Ix')
+  const cards = tiles.map(def => {
+    const card = new DuneCard(game, { ...def, defId: def.id, id: `tech-${def.id}`, type: 'tech' })
+    game.cards.register(card)
+    return card
+  })
+  util.array.shuffle(cards, game.random)
+  game.state.techStacks = [[], [], []]
+  for (let i = 0; i < cards.length; i++) {
+    game.state.techStacks[i % 3].push(cards[i])
+  }
 }
 
 // Six Foldspace cards, created only for Ilesa. Nothing else draws from this pile.

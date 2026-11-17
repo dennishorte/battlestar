@@ -522,7 +522,7 @@ function awardReward(game, player, rewardText, rank) {
       else if (effect.type === 'return-spies-for-vp') {
         // Optional: return N spies to supply for VP
         const spies = require('../systems/spies.js')
-        const observationPosts = require('../res/observationPosts.js')
+        const observationPosts = game.state.observationPosts
         const playerSpyCount = observationPosts.reduce((count, post) => {
           const occupants = game.state.spyPosts[post.id] || []
           return count + occupants.filter(n => n === player.name).length

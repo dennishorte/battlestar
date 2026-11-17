@@ -24,6 +24,13 @@ class DunePlayer extends BasePlayer {
     // Spies
     this.addCounter('spiesInSupply', constants.STARTING_SPIES)
 
+    // Rise of Ix pieces. Supply starts at 0 until setup turns the expansion on.
+    this.addCounter('dreadnoughtsInSupply', 0)
+    this.addCounter('dreadnoughtsInGarrison', 0)
+    this.addCounter('dreadnoughtsInConflict', 0)
+    this.addCounter('negotiators', 0)
+    this.addCounter('freighterPosition', 0)
+
     // Faction influence
     for (const faction of constants.FACTIONS) {
       this.addCounter(`influence_${faction}`, 0)
@@ -69,6 +76,21 @@ class DunePlayer extends BasePlayer {
   // Spy management
   get spiesInSupply() {
     return this.getCounter('spiesInSupply')
+  }
+  get dreadnoughtsInSupply() {
+    return this.getCounter('dreadnoughtsInSupply')
+  }
+  get dreadnoughtsInGarrison() {
+    return this.getCounter('dreadnoughtsInGarrison')
+  }
+  get dreadnoughtsInConflict() {
+    return this.getCounter('dreadnoughtsInConflict')
+  }
+  get negotiators() {
+    return this.getCounter('negotiators')
+  }
+  get freighterPosition() {
+    return this.getCounter('freighterPosition')
   }
 
   // Faction influence

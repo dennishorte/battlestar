@@ -282,4 +282,56 @@ const boardSpaces = [
   },
 ]
 
+const ixSpaces = [
+  {
+    id: 'dreadnought',
+    name: 'Dreadnought',
+    icon: 'green',
+    cost: { solari: 3 },
+    isCombatSpace: false,
+    effects: [
+      { type: 'commission-dreadnought' },
+    ],
+  },
+  {
+    id: 'tech-negotiation',
+    name: 'Tech Negotiation',
+    icon: 'green',
+    isCombatSpace: false,
+    effects: [
+      { type: 'choice', choices: [
+        { label: 'Place a Negotiator', effects: [{ type: 'place-negotiator' }] },
+        { label: 'Pass', effects: [] },
+      ]},
+    ],
+  },
+  {
+    id: 'smuggling',
+    name: 'Smuggling',
+    icon: 'yellow',
+    isCombatSpace: false,
+    effects: [
+      { type: 'gain', resource: 'solari', amount: 1 },
+    ],
+  },
+  {
+    id: 'interstellar-shipping',
+    name: 'Interstellar Shipping',
+    icon: 'yellow',
+    influenceRequirement: { faction: 'guild', amount: 2 },
+    isCombatSpace: false,
+    effects: [],
+  },
+]
+
+function getBoardSpaces(settings) {
+  if (!settings?.useRiseOfIx) {
+    return boardSpaces
+  }
+  const covered = new Set(['assembly-hall', 'gather-support'])
+  return boardSpaces.filter(space => !covered.has(space.id)).concat(ixSpaces)
+}
+
+boardSpaces.getBoardSpaces = getBoardSpaces
+
 module.exports = boardSpaces

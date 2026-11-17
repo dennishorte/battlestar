@@ -25,7 +25,7 @@ module.exports = {
   combatText: "Recall 2 Spies → +7 Swords",
 
   combatEffect(game, player) {
-    const observationPosts = require('../../observationPosts.js')
+    const observationPosts = game.state.observationPosts
     const playerSpies = () => observationPosts.filter(p =>
       (game.state.spyPosts[p.id] || []).includes(player.name)
     )

@@ -43,7 +43,7 @@ module.exports = {
 
   revealEffect(game, player) {
     const spyMod = require('../../../../systems/spies.js')
-    const observationPosts = require('../../../observationPosts.js')
+    const observationPosts = game.state.observationPosts
     let spiesOnBoard = 0
     for (const post of observationPosts) {
       const occupants = game.state.spyPosts[post.id] || []
