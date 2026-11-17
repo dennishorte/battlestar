@@ -191,6 +191,7 @@ Dune.prototype.initialize = function() {
 
   const leaders = require('./systems/leaders.js')
   leaders.selectLeaders(this)
+  require('./systems/leaderAbilities.js').onGameStart(this)
 
   this._breakpoint('initialization-complete')
 }
@@ -227,6 +228,7 @@ Dune.prototype.initializeZones = function() {
     z(`${player.name}.intrigue`, `${player.name}'s Intrigue`, 'private', player)
     z(`${player.name}.contracts`, `${player.name}'s Contracts`, 'public')
     z(`${player.name}.contractsCompleted`, `${player.name}'s Completed Contracts`, 'public')
+    z(`${player.name}.setAside`, `${player.name}'s Set Aside`, 'public')
   }
 }
 

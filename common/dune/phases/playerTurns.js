@@ -23,6 +23,7 @@ function spaceOption(space) {
 function playerTurnsPhase(game) {
   game.state.phase = 'player-turns'
   game.log.add({ template: 'Player Turns', event: 'phase-start' })
+  leaderAbilities.onRoundStart(game)
 
   // Reset turn state
   for (const player of game.players.all()) {
@@ -83,6 +84,7 @@ function playerTurnsPhase(game) {
       }
       game._breakpoint('turn-ready')
 
+      leaderAbilities.onTurnStart(game, player)
       require('../systems/tech.js').offerTurnAbilities(game, player)
 
       // Version 4 offers Plot cards only here, before the player commits to
@@ -254,6 +256,7 @@ function agentTurn(game, player, card) {
 
   // Play the card — top-level log entry for this agent action
   deckEngine.playCard(game, player, card)
+  leaderAbilities.onAgentCard(game, player, card)
   game.log.indent()
 
   // Infiltrate before placing when the space is occupied
@@ -390,6 +393,9 @@ function agentTurn(game, player, card) {
         template: '{player} receives {amount} {resource} (control bonus)',
         args: { player: controller, amount: space.controlBonus.amount, resource: space.controlBonus.resource },
       })
+      if (space.controlBonus.resource === 'solari') {
+        leaderAbilities.onGainSolari(game, controller, space.controlBonus.amount)
+      }
     }
   }
 
@@ -452,6 +458,7 @@ function revealTurn(game, player) {
 
   // Flags cards like Reinforcements that key off "your Reveal turn"
   game.state.turnTracking.isRevealTurn = true
+  leaderAbilities.onBeforeReveal(game, player)
 
   // Plot Intrigue already offered by playerTurnsPhase before the
   // turn-type choice.

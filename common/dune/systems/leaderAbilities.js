@@ -18,6 +18,30 @@ function callHook(game, player, hookName, ...args) {
   return leader[hookName](game, player, ...args)
 }
 
+function onGameStart(game) {
+  for (const player of game.players.all()) {
+    callHook(game, player, 'onGameStart')
+  }
+}
+
+function onRoundStart(game) {
+  for (const player of game.players.all()) {
+    callHook(game, player, 'onRoundStart')
+  }
+}
+
+function onTurnStart(game, player) {
+  callHook(game, player, 'onTurnStart')
+}
+
+function onBeforeReveal(game, player) {
+  callHook(game, player, 'onBeforeReveal')
+}
+
+function onAgentCard(game, player, card) {
+  callHook(game, player, 'onAgentCard', card)
+}
+
 function onAgentTurnStart(game, player) {
   callHook(game, player, 'onAgentTurnStart')
 }
@@ -99,6 +123,11 @@ function onAgentPlaced(game, player, space, resolveBoardSpaceEffectsFn) {
 }
 
 module.exports = {
+  onGameStart,
+  onRoundStart,
+  onTurnStart,
+  onBeforeReveal,
+  onAgentCard,
   onAgentTurnStart,
   onRevealTurn,
   onPaySolariForSpace,

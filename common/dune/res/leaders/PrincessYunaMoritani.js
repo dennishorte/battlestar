@@ -21,13 +21,17 @@ module.exports = {
   },
 
   onGainSolari(game, player, amount) {
-    if (amount > 0) {
-      player.incrementCounter('solari', 1, { silent: true })
-      game.log.add({
-        template: '{player}: Smuggling Operation — +{amount} bonus {resource}',
-        args: { player, amount: 1, resource: 'solari' },
-      })
+    if (amount <= 0) {
+      return
     }
+    if (game.state.phase !== 'player-turns' || game.state.currentTurnPlayer !== player.name) {
+      return
+    }
+    player.incrementCounter('solari', 1, { silent: true })
+    game.log.add({
+      template: '{player}: Smuggling Operation — +{amount} bonus {resource}',
+      args: { player, amount: 1, resource: 'solari' },
+    })
   },
 
   resolveSignetRing(game, player, _resolveEffectFn) {

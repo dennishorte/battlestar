@@ -135,6 +135,7 @@ function applyFactionBonus(game, player, faction) {
         template: '{player} gains {amount} {resource}',
         args: { player, amount: 3, resource: 'solari' },
       })
+      require('./leaderAbilities.js').onGainSolari(game, player, 3)
       break
     case 'bene-gesserit': {
       // +1 Intrigue card
@@ -296,6 +297,7 @@ module.exports = {
   factionLabel,
   factionOption,
   gainInfluence,
+  payFactionBonus: applyFactionBonus,
   gainInfluenceWithChoice,
   loseInfluence,
   swapInfluence,

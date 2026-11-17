@@ -9,4 +9,17 @@ module.exports = {
   leaderAbility: 'Heavy Lasgun Cannons\nYour dreadnoughts have 4 Swords (instead of 3).',
   signetRingAbility: 'Ixian Technology\n· Acquire Tech or Tech Negotiation',
   complexity: 1,
+
+  resolveSignetRing(game, player, resolveEffect) {
+    const [choice] = game.actions.choose(player, [
+      game.actions.option({ id: 'acquire', title: 'Acquire Tech' }),
+      game.actions.option({ id: 'negotiate', title: 'Tech Negotiation' }),
+    ], { title: 'Ixian Technology' })
+    const choiceId = typeof choice === 'object' ? choice.id : choice
+    if (choiceId === 'negotiate' || choice === 'Tech Negotiation') {
+      resolveEffect(game, player, { type: 'tech-negotiation' })
+      return
+    }
+    resolveEffect(game, player, { type: 'acquire-tech' })
+  },
 }
