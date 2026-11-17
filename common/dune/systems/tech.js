@@ -468,6 +468,17 @@ function applyEndgame(game) {
  * Spaceport lets the player put an acquired card on top of the deck
  * when no other effect already chose a destination.
  */
+function applyWinConflict(game, player) {
+  if (!game.settings?.useRiseOfIx || !owns(game, player, 'windtraps')) {
+    return
+  }
+  player.incrementCounter('water', 1, { silent: true })
+  game.log.add({
+    template: '{player}: +{amount} Water (Windtraps)',
+    args: { player, amount: 1 },
+  })
+}
+
 function chooseAcquireDestination(game, player, toTopOfDeck, toHand) {
   if (toTopOfDeck || toHand || !game.settings?.useRiseOfIx || !owns(game, player, 'spaceport')) {
     return { toTopOfDeck, toHand }
@@ -492,5 +503,6 @@ module.exports = {
   offerTurnAbilities,
   applyRoundStart,
   applyEndgame,
+  applyWinConflict,
   chooseAcquireDestination,
 }

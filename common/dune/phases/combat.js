@@ -640,6 +640,7 @@ function findFaceUpMatch(game, winner, justWon, icon) {
 function resolveWinnerBonuses(game, winner) {
   const factionsMod = require('../systems/factions.js')
   const constants = require('../res/constants.js')
+  require('../systems/tech.js').applyWinConflict(game, winner)
 
   // Demand Respect: +1 Influence OR Pay 2 Spice -> +2 Influence
   if (game.state.turnTracking?.demandRespect) {
