@@ -37,6 +37,8 @@ describe("diversion", () => {
     expect(game.state.turnTracking.unitsDeployedThisTurn).toBe(4)
     expect(game.state.turnTracking.diversionFired).toBe(true)
     expect(game.state.conflict.deployedSandworms.dennis).toBe(1)
+    t.choose(game, 'Advance')
+    expect(game.players.byName('dennis').freighterPosition).toBe(1)
   })
 
   test('plot: 3 troops alone does not trigger Diversion', () => {

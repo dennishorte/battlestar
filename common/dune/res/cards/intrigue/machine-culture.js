@@ -21,13 +21,19 @@ module.exports = {
   endgameText: "If you have three or more Tech tiles: +1 Victory Point",
 
   plotEffect(game, player) {
-    // Acquire Tech (expansion) — stub
-    game.log.add({ template: '{player}: Machine Culture — Tech not available (expansion)', args: { player }, event: 'memo' })
+    require('../../../systems/tech.js').acquireTech(game, player)
   },
 
   endgameEffect(game, player) {
-    // 3+ Tech tiles -> +1 VP (expansion) — stub
-    game.log.add({ template: '{player}: Machine Culture — Tech tiles not tracked (expansion)', args: { player }, event: 'memo' })
+    const owned = game.state.ownedTech?.[player.name] || []
+    if (owned.length < 3) {
+      return
+    }
+    player.incrementCounter('vp', 1, { silent: true, source: 'Machine Culture' })
+    game.log.add({
+      template: '{player}: Machine Culture — +1 Victory Point',
+      args: { player },
+    })
   },
 
 }

@@ -231,12 +231,7 @@ function checkDiversionTrigger(game, player) {
   }
 
   tt.diversionFired = true
-  // Rise of Ix Freighter track not yet implemented
-  game.log.add({
-    template: '{player} triggers Diversion — Freighter not available (expansion)',
-    args: { player },
-    event: 'memo',
-  })
+  require('./shipping.js').moveFreighter(game, player, 1)
 }
 
 module.exports = {

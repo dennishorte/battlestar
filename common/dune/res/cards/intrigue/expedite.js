@@ -21,8 +21,23 @@ module.exports = {
   plotText: "Pay 1 Spice → Move Freighter once",
 
   plotEffect(game, player) {
-    // Pay 1 Spice -> Move Freighter (expansion) — stub
-    game.log.add({ template: '{player}: Expedite — Freighter not available (expansion)', args: { player }, event: 'memo' })
+    if (player.spice < 1) {
+      return
+    }
+    const [choice] = game.actions.choose(player, [
+      game.actions.option({ id: 'pass', title: 'Do not pay' }),
+      game.actions.option({ id: 'pay', title: 'Pay 1 Spice' }),
+    ], { title: 'Expedite' })
+    const choiceId = typeof choice === 'object' ? choice.id : choice
+    if (choiceId !== 'pay' && choice !== 'Pay 1 Spice') {
+      return
+    }
+    player.decrementCounter('spice', 1, { silent: true })
+    game.log.add({
+      template: '{player} pays {amount} {resource}',
+      args: { player, amount: 1, resource: 'spice' },
+    })
+    require('../../../systems/shipping.js').moveFreighter(game, player, 1)
   },
 
 }

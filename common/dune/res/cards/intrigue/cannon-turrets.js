@@ -26,7 +26,18 @@ module.exports = {
   combatEffect(game, player) {
     // +2 Swords; Each opponent retreats one Dreadnought (expansion)
     addStrength(game, player, 'intrigue', 'Cannon Turrets', 2 * constants.SWORD_STRENGTH)
-    game.log.add({ template: '{player}: +2 Swords (Dreadnought retreat is expansion)', args: { player } })
+    game.log.add({ template: '{player}: +2 Swords (Cannon Turrets)', args: { player } })
+    for (const opponent of game.players.all()) {
+      if (opponent.name === player.name || opponent.dreadnoughtsInConflict <= 0) {
+        continue
+      }
+      opponent.decrementCounter('dreadnoughtsInConflict', 1, { silent: true })
+      opponent.incrementCounter('dreadnoughtsInGarrison', 1, { silent: true })
+      game.log.add({
+        template: '{player} retreats a dreadnought',
+        args: { player: opponent },
+      })
+    }
   },
 
 }
