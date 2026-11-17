@@ -46,6 +46,26 @@ function deploySandworms(game, player, count) {
  * Count must already be chosen by the caller (choice UI stays at call sites).
  * Returns the number of troops actually deployed.
  */
+function deployDreadnoughtsFromGarrison(game, player, count, opts = {}) {
+  if (count <= 0) {
+    return 0
+  }
+  const actual = Math.min(count, player.dreadnoughtsInGarrison)
+  if (actual <= 0) {
+    return 0
+  }
+  player.decrementCounter('dreadnoughtsInGarrison', actual, { silent: true })
+  player.incrementCounter('dreadnoughtsInConflict', actual, { silent: true })
+  recordUnitsDeployed(game, player, actual)
+  if (!opts.silent) {
+    game.log.add({
+      template: '{player} deploys {count} dreadnought(s) to the Conflict',
+      args: { player, count: actual },
+    })
+  }
+  return actual
+}
+
 function deployFromGarrison(game, player, count, opts = {}) {
   if (count <= 0) {
     return 0
@@ -223,6 +243,7 @@ module.exports = {
   deployToConflict,
   deploySandworms,
   deployFromGarrison,
+  deployDreadnoughtsFromGarrison,
   recruitTroops,
   retreatTroops,
   loseTroops,

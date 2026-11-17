@@ -13,8 +13,10 @@ function combatPhase(game) {
   const { hasUnitInConflict } = require('../systems/units.js')
   const combatants = game.players.all().filter(p => hasUnitInConflict(game, p))
 
+  const dreadnoughts = require('../systems/dreadnoughts.js')
   if (combatants.length === 0) {
     game.log.add({ template: 'No units in Conflict — combat skipped', event: 'memo' })
+    dreadnoughts.recallParkedDreadnoughts(game)
     return
   }
 
@@ -23,6 +25,7 @@ function combatPhase(game) {
 
   // Resolve combat
   resolveCombat(game)
+  dreadnoughts.recallParkedDreadnoughts(game)
 }
 
 /**
@@ -169,6 +172,7 @@ function resolveCombat(game) {
   if (rankings.length === 0) {
     game.log.add({ template: 'No players with strength — no rewards', event: 'memo' })
     game.log.outdent()
+    require('../systems/dreadnoughts.js').settleConflictDreadnoughts(game, null)
     afterCombat(game)
     return
   }
@@ -283,6 +287,10 @@ function resolveCombat(game) {
 
   game.log.outdent()
 
+  const soleWinner = placements.length > 0 && placements[0].players.length === 1
+    ? placements[0].players[0]
+    : null
+  require('../systems/dreadnoughts.js').settleConflictDreadnoughts(game, soleWinner)
   afterCombat(game)
 }
 

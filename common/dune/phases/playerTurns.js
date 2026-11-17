@@ -72,6 +72,7 @@ function playerTurnsPhase(game) {
         spaceIcon: null,
         agentSpaceId: null,
         garrisonAtTurnStart: player.troopsInGarrison,
+        dreadnoughtsAtTurnStart: player.dreadnoughtsInGarrison,
         acquireToHand: false,
         acquireToTopOfDeck: false,
         unitsDeployedThisTurn: 0,
@@ -80,6 +81,7 @@ function playerTurnsPhase(game) {
         diversionArmed: false,
         diversionFired: false,
       }
+      game._breakpoint('turn-ready')
 
       require('../systems/tech.js').offerTurnAbilities(game, player)
 
@@ -919,52 +921,35 @@ function deployUnits(game, player, opts = {}) {
     return
   }
 
-  const maxDeployNow = () => {
-    const garrisoned = player.troopsInGarrison
-    if (garrisoned === 0) {
-      return 0
-    }
-    // Per rules: deploy any/all troops recruited this turn + up to 2 from pre-existing garrison
-    const garrisonAtStart = game.state.turnTracking?.garrisonAtTurnStart ?? garrisoned
-    const recruited = Math.max(0, garrisoned - garrisonAtStart)
-    const preExisting = garrisonAtStart
-    return opts.recruitedOnly
-      ? Math.min(garrisoned, recruited)
-      : Math.min(garrisoned, recruited + Math.min(2, preExisting))
-  }
+  const dreadnoughts = require('../systems/dreadnoughts.js')
+  const optionsNow = () => dreadnoughts.listAgentDeployOptions(game, player, opts)
+  const nothingToDeploy = () => optionsNow().every(option => option.troops === 0 && option.ships === 0)
 
-  if (maxDeployNow() === 0 && !hasLegalPlots(game, player, 'turn')) {
+  if (nothingToDeploy() && !hasLegalPlots(game, player, 'turn')) {
     return
   }
 
   const [choice] = game.actions.choose(player, () => {
-    const maxDeploy = maxDeployNow()
-    if (maxDeploy === 0) {
+    if (nothingToDeploy()) {
       return [game.actions.option({ id: 'continue', title: 'Continue' })]
     }
-    const choices = []
-    for (let i = 0; i <= maxDeploy; i++) {
-      choices.push(game.actions.option({ id: `deploy-${i}`, title: `Deploy ${i} troop(s) from garrison` }))
-    }
-    return choices
+    return optionsNow().map(option => game.actions.option({ id: option.id, title: option.title }))
   }, {
     title: 'Deploy troops to the Conflict',
     window: 'turn',
   })
 
-  const choiceId = typeof choice === 'object' ? choice.id : null
-  if (choiceId === 'continue') {
+  const picked = dreadnoughts.parseDeployChoice(choice)
+  if (!picked) {
     return
   }
-  const count = choiceId
-    ? parseInt(choiceId.replace('deploy-', ''), 10)
-    : parseInt(String(choice).match(/\d+/)[0], 10)
-  if (count > 0) {
-    deploy.deployFromGarrison(game, player, count)
+  if (picked.troops > 0 || picked.ships > 0) {
+    const troopCount = picked.troops
+    dreadnoughts.deploySelected(game, player, picked.troops, picked.ships)
 
     // Desert Ambush: force enemy retreat per troop deployed
     if (game.state.turnTracking?.forceRetreatOnDeploy) {
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < troopCount; i++) {
         const opponents = game.players.all().filter(p =>
           p.name !== player.name && (game.state.conflict.deployedTroops[p.name] || 0) > 0
         )
@@ -1851,6 +1836,9 @@ function countPerVariable(game, player, per) {
   }
   if (/deployed troop/i.test(per)) {
     return game.state.conflict.deployedTroops[player.name] || 0
+  }
+  if (/dreadnought/i.test(per)) {
+    return player.dreadnoughtsInConflict || 0
   }
   if (/spy.*on.*board/i.test(per)) {
     const spySystem = require('../systems/spies.js')

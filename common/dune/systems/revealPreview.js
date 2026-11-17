@@ -437,6 +437,9 @@ function countPerVariable(game, player, handCards, per) {
   if (/deployed troop/i.test(per)) {
     return game.state.conflict?.deployedTroops?.[player.name] || 0
   }
+  if (/dreadnought/i.test(per)) {
+    return player.dreadnoughtsInConflict || 0
+  }
   return 0
 }
 

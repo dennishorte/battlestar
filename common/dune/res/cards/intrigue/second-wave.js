@@ -2,7 +2,6 @@
 
 const constants = require('../../constants.js')
 const { addStrength } = require('../../../systems/strengthBreakdown.js')
-const deploy = require('../../../systems/deploy.js')
 
 module.exports = {
   id: "second-wave",
@@ -26,20 +25,19 @@ module.exports = {
 
   combatEffect(game, player) {
     addStrength(game, player, 'intrigue', 'Second Wave', 2 * constants.SWORD_STRENGTH)
-    const max = Math.min(2, player.troopsInGarrison)
-    if (max > 0) {
-      const choices = []
-      for (let i = 0; i <= max; i++) {
-        choices.push(game.actions.option({ id: `deploy-${i}`, title: `Deploy ${i}` }))
-      }
-      const [choice] = game.actions.choose(player, choices, { title: 'Deploy to Conflict?' })
-      const chId = typeof choice === 'object' ? choice.id : null
-      const count = chId
-        ? parseInt(chId.replace('deploy-', ''))
-        : parseInt(String(choice).match(/\d+/)[0])
-      if (count > 0) {
-        deploy.deployFromGarrison(game, player, count)
-      }
+    const dreadnoughts = require('../../../systems/dreadnoughts.js')
+    const options = dreadnoughts.listGarrisonChoices(game, player, 2)
+    const usable = options.filter(option => option.troops > 0 || option.ships > 0)
+    if (usable.length === 0) {
+      return
+    }
+    const [choice] = game.actions.choose(player, options.map(option => game.actions.option({
+      id: option.id,
+      title: option.title,
+    })), { title: 'Deploy to Conflict?' })
+    const picked = dreadnoughts.parseDeployChoice(choice)
+    if (picked && (picked.troops > 0 || picked.ships > 0)) {
+      dreadnoughts.deploySelected(game, player, picked.troops, picked.ships)
     }
   },
 
