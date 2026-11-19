@@ -126,7 +126,7 @@ export default {
     return {
       playerError: '',
       models: {
-        useBaseGameCards: true,
+        useBaseGameCards: false,
         useRiseOfIx: false,
         useEpic: false,
         useImmortality: false,
@@ -181,17 +181,20 @@ export default {
   },
 
   created() {
-    if (this.lobby.options) {
-      this.models.useBaseGameCards = this.lobby.options.useBaseGameCards !== false
-      this.models.useRiseOfIx = Boolean(this.lobby.options.useRiseOfIx)
-      this.models.useEpic = Boolean(this.lobby.options.useEpic) && this.models.useRiseOfIx
-      this.models.useImmortality = Boolean(this.lobby.options.useImmortality)
-      this.models.useBloodlines = Boolean(this.lobby.options.useBloodlines)
-      this.models.imperiumRowRefresh = this.lobby.options.imperiumRowRefresh || 'none'
-    }
-    else {
+    if (!this.lobby.options) {
       this.lobby.options = {}
     }
+    // A missing flag used to mean "on". New lobbies start with base cards off,
+    // and only an explicit true keeps them in the deck.
+    if (this.lobby.options.useBaseGameCards === undefined) {
+      this.lobby.options.useBaseGameCards = false
+    }
+    this.models.useBaseGameCards = this.lobby.options.useBaseGameCards === true
+    this.models.useRiseOfIx = Boolean(this.lobby.options.useRiseOfIx)
+    this.models.useEpic = Boolean(this.lobby.options.useEpic) && this.models.useRiseOfIx
+    this.models.useImmortality = Boolean(this.lobby.options.useImmortality)
+    this.models.useBloodlines = Boolean(this.lobby.options.useBloodlines)
+    this.models.imperiumRowRefresh = this.lobby.options.imperiumRowRefresh || 'none'
     this.updateValid()
   },
 }

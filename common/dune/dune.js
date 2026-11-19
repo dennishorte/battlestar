@@ -78,7 +78,7 @@ function factoryFromLobby(lobby) {
     seed: lobby.seed,
     numPlayers: lobby.users.length,
     useCHOAM: true,
-    useBaseGameCards: lobby.options?.useBaseGameCards !== false,
+    useBaseGameCards: lobby.options?.useBaseGameCards === true,
     useRiseOfIx: lobby.options?.useRiseOfIx || false,
     useEpic: lobby.options?.useEpic || false,
     useImmortality: lobby.options?.useImmortality || false,
