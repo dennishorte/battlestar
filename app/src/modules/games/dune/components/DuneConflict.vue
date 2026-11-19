@@ -1,6 +1,15 @@
 <template>
   <div class="round-banner">
-    <span class="round-text">Round {{ game.state.round }}/{{ totalRounds }}</span>
+    <span class="round-cluster">
+      <span class="round-text">Round {{ game.state.round }}/{{ totalRounds }}</span>
+      <button v-if="epicMode"
+              type="button"
+              class="epic-memo"
+              title="Epic mode is on. Click to see how it differs from a regular game."
+              @click="openEpicMode">
+        epic mode
+      </button>
+    </span>
     <span class="phase-text">{{ phaseLabel }}</span>
   </div>
   <div class="conflict">
@@ -219,6 +228,10 @@ export default {
       return !!this.game.settings?.useRiseOfIx
     },
 
+    epicMode() {
+      return !!(this.game.settings?.useEpic && this.game.settings?.useRiseOfIx)
+    },
+
     thirdPlaceAvailable() {
       return this.game.players.all().length >= 4
     },
@@ -315,6 +328,10 @@ export default {
       this.$modal('dune-shield-wall-modal').show()
     },
 
+    openEpicMode() {
+      this.$modal('dune-epic-mode-modal').show()
+    },
+
     openStrengthBreakdown(player) {
       this.ui.modals.strengthBreakdown = { player }
       this.$modal('dune-strength-breakdown-modal').show()
@@ -333,6 +350,8 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: .4em;
+  flex-wrap: wrap;
   padding: .35em .6em;
   border: 1px solid #d4c8a8;
   border-radius: .3em;
@@ -341,9 +360,42 @@ export default {
   font-size: .9em;
 }
 
+.round-cluster {
+  display: inline-flex;
+  align-items: baseline;
+  gap: .5em;
+  min-width: 0;
+}
+
 .round-text {
   font-weight: 600;
   color: #8b6914;
+}
+
+.epic-memo {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  font-size: .8em;
+  font-weight: 500;
+  color: #8a7a62;
+  cursor: pointer;
+  text-decoration: underline dotted;
+  text-underline-offset: .15em;
+}
+
+.epic-memo:hover,
+.epic-memo:focus-visible {
+  color: #8b6914;
+}
+
+.epic-memo:focus-visible {
+  outline: 1px solid #8b6914;
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 .phase-text {
