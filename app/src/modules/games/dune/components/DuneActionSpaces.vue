@@ -2,11 +2,11 @@
   <div class="action-spaces">
     <div class="board-layout">
       <div class="spaces-column" ref="spacesColumn">
-        <div class="section-header">
-          {{ factions ? 'Factions' : 'Action Spaces' }}
+        <div class="section-header" :class="headerClass">
+          {{ columnTitle }}
         </div>
         <div v-for="group in visibleGroups" :key="group.label" class="space-group">
-          <div class="group-label" :class="`group-${group.icon}`">
+          <div v-if="!usesGroupTitle" class="group-label" :class="`group-${group.icon}`">
             <DuneFactionIcon v-if="isFaction(group.icon)"
                              :faction="group.icon"
                              size=".9em"
@@ -137,6 +137,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    icons: {
+      type: Array,
+      default: null,
+    },
   },
 
   data() {
@@ -170,10 +174,34 @@ export default {
           { label: 'Desert', icon: 'yellow', icons: ['yellow'] },
           { label: 'Landsraad', icon: 'green', icons: ['green'] },
         ]
-      return defs.map(g => ({
+      const selected = this.icons
+        ? defs.filter(g => this.icons.includes(g.icon))
+        : defs
+      return selected.map(g => ({
         ...g,
         spaces: this.activeSpaces.filter(s => g.icons.includes(s.icon)),
       })).filter(g => g.spaces.length > 0)
+    },
+
+    usesGroupTitle() {
+      return !this.factions && this.visibleGroups.length === 1
+    },
+
+    columnTitle() {
+      if (this.factions) {
+        return 'Factions'
+      }
+      if (this.usesGroupTitle) {
+        return this.visibleGroups[0].label
+      }
+      return 'Action Spaces'
+    },
+
+    headerClass() {
+      if (!this.usesGroupTitle) {
+        return null
+      }
+      return `group-${this.visibleGroups[0].icon} single-group-title`
     },
 
     playerColorMap() {
@@ -495,6 +523,15 @@ export default {
   font-size: .9em;
   color: #8b6914;
   margin-bottom: .3em;
+}
+
+.section-header.single-group-title {
+  justify-content: flex-start;
+  color: white;
+  text-transform: uppercase;
+  font-size: .8em;
+  padding: .15em .4em;
+  border-radius: .15em;
 }
 
 .board-layout {

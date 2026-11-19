@@ -32,7 +32,11 @@
         </div>
 
         <div class="col spaces-column">
-          <DuneActionSpaces />
+          <DuneActionSpaces :icons="['purple', 'yellow']" />
+        </div>
+
+        <div class="col landsraad-column">
+          <DuneActionSpaces :icons="['green']" />
         </div>
 
         <div class="col faction-column">
@@ -526,7 +530,8 @@ export default {
   padding-bottom: 3em;
 }
 
-.spaces-column {
+.spaces-column,
+.landsraad-column {
   height: 100vh;
   height: 100dvh;
   min-width: 200px;
