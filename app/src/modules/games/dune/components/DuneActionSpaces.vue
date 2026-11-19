@@ -2,11 +2,11 @@
   <div class="action-spaces">
     <div class="board-layout">
       <div class="spaces-column" ref="spacesColumn">
-        <div class="section-header" :class="headerClass">
+        <div class="section-header">
           {{ columnTitle }}
         </div>
         <div v-for="group in visibleGroups" :key="group.label" class="space-group">
-          <div v-if="!usesGroupTitle" class="group-label" :class="`group-${group.icon}`">
+          <div class="group-label" :class="`group-${group.icon}`">
             <DuneFactionIcon v-if="isFaction(group.icon)"
                              :faction="group.icon"
                              size=".9em"
@@ -194,14 +194,7 @@ export default {
       if (this.usesGroupTitle) {
         return this.visibleGroups[0].label
       }
-      return 'Action Spaces'
-    },
-
-    headerClass() {
-      if (!this.usesGroupTitle) {
-        return null
-      }
-      return `group-${this.visibleGroups[0].icon} single-group-title`
+      return 'Arrakis'
     },
 
     playerColorMap() {
@@ -523,15 +516,6 @@ export default {
   font-size: .9em;
   color: #8b6914;
   margin-bottom: .3em;
-}
-
-.section-header.single-group-title {
-  justify-content: flex-start;
-  color: white;
-  text-transform: uppercase;
-  font-size: .8em;
-  padding: .15em .4em;
-  border-radius: .15em;
 }
 
 .board-layout {
