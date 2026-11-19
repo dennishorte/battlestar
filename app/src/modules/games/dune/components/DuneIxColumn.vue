@@ -1,5 +1,5 @@
 <template>
-  <div class="ix-column">
+  <div class="ix-board">
     <section class="ix-panel">
       <div class="section-header">
         <span>Shipping</span>
@@ -255,10 +255,17 @@ function inkFor(hex) {
 
 
 <style scoped>
-.ix-column {
+.ix-board {
   display: flex;
   flex-direction: column;
   gap: .35em;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.ix-board > * {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .ix-panel {
