@@ -19,6 +19,15 @@ describe("imperial-spy", () => {
         intrigue: [],
       },
     })
+    // The contract row is a shuffle of the deck. Put this one face up so the
+    // choice does not depend on how many intrigue cards were shuffled first.
+    game.testSetBreakpoint('initialization-complete', (game) => {
+      const contractDeck = game.zones.byId('common.contractDeck')
+      const contractMarket = game.zones.byId('common.contractMarket')
+      const pool = [...contractMarket.cardlist(), ...contractDeck.cardlist()]
+      const card = pool.find(c => c.defId === 'spice-refinery-2')
+      card.moveTo(contractMarket)
+    })
     game.run()
 
     t.choose(game, 'Agent Turn.Imperial Spy')

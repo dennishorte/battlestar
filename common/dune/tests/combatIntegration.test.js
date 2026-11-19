@@ -83,7 +83,7 @@ describe('Combat Integration', () => {
   test('winner gets first place reward from conflict card', () => {
     const game = t.fixture()
     t.setBoard(game, {
-      conflictCard: 'Shadow Contest',
+      conflictCard: { id: 'conflict-shadow-contest' },
       dennis: { troopsInGarrison: 3, solari: 0 },
     })
     game.run()

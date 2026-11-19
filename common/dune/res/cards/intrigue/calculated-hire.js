@@ -4,7 +4,7 @@ module.exports = {
   id: "calculated-hire",
   name: "Calculated Hire",
   source: "Base",
-  compatibility: "All",
+  compatibility: "Base",
   count: 1,
   hasTech: false,
   hasShipping: false,
