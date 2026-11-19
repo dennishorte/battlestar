@@ -112,6 +112,9 @@ Dune.prototype._reset = function() {
   this.state.ownedTech = {}
   this.state.flippedTech = {}
   this.state.parkedDreadnoughts = {}
+  // Set while a recalled freighter is collecting a track reward.
+  // { player, space } or null. Does not change freighterPosition.
+  this.state.freighterReward = null
 
   // Control markers: { locationId: playerName | null }
   this.state.controlMarkers = {

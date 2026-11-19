@@ -59,6 +59,19 @@
         <TableauSection v-if="revealedCards.length" title="Revealed" :cards="revealedCards" />
         <TableauSection title="Discard" :cards="discardCards" />
         <TableauSection :title="intrigueTitle" :cards="intrigueCards" :hidden-count="intrigueHiddenCount" />
+        <div class="section" v-if="ownedTech.length">
+          <div class="section-title">
+            Tech
+            <span class="section-count">{{ ownedTech.length }}</span>
+          </div>
+          <div v-for="tile in ownedTech"
+               :key="tile.id"
+               class="owned-tech"
+               :class="{ flipped: tile.flipped }">
+            <div v-if="tile.flipped" class="flipped-note">Face down this round</div>
+            <DuneCard :card="tile.card" />
+          </div>
+        </div>
         <TableauSection v-if="contractCards.length" title="Contracts" :cards="contractCards" />
         <TableauSection v-if="reservedContractCards.length"
                         title="Reserved Contracts"
@@ -209,6 +222,18 @@ export default {
         return null
       }
       return this.zone('intrigue').length
+    },
+
+    ownedTech() {
+      if (!this.player || !this.game.settings?.useRiseOfIx) {
+        return []
+      }
+      const flipped = this.game.state.flippedTech || {}
+      return (this.game.state.ownedTech?.[this.player.name] || []).map(card => ({
+        id: card.id,
+        card,
+        flipped: !!flipped[card.id],
+      }))
     },
 
     contractCards() {
@@ -449,5 +474,33 @@ export default {
   border: 1px solid #d4c8a8;
   font-size: .9em;
   padding: .4em .6em;
+}
+
+.section-title {
+  font-size: .8em;
+  text-transform: uppercase;
+  color: #6a5a48;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  padding: .25em .25em 0;
+  border-top: 1px solid #efe8db;
+}
+
+.section-count {
+  color: #8a7a68;
+  font-weight: 400;
+}
+
+.owned-tech.flipped :deep(.dune-card) {
+  opacity: .55;
+}
+
+.flipped-note {
+  font-size: .72em;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: #1f6f78;
+  padding: .2em .4em 0;
 }
 </style>

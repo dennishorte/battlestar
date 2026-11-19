@@ -42,11 +42,17 @@ function recall(game, player, fromPosition) {
   for (let space = fromPosition; space >= 0; space--) {
     pending.push(space)
   }
+  // Visual only. The real track position stays put until the recall finishes,
+  // so a nested freighter move still reads where the ship actually is.
+  // While a reward is being chosen, the marker sits on that space.
+  game.state.freighterReward = { player: player.name, space: fromPosition }
   while (pending.length > 0) {
     const space = pending.length === 1 ? pending[0] : chooseSpace(game, player, pending)
+    game.state.freighterReward = { player: player.name, space }
     paySpace(game, player, space)
     pending.splice(pending.indexOf(space), 1)
   }
+  game.state.freighterReward = null
   player.setCounter('freighterPosition', 0, { silent: true })
   game.log.add({
     template: '{player} recalls the Freighter to the bottom',

@@ -32,7 +32,6 @@
         </div>
 
         <div class="col spaces-column">
-          <DuneBoardState v-if="game.settings.useRiseOfIx" />
           <DuneActionSpaces />
         </div>
 
@@ -40,9 +39,13 @@
           <DuneActionSpaces :factions="true" />
         </div>
 
+        <div class="col ix-column" v-if="game.settings.useRiseOfIx">
+          <DuneIxColumn />
+        </div>
+
         <div class="col imperium-column">
           <DuneImperiumRow />
-          <DuneContractMarket />
+          <DuneContractMarket v-if="!game.settings.useRiseOfIx" />
         </div>
 
       </div>
@@ -75,9 +78,9 @@ import DuneImperiumRow from './DuneImperiumRow.vue'
 import DuneConflict from './DuneConflict.vue'
 import DuneFactionTrack from './DuneFactionTrack.vue'
 import DuneContractMarket from './DuneContractMarket.vue'
+import DuneIxColumn from './DuneIxColumn.vue'
 import DunePlayerCards from './DunePlayerCards.vue'
 import DuneActionSpaces from './DuneActionSpaces.vue'
-import DuneBoardState from './DuneBoardState.vue'
 import DuneOptionChip from './DuneOptionChip.vue'
 import DuneCardListModal from './modals/DuneCardListModal.vue'
 import DuneCardViewerModal from './modals/DuneCardViewerModal.vue'
@@ -96,13 +99,13 @@ export default {
     DebugModal,
     DropdownButton,
     DuneActionSpaces,
-    DuneBoardState,
     DuneCardListModal,
     DuneCardViewerModal,
     DuneConflict,
     DuneContractMarket,
     DuneFactionTrack,
     DuneImperiumRow,
+    DuneIxColumn,
     DuneOptionChip,
     DunePlayerCards,
     DunePlayerSummary,
@@ -274,6 +277,20 @@ export default {
       return null
     }
 
+    function techPriceLabel(option) {
+      const meta = option && option.meta
+      if (!meta || meta.cost == null) {
+        return null
+      }
+      const currency = meta.payWith === 'solari' ? 'solari' : 'spice'
+      let text = `${meta.cost} ${currency}`
+      if (meta.negotiators > 0) {
+        const count = meta.negotiators
+        text += ` · return ${count} negotiator${count === 1 ? '' : 's'}`
+      }
+      return text
+    }
+
     const resolveByKindId = (kind, id) => {
       if (!id) {
         return null
@@ -355,6 +372,12 @@ export default {
             return {
               component: DuneOptionChip,
               props: { name, boardSpace: resolved, subtitle: spaceSubtitle(resolved) },
+            }
+          }
+          if (option.kind === 'tech-card') {
+            return {
+              component: DuneOptionChip,
+              props: { name: resolved.name, card: resolved, detailText: techPriceLabel(option) },
             }
           }
           return { component: DuneOptionChip, props: { name, card: resolved } }
@@ -519,6 +542,17 @@ export default {
   height: 100dvh;
   min-width: 180px;
   max-width: 220px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-top: .5em;
+  padding-bottom: 3em;
+}
+
+.ix-column {
+  height: 100vh;
+  height: 100dvh;
+  min-width: 240px;
+  max-width: 320px;
   overflow-x: hidden;
   overflow-y: auto;
   padding-top: .5em;

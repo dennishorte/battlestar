@@ -23,6 +23,9 @@ describe('Rise of Ix tech purchase', () => {
     t.choose(game, 'Agent Turn.Dagger')
     t.choose(game, 'Tech Negotiation')
     t.choose(game, 'Acquire Tech at a 1 spice discount')
+    const artillery = game.waiting.selectors[0].choices.find(choice => choice.defId === 'artillery')
+    expect(artillery.kind).toBe('tech-card')
+    expect(artillery.meta).toEqual({ cost: 0, payWith: 'spice', negotiators: 0 })
     t.choose(game, 'Artillery for 0 Spice')
 
     const dennis = game.players.byName('dennis')

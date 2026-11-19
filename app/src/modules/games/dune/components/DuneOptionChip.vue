@@ -112,6 +112,7 @@ export default {
     boardSpace: { type: Object, default: null },
     faction: { type: String, default: null },
     subtitle: { type: String, default: null },
+    detailText: { type: String, default: null },
     feydPosition: { type: String, default: null },
     jessicaFlipped: { type: Boolean, default: false },
   },
@@ -277,6 +278,9 @@ export default {
     },
 
     detail() {
+      if (this.detailText != null) {
+        return this.detailText
+      }
       if (this.faction || this.leader) {
         return ''
       }
@@ -446,8 +450,13 @@ export default {
 }
 .chip-contract { border-color: #c07020; background-color: #fef5ee; }
 .chip-contract:hover { background-color: #f8e8d4; }
-.chip-tech { border-color: #3a7d7d; background-color: #eef7f7; }
-.chip-tech:hover { background-color: #dceeed; }
+.chip-tech {
+  border-color: #1f6f78;
+  background-color: #e5f4f4;
+  box-shadow: inset 3px 0 0 #1f6f78;
+}
+.chip-tech:hover { background-color: #d3ebeb; }
+.chip-tech .chip-name { color: #134e56; }
 
 .chip-space-purple { border-color: #6a3d8a; }
 .chip-space-yellow { border-color: #b8860b; }

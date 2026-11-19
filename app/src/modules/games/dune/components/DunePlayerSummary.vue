@@ -115,6 +115,18 @@
         {{ entry.intrigueCount }}
       </div>
 
+      <template v-if="useRiseOfIx">
+        <div class="stat-label" title="Negotiators on the Ix banner">Neg</div>
+        <div v-for="entry in entries"
+             :key="`neg-${entry.name}`"
+             class="stat-cell"
+             :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer, dim: !entry.negotiators }"
+             :style="{ '--viewer-tint': viewerTint(entry.color) }"
+             title="Negotiators on the Ix banner">
+          {{ entry.negotiators }}
+        </div>
+      </template>
+
       <div class="stat-label">Cntrx</div>
       <div v-for="entry in entries"
            :key="`con-${entry.name}`"
@@ -138,6 +150,16 @@
     </div>
 
     <div class="viewer-cards" v-if="viewer">
+      <div class="cards-section" v-if="viewerTech.length">
+        <div class="section-label">Tech</div>
+        <div v-for="tile in viewerTech"
+             :key="tile.id"
+             class="owned-tech"
+             :class="{ flipped: tile.flipped }">
+          <div v-if="tile.flipped" class="flipped-note">Face down this round</div>
+          <DuneCard :card="tile.card" />
+        </div>
+      </div>
       <div class="cards-section" v-if="viewerContracts.length">
         <div class="section-label">Contracts</div>
         <DuneCard v-for="card in viewerContracts" :key="card.id" :card="card" />
@@ -172,6 +194,10 @@ export default {
   inject: ['actor', 'game', 'ui'],
 
   computed: {
+    useRiseOfIx() {
+      return !!this.game.settings?.useRiseOfIx
+    },
+
     orderedPlayers() {
       const allPlayers = this.game.players.all()
       if (!allPlayers.length) {
@@ -237,6 +263,7 @@ export default {
           agentsTotal: player.getCounter('agents') + player.getCounter('hasSwordmaster'),
           spiesInSupply: player.spiesInSupply,
           intrigueCount: this.zoneCount(player.name, 'intrigue'),
+          negotiators: player.negotiators || 0,
           contractsUnfinished: this.zoneCount(player.name, 'contracts'),
           contractsTotal: this.zoneCount(player.name, 'contracts') + this.zoneCount(player.name, 'contractsCompleted'),
           hasHighCouncil: !!player.hasHighCouncil,
@@ -250,6 +277,18 @@ export default {
 
     viewer() {
       return this.game.players.byName(this.actor.name) || null
+    },
+
+    viewerTech() {
+      if (!this.viewer || !this.useRiseOfIx) {
+        return []
+      }
+      const flipped = this.game.state.flippedTech || {}
+      return (this.game.state.ownedTech?.[this.viewer.name] || []).map(card => ({
+        id: card.id,
+        card,
+        flipped: !!flipped[card.id],
+      }))
     },
 
     viewerContracts() {
@@ -526,5 +565,17 @@ export default {
   color: #8a7a68;
   padding: .25em .2em .1em;
   font-weight: 600;
+}
+
+.owned-tech.flipped :deep(.dune-card) {
+  opacity: .55;
+}
+
+.flipped-note {
+  font-size: .68em;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: #1f6f78;
+  padding: .2em .35em 0;
 }
 </style>

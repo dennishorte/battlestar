@@ -49,6 +49,13 @@ function acquireTech(game, player, opts = {}) {
     ...offers.map((offer, index) => game.actions.option({
       id: `tech-${index}`,
       title: offerTitle(offer, payWith),
+      kind: 'tech-card',
+      defId: offer.tile.defId,
+      meta: {
+        cost: offer.cost,
+        payWith,
+        negotiators: offer.used,
+      },
     })),
   ]
   const [choice] = game.actions.choose(player, choices, { title: 'Acquire Tech' })

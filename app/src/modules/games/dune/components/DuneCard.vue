@@ -315,9 +315,11 @@ export default {
 .card-intrigue.intrigue-mixed .effect-endgame .effect-label { color: #3a6286; }
 
 .card-tech {
-  background-color: #eef7f7;
-  border-color: #88b8b8;
+  background-color: #e5f4f4;
+  border-color: #7eb8b8;
+  border-left: 4px solid #1f6f78;
 }
-.card-tech .card-name { color: #2a5a5a; }
-.card-tech .effect-label { color: #5a8a8a; }
+.card-tech .card-name { color: #134e56; }
+.card-tech .effect-label { color: #1f6f78; }
+.card-tech .card-cost { color: #1f6f78; }
 </style>

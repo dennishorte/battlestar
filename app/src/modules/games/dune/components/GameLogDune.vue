@@ -379,9 +379,10 @@ useGameLogProvider({
 }
 
 #gamelog :deep(.card-name.card-type-tech) {
-  border-color: #3a7d7d;
-  background-color: #eef7f7;
-  color: #2a5a5a;
+  border-color: #1f6f78;
+  background-color: #e5f4f4;
+  color: #134e56;
+  box-shadow: inset 3px 0 0 #1f6f78;
 }
 
 #gamelog :deep(.card-name.card-type-conflict) {
