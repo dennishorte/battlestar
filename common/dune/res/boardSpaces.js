@@ -284,6 +284,19 @@ const boardSpaces = [
 
 const ixSpaces = [
   {
+    id: 'tech-negotiation',
+    name: 'Tech Negotiation',
+    icon: 'green',
+    isCombatSpace: false,
+    effects: [
+      { type: 'influence-choice', amount: 1 },
+      { type: 'choice', choices: [
+        { label: 'Acquire Tech at a 1 spice discount', effects: [{ type: 'acquire-tech', discount: 1 }] },
+        { label: 'Place a Negotiator', effects: [{ type: 'place-negotiator' }] },
+      ]},
+    ],
+  },
+  {
     id: 'dreadnought',
     name: 'Dreadnought',
     icon: 'green',
@@ -292,18 +305,6 @@ const ixSpaces = [
     effects: [
       { type: 'commission-dreadnought' },
       { type: 'acquire-tech' },
-    ],
-  },
-  {
-    id: 'tech-negotiation',
-    name: 'Tech Negotiation',
-    icon: 'green',
-    isCombatSpace: false,
-    effects: [
-      { type: 'choice', choices: [
-        { label: 'Acquire Tech at a 1 spice discount', effects: [{ type: 'acquire-tech', discount: 1 }] },
-        { label: 'Place a Negotiator', effects: [{ type: 'place-negotiator' }] },
-      ]},
     ],
   },
   {
@@ -332,7 +333,7 @@ function getBoardSpaces(settings) {
   if (!settings?.useRiseOfIx) {
     return boardSpaces
   }
-  const covered = new Set(['accept-contract', 'shipping'])
+  const covered = new Set(['assembly-hall', 'gather-support'])
   return boardSpaces.filter(space => !covered.has(space.id)).concat(ixSpaces)
 }
 

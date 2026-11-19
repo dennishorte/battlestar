@@ -21,7 +21,7 @@ describe('Rise of Ix tech purchase', () => {
     game.run()
 
     t.choose(game, 'Agent Turn.Dagger')
-    t.choose(game, 'Tech Negotiation')
+    t.choose(game, 'emperor')
     t.choose(game, 'Acquire Tech at a 1 spice discount')
     const artillery = game.waiting.selectors[0].choices.find(choice => choice.defId === 'artillery')
     expect(artillery.kind).toBe('tech-card')

@@ -6,13 +6,14 @@ Rise of Ix adds an Ix board, a CHOAM overlay with a Shipping track, Tech tiles, 
 
 ### Setup with Uprising
 
-1. Fold the CHOAM overlay in half and cover Accept Contract and Shipping with the Shipping track. Those two spaces are not available. This adds the CHOAM section (Smuggling, Interstellar Shipping, and the Shipping track). Assembly Hall, Gather Support, and the other Landsraad spaces stay.
+1. Fold the CHOAM overlay in half and cover Assembly Hall and Gather Support with the Shipping track. Those two spaces are not available. This adds Smuggling, Interstellar Shipping, and the Shipping track. Accept Contract, Shipping, and the other Landsraad spaces stay.
 2. Place the Ix board beside the game board. It holds Tech Negotiation, Dreadnought, and the three Tech-tile stacks.
 3. Shuffle the 18 Tech tiles face down and split them into three stacks of six. Put a stack on each space of the Ix board and turn the top tile of each stack face up.
 4. Each player puts two dreadnoughts in their supply and puts their Freighter disc on the bottom space of the Shipping track.
 5. Shuffle the 17 Intrigue cards into the Intrigue deck and the 35 Imperium cards into the Imperium deck before dealing the Imperium Row. Add the six Leaders to the Leader pool.
 6. The overlay and the Ix board have no observation posts printed on them. Play as if there are two:
-   - Observation post G connects to Smuggling and Interstellar Shipping, in place of Accept Contract and Shipping.
+   - Observation post I connects to Smuggling and Interstellar Shipping, in place of Assembly Hall and Gather Support.
+   - Observation post G still connects to Accept Contract and Shipping.
    - One post connects to Tech Negotiation and Dreadnought.
 7. Do not add the Rise of Ix Conflict cards to a normal game. Epic mode adds one of them, Economic Supremacy, and leaves the other three out. See Epic mode below.
 8. Ilesa Ecaz needs the Foldspace cards from the original game. Only she may acquire them.
@@ -27,7 +28,7 @@ Dreadnought and Tech Negotiation use the Landsraad (green) Agent icon. Smuggling
 | Space | Icon | Cost or requirement | Effect |
 |---|---|---|---|
 | Dreadnought | Landsraad | 3 Solari | Commission a dreadnought, Acquire Tech, or both |
-| Tech Negotiation | Landsraad | none | Choose one: Acquire Tech at a 1 spice discount, or place a Negotiator on Ix. On your Reveal turn, +1 Persuasion if your Agent is still here |
+| Tech Negotiation | Landsraad | none | Gain 1 Influence with one faction, then choose one: Acquire Tech at a 1 spice discount, or place a Negotiator on Ix. On your Reveal turn, +1 Persuasion if your Agent is still here |
 | Smuggling | Spice Trade | none | Gain 1 Solari and move your Freighter once |
 | Interstellar Shipping | Spice Trade | 2 or more Spacing Guild Influence | Move your Freighter twice |
 
@@ -35,16 +36,19 @@ Dreadnought and Tech Negotiation use the Landsraad (green) Agent icon. Smuggling
 
 ### Shipping track
 
-Each player has one Freighter, starting on the bottom space. A Freighter icon lets you do one of these:
+The track has four spaces. Each player has one Freighter, starting on the bottom space. That space lines up with no reward. The three spaces above it are the reward spaces: Bottom, Middle, and Top.
+
+A Freighter icon lets you do one of these:
 
 - Advance one space up the track. You cannot advance if the Freighter is already on the top space.
-- Recall the Freighter to the bottom space. You collect the reward for its current space and every space below that, in any order.
+- Recall the Freighter to the bottom space. You collect the reward for its current space and every reward space below that, in any order.
 
-Advancing does not score. Only a recall pays. Recalling from the bottom space collects only the bottom reward.
+Advancing does not score. Only a recall pays. Recalling from the bottom space collects nothing. Recalling from the Bottom reward, the space just above it, collects only that reward.
 
 | Space | Reward |
 |---|---|
-| Bottom | Choose one: Dividends, or 2 spice |
+| Bottom of the track | none |
+| Bottom reward | Choose one: Dividends, or 2 spice |
 | Middle | Recruit 2 troops, and gain 1 Influence with any one Faction |
 | Top | Acquire Tech with a discount of 2 spice |
 
@@ -147,7 +151,7 @@ Setup of the House Hagal deck:
 
 - Remove both Hall of Oratory cards and both Rally Troops cards from the original deck.
 - Shuffle in the nine new cards, then remove some of them. Solo: remove the two Dreadnought cards marked 2P. Two players: remove the four cards marked 1P, which are two Dreadnought cards and two Tech Negotiation cards.
-- With Uprising, also remove the Uprising House Hagal cards for Accept Contract, Shipping (two), Gather Support (two), and Assembly Hall. Drop the Rise of Ix Foldspace / Interstellar Shipping card. For a card that would send the rival to Foldspace, send it to Deliver Supplies instead.
+- With Uprising, also remove the Uprising House Hagal cards for Assembly Hall and Gather Support. Accept Contract and Shipping stay. Drop the Rise of Ix Foldspace / Interstellar Shipping card. For a card that would send the rival to Foldspace, send it to Deliver Supplies instead.
 
 Rival behavior from the rulebook:
 

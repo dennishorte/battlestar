@@ -1,9 +1,12 @@
 'use strict'
 
-// The Rise of Ix shipping track. 0 is the bottom space, 1 the middle, 2 the top.
-// Advancing pays nothing. Recalling pays the current space and every space below it.
+// The Rise of Ix shipping track has four spaces.
+// 0 is the empty bottom, below every reward. Freighters start there.
+// 1 is the lowest reward, 2 the middle, 3 the top.
+// Advancing pays nothing. Recalling pays the current reward and every reward below it.
 
-const SPACE_NAMES = ['Bottom', 'Middle', 'Top']
+const SPACE_NAMES = [null, 'Bottom', 'Middle', 'Top']
+const TOP = 3
 
 function moveFreighter(game, player, times = 1) {
   if (!game.settings?.useRiseOfIx) {
@@ -18,7 +21,7 @@ function moveFreighter(game, player, times = 1) {
 function moveOnce(game, player) {
   const position = player.freighterPosition
   const choices = []
-  if (position < 2) {
+  if (position < TOP) {
     choices.push(game.actions.option({ id: 'advance', title: 'Advance' }))
   }
   choices.push(game.actions.option({ id: 'recall', title: 'Recall' }))
@@ -39,13 +42,16 @@ function moveOnce(game, player) {
 
 function recall(game, player, fromPosition) {
   const pending = []
-  for (let space = fromPosition; space >= 0; space--) {
+  for (let space = fromPosition; space >= 1; space--) {
     pending.push(space)
   }
   // Visual only. The real track position stays put until the recall finishes,
   // so a nested freighter move still reads where the ship actually is.
   // While a reward is being chosen, the marker sits on that space.
-  game.state.freighterReward = { player: player.name, space: fromPosition }
+  // The empty bottom (0) is not a reward, so a recall from there sets nothing.
+  if (pending.length > 0) {
+    game.state.freighterReward = { player: player.name, space: fromPosition }
+  }
   while (pending.length > 0) {
     const space = pending.length === 1 ? pending[0] : chooseSpace(game, player, pending)
     game.state.freighterReward = { player: player.name, space }
@@ -74,13 +80,13 @@ function chooseSpace(game, player, pending) {
 }
 
 function paySpace(game, player, space) {
-  if (space === 0) {
+  if (space === 1) {
     payBottom(game, player)
   }
-  else if (space === 1) {
+  else if (space === 2) {
     payMiddle(game, player)
   }
-  else {
+  else if (space === 3) {
     payTop(game, player)
   }
 }

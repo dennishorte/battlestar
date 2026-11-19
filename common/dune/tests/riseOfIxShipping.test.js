@@ -57,11 +57,31 @@ describe('Rise of Ix shipping track', () => {
     expect(dennis.troopsInGarrison).toBe(3)
   })
 
-  test('recalling from the bottom pays Dividends', () => {
+  test('recalling from the bottom pays nothing', () => {
     const game = t.fixture({ useRiseOfIx: true })
     t.setBoard(game, {
       dennis: { hand: ['Dune, The Desert Planet'] },
     })
+    game.run()
+
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
+    t.choose(game, 'Smuggling')
+    t.choose(game, 'Recall')
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.freighterPosition).toBe(0)
+    expect(dennis.solari).toBe(1)
+    expect(dennis.spice).toBe(0)
+    expect(game.state.freighterReward).toBe(null)
+    expect(game.waiting.selectors[0].title).not.toBe('Bottom of the Shipping track')
+  })
+
+  test('recalling from the lowest reward pays Dividends', () => {
+    const game = t.fixture({ useRiseOfIx: true })
+    t.setBoard(game, {
+      dennis: { hand: ['Dune, The Desert Planet'] },
+    })
+    parkFreighter(game, 1)
     game.run()
 
     t.choose(game, 'Agent Turn.Dune, The Desert Planet')
@@ -81,7 +101,7 @@ describe('Rise of Ix shipping track', () => {
     t.setBoard(game, {
       dennis: { hand: ['Dune, The Desert Planet'] },
     })
-    parkFreighter(game, 2)
+    parkFreighter(game, 3)
     game.run()
 
     t.choose(game, 'Agent Turn.Dune, The Desert Planet')
@@ -95,26 +115,26 @@ describe('Rise of Ix shipping track', () => {
     t.setBoard(game, {
       dennis: { hand: ['Dune, The Desert Planet'], spice: 0 },
     })
-    parkFreighter(game, 2)
+    parkFreighter(game, 3)
     surfaceTile(game, 'windtraps')
     game.run()
 
     t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Smuggling')
-    expect(game.state.freighterReward).toEqual({ player: 'dennis', space: 2 })
-    expect(game.players.byName('dennis').freighterPosition).toBe(2)
+    expect(game.state.freighterReward).toEqual({ player: 'dennis', space: 3 })
+    expect(game.players.byName('dennis').freighterPosition).toBe(3)
 
     t.choose(game, 'Top')
-    expect(game.state.freighterReward).toEqual({ player: 'dennis', space: 2 })
+    expect(game.state.freighterReward).toEqual({ player: 'dennis', space: 3 })
     expect(game.waiting.selectors[0].title).toBe('Acquire Tech')
-    expect(game.players.byName('dennis').freighterPosition).toBe(2)
+    expect(game.players.byName('dennis').freighterPosition).toBe(3)
 
     t.choose(game, 'Windtraps for 0 Spice')
-    expect(game.state.freighterReward).toEqual({ player: 'dennis', space: 2 })
+    expect(game.state.freighterReward).toEqual({ player: 'dennis', space: 3 })
 
     t.choose(game, 'Middle')
-    expect(game.state.freighterReward).toEqual({ player: 'dennis', space: 1 })
-    expect(game.players.byName('dennis').freighterPosition).toBe(2)
+    expect(game.state.freighterReward).toEqual({ player: 'dennis', space: 2 })
+    expect(game.players.byName('dennis').freighterPosition).toBe(3)
     t.choose(game, 'emperor')
     t.choose(game, '2 Spice')
 
@@ -133,7 +153,7 @@ describe('Rise of Ix shipping track', () => {
     t.setBoard(game, {
       dennis: { hand: ['Dune, The Desert Planet'], influence: { guild: 2 } },
     })
-    parkFreighter(game, 1)
+    parkFreighter(game, 2)
     giveTile(game, 'dennis', 'troop-transports')
     game.run()
 

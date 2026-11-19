@@ -15,7 +15,7 @@
         <div v-for="row in rows"
              :key="row.space"
              class="track-row"
-             :class="{ 'is-eligible': row.eligible, 'is-collecting': row.collecting }">
+             :class="{ 'is-eligible': row.eligible, 'is-collecting': row.collecting, 'is-home': row.home }">
           <div class="marker-well">
             <span v-for="disc in row.discs"
                   :key="disc.name"
@@ -24,7 +24,8 @@
                   :style="disc.style"
                   :title="disc.title">{{ disc.initials }}</span>
           </div>
-          <div class="reward">
+          <div v-if="row.home" class="reward reward-empty"/>
+          <div v-else class="reward">
             <span class="reward-level">{{ row.level }}</span>
             <span class="reward-text">{{ row.reward }}</span>
           </div>
@@ -50,13 +51,13 @@
         <template #header>Freighters</template>
 
         <div class="freighter-info">
-          <p>Each player has one freighter. It starts on the bottom space.</p>
+          <p>Each player has one freighter. The track has four spaces. The freighter starts on the bottom space, which lines up with no reward.</p>
           <p>When you move your freighter, choose one:</p>
           <ul>
             <li>Advance one space toward the top. You cannot advance from the top. Advancing does not pay a reward.</li>
-            <li>Recall to the bottom. You take the reward for your current space and every space below it, in any order. Recalling from the bottom takes only the bottom reward.</li>
+            <li>Recall to the bottom. You take the reward for your current space and every reward space below it, in any order. The bottom space pays nothing. Recalling from the space just above it takes only that reward.</li>
           </ul>
-          <p>While you are choosing a reward, your freighter sits on that space.</p>
+          <p>While you are choosing a reward, your freighter sits on that space. When the recall is finished, it returns to the bottom.</p>
 
           <div class="reward-block">
             <div class="reward-title">Bottom</div>
@@ -87,9 +88,10 @@ import DuneCard from './DuneCard.vue'
 import DuneContractMarket from './DuneContractMarket.vue'
 
 const LEVELS = [
-  { space: 2, level: 'Top', reward: 'Acquire Tech, −2 spice' },
-  { space: 1, level: 'Middle', reward: '2 troops and 1 influence' },
-  { space: 0, level: 'Bottom', reward: 'Dividends or 2 spice' },
+  { space: 3, level: 'Top', reward: 'Acquire Tech, −2 spice' },
+  { space: 2, level: 'Middle', reward: '2 troops and 1 influence' },
+  { space: 1, level: 'Bottom', reward: 'Dividends or 2 spice' },
+  { space: 0, home: true },
 ]
 
 export default {
@@ -131,13 +133,13 @@ export default {
           spaces.add(Number(match[1]))
         }
         else if (choice === 'Top' || choice?.title === 'Top') {
-          spaces.add(2)
+          spaces.add(3)
         }
         else if (choice === 'Middle' || choice?.title === 'Middle') {
-          spaces.add(1)
+          spaces.add(2)
         }
         else if (choice === 'Bottom' || choice?.title === 'Bottom') {
-          spaces.add(0)
+          spaces.add(1)
         }
       }
       return spaces
@@ -316,7 +318,7 @@ function inkFor(hex) {
 .track-row {
   position: relative;
   display: grid;
-  grid-template-columns: 5.4rem minmax(0, 1fr);
+  grid-template-columns: 5.8rem minmax(0, 1fr);
   min-height: 2.7rem;
   border-top: 1px solid #c4a574;
 }
@@ -362,7 +364,7 @@ function inkFor(hex) {
 
 .disc.collecting {
   position: absolute;
-  left: 5.55rem;
+  left: 5.95rem;
   top: 50%;
   transform: translateY(-50%);
   z-index: 2;
@@ -373,6 +375,15 @@ function inkFor(hex) {
 
 .track-row.is-collecting .reward {
   padding-left: 1.9rem;
+}
+
+.track-row.is-home .marker-well {
+  border-right: none;
+  background-color: rgba(120, 84, 40, .16);
+}
+
+.reward-empty {
+  background: transparent;
 }
 
 .reward {

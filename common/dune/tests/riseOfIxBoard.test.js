@@ -17,14 +17,14 @@ describe('Rise of Ix board', () => {
     expect(game.state.techStacks.flat()).toHaveLength(0)
   })
 
-  test('the expansion covers Accept Contract and Shipping and deals the tech stacks', () => {
+  test('the expansion covers Assembly Hall and Gather Support and deals the tech stacks', () => {
     const game = t.fixture({ useRiseOfIx: true })
     game.run()
 
-    expect(game.state.boardSpaces['accept-contract']).toBeUndefined()
-    expect(game.state.boardSpaces.shipping).toBeUndefined()
-    expect(game.state.boardSpaces['assembly-hall']).toEqual([])
-    expect(game.state.boardSpaces['gather-support']).toEqual([])
+    expect(game.state.boardSpaces['accept-contract']).toEqual([])
+    expect(game.state.boardSpaces.shipping).toEqual([])
+    expect(game.state.boardSpaces['assembly-hall']).toBeUndefined()
+    expect(game.state.boardSpaces['gather-support']).toBeUndefined()
     expect(game.state.boardSpaces.dreadnought).toEqual([])
     expect(game.state.boardSpaces['tech-negotiation']).toEqual([])
     expect(game.state.boardSpaces.smuggling).toEqual([])
@@ -33,8 +33,8 @@ describe('Rise of Ix board', () => {
     const postG = game.state.observationPosts.find(post => post.id === 'G')
     const postI = game.state.observationPosts.find(post => post.id === 'I')
     const postN = game.state.observationPosts.find(post => post.id === 'N')
-    expect(postG.spaces).toEqual(['smuggling', 'interstellar-shipping'])
-    expect(postI.spaces).toEqual(['assembly-hall', 'gather-support'])
+    expect(postG.spaces).toEqual(['accept-contract', 'shipping'])
+    expect(postI.spaces).toEqual(['smuggling', 'interstellar-shipping'])
     expect(postN.spaces).toEqual(['tech-negotiation', 'dreadnought'])
 
     const stacks = game.state.techStacks
@@ -77,10 +77,11 @@ describe('Rise of Ix board', () => {
 
     const supplyBefore = game.players.byName('dennis').troopsInSupply
     t.choose(game, 'Agent Turn.Dagger')
-    t.choose(game, 'Tech Negotiation')
+    t.choose(game, 'emperor')
     t.choose(game, 'Place a Negotiator')
 
     const dennis = game.players.byName('dennis')
+    expect(dennis.getInfluence('emperor')).toBe(1)
     expect(dennis.negotiators).toBe(1)
     expect(dennis.troopsInSupply).toBe(supplyBefore - 1)
     expect(game.state.boardSpaces['tech-negotiation']).toContain('dennis')

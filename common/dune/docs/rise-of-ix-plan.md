@@ -13,7 +13,7 @@ This plan was revised after review against the current code. The corrections are
 - A normal game uses no Rise of Ix conflict cards. Epic mode adds Economic Supremacy as the fifth Conflict III. Do not add Skirmish I, Skirmish II, or Trade Monopoly until something uses them.
 - Tessia Vernius's four snooper rewards are one shared list, taken top to bottom, one at a time. No reward belongs to an influence number or a faction. "This token's Influence track" means the faction that just crossed 2.
 - Rivals, House Hagal, solo play, and the six-player team mode are out of scope.
-- The Uprising board is the board. The overlay covers only Accept Contract and Shipping.
+- The Uprising board is the board. The overlay covers Assembly Hall and Gather Support.
 
 ## Calls to build with
 
@@ -73,9 +73,9 @@ Tests: with the flag off, deck counts match today. With the flag on, the 35 impe
 
 ## Phase 2 — Board and pieces
 
-Add the four spaces only when the flag is on, and omit Accept Contract and Shipping in that same case. Icons and requirements are the table in the living rules. None of the four is a combat space. Interstellar Shipping requires 2 Spacing Guild influence. The Dreadnought space costs 3 Solari to send the agent. Commission and Acquire Tech are optional after that.
+Add the four spaces only when the flag is on, and omit Assembly Hall and Gather Support in that same case. Icons and requirements are the table in the living rules. None of the four is a combat space. Interstellar Shipping requires 2 Spacing Guild influence. The Dreadnought space costs 3 Solari to send the agent. Commission and Acquire Tech are optional after that.
 
-Retarget observation post `G` to Smuggling and Interstellar Shipping. Add one new post for Tech Negotiation and Dreadnought. Do not leave `G` pointing at the covered spaces, and do not add two posts on top of the old `G`.
+Retarget observation post `I` to Smuggling and Interstellar Shipping. Leave post `G` on Accept Contract and Shipping. Add one new post for Tech Negotiation and Dreadnought. Do not leave `I` pointing at the covered spaces, and do not add two posts on top of the old `I`.
 
 Per player, on the ephemeral player state:
 
@@ -139,9 +139,9 @@ New `systems/shipping.js`. Each freighter icon is a choice:
 - Advance one space. No advance from the top space.
 - Recall to the bottom and take the current space plus every space below it, in any order.
 
-Advancing does not pay. Recalling from the bottom pays only the bottom reward.
+The track has four spaces. Freighters start on the bottom space, which has no reward. Advancing does not pay. Recalling from the bottom pays nothing. Recalling from a reward space pays that space and every reward below it.
 
-- Bottom: Dividends (you 5 Solari, each opponent 1) or 2 spice.
+- Bottom reward, the space just above the start: Dividends (you 5 Solari, each opponent 1) or 2 spice.
 - Middle: recruit 2 troops and 1 influence with one faction.
 - Top: Acquire Tech at a 2 spice discount.
 
@@ -229,7 +229,7 @@ Epic without Rise of Ix does nothing.
 The engine comes first. Before touching the screen, a headless game must commission a dreadnought, buy a tile, recall a freighter, park a dreadnought, and win a fight with only a dreadnought in the conflict, swords counted and a combat intrigue legal. One leader ability from phase 7 must have a test.
 
 - Enable the Rise of Ix checkbox: remove `disabled` and the "not yet implemented" label. The Epic checkbox from phase 9 stays disabled until Rise of Ix is checked. Confirm a new lobby saves `useRiseOfIx` and `useEpic`, a started game has both on `game.settings`, and a rematch lobby still has both after another checkbox change.
-- `DuneActionSpaces.vue` and `DuneGame.vue` read the static `dune.res.boardSpaces`. Hiding Accept Contract and Shipping means filtering that list when the flag is on, not only `game.state.boardSpaces`.
+- `DuneActionSpaces.vue` and `DuneGame.vue` read the static `dune.res.boardSpaces`. Hiding Assembly Hall and Gather Support means filtering that list when the flag is on, not only `game.state.boardSpaces`.
 - Show the Ix board: three stacks with the top tile face up, negotiators on the banner, and owned tiles, face down when flipped.
 - Show each freighter, dreadnoughts in garrison and in the conflict, and a parked dreadnought on its control space.
 - Reuse `DuneBoardState`, `DuneConflict`, and the existing resource icons.

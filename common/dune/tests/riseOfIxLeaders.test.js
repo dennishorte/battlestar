@@ -141,9 +141,6 @@ describe('Rise of Ix leaders', () => {
     t.choose(game, 'Deliver Supplies')
     untilDennis(game)
     t.choose(game, 'Agent Turn.Dagger')
-    if (waitingTitle(game) !== 'Choose an option') {
-      t.choose(game, 'Tech Negotiation')
-    }
 
     expect(dennis(game).spice).toBe(1)
   })
@@ -158,9 +155,7 @@ describe('Rise of Ix leaders', () => {
 
     t.choose(game, 'Diplomacy')
     t.choose(game, 'Agent Turn.Dagger')
-    if (waitingTitle(game) !== 'Choose an option') {
-      t.choose(game, 'Tech Negotiation')
-    }
+    t.choose(game, 'emperor')
     t.choose(game, 'Place a Negotiator')
     untilDennis(game)
     t.choose(game, 'Agent Turn.Diplomacy')

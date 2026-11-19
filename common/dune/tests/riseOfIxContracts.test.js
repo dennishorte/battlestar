@@ -92,7 +92,7 @@ describe('Rise of Ix contracts', () => {
     game.run()
 
     t.choose(game, 'Agent Turn.Dagger')
-    t.choose(game, 'Tech Negotiation')
+    t.choose(game, 'emperor')
     t.choose(game, 'Place a Negotiator')
 
     expect(dennis(game).negotiators).toBe(1)
