@@ -72,7 +72,9 @@
             <DuneCard :card="tile.card" />
           </div>
         </div>
-        <TableauSection v-if="contractCards.length" title="Contracts" :cards="contractCards" />
+        <TableauSection title="Contracts"
+                        :cards="contractCards"
+                        :note="`completed: ${completedContractCards.length}`" />
         <TableauSection v-if="reservedContractCards.length"
                         title="Reserved Contracts"
                         :cards="reservedContractCards" />
@@ -107,11 +109,16 @@ const TableauSection = {
     title: { type: String, required: true },
     cards: { type: Array, default: () => [] },
     hiddenCount: { type: Number, default: null },
+    note: { type: String, default: '' },
   },
   render() {
     const children = []
+    const titleText = [this.title]
+    if (this.note) {
+      titleText.push(h('span', { class: 'section-note' }, this.note))
+    }
     children.push(h('div', { class: 'section-title' }, [
-      this.title,
+      h('span', { class: 'section-title-text' }, titleText),
       h('span', { class: 'section-count' },
         this.hiddenCount !== null ? `${this.hiddenCount}` : `${this.cards.length}`),
     ]))
@@ -455,6 +462,20 @@ export default {
   justify-content: space-between;
   padding: .25em .25em 0;
   border-top: 1px solid #efe8db;
+}
+
+.section :deep(.section-title-text) {
+  display: flex;
+  align-items: baseline;
+  gap: .6em;
+  min-width: 0;
+}
+
+.section :deep(.section-note) {
+  text-transform: none;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0;
 }
 
 .section :deep(.section-count) {

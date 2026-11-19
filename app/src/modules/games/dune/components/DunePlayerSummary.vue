@@ -160,13 +160,18 @@
           <DuneCard :card="tile.card" />
         </div>
       </div>
-      <div class="cards-section" v-if="viewerContracts.length">
-        <div class="section-label">Contracts</div>
+      <div class="cards-section">
+        <div class="section-label">
+          <span>Contracts</span>
+          <span class="completed-count">completed: {{ viewerContractsCompleted }}</span>
+        </div>
         <DuneCard v-for="card in viewerContracts" :key="card.id" :card="card" />
+        <div v-if="!viewerContracts.length" class="section-empty">none</div>
       </div>
-      <div class="cards-section" v-if="viewerIntrigue.length">
+      <div class="cards-section">
         <div class="section-label">Intrigue</div>
         <DuneCard v-for="card in viewerIntrigue" :key="card.id" :card="card" />
+        <div v-if="!viewerIntrigue.length" class="section-empty">none</div>
       </div>
     </div>
   </div>
@@ -297,6 +302,13 @@ export default {
       }
       return this.game.zones.byId(`${this.viewer.name}.contracts`).cardlist()
         .sort((l, r) => l.name.localeCompare(r.name))
+    },
+
+    viewerContractsCompleted() {
+      if (!this.viewer) {
+        return 0
+      }
+      return this.game.zones.byId(`${this.viewer.name}.contractsCompleted`).cardlist().length
     },
 
     viewerIntrigue() {
@@ -565,6 +577,24 @@ export default {
   color: #8a7a68;
   padding: .25em .2em .1em;
   font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: .5em;
+}
+
+.completed-count {
+  text-transform: none;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0;
+}
+
+.section-empty {
+  font-size: .85em;
+  color: #8a7a68;
+  font-style: italic;
+  padding: .1em .2em .15em;
 }
 
 .owned-tech.flipped :deep(.dune-card) {
