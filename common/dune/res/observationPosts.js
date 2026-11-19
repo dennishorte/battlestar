@@ -23,10 +23,10 @@ function getObservationPosts(settings) {
     return observationPosts
   }
   const posts = observationPosts.map(post => {
-    if (post.id !== 'I') {
+    if (post.id !== 'G') {
       return post
     }
-    return { id: 'I', spaces: ['interstellar-shipping', 'smuggling'] }
+    return { id: 'G', spaces: ['smuggling', 'interstellar-shipping'] }
   })
   posts.push({ id: 'N', spaces: ['tech-negotiation', 'dreadnought'] })
   return posts

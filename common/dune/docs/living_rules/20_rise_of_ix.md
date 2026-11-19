@@ -6,13 +6,13 @@ Rise of Ix adds an Ix board, a CHOAM overlay with a Shipping track, Tech tiles, 
 
 ### Setup with Uprising
 
-1. Fold the CHOAM overlay in half and cover only the top-right corner of the Uprising board. This adds the CHOAM section (Smuggling, Interstellar Shipping, and the Shipping track) and covers Assembly Hall and Gather Support. The other Landsraad spaces stay.
+1. Fold the CHOAM overlay in half and cover Accept Contract and Shipping with the Shipping track. Those two spaces are not available. This adds the CHOAM section (Smuggling, Interstellar Shipping, and the Shipping track). Assembly Hall, Gather Support, and the other Landsraad spaces stay.
 2. Place the Ix board beside the game board. It holds Tech Negotiation, Dreadnought, and the three Tech-tile stacks.
 3. Shuffle the 18 Tech tiles face down and split them into three stacks of six. Put a stack on each space of the Ix board and turn the top tile of each stack face up.
 4. Each player puts two dreadnoughts in their supply and puts their Freighter disc on the bottom space of the Shipping track.
 5. Shuffle the 17 Intrigue cards into the Intrigue deck and the 35 Imperium cards into the Imperium deck before dealing the Imperium Row. Add the six Leaders to the Leader pool.
 6. The overlay and the Ix board have no observation posts printed on them. Play as if there are two:
-   - One post connects to Interstellar Shipping and Smuggling.
+   - Observation post G connects to Smuggling and Interstellar Shipping, in place of Accept Contract and Shipping.
    - One post connects to Tech Negotiation and Dreadnought.
 7. Do not add the Rise of Ix Conflict cards to a normal game. Epic mode adds one of them, Economic Supremacy, and leaves the other three out. See Epic mode below.
 8. Ilesa Ecaz needs the Foldspace cards from the original game. Only she may acquire them.

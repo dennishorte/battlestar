@@ -184,6 +184,7 @@ describe('Rise of Ix tech tiles', () => {
     t.choose(game, 'Invasion Ships: discard a card to ignore enemy Agents')
     t.choose(game, 'Diplomacy')
     t.choose(game, 'Agent Turn.Dagger')
+    t.choose(game, 'Tech Negotiation')
 
     expect(game.state.boardSpaces['tech-negotiation']).toEqual(expect.arrayContaining(['micah', 'dennis']))
   })

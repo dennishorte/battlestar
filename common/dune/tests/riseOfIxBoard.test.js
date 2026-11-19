@@ -6,29 +6,35 @@ describe('Rise of Ix board', () => {
     const game = t.fixture()
     game.run()
 
+    expect(game.state.boardSpaces['accept-contract']).toEqual([])
+    expect(game.state.boardSpaces.shipping).toEqual([])
     expect(game.state.boardSpaces['assembly-hall']).toEqual([])
-    expect(game.state.boardSpaces['gather-support']).toEqual([])
     expect(game.state.boardSpaces.dreadnought).toBeUndefined()
     expect(game.state.observationPosts.map(post => post.id)).not.toContain('N')
+    expect(game.state.observationPosts.find(post => post.id === 'G').spaces).toEqual(['accept-contract', 'shipping'])
     expect(game.state.observationPosts.find(post => post.id === 'I').spaces).toEqual(['assembly-hall', 'gather-support'])
     expect(game.players.byName('dennis').dreadnoughtsInSupply).toBe(0)
     expect(game.state.techStacks.flat()).toHaveLength(0)
   })
 
-  test('the expansion covers Assembly Hall and deals the tech stacks', () => {
+  test('the expansion covers Accept Contract and Shipping and deals the tech stacks', () => {
     const game = t.fixture({ useRiseOfIx: true })
     game.run()
 
-    expect(game.state.boardSpaces['assembly-hall']).toBeUndefined()
-    expect(game.state.boardSpaces['gather-support']).toBeUndefined()
+    expect(game.state.boardSpaces['accept-contract']).toBeUndefined()
+    expect(game.state.boardSpaces.shipping).toBeUndefined()
+    expect(game.state.boardSpaces['assembly-hall']).toEqual([])
+    expect(game.state.boardSpaces['gather-support']).toEqual([])
     expect(game.state.boardSpaces.dreadnought).toEqual([])
     expect(game.state.boardSpaces['tech-negotiation']).toEqual([])
     expect(game.state.boardSpaces.smuggling).toEqual([])
     expect(game.state.boardSpaces['interstellar-shipping']).toEqual([])
 
+    const postG = game.state.observationPosts.find(post => post.id === 'G')
     const postI = game.state.observationPosts.find(post => post.id === 'I')
     const postN = game.state.observationPosts.find(post => post.id === 'N')
-    expect(postI.spaces).toEqual(['interstellar-shipping', 'smuggling'])
+    expect(postG.spaces).toEqual(['smuggling', 'interstellar-shipping'])
+    expect(postI.spaces).toEqual(['assembly-hall', 'gather-support'])
     expect(postN.spaces).toEqual(['tech-negotiation', 'dreadnought'])
 
     const stacks = game.state.techStacks
@@ -70,8 +76,8 @@ describe('Rise of Ix board', () => {
     game.run()
 
     const supplyBefore = game.players.byName('dennis').troopsInSupply
-    // Dagger's only affordable green space is Tech Negotiation, so the game takes it.
     t.choose(game, 'Agent Turn.Dagger')
+    t.choose(game, 'Tech Negotiation')
     t.choose(game, 'Place a Negotiator')
 
     const dennis = game.players.byName('dennis')

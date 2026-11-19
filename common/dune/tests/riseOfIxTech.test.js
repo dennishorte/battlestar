@@ -21,6 +21,7 @@ describe('Rise of Ix tech purchase', () => {
     game.run()
 
     t.choose(game, 'Agent Turn.Dagger')
+    t.choose(game, 'Tech Negotiation')
     t.choose(game, 'Acquire Tech at a 1 spice discount')
     t.choose(game, 'Artillery for 0 Spice')
 

@@ -332,7 +332,7 @@ function getBoardSpaces(settings) {
   if (!settings?.useRiseOfIx) {
     return boardSpaces
   }
-  const covered = new Set(['assembly-hall', 'gather-support'])
+  const covered = new Set(['accept-contract', 'shipping'])
   return boardSpaces.filter(space => !covered.has(space.id)).concat(ixSpaces)
 }
 

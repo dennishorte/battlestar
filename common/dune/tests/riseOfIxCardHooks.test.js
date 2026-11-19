@@ -185,6 +185,7 @@ describe('Rise of Ix shipping and tech cards', () => {
     game.run()
 
     t.choose(game, 'Agent Turn.Embedded Agent')
+    t.choose(game, 'Assembly Hall')
     t.choose(game, 'Embedded Agent')
     t.choose(game, 'Advance')
     t.choose(game, 'Advance')
