@@ -330,10 +330,9 @@ function inkFor(hex) {
 .track {
   display: flex;
   flex-direction: column;
-  border: 1px solid #6b4e2e;
+  border: 1px solid #d4c8a8;
   border-radius: .2em;
-  background:
-    linear-gradient(180deg, #f6e7c4 0%, #ead3a4 100%);
+  background-color: #f5f0e8;
   cursor: pointer;
   overflow: hidden;
 }
@@ -352,7 +351,7 @@ function inkFor(hex) {
   display: grid;
   grid-template-columns: 5.8rem minmax(0, 1fr);
   min-height: 2.7rem;
-  border-top: 1px solid #c4a574;
+  border-top: 1px solid #e0d4bc;
 }
 
 .track-row:first-child {
@@ -360,12 +359,12 @@ function inkFor(hex) {
 }
 
 .track-row.is-eligible {
-  background-color: rgba(255, 248, 220, .72);
-  box-shadow: inset 3px 0 0 #c8962e;
+  background-color: #f8eecc;
+  box-shadow: inset 3px 0 0 #8b6914;
 }
 
 .track-row.is-collecting {
-  background-color: rgba(255, 236, 180, .9);
+  background-color: #f3e6b8;
 }
 
 .marker-well {
@@ -375,8 +374,8 @@ function inkFor(hex) {
   align-content: center;
   gap: .2rem;
   padding: .25rem .3rem;
-  background-color: rgba(120, 84, 40, .08);
-  border-right: 1px solid #c4a574;
+  background-color: #efe4c8;
+  border-right: 1px solid #e0d4bc;
 }
 
 .disc {
@@ -411,7 +410,7 @@ function inkFor(hex) {
 
 .track-row.is-home .marker-well {
   border-right: none;
-  background-color: rgba(120, 84, 40, .16);
+  background-color: #e8dcc0;
 }
 
 .reward-empty {
@@ -432,12 +431,12 @@ function inkFor(hex) {
   font-weight: 700;
   letter-spacing: .06em;
   text-transform: uppercase;
-  color: #8a5a28;
+  color: #8b6914;
 }
 
 .reward-text {
   font-size: .78rem;
-  color: #3a2c18;
+  color: #2c2416;
   line-height: 1.25;
 }
 
