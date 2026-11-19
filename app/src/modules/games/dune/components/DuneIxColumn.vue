@@ -3,7 +3,7 @@
     <section class="ix-panel">
       <div class="section-header">
         <span>Shipping</span>
-        <span class="header-note">How it works</span>
+        <button type="button" class="header-note how-it-works" @click="openInfo">How it works</button>
       </div>
       <div class="track"
            role="button"
@@ -291,6 +291,31 @@ function inkFor(hex) {
   font-weight: 500;
   font-size: .75em;
   color: #8a7a68;
+}
+
+.how-it-works {
+  border: 0;
+  padding: 0;
+  background: none;
+  font: inherit;
+  font-weight: 500;
+  font-size: .75em;
+  line-height: inherit;
+  color: #8a7a68;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: .15em;
+}
+
+.how-it-works:hover,
+.how-it-works:focus-visible {
+  color: #8b6914;
+}
+
+.how-it-works:focus-visible {
+  outline: 2px solid #8b6914;
+  outline-offset: 2px;
+  border-radius: .15em;
 }
 
 .tech-panel .section-header {
