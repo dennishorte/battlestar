@@ -110,6 +110,23 @@ describe('Rise of Ix leaders', () => {
     expect(dennis(game).getCounter('persuasion')).toBe(0)
   })
 
+  test('Ilesa names One Step Ahead and hides the set-aside card from other players', () => {
+    const game = t.fixture({ useRiseOfIx: true })
+    t.setBoard(game, {
+      leaders: { dennis: ilesa },
+      dennis: { handExact: ['Dagger', 'Diplomacy'] },
+    })
+    game.run()
+
+    t.choose(game, 'Dagger')
+
+    const entry = game.log.getLog().find(e => e.template && e.template.includes('sets aside'))
+    expect(entry.template).toBe('{player} sets aside {card} (One Step Ahead)')
+    expect(entry.redacted).toBe('{player} sets aside a card (One Step Ahead)')
+    expect(entry.visibility).toEqual(['dennis'])
+    expect(entry.args.card.value).toBe('Dagger')
+  })
+
   test('Ilesa reveals a set-aside card with her first turn when that turn is a reveal', () => {
     const game = t.fixture({ useRiseOfIx: true })
     t.setBoard(game, {

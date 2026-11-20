@@ -54,8 +54,10 @@ module.exports = {
 
     card.moveTo(game.zones.byId(`${player.name}.setAside`))
     info.cardId = card.id
-    game.log.add({
-      template: '{player} sets aside {card}',
+    game.log.addPrivate({
+      viewer: player,
+      template: '{player} sets aside {card} (One Step Ahead)',
+      redactedTemplate: '{player} sets aside a card (One Step Ahead)',
       args: { player, card },
     })
   },
