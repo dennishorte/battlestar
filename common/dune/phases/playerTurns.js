@@ -282,6 +282,7 @@ function agentTurn(game, player, card) {
     game.state.boardSpaces[space.id] = []
   }
   game.state.boardSpaces[space.id].push(player.name)
+  require('../res/boardSpaces.js').recordAgentVisit(game, player.name, space.id)
   player.incrementCounter('agentsPlaced', 1, { silent: true })
 
   game.log.add({
@@ -510,12 +511,14 @@ function revealTurn(game, player) {
     game.log.outdent()
   }
 
-  // Tech Negotiation: +1 Persuasion on your Reveal turn while your Agent is still there.
-  if ((game.state.boardSpaces['tech-negotiation'] || []).includes(player.name)) {
-    totalPersuasion += 1
+  // Assembly Hall and Tech Negotiation: +1 Persuasion on reveal for having
+  // sent an Agent there this round, even if that Agent has since left.
+  for (const space of require('../res/boardSpaces.js').revealPersuasionSpaces(game, player.name)) {
+    const bonus = space.effects.find(effect => effect.type === 'reveal-persuasion')
+    totalPersuasion += bonus.amount
     game.log.add({
-      template: '{player}: +{amount} Persuasion (Tech Negotiation)',
-      args: { player, amount: 1 },
+      template: '{player}: +{amount} Persuasion ({space})',
+      args: { player, amount: bonus.amount, space: space.name },
     })
   }
 
@@ -1162,6 +1165,10 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
         return effect.cost ? false : undefined
       }
       return undefined
+
+    case 'reveal-persuasion':
+      // Paid during the Reveal turn from the visit record, not when the Agent arrives.
+      break
 
     case 'gain':
       player.incrementCounter(effect.resource, effect.amount, { silent: true })

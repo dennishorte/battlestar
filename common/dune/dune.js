@@ -104,6 +104,7 @@ Dune.prototype._reset = function() {
   // Multiple occupants possible via spy infiltration or leader abilities
   // (e.g. Helena Richese ignoring occupancy on green/purple).
   this.state.boardSpaces = {}
+  this.state.agentVisits = {}
   for (const space of res.boardSpaces.getBoardSpaces(this.settings)) {
     this.state.boardSpaces[space.id] = []
   }

@@ -28,7 +28,7 @@ describe('captured-mentat', () => {
     const dennis = game.players.byName('dennis')
     expect(game.zones.byId('dennis.hand').cardlist().length).toBe(1)
     expect(game.zones.byId('dennis.intrigue').cardlist().length).toBe(2)
-    expect(dennis.getCounter('persuasion')).toBe(1)
+    expect(dennis.getCounter('persuasion')).toBe(0)
     const discard = game.zones.byId('dennis.discard').cardlist()
     expect(discard.some(c => c.name === 'Dagger')).toBe(true)
   })

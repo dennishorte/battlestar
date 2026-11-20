@@ -107,7 +107,7 @@ describe('Rise of Ix leaders', () => {
     t.choose(game, 'Prepare the Way')
 
     expect(game.zones.byId('dennis.discard').cardlist().some(card => card.name === 'Prepare the Way')).toBe(true)
-    expect(dennis(game).getCounter('persuasion')).toBe(1)
+    expect(dennis(game).getCounter('persuasion')).toBe(0)
   })
 
   test('Ilesa reveals a set-aside card with her first turn when that turn is a reveal', () => {

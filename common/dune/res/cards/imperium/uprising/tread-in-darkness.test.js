@@ -78,9 +78,9 @@ describe('tread-in-darkness', () => {
     t.choose(game, 'Tread in Darkness')
     // No trash prompt expected — agentEffect's condition fails.
 
-    // Assembly Hall: +1 persuasion, +1 intrigue card.
+    // Assembly Hall draws an intrigue now. Its persuasion waits for reveal.
     const dennis = game.players.byName('dennis')
-    expect(dennis.getCounter('persuasion')).toBe(1)
+    expect(dennis.getCounter('persuasion')).toBe(0)
     expect(game.zones.byId('dennis.intrigue').cardlist().length).toBe(1)
   })
 

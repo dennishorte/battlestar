@@ -388,6 +388,7 @@ export default {
         'intrigue-trash-draw': () => 'trash intrigue → draw intrigue',
         'break-shield-wall': () => 'destroy Shield Wall',
         'influence-choice': (e) => `+${e.amount} influence (any faction)`,
+        'reveal-persuasion': (e) => `+${e.amount} persuasion on reveal`,
         'commission-dreadnought': () => 'commission a dreadnought',
         'acquire-tech': (e) => e.discount ? `acquire tech (-${e.discount} spice)` : 'acquire tech',
         'place-negotiator': () => 'place a negotiator',

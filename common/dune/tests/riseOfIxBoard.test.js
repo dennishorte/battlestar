@@ -1,5 +1,31 @@
 const t = require('../testutil')
 
+function untilChooseTurn(game, playerName) {
+  for (let guard = 0; guard < 40; guard++) {
+    const selector = game.waiting && game.waiting.selectors[0]
+    if (selector && selector.actor === playerName && selector.title === 'Choose Turn') {
+      return
+    }
+    const choices = t.currentChoices(game)
+    if (choices.includes('Reveal Turn')) {
+      t.choose(game, 'Reveal Turn')
+    }
+    else if (choices.includes('Pass')) {
+      t.choose(game, 'Pass')
+    }
+    else if (choices.includes('Decline')) {
+      t.choose(game, 'Decline')
+    }
+    else if (choices.includes('Do not commission')) {
+      t.choose(game, 'Do not commission')
+    }
+    else {
+      t.choose(game, choices[0])
+    }
+  }
+  throw new Error(`never reached ${playerName}'s turn`)
+}
+
 describe('Rise of Ix board', () => {
 
   test('a normal game keeps Assembly Hall and has no Ix pieces', () => {
@@ -80,11 +106,44 @@ describe('Rise of Ix board', () => {
     t.choose(game, 'Place a Negotiator')
 
     const dennis = game.players.byName('dennis')
-    expect(dennis.getCounter('persuasion')).toBe(1)
+    expect(dennis.getCounter('persuasion')).toBe(0)
     expect(dennis.getInfluence('emperor')).toBe(0)
     expect(dennis.negotiators).toBe(1)
     expect(dennis.troopsInSupply).toBe(supplyBefore - 1)
     expect(game.state.boardSpaces['tech-negotiation']).toContain('dennis')
+  })
+
+  test('Tech Negotiation pays persuasion on reveal even after the agent leaves', () => {
+    const game = t.fixture({ useRiseOfIx: true })
+    t.setBoard(game, {
+      dennis: {
+        handExact: ['Dagger', 'Dagger'],
+        influence: { emperor: 2 },
+        solari: 5,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Agent Turn.Dagger')
+    if (t.currentChoices(game).includes('Tech Negotiation')) {
+      t.choose(game, 'Tech Negotiation')
+    }
+    t.choose(game, 'Place a Negotiator')
+    expect(game.players.byName('dennis').getCounter('persuasion')).toBe(0)
+
+    untilChooseTurn(game, 'dennis')
+    t.choose(game, 'Agent Turn.Dagger')
+    t.choose(game, 'Imperial Privilege')
+    if (t.currentChoices(game).includes('Pass')) {
+      t.choose(game, 'Pass')
+    }
+    expect(game.state.boardSpaces['tech-negotiation']).toEqual([])
+
+    untilChooseTurn(game, 'dennis')
+    const handPersuasion = game.zones.byId('dennis.hand').cardlist()
+      .reduce((sum, card) => sum + (card.revealPersuasion || 0), 0)
+    t.choose(game, 'Reveal Turn')
+    expect(game.players.byName('dennis').getCounter('persuasion')).toBe(handPersuasion + 1)
   })
 
   test('Smuggling pays 1 Solari', () => {

@@ -79,6 +79,13 @@ function previewReveal(game, player) {
     resolved.push({ source: 'High Council', description: '+2 Persuasion' })
   }
 
+  const boardSpaces = require('../res/boardSpaces.js')
+  for (const space of boardSpaces.revealPersuasionSpaces(game, player.name)) {
+    const bonus = space.effects.find(effect => effect.type === 'reveal-persuasion')
+    totals.persuasion += bonus.amount
+    resolved.push({ source: space.name, description: `+${bonus.amount} Persuasion` })
+  }
+
   const units = require('./units.js')
   const baseDeployedTroops = game.state.conflict?.deployedTroops?.[player.name] || 0
   const baseDeployedSandworms = game.state.conflict?.deployedSandworms?.[player.name] || 0

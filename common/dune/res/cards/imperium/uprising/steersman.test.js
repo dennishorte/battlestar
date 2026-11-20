@@ -37,15 +37,15 @@ describe('steersman', () => {
     // just-placed agent's space).
     t.choose(game, 'Steersman')
 
-    // Hand: drew 1 from Steersman + Assembly Hall has no draw effect; persuasion +1, intrigue +1.
+    // Hand: drew 1 from Steersman. Assembly Hall draws an intrigue, not a card.
     const dennis = game.players.byName('dennis')
     // Steersman was played from hand (-1) and we drew 1 -> handSizeBefore - 1 + 1 - 1 (Steersman moved out) = handSizeBefore
     // Actually: hand had Steersman; play removes Steersman; draw adds 1; Assembly Hall doesn't draw. Net: handSizeBefore.
     expect(game.zones.byId('dennis.hand').cardlist().length).toBe(handSizeBefore)
     expect(game.state.boardSpaces['gather-support']).toEqual([])
     expect(game.state.boardSpaces['assembly-hall']).toEqual(['dennis'])
-    // Assembly Hall: +1 intrigue, +1 persuasion.
-    expect(dennis.getCounter('persuasion')).toBe(1)
+    // Assembly Hall draws an intrigue now. Its persuasion waits for reveal.
+    expect(dennis.getCounter('persuasion')).toBe(0)
     expect(game.zones.byId('dennis.intrigue').cardlist().length).toBe(1)
     void dennis0
   })
@@ -65,9 +65,9 @@ describe('steersman', () => {
     // recall-agent has no eligible target (only the just-placed agent is on the board).
 
     expect(game.state.boardSpaces['assembly-hall']).toEqual(['dennis'])
-    // Assembly Hall effects still fired for the placed agent.
+    // Assembly Hall draws an intrigue now. Its persuasion waits for reveal.
     const dennis = game.players.byName('dennis')
-    expect(dennis.getCounter('persuasion')).toBe(1)
+    expect(dennis.getCounter('persuasion')).toBe(0)
     expect(game.zones.byId('dennis.intrigue').cardlist().length).toBe(1)
   })
 

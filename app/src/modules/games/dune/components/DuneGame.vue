@@ -346,6 +346,7 @@ export default {
         'high-council': () => 'High Council',
         'sword-master': () => 'Swordmaster',
         'influence-choice': (e) => `+${e.amount} influence`,
+        'reveal-persuasion': (e) => `+${e.amount} persuasion on reveal`,
       }
       const fn = labels[effect.type]
       return fn ? fn(effect) : null

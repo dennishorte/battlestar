@@ -48,9 +48,10 @@ describe('undercover-asset', () => {
     t.choose(game, 'Undercover Asset')   // resolve card before space
 
     expect(game.state.boardSpaces['assembly-hall']).toContain('dennis')
-    // Assembly Hall effects fired.
+    // Assembly Hall draws an intrigue now. Its persuasion waits for reveal.
     const dennis = game.players.byName('dennis')
-    expect(dennis.getCounter('persuasion')).toBe(1)
+    expect(dennis.getCounter('persuasion')).toBe(0)
+    expect(game.zones.byId('dennis.intrigue').cardlist()).toHaveLength(1)
   })
 
   test('reveal: +1 Spy choice places a spy', () => {

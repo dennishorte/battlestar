@@ -170,7 +170,7 @@ const boardSpaces = [
     icon: 'green',
     effects: [
       { type: 'intrigue', amount: 1 },
-      { type: 'gain', resource: 'persuasion', amount: 1 },
+      { type: 'reveal-persuasion', amount: 1 },
     ],
   },
   {
@@ -289,7 +289,7 @@ const ixSpaces = [
     icon: 'green',
     isCombatSpace: false,
     effects: [
-      { type: 'gain', resource: 'persuasion', amount: 1 },
+      { type: 'reveal-persuasion', amount: 1 },
       { type: 'choice', choices: [
         { label: 'Acquire Tech at a 1 spice discount', effects: [{ type: 'acquire-tech', discount: 1 }] },
         { label: 'Place a Negotiator', effects: [{ type: 'place-negotiator' }] },
@@ -337,6 +337,34 @@ function getBoardSpaces(settings) {
   return boardSpaces.filter(space => !covered.has(space.id)).concat(ixSpaces)
 }
 
+function recordAgentVisit(game, playerName, spaceId) {
+  if (!game.state.agentVisits) {
+    game.state.agentVisits = {}
+  }
+  const visits = game.state.agentVisits[playerName] || []
+  if (!visits.includes(spaceId)) {
+    visits.push(spaceId)
+  }
+  game.state.agentVisits[playerName] = visits
+}
+
+function sentAgentTo(game, playerName, spaceId) {
+  const visits = game.state.agentVisits?.[playerName] || []
+  if (visits.includes(spaceId)) {
+    return true
+  }
+  return (game.state.boardSpaces?.[spaceId] || []).includes(playerName)
+}
+
+function revealPersuasionSpaces(game, playerName) {
+  return getBoardSpaces(game.settings).filter(space =>
+    (space.effects || []).some(effect => effect.type === 'reveal-persuasion')
+    && sentAgentTo(game, playerName, space.id)
+  )
+}
+
 boardSpaces.getBoardSpaces = getBoardSpaces
+boardSpaces.recordAgentVisit = recordAgentVisit
+boardSpaces.revealPersuasionSpaces = revealPersuasionSpaces
 
 module.exports = boardSpaces

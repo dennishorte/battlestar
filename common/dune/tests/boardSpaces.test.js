@@ -1,5 +1,28 @@
 const t = require('../testutil')
 
+function untilChooseTurn(game, playerName) {
+  for (let guard = 0; guard < 40; guard++) {
+    const selector = game.waiting && game.waiting.selectors[0]
+    if (selector && selector.actor === playerName && selector.title === 'Choose Turn') {
+      return
+    }
+    const choices = t.currentChoices(game)
+    if (choices.includes('Reveal Turn')) {
+      t.choose(game, 'Reveal Turn')
+    }
+    else if (choices.includes('Pass')) {
+      t.choose(game, 'Pass')
+    }
+    else if (choices.includes('Decline')) {
+      t.choose(game, 'Decline')
+    }
+    else {
+      t.choose(game, choices[0])
+    }
+  }
+  throw new Error(`never reached ${playerName}'s turn`)
+}
+
 describe('Board Space Effects', () => {
 
   test('Arrakeen gives 1 troop and draws 1 card', () => {
@@ -30,7 +53,7 @@ describe('Board Space Effects', () => {
     expect(player.troopsInSupply).toBe(8)
   })
 
-  test('Assembly Hall gives 1 intrigue and 1 persuasion', () => {
+  test('Assembly Hall gives 1 intrigue now and 1 persuasion on reveal', () => {
     const game = t.fixture()
     game.run()
 
@@ -53,7 +76,38 @@ describe('Board Space Effects', () => {
     t.choose(game, 'Assembly Hall')
 
     const player = game.players.byName('dennis')
-    expect(player.getCounter('persuasion')).toBe(1)
+    expect(player.getCounter('persuasion')).toBe(0)
+    expect(game.zones.byId('dennis.intrigue').cardlist().length).toBeGreaterThan(0)
+  })
+
+  test('Assembly Hall pays persuasion on reveal even after the agent leaves', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: {
+        handExact: ['Dagger', 'Dagger'],
+        influence: { emperor: 2 },
+        solari: 5,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Agent Turn.Dagger')
+    t.choose(game, 'Assembly Hall')
+    expect(game.players.byName('dennis').getCounter('persuasion')).toBe(0)
+
+    untilChooseTurn(game, 'dennis')
+    t.choose(game, 'Agent Turn.Dagger')
+    t.choose(game, 'Imperial Privilege')
+    if (t.currentChoices(game).includes('Pass')) {
+      t.choose(game, 'Pass')
+    }
+    expect(game.state.boardSpaces['assembly-hall']).toEqual([])
+
+    untilChooseTurn(game, 'dennis')
+    const handPersuasion = game.zones.byId('dennis.hand').cardlist()
+      .reduce((sum, card) => sum + (card.revealPersuasion || 0), 0)
+    t.choose(game, 'Reveal Turn')
+    expect(game.players.byName('dennis').getCounter('persuasion')).toBe(handPersuasion + 1)
   })
 
   test('Spice Refinery choice: gain 2 solari', () => {

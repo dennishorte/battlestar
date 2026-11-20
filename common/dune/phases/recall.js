@@ -29,10 +29,13 @@ function recallPhase(game) {
     player.setCounter('agentsPlaced', 0, { silent: true })
   }
 
-  // Clear board space occupation
+  // Clear board space occupation. Visits are remembered until now so a
+  // recalled Agent still pays reveal persuasion for Assembly Hall and
+  // Tech Negotiation.
   for (const spaceId of Object.keys(game.state.boardSpaces)) {
     game.state.boardSpaces[spaceId] = []
   }
+  game.state.agentVisits = {}
 
   // Clear round-scoped state
   game.state.blockedSpaces = []

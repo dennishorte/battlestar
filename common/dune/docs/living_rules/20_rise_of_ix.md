@@ -28,7 +28,7 @@ Dreadnought and Tech Negotiation use the Landsraad (green) Agent icon. Smuggling
 | Space | Icon | Cost or requirement | Effect |
 |---|---|---|---|
 | Dreadnought | Landsraad | 3 Solari | Commission a dreadnought, Acquire Tech, or both |
-| Tech Negotiation | Landsraad | none | Gain 1 Persuasion, then choose one: Acquire Tech at a 1 spice discount, or place a Negotiator on Ix. On your Reveal turn, +1 Persuasion if your Agent is still here |
+| Tech Negotiation | Landsraad | none | Choose one: Acquire Tech at a 1 spice discount, or place a Negotiator on Ix. On your Reveal turn, +1 Persuasion for having sent an Agent here |
 | Smuggling | Spice Trade | none | Gain 1 Solari and move your Freighter once |
 | Interstellar Shipping | Spice Trade | 2 or more Spacing Guild Influence | Move your Freighter twice |
 
