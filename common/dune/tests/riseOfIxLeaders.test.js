@@ -373,6 +373,26 @@ describe('Rise of Ix leaders', () => {
     expect(game.state.ownedTech.dennis.some(tile => tile.definition.defId === 'windtraps')).toBe(true)
   })
 
+  test('Rhombur places a Negotiator from his signet ring without a tech discount', () => {
+    const game = t.fixture({ useRiseOfIx: true })
+    t.setBoard(game, {
+      leaders: { dennis: rhombur },
+      dennis: { handExact: ['Signet Ring'] },
+    })
+    game.run()
+
+    const supplyBefore = dennis(game).troopsInSupply
+    t.choose(game, 'Agent Turn.Signet Ring')
+    t.choose(game, 'Smuggling')
+    t.choose(game, 'Signet Ring')
+    t.choose(game, 'Place a Negotiator')
+
+    expect(dennis(game).negotiators).toBe(1)
+    expect(dennis(game).troopsInSupply).toBe(supplyBefore - 1)
+    expect(waitingTitle(game)).not.toBe('Tech Negotiation')
+    expect(t.currentChoices(game)).not.toContain('Acquire Tech at a 1 spice discount')
+  })
+
   test('Yuna gains an extra Solari on her turn, including a control bonus, and starts without water', () => {
     const game = t.fixture({ useRiseOfIx: true })
     game.testSetBreakpoint('initialization-complete', (g) => {
