@@ -289,7 +289,7 @@ const ixSpaces = [
     icon: 'green',
     isCombatSpace: false,
     effects: [
-      { type: 'influence-choice', amount: 1 },
+      { type: 'gain', resource: 'persuasion', amount: 1 },
       { type: 'choice', choices: [
         { label: 'Acquire Tech at a 1 spice discount', effects: [{ type: 'acquire-tech', discount: 1 }] },
         { label: 'Place a Negotiator', effects: [{ type: 'place-negotiator' }] },

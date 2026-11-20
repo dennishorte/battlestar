@@ -77,11 +77,11 @@ describe('Rise of Ix board', () => {
 
     const supplyBefore = game.players.byName('dennis').troopsInSupply
     t.choose(game, 'Agent Turn.Dagger')
-    t.choose(game, 'emperor')
     t.choose(game, 'Place a Negotiator')
 
     const dennis = game.players.byName('dennis')
-    expect(dennis.getInfluence('emperor')).toBe(1)
+    expect(dennis.getCounter('persuasion')).toBe(1)
+    expect(dennis.getInfluence('emperor')).toBe(0)
     expect(dennis.negotiators).toBe(1)
     expect(dennis.troopsInSupply).toBe(supplyBefore - 1)
     expect(game.state.boardSpaces['tech-negotiation']).toContain('dennis')
