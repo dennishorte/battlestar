@@ -477,7 +477,7 @@ Innovation.prototype.action = function(count) {
   }
   else if (name === 'Dogma') {
     const card = this.cards.byId(arg)
-    this.actions.dogma(player, card)
+    this.actions.dogma(player, card, { asAction: true })
   }
   else if (name === 'Draw') {
     this.actions.draw(player, { isAction: true })

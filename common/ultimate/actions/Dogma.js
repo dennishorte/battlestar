@@ -113,7 +113,7 @@ function EndorseAction(player, color) {
     title: 'Junk a card to endorse'
   })
 
-  DogmaHelper.call(this, player, card, { endorsed: true })
+  DogmaHelper.call(this, player, card, { endorsed: true, asAction: true })
 
   this.log.outdent()
 }

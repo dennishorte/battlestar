@@ -14,7 +14,9 @@ module.exports = {
     {
       trigger: 'dogma',
       kind: 'would-first',
-      matches: (game) => game.state.actionNumber === 2,
+      // Only a chosen Dogma or Endorse action. Forecast promotion, Auspice,
+      // and the free artifact action activate a card's effects for another reason.
+      matches: (game, player, { asAction }) => game.state.actionNumber === 2 && asAction,
       func: (game, player) => {
         game.actions.chooseAndScore(
           player,

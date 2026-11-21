@@ -77,6 +77,122 @@ describe('Amina Sukhera', () => {
         },
       })
     })
+
+    test('karma: meld that promotes a forecast card does not score a figure', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          hand: ['Peter the Great'],
+        },
+        micah: {
+          red: ['Amina Sukhera'],
+          blue: ['Writing'],
+          hand: ['Reformation'],
+          forecast: ['Sailing'],
+        },
+        decks: {
+          base: {
+            1: ['Tools', 'The Wheel'],
+            2: ['Calendar'],
+          },
+        },
+      })
+
+      let request
+      request = game.run()
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'Dogma.Writing')
+      request = t.choose(game, 'Meld.Reformation')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Peter the Great', 'Tools'],
+        },
+        micah: {
+          red: ['Amina Sukhera'],
+          blue: ['Writing'],
+          purple: ['Reformation'],
+          green: ['The Wheel', 'Sailing'],
+          hand: ['Calendar'],
+        },
+      })
+    })
+
+    test('karma: endorse as second action scores a figure', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs', 'city'] })
+      t.setBoard(game, {
+        dennis: {
+          hand: ['Peter the Great'],
+        },
+        micah: {
+          red: ['Amina Sukhera'],
+          blue: ['Cordoba'],
+          hand: ['Tools'],
+        },
+        decks: {
+          base: {
+            1: ['Sailing'],
+            4: ['Gunpowder'],
+          },
+        },
+      })
+
+      let request
+      request = game.run()
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'Endorse.blue')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Sailing'],
+        },
+        micah: {
+          red: ['Amina Sukhera'],
+          blue: ['Cordoba'],
+          hand: ['Gunpowder'],
+          score: ['Peter the Great'],
+        },
+        junk: ['Tools'],
+      })
+    })
+
+    test('karma: auspice as second action does not score a figure', () => {
+      const game = t.fixtureFirstPlayer({ expansions: ['base', 'figs'] })
+      t.setBoard(game, {
+        dennis: {
+          hand: ['Peter the Great'],
+        },
+        micah: {
+          red: ['Amina Sukhera'],
+          yellow: ['Canning'],
+        },
+        decks: {
+          base: {
+            1: ['Tools'],
+            6: ['Vaccination'],
+          },
+        },
+      })
+
+      let request
+      request = game.run()
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'Draw.draw a card')
+      request = t.choose(game, 'Auspice.Canning')
+      request = t.choose(game, 'no')
+
+      t.testBoard(game, {
+        dennis: {
+          hand: ['Peter the Great', 'Tools'],
+        },
+        micah: {
+          red: ['Amina Sukhera'],
+          yellow: ['Canning'],
+          hand: ['Vaccination'],
+        },
+      })
+    })
   })
 
   test('karma: list-achievements', () => {
