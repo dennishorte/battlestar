@@ -6,20 +6,20 @@ Rise of Ix adds an Ix board, a CHOAM overlay with a Shipping track, Tech tiles, 
 
 ### Setup with Uprising
 
-1. Fold the CHOAM overlay in half and cover Assembly Hall and Gather Support with the Shipping track. Those two spaces are not available. This adds Smuggling, Interstellar Shipping, and the Shipping track. Accept Contract, Shipping, and the other Landsraad spaces stay.
+1. Place the CHOAM overlay over Assembly Hall, Gather Support, Accept Contract, and Shipping. Those four spaces are not available. This adds Smuggling, Interstellar Shipping, and the Shipping track. The other Landsraad spaces stay.
 2. Place the Ix board beside the game board. It holds Tech Negotiation, Dreadnought, and the three Tech-tile stacks.
 3. Shuffle the 18 Tech tiles face down and split them into three stacks of six. Put a stack on each space of the Ix board and turn the top tile of each stack face up.
 4. Each player puts two dreadnoughts in their supply and puts their Freighter disc on the bottom space of the Shipping track.
 5. Shuffle the 17 Intrigue cards into the Intrigue deck and the 35 Imperium cards into the Imperium deck before dealing the Imperium Row. Add the six Leaders to the Leader pool.
 6. The overlay and the Ix board have no observation posts printed on them. Play as if there are two:
    - Observation post I connects to Smuggling and Interstellar Shipping, in place of Assembly Hall and Gather Support.
-   - Observation post G still connects to Accept Contract and Shipping.
+   - Observation post G is not used. Accept Contract and Shipping are covered, and the Shipping track is not a board space.
    - One post connects to Tech Negotiation and Dreadnought.
 7. Do not add the Rise of Ix Conflict cards to a normal game. Epic mode adds one of them, Economic Supremacy, and leaves the other three out. See Epic mode below.
 8. Ilesa Ecaz needs the Foldspace cards from the original game. Only she may acquire them.
 9. With the CHOAM module: after setting up the 20 standard contracts, shuffle the 10 Rise of Ix contracts and deal two to each player. Each player keeps one face up and the rest go back in the box.
 
-On the original board, the full overlay covers Rally Troops, Hall of Oratory, Secure Contract, and Sell Melange. Uprising does not use that layout.
+On the original board, the overlay covers Rally Troops, Hall of Oratory, Secure Contract, and Sell Melange. On the Uprising board it covers Assembly Hall, Gather Support, Accept Contract, and Shipping.
 
 ### Board spaces
 
@@ -151,7 +151,7 @@ Setup of the House Hagal deck:
 
 - Remove both Hall of Oratory cards and both Rally Troops cards from the original deck.
 - Shuffle in the nine new cards, then remove some of them. Solo: remove the two Dreadnought cards marked 2P. Two players: remove the four cards marked 1P, which are two Dreadnought cards and two Tech Negotiation cards.
-- With Uprising, also remove the Uprising House Hagal cards for Assembly Hall and Gather Support. Accept Contract and Shipping stay. Drop the Rise of Ix Foldspace / Interstellar Shipping card. For a card that would send the rival to Foldspace, send it to Deliver Supplies instead.
+- With Uprising, also remove the Uprising House Hagal cards for Assembly Hall, Gather Support, Accept Contract, and Shipping. Drop the Rise of Ix Foldspace / Interstellar Shipping card. For a card that would send the rival to Foldspace, send it to Deliver Supplies instead.
 
 Rival behavior from the rulebook:
 

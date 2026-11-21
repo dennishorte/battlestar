@@ -43,12 +43,12 @@ describe('Rise of Ix board', () => {
     expect(game.state.techStacks.flat()).toHaveLength(0)
   })
 
-  test('the expansion covers Assembly Hall and Gather Support and deals the tech stacks', () => {
+  test('the expansion covers Assembly Hall, Gather Support, Accept Contract, and Shipping', () => {
     const game = t.fixture({ useRiseOfIx: true })
     game.run()
 
-    expect(game.state.boardSpaces['accept-contract']).toEqual([])
-    expect(game.state.boardSpaces.shipping).toEqual([])
+    expect(game.state.boardSpaces['accept-contract']).toBeUndefined()
+    expect(game.state.boardSpaces.shipping).toBeUndefined()
     expect(game.state.boardSpaces['assembly-hall']).toBeUndefined()
     expect(game.state.boardSpaces['gather-support']).toBeUndefined()
     expect(game.state.boardSpaces.dreadnought).toEqual([])
@@ -59,7 +59,7 @@ describe('Rise of Ix board', () => {
     const postG = game.state.observationPosts.find(post => post.id === 'G')
     const postI = game.state.observationPosts.find(post => post.id === 'I')
     const postN = game.state.observationPosts.find(post => post.id === 'N')
-    expect(postG.spaces).toEqual(['accept-contract', 'shipping'])
+    expect(postG).toBeUndefined()
     expect(postI.spaces).toEqual(['smuggling', 'interstellar-shipping'])
     expect(postN.spaces).toEqual(['tech-negotiation', 'dreadnought'])
 

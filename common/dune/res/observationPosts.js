@@ -22,12 +22,14 @@ function getObservationPosts(settings) {
   if (!settings?.useRiseOfIx) {
     return observationPosts
   }
-  const posts = observationPosts.map(post => {
-    if (post.id !== 'I') {
-      return post
-    }
-    return { id: 'I', spaces: ['smuggling', 'interstellar-shipping'] }
-  })
+  const posts = observationPosts
+    .filter(post => post.id !== 'G')
+    .map(post => {
+      if (post.id !== 'I') {
+        return post
+      }
+      return { id: 'I', spaces: ['smuggling', 'interstellar-shipping'] }
+    })
   posts.push({ id: 'N', spaces: ['tech-negotiation', 'dreadnought'] })
   return posts
 }

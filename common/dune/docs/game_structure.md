@@ -23,6 +23,8 @@ Cards with no `agentIcons` AND no `factionAccess` (Convincing Argument) can only
 | purple (city) | Arrakeen, Spice Refinery, Research Station, Sietch Tabr |
 | yellow (desert) | Imperial Basin, Hagga Basin, Deep Desert, Accept Contract, Shipping |
 | green (Landsraad) | High Council, Imperial Privilege, Sword Master, Assembly Hall, Gather Support |
+
+Rise of Ix covers Assembly Hall, Gather Support, Accept Contract, and Shipping, and adds Smuggling, Interstellar Shipping, Tech Negotiation, and Dreadnought.
 | emperor | Sardaukar, Dutiful Service |
 | guild | Heighliner, Deliver Supplies |
 | bene-gesserit | Espionage, Secrets |
