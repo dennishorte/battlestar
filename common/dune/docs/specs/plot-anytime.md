@@ -8,7 +8,7 @@ Today `offerPlotIntrigue` asks "Play a Plot Intrigue card?" at three stops: befo
 
 Use the same side channel Agricola uses for anytime actions. Do not add a new "Pass?" prompt on every decision. Do not move the loop into `BaseActionManager`. The base `choose` already returns a selection that has an `action` field before it checks the choice list (`common/lib/game/BaseActionManager.js`). Title matching in `selector.validate` does not run for that selection. The client still sends a title so the response shape matches other answers; the engine accepts the response because of the `action` field.
 
-Rules version **5**. Games already in progress stay on version 4 and keep the three prompts. `factoryFromLobby` uses 5 for new games. The test fixture's default version becomes 5, placed **before** `...options` so a test that passes `version: 2` or `version: 3` still wins.
+Rules version **5** and later. Games already in progress at the time stay on version 4 and keep the three prompts. The check is `version >= 5`, so a later rules version keeps this behavior. The test fixture's default version is the current rules version, placed **before** `...options` so a test that passes an older `version` still wins.
 
 ## When a Plot can be played
 
@@ -178,8 +178,8 @@ The strip uses the existing intrigue card chip. Clicking a chip submits:
 | `common/dune/phases/playerTurns.js` | Version branch around the three offers. Function-form choices. Callers re-resolve by id from live state. `agentCardPlayed`. Start sentinel handled before destructure. `canPlayPlot` / `playPlot`. Pauses 1 and 3. Version 4 reads `passedTurn`. |
 | `common/dune/systems/deckEngine.js` | `drawIntrigueCard` triggers pause 2 under the rules above. |
 | `common/dune/phases/playerTurns.js` `canSendAgentTo` | Read `hasEmperorIcon` the same way it reads `allIcons`. |
-| `common/dune/dune.js` | `factoryFromLobby` version 5. |
-| `common/dune/testutil.js` | Default `version: 5` before `...options`. `t.playPlot(game, cardId or name)` submits the side-channel response for `waiting.selectors[0]`, and uses that selector's actor. |
+| `common/dune/dune.js` | `factoryFromLobby` shipped this at version 5. The gate is `version >= 5`. |
+| `common/dune/testutil.js` | Default version is the current rules version, before `...options`. `t.playPlot(game, cardId or name)` submits the side-channel response for `waiting.selectors[0]`, and uses that selector's actor. |
 | Card files listed under Legality | `plotTiming`, and `canPlayPlot` where the effect returns early. |
 | `common/dune/res/cards/intrigue/bindu-suspension.js` | Version 5 asks and may set `passedTurn`. Version 4 only sets `binduSuspension`. |
 | `common/dune/res/cards/intrigue/withdrawn.js` | Sets `passedTurn`. No question. |

@@ -949,21 +949,12 @@ function deployUnits(game, player, opts = {}) {
     return
   }
 
-  const [choice] = game.actions.choose(player, () => {
-    if (nothingToDeploy()) {
-      return [game.actions.option({ id: 'continue', title: 'Continue' })]
-    }
-    return optionsNow().map(option => game.actions.option({ id: option.id, title: option.title }))
-  }, {
+  const picked = dreadnoughts.chooseDeployment(game, player, optionsNow, {
     title: 'Deploy troops to the Conflict',
     window: 'turn',
+    continueWhenEmpty: true,
   })
-
-  const picked = dreadnoughts.parseDeployChoice(choice)
-  if (!picked) {
-    return
-  }
-  if (picked.troops > 0 || picked.ships > 0) {
+  if (picked && (picked.troops > 0 || picked.ships > 0)) {
     const troopCount = picked.troops
     dreadnoughts.deploySelected(game, player, picked.troops, picked.ships)
 

@@ -31,11 +31,9 @@ module.exports = {
     if (usable.length === 0) {
       return
     }
-    const [choice] = game.actions.choose(player, options.map(option => game.actions.option({
-      id: option.id,
-      title: option.title,
-    })), { title: 'Deploy to Conflict?' })
-    const picked = dreadnoughts.parseDeployChoice(choice)
+    const picked = dreadnoughts.chooseDeployment(game, player, options, {
+      title: 'Deploy to Conflict?',
+    })
     if (picked && (picked.troops > 0 || picked.ships > 0)) {
       dreadnoughts.deploySelected(game, player, picked.troops, picked.ships)
     }

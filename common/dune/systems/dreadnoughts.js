@@ -29,6 +29,159 @@ function optionId(troops, ships) {
   return `deploy-t${troops}-s${ships}`
 }
 
+// One top-level group per unit kind. A later kind (Sardaukar commanders) is
+// another entry here, plus a cost field on each option from the list functions.
+const DEPLOY_KINDS = [
+  {
+    key: 'troops',
+    costKey: 'troopCost',
+    singular: 'troop',
+    plural: 'troops',
+    group: 'Troops',
+    idPrefix: 'deploy-troops',
+  },
+  {
+    key: 'ships',
+    costKey: 'shipCost',
+    singular: 'dreadnought',
+    plural: 'dreadnoughts',
+    group: 'Dreadnoughts',
+    idPrefix: 'deploy-ships',
+  },
+]
+
+function usesSplitDeploy(game) {
+  return (game.settings.version || 1) >= 6
+}
+
+function kindTitle(kind, count) {
+  const word = count === 1 ? kind.singular : kind.plural
+  return `Deploy ${count} ${word}`
+}
+
+function readOptions(optionsOrFn) {
+  return typeof optionsOrFn === 'function' ? optionsOrFn() : optionsOrFn
+}
+
+function nothingToDeploy(options) {
+  return options.every(option =>
+    DEPLOY_KINDS.every(kind => (option[kind.key] || 0) === 0)
+  )
+}
+
+function shouldSplit(game, options) {
+  if (!usesSplitDeploy(game)) {
+    return false
+  }
+  const active = DEPLOY_KINDS.filter(kind =>
+    options.some(option => (option[kind.key] || 0) > 0)
+  )
+  return active.length >= 2
+}
+
+function countsFor(options, kind) {
+  return [...new Set(options.map(option => option[kind.key] || 0))].sort((a, b) => a - b)
+}
+
+function costFor(options, kind, count) {
+  const sample = options.find(option => (option[kind.key] || 0) === count)
+  if (!sample) {
+    return 0
+  }
+  return sample[kind.costKey] || 0
+}
+
+function readCount(choice, kind) {
+  const id = choice && typeof choice === 'object' ? choice.id : null
+  if (typeof id === 'string') {
+    const match = id.match(new RegExp(`^${kind.idPrefix}-(\\d+)$`))
+    if (match) {
+      return Number(match[1])
+    }
+  }
+  const text = choice && typeof choice === 'object' ? choice.title : String(choice ?? '')
+  const num = text.match(/\d+/)
+  return num ? Number(num[0]) : 0
+}
+
+function describeDeploy(game, options, opts) {
+  if (opts.continueWhenEmpty && nothingToDeploy(options)) {
+    return {
+      choices: [game.actions.option({ id: 'continue', title: 'Continue' })],
+    }
+  }
+  if (!shouldSplit(game, options)) {
+    return {
+      choices: options.map(option => game.actions.option({ id: option.id, title: option.title })),
+    }
+  }
+
+  const kinds = DEPLOY_KINDS.filter(kind => options.some(option => (option[kind.key] || 0) > 0))
+  const choices = kinds.map(kind => ({
+    title: kind.group,
+    id: kind.key,
+    count: 1,
+    choices: countsFor(options, kind).map(count => game.actions.option({
+      id: `${kind.idPrefix}-${count}`,
+      title: kindTitle(kind, count),
+      cost: costFor(options, kind, count),
+    })),
+  }))
+  const described = { choices, count: choices.length }
+  if (options.maxCost != null) {
+    described.maxCost = options.maxCost
+  }
+  if (options.help) {
+    described.help = options.help
+  }
+  return described
+}
+
+function pickedFromSelection(selected) {
+  if (!selected || !Array.isArray(selected) || selected.length === 0) {
+    return null
+  }
+  if (selected.some(item => item && item.selection)) {
+    const picked = {}
+    for (const kind of DEPLOY_KINDS) {
+      picked[kind.key] = 0
+    }
+    for (const group of selected) {
+      const kind = DEPLOY_KINDS.find(entry => entry.group === group.title || entry.key === group.id)
+      if (!kind) {
+        continue
+      }
+      const leaf = Array.isArray(group.selection) ? group.selection[0] : null
+      picked[kind.key] = readCount(leaf, kind)
+    }
+    return picked
+  }
+
+  const choice = selected[0]
+  const choiceId = choice && typeof choice === 'object' ? choice.id : null
+  if (!choice || choiceId === 'continue' || choice === 'Continue') {
+    return null
+  }
+  return parseDeployChoice(choice)
+}
+
+/**
+ * Ask which units to deploy. Rules version 6 puts each kind in its own
+ * top-level group of one request, so the player picks troops and dreadnoughts
+ * together. A shared limit is a cost on those counts: the request stays
+ * invalid until the mix fits. Older games get the single combined list their
+ * stored answers expect.
+ * Returns { troops, ships } or null when the player continues without deploying.
+ */
+function chooseDeployment(game, player, optionsOrFn, opts = {}) {
+  const chooseOpts = { title: opts.title }
+  if (opts.window) {
+    chooseOpts.window = opts.window
+  }
+  const selected = game.actions.choose(player, () => describeDeploy(game, readOptions(optionsOrFn), opts), chooseOpts)
+  return pickedFromSelection(selected)
+}
+
 /**
  * Agent-turn deployment. Fresh units (troops recruited or dreadnoughts
  * commissioned since the turn began) are not limited by the two-from-garrison
@@ -55,11 +208,15 @@ function listAgentDeployOptions(game, player, opts = {}) {
       options.push({
         troops: t,
         ships: s,
+        troopCost: Math.max(0, t - newTroops),
+        shipCost: opts.recruitedOnly ? 0 : Math.max(0, s - newShips),
         id: optionId(t, s),
         title: optionTitle(t, s, 'garrison'),
       })
     }
   }
+  options.maxCost = 2
+  options.help = 'At most 2 units that were already in your garrison. Units gained this turn are free.'
   return options
 }
 
@@ -74,11 +231,15 @@ function listGarrisonChoices(game, player, limit) {
       options.push({
         troops: t,
         ships: s,
+        troopCost: t,
+        shipCost: s,
         id: optionId(t, s),
         title: ships > 0 ? optionTitle(t, s, 'garrison') : optionTitle(t, 0, 'short'),
       })
     }
   }
+  options.maxCost = limit
+  options.help = `Up to ${limit} units.`
   return options
 }
 
@@ -236,6 +397,7 @@ function recallParkedDreadnoughts(game) {
 module.exports = {
   listAgentDeployOptions,
   listGarrisonChoices,
+  chooseDeployment,
   deploySelected,
   parseDeployChoice,
   settleConflictDreadnoughts,

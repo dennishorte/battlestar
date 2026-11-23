@@ -1,4 +1,5 @@
 const t = require('../testutil')
+const selector = require('../../lib/selector.js')
 
 function putConflict(game, defId) {
   game.testSetBreakpoint('initialization-complete', (g) => {
@@ -69,12 +70,30 @@ describe('Rise of Ix dreadnoughts in the fight', () => {
     t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
 
-    const choices = t.currentChoices(game)
-    expect(choices).toContain('Deploy 1 dreadnought')
-    expect(choices).toContain('Deploy 3 troop(s) from garrison')
-    expect(choices).not.toContain('Deploy 4 troop(s) from garrison')
+    const request = game.waiting.selectors[0]
+    expect(request.title).toBe('Deploy troops to the Conflict')
+    expect(request.count).toBe(2)
+    expect(t.currentChoices(game)).toEqual(['Troops', 'Dreadnoughts'])
+    expect(request.choices[0].choices.map(choice => choice.title)).toEqual([
+      'Deploy 0 troops',
+      'Deploy 1 troop',
+      'Deploy 2 troops',
+      'Deploy 3 troops',
+    ])
+    expect(request.choices[1].choices.map(choice => choice.title)).toEqual([
+      'Deploy 0 dreadnoughts',
+      'Deploy 1 dreadnought',
+    ])
+    // The dreadnought was gained this turn, so it does not spend the garrison cap.
+    expect(selector.validate(request, {
+      title: request.title,
+      selection: [
+        { title: 'Troops', selection: ['Deploy 3 troops'] },
+        { title: 'Dreadnoughts', selection: ['Deploy 1 dreadnought'] },
+      ],
+    }).valid).toBe(true)
 
-    t.choose(game, 'Deploy 1 dreadnought')
+    t.choose(game, 'Troops.Deploy 0 troops', 'Dreadnoughts.Deploy 1 dreadnought')
     const dennis = game.players.byName('dennis')
     expect(dennis.dreadnoughtsInConflict).toBe(1)
     expect(dennis.dreadnoughtsInGarrison).toBe(0)
@@ -92,14 +111,68 @@ describe('Rise of Ix dreadnoughts in the fight', () => {
     t.choose(game, 'Agent Turn.Reconnaissance')
     t.choose(game, 'Arrakeen')
 
+    const request = game.waiting.selectors[0]
+    expect(t.currentChoices(game)).toEqual(['Troops', 'Dreadnoughts'])
+    expect(request.choices[0].choices.map(choice => choice.title)).toContain('Deploy 3 troops')
+    expect(selector.validate(request, {
+      title: request.title,
+      selection: [
+        { title: 'Troops', selection: ['Deploy 3 troops'] },
+        { title: 'Dreadnoughts', selection: ['Deploy 1 dreadnought'] },
+      ],
+    }).valid).toBe(false)
+    expect(selector.validate(request, {
+      title: request.title,
+      selection: [
+        { title: 'Troops', selection: ['Deploy 1 troop'] },
+        { title: 'Dreadnoughts', selection: ['Deploy 1 dreadnought'] },
+      ],
+    }).valid).toBe(true)
+
+    t.choose(game, 'Troops.Deploy 1 troop', 'Dreadnoughts.Deploy 1 dreadnought')
+    const dennis = game.players.byName('dennis')
+    expect(dennis.dreadnoughtsInConflict).toBe(1)
+    expect(game.state.conflict.deployedTroops.dennis).toBe(1)
+  })
+
+  test('version 5 still offers every troop and dreadnought mix in one list', () => {
+    const game = t.fixture({ useRiseOfIx: true, version: 5 })
+    t.setBoard(game, { dennis: { hand: ['Reconnaissance'], troopsInGarrison: 3 } })
+    afterRound(game, (g) => {
+      g.players.byName('dennis').setCounter('dreadnoughtsInGarrison', 1, { silent: true })
+    })
+    game.run()
+
+    t.choose(game, 'Agent Turn.Reconnaissance')
+    t.choose(game, 'Arrakeen')
+
     const choices = t.currentChoices(game)
     expect(choices).toContain('Deploy 1 dreadnought')
+    expect(choices).toContain('Deploy 1 troop and 1 dreadnought')
     expect(choices).not.toContain('Deploy 3 troops and 1 dreadnought')
 
     t.choose(game, 'Deploy 1 troop and 1 dreadnought')
     const dennis = game.players.byName('dennis')
     expect(dennis.dreadnoughtsInConflict).toBe(1)
     expect(game.state.conflict.deployedTroops.dennis).toBe(1)
+  })
+
+  test('filling the garrison cap in the same request leaves the dreadnought behind', () => {
+    const game = t.fixture({ useRiseOfIx: true })
+    t.setBoard(game, { dennis: { hand: ['Reconnaissance'], troopsInGarrison: 3 } })
+    afterRound(game, (g) => {
+      g.players.byName('dennis').setCounter('dreadnoughtsInGarrison', 1, { silent: true })
+    })
+    game.run()
+
+    t.choose(game, 'Agent Turn.Reconnaissance')
+    t.choose(game, 'Arrakeen')
+    t.choose(game, 'Troops.Deploy 3 troops', 'Dreadnoughts.Deploy 0 dreadnoughts')
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.dreadnoughtsInConflict).toBe(0)
+    expect(dennis.dreadnoughtsInGarrison).toBe(1)
+    expect(game.state.conflict.deployedTroops.dennis).toBe(3)
   })
 
   test('the winner parks one dreadnought and covers the control marker', () => {
@@ -273,5 +346,42 @@ describe('Rise of Ix dreadnoughts in the fight', () => {
 
     expect(game.players.byName('dennis').dreadnoughtsInConflict).toBe(1)
     expect(game.players.byName('dennis').dreadnoughtsInGarrison).toBe(0)
+  })
+
+  test('Second Wave asks for troops and dreadnoughts separately', () => {
+    const game = t.fixture({ useRiseOfIx: true })
+    t.setBoard(game, {
+      dennis: { agents: 0, intrigue: ['Second Wave'], troopsInGarrison: 2 },
+      scott: { agents: 0 },
+      micah: { agents: 0 },
+      conflict: { deployedTroops: { dennis: 1 } },
+    })
+    putConflict(game, 'conflict-skirmish-desert-mouse')
+    afterRound(game, (g) => {
+      g.players.byName('dennis').setCounter('dreadnoughtsInGarrison', 1, { silent: true })
+    })
+    game.run()
+    advance(game, () => false, title => title.includes('Combat Intrigue'))
+    t.choose(game, 'Second Wave')
+
+    const request = game.waiting.selectors[0]
+    expect(request.title).toBe('Deploy to Conflict?')
+    expect(request.count).toBe(2)
+    expect(request.maxCost).toBe(2)
+    expect(t.currentChoices(game)).toEqual(['Troops', 'Dreadnoughts'])
+    expect(selector.validate(request, {
+      title: request.title,
+      selection: [
+        { title: 'Troops', selection: ['Deploy 2 troops'] },
+        { title: 'Dreadnoughts', selection: ['Deploy 1 dreadnought'] },
+      ],
+    }).valid).toBe(false)
+
+    t.choose(game, 'Troops.Deploy 1 troop', 'Dreadnoughts.Deploy 1 dreadnought')
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.dreadnoughtsInConflict).toBe(1)
+    expect(game.state.conflict.deployedTroops.dennis).toBe(2)
+    expect(dennis.troopsInGarrison).toBe(1)
   })
 })

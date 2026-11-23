@@ -20,7 +20,7 @@ class BaseActionManager {
 
   static SAFE_BARE_OPTIONS = SAFE_BARE_OPTIONS
 
-  option({ id, title, kind, defId, meta } = {}) {
+  option({ id, title, kind, defId, meta, cost } = {}) {
     const opt = { title: title ?? String(id) }
     if (id != null) {
       opt.id = id
@@ -33,6 +33,9 @@ class BaseActionManager {
     }
     if (meta != null) {
       opt.meta = meta
+    }
+    if (cost != null) {
+      opt.cost = cost
     }
     return opt
   }

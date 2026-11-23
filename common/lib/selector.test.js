@@ -173,6 +173,48 @@ describe('count', () => {
     expect(validate(selector, { title: 'test', selection: ['three', 'two'] }).valid).toBe(true)
   })
 
+  test('maxCost limits the sum across nested groups', () => {
+    const limited = {
+      title: 'Deploy to the Conflict',
+      count: 2,
+      maxCost: 2,
+      choices: [
+        {
+          title: 'Troops',
+          count: 1,
+          choices: [
+            { title: 'Deploy 0 troops', cost: 0 },
+            { title: 'Deploy 2 troops', cost: 2 },
+          ],
+        },
+        {
+          title: 'Dreadnoughts',
+          count: 1,
+          choices: [
+            { title: 'Deploy 0 dreadnoughts', cost: 0 },
+            { title: 'Deploy 1 dreadnought', cost: 1 },
+          ],
+        },
+      ],
+    }
+
+    expect(validate(limited, {
+      title: limited.title,
+      selection: [
+        { title: 'Troops', selection: ['Deploy 2 troops'] },
+        { title: 'Dreadnoughts', selection: ['Deploy 0 dreadnoughts'] },
+      ],
+    }).valid).toBe(true)
+
+    expect(validate(limited, {
+      title: limited.title,
+      selection: [
+        { title: 'Troops', selection: ['Deploy 2 troops'] },
+        { title: 'Dreadnoughts', selection: ['Deploy 1 dreadnought'] },
+      ],
+    }).valid).toBe(false)
+  })
+
   test('count with nested choices', () => {
     const selector = {
       title: 'test',

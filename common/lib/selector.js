@@ -90,6 +90,7 @@ function _validate(selector, selection, opts) {
   const unmatched = []
   let exclusive = false
   let count = 0
+  let totalCost = 0
   for (const sel of selection.selection) {
     for (const opt of unused) {
       const idsBothPresent = sel.id && opt.id
@@ -98,6 +99,7 @@ function _validate(selector, selection, opts) {
         : sel.title === opt.title
       if (keyMatch) {
         let match = true
+        let nestedCost = 0
 
         // If the selector selection had sub-choices, this must also validate against those.
         if (opt.choices) {
@@ -105,13 +107,18 @@ function _validate(selector, selection, opts) {
             match = false
           }
           else {
-            match = _validate(opt, sel, opts).valid
+            const nested = _validate(opt, sel, opts)
+            match = nested.valid
+            if (match) {
+              nestedCost = nested.cost || 0
+            }
           }
         }
 
         if (match) {
           util.array.remove(unused, opt)
           matched.push(sel)
+          totalCost += (opt.cost || 0) + nestedCost
           if (!opt.extra) {
             count += 1
           }
@@ -145,10 +152,21 @@ function _validate(selector, selection, opts) {
     }
   }
   else if (min <= count && count <= max) {
+    if (selector.maxCost != null && totalCost > selector.maxCost) {
+      if (opts.annotate) {
+        selection.annotation.isValid = false
+        selection.annotation.mismatch = 'cost'
+      }
+      return {
+        valid: false,
+        mismatch: `Selected cost ${totalCost} exceeds ${selector.maxCost}`,
+        cost: totalCost,
+      }
+    }
     if (opts.annotate) {
       selection.annotation.isValid = true
     }
-    return { valid: true }
+    return { valid: true, cost: totalCost }
   }
   else {
     if (opts.annotate) {
