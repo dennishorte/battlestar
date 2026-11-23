@@ -22,6 +22,9 @@ describe('Empiricism', () => {
     request = t.choose(game, 'Dogma.Empiricism')
     request = t.choose(game, 'purple', 'blue')
 
+    const colorChoices = game.log.getLog().filter(e => e.template === '{player} chooses {color1} and {color2}')
+    expect(colorChoices).toHaveLength(1)
+
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {

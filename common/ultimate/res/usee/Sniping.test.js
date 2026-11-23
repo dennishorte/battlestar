@@ -31,6 +31,10 @@ describe('Sniping', () => {
         green: ['The Wheel', 'Measurement'],
       },
     })
+
+    const templates = game.log.getLog().map(entry => entry.template).filter(Boolean)
+    expect(templates).toContain('{player} unsplays {zone}')
+    expect(templates).not.toContain('{player} chooses {color}')
   })
 
 })

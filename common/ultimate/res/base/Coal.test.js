@@ -58,6 +58,10 @@ describe('Coal', () => {
       .map(e => e.args.card.value)
 
     expect(scored).toEqual(['Alchemy', 'Calendar'])
+
+    const colorChoices = game.log.getLog().filter(e => e.template === '{player} chooses {color}')
+    expect(colorChoices).toHaveLength(1)
+    expect(colorChoices[0].args.color.value).toBe('blue')
   })
 
   test('dogma: choose not to score', () => {

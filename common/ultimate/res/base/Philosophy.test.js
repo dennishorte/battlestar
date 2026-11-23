@@ -20,6 +20,10 @@ describe('Philosophy', () => {
 
       const red = game.zones.byPlayer(t.dennis(game), 'red')
       expect(red.splay).toBe('left')
+
+      const templates = game.log.getLog().map(entry => entry.template).filter(Boolean)
+      expect(templates).toContain('{player} splays {color} {direction}')
+      expect(templates).not.toContain('{player} chooses {color}')
     })
 
     test('do not choose a color', () => {

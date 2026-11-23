@@ -21,6 +21,10 @@ describe('Ninja', () => {
     request = t.choose(game, 'blue')
     request = t.choose(game, 'red')
 
+    const colorChoices = game.log.getLog().filter(entry => entry.template === '{player} chooses {color}')
+    expect(colorChoices).toHaveLength(1)
+    expect(colorChoices[0].args.color.value).toBe('blue')
+
     t.testIsSecondPlayer(game)
     t.testBoard(game, {
       dennis: {
@@ -66,6 +70,10 @@ describe('Ninja', () => {
     const micah = game.players.byName('micah')
     const hand = game.cards.byPlayer(micah, 'hand')
     expect(hand.every(card => card.revealed())).toBe(true)
+
+    const colorChoices = game.log.getLog().filter(entry => entry.template === '{player} chooses {color}')
+    expect(colorChoices).toHaveLength(1)
+    expect(colorChoices[0].args.color.value).toBe('red')
   })
 
 })

@@ -172,11 +172,38 @@ class UltimateActionManager extends BaseActionManager {
     }
 
     const { decisionMaker, decisionMakerFor } = this.state.dogmaInfo
-    if (decisionMaker && decisionMakerFor && player.name === decisionMakerFor.name) {
-      return super.choose(decisionMaker, choices, opts)
+    const actor = (decisionMaker && decisionMakerFor && player.name === decisionMakerFor.name)
+      ? decisionMaker
+      : player
+
+    const selected = super.choose(actor, choices, opts)
+    this._logColorChoice(actor, selected, choices)
+    return selected
+  }
+
+  // Color options are the only choices that need this. The log manager drops
+  // the line when a later entry already names the color.
+  _logColorChoice(player, selected, choices) {
+    if (!Array.isArray(selected) || selected.length === 0 || !Array.isArray(choices)) {
+      return
     }
 
-    return super.choose(player, choices, opts)
+    const colors = []
+    for (const sel of selected) {
+      const id = (sel && typeof sel === 'object') ? sel.id : sel
+      const title = (sel && typeof sel === 'object') ? sel.title : sel
+      const match = choices.find(choice =>
+        choice && typeof choice === 'object'
+        && choice.kind === 'color'
+        && (choice.id === id || choice.title === title || choice.id === title)
+      )
+      if (!match) {
+        return
+      }
+      colors.push(match.id ?? match.title)
+    }
+
+    this.log.noteColorChoice(player, colors)
   }
 
   chooseYesNo(player, title) {
