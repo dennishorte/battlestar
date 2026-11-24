@@ -179,12 +179,14 @@ export default {
     },
 
     winnerName(game) {
-      if (game.stats.result) {
-        return game.stats.result.player.name || game.stats.result.player
+      const result = game.stats && game.stats.result
+      if (!result) {
+        return 'result missing'
       }
-      else {
-        'result missing'
-      }
+
+      const player = result.player
+      const name = player && typeof player === 'object' ? player.name : player
+      return name || 'n/a'
     },
 
     async fetchActiveGames() {
