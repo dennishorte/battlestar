@@ -139,7 +139,7 @@
       <div class="stat-label">In Conflict</div>
       <div v-for="entry in combatants"
            :key="`con-${entry.name}`"
-           class="stat-cell unit-cell clickable"
+           class="stat-cell unit-cell conflict-units clickable"
            :class="{ 'is-current': entry.isCurrent, 'is-viewer': entry.isViewer }"
            :style="{ '--viewer-tint': viewerTint(entry.color) }"
            @click="openStrengthBreakdown(entry.player)">
@@ -670,6 +670,17 @@ export default {
   align-items: center;
   justify-content: center;
   gap: .2em;
+}
+
+.unit-cell.conflict-units {
+  flex-wrap: wrap;
+  align-content: center;
+  white-space: normal;
+}
+
+.conflict-units .unit-block {
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 .unit-block {
