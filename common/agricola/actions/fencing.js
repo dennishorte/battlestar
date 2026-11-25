@@ -90,6 +90,7 @@ AgricolaActionManager.prototype.buildFences = function(player, options = {}) {
 
   if (totalFencesBuilt > 0) {
     this.game.callPlayerCardHook(player, 'onBuildFences', totalFencesBuilt)
+    this.enforceEmptyPasture(player)
   }
 
   return totalFencesBuilt > 0

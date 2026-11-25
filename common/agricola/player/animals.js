@@ -209,6 +209,11 @@ AgricolaPlayer.prototype.getTotalAnimalCapacity = function(animalType) {
     }
   }
 
+  // Herbal Garden: one pasture must stay empty, so that space is not capacity.
+  if (this.mustKeepPastureEmpty() && this.farmyard.pastures.length > 0) {
+    capacity -= this._reservedEmptyPastureCapacity(animalType)
+  }
+
   // Unfenced stables - only count if empty or same type
   for (const stable of this.getStableSpaces()) {
     if (!this.getPastureAtSpace(stable.row, stable.col)) {
@@ -409,7 +414,46 @@ AgricolaPlayer.prototype.getAnimalPlacementLocationsWithAvailability = function(
     }
   }
 
+  // The last empty pasture cannot take animals while Herbal Garden is in play.
+  if (this.mustKeepPastureEmpty()) {
+    const emptyPastures = locations.filter(loc => loc.type === 'pasture' && !(loc.currentCount > 0))
+    if (emptyPastures.length === 1) {
+      for (const animalType of res.animalTypes) {
+        emptyPastures[0].availableFor[animalType] = 0
+      }
+    }
+  }
+
   return locations
+}
+
+AgricolaPlayer.prototype.mustKeepPastureEmpty = function() {
+  return this.getActiveCards().some(card => card.definition.requiresEmptyPasture)
+}
+
+AgricolaPlayer.prototype.violatesEmptyPastureRule = function() {
+  if (!this.mustKeepPastureEmpty() || this.farmyard.pastures.length === 0) {
+    return false
+  }
+  return this.farmyard.pastures.every(pasture => pasture.animalCount > 0)
+}
+
+// Capacity of the pasture that must stay empty. When one is already empty,
+// that is the smallest empty pasture. When none is empty, no pasture that
+// could hold this type counts until the player empties one.
+AgricolaPlayer.prototype._reservedEmptyPastureCapacity = function(animalType) {
+  const empty = this.farmyard.pastures.filter(pasture => !(pasture.animalCount > 0))
+  if (empty.length > 0) {
+    return Math.min(...empty.map(pasture => this.getPastureCapacity(pasture)))
+  }
+
+  let blocked = 0
+  for (const pasture of this.farmyard.pastures) {
+    if (!pasture.animalType || pasture.animalType === animalType) {
+      blocked += this.getPastureCapacity(pasture)
+    }
+  }
+  return blocked
 }
 
 AgricolaPlayer.prototype.canPlaceAnimals = function(animalType, count) {
@@ -428,6 +472,11 @@ AgricolaPlayer.prototype.getRearrangeableAnimalCapacity = function(animalType) {
 
   for (const pasture of this.farmyard.pastures) {
     capacity += this.getPastureCapacity(pasture)
+  }
+
+  if (this.mustKeepPastureEmpty() && this.farmyard.pastures.length > 0) {
+    const smallest = Math.min(...this.farmyard.pastures.map(pasture => this.getPastureCapacity(pasture)))
+    capacity -= smallest
   }
 
   const perStable = this.getModifiedUnfencedStableCapacity()
@@ -479,18 +528,25 @@ AgricolaPlayer.prototype.placeAnimals = function(animalType, count) {
     }
   }
 
-  // Then try empty pastures
-  for (const pasture of this.farmyard.pastures) {
+  // Then try empty pastures. Herbal Garden fills the largest ones and leaves
+  // the smallest empty. Without that card, keep the farm's pasture order.
+  let emptyPastures = this.farmyard.pastures.filter(pasture => !(pasture.animalCount > 0))
+  let usableEmpty = emptyPastures
+  if (this.mustKeepPastureEmpty()) {
+    emptyPastures = [...emptyPastures].sort(
+      (a, b) => this.getPastureCapacity(b) - this.getPastureCapacity(a)
+    )
+    usableEmpty = emptyPastures.slice(0, Math.max(0, emptyPastures.length - 1))
+  }
+  for (const pasture of usableEmpty) {
     if (remaining <= 0) {
       break
     }
-    if (!pasture.animalType) {
-      pasture.animalType = animalType
-      const capacity = this.getPastureCapacity(pasture)
-      const toAdd = Math.min(remaining, capacity)
-      pasture.animalCount = toAdd
-      remaining -= toAdd
-    }
+    pasture.animalType = animalType
+    const capacity = this.getPastureCapacity(pasture)
+    const toAdd = Math.min(remaining, capacity)
+    pasture.animalCount = toAdd
+    remaining -= toAdd
   }
 
   // Then try unfenced stables
@@ -743,6 +799,37 @@ AgricolaPlayer.prototype.getAnimalHoldingCards = function() {
   return holdings
 }
 
+AgricolaPlayer.prototype._emptyPasturePlacementError = function(placements, removals) {
+  if (!this.mustKeepPastureEmpty() || this.farmyard.pastures.length === 0) {
+    return null
+  }
+
+  const counts = new Map()
+  for (const pasture of this.farmyard.pastures) {
+    counts.set(pasture.id, pasture.animalCount || 0)
+  }
+  for (const removal of removals || []) {
+    if (!removal.locationId || !removal.locationId.startsWith('pasture-')) {
+      continue
+    }
+    const id = parseInt(removal.locationId.slice('pasture-'.length), 10)
+    counts.set(id, Math.max(0, (counts.get(id) || 0) - (removal.count || 0)))
+  }
+  for (const placement of placements || []) {
+    if (!placement.locationId || !placement.locationId.startsWith('pasture-')) {
+      continue
+    }
+    const id = parseInt(placement.locationId.slice('pasture-'.length), 10)
+    counts.set(id, (counts.get(id) || 0) + (placement.count || 0))
+  }
+
+  const hasEmpty = this.farmyard.pastures.some(pasture => (counts.get(pasture.id) || 0) <= 0)
+  if (!hasEmpty) {
+    return 'At least one pasture must contain no animals'
+  }
+  return null
+}
+
 /**
  * Validate and apply a placement plan from the animal placement modal.
  * @param {Object} plan - The placement plan
@@ -753,6 +840,11 @@ AgricolaPlayer.prototype.getAnimalHoldingCards = function() {
  */
 AgricolaPlayer.prototype.applyAnimalPlacements = function(plan) {
   const { placements, overflow, incoming, removals, breedingConstraints } = plan
+
+  const emptyPastureError = this._emptyPasturePlacementError(placements, removals)
+  if (emptyPastureError) {
+    return { success: false, error: emptyPastureError }
+  }
 
   // Step 1: Apply removals first (if any)
   if (removals && removals.length > 0) {

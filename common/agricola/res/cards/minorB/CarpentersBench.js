@@ -95,6 +95,7 @@ module.exports = {
 
       game.callPlayerCardHook(player, 'onBuildPasture', { spaces: selectedSpaces })
       game.callPlayerCardHook(player, 'onBuildFences', fencesNeeded)
+      game.actions.enforceEmptyPasture(player)
     }
   },
 }

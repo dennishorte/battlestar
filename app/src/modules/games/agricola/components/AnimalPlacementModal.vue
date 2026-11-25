@@ -59,6 +59,14 @@
         <FarmyardGrid :player="player" :animalOverrides="animalOverrides" />
       </div>
 
+      <p
+        v-if="requiresEmptyPasture"
+        class="empty-pasture-rule"
+        :class="{ violated: emptyPastureViolated }"
+      >
+        At least one pasture must contain no animals.
+      </p>
+
       <!-- Card Holdings -->
       <div class="card-holdings-section" v-if="cardLocations.length > 0">
         <h5>Card Holdings</h5>
@@ -174,7 +182,7 @@
       <button class="btn btn-secondary" @click="resetAll">
         Reset All
       </button>
-      <button class="btn btn-primary" @click="confirm">
+      <button class="btn btn-primary" @click="confirm" :disabled="emptyPastureViolated">
         Confirm Placement
       </button>
     </template>
@@ -243,6 +251,24 @@ export default {
 
     isBreeding() {
       return this.waitingRequest?.breeding === true
+    },
+
+    requiresEmptyPasture() {
+      return this.waitingRequest?.requiresEmptyPasture === true
+    },
+
+    pastureLocations() {
+      return this.locations.filter(loc => loc.type === 'pasture')
+    },
+
+    emptyPastureCount() {
+      return this.pastureLocations.filter(loc => this.getLocTotal(loc.id) === 0).length
+    },
+
+    emptyPastureViolated() {
+      return this.requiresEmptyPasture
+        && this.pastureLocations.length > 0
+        && this.emptyPastureCount === 0
     },
 
     breedingRequirements() {
@@ -808,6 +834,9 @@ export default {
     },
 
     maxDropCount(loc, type) {
+      if (this.wouldFillLastEmptyPasture(loc)) {
+        return 0
+      }
       const state = this.animalState[loc.id]
       if (!state) {
         return 0
@@ -823,9 +852,22 @@ export default {
       return Math.min(Math.max(0, available), this.unplacedPool[type])
     },
 
+    wouldFillLastEmptyPasture(loc) {
+      if (!this.requiresEmptyPasture || loc.type !== 'pasture') {
+        return false
+      }
+      if (this.getLocTotal(loc.id) > 0) {
+        return false
+      }
+      return this.emptyPastureCount <= 1
+    },
+
     canPlaceTypeAtState(loc, type) {
       const state = this.animalState[loc.id]
       if (!state) {
+        return false
+      }
+      if (this.wouldFillLastEmptyPasture(loc)) {
         return false
       }
       const total = state.sheep + state.boar + state.cattle
@@ -980,6 +1022,10 @@ export default {
     },
 
     confirm() {
+      if (this.emptyPastureViolated) {
+        return
+      }
+
       const placements = []
       const removals = []
 
@@ -1045,6 +1091,15 @@ export default {
 <style scoped>
 .animal-placement-modal {
   padding: 1rem;
+}
+
+.empty-pasture-rule {
+  margin: 0.75rem 0 0;
+}
+
+.empty-pasture-rule.violated {
+  color: #842029;
+  font-weight: 600;
 }
 
 .cooking-section {

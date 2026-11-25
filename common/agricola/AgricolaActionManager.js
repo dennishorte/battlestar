@@ -319,6 +319,7 @@ class AgricolaActionManager extends BaseActionManager {
       incoming: overflow,
       locations,
       cookingRates,
+      requiresEmptyPasture: player.mustKeepPastureEmpty(),
     })
 
     // Check response format - new modal returns object with action/placements
@@ -468,6 +469,7 @@ class AgricolaActionManager extends BaseActionManager {
       breedingRequirements,
       locations,
       cookingRates,
+      requiresEmptyPasture: player.mustKeepPastureEmpty(),
     })
 
     // New modal response
@@ -546,6 +548,15 @@ class AgricolaActionManager extends BaseActionManager {
       return
     }
     this.handleAnimalPlacement(player, {}, { forceModal: true })
+  }
+
+  // Herbal Garden: if every pasture has animals, the player must empty one.
+  enforceEmptyPasture(player) {
+    let attempts = 0
+    while (player.violatesEmptyPastureRule() && attempts < 8) {
+      attempts++
+      this.handleAnimalPlacement(player, {}, { forceModal: true })
+    }
   }
 
   // Entry point for animal overflow - redirects to unified handler

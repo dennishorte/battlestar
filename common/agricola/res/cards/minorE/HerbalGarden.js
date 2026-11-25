@@ -9,4 +9,7 @@ module.exports = {
   prereqs: { pastures: 1 },
   text: "From now on, at least one of your pastures must contain no animals.",
   requiresEmptyPasture: true,
+  onPlay(game, player) {
+    game.actions.enforceEmptyPasture(player)
+  },
 }

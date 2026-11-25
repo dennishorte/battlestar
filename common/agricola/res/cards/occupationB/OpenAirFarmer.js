@@ -57,6 +57,7 @@ module.exports = {
         if (built.fencesBuilt > 0) {
           game.callPlayerCardHook(player, 'onBuildFences', built.fencesBuilt)
         }
+        game.actions.enforceEmptyPasture(player)
       }
     }
   },
