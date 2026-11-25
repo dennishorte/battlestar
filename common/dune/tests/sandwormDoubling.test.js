@@ -31,6 +31,44 @@ function finishUntilNextRound(game) {
   }
 }
 
+// Advance the round, answering influence prompts with `picks` in order.
+// Returns the titles of those prompts. Throws if another influence prompt
+// appears after the picks are used.
+function playUntilInfluence(game, picks) {
+  const startRound = game.state.round
+  const seen = []
+  let safety = 80
+  while (game.waiting && !game.gameOver && game.state.round === startRound && safety-- > 0) {
+    const title = game.waiting.selectors[0].title || ''
+    if (title.startsWith('Choose faction for') || title === 'Choose a faction to gain Influence') {
+      const pick = picks[seen.length]
+      if (!pick) {
+        throw new Error(`unexpected extra influence prompt: ${title}`)
+      }
+      seen.push(title)
+      t.choose(game, pick)
+      continue
+    }
+    const choices = t.currentChoices(game)
+    const payOrReturn = choices.find(c =>
+      c.startsWith('Pay ') || c.startsWith('Return ')
+    )
+    if (payOrReturn) {
+      t.choose(game, payOrReturn)
+    }
+    else if (choices.includes('Reveal Turn')) {
+      t.choose(game, 'Reveal Turn')
+    }
+    else if (choices.includes('Pass')) {
+      t.choose(game, 'Pass')
+    }
+    else {
+      t.choose(game, choices[0])
+    }
+  }
+  return seen
+}
+
 describe('Sandworm Reward Doubling', () => {
 
   test('sandworm offers pay-for-VP reward a second time', () => {
@@ -116,6 +154,52 @@ describe('Sandworm Reward Doubling', () => {
     expect(dennis.vp).toBe(4)
     expect(dennis.spiesInSupply).toBe(4)
     expect(game.state.controlMarkers.arrakeen).toBe('dennis')
+  })
+
+  test('sandworm lets Spice Freighters influence go to different factions', () => {
+    // First reward: "+1 Influence and Pay 3 Spice for +1 Victory point".
+    // The worm grants the influence twice. Each point picks its own faction.
+    const game = t.fixture()
+    t.setBoard(game, {
+      conflictCard: { id: 'conflict-spice-freighters' },
+      dennis: { spice: 0, vp: 0 },
+      objectives: { dennis: NO_ICON_OBJ },
+      conflict: { deployedSandworms: { dennis: 1 } },
+    })
+    game.run()
+
+    const prompts = playUntilInfluence(game, ['emperor', 'fremen'])
+
+    expect(prompts).toEqual([
+      'Choose faction for +1 Influence (1 of 2)',
+      'Choose faction for +1 Influence (2 of 2)',
+    ])
+    const dennis = game.players.byName('dennis')
+    expect(dennis.getInfluence('emperor')).toBe(1)
+    expect(dennis.getInfluence('fremen')).toBe(1)
+    expect(dennis.getInfluence('guild')).toBe(0)
+    expect(dennis.getInfluence('bene-gesserit')).toBe(0)
+  })
+
+  test('without a sandworm, Spice Freighters grants one influence', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      conflictCard: { id: 'conflict-spice-freighters' },
+      dennis: { troopsInGarrison: 5, spice: 0, vp: 0 },
+      objectives: { dennis: NO_ICON_OBJ },
+    })
+    game.run()
+
+    t.choose(game, 'Agent Turn.Reconnaissance')
+    t.choose(game, 'Arrakeen')
+    t.choose(game, 'Deploy 2 troop(s) from garrison')
+
+    const prompts = playUntilInfluence(game, ['guild'])
+
+    expect(prompts).toEqual(['Choose a faction to gain Influence'])
+    const dennis = game.players.byName('dennis')
+    expect(dennis.getInfluence('guild')).toBe(1)
+    expect(dennis.getInfluence('emperor')).toBe(0)
   })
 
   test('resources double but control does not', () => {

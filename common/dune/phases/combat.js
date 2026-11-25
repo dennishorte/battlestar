@@ -489,14 +489,17 @@ function awardReward(game, player, rewardText, rank) {
 
   for (const effect of effects) {
     // Sandworms double most rewards, but NOT control or battle icons.
-    // Optional pay-cost rewards are offered a second time instead (see below).
+    // Optional pay-cost rewards, and influence you choose a faction for, are
+    // taken a second time instead of stacking the amount (see below).
     if (hasSandworms && canDoubleReward(effect)) {
       effect.amount = (effect.amount || 1) * 2
     }
 
     // "When a reward offers the option to pay a cost to gain something, you may
     // pay the cost a second time to gain it a second time."
-    const times = (hasSandworms && isRepeatableCostReward(effect)) ? 2 : 1
+    // A "+1 Influence" reward is likewise gained twice, and each copy asks for
+    // its own faction. Stacking the amount would force both points onto one.
+    const times = (hasSandworms && isRepeatedWhenDoubled(effect)) ? 2 : 1
     for (let offer = 0; offer < times; offer++) {
       if (effect.type === 'influence-choice-two') {
         // Special: choose 2 different factions per round; sandworms double the rounds (1→2)
@@ -554,7 +557,13 @@ function awardReward(game, player, rewardText, rank) {
         }
       }
       else {
-        resolveEffect(game, player, effect, null, sourceLabel)
+        const toResolve = (effect.type === 'influence-choice' && times > 1)
+          ? {
+            ...effect,
+            promptTitle: `Choose faction for +${effect.amount || 1} Influence (${offer + 1} of ${times})`,
+          }
+          : effect
+        resolveEffect(game, player, toResolve, null, sourceLabel)
       }
     }
   }
@@ -716,13 +725,24 @@ function afterCombat(game) {
 
 /**
  * Check if a reward effect can be doubled by sandworms via amount scaling.
- * Control markers are NOT doubled. Optional pay-cost rewards are handled
- * separately via isRepeatableCostReward (offered twice instead).
+ * Control markers are NOT doubled. Optional pay-cost rewards and faction
+ * choices are repeated via isRepeatedWhenDoubled instead, so each copy is
+ * resolved on its own.
  */
 function canDoubleReward(effect) {
   return effect.type !== 'control'
     && effect.type !== 'choice'
     && effect.type !== 'return-spies-for-vp'
+    && effect.type !== 'influence-choice'
+}
+
+/**
+ * Rewards a sandworm grants a second time, rather than multiplying one payout.
+ * Pay-costs are optional each time. Influence choices pick a faction each time,
+ * so the two points need not land on the same faction.
+ */
+function isRepeatedWhenDoubled(effect) {
+  return isRepeatableCostReward(effect) || effect.type === 'influence-choice'
 }
 
 /**

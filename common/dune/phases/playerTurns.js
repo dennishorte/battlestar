@@ -1296,7 +1296,7 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
     case 'influence-choice': {
       const factionChoices = constants.FACTIONS.map(f => game.actions.option({ id: f, title: f, kind: 'faction' }))
       const [factionChoice] = game.actions.choose(player, factionChoices, {
-        title: 'Choose a faction to gain Influence',
+        title: effect.promptTitle || 'Choose a faction to gain Influence',
       })
       const faction = typeof factionChoice === 'object' ? factionChoice.id : factionChoice
       factions.gainInfluence(game, player, faction, effect.amount)
