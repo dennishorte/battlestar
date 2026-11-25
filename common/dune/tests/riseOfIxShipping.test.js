@@ -102,12 +102,15 @@ describe('Rise of Ix shipping track', () => {
       dennis: { hand: ['Dune, The Desert Planet'] },
     })
     parkFreighter(game, 3)
+    surfaceTile(game, 'windtraps')
     game.run()
 
     t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Smuggling')
 
-    expect(t.currentChoices(game)).toEqual(['Top', 'Middle', 'Bottom'])
+    expect(game.waiting.selectors[0].title).toBe('Acquire Tech')
+    expect(game.state.freighterReward).toEqual({ player: 'dennis', space: 3 })
+    expect(t.currentChoices(game)).not.toContain('Advance')
   })
 
   test('recalling from the top buys a tile at a 2 spice discount, then the spaces below', () => {
@@ -123,19 +126,16 @@ describe('Rise of Ix shipping track', () => {
     t.choose(game, 'Smuggling')
     expect(game.state.freighterReward).toEqual({ player: 'dennis', space: 3 })
     expect(game.players.byName('dennis').freighterPosition).toBe(3)
-
-    t.choose(game, 'Top')
-    expect(game.state.freighterReward).toEqual({ player: 'dennis', space: 3 })
     expect(game.waiting.selectors[0].title).toBe('Acquire Tech')
-    expect(game.players.byName('dennis').freighterPosition).toBe(3)
 
     t.choose(game, 'Windtraps for 0 Spice')
-    expect(game.state.freighterReward).toEqual({ player: 'dennis', space: 3 })
-
-    t.choose(game, 'Middle')
     expect(game.state.freighterReward).toEqual({ player: 'dennis', space: 2 })
+    expect(game.waiting.selectors[0].title).toBe('Shipping: +1 Influence')
     expect(game.players.byName('dennis').freighterPosition).toBe(3)
+
     t.choose(game, 'emperor')
+    expect(game.state.freighterReward).toEqual({ player: 'dennis', space: 1 })
+    expect(game.waiting.selectors[0].title).toBe('Bottom of the Shipping track')
     t.choose(game, '2 Spice')
 
     const dennis = game.players.byName('dennis')
@@ -160,7 +160,7 @@ describe('Rise of Ix shipping track', () => {
     t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Interstellar Shipping')
     t.choose(game, 'Recall')
-    t.choose(game, 'Middle')
+    expect(game.waiting.selectors[0].title).toBe('Shipping: +1 Influence')
     t.choose(game, 'fremen')
     t.choose(game, '2 Spice')
     t.choose(game, 'Advance')
@@ -171,6 +171,34 @@ describe('Rise of Ix shipping track', () => {
     expect(game.state.conflict.deployedTroops.dennis || 0).toBe(0)
     expect(dennis.freighterPosition).toBe(1)
     expect(game.waiting.selectors[0].title).not.toBe('Deploy troops to the Conflict')
+  })
+
+  test('version 6 still lets the player choose the shipping reward order', () => {
+    const game = t.fixture({ useRiseOfIx: true, version: 6 })
+    t.setBoard(game, {
+      dennis: { hand: ['Dune, The Desert Planet'], influence: { guild: 2 } },
+    })
+    parkFreighter(game, 2)
+    game.run()
+
+    t.choose(game, 'Agent Turn.Dune, The Desert Planet')
+    t.choose(game, 'Interstellar Shipping')
+    t.choose(game, 'Recall')
+    expect(t.currentChoices(game)).toEqual(['Middle', 'Bottom'])
+
+    t.choose(game, 'Bottom')
+    expect(game.state.freighterReward).toEqual({ player: 'dennis', space: 1 })
+    const spiceBefore = game.players.byName('dennis').spice
+    t.choose(game, '2 Spice')
+    expect(game.players.byName('dennis').spice).toBe(spiceBefore + 2)
+    expect(game.waiting.selectors[0].title).toBe('Shipping: +1 Influence')
+
+    t.choose(game, 'fremen')
+    t.choose(game, 'Advance')
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.getInfluence('fremen')).toBe(1)
+    expect(dennis.freighterPosition).toBe(1)
   })
 
   test('Interstellar Shipping moves the freighter twice', () => {

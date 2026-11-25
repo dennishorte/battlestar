@@ -72,10 +72,10 @@ function DuneFactory(settings, viewerName) {
 function factoryFromLobby(lobby) {
   return DuneFactory({
     game: 'Dune Imperium: Uprising',
-    // Version 6 puts each deployable unit kind in its own group on one deploy
-    // request. Older games keep the combined list so a stored answer still
+    // Version 7 takes shipping rewards from the highest space down.
+    // Older games still ask which reward to take, so a stored answer still
     // matches the prompt it was given.
-    version: 6,
+    version: 7,
     name: lobby.name,
     players: lobby.users,
     seed: lobby.seed,

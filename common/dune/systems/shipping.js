@@ -4,6 +4,8 @@
 // 0 is the empty bottom, below every reward. Freighters start there.
 // 1 is the lowest reward, 2 the middle, 3 the top.
 // Advancing pays nothing. Recalling pays the current reward and every reward below it.
+// Version 7 takes those rewards from the highest space down.
+// Older games still ask which one to take next, so a stored answer still matches its prompt.
 
 const SPACE_NAMES = [null, 'Bottom', 'Middle', 'Top']
 const TOP = 3
@@ -53,7 +55,9 @@ function recall(game, player, fromPosition) {
     game.state.freighterReward = { player: player.name, space: fromPosition }
   }
   while (pending.length > 0) {
-    const space = pending.length === 1 ? pending[0] : chooseSpace(game, player, pending)
+    const space = pending.length === 1 || rewardsInFixedOrder(game)
+      ? pending[0]
+      : chooseSpace(game, player, pending)
     game.state.freighterReward = { player: player.name, space }
     paySpace(game, player, space)
     pending.splice(pending.indexOf(space), 1)
@@ -64,6 +68,10 @@ function recall(game, player, fromPosition) {
     template: '{player} recalls the Freighter to the bottom',
     args: { player },
   })
+}
+
+function rewardsInFixedOrder(game) {
+  return (game.settings.version || 1) >= 7
 }
 
 function chooseSpace(game, player, pending) {

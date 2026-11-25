@@ -19,9 +19,9 @@ TestUtil.fixture = function(options = {}) {
   const game = DuneFactory({
     game: 'Dune Imperium: Uprising',
     // Current rules. Placed before ...options so a test can pass an older
-    // version and keep that rules set. Version 6 asks for each deployable
-    // unit kind inside one deploy request.
-    version: 6,
+    // version and keep that rules set. Version 7 takes shipping rewards
+    // from the highest space down.
+    version: 7,
     name: options.name || 'test_game',
     seed: options.seed || 'test_seed',
     players: activePlayers,

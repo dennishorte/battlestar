@@ -55,7 +55,7 @@
           <p>When you move your freighter, choose one:</p>
           <ul>
             <li>Advance one space toward the top. You cannot advance from the top. Advancing does not pay a reward.</li>
-            <li>Recall to the bottom. You take the reward for your current space and every reward space below it, in any order. The bottom space pays nothing. Recalling from the space just above it takes only that reward.</li>
+            <li>Recall to the bottom. You take the reward for your current space and every reward space below it, from the highest space to the lowest. The bottom space pays nothing. Recalling from the space just above it takes only that reward.</li>
           </ul>
           <p>While you are choosing a reward, your freighter sits on that space. When the recall is finished, it returns to the bottom.</p>
 

@@ -41,7 +41,7 @@ The track has four spaces. Each player has one Freighter, starting on the bottom
 A Freighter icon lets you do one of these:
 
 - Advance one space up the track. You cannot advance if the Freighter is already on the top space.
-- Recall the Freighter to the bottom space. You collect the reward for its current space and every reward space below that, in any order.
+- Recall the Freighter to the bottom space. You collect the reward for its current space and every reward space below that, from the highest space to the lowest.
 
 Advancing does not score. Only a recall pays. Recalling from the bottom space collects nothing. Recalling from the Bottom reward, the space just above it, collects only that reward.
 

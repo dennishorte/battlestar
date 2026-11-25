@@ -137,7 +137,7 @@ After combat, troops still return to the supply. Dreadnoughts do not, except thr
 New `systems/shipping.js`. Each freighter icon is a choice:
 
 - Advance one space. No advance from the top space.
-- Recall to the bottom and take the current space plus every space below it, in any order.
+- Recall to the bottom and take the current space plus every space below it, from the highest space to the lowest.
 
 The track has four spaces. Freighters start on the bottom space, which has no reward. Advancing does not pay. Recalling from the bottom pays nothing. Recalling from a reward space pays that space and every reward below it.
 
