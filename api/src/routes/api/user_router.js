@@ -218,7 +218,7 @@ router.post('/games_recently_finished', userController.getRecentlyFinishedGames)
  * @swagger
  * /user/next:
  *   post:
- *     summary: Get the next game for a user that is waiting for their turn
+ *     summary: Get the next unpaused game for a user that is waiting for their turn
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []

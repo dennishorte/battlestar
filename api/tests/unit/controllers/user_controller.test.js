@@ -317,4 +317,75 @@ describe('User Controller', () => {
       expect(next).toHaveBeenCalledWith(expect.any(BadRequestError))
     })
   })
+
+  describe('getNextGame', () => {
+    function gameId(value) {
+      return {
+        value,
+        equals(other) {
+          return other === this || other?.value === value
+        },
+        toString() {
+          return value
+        },
+      }
+    }
+
+    function mockGames(games) {
+      db.game.findByUserId.mockReturnValueOnce({
+        toArray: vi.fn().mockResolvedValue(games),
+      })
+    }
+
+    it('skips paused games that are waiting for the user', async () => {
+      req.body = { userId: 'user1' }
+      const paused = gameId('paused')
+      const open = gameId('open')
+      mockGames([
+        { _id: paused, waiting: ['User One'], paused: true },
+        { _id: open, waiting: ['User One'], paused: false },
+      ])
+
+      await userController.getNextGame(req, res, next)
+
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'success',
+        gameId: open,
+      })
+    })
+
+    it('returns no game when every waiting game is paused', async () => {
+      req.body = { userId: 'user1' }
+      mockGames([
+        { _id: gameId('paused'), waiting: ['User One'], paused: true },
+      ])
+
+      await userController.getNextGame(req, res, next)
+
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'success',
+        gameId: undefined,
+      })
+    })
+
+    it('skips a paused game when cycling past the current game', async () => {
+      const current = gameId('current')
+      const paused = gameId('paused')
+      const later = gameId('later')
+      req.body = { userId: 'user1' }
+      req.game = { _id: current }
+      mockGames([
+        { _id: current, waiting: ['User One'] },
+        { _id: paused, waiting: ['User One'], paused: true },
+        { _id: later, waiting: ['User One'] },
+      ])
+
+      await userController.getNextGame(req, res, next)
+
+      expect(res.json).toHaveBeenCalledWith({
+        status: 'success',
+        gameId: later,
+      })
+    })
+  })
 })

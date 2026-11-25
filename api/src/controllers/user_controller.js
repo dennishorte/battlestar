@@ -296,6 +296,7 @@ export const getNextGame = async (req, res, next) => {
       const gameIds = gameArray
         .filter(game => !!game.waiting)
         .filter(game => game.waiting.includes(userName))
+        .filter(game => !game.paused)
         .map(game => game._id)
 
       const nextId = gameIds.length > 0 ? gameIds[0] : undefined
