@@ -125,8 +125,16 @@ function payBottom(game, player) {
 }
 
 function payMiddle(game, player) {
-  const extra = require('./tech.js').owns(game, player, 'troop-transports') ? 1 : 0
-  require('./deploy.js').recruitTroops(game, player, 2 + extra)
+  const tech = require('./tech.js')
+  const hasTransports = tech.owns(game, player, 'troop-transports')
+  const recruited = require('./deploy.js').recruitTroops(game, player, hasTransports ? 3 : 2)
+  // The usual deploy step already includes troops recruited this turn when an
+  // agent is on a combat space. Troop Transports is the other permission: any
+  // of the troops just taken from the track may go to the Conflict, including
+  // on a Reveal turn and from a space that is not a combat space.
+  if (hasTransports) {
+    offerShippingDeploy(game, player, recruited)
+  }
   const factions = require('../res/constants.js').FACTIONS
   const [choice] = game.actions.choose(player, factions.map(faction => game.actions.option({
     id: faction,
@@ -139,6 +147,55 @@ function payMiddle(game, player) {
 
 function payTop(game, player) {
   require('./tech.js').acquireTech(game, player, { discount: 2 })
+}
+
+function offerShippingDeploy(game, player, recruited) {
+  if (recruited <= 0 || game.state.turnTracking?.shaddamNoDeploy) {
+    return
+  }
+  if (agentTurnWillDeploy(game)) {
+    return
+  }
+  const max = Math.min(recruited, player.troopsInGarrison)
+  if (max <= 0) {
+    return
+  }
+  const choices = []
+  for (let i = 0; i <= max; i++) {
+    choices.push(game.actions.option({
+      id: `deploy-${i}`,
+      title: `Deploy ${i} troop(s) to the Conflict`,
+    }))
+  }
+  const [choice] = game.actions.choose(player, choices, {
+    title: 'Deploy shipping troops to the Conflict',
+    window: 'turn',
+  })
+  const choiceId = typeof choice === 'object' ? choice.id : choice
+  const fromId = String(choiceId).match(/^deploy-(\d+)$/)
+  const count = fromId
+    ? Number(fromId[1])
+    : Number(String(choice).match(/\d+/)?.[0] || 0)
+  if (count > 0) {
+    require('./deploy.js').deployFromGarrison(game, player, count)
+  }
+}
+
+function agentTurnWillDeploy(game) {
+  const tracking = game.state.turnTracking
+  if (!tracking || tracking.isRevealTurn) {
+    return false
+  }
+  if (tracking.spaceIsCombat || tracking.recruitToConflict) {
+    return true
+  }
+  const spaceId = tracking.agentSpaceId
+  if (!spaceId) {
+    return false
+  }
+  const space = require('../res/boardSpaces.js').getBoardSpaces(game.settings)
+    .find(entry => entry.id === spaceId)
+  return !!space?.isCombatSpace
 }
 
 function gainSolari(game, player, amount) {

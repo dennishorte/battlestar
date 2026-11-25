@@ -147,7 +147,7 @@ The track has four spaces. Freighters start on the bottom space, which has no re
 
 Troops recruited from the track go to the garrison. If the agent this turn is on a combat space, they may be deployed under the phase 4 cap. Interstellar Shipping is not a combat space.
 
-Troop Transports adds one troop to a shipping-track recruit. Those extra troops follow the same deploy rule. They do not deploy from a non-combat space.
+Troop Transports adds one troop to a shipping-track recruit and lets you deploy any of those troops to the Conflict, including on a Reveal turn and from a non-combat space. On a Combat space the usual end-of-turn deploy already includes them, so do not ask twice.
 
 Cards and the Hundro signet call the same `moveFreighter` function.
 

@@ -148,7 +148,7 @@ describe('Rise of Ix shipping track', () => {
     expect(game.state.ownedTech.dennis.map(tile => tile.definition.defId)).toEqual(['windtraps'])
   })
 
-  test('Troop Transports adds one troop to a shipping recruit, and a non-combat space does not deploy it', () => {
+  test('Troop Transports deploys a shipping recruit from a non-combat space', () => {
     const game = t.fixture({ useRiseOfIx: true })
     t.setBoard(game, {
       dennis: { hand: ['Dune, The Desert Planet'], influence: { guild: 2 } },
@@ -160,17 +160,87 @@ describe('Rise of Ix shipping track', () => {
     t.choose(game, 'Agent Turn.Dune, The Desert Planet')
     t.choose(game, 'Interstellar Shipping')
     t.choose(game, 'Recall')
+    expect(game.waiting.selectors[0].title).toBe('Deploy shipping troops to the Conflict')
+    expect(t.currentChoices(game)).toContain('Deploy 3 troop(s) to the Conflict')
+    expect(t.currentChoices(game)).not.toContain('Deploy 4 troop(s) to the Conflict')
+    t.choose(game, 'Deploy 3 troop(s) to the Conflict')
     expect(game.waiting.selectors[0].title).toBe('Shipping: +1 Influence')
     t.choose(game, 'fremen')
     t.choose(game, '2 Spice')
     t.choose(game, 'Advance')
 
     const dennis = game.players.byName('dennis')
-    expect(dennis.troopsInGarrison).toBe(6)
+    expect(dennis.troopsInGarrison).toBe(3)
     expect(dennis.troopsInSupply).toBe(6)
-    expect(game.state.conflict.deployedTroops.dennis || 0).toBe(0)
+    expect(game.state.conflict.deployedTroops.dennis).toBe(3)
     expect(dennis.freighterPosition).toBe(1)
-    expect(game.waiting.selectors[0].title).not.toBe('Deploy troops to the Conflict')
+  })
+
+  test('a combat space deploys shipping troops at the end of the turn, once', () => {
+    const game = t.fixture({ useRiseOfIx: true })
+    t.setBoard(game, {
+      dennis: { handExact: ['Landing Rights'] },
+    })
+    parkFreighter(game, 2)
+    giveTile(game, 'dennis', 'troop-transports')
+    game.run()
+
+    t.choose(game, 'Agent Turn.Landing Rights')
+    t.choose(game, 'Spice Refinery')
+    t.choose(game, 'Landing Rights')
+    t.choose(game, 'Recall')
+    expect(game.waiting.selectors[0].title).toBe('Shipping: +1 Influence')
+    t.choose(game, 'fremen')
+    t.choose(game, '2 Spice')
+    t.choose(game, 'Gain 2 Solari')
+
+    expect(game.waiting.selectors[0].title).toBe('Deploy troops to the Conflict')
+    expect(t.currentChoices(game)).toContain('Deploy 5 troop(s) from garrison')
+    expect(t.currentChoices(game)).not.toContain('Deploy 6 troop(s) from garrison')
+    t.choose(game, 'Deploy 5 troop(s) from garrison')
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.troopsInGarrison).toBe(1)
+    expect(game.state.conflict.deployedTroops.dennis).toBe(5)
+  })
+
+  test('Freighter Fleet on a reveal turn deploys shipping troops with Troop Transports', () => {
+    const game = t.fixture({ useRiseOfIx: true })
+    t.setBoard(game, { dennis: { handExact: ['Freighter Fleet'] } })
+    parkFreighter(game, 2)
+    giveTile(game, 'dennis', 'troop-transports')
+    game.run()
+
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Recall')
+    expect(game.waiting.selectors[0].title).toBe('Deploy shipping troops to the Conflict')
+    t.choose(game, 'Deploy 3 troop(s) to the Conflict')
+    t.choose(game, 'emperor')
+    t.choose(game, '2 Spice')
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.troopsInGarrison).toBe(3)
+    expect(dennis.troopsInSupply).toBe(6)
+    expect(game.state.conflict.deployedTroops.dennis).toBe(3)
+    expect(dennis.strength).toBe(6)
+  })
+
+  test('Freighter Fleet on a reveal turn leaves shipping troops in the garrison without Troop Transports', () => {
+    const game = t.fixture({ useRiseOfIx: true })
+    t.setBoard(game, { dennis: { handExact: ['Freighter Fleet'] } })
+    parkFreighter(game, 2)
+    game.run()
+
+    t.choose(game, 'Reveal Turn')
+    t.choose(game, 'Recall')
+    expect(game.waiting.selectors[0].title).toBe('Shipping: +1 Influence')
+    t.choose(game, 'emperor')
+    t.choose(game, '2 Spice')
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.troopsInGarrison).toBe(5)
+    expect(game.state.conflict.deployedTroops.dennis || 0).toBe(0)
+    expect(dennis.strength).toBe(0)
   })
 
   test('version 6 still lets the player choose the shipping reward order', () => {

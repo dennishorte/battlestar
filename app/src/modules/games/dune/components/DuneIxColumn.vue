@@ -65,7 +65,7 @@
           </div>
           <div class="reward-block">
             <div class="reward-title">Middle</div>
-            <p>Recruit 2 troops and gain 1 influence with one faction. The troops go to your garrison. If your agent is on a combat space this turn, you may deploy them. Troop Transports recruits one extra troop.</p>
+            <p>Recruit 2 troops and gain 1 influence with one faction. The troops go to your garrison. If your agent is on a combat space this turn, you may deploy them. Troop Transports recruits one extra troop, and you may deploy any troops just recruited from the track to the conflict, including on your reveal turn.</p>
           </div>
           <div class="reward-block">
             <div class="reward-title">Top</div>

@@ -54,7 +54,7 @@ Advancing does not score. Only a recall pays. Recalling from the bottom space co
 
 Dividends: you gain 5 Solari, and each opponent gains 1 Solari.
 
-Troops recruited from the track go to your garrison. If you sent an Agent to a Combat space this turn, you may deploy them under the usual deployment rules. Interstellar Shipping is not a Combat space, so troops recruited there go to the garrison.
+Troops recruited from the track go to your garrison. If you sent an Agent to a Combat space this turn, you may deploy them under the usual deployment rules. Interstellar Shipping is not a Combat space, so troops recruited there go to the garrison. Troop Transports recruits one extra troop and lets you deploy any troops just recruited from the track to the Conflict, including on a Reveal turn and from a space that is not a Combat space.
 
 ### Tech tiles
 
