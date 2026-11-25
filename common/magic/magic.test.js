@@ -742,6 +742,67 @@ describe('Magic Actions', () => {
     expect(game.players.current().name).toBe('micah')
   })
 
+  test('random discard', () => {
+    const game = t.fixtureDecksSelected()
+
+    const request1 = game.run()
+    const request2 = t.do(game, request1, { name: 'draw 7', playerName: 'dennis' })
+
+    const handBefore = game.cards.byPlayer(t.dennis(game), 'hand').map(card => card.id)
+    t.do(game, request2, { name: 'random discard', playerName: 'dennis' })
+
+    const hand = game.cards.byPlayer(t.dennis(game), 'hand')
+    const graveyard = game.cards.byPlayer(t.dennis(game), 'graveyard')
+
+    expect(hand).toHaveLength(6)
+    expect(graveyard).toHaveLength(1)
+    expect(handBefore).toContain(graveyard[0].id)
+    expect(hand.map(card => card.id)).not.toContain(graveyard[0].id)
+    expect(graveyard[0].visibility).toEqual(game.players.all())
+
+    const log = game.log.getLog()
+    const entry = log[log.length - 1]
+    expect(entry.template).toBe('{player} randomly discards {card}')
+    expect(entry.args.card.value).toBe(graveyard[0].name())
+    expect(entry.args.card.cardId).toBe(graveyard[0].id)
+  })
+
+  test('random discard with an empty hand', () => {
+    const game = t.fixtureDecksSelected()
+
+    const request1 = game.run()
+    t.do(game, request1, { name: 'random discard', playerName: 'dennis' })
+
+    t.testBoard(game, {
+      dennis: {
+        hand: [],
+        graveyard: [],
+      },
+    })
+
+    const log = game.log.getLog()
+    expect(log[log.length - 1].template).toBe(
+      '{player} tries to randomly discard, but their hand is empty'
+    )
+  })
+
+  test('random discard puts the newest card on top of the graveyard', () => {
+    const game = t.fixtureDecksSelected()
+
+    const request1 = game.run()
+    const request2 = t.do(game, request1, { name: 'draw 7', playerName: 'dennis' })
+    const request3 = t.do(game, request2, { name: 'random discard', playerName: 'dennis' })
+
+    const firstDiscard = game.cards.byPlayer(t.dennis(game), 'graveyard')[0]
+    t.do(game, request3, { name: 'random discard', playerName: 'dennis' })
+
+    const graveyard = game.cards.byPlayer(t.dennis(game), 'graveyard')
+    expect(graveyard).toHaveLength(2)
+    expect(graveyard[1].id).toBe(firstDiscard.id)
+    expect(graveyard[0].id).not.toBe(firstDiscard.id)
+    expect(game.cards.byPlayer(t.dennis(game), 'hand')).toHaveLength(5)
+  })
+
   test('reveal', () => {
     const game = t.fixtureDecksSelected()
 

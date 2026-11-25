@@ -49,6 +49,7 @@
           <DropdownButton @click="revealHand">reveal</DropdownButton>
           <DropdownButton @click="hideHand">hide</DropdownButton>
           <DropdownButton @click="shuffle('hand')">shuffle</DropdownButton>
+          <DropdownButton @click="randomDiscard">random discard</DropdownButton>
           <DropdownDivider />
           <DropdownButton @click="importCard('hand')">import card</DropdownButton>
           <DropdownButton @click="makeToken('hand')">make token</DropdownButton>
@@ -343,6 +344,10 @@ export default {
     passToThisPlayer() {
       this.do(this.actorPlayer, { name: 'pass priority', target: this.player.name })
       this.$store.dispatch('game/save')
+    },
+
+    randomDiscard() {
+      this.do(this.player, { name: 'random discard' })
     },
 
     revealHand() {

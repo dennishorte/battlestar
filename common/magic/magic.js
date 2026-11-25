@@ -477,6 +477,7 @@ Magic.prototype.aChooseAction = function(player) {
       case 'notap clear'         : return this.aSetNoUntap(actor, action.cardId, false)
       case 'notap set'           : return this.aSetNoUntap(actor, action.cardId, true)
       case 'pass priority'       : return this.aPassPriority(actor, action.target)
+      case 'random discard'      : return this.aRandomDiscard(actor)
       case 'reveal'              : return this.aReveal(actor, action.cardId)
       case 'reveal all'          : return this.aRevealAll(actor, action.zoneId)
       case 'reveal next'         : return this.aRevealNext(actor, action.zoneId)
@@ -840,6 +841,27 @@ Magic.prototype.aPassPriority = function(actor, targetName) {
     event: 'pass-priority',
   })
   this.log.setIndent(indent)
+}
+
+Magic.prototype.aRandomDiscard = function(player) {
+  const hand = this.zones.byPlayer(player, 'hand')
+
+  if (hand.cardlist().length === 0) {
+    this.log.add({
+      template: '{player} tries to randomly discard, but their hand is empty',
+      args: { player },
+    })
+    return
+  }
+
+  const card = hand.random()
+  const graveyard = this.zones.byPlayer(player, 'graveyard')
+  card.moveTo(graveyard, 0)
+
+  this.log.add({
+    template: '{player} randomly discards {card}',
+    args: { player, card },
+  })
 }
 
 Magic.prototype.aReveal = function(player, cardId) {
