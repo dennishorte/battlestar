@@ -11,9 +11,16 @@ module.exports = {
   passiveAbility: null,
   agentIcons: ['green', 'purple', 'yellow'],
   factionAccess: ['emperor', 'guild', 'bene-gesserit', 'fremen'],
-  agentAbility: null,
+  agentAbility: 'Draw a card',
   revealPersuasion: 0,
   revealSwords: 0,
   revealAbility: null,
   factionAffiliation: null,
+
+  agentEffects: [
+    {
+      type: 'draw',
+      amount: 1,
+    },
+  ],
 }
