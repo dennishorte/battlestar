@@ -31,6 +31,7 @@
           <DropdownButton @click="draw">draw</DropdownButton>
           <DropdownButton @click="drawSeven">draw 7</DropdownButton>
           <DropdownButton @click="mulligan">mulligan</DropdownButton>
+          <DropdownButton @click="cascade">cascade</DropdownButton>
           <DropdownDivider />
           <DropdownButton @click="shuffle('library')">shuffle</DropdownButton>
           <DropdownButton @click="shuffleBottom">shuffle bottom</DropdownButton>
@@ -128,6 +129,12 @@
       <input class="form-control" placeholder="number of faces" v-model.number="dieFaces" />
     </ModalBase>
 
+    <!-- Cascade Modal -->
+    <ModalBase :id="`magic-cascade-${player.name}`" @ok="cascadeDo">
+      <template #header>Cascade</template>
+      <input class="form-control" placeholder="mana value" v-model.number="cascadeValue" />
+    </ModalBase>
+
     <!-- Shuffle Bottom Modal -->
     <ModalBase :id="`magic-shuffle-bottom-${player.name}`" @ok="shuffleBottomDo">
       <template #header>Shuffle Bottom of Library</template>
@@ -210,6 +217,7 @@ export default {
 
   data() {
     return {
+      cascadeValue: 3,
       dieFaces: 2,
       importZoneId: '',
       shuffleBottomCount: 5,
@@ -261,6 +269,14 @@ export default {
   },
 
   methods: {
+    cascade() {
+      this.$modal(`magic-cascade-${this.player.name}`).show()
+    },
+
+    cascadeDo() {
+      this.do(this.player, { name: 'cascade', x: this.cascadeValue })
+    },
+
     concede() {
       this.do(this.player, { name: 'concede' })
     },
