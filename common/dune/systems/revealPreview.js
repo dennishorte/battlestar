@@ -1,6 +1,7 @@
 'use strict'
 
 const constants = require('../res/constants.js')
+const { choiceOptionPlayable } = require('./shieldWall.js')
 
 const FACTION_LABELS = {
   emperor: 'Emperor',
@@ -177,7 +178,26 @@ function evaluateEffects(game, player, handCards, sourceCard, effects, sourceNam
       continue
     }
     if (effect.type === 'choice') {
-      pending.push({ source: sourceName, text: describeChoice(effect) })
+      const available = (effect.choices || []).filter(c => choiceOptionPlayable(game, player, c))
+      const actionable = available.filter(c => c.cost || (c.effects && c.effects.length > 0))
+      if (actionable.length === 0) {
+        continue
+      }
+      // One legal branch is what the game will play. Preview that outcome
+      // instead of advertising a choice the player no longer has.
+      if (available.length === 1) {
+        const descriptions = previewDeterminateOption(available[0], totals, ctx)
+        if (descriptions) {
+          for (const description of descriptions) {
+            resolved.push({ source: sourceName, description })
+          }
+          continue
+        }
+      }
+      pending.push({
+        source: sourceName,
+        text: available.map(c => c.label || '?').join(' OR '),
+      })
       continue
     }
     const desc = applyEffect(effect, totals, ctx)
@@ -454,6 +474,62 @@ function describeConditional(effect) {
   const cond = describeCondition(effect.condition)
   const inner = (effect.effects || []).map(describeEffect).filter(Boolean).join(', ')
   return cond ? `If ${cond}: ${inner}` : inner
+}
+
+function snapshotTotals(totals) {
+  return {
+    persuasion: totals.persuasion,
+    swords: totals.swords,
+    spice: totals.spice,
+    solari: totals.solari,
+    water: totals.water,
+    troops: totals.troops,
+    intrigue: totals.intrigue,
+    spy: totals.spy,
+    draw: totals.draw,
+    vp: totals.vp,
+    deployFromSupply: totals.deployFromSupply,
+    influence: { ...totals.influence },
+  }
+}
+
+function restoreTotals(totals, snapshot) {
+  Object.assign(totals, snapshot)
+  totals.influence = snapshot.influence
+}
+
+/**
+ * Apply a single remaining choice to the preview totals.
+ * Returns the description lines, or null when the branch is not predictable.
+ */
+function previewDeterminateOption(option, totals, ctx) {
+  const snapshot = snapshotTotals(totals)
+  const descriptions = []
+  if (option.cost) {
+    for (const [resource, amount] of Object.entries(option.cost)) {
+      if (typeof totals[resource] !== 'number') {
+        restoreTotals(totals, snapshot)
+        return null
+      }
+      totals[resource] -= amount
+      descriptions.push(formatDelta(resource, -amount))
+    }
+  }
+  for (const sub of option.effects || []) {
+    if (!sub || sub.type === 'conditional' || sub.type === 'choice') {
+      restoreTotals(totals, snapshot)
+      return null
+    }
+    const desc = applyEffect(sub, totals, ctx)
+    if (desc == null) {
+      restoreTotals(totals, snapshot)
+      return null
+    }
+    if (desc) {
+      descriptions.push(desc)
+    }
+  }
+  return descriptions
 }
 
 function describeChoice(effect) {

@@ -5,6 +5,7 @@ const deploy = require('../systems/deploy.js')
 const leaderAbilities = require('../systems/leaderAbilities.js')
 const constants = require('../res/constants.js')
 const { applyNukeRefresh } = require('../systems/imperiumRowRefresh.js')
+const { choiceOptionPlayable } = require('../systems/shieldWall.js')
 
 /**
  * Build a structured choice option for a board space. The engine provides
@@ -1224,25 +1225,8 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
     }
 
     case 'choice': {
-      // Filter choices the player can afford / qualifies for
-      const available = effect.choices.filter(c => {
-        if (c.cost) {
-          for (const [resource, amount] of Object.entries(c.cost)) {
-            if (player.getCounter(resource) < amount) {
-              return false
-            }
-          }
-        }
-        if (c.requires === 'maker-hook') {
-          if (!game.state.makerHooks?.[player.name]) {
-            return false
-          }
-          if (isConflictProtected(game)) {
-            return false
-          }
-        }
-        return true
-      })
+      // Cost, Maker Hook, and the Shield Wall sandworm ban share one filter.
+      const available = effect.choices.filter(c => choiceOptionPlayable(game, player, c))
 
       // Skip when nothing actionable remains (e.g. only Pass after costs
       // filtered out) — don't prompt just to decline.
@@ -1528,20 +1512,21 @@ function resolveEffect(game, player, effect, space, sourceName, card) {
       break
 
     case 'sandworm': {
-      // Sandworms cannot be summoned to a conflict protected by the Shield Wall
-      if (isConflictProtected(game)) {
+      const count = effect.amount || 1
+      const deployed = deploy.deploySandworms(game, player, count)
+      if (deployed === false) {
         game.log.add({
           template: 'Sandworm cannot be summoned — Conflict is protected by the Shield Wall',
           event: 'memo',
         })
         break
       }
-      const count = effect.amount || 1
-      deploy.deploySandworms(game, player, count)
-      game.log.add({
-        template: '{player} summons {count} Sandworm(s)',
-        args: { player, count },
-      })
+      if (deployed > 0) {
+        game.log.add({
+          template: '{player} summons {count} Sandworm(s)',
+          args: { player, count: deployed },
+        })
+      }
       break
     }
 
@@ -2142,25 +2127,6 @@ function hasPlotAbility(def) {
   return typeof def.plotEffect === 'string' && def.plotEffect.length > 0
 }
 
-function choiceOptionPlayable(game, player, option) {
-  if (option.cost) {
-    for (const [resource, amount] of Object.entries(option.cost)) {
-      if (player.getCounter(resource) < amount) {
-        return false
-      }
-    }
-  }
-  if (option.requires === 'maker-hook') {
-    if (!game.state.makerHooks?.[player.name]) {
-      return false
-    }
-    if (isConflictProtected(game)) {
-      return false
-    }
-  }
-  return true
-}
-
 /**
  * A declarative plot whose only effects are choices the player cannot take
  * would be discarded for nothing. Anything else still does something.
@@ -2391,22 +2357,6 @@ function offerPlotIntrigue(game, player) {
     }
     game.log.outdent()
   }
-}
-
-/**
- * Check if the current conflict is at a location protected by the Shield Wall.
- */
-function isConflictProtected(game) {
-  if (!game.state.shieldWall) {
-    return false
-  }
-  const currentCard = game.state.conflict.currentCard
-  if (!currentCard || !currentCard.location) {
-    return false
-  }
-  const boardSpacesData = getBoardSpaces(game)
-  const locationSpace = boardSpacesData.find(s => s.id === currentCard.location)
-  return locationSpace && locationSpace.isProtected
 }
 
 function getSpaceCost(game, space, player) {

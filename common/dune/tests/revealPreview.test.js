@@ -286,6 +286,34 @@ describe('previewReveal', () => {
     expect(preview.pending).toEqual([])
   })
 
+  test('Desert Power: sandworm stays a choice when the conflict is not protected', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { handExact: ['Desert Power', 'Dagger'], water: 1 },
+      makerHooks: { dennis: 1 },
+    })
+    game.run()
+    const preview = previewReveal(game, game.players.byName('dennis'))
+    expect(preview.totals.persuasion).toBe(0)
+    expect(preview.pending.length).toBe(1)
+    expect(preview.pending[0].source).toBe('Desert Power')
+    expect(preview.pending[0].text).toContain('Sandworm')
+  })
+
+  test('Desert Power: auto +2 persuasion when the shield wall protects the conflict', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { handExact: ['Desert Power', 'Dagger'], water: 1 },
+      makerHooks: { dennis: 1 },
+      shieldWall: true,
+      conflictCard: { location: 'arrakeen' },
+    })
+    game.run()
+    const preview = previewReveal(game, game.players.byName('dennis'))
+    expect(preview.totals.persuasion).toBe(2)
+    expect(preview.pending).toEqual([])
+  })
+
   test('Corrinth City: auto +5 Solari when HC seat already taken', () => {
     const game = t.fixture()
     t.setBoard(game, {

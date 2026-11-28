@@ -1,6 +1,7 @@
 'use strict'
 
 const spies = require('./spies.js')
+const { isConflictProtected } = require('./shieldWall.js')
 
 /**
  * Troops and sandworms are both units. Any deploy-to-Conflict path that should
@@ -29,16 +30,23 @@ function deployToConflict(game, player, count) {
 /**
  * Summon/deploy sandworms directly to the Conflict (never garrison).
  * Counts toward unitsDeployedThisTurn — sandworms are units.
+ * Returns the number deployed, or false when the Shield Wall blocks the summon.
+ * Callers that offer a choice must filter that option first; this is the
+ * backstop for a direct summon.
  */
 function deploySandworms(game, player, count) {
   if (count <= 0) {
-    return
+    return 0
+  }
+  if (isConflictProtected(game)) {
+    return false
   }
 
   const conflict = game.state.conflict
   conflict.deployedSandworms[player.name] =
     (conflict.deployedSandworms[player.name] || 0) + count
   recordUnitsDeployed(game, player, count)
+  return count
 }
 
 /**

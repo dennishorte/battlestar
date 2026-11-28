@@ -101,6 +101,45 @@ describe('desert-power', () => {
     expect(dennis.getCounter('persuasion')).toBe(0)
   })
 
+  test('reveal: shield wall hides the sandworm at a protected conflict', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { handExact: ['Desert Power'], water: 3 },
+      makerHooks: { dennis: 1 },
+      shieldWall: true,
+      conflictCard: { location: 'arrakeen' },
+    })
+    game.run()
+
+    expect(game.state.conflict.currentCard.location).toBe('arrakeen')
+    t.choose(game, 'Reveal Turn')
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.getCounter('persuasion')).toBe(2)
+    expect(dennis.water).toBe(3)
+    expect(game.state.conflict.deployedSandworms.dennis || 0).toBe(0)
+  })
+
+  test('reveal: sandworm is offered at a protected conflict once the shield wall is down', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { handExact: ['Desert Power'], water: 3 },
+      makerHooks: { dennis: 1 },
+      shieldWall: false,
+      conflictCard: { location: 'arrakeen' },
+    })
+    game.run()
+
+    t.choose(game, 'Reveal Turn')
+    const choices = t.currentChoices(game)
+    expect(choices).toEqual(expect.arrayContaining(['+2 Persuasion', 'Pay 1 Water for 1 Sandworm']))
+    t.choose(game, 'Pay 1 Water for 1 Sandworm')
+
+    const dennis = game.players.byName('dennis')
+    expect(dennis.water).toBe(2)
+    expect(game.state.conflict.deployedSandworms.dennis).toBe(1)
+  })
+
   test('reveal: with Maker Hook, may still choose +2 Persuasion', () => {
     const game = t.fixture()
     t.setBoard(game, {

@@ -1,7 +1,5 @@
 'use strict'
 
-const deploy = require('../../../../systems/deploy.js')
-
 module.exports = {
   id: "desert-power",
   name: "Desert Power",
@@ -34,36 +32,32 @@ module.exports = {
   hasBattleIcons: false,
   hasSardaukar: false,
 
-  revealEffect(game, player) {
-    const hasMaker = game.state.makerHooks?.[player.name]
-    const choices = [game.actions.option({ id: 'persuasion', title: '+2 Persuasion' })]
-    if (hasMaker && player.water >= 1) {
-      choices.push(game.actions.option({ id: 'sandworm', title: 'Pay 1 Water for 1 Sandworm' }))
-    }
-    const [choice] = game.actions.choose(player, choices, { title: 'Desert Power' })
-    const chId = typeof choice === 'object' ? choice.id : choice
-    const isPersuasion = chId === 'persuasion' || (typeof choice === 'string' && choice.includes('Persuasion'))
-    if (isPersuasion) {
-      player.incrementCounter('persuasion', 2)
-    }
-    else {
-      player.decrementCounter('water', 1)
-      deploy.deploySandworms(game, player, 1)
-      game.log.add({ template: '{player}: deploys 1 Sandworm', args: { player } })
-    }
-  },
-
-  previewReveal(game, player) {
-    // When the sandworm branch is unavailable the engine auto-picks +2
-    // Persuasion (single-choice prompt), so it's deterministic here too.
-    const hasMaker = !!game.state.makerHooks?.[player.name]
-    const canPaySandworm = hasMaker && player.water >= 1
-    if (!canPaySandworm) {
-      return { persuasion: 2 }
-    }
-    return { pending: 'Choice: +2 Persuasion OR pay 1 Water → 1 Sandworm in conflict' }
-  },
-
+  // The sandworm branch is an ordinary choice. Cost, Maker Hook, and the
+  // Shield Wall ban are applied by the shared option filter, so this card
+  // does not decide for itself whether a worm can be summoned.
+  revealEffects: [
+    {
+      type: 'choice',
+      choices: [
+        {
+          id: 'persuasion',
+          label: '+2 Persuasion',
+          effects: [
+            { type: 'gain', resource: 'persuasion', amount: 2 },
+          ],
+        },
+        {
+          id: 'sandworm',
+          label: 'Pay 1 Water for 1 Sandworm',
+          requires: 'maker-hook',
+          cost: { water: 1 },
+          effects: [
+            { type: 'sandworm', amount: 1 },
+          ],
+        },
+      ],
+    },
+  ],
 
   agentEffects: [
     {

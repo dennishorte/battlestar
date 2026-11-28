@@ -44,6 +44,23 @@ describe("unexpected-allies", () => {
     expect(game.state.shieldWall).toBe(true)
   })
 
+  test('plot: blowing the shield wall still summons a worm at a protected conflict', () => {
+    const game = t.fixture()
+    t.setBoard(game, {
+      dennis: { intrigue: ['Unexpected Allies'], water: 2 },
+      shieldWall: true,
+      conflictCard: { location: 'arrakeen' },
+    })
+    game.run()
+
+    expect(game.state.conflict.currentCard.location).toBe('arrakeen')
+    t.playPlot(game, 'Unexpected Allies')
+    t.choose(game, 'Pay 2 Water: Blow Shield Wall + 1 Sandworm')
+
+    expect(game.state.shieldWall).toBe(false)
+    expect(game.state.conflict.deployedSandworms.dennis).toBe(1)
+  })
+
   test('plot: explicit Pass keeps water and shield wall intact', () => {
     const game = t.fixture()
     t.setBoard(game, {

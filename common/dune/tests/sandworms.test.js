@@ -43,14 +43,7 @@ describe('Sandworm Summoning', () => {
     })
     game.run()
 
-    // Verify active conflict has a location
-    const activeCards = game.zones.byId('common.conflictActive').cardlist()
-    const hasLocation = activeCards.some(c => c.definition?.location)
-
-    if (!hasLocation) {
-      return
-    }
-
+    expect(game.state.conflict.currentCard.location).toBe('arrakeen')
     expect(game.state.shieldWall).toBe(true)
 
     // Dennis reveals first
@@ -62,16 +55,8 @@ describe('Sandworm Summoning', () => {
     t.choose(game, 'Hagga Basin')
 
     const choices = t.currentChoices(game)
-    const makerChoice = choices.find(c => c.includes('Sandworm'))
-    if (!makerChoice) {
-      return
-    }
-    t.choose(game, makerChoice)
-
-    // Sandworm should NOT have been deployed
-    t.testBoard(game, {
-      conflict: { deployedSandworms: { micah: 0 } },
-    })
+    expect(choices.some(c => /sandworm/i.test(c))).toBe(false)
+    expect(game.state.conflict.deployedSandworms.micah || 0).toBe(0)
   })
 
   test('sandworm allowed at protected location when shield wall is down', () => {
