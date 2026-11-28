@@ -112,6 +112,11 @@ describe('Faction Influence', () => {
 
     expect(game.state.alliances.emperor).toBe('micah')
 
+    const transfer = game.log.getLog().find(e => e.template?.includes('takes the'))
+    expect(transfer.args.player.value).toBe('micah')
+    expect(transfer.args.player2.value).toBe('dennis')
+    expect(transfer.args.faction.value).toBe('emperor')
+
     t.testBoard(game, {
       dennis: { influence: { emperor: 3, guild: 0 }, solari: 0, vp: 5 },
       micah: { influence: { emperor: 4 }, vp: 1 },
@@ -140,6 +145,11 @@ describe('Faction Influence', () => {
     // who could receive the alliance, so no recipient prompt appears.
 
     expect(game.state.alliances.fremen).toBe('micah')
+
+    const transfer = game.log.getLog().find(e => e.template?.includes('takes the'))
+    expect(transfer.args.player.value).toBe('micah')
+    expect(transfer.args.player2.value).toBe('dennis')
+    expect(transfer.args.faction.value).toBe('fremen')
 
     t.testBoard(game, {
       dennis: { influence: { fremen: 4, guild: 0 }, solari: 0, vp: 5 },

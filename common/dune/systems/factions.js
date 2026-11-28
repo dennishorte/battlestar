@@ -107,8 +107,8 @@ function checkAllianceOnLoss(game, player, faction) {
   player.decrementCounter('vp', 1, { silent: true, source: `${factionLabel(faction)} Alliance (lost to ${newHolder.name})` })
   newHolder.incrementCounter('vp', 1, { silent: true, source: `${factionLabel(faction)} Alliance (from ${player.name})` })
   game.log.add({
-    template: '{player} takes the {faction} Alliance from {holder}: VP transfers',
-    args: { player: newHolder, faction, holder: player },
+    template: '{player} takes the {faction} Alliance from {player2}: VP transfers',
+    args: { player: newHolder, faction, player2: player },
   })
 }
 
@@ -182,8 +182,8 @@ function checkAlliance(game, player, faction) {
       holder.decrementCounter('vp', 1, { silent: true, source: `${factionLabel(faction)} Alliance (lost to ${player.name})` })
       player.incrementCounter('vp', 1, { silent: true, source: `${factionLabel(faction)} Alliance (from ${holder.name})` })
       game.log.add({
-        template: '{player} takes the {faction} Alliance from {holder}: VP transfers',
-        args: { player, faction, holder },
+        template: '{player} takes the {faction} Alliance from {player2}: VP transfers',
+        args: { player, faction, player2: holder },
       })
     }
   }

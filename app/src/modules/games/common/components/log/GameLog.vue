@@ -167,7 +167,7 @@ function convertLogMessage(entry) {
       }
     }
 
-    else if (arg === 'player') {
+    else if (arg === 'player' || value.classes?.includes('player-name')) {
       replacement = `player(${value.value})`
     }
 
