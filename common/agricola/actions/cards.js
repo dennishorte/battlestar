@@ -205,6 +205,7 @@ AgricolaActionManager.prototype.offerUseOtherSpace = function(player, card, othe
  * @param {string} cardId
  * @param {object} [options]
  * @param {object} [options.cost]             — cost to pay (e.g., { food: 2 })
+ * @param {number} [options.foodPaid]         — food already paid by the caller
  * @param {string} [options.logTemplate]      — custom log template
  * @param {object} [options.logArgs]          — extra log args merged with { player, card }
  * @param {boolean} [options.skipBeforeHooks] — suppress onBeforePlayOccupation (when caller already fired it)
@@ -220,9 +221,12 @@ AgricolaActionManager.prototype._completeOccupationPlay = function(player, cardI
     this.game.callPlayerCardHook(player, 'onBeforePlayOccupation')
   }
 
-  // Pay cost if provided
+  // Food paid as the occupation cost. playOccupation records what it already
+  // collected; a cost passed in here is paid now and added on top.
+  let foodPaid = options.foodPaid || 0
   if (options.cost) {
     player.payCost(options.cost)
+    foodPaid += options.cost.food || 0
   }
 
   // Play the card (moves from hand to playedOccupations)
@@ -250,7 +254,7 @@ AgricolaActionManager.prototype._completeOccupationPlay = function(player, cardI
 
   // Call onPlayOccupation hooks on all active cards (before onPlay so that
   // triggered effects like Scales resolve before the card's own effect)
-  this.game.callPlayerCardHook(player, 'onPlayOccupation', card)
+  this.game.callPlayerCardHook(player, 'onPlayOccupation', card, foodPaid)
 
   // Execute onPlay effect if present
   if (card.hasHook('onPlay')) {
@@ -422,7 +426,10 @@ AgricolaActionManager.prototype.playOccupation = function(player, options = {}) 
   // Fire onBeforePlayOccupation hooks (e.g. WhaleOil: get stored food before paying)
   this.game.callPlayerCardHook(player, 'onBeforePlayOccupation')
 
-  // Pay the occupation cost
+  // Pay the occupation cost. Record the food actually spent: Lessons B can
+  // cost 2, a free play costs 0, and wood or a building resource can stand
+  // in for food (Forest School, Working Gloves).
+  let foodPaid = 0
   if (cost > 0) {
     if (hasWoodOrFood) {
       // Player can pay with wood or food (e.g., Forest School)
@@ -453,6 +460,7 @@ AgricolaActionManager.prototype.playOccupation = function(player, options = {}) 
         }
         else {
           player.payCost({ food: amount })
+          foodPaid = amount
         }
       }
       else if (canPayWood) {
@@ -460,6 +468,7 @@ AgricolaActionManager.prototype.playOccupation = function(player, options = {}) 
       }
       else {
         player.payCost({ food: amount })
+        foodPaid = amount
       }
     }
     else if (hasResourceSub) {
@@ -483,10 +492,12 @@ AgricolaActionManager.prototype.playOccupation = function(player, options = {}) 
         const applyPayment = (id) => {
           if (id === 'pay-food') {
             player.payCost({ food: cost })
+            foodPaid = cost
             return
           }
           const res = id.slice('pay-'.length)
           player.payCost({ [res]: 1, ...(remainingFood > 0 ? { food: remainingFood } : {}) })
+          foodPaid = remainingFood
           this.log.add({
             template: '{player} pays 1 {resource} in place of {amount} food via {card}',
             args: { player, resource: res, amount: foodReduction, card: 'Working Gloves' },
@@ -508,10 +519,12 @@ AgricolaActionManager.prototype.playOccupation = function(player, options = {}) 
       else {
         // No building resources available, pay normally
         player.payCost({ food: cost })
+        foodPaid = cost
       }
     }
     else {
-      // Art Teacher: can use food from Traveling Players accumulation space
+      // Art Teacher: can use food from Traveling Players accumulation space.
+      // That food is still food paid as the occupation cost.
       let remainingCost = cost
       const hasTravelingPlayersFoodFlag = player.getActiveCards().some(c => c.definition.canUseTravelingPlayersFood)
       if (hasTravelingPlayersFoodFlag) {
@@ -532,10 +545,11 @@ AgricolaActionManager.prototype.playOccupation = function(player, options = {}) 
       if (remainingCost > 0) {
         player.payCost({ food: remainingCost })
       }
+      foodPaid = cost
     }
   }
 
-  return this._completeOccupationPlay(player, cardId, { skipBeforeHooks: true })
+  return this._completeOccupationPlay(player, cardId, { skipBeforeHooks: true, foodPaid })
 }
 
 // ---------------------------------------------------------------------------

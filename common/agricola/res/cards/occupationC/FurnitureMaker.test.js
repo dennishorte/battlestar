@@ -98,4 +98,83 @@ describe('Furniture Maker', () => {
       },
     })
   })
+
+  test('gives 2 wood when Lessons B costs 2 food', () => {
+    // 3-player Lessons B always costs 2 food, even for the second occupation.
+    const game = t.fixture({ numPlayers: 3, cardSets: ['occupationC', 'test'] })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['furniture-maker-c116', 'test-occupation-1'],
+        food: 2,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Lessons A')
+    t.choose(game, 'Furniture Maker')
+    t.choose(game, 'Day Laborer') // micah
+    t.choose(game, 'Forest') // scott
+
+    t.choose(game, 'Lessons B')
+    t.choose(game, 'Test Occupation 1')
+
+    t.testBoard(game, {
+      dennis: {
+        food: 0, // paid 2 food on Lessons B
+        wood: 3, // 1 from playing Furniture Maker + 2 for the food paid
+        occupations: ['furniture-maker-c116', 'test-occupation-1'],
+      },
+    })
+  })
+
+  test('playing Furniture Maker on Lessons B still gives only its own 1 wood', () => {
+    const game = t.fixture({ numPlayers: 3, cardSets: ['occupationC', 'test'] })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        hand: ['furniture-maker-c116'],
+        food: 2,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Lessons B')
+    t.choose(game, 'Furniture Maker')
+
+    t.testBoard(game, {
+      dennis: {
+        food: 0,
+        wood: 1,
+        occupations: ['furniture-maker-c116'],
+      },
+    })
+  })
+
+  test('gives no wood when the occupation cost is paid in wood', () => {
+    const game = t.fixture({ cardSets: ['occupationC', 'minorImprovementA', 'test'] })
+    t.setBoard(game, {
+      firstPlayer: 'dennis',
+      dennis: {
+        occupations: ['furniture-maker-c116'],
+        minorImprovements: ['forest-school-a028'],
+        hand: ['test-occupation-1'],
+        wood: 1,
+        food: 0,
+      },
+    })
+    game.run()
+
+    t.choose(game, 'Lessons A')
+    t.choose(game, 'Test Occupation 1')
+
+    t.testBoard(game, {
+      dennis: {
+        wood: 0,
+        food: 0,
+        occupations: ['furniture-maker-c116', 'test-occupation-1'],
+        minorImprovements: ['forest-school-a028'],
+      },
+    })
+  })
 })
