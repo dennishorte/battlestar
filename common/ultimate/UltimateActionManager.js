@@ -116,13 +116,16 @@ class UltimateActionManager extends BaseActionManager {
     }
   }
 
-  acted(player) {
+  acted(player, opts={}) {
     if (!this.state.initializationComplete || !this.state.firstPicksComplete) {
       return
     }
 
+    // Revealing cards never earns a share bonus. Any other action does,
+    // when someone other than the leader carries out a non-demand effect.
     if (
-      !this.state.dogmaInfo.isDemandEffect
+      opts.share !== false
+      && !this.state.dogmaInfo.isDemandEffect
       && this.state.dogmaInfo.acting
       && this.state.dogmaInfo.acting.name === player.name
       && !this.game.checkSameTeam(player, this.players.current())
@@ -944,7 +947,7 @@ class UltimateActionManager extends BaseActionManager {
       template: '{player} reveals {card}',
       args: { player, card }
     })
-    this.acted(player)
+    this.acted(player, { share: false })
     return card
   })
 

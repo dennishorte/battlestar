@@ -66,6 +66,51 @@ describe('Specialization', () => {
     })
   })
 
+  test('revealing a card does not award a share bonus', () => {
+    const game = t.fixtureFirstPlayer()
+    t.setBoard(game, {
+      dennis: {
+        purple: ['Specialization'],
+        hand: ['Sailing'],
+      },
+      micah: {
+        red: ['Gunpowder'],
+        hand: ['Agriculture'],
+      },
+      decks: {
+        base: {
+          9: ['Computers'],
+        },
+      },
+    })
+
+    game.run()
+    t.choose(game, 'Dogma.Specialization')
+
+    // Both players reveal a hand card, and neither has a board card of that
+    // color to take. The reveal is the only thing Micah does, so Dennis
+    // does not draw a share bonus.
+    const revealed = game.log.getLog()
+      .filter(entry => entry.template === '{player} reveals {card}')
+      .map(entry => entry.args.card.value)
+    expect(revealed).toEqual(expect.arrayContaining(['Sailing', 'Agriculture']))
+    expect(game.log.getLog().some(entry =>
+      entry.template && entry.template.includes('sharing bonus')
+    )).toBe(false)
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        purple: ['Specialization'],
+        hand: ['Sailing'],
+      },
+      micah: {
+        red: ['Gunpowder'],
+        hand: ['Agriculture'],
+      },
+    })
+  })
+
   describe('splay', () => {
     test('can splay', () => {
       const game = t.fixtureFirstPlayer({ numPlayers: 3 })

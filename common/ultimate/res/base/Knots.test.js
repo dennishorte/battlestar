@@ -35,6 +35,91 @@ describe('Knots', () => {
     })
   })
 
+  test('dogma: proof reveal by a sharing player does not award a share bonus', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'surv'], useAgeZero: true })
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Knots'],
+        red: ['Archery'],
+        score: ['Agriculture'],
+      },
+      micah: {
+        purple: ['Philosophy'],
+        score: ['Sailing'],
+      },
+      decks: {
+        base: {
+          1: ['Tools'],
+        },
+      },
+    })
+
+    game.run()
+    t.choose(game, 'Dogma.Knots')
+
+    // Neither score card matches a color on that player's board, so each
+    // player only reveals their score pile to prove they cannot. Micah
+    // sharing that non-demand must not give Dennis a share bonus.
+    const proofs = game.log.getLog().filter(entry =>
+      entry.template && entry.template.includes('no valid card')
+    )
+    expect(proofs).toHaveLength(2)
+    expect(game.log.getLog().some(entry =>
+      entry.template && entry.template.includes('sharing bonus')
+    )).toBe(false)
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Knots'],
+        red: ['Archery'],
+        score: ['Agriculture'],
+      },
+      micah: {
+        purple: ['Philosophy'],
+        score: ['Sailing'],
+      },
+    })
+  })
+
+  test('dogma: drawing after a reveal still awards a share bonus', () => {
+    const game = t.fixtureFirstPlayer({ expansions: ['base', 'surv'], useAgeZero: true })
+    t.setBoard(game, {
+      dennis: {
+        blue: ['Knots'],
+        red: ['Archery'],
+        score: ['Agriculture'],
+      },
+      micah: {
+        purple: ['Philosophy'],
+        score: ['Code of Laws'],
+      },
+      decks: {
+        base: {
+          1: ['Tools', 'Writing'],
+        },
+      },
+    })
+
+    game.run()
+    t.choose(game, 'Dogma.Knots')
+
+    t.testIsSecondPlayer(game)
+    t.testBoard(game, {
+      dennis: {
+        blue: ['Knots'],
+        red: ['Archery'],
+        score: ['Agriculture'],
+        hand: ['Writing'],
+      },
+      micah: {
+        purple: ['Philosophy'],
+        score: ['Code of Laws'],
+        hand: ['Tools'],
+      },
+    })
+  })
+
   test('dogma: no valid cards to reveal (no matching colors)', () => {
     const game = t.fixtureFirstPlayer({ expansions: ['base', 'surv'], useAgeZero: true })
     t.setBoard(game, {
